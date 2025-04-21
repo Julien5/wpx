@@ -6,14 +6,14 @@ use svg::node::element::Path;
 use svg::Document;
 
 fn to_view(x: f64, y: f64) -> (f64, f64) {
-    (10f64 * x, 250f64 - (y / 5f64))
+    (10f64 * (x / 1000f64), 250f64 - (y / 5f64))
 }
 
-pub fn profile(profile: &gpsdata::Profile, filename: &str) {
+pub fn profile(geodata: &gpsdata::GeoData, filename: &str) {
     let mut data = Data::new();
-    for k in 0..profile.xdata.len() {
-        let (x, y) = (profile.xdata[k], profile.ydata[k]);
-        let (xg, yg) = (10f64 * x, 250f64 - (y / 5f64));
+    for k in 0..geodata.len() {
+        let (x, y) = (geodata.distance(k), geodata.elevation(k));
+        let (xg, yg) = to_view(x, y);
         if data.is_empty() {
             data.append(Command::Move(Position::Absolute, (xg, yg).into()));
         }
@@ -32,9 +32,9 @@ pub fn profile(profile: &gpsdata::Profile, filename: &str) {
         .set("viewBox", (0, 0, 1000, 250))
         .add(svgpath);
 
-    let A = profile.get_automatic_points();
-    for k in A {
-        let (x, y) = to_view(profile.xdata[k], profile.ydata[k]);
+    let indices = geodata.get_automatic_points();
+    for k in indices {
+        let (x, y) = to_view(geodata.distance(k), geodata.elevation(k));
         let dot = svg::node::element::Circle::new()
             .set("cx", x)
             .set("cy", y)

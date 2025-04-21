@@ -10,9 +10,10 @@ use std::io::Read;
 
 use gpx::TrackSegment;
 
-pub struct Profile {
-    pub xdata: Vec<f64>,
-    pub ydata: Vec<f64>,
+pub struct GeoData {
+    pub wgs84: Vec<(f64, f64, f64)>,
+    pub utm: Vec<(f64, f64)>,
+    _distance: Vec<f64>,
 }
 
 pub fn read_segment(filename: &str) -> Box<gpx::TrackSegment> {
@@ -27,41 +28,60 @@ pub fn read_segment(filename: &str) -> Box<gpx::TrackSegment> {
     Box::new(s0)
 }
 
-impl Profile {
-    pub fn from_segment(segment: &TrackSegment) -> Profile {
-        let mut xdata = Vec::new();
-        let mut ydata = Vec::new();
-        let mut prev: Option<geo::Point> = None;
-        let mut d = 0f64;
+impl GeoData {
+    pub fn len(&self) -> usize {
+        self.wgs84.len()
+    }
+    pub fn elevation(&self, index: usize) -> f64 {
+        self.wgs84[index].2
+    }
+    pub fn distance(&self, index: usize) -> f64 {
+        self._distance[index]
+    }
+    pub fn from_segment(segment: &TrackSegment) -> GeoData {
+        let mut dist = Vec::new();
+
+        use proj4rs::proj::Proj;
+        let spec = "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs +type=crs";
+        let utm32n = Proj::from_proj_string(spec).unwrap();
+
+        let spec = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
+        let wgs84 = Proj::from_proj_string(spec).unwrap();
+        let mut utm = Vec::new();
+        let mut wgs = Vec::new();
         for k in 0..segment.points.len() {
             let point = &segment.points[k];
-            let (x, y) = point.point().x_y();
-            if let Some(p) = prev {
-                d += distance(p.x(), p.y(), x, y);
-                let dy = point.elevation.unwrap();
-                let kx = d / 1000f64;
-                xdata.push(kx);
-                ydata.push(dy);
-                if kx > 100f64 {
-                    break;
-                }
+            let (lon, lat) = point.point().x_y();
+            wgs.push((lon, lat, point.elevation.unwrap()));
+            debug_assert_eq!(wgs.len(), k + 1);
+            let mut p = (lon.to_radians(), lat.to_radians());
+            proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
+            utm.push(p);
+
+            if k == 0 {
+                dist.push(0f64);
+            } else {
+                let dloc = distance(wgs[k - 1].0, wgs[k - 1].1, wgs[k].0, wgs[k].1);
+                dist.push(dist[k - 1] + dloc);
             }
-            prev = Some(point.point());
         }
-        Profile { xdata, ydata }
+        assert_eq!(dist.len(), wgs.len());
+        GeoData {
+            wgs84: wgs,
+            utm,
+            _distance: dist,
+        }
     }
 
     pub fn get_automatic_points(&self) -> Vec<usize> {
-        use geo::line_string;
-        use geo::Simplify;
         let mut coords = Vec::new();
-        for k in 0..self.xdata.len() {
-            let x = self.xdata[k];
-            let y = self.ydata[k];
+        for k in 0..self.len() {
+            let x = self.distance(k);
+            let y = self.elevation(k);
             coords.push(geo::coord!(x:x, y:y));
         }
-        let mut line = geo::LineString::new(coords);
-        line.simplify_idx(&5.0)
+        let line = geo::LineString::new(coords);
+        line.simplify_idx(&100.0)
     }
 }
 
