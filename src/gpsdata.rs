@@ -38,6 +38,27 @@ impl GeoData {
     pub fn distance(&self, index: usize) -> f64 {
         self._distance[index]
     }
+
+    pub fn segment(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {
+        assert!(!self._distance.is_empty());
+        assert!(d0 < d1);
+        let maxdist = *self._distance.last().unwrap();
+        let end = self._distance.len();
+        let mut it = self._distance.iter();
+        if d0 > maxdist {
+            return end..end;
+        }
+        let startidx = it.position(|&d| d >= d0).unwrap();
+        // TODO: binary search.
+        let endidx = if d1 > maxdist {
+            end
+        } else {
+            self._distance.iter().rposition(|&d| d < d1).unwrap()
+        };
+        assert!(startidx <= endidx);
+        startidx..endidx
+    }
+
     pub fn from_segment(segment: &TrackSegment) -> GeoData {
         let mut dist = Vec::new();
 
@@ -84,7 +105,6 @@ impl GeoData {
         line.simplify_idx(&100.0)
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
