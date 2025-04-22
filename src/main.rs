@@ -1,5 +1,4 @@
 pub mod gpsdata;
-pub mod minimap;
 pub mod pdf;
 pub mod render;
 pub mod speed;
