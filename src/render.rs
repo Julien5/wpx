@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 use crate::gpsdata;
 
 use svg::node::element::path::{Command, Data, Position};
@@ -17,7 +19,7 @@ pub fn profile(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filen
         range.len(),
         dist / 1000f64
     );
-    for k in range.clone() {
+    for k in range.start..range.end {
         let (x, y) = (geodata.distance(k), geodata.elevation(k));
         let (xg, yg) = to_view(x, y);
         if data.is_empty() {
@@ -36,16 +38,11 @@ pub fn profile(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filen
 
     let start = geodata.distance(range.start);
     let end = geodata.distance(range.end - 1);
+    let (TLx, TLy) = to_view(start, 1250f64);
+    let width = end - start;
+    let (W, H) = to_view(width, 0f64);
     let mut document = Document::new()
-        .set(
-            "viewBox",
-            (
-                (start / 100f64).floor(),
-                0,
-                ((end - start) / 100f64).floor(),
-                250,
-            ),
-        )
+        .set("viewBox", (TLx, TLy, W, H))
         .add(svgpath);
 
     let indices = geodata.get_automatic_points();
