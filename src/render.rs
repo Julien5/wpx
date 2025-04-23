@@ -172,9 +172,53 @@ impl Templates {
     }
 }
 
-fn link(templates: &Templates, profilesvg: &str, mapsvg: &str, document: &mut String) {
+fn points_table(
+    templates: &Templates,
+    geodata: &gpsdata::GeoData,
+    range: &std::ops::Range<usize>,
+) -> String {
+    let table = templates.table_points.clone();
+    let mut template_line_orig = String::new();
+    let mut template_line = String::new();
+    for line in table.split("\n") {
+        if line.contains("/* #line-template") {
+            template_line_orig = String::from_str(line).unwrap();
+            template_line = template_line_orig.clone();
+            template_line = template_line.replace("/* #line-template", "");
+            template_line = template_line.replace("*/", "");
+        }
+    }
+    debug_assert!(!template_line.is_empty());
+    // TODO: avoid recomputing the automatic points
+    let A = geodata.get_automatic_points();
+    let mut lines = Vec::new();
+    for k in &A {
+        let mut copy = template_line.clone();
+        if !range.contains(k) {
+            continue;
+        }
+        copy = copy.replace("{name}", format!("{:02}", 1 + lines.len()).as_str());
+        copy = copy.replace(
+            "{distance}",
+            format!("{:4.1}", geodata.distance(*k) / 1000f64).as_str(),
+        );
+        copy = copy.replace("{time}", "00:00");
+        copy = copy.replace("{d+}", "0 m");
+        lines.push(copy.clone());
+    }
+    let joined = lines.join("\n");
+    table.replace(&template_line_orig, joined.as_str())
+}
+
+fn link(
+    templates: &Templates,
+    profilesvg: &str,
+    mapsvg: &str,
+    points_table: &String,
+    document: &mut String,
+) {
     let mut table = templates.table_large.clone();
-    table = table.replace("{table-points}", templates.table_points.as_str());
+    table = table.replace("{table-points}", points_table.as_str());
     table = table.replace("{profile.svg}", profilesvg);
     table = table.replace("{map.svg}", mapsvg);
     document.push_str(table.as_str());
@@ -196,7 +240,8 @@ pub fn compile(geodata: &gpsdata::GeoData) -> String {
         profile(&geodata, &range, p.as_str());
         let m = format!("/tmp/map-{}.svg", k);
         map(&geodata, &range, m.as_str());
-        link(&templates, &p, &m, &mut document);
+        let table = points_table(&templates, &geodata, &range);
+        link(&templates, &p, &m, &table, &mut document);
         if range.end == geodata.len() {
             break;
         }
