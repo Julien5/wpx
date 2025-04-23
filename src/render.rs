@@ -10,7 +10,7 @@ fn to_view(x: f64, y: f64) -> (f64, f64) {
     ((x / 100f64), 250f64 - (y / 5f64))
 }
 
-fn profile(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename: &str) {
+fn profile(geodata: &gpsdata::Track, range: &std::ops::Range<usize>, filename: &str) {
     let mut data = Data::new();
     let dist = geodata.distance(range.end - 1) - geodata.distance(range.start);
     println!(
@@ -110,7 +110,7 @@ impl BoundingBox {
     }
 }
 
-fn map(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename: &str) {
+fn map(geodata: &gpsdata::Track, range: &std::ops::Range<usize>, filename: &str) {
     let mut data = Data::new();
     let path = &geodata.utm;
     let mut bbox = BoundingBox::new();
@@ -174,7 +174,7 @@ impl Templates {
 
 fn points_table(
     templates: &Templates,
-    geodata: &gpsdata::GeoData,
+    geodata: &gpsdata::Track,
     range: &std::ops::Range<usize>,
 ) -> String {
     let table = templates.table_points.clone();
@@ -224,7 +224,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn compile(geodata: &gpsdata::GeoData) -> String {
+pub fn compile(geodata: &gpsdata::Track) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let km = 1000f64;

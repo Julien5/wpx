@@ -6,11 +6,10 @@ fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
     geo::Haversine::distance(p1, p2)
 }
 
+use gpx::TrackSegment;
 use std::io::Read;
 
-use gpx::TrackSegment;
-
-pub struct GeoData {
+pub struct Track {
     pub wgs84: Vec<(f64, f64, f64)>,
     pub utm: Vec<(f64, f64)>,
     _distance: Vec<f64>,
@@ -28,7 +27,7 @@ pub fn read_segment(filename: &str) -> Box<gpx::TrackSegment> {
     Box::new(s0)
 }
 
-impl GeoData {
+impl Track {
     pub fn len(&self) -> usize {
         self.wgs84.len()
     }
@@ -59,7 +58,7 @@ impl GeoData {
         startidx..endidx
     }
 
-    pub fn from_segment(segment: &TrackSegment) -> GeoData {
+    pub fn from_segment(segment: &TrackSegment) -> Track {
         let mut dist = Vec::new();
 
         use proj4rs::proj::Proj;
@@ -87,7 +86,7 @@ impl GeoData {
             }
         }
         assert_eq!(dist.len(), wgs.len());
-        GeoData {
+        Track {
             wgs84: wgs,
             utm,
             _distance: dist,
