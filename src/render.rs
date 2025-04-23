@@ -10,7 +10,13 @@ fn to_view(x: f64, y: f64) -> (f64, f64) {
 
 pub fn profile(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename: &str) {
     let mut data = Data::new();
-    println!("range:{:?} L={}", range, range.len());
+    let dist = geodata.distance(range.end - 1) - geodata.distance(range.start);
+    println!(
+        "range:{:?} L={} distance={}",
+        range,
+        range.len(),
+        dist / 1000f64
+    );
     for k in range.clone() {
         let (x, y) = (geodata.distance(k), geodata.elevation(k));
         let (xg, yg) = to_view(x, y);
@@ -61,37 +67,63 @@ fn to_graphics_coordinates(x: f64, y: f64, ymax: f64) -> (f64, f64) {
     (x, ymax - y)
 }
 
-fn bbox(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>) -> (f64, f64, f64, f64) {
-    let path = &geodata.utm;
-    let mut xmin = f64::MAX;
-    let mut xmax = f64::MIN;
-    let mut ymin = f64::MAX;
-    let mut ymax = f64::MIN;
-    for k in range.clone() {
-        let (x, y) = path[k];
-        if x > xmax {
-            xmax = x;
+struct BoundingBox {
+    pub min: (f64, f64),
+    pub max: (f64, f64),
+}
+
+impl BoundingBox {
+    fn new() -> BoundingBox {
+        let min = (f64::MAX, f64::MAX);
+        let max = (f64::MIN, f64::MIN);
+        BoundingBox { min, max }
+    }
+    fn width(&self) -> f64 {
+        return self.max.0 - self.min.0;
+    }
+    fn height(&self) -> f64 {
+        return self.max.1 - self.min.1;
+    }
+    fn update(&mut self, (x, y): (f64, f64)) {
+        if x > self.max.0 {
+            self.max.0 = x;
         }
-        if y > ymax {
-            ymax = y;
+        if y > self.max.1 {
+            self.max.1 = y;
         }
-        if x < xmin {
-            xmin = x;
+        if x < self.min.0 {
+            self.min.0 = x;
         }
-        if y < ymin {
-            ymin = y;
+        if y < self.min.1 {
+            self.min.1 = y;
         }
     }
-    (xmin, ymin, xmax, ymax)
+    fn fix_aspect_ratio(&mut self) {
+        let X = (self.min.0 + self.max.0) / 2f64;
+        let Y = (self.min.1 + self.max.1) / 2f64;
+        if self.height() > self.width() {
+            let delta = 0.5f64 * (self.height());
+            self.max.0 = X + delta;
+            self.min.0 = X - delta;
+        } else {
+            let delta = 0.5f64 * (self.width());
+            self.max.1 = Y + delta;
+            self.min.1 = Y - delta;
+        }
+    }
 }
 
 pub fn map(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename: &str) {
     let mut data = Data::new();
     let path = &geodata.utm;
-    let (xmin, ymin, xmax, ymax) = bbox(geodata, range);
+    let mut bbox = BoundingBox::new();
+    for k in range.clone() {
+        bbox.update(geodata.utm[k]);
+    }
+    bbox.fix_aspect_ratio();
     for k in range.clone() {
         let (x, y) = path[k];
-        let (xg, yg) = to_graphics_coordinates(x, y, ymax);
+        let (xg, yg) = to_graphics_coordinates(x, y, bbox.max.1);
         if data.is_empty() {
             data.append(Command::Move(Position::Absolute, (xg, yg).into()));
         }
@@ -105,7 +137,7 @@ pub fn map(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename:
         .set("d", data);
 
     let document = Document::new()
-        .set("viewBox", (xmin, 0, xmax - xmin, ymax - ymin))
+        .set("viewBox", (bbox.min.0, 0, bbox.width(), bbox.height()))
         .add(svgpath);
 
     svg::save(filename, &document).unwrap();
@@ -168,6 +200,9 @@ pub fn compile(geodata: &gpsdata::GeoData) -> String {
         let m = format!("/tmp/map-{}.svg", k);
         map(&geodata, &range, m.as_str());
         link(&templates, &p, &m, &mut document);
+        if range.end == geodata.len() {
+            break;
+        }
         start = start + 50f64 * km;
         k = k + 1;
     }
