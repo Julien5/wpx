@@ -10,7 +10,7 @@ fn to_view(x: f64, y: f64) -> (f64, f64) {
     ((x / 100f64), 250f64 - (y / 5f64))
 }
 
-pub fn profile(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename: &str) {
+fn profile(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename: &str) {
     let mut data = Data::new();
     let dist = geodata.distance(range.end - 1) - geodata.distance(range.start);
     println!(
@@ -65,8 +65,8 @@ fn to_graphics_coordinates(x: f64, y: f64, ymax: f64) -> (f64, f64) {
 }
 
 struct BoundingBox {
-    pub min: (f64, f64),
-    pub max: (f64, f64),
+    min: (f64, f64),
+    max: (f64, f64),
 }
 
 impl BoundingBox {
@@ -110,7 +110,7 @@ impl BoundingBox {
     }
 }
 
-pub fn map(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename: &str) {
+fn map(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename: &str) {
     let mut data = Data::new();
     let path = &geodata.utm;
     let mut bbox = BoundingBox::new();
@@ -143,14 +143,14 @@ pub fn map(geodata: &gpsdata::GeoData, range: &std::ops::Range<usize>, filename:
 use std::io::prelude::*;
 use std::str::FromStr;
 
-pub fn read_file(filename: &str) -> String {
+fn read_file(filename: &str) -> String {
     let mut f = std::fs::File::open(filename).unwrap();
     let mut c = String::new();
     f.read_to_string(&mut c).unwrap();
     c
 }
 
-pub fn write_file(filename: &str, content: String) -> std::io::Result<()> {
+fn write_file(filename: &str, content: String) -> std::io::Result<()> {
     let mut f = std::fs::File::create(filename)?;
     f.write_all(content.as_bytes())?;
     Ok(())
