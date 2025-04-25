@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::gpsdata;
+use crate::gpsdata::{self, UTMPoint};
 
 use svg::node::element::path::{Command, Data, Position};
 use svg::node::element::Path;
@@ -10,15 +10,14 @@ fn to_view(x: f64, y: f64) -> (f64, f64) {
     ((x / 100f64), 250f64 - (y / 5f64))
 }
 
-fn profile(geodata: &gpsdata::Track, range: &std::ops::Range<usize>, filename: &str) {
+fn profile(
+    geodata: &gpsdata::Track,
+    waypoints: &Vec<gpsdata::Waypoint>,
+    range: &std::ops::Range<usize>,
+    filename: &str,
+) {
     let mut data = Data::new();
     let dist = geodata.distance(range.end - 1) - geodata.distance(range.start);
-    println!(
-        "range:{:?} L={} distance={}",
-        range,
-        range.len(),
-        dist / 1000f64
-    );
     for k in range.start..range.end {
         let (x, y) = (geodata.distance(k), geodata.elevation(k));
         let (xg, yg) = to_view(x, y);
@@ -45,8 +44,8 @@ fn profile(geodata: &gpsdata::Track, range: &std::ops::Range<usize>, filename: &
         .set("viewBox", (TLx, TLy, W, H))
         .add(svgpath);
 
-    let indices = geodata.get_automatic_points();
-    for k in indices {
+    for w in waypoints {
+        let k = w.track_index;
         if !range.contains(&k) {
             continue;
         }
@@ -60,8 +59,8 @@ fn profile(geodata: &gpsdata::Track, range: &std::ops::Range<usize>, filename: &
     svg::save(filename, &document).unwrap();
 }
 
-fn to_graphics_coordinates(x: f64, y: f64, ymax: f64) -> (f64, f64) {
-    (x, ymax - y)
+fn to_graphics_coordinates(p: &UTMPoint, ymax: f64) -> (f64, f64) {
+    (p.x(), ymax - p.y())
 }
 
 struct BoundingBox {
@@ -81,18 +80,18 @@ impl BoundingBox {
     fn height(&self) -> f64 {
         return self.max.1 - self.min.1;
     }
-    fn update(&mut self, (x, y): (f64, f64)) {
-        if x > self.max.0 {
-            self.max.0 = x;
+    fn update(&mut self, p: &gpsdata::UTMPoint) {
+        if p.x() > self.max.0 {
+            self.max.0 = p.x();
         }
-        if y > self.max.1 {
-            self.max.1 = y;
+        if p.y() > self.max.1 {
+            self.max.1 = p.y();
         }
-        if x < self.min.0 {
-            self.min.0 = x;
+        if p.x() < self.min.0 {
+            self.min.0 = p.x();
         }
-        if y < self.min.1 {
-            self.min.1 = y;
+        if p.y() < self.min.1 {
+            self.min.1 = p.y();
         }
     }
     fn fix_aspect_ratio(&mut self) {
@@ -110,17 +109,22 @@ impl BoundingBox {
     }
 }
 
-fn map(geodata: &gpsdata::Track, range: &std::ops::Range<usize>, filename: &str) {
+fn map(
+    geodata: &gpsdata::Track,
+    waypoints: &Vec<gpsdata::Waypoint>,
+    range: &std::ops::Range<usize>,
+    filename: &str,
+) {
     let mut data = Data::new();
     let path = &geodata.utm;
     let mut bbox = BoundingBox::new();
     for k in range.clone() {
-        bbox.update(geodata.utm[k]);
+        bbox.update(&geodata.utm[k]);
     }
     bbox.fix_aspect_ratio();
     for k in range.clone() {
-        let (x, y) = path[k];
-        let (xg, yg) = to_graphics_coordinates(x, y, bbox.max.1);
+        let p = &path[k];
+        let (xg, yg) = to_graphics_coordinates(p, bbox.max.1);
         if data.is_empty() {
             data.append(Command::Move(Position::Absolute, (xg, yg).into()));
         }
@@ -133,9 +137,22 @@ fn map(geodata: &gpsdata::Track, range: &std::ops::Range<usize>, filename: &str)
         .set("stroke-width", 2)
         .set("d", data);
 
-    let document = Document::new()
+    let mut document = Document::new()
         .set("viewBox", (bbox.min.0, 0, bbox.width(), bbox.height()))
         .add(svgpath);
+
+    for w in waypoints {
+        let k = w.track_index;
+        if !range.contains(&k) {
+            continue;
+        }
+        let (x, y) = to_graphics_coordinates(&w.utm, bbox.max.1);
+        let dot = svg::node::element::Circle::new()
+            .set("cx", x)
+            .set("cy", y)
+            .set("r", 500);
+        document = document.add(dot);
+    }
 
     svg::save(filename, &document).unwrap();
 }
@@ -190,7 +207,7 @@ fn points_table(
     }
     debug_assert!(!template_line.is_empty());
     // TODO: avoid recomputing the automatic points
-    let A = geodata.get_automatic_points();
+    let A = geodata.interesting_indexes();
     let mut lines = Vec::new();
     for k in &A {
         let mut copy = template_line.clone();
@@ -224,7 +241,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn compile(geodata: &gpsdata::Track) -> String {
+pub fn compile(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let km = 1000f64;
@@ -232,17 +249,17 @@ pub fn compile(geodata: &gpsdata::Track) -> String {
     let mut k = 0usize;
     loop {
         let end = start + 100f64 * km;
-        let range = geodata.segment(start, end);
+        let range = track.segment(start, end);
         if range.is_empty() {
             break;
         }
         let p = format!("/tmp/profile-{}.svg", k);
-        profile(&geodata, &range, p.as_str());
+        profile(&track, &waypoints, &range, p.as_str());
         let m = format!("/tmp/map-{}.svg", k);
-        map(&geodata, &range, m.as_str());
-        let table = points_table(&templates, &geodata, &range);
+        map(&track, &waypoints, &range, m.as_str());
+        let table = points_table(&templates, &track, &range);
         link(&templates, &p, &m, &table, &mut document);
-        if range.end == geodata.len() {
+        if range.end == track.len() {
             break;
         }
         start = start + 50f64 * km;

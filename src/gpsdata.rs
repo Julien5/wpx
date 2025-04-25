@@ -9,19 +9,35 @@ fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
 use gpx::TrackSegment;
 use std::io::Read;
 
+#[derive(Clone)]
+pub struct UTMPoint(f64, f64);
+
+impl UTMPoint {
+    pub fn clone(other: UTMPoint) {}
+    pub fn x(&self) -> f64 {
+        self.0
+    }
+    pub fn y(&self) -> f64 {
+        self.1
+    }
+}
+
 pub struct Track {
     pub wgs84: Vec<(f64, f64, f64)>,
-    pub utm: Vec<(f64, f64)>,
+    pub utm: Vec<UTMPoint>,
     _distance: Vec<f64>,
 }
 
-pub fn read_segment(filename: &str) -> Box<gpx::TrackSegment> {
+pub fn read_gpx(filename: &str) -> Box<gpx::Gpx> {
     let file = std::fs::File::open(filename).unwrap();
     let mut reader_file = std::io::BufReader::new(file);
     let mut content: Vec<u8> = Vec::new();
     let _ = reader_file.read_to_end(&mut content);
     let reader_mem = std::io::Cursor::new(content);
-    let mut gpx: gpx::Gpx = gpx::read(reader_mem).unwrap();
+    Box::new(gpx::read(reader_mem).unwrap())
+}
+
+pub fn read_segment(gpx: &mut gpx::Gpx) -> Box<gpx::TrackSegment> {
     let mut t0 = gpx.tracks.swap_remove(0);
     let s0 = t0.segments.swap_remove(0);
     Box::new(s0)
@@ -76,7 +92,7 @@ impl Track {
             debug_assert_eq!(wgs.len(), k + 1);
             let mut p = (lon.to_radians(), lat.to_radians());
             proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
-            utm.push(p);
+            utm.push(UTMPoint(p.0, p.1));
 
             if k == 0 {
                 dist.push(0f64);
@@ -93,7 +109,7 @@ impl Track {
         }
     }
 
-    pub fn get_automatic_points(&self) -> Vec<usize> {
+    pub fn interesting_indexes(&self) -> Vec<usize> {
         let mut coords = Vec::new();
         for k in 0..self.len() {
             let x = self.distance(k);
@@ -101,9 +117,53 @@ impl Track {
             coords.push(geo::coord!(x:x, y:y));
         }
         let line = geo::LineString::new(coords);
-        line.simplify_idx(&100.0)
+        line.simplify_idx(&70.0)
     }
 }
+
+pub struct Waypoint {
+    pub wgs84: (f64, f64, f64),
+    pub utm: UTMPoint,
+    pub track_index: usize,
+}
+
+pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
+    let mut ret = Vec::new();
+    // TODO: remove proj4 duplicate
+    use proj4rs::proj::Proj;
+    let spec = "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs +type=crs";
+    let utm32n = Proj::from_proj_string(spec).unwrap();
+
+    let spec = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
+    let wgs84 = Proj::from_proj_string(spec).unwrap();
+
+    for w in &gpx.waypoints {
+        let (lon, lat) = w.point().x_y();
+        let mut p = (lon.to_radians(), lat.to_radians());
+        proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
+        ret.push(Waypoint::from_gpx(w, UTMPoint(p.0, p.1)));
+    }
+    ret
+}
+
+impl Waypoint {
+    pub fn from_gpx(gpx: &gpx::Waypoint, utm: UTMPoint) -> Waypoint {
+        let (lon, lat) = gpx.point().x_y();
+        Waypoint {
+            wgs84: (lon, lat, gpx.elevation.unwrap()),
+            utm: utm,
+            track_index: usize::MAX,
+        }
+    }
+    pub fn from_track(wgs: (f64, f64, f64), utm: UTMPoint, indx: usize) -> Waypoint {
+        Waypoint {
+            wgs84: wgs.clone(),
+            utm: utm,
+            track_index: indx,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
