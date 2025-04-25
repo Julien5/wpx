@@ -17,7 +17,6 @@ fn profile(
     filename: &str,
 ) {
     let mut data = Data::new();
-    let dist = geodata.distance(range.end - 1) - geodata.distance(range.start);
     for k in range.start..range.end {
         let (x, y) = (geodata.distance(k), geodata.elevation(k));
         let (xg, yg) = to_view(x, y);

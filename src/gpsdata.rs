@@ -13,7 +13,6 @@ use std::io::Read;
 pub struct UTMPoint(f64, f64);
 
 impl UTMPoint {
-    pub fn clone(other: UTMPoint) {}
     pub fn x(&self) -> f64 {
         self.0
     }
