@@ -24,6 +24,14 @@ pub fn worker(filename: &str) {
     for k in 0..indexes.len() {
         waypoints[k].track_index = indexes[k];
     }
+    // sort
+    waypoints.sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
+    for k in 1..waypoints.len() {
+        let k1 = waypoints[k].track_index;
+        let k0 = waypoints[k - 1].track_index;
+        println!("{}:{}", k0, k1);
+        debug_assert!(k1 >= k0);
+    }
     println!("render");
     let typfile = render::compile(&track, &waypoints);
     println!("make pdf");

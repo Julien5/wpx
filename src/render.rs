@@ -191,7 +191,8 @@ impl Templates {
 
 fn points_table(
     templates: &Templates,
-    geodata: &gpsdata::Track,
+    track: &gpsdata::Track,
+    waypoints: &Vec<gpsdata::Waypoint>,
     range: &std::ops::Range<usize>,
 ) -> String {
     let table = templates.table_points.clone();
@@ -207,21 +208,37 @@ fn points_table(
     }
     debug_assert!(!template_line.is_empty());
     // TODO: avoid recomputing the automatic points
-    let A = geodata.interesting_indexes();
     let mut lines = Vec::new();
-    for k in &A {
-        let mut copy = template_line.clone();
-        if !range.contains(k) {
+    for k in 0..waypoints.len() {
+        let this = &waypoints[k];
+        let tk = this.track_index;
+        if !range.contains(&tk) {
             continue;
         }
+        let mut copy = template_line.clone();
         copy = copy.replace("{name}", format!("{:02}", 1 + lines.len()).as_str());
         copy = copy.replace(
             "{distance}",
-            format!("{:4.1}", geodata.distance(*k) / 1000f64).as_str(),
+            format!("{:4.1}", track.distance(tk) / 1000f64).as_str(),
         );
         copy = copy.replace("{time}", "00:00");
-        copy = copy.replace("{d+}", "0 m");
-        lines.push(copy.clone());
+        if k > 0 {
+            let prev = &waypoints[k - 1];
+            let pk = prev.track_index;
+            println!("{}:{}", tk, pk);
+            debug_assert!(tk >= pk);
+            let d0 = track.distance(pk);
+            let d1 = track.distance(tk);
+            debug_assert!(d1 >= d0);
+            let _d = d1 - d0;
+            let e0 = track.wgs84[pk].2;
+            let e1 = track.wgs84[tk].2;
+            let hm = e1 - e0;
+            copy = copy.replace("{d+}", format!("{:.1} m", hm).as_str());
+        } else {
+            copy = copy.replace("{d+}", "0 m");
+        }
+        lines.push(copy);
     }
     let joined = lines.join("\n");
     table.replace(&template_line_orig, joined.as_str())
@@ -257,7 +274,7 @@ pub fn compile(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> St
         profile(&track, &waypoints, &range, p.as_str());
         let m = format!("/tmp/map-{}.svg", k);
         map(&track, &waypoints, &range, m.as_str());
-        let table = points_table(&templates, &track, &range);
+        let table = points_table(&templates, &track, &waypoints, &range);
         link(&templates, &p, &m, &table, &mut document);
         if range.end == track.len() {
             break;
