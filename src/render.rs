@@ -38,6 +38,7 @@ fn profile(
     let end = geodata.distance(range.end - 1);
     let (TLx, TLy) = to_view(start, 1250f64);
     let width = end - start;
+    let width = width.max(100000f64);
     let (W, H) = to_view(width, 0f64);
     let mut document = Document::new()
         .set("viewBox", (TLx, TLy, W, H))
@@ -101,7 +102,7 @@ impl BoundingBox {
             self.max.0 = X + delta;
             self.min.0 = X - delta;
         } else {
-            let delta = 0.5f64 * (self.width());
+            let delta = 0.5f64 * self.width();
             self.max.1 = Y + delta;
             self.min.1 = Y - delta;
         }
