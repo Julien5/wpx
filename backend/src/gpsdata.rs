@@ -108,7 +108,7 @@ impl Track {
         }
     }
 
-    pub fn interesting_indexes(&self) -> Vec<usize> {
+    pub fn interesting_indexes(&self, epsilon: f32) -> Vec<usize> {
         let mut coords = Vec::new();
         for k in 0..self.len() {
             let x = self.distance(k);
@@ -116,7 +116,7 @@ impl Track {
             coords.push(geo::coord!(x:x, y:y));
         }
         let line = geo::LineString::new(coords);
-        line.simplify_idx(&70.0)
+        line.simplify_idx(&(epsilon as f64))
     }
 }
 

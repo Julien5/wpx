@@ -10,12 +10,11 @@ fn to_view(x: f64, y: f64) -> (f64, f64) {
     ((x / 100f64), 250f64 - (y / 5f64))
 }
 
-fn profile(
+fn profile_data(
     geodata: &gpsdata::Track,
     waypoints: &Vec<gpsdata::Waypoint>,
     range: &std::ops::Range<usize>,
-    filename: &str,
-) {
+) -> String {
     let mut data = Data::new();
     for k in range.start..range.end {
         let (x, y) = (geodata.distance(k), geodata.elevation(k));
@@ -56,7 +55,17 @@ fn profile(
             .set("r", 10);
         document = document.add(dot);
     }
-    svg::save(filename, &document).unwrap();
+    document.to_string()
+}
+
+fn profile(
+    geodata: &gpsdata::Track,
+    waypoints: &Vec<gpsdata::Waypoint>,
+    range: &std::ops::Range<usize>,
+    filename: &str,
+) {
+    let data = profile_data(geodata, waypoints, range);
+    std::fs::write(filename, data).expect("Unable to write file");
 }
 
 fn to_graphics_coordinates(p: &UTMPoint, ymax: f64) -> (f64, f64) {
@@ -284,4 +293,12 @@ pub fn compile(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> St
     }
     let _ = write_file("/tmp/document.typ", document);
     String::from_str("/tmp/document.typ").unwrap()
+}
+
+pub fn test_svg(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> String {
+    let km = 1000f64;
+    let start = 0f64;
+    let end = start + 100f64 * km;
+    let range = track.segment(start, end);
+    profile_data(&track, &waypoints, &range)
 }
