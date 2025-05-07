@@ -20,12 +20,12 @@ impl Frontend {
         self.backend.changeParameter(eps);
     }
     pub async fn svg(&mut self) -> String {
-        // sleep(Duration::from_secs(1)).await;
         self.backend.svg()
     }
 }
 
-pub fn svgCircle() -> String {
+pub async fn svgCircle() -> String {
+    sleep(Duration::from_secs(1)).await;
     let s = r#"<svg height="100" width="100" xmlns="http://www.w3.org/2000/svg">
   <circle r="45" cx="50" cy="50" fill="red" />
 </svg>"#;

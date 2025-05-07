@@ -41,11 +41,11 @@ class ProfileWidgetState extends State<ProfileWidget> {
   }
 
   Future<void> loadProfile(Frontend frontend) async {
-    setState(() {
+    /*setState(() {
       isLoading = true;
       svgData = null; // Clear previous SVG data
       errorMessage = null; // Clear previous error message
-    });
+    });*/
     try {
       //final data = await svgCircle();
       final data = await frontend.svg();
