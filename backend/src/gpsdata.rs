@@ -120,10 +120,18 @@ impl Track {
     }
 }
 
+#[derive(Clone)]
+pub enum WaypointOrigin {
+    GPX,
+    DouglasPeucker,
+}
+
+#[derive(Clone)]
 pub struct Waypoint {
     pub wgs84: (f64, f64, f64),
     pub utm: UTMPoint,
     pub track_index: usize,
+    pub origin: WaypointOrigin,
 }
 
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
@@ -152,6 +160,7 @@ impl Waypoint {
             wgs84: (lon, lat, gpx.elevation.unwrap()),
             utm: utm,
             track_index: usize::MAX,
+            origin: WaypointOrigin::GPX,
         }
     }
     pub fn from_track(wgs: (f64, f64, f64), utm: UTMPoint, indx: usize) -> Waypoint {
@@ -159,6 +168,7 @@ impl Waypoint {
             wgs84: wgs.clone(),
             utm: utm,
             track_index: indx,
+            origin: WaypointOrigin::DouglasPeucker,
         }
     }
 }
