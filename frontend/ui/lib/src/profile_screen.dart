@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     developer.log(name:'screen',"frontend is not null");
     Frontend f=frontend!;
-    f.changeParameter(eps: 50.0);
+    f.changeParameter(eps: 10.0);
     _profileKey.currentState?.loadProfile(f);
   }
 

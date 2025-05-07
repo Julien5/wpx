@@ -19,9 +19,9 @@ impl Frontend {
     pub fn changeParameter(&mut self, eps: f32) {
         self.backend.changeParameter(eps);
     }
-    pub async fn svg(&self) -> String {
-        sleep(Duration::from_secs(1)).await;
-        self.backend.testSvg()
+    pub async fn svg(&mut self) -> String {
+        // sleep(Duration::from_secs(1)).await;
+        self.backend.svg()
     }
 }
 
