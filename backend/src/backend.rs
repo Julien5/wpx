@@ -7,11 +7,24 @@ use crate::gpsdata::WaypointOrigin;
 use crate::pdf;
 use crate::project;
 use crate::render;
+use crate::render::ViewBox;
 
 pub struct Backend {
     track: gpsdata::Track,
     waypoints: Vec<gpsdata::Waypoint>,
     epsilon: f32,
+}
+
+#[derive(Clone)]
+pub struct Segment {
+    pub id: usize,
+    pub range: std::ops::Range<usize>,
+}
+
+impl Segment {
+    pub fn new(id: usize, range: std::ops::Range<usize>) -> Segment {
+        Segment { id, range }
+    }
 }
 
 impl Backend {
@@ -65,10 +78,47 @@ impl Backend {
     pub fn changeParameter(&mut self, delta: f32) {
         self.epsilon += delta;
     }
-    pub fn svg(&mut self) -> String {
-        println!("render");
+
+    pub fn render_track(&mut self) -> String {
         self.enrichWaypoints();
-        render::test_svg(&self.track, &self.waypoints)
+        let range = 0..self.track.len();
+        let viewBox = ViewBox::from_track(&self.track, &range);
+        render::track_profile(&self.track, &range, &viewBox)
+    }
+    pub fn render_waypoints(&mut self) -> String {
+        self.enrichWaypoints();
+        let range = 0..self.track.len();
+        let viewBox = ViewBox::from_track(&self.track, &range);
+        render::waypoints_profile(&self.track, &self.waypoints, &range, &viewBox)
+    }
+    pub fn segments(&self) -> Vec<Segment> {
+        let mut ret = Vec::new();
+        let km = 1000f64;
+        let mut start = 0f64;
+        let mut k = 0usize;
+        loop {
+            let end = start + 100f64 * km;
+            let range = self.track.segment(start, end);
+            if range.is_empty() {
+                break;
+            }
+            ret.push(Segment::new(k, range));
+            start = start + 50f64 * km;
+            k = k + 1;
+        }
+        ret
+    }
+    pub fn render_segment_track(&mut self, segment: &Segment) -> String {
+        let range = &segment.range;
+        self.enrichWaypoints();
+        let viewBox = ViewBox::from_track(&self.track, &range);
+        render::track_profile(&self.track, &range, &viewBox)
+    }
+    pub fn render_segment_waypoints(&mut self, segment: &Segment) -> String {
+        let range = &segment.range;
+        self.enrichWaypoints();
+        let viewBox = ViewBox::from_track(&self.track, &range);
+        render::waypoints_profile(&self.track, &self.waypoints, &range, &viewBox)
     }
 }
 

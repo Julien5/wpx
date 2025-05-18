@@ -10,6 +10,89 @@ fn to_view(x: f64, y: f64) -> (f64, f64) {
     ((x / 100f64), 250f64 - (y / 5f64))
 }
 
+pub struct ViewBox {
+    tlx: f64,
+    tly: f64,
+    width: f64,
+    height: f64,
+}
+
+impl ViewBox {
+    pub fn from_track(track: &gpsdata::Track, range: &std::ops::Range<usize>) -> ViewBox {
+        let start = track.distance(range.start);
+        let end = track.distance(range.end - 1);
+        let (TLx, TLy) = to_view(start, 1250f64);
+        let width = end - start;
+        let width = width.max(100000f64);
+        let (W, H) = to_view(width, 0f64);
+        ViewBox {
+            tlx: TLx,
+            tly: TLy,
+            width: W,
+            height: H,
+        }
+    }
+}
+
+pub fn track_profile(
+    geodata: &gpsdata::Track,
+    range: &std::ops::Range<usize>,
+    viewbox: &ViewBox,
+) -> String {
+    let mut data = Data::new();
+    for k in range.start..range.end {
+        let (x, y) = (geodata.distance(k), geodata.elevation(k));
+        let (xg, yg) = to_view(x, y);
+        if data.is_empty() {
+            data.append(Command::Move(Position::Absolute, (xg, yg).into()));
+        }
+        data.append(Command::Line(Position::Absolute, (xg, yg).into()));
+    }
+
+    let svgpath = Path::new()
+        .set("fill", "none")
+        .set("stroke", "black")
+        .set("stroke-width", 2)
+        .set("stroke-linecap", "round")
+        .set("stroke-linejoin", "round")
+        .set("d", data);
+
+    let document = Document::new()
+        .set(
+            "viewBox",
+            (viewbox.tlx, viewbox.tly, viewbox.width, viewbox.height),
+        )
+        .add(svgpath);
+
+    document.to_string()
+}
+
+pub fn waypoints_profile(
+    geodata: &gpsdata::Track,
+    waypoints: &Vec<gpsdata::Waypoint>,
+    range: &std::ops::Range<usize>,
+    viewbox: &ViewBox,
+) -> String {
+    let mut document = Document::new().set(
+        "viewBox",
+        (viewbox.tlx, viewbox.tly, viewbox.width, viewbox.height),
+    );
+
+    for w in waypoints {
+        let k = w.track_index;
+        if !range.contains(&k) {
+            continue;
+        }
+        let (x, y) = to_view(geodata.distance(k), geodata.elevation(k));
+        let dot = svg::node::element::Circle::new()
+            .set("cx", x)
+            .set("cy", y)
+            .set("r", 10);
+        document = document.add(dot);
+    }
+    document.to_string()
+}
+
 fn profile_data(
     geodata: &gpsdata::Track,
     waypoints: &Vec<gpsdata::Waypoint>,
@@ -295,7 +378,7 @@ pub fn compile(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> St
     String::from_str("/tmp/document.typ").unwrap()
 }
 
-pub fn test_svg(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> String {
+pub fn svg(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> String {
     let km = 1000f64;
     let start = 0f64;
     let end = start + 100f64 * km;

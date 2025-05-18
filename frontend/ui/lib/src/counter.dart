@@ -1,24 +1,25 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 
-class Counter extends StatelessWidget {
+class PressButton extends StatelessWidget {
   final VoidCallback? onCounterPressed;
+  final String label;
 
-  const Counter({super.key, required this.onCounterPressed});
+  const PressButton({
+    super.key,
+    required this.label,
+    required this.onCounterPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onCounterPressed ?? () {
-        developer.log('Counter pressed', name: 'Counter');
-      },
+      onPressed: onCounterPressed,
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4.0), // Smaller corner radius
         ),
       ),
-      child: const Text('Press me'),
+      child: Text(label),
     );
   }
 }

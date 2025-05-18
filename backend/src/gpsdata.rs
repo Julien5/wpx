@@ -52,24 +52,31 @@ impl Track {
     pub fn distance(&self, index: usize) -> f64 {
         self._distance[index]
     }
+    pub fn index_after(&self, distance: f64) -> usize {
+        let maxdist = *self._distance.last().unwrap();
+        let end = self._distance.len();
+        if distance > maxdist {
+            return end;
+        }
+        let mut it = self._distance.iter();
+        // positions stops on true
+        it.position(|&d| d >= distance).unwrap()
+    }
+    pub fn index_before(&self, distance: f64) -> usize {
+        let maxdist = *self._distance.last().unwrap();
+        let end = self._distance.len();
+        if distance > maxdist {
+            return end;
+        }
+        let mut it = self._distance.iter();
+        it.rposition(|&d| d < distance).unwrap()
+    }
 
     pub fn segment(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {
         assert!(!self._distance.is_empty());
         assert!(d0 < d1);
-        let maxdist = *self._distance.last().unwrap();
-        let end = self._distance.len();
-        let mut it = self._distance.iter();
-        if d0 > maxdist {
-            return end..end;
-        }
-        let startidx = it.position(|&d| d >= d0).unwrap();
-        // TODO: binary search.
-        let endidx = if d1 > maxdist {
-            end
-        } else {
-            self._distance.iter().rposition(|&d| d < d1).unwrap()
-        };
-        assert!(startidx <= endidx);
+        let startidx = self.index_after(d0);
+        let endidx = self.index_before(d1);
         startidx..endidx
     }
 
@@ -175,7 +182,6 @@ impl Waypoint {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use geo::line_string;
     use geo::Simplify;
     #[test]

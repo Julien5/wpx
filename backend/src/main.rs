@@ -1,11 +1,11 @@
+pub mod backend;
 pub mod gpsdata;
 pub mod pdf;
 pub mod project;
 pub mod render;
 pub mod speed;
-pub mod worker;
 
 fn main() {
     let filename = "data/blackforest.gpx";
-    worker::worker(filename);
+    backend::worker(filename);
 }

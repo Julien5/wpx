@@ -64,7 +64,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.9.0';
 
   @override
-  int get rustContentHash => 1159600974;
+  int get rustContentHash => -1251613850;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -75,6 +75,8 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  Future<BigInt> crateApiFrontendFSegmentId({required FSegment that});
+
   void crateApiFrontendFrontendChangeParameter({
     required Frontend that,
     required double eps,
@@ -82,11 +84,37 @@ abstract class RustLibApi extends BaseApi {
 
   Future<Frontend> crateApiFrontendFrontendCreate();
 
-  Future<String> crateApiFrontendFrontendSvg({required Frontend that});
+  Future<String> crateApiFrontendFrontendRenderSegmentTrack({
+    required Frontend that,
+    required FSegment segment,
+  });
+
+  Future<String> crateApiFrontendFrontendRenderSegmentWaypoints({
+    required Frontend that,
+    required FSegment segment,
+  });
+
+  Future<String> crateApiFrontendFrontendRenderTrack({required Frontend that});
+
+  Future<String> crateApiFrontendFrontendRenderWaypoints({
+    required Frontend that,
+  });
+
+  Future<List<FSegment>> crateApiFrontendFrontendSegments({
+    required Frontend that,
+  });
 
   Future<void> crateApiFrontendInitApp();
 
   Future<String> crateApiFrontendSvgCircle();
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_FSegment;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_FSegment;
+
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_FSegmentPtr;
 
   RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_Frontend;
@@ -106,6 +134,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  Future<BigInt> crateApiFrontendFSegmentId({required FSegment that}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 1,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_usize,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiFrontendFSegmentIdConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiFrontendFSegmentIdConstMeta =>
+      const TaskConstMeta(debugName: "FSegment_id", argNames: ["that"]);
+
+  @override
   void crateApiFrontendFrontendChangeParameter({
     required Frontend that,
     required double eps,
@@ -119,7 +178,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_f_32(eps, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -147,7 +206,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 2,
+            funcId: 3,
             port: port_,
           );
         },
@@ -167,7 +226,89 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "Frontend_create", argNames: []);
 
   @override
-  Future<String> crateApiFrontendFrontendSvg({required Frontend that}) {
+  Future<String> crateApiFrontendFrontendRenderSegmentTrack({
+    required Frontend that,
+    required FSegment segment,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+            that,
+            serializer,
+          );
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+            segment,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 4,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiFrontendFrontendRenderSegmentTrackConstMeta,
+        argValues: [that, segment],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiFrontendFrontendRenderSegmentTrackConstMeta =>
+      const TaskConstMeta(
+        debugName: "Frontend_renderSegmentTrack",
+        argNames: ["that", "segment"],
+      );
+
+  @override
+  Future<String> crateApiFrontendFrontendRenderSegmentWaypoints({
+    required Frontend that,
+    required FSegment segment,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+            that,
+            serializer,
+          );
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+            segment,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 5,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiFrontendFrontendRenderSegmentWaypointsConstMeta,
+        argValues: [that, segment],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiFrontendFrontendRenderSegmentWaypointsConstMeta =>
+      const TaskConstMeta(
+        debugName: "Frontend_renderSegmentWaypoints",
+        argNames: ["that", "segment"],
+      );
+
+  @override
+  Future<String> crateApiFrontendFrontendRenderTrack({required Frontend that}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -179,7 +320,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 3,
+            funcId: 6,
             port: port_,
           );
         },
@@ -187,15 +328,88 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_String,
           decodeErrorData: null,
         ),
-        constMeta: kCrateApiFrontendFrontendSvgConstMeta,
+        constMeta: kCrateApiFrontendFrontendRenderTrackConstMeta,
         argValues: [that],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFrontendFrontendSvgConstMeta =>
-      const TaskConstMeta(debugName: "Frontend_svg", argNames: ["that"]);
+  TaskConstMeta get kCrateApiFrontendFrontendRenderTrackConstMeta =>
+      const TaskConstMeta(
+        debugName: "Frontend_renderTrack",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<String> crateApiFrontendFrontendRenderWaypoints({
+    required Frontend that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiFrontendFrontendRenderWaypointsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiFrontendFrontendRenderWaypointsConstMeta =>
+      const TaskConstMeta(
+        debugName: "Frontend_renderWaypoints",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<List<FSegment>> crateApiFrontendFrontendSegments({
+    required Frontend that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 8,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiFrontendFrontendSegmentsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiFrontendFrontendSegmentsConstMeta =>
+      const TaskConstMeta(debugName: "Frontend_segments", argNames: ["that"]);
 
   @override
   Future<void> crateApiFrontendInitApp() {
@@ -206,7 +420,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 4,
+            funcId: 9,
             port: port_,
           );
         },
@@ -233,7 +447,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 5,
+            funcId: 10,
             port: port_,
           );
         },
@@ -252,12 +466,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "svgCircle", argNames: []);
 
   RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_FSegment =>
+      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_FSegment =>
+      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment;
+
+  RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_Frontend =>
       wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend;
 
   RustArcDecrementStrongCountFnType
   get rust_arc_decrement_strong_count_Frontend =>
       wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend;
+
+  @protected
+  FSegment
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return FSegmentImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
 
   @protected
   Frontend
@@ -275,6 +506,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return FrontendImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  FSegment
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return FSegmentImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  Frontend
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return FrontendImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  FSegment
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return FSegmentImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -296,6 +554,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   double dco_decode_f_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
+  }
+
+  @protected
+  List<FSegment>
+  dco_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>)
+        .map(
+          dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment,
+        )
+        .toList();
   }
 
   @protected
@@ -323,6 +594,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  FSegment
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return FSegmentImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   Frontend
   sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
     SseDeserializer deserializer,
@@ -341,6 +624,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return FrontendImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  FSegment
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return FSegmentImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  Frontend
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return FrontendImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  FSegment
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return FSegmentImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
@@ -369,6 +688,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   double sse_decode_f_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getFloat32();
+  }
+
+  @protected
+  List<FSegment>
+  sse_decode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <FSegment>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(
+        sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+          deserializer,
+        ),
+      );
+    }
+    return ans_;
   }
 
   @protected
@@ -409,6 +747,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    FSegment self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as FSegmentImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
     Frontend self,
     SseSerializer serializer,
@@ -429,6 +780,45 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
       (self as FrontendImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    FSegment self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as FSegmentImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+    Frontend self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as FrontendImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    FSegment self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as FSegmentImpl).frbInternalSseEncode(move: null),
       serializer,
     );
   }
@@ -456,6 +846,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_f_32(double self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putFloat32(self);
+  }
+
+  @protected
+  void
+  sse_encode_list_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+    List<FSegment> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+        item,
+        serializer,
+      );
+    }
   }
 
   @protected
@@ -499,6 +905,29 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 }
 
 @sealed
+class FSegmentImpl extends RustOpaque implements FSegment {
+  // Not to be used by end users
+  FSegmentImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  FSegmentImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_FSegment,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_FSegment,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_FSegmentPtr,
+  );
+
+  Future<BigInt> id() =>
+      RustLib.instance.api.crateApiFrontendFSegmentId(that: this);
+}
+
+@sealed
 class FrontendImpl extends RustOpaque implements Frontend {
   // Not to be used by end users
   FrontendImpl.frbInternalDcoDecode(List<dynamic> wire)
@@ -520,6 +949,23 @@ class FrontendImpl extends RustOpaque implements Frontend {
   void changeParameter({required double eps}) => RustLib.instance.api
       .crateApiFrontendFrontendChangeParameter(that: this, eps: eps);
 
-  Future<String> svg() =>
-      RustLib.instance.api.crateApiFrontendFrontendSvg(that: this);
+  Future<String> renderSegmentTrack({required FSegment segment}) => RustLib
+      .instance
+      .api
+      .crateApiFrontendFrontendRenderSegmentTrack(that: this, segment: segment);
+
+  Future<String> renderSegmentWaypoints({required FSegment segment}) =>
+      RustLib.instance.api.crateApiFrontendFrontendRenderSegmentWaypoints(
+        that: this,
+        segment: segment,
+      );
+
+  Future<String> renderTrack() =>
+      RustLib.instance.api.crateApiFrontendFrontendRenderTrack(that: this);
+
+  Future<String> renderWaypoints() =>
+      RustLib.instance.api.crateApiFrontendFrontendRenderWaypoints(that: this);
+
+  Future<List<FSegment>> segments() =>
+      RustLib.instance.api.crateApiFrontendFrontendSegments(that: this);
 }

@@ -32,7 +32,6 @@ pub fn nearest_neighboor(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     #[test]
     fn kdtree() {
         let items = vec![[10, 20, 30], [30, 10, 20], [20, 30, 10]];

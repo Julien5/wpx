@@ -6,7 +6,14 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`
+
 Future<String> svgCircle() => RustLib.instance.api.crateApiFrontendSvgCircle();
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<FSegment>>
+abstract class FSegment implements RustOpaqueInterface {
+  Future<BigInt> id();
+}
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Frontend>>
 abstract class Frontend implements RustOpaqueInterface {
@@ -15,5 +22,13 @@ abstract class Frontend implements RustOpaqueInterface {
   static Future<Frontend> create() =>
       RustLib.instance.api.crateApiFrontendFrontendCreate();
 
-  Future<String> svg();
+  Future<String> renderSegmentTrack({required FSegment segment});
+
+  Future<String> renderSegmentWaypoints({required FSegment segment});
+
+  Future<String> renderTrack();
+
+  Future<String> renderWaypoints();
+
+  Future<List<FSegment>> segments();
 }

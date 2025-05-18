@@ -1,90 +1,121 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ui/src/globalfrontend.dart';
+import 'dart:developer' as developer;
+
 import 'package:ui/src/rust/api/frontend.dart';
 
-class ProfileWidget extends StatefulWidget {
-  const ProfileWidget({super.key});
-
+class TrackWidget extends StatefulWidget {
+  final FSegment segment;
+  const TrackWidget({super.key, required this.segment});
   @override
-  State<ProfileWidget> createState() => ProfileWidgetState();
+  State<TrackWidget> createState() => TrackWidgetState();
 }
 
-class ProfileWidgetState extends State<ProfileWidget> {
+class TrackWidgetState extends State<TrackWidget> {
   String? svgData;
-  String? errorMessage;
-  bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    loadCircle();
+    loadTrack();
   }
 
-  Future<void> loadCircle() async {
+  void loadTrack() async {
+    if (!mounted) {
+      return;
+    }
+    assert(GlobalFrontend().loaded());
+    Frontend f = GlobalFrontend().frontend();
+    String d = await f.renderSegmentTrack(segment: widget.segment);
+    developer.log("found ${d.length} svg track bytes");
+    if (!mounted) {
+      return;
+    }
     setState(() {
-      isLoading = true;
-      svgData = null; // Clear previous SVG data
-      errorMessage = null; // Clear previous error message
+      svgData = d;
     });
-    try {
-      final data = await svgCircle();
-      setState(() {
-        svgData = data;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        errorMessage = 'Error: $e';
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> loadProfile(Frontend frontend) async {
-    /*setState(() {
-      isLoading = true;
-      svgData = null; // Clear previous SVG data
-      errorMessage = null; // Clear previous error message
-    });*/
-    try {
-      //final data = await svgCircle();
-      final data = await frontend.svg();
-      setState(() {
-        svgData = data;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        errorMessage = 'Error: $e';
-        isLoading = false;
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 500.0, // Fixed width
-      height: 250.0, // Fixed height
-      child: Builder(
-        builder: (context) {
-          if (isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(), // CircularProgressIndicator without extra SizedBox
-            );
-          } else if (errorMessage != null) {
-            return Center(child: Text(errorMessage!));
-          } else if (svgData != null) {
-            return SvgPicture.string(
-              svgData!,
-              width: 500,
-              height: 250,
-            );
-          } else {
-            return const Center(child: Text('No data available'));
-          }
-        },
-      ),
+    Widget child;
+    if (svgData == null) {
+      child = Text("loading track...");
+    } else {
+      child = SvgPicture.string(svgData!, width: 600, height: 150);
+    }
+    return SizedBox(width: 600.0, child: Column(children: [child]));
+  }
+}
+
+class WaypointsWidget extends StatefulWidget {
+  final FSegment segment;
+  const WaypointsWidget({super.key, required this.segment});
+
+  @override
+  State<WaypointsWidget> createState() => WaypointsWidgetState();
+}
+
+class WaypointsWidgetState extends State<WaypointsWidget> {
+  String? svgData;
+  @override
+  void initState() {
+    super.initState();
+    loadWaypoints();
+  }
+
+  void loadWaypoints() async {
+    if (!mounted) {
+      return;
+    }
+    assert(GlobalFrontend().loaded());
+    Frontend f = GlobalFrontend().frontend();
+    String d = await f.renderSegmentWaypoints(segment: widget.segment);
+    if (!mounted) {
+      developer.log("unmounted");
+      return;
+    }
+    developer.log("found ${d.length} svg waypoints bytes");
+    setState(() {
+      svgData = d;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget child;
+    if (svgData == null) {
+      child = Text("loading.");
+    } else {
+      child = SvgPicture.string(svgData!, width: 600, height: 150);
+    }
+    return SizedBox(width: 600.0, child: Column(children: [child]));
+  }
+}
+
+class SegmentKey {
+  final FSegment segment;
+  final double delta;
+  const SegmentKey(this.segment, this.delta);
+}
+
+class SegmentStack extends StatelessWidget {
+  final FSegment segment;
+  final GlobalKey<WaypointsWidgetState> waypointsKey;
+
+  const SegmentStack({
+    super.key,
+    required this.segment,
+    required this.waypointsKey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        TrackWidget(segment: segment),
+        WaypointsWidget(key: waypointsKey, segment: segment),
+      ],
     );
   }
 }
