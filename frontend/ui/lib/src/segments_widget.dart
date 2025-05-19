@@ -15,7 +15,6 @@ class SegmentsWidget extends StatefulWidget {
 
 class SegmentsWidgetState extends State<SegmentsWidget> {
   List<SegmentWidget>? segmentWidgets;
-  double currentDelta = 0;
 
   @override
   void initState() {
@@ -32,7 +31,7 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
         segmentWidgets = [];
         for (var i = 0; i < ret.length; i++) {
           FSegment s = ret.elementAt(i);
-          segmentWidgets!.add(SegmentWidget(segment: s, delta: currentDelta));
+          segmentWidgets!.add(SegmentWidget(segment: s));
         }
       }
     });

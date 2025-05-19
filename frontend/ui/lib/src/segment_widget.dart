@@ -5,20 +5,19 @@ import 'package:ui/src/profile_widget.dart';
 import 'package:ui/src/rust/api/frontend.dart';
 
 class SegmentWidget extends StatelessWidget {
-  final GlobalKey<WaypointsWidgetState> waypointsKey =
-      GlobalKey<WaypointsWidgetState>();
+  final GlobalKey<TrackWidgetState> waypointsKey =
+      GlobalKey<TrackWidgetState>();
 
   final FSegment segment;
-  final double delta;
-  SegmentWidget({super.key, required this.segment, required this.delta});
+  SegmentWidget({super.key, required this.segment});
 
-void update() {
+  void update() {
     if (waypointsKey.currentState == null) {
       developer.log("current state is null");
       return;
     }
     developer.log("current state is NOT null");
-    waypointsKey.currentState?.loadWaypoints();
+    waypointsKey.currentState?.load();
   }
 
   @override
@@ -31,7 +30,7 @@ void update() {
             border: Border.all(color: Colors.blue, width: 1.0),
             borderRadius: BorderRadius.circular(8.0),
           ),
-          child: SegmentStack(segment:segment,waypointsKey: waypointsKey),
+          child: SegmentStack(segment: segment, waypointsKey: waypointsKey),
         ),
       ],
     );

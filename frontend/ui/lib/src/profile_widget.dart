@@ -5,9 +5,16 @@ import 'dart:developer' as developer;
 
 import 'package:ui/src/rust/api/frontend.dart';
 
+enum TrackData { track, waypoints }
+
 class TrackWidget extends StatefulWidget {
   final FSegment segment;
-  const TrackWidget({super.key, required this.segment});
+  final TrackData trackData;
+  const TrackWidget({
+    super.key,
+    required this.segment,
+    required this.trackData,
+  });
   @override
   State<TrackWidget> createState() => TrackWidgetState();
 }
@@ -17,17 +24,22 @@ class TrackWidgetState extends State<TrackWidget> {
   @override
   void initState() {
     super.initState();
-    loadTrack();
+    load();
   }
 
-  void loadTrack() async {
+  void load() async {
     if (!mounted) {
       return;
     }
     assert(GlobalFrontend().loaded());
     Frontend f = GlobalFrontend().frontend();
-    String d = await f.renderSegmentTrack(segment: widget.segment);
-    developer.log("found ${d.length} svg track bytes");
+    String d;
+    if (widget.trackData == TrackData.track) {
+      d = await f.renderSegmentTrack(segment: widget.segment);
+    } else {
+      d = await f.renderSegmentWaypoints(segment: widget.segment);
+    }
+    developer.log("found ${d.length} svg track bytes for ${widget.trackData}");
     if (!mounted) {
       return;
     }
@@ -40,68 +52,17 @@ class TrackWidgetState extends State<TrackWidget> {
   Widget build(BuildContext context) {
     Widget child;
     if (svgData == null) {
-      child = Text("loading track...");
+      child = Text("loading ${widget.trackData}...");
     } else {
       child = SvgPicture.string(svgData!, width: 600, height: 150);
     }
     return SizedBox(width: 600.0, child: Column(children: [child]));
   }
-}
-
-class WaypointsWidget extends StatefulWidget {
-  final FSegment segment;
-  const WaypointsWidget({super.key, required this.segment});
-
-  @override
-  State<WaypointsWidget> createState() => WaypointsWidgetState();
-}
-
-class WaypointsWidgetState extends State<WaypointsWidget> {
-  String? svgData;
-  @override
-  void initState() {
-    super.initState();
-    loadWaypoints();
-  }
-
-  void loadWaypoints() async {
-    if (!mounted) {
-      return;
-    }
-    assert(GlobalFrontend().loaded());
-    Frontend f = GlobalFrontend().frontend();
-    String d = await f.renderSegmentWaypoints(segment: widget.segment);
-    if (!mounted) {
-      developer.log("unmounted");
-      return;
-    }
-    developer.log("found ${d.length} svg waypoints bytes");
-    setState(() {
-      svgData = d;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget child;
-    if (svgData == null) {
-      child = Text("loading.");
-    } else {
-      child = SvgPicture.string(svgData!, width: 600, height: 150);
-    }
-    return SizedBox(width: 600.0, child: Column(children: [child]));
-  }
-}
-
-class SegmentKey {
-  final FSegment segment;
-  final double delta;
-  const SegmentKey(this.segment, this.delta);
 }
 
 class SegmentStack extends StatelessWidget {
   final FSegment segment;
-  final GlobalKey<WaypointsWidgetState> waypointsKey;
+  final GlobalKey<TrackWidgetState> waypointsKey;
 
   const SegmentStack({
     super.key,
@@ -113,8 +74,8 @@ class SegmentStack extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        TrackWidget(segment: segment),
-        WaypointsWidget(key: waypointsKey, segment: segment),
+        TrackWidget(segment: segment, trackData: TrackData.track,),
+        TrackWidget(key: waypointsKey, segment: segment, trackData: TrackData.waypoints,),
       ],
     );
   }
