@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ui/src/globalfrontend.dart';
-import 'dart:developer' as developer;
+import 'package:ui/src/backendmodel.dart';
 
 import 'package:ui/src/rust/api/frontend.dart';
 
@@ -24,22 +23,20 @@ class TrackWidgetState extends State<TrackWidget> {
   @override
   void initState() {
     super.initState();
-    load();
+    if (widget.trackData == TrackData.track) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        loadBackground(context); // Call load() in the next frame
+      });
+    } else {
+      
+    }
+
   }
 
-  void load() async {
-    if (!mounted) {
-      return;
-    }
-    assert(GlobalFrontend().loaded());
-    Frontend f = GlobalFrontend().frontend();
-    String d;
-    if (widget.trackData == TrackData.track) {
-      d = await f.renderSegmentTrack(segment: widget.segment);
-    } else {
-      d = await f.renderSegmentWaypoints(segment: widget.segment);
-    }
-    developer.log("found ${d.length} svg track bytes for ${widget.trackData}");
+  void loadBackground(BuildContext context) async {
+    BackendModel backend = BackendModel.of(context);
+    String d = await backend.renderSegmentTrack(widget.segment);
+      
     if (!mounted) {
       return;
     }
@@ -51,6 +48,9 @@ class TrackWidgetState extends State<TrackWidget> {
   @override
   Widget build(BuildContext context) {
     Widget child;
+    if (widget.trackData == TrackData.waypoints) {
+      svgData=BackendModel.of(context).renderSegmentWaypoints(widget.segment);
+    }
     if (svgData == null) {
       child = Text("loading ${widget.trackData}...");
     } else {
@@ -62,20 +62,18 @@ class TrackWidgetState extends State<TrackWidget> {
 
 class SegmentStack extends StatelessWidget {
   final FSegment segment;
-  final GlobalKey<TrackWidgetState> waypointsKey;
 
   const SegmentStack({
     super.key,
     required this.segment,
-    required this.waypointsKey,
   });
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        TrackWidget(segment: segment, trackData: TrackData.track,),
-        TrackWidget(key: waypointsKey, segment: segment, trackData: TrackData.waypoints,),
+        TrackWidget(segment: segment, trackData: TrackData.track),
+        TrackWidget(segment: segment, trackData: TrackData.waypoints),
       ],
     );
   }

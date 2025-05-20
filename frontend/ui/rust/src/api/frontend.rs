@@ -38,7 +38,17 @@ impl Frontend {
     pub async fn renderSegmentWaypoints(&mut self, segment: &FSegment) -> String {
         self.backend.render_segment_waypoints(&segment._backend)
     }
-    pub async fn segments(&self) -> Vec<FSegment> {
+    #[frb(sync)]
+    pub fn renderSegmentWaypointsSync(&mut self, segment: &FSegment) -> String {
+        self.backend.render_segment_waypoints(&segment._backend)
+    }
+    #[frb(sync)]
+    pub fn epsilon(&self) -> f32 {
+        self.backend.epsilon()
+    }
+
+    #[frb(sync)]
+    pub fn segments(&self) -> Vec<FSegment> {
         let segb = self.backend.segments();
         let mut ret = Vec::new();
         for s in segb {
@@ -52,6 +62,7 @@ impl Frontend {
 }
 
 impl FSegment {
+    #[frb(sync)]
     pub fn id(&self) -> usize {
         self._backend.id
     }

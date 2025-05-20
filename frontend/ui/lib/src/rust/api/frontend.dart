@@ -12,7 +12,7 @@ Future<String> svgCircle() => RustLib.instance.api.crateApiFrontendSvgCircle();
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<FSegment>>
 abstract class FSegment implements RustOpaqueInterface {
-  Future<BigInt> id();
+  BigInt id();
 }
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Frontend>>
@@ -22,13 +22,17 @@ abstract class Frontend implements RustOpaqueInterface {
   static Future<Frontend> create() =>
       RustLib.instance.api.crateApiFrontendFrontendCreate();
 
+  double epsilon();
+
   Future<String> renderSegmentTrack({required FSegment segment});
 
   Future<String> renderSegmentWaypoints({required FSegment segment});
+
+  String renderSegmentWaypointsSync({required FSegment segment});
 
   Future<String> renderTrack();
 
   Future<String> renderWaypoints();
 
-  Future<List<FSegment>> segments();
+  List<FSegment> segments();
 }

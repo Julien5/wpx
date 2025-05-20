@@ -1,10 +1,9 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:ui/src/globalfrontend.dart';
-import 'package:ui/src/segment_widget.dart';
-import 'package:ui/src/rust/api/frontend.dart';
+import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/counter.dart';
+import 'package:ui/src/segment_widget.dart';
 
 class SegmentsWidget extends StatefulWidget {
   const SegmentsWidget({super.key});
@@ -14,71 +13,51 @@ class SegmentsWidget extends StatefulWidget {
 }
 
 class SegmentsWidgetState extends State<SegmentsWidget> {
-  List<SegmentWidget>? segmentWidgets;
-
   @override
   void initState() {
     super.initState();
-    _loadSegments();
-  }
-
-  void _loadSegments() async {
-    Frontend f = GlobalFrontend().frontend();
-    var segments = await f.segments();
-    developer.log("found ${segments.length} segments");
-    setState(() {
-      if (segmentWidgets==null || segmentWidgets!.length != segments.length) {
-        segmentWidgets = [];
-        for (var segment in segments) {
-          segmentWidgets!.add(SegmentWidget(segment: segment));
-        }
-      }
-    });
-  }
-
-  void makeMorePoints() {
-    Frontend f = GlobalFrontend().frontend();
-    f.changeParameter(eps: -10.0);
-    developer.log("makeMorePoints on ${segmentWidgets!.length} widgets");
-    setState(() {
-      for (var i = 0; i < segmentWidgets!.length; i++) {
-        segmentWidgets!.elementAt(i).update();
-      }
-    });
-  }
-
-  void makeLessPoints() {
-    Frontend f = GlobalFrontend().frontend();
-    f.changeParameter(eps: 10.0);
-    setState(() {
-      for (var i = 0; i < segmentWidgets!.length; i++) {
-        segmentWidgets!.elementAt(i).update();
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    developer.log("SegmentsWidgetState build");
-    if (segmentWidgets == null) {
-      return Text("segments is null");
-    }
-    if (segmentWidgets!.isEmpty) {
+    assert(BackendModel.maybeOf(context) != null);
+    FrontendNotifier notifier = BackendModel.of(context).notifier;
+    BackendModel backend = BackendModel.of(context);
+    return ListenableBuilder(
+      listenable: notifier,
+      builder: (context,_) {
+        return buildWorker(context, backend);
+      },);
+  }
+
+  void makeMorePoints() {
+    BackendModel backend = BackendModel.of(context);
+    backend.decrementDelta();
+    developer.log("delta=${backend.epsilon()}");
+  }
+
+  void makeLessPoints() {
+    BackendModel backend = BackendModel.of(context);
+    backend.incrementDelta();
+    developer.log("delta=${backend.epsilon()}");
+  }
+
+  Widget buildWorker(BuildContext context, BackendModel backend) {
+    developer.log("delta=${backend.epsilon()}");
+    var segments = backend.segments();
+    if (segments.isEmpty) {
       return Text("segments is empty");
+    }
+    List<Widget> W = [];
+    for (var segment in segments) {
+      W.add(SegmentWidget(segment: segment));
     }
 
     return Column(
       children: [
         PressButton(label: "more", onCounterPressed: makeMorePoints),
         PressButton(label: "less", onCounterPressed: makeLessPoints),
-        Expanded(
-          child: ListView.separated(
-            itemCount: segmentWidgets!.length,
-            scrollDirection: Axis.vertical,
-            separatorBuilder: (BuildContext context, int index) => const Divider(),
-            itemBuilder: (context,index) {return segmentWidgets!.elementAt(index);},
-          ),
-        ),
+        Expanded(child: ListView(children: W)),
       ],
     );
   }

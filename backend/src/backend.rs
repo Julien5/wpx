@@ -12,7 +12,7 @@ use crate::render::ViewBox;
 pub struct Backend {
     track: gpsdata::Track,
     waypoints: Vec<gpsdata::Waypoint>,
-    epsilon: f32,
+    _epsilon: f32,
 }
 
 #[derive(Clone)]
@@ -37,8 +37,8 @@ impl Backend {
                 _ => {}
             }
         }
-        println!("add automatic waypoints with {}", self.epsilon);
-        let indexes = self.track.interesting_indexes(self.epsilon);
+        println!("add automatic waypoints with {}", self._epsilon);
+        let indexes = self.track.interesting_indexes(self._epsilon);
         for idx in indexes {
             let wgs = self.track.wgs84[idx].clone();
             let utm = self.track.utm[idx].clone();
@@ -69,14 +69,18 @@ impl Backend {
         let mut ret = Backend {
             track,
             waypoints: gpsdata::read_waypoints(&gpx),
-            epsilon: 70.0f32,
+            _epsilon: 70.0f32,
         };
         ret.enrichWaypoints();
         ret
     }
 
     pub fn changeParameter(&mut self, delta: f32) {
-        self.epsilon += delta;
+        self._epsilon += delta;
+    }
+
+    pub fn epsilon(&self) -> f32 {
+        self._epsilon
     }
 
     pub fn render_track(&mut self) -> String {

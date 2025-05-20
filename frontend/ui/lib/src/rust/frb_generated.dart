@@ -64,7 +64,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.9.0';
 
   @override
-  int get rustContentHash => -1251613850;
+  int get rustContentHash => -838939746;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -75,7 +75,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<BigInt> crateApiFrontendFSegmentId({required FSegment that});
+  BigInt crateApiFrontendFSegmentId({required FSegment that});
 
   void crateApiFrontendFrontendChangeParameter({
     required Frontend that,
@@ -83,6 +83,8 @@ abstract class RustLibApi extends BaseApi {
   });
 
   Future<Frontend> crateApiFrontendFrontendCreate();
+
+  double crateApiFrontendFrontendEpsilon({required Frontend that});
 
   Future<String> crateApiFrontendFrontendRenderSegmentTrack({
     required Frontend that,
@@ -94,15 +96,18 @@ abstract class RustLibApi extends BaseApi {
     required FSegment segment,
   });
 
+  String crateApiFrontendFrontendRenderSegmentWaypointsSync({
+    required Frontend that,
+    required FSegment segment,
+  });
+
   Future<String> crateApiFrontendFrontendRenderTrack({required Frontend that});
 
   Future<String> crateApiFrontendFrontendRenderWaypoints({
     required Frontend that,
   });
 
-  Future<List<FSegment>> crateApiFrontendFrontendSegments({
-    required Frontend that,
-  });
+  List<FSegment> crateApiFrontendFrontendSegments({required Frontend that});
 
   Future<void> crateApiFrontendInitApp();
 
@@ -134,21 +139,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<BigInt> crateApiFrontendFSegmentId({required FSegment that}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
+  BigInt crateApiFrontendFSegmentId({required FSegment that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
             that,
             serializer,
           );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 1,
-            port: port_,
-          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_usize,
@@ -226,6 +226,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "Frontend_create", argNames: []);
 
   @override
+  double crateApiFrontendFrontendEpsilon({required Frontend that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_f_32,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiFrontendFrontendEpsilonConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiFrontendFrontendEpsilonConstMeta =>
+      const TaskConstMeta(debugName: "Frontend_epsilon", argNames: ["that"]);
+
+  @override
   Future<String> crateApiFrontendFrontendRenderSegmentTrack({
     required Frontend that,
     required FSegment segment,
@@ -245,7 +271,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 4,
+            funcId: 5,
             port: port_,
           );
         },
@@ -286,7 +312,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 5,
+            funcId: 6,
             port: port_,
           );
         },
@@ -308,6 +334,43 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  String crateApiFrontendFrontendRenderSegmentWaypointsSync({
+    required Frontend that,
+    required FSegment segment,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
+            that,
+            serializer,
+          );
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFSegment(
+            segment,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiFrontendFrontendRenderSegmentWaypointsSyncConstMeta,
+        argValues: [that, segment],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateApiFrontendFrontendRenderSegmentWaypointsSyncConstMeta =>
+      const TaskConstMeta(
+        debugName: "Frontend_renderSegmentWaypointsSync",
+        argNames: ["that", "segment"],
+      );
+
+  @override
   Future<String> crateApiFrontendFrontendRenderTrack({required Frontend that}) {
     return handler.executeNormal(
       NormalTask(
@@ -320,7 +383,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 8,
             port: port_,
           );
         },
@@ -356,7 +419,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 9,
             port: port_,
           );
         },
@@ -378,23 +441,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<List<FSegment>> crateApiFrontendFrontendSegments({
-    required Frontend that,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
+  List<FSegment> crateApiFrontendFrontendSegments({required Frontend that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerFrontend(
             that,
             serializer,
           );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 8,
-            port: port_,
-          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -420,7 +476,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 11,
             port: port_,
           );
         },
@@ -447,7 +503,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 12,
             port: port_,
           );
         },
@@ -923,8 +979,7 @@ class FSegmentImpl extends RustOpaque implements FSegment {
         RustLib.instance.api.rust_arc_decrement_strong_count_FSegmentPtr,
   );
 
-  Future<BigInt> id() =>
-      RustLib.instance.api.crateApiFrontendFSegmentId(that: this);
+  BigInt id() => RustLib.instance.api.crateApiFrontendFSegmentId(that: this);
 }
 
 @sealed
@@ -949,6 +1004,9 @@ class FrontendImpl extends RustOpaque implements Frontend {
   void changeParameter({required double eps}) => RustLib.instance.api
       .crateApiFrontendFrontendChangeParameter(that: this, eps: eps);
 
+  double epsilon() =>
+      RustLib.instance.api.crateApiFrontendFrontendEpsilon(that: this);
+
   Future<String> renderSegmentTrack({required FSegment segment}) => RustLib
       .instance
       .api
@@ -960,12 +1018,18 @@ class FrontendImpl extends RustOpaque implements Frontend {
         segment: segment,
       );
 
+  String renderSegmentWaypointsSync({required FSegment segment}) =>
+      RustLib.instance.api.crateApiFrontendFrontendRenderSegmentWaypointsSync(
+        that: this,
+        segment: segment,
+      );
+
   Future<String> renderTrack() =>
       RustLib.instance.api.crateApiFrontendFrontendRenderTrack(that: this);
 
   Future<String> renderWaypoints() =>
       RustLib.instance.api.crateApiFrontendFrontendRenderWaypoints(that: this);
 
-  Future<List<FSegment>> segments() =>
+  List<FSegment> segments() =>
       RustLib.instance.api.crateApiFrontendFrontendSegments(that: this);
 }
