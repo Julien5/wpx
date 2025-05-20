@@ -24,14 +24,13 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
 
   void _loadSegments() async {
     Frontend f = GlobalFrontend().frontend();
-    List<FSegment> ret = await f.segments();
-    developer.log("found ${ret.length} segments");
+    var segments = await f.segments();
+    developer.log("found ${segments.length} segments");
     setState(() {
-      if (segmentWidgets==null || segmentWidgets!.length != ret.length) {
+      if (segmentWidgets==null || segmentWidgets!.length != segments.length) {
         segmentWidgets = [];
-        for (var i = 0; i < ret.length; i++) {
-          FSegment s = ret.elementAt(i);
-          segmentWidgets!.add(SegmentWidget(segment: s));
+        for (var segment in segments) {
+          segmentWidgets!.add(SegmentWidget(segment: segment));
         }
       }
     });
