@@ -31,7 +31,7 @@ class TrackWidgetState extends State<TrackWidget> {
   Widget buildWorker(BuildContext context) {
     Widget child;
     if (!widget.future.done()) {
-      child = Text("loading ${widget.future.currentEpsilon}...");
+      child = Text("");//Text("loading ${widget.future.currentEpsilon}...");
     } else {
       child = SvgPicture.string(
         widget.future.result(),
@@ -45,21 +45,26 @@ class TrackWidgetState extends State<TrackWidget> {
 
 class Renderings {
   final FutureRendering track;
-  final FutureRendering waypoints;
-  const Renderings({required this.track, required this.waypoints});
+  FutureRendering waypoints;
+  Renderings({required this.track, required this.waypoints});
 }
 
-class SegmentStack extends StatelessWidget {
+class SegmentStack extends StatefulWidget {
   final Renderings renderings;
 
   const SegmentStack({super.key, required this.renderings});
 
   @override
+  State<SegmentStack> createState() => _SegmentStackState();
+}
+
+class _SegmentStackState extends State<SegmentStack> {
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        TrackWidget(future: renderings.track),
-        TrackWidget(future: renderings.waypoints),
+        TrackWidget(future: widget.renderings.track),
+        TrackWidget(future: widget.renderings.waypoints),
       ],
     );
   }

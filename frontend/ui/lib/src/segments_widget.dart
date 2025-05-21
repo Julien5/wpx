@@ -25,17 +25,23 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
   }
 
   void updateSegments() {
-    segments.clear();
     BackendModel backend = BackendModel.of(context);
     var S = backend.segments();
-    for (var segment in S) {
-      var track = backend.renderSegmentTrack(segment);
-      var wp = backend.renderSegmentWaypoints(segment);
-      segments.add(Renderings(track: track, waypoints: wp));
+    if (S.length != segments.length) {
+      segments.clear();
+      for (var segment in S) {
+        var track = backend.renderSegmentTrack(segment);
+        var wp = backend.renderSegmentWaypoints(segment);
+        segments.add(Renderings(track: track, waypoints: wp));
+      }
+    } else {
+      for (int i=0; i<S.length; i++) {
+        var wp = backend.renderSegmentWaypoints(S[i]);
+        segments[i].waypoints=wp;
+      }
     }
     developer.log("made ${segments.length} segments");
-    setState(() {
-    });
+    setState(() {});
   }
 
   void makeMorePoints() {
