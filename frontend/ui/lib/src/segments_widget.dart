@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/counter.dart';
-import 'package:ui/src/profile_widget.dart';
 import 'package:ui/src/segment_widget.dart';
 
 class SegmentsWidget extends StatefulWidget {
@@ -14,7 +13,7 @@ class SegmentsWidget extends StatefulWidget {
 }
 
 class SegmentsWidgetState extends State<SegmentsWidget> {
-  List<SegmentWidget> segments = [];
+  List<RenderingsModel> segments = [];
 
   @override
   void initState() {
@@ -30,18 +29,15 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
     if (S.length != segments.length) {
       segments.clear();
       for (var segment in S) {
-        var track = backend.renderSegmentTrack(segment);
-        var wp = backend.renderSegmentWaypoints(segment);
-        track.start();
-        segments.add(
-          SegmentWidget(renderings: Renderings(track: track, waypoints: wp)),
-        );
+        var model = backend.createRenderingsModel(segment, SegmentWidget());
+        segments.add(model);
+        model.track.reset();
+        model.waypoints.reset();
       }
     } else {
-      for (int i = 0; i < S.length; i++) {
-        //var wp = backend.renderSegmentWaypoints(S[i]);
-        // this is where we need something like: segments[i].update();
-        segments[i].renderings.waypoints.reset();
+      for(var model in segments) {
+        model.track.reset();
+        model.waypoints.reset();
       }
     }
     developer.log("made ${segments.length} segments");

@@ -5,8 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ui/src/backendmodel.dart';
 
 class TrackWidget extends StatefulWidget {
-  final FutureRendering future;
-  const TrackWidget({super.key, required this.future});
+  final TrackData trackData;
+  const TrackWidget({super.key, required this.trackData});
   @override
   State<TrackWidget> createState() => TrackWidgetState();
 }
@@ -16,72 +16,86 @@ class TrackWidgetState extends State<TrackWidget> {
   @override
   void initState() {
     super.initState();
-    widget.future.start();
+    ensureStart();
+  }
+
+  void ensureStart() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      start();
+    });
+  }
+
+  void start() {
+    if (!mounted) {
+      return;
+    }
+    final renderings = RenderingsModel.of(context);
+    if (widget.trackData == TrackData.track) {
+      if (renderings.track.needsStart()) {
+        renderings.track.start();
+      }
+    }
+    if (widget.trackData == TrackData.waypoints) {
+      if (renderings.waypoints.needsStart()) {
+        renderings.waypoints.start();
+      }
+    }
   }
 
   @override
   void didUpdateWidget(covariant TrackWidget oldWidget) {
+    debugPrint("didUpdateWidget");
     super.didUpdateWidget(oldWidget);
-    developer.log("didUpdateWidget");
-    if (!widget.future.started() && !widget.future.done()) {
-      widget.future.start();
-    }
   }
 
-  /*@override
+  @override
   void didChangeDependencies() {
-    developer.log("didChangeDependencies");
+    final renderings = RenderingsModel.of(context);
+    developer.log(
+      "didChangeDependencies ID:${renderings.track.segment.id()} ID:${renderings.waypoints.segment.id()}",
+    );
+    start();
     super.didChangeDependencies();
-    if (!widget.future.started() && !widget.future.done()) {
-      widget.future.start();
-    }
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
-    developer.log("buildd1 ${widget.future.currentEpsilon}...");
+    final renderings = RenderingsModel.of(context);
+    FutureRendering? sender;
+    if (widget.trackData == TrackData.track) {
+      sender = renderings.track;
+    } else {
+      sender = renderings.waypoints;
+    }
+    developer.log("buildd1 ${sender.currentEpsilon()}...");
     return ListenableBuilder(
-      listenable: widget.future,
+      listenable: sender,
       builder: (context, _) {
-        return buildWorker(context);
+        return buildWorker(context, sender!);
       },
     );
   }
 
   Widget? child;
 
-  Widget buildWorker(BuildContext context) {
+  Widget buildWorker(BuildContext context, FutureRendering future) {
     developer.log("SVG ..");
+
     if (child == null) {
-      child = Text("starting ${widget.future.currentEpsilon()}...");
+      child = Text("starting ${future.currentEpsilon()}...");
     }
 
-    if (!widget.future.done() && !widget.future.started()) {
-      widget.future.start();
+    if (future.done()) {
+      developer.log("SVG .. ${future.result().length}");
+      child = SvgPicture.string(future.result(), width: 600, height: 150);
     }
-
-    if (widget.future.done()) {
-      developer.log("SVG .. ${widget.future.result().length}");
-      child = SvgPicture.string(
-        widget.future.result(),
-        width: 600,
-        height: 150,
-      );
-    }
+    ensureStart();
     return SizedBox(width: 600.0, child: Column(children: [child!]));
   }
 }
 
-class Renderings {
-  final FutureRendering track;
-  FutureRendering waypoints;
-  Renderings({required this.track, required this.waypoints});
-}
-
 class SegmentStack extends StatefulWidget {
-  final Renderings renderings;
-
-  const SegmentStack({super.key, required this.renderings});
+  const SegmentStack({super.key});
 
   @override
   State<SegmentStack> createState() => _SegmentStackState();
@@ -90,11 +104,12 @@ class SegmentStack extends StatefulWidget {
 class _SegmentStackState extends State<SegmentStack> {
   @override
   Widget build(BuildContext context) {
-    developer.log("build2 ${widget.renderings.track.currentEpsilon}...");
+    final renderings = RenderingsModel.of(context);
+    developer.log("build2 ${renderings.track.currentEpsilon()}...");
     return Stack(
       children: <Widget>[
-        TrackWidget(future: widget.renderings.track),
-        TrackWidget(future: widget.renderings.waypoints),
+        TrackWidget(trackData: TrackData.track),
+        TrackWidget(trackData: TrackData.waypoints),
       ],
     );
   }

@@ -19,6 +19,7 @@ class FutureRendering extends ChangeNotifier {
   Frontend frontend;
   Future<String>? future;
   String? _result;
+  double epsilon = 0;
 
   FutureRendering({
     required this.frontend,
@@ -26,15 +27,24 @@ class FutureRendering extends ChangeNotifier {
     required this.trackData,
   });
 
+  bool equal(FutureRendering other) {
+    return epsilon == other.epsilon &&
+        segment.id() == other.segment.id() &&
+        trackData == other.trackData &&
+        _result == other._result;
+  }
+
   double currentEpsilon() {
-    return frontend.epsilon();
+    return epsilon;
   }
 
   void start() {
-    developer.log("START future");
+    epsilon = frontend.epsilon();
     if (trackData == TrackData.track) {
+      developer.log("START track rendering for ${segment.id()}");
       future = frontend.renderSegmentTrack(segment: segment);
     } else {
+      developer.log("START waypoints rendering for ${segment.id()}");
       future = frontend.renderSegmentWaypoints(segment: segment);
     }
     future!.then((value) => onCompleted(value));
@@ -49,6 +59,10 @@ class FutureRendering extends ChangeNotifier {
 
   bool started() {
     return future != null;
+  }
+
+  bool needsStart() {
+    return future == null && _result == null;
   }
 
   void onCompleted(String value) {
@@ -68,6 +82,36 @@ class FutureRendering extends ChangeNotifier {
   String result() {
     assert(_result != null);
     return _result!;
+  }
+}
+
+class RenderingsModel extends InheritedWidget {
+  final FutureRendering track;
+  final FutureRendering waypoints;
+  const RenderingsModel({
+    super.key,
+    required super.child,
+    required this.track,
+    required this.waypoints,
+  });
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget other) {
+    debugPrint("updateShouldNotify");
+    return true;
+    //var eq = track.equal(other.track) && waypoints.equal(other.waypoints);
+    //    return !eq;
+  }
+
+  static RenderingsModel? maybeOf(BuildContext context) {
+    debugPrint("RenderingsModel maybeOf");
+    return context.dependOnInheritedWidgetOfExactType<RenderingsModel>();
+  }
+
+  static RenderingsModel of(BuildContext context) {
+    final RenderingsModel? ret = maybeOf(context);
+    assert(ret != null);
+    return ret!;
   }
 }
 
@@ -102,7 +146,7 @@ class BackendModel extends InheritedWidget {
     return _frontend().renderSegmentWaypointsSync(segment: segment);
   }
 
-  FutureRendering renderSegmentWaypoints(FSegment segment) {
+  FutureRendering _renderSegmentWaypoints(FSegment segment) {
     return FutureRendering(
       frontend: _frontend(),
       segment: segment,
@@ -110,11 +154,19 @@ class BackendModel extends InheritedWidget {
     );
   }
 
-  FutureRendering renderSegmentTrack(FSegment segment) {
+  FutureRendering _renderSegmentTrack(FSegment segment) {
     return FutureRendering(
       frontend: _frontend(),
       segment: segment,
       trackData: TrackData.track,
+    );
+  }
+
+  RenderingsModel createRenderingsModel(FSegment segment, Widget child) {
+    return RenderingsModel(
+      track: _renderSegmentTrack(segment),
+      waypoints: _renderSegmentWaypoints(segment),
+      child: child,
     );
   }
 
