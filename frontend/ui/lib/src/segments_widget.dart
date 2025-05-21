@@ -31,12 +31,9 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
       for (var segment in S) {
         var model = backend.createRenderingsModel(segment, SegmentWidget());
         segments.add(model);
-        model.track.reset();
-        model.waypoints.reset();
       }
     } else {
-      for(var model in segments) {
-        model.track.reset();
+      for (var model in segments) {
         model.waypoints.reset();
       }
     }
@@ -68,7 +65,15 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
       children: [
         PressButton(label: "more", onCounterPressed: makeMorePoints),
         PressButton(label: "less", onCounterPressed: makeLessPoints),
-        Expanded(child: ListView(children: segments)),
+        Expanded(
+          child: ListView.separated(
+            itemCount: segments.length,
+            separatorBuilder: (context, index) => const Divider(),
+            itemBuilder: (context, index) {
+              return segments[index];
+            },
+          ),
+        ),
       ],
     );
   }

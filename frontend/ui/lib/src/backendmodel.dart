@@ -53,7 +53,7 @@ class FutureRendering extends ChangeNotifier {
   }
 
   bool needsStart() {
-    return future == null && _result == null;
+    return !started() && !done();
   }
 
   void onCompleted(String value) {
@@ -64,10 +64,6 @@ class FutureRendering extends ChangeNotifier {
 
   bool done() {
     return _result != null;
-  }
-
-  bool running() {
-    return future != null && _result == null;
   }
 
   String result() {
@@ -99,11 +95,11 @@ class Segment extends InheritedWidget {
     assert(ret != null);
     return ret!;
   }
-  
+
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    assert(false);
-    throw UnimplementedError();
+    developer.log("UPDATE SHOULD NOTIFY");
+    return true;
   }
 }
 
