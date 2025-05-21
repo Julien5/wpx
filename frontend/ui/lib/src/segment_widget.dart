@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ui/src/profile_widget.dart';
-import 'package:ui/src/rust/api/frontend.dart';
 
 class SegmentWidget extends StatelessWidget {
-  final GlobalKey<TrackWidgetState> waypointsKey =
-      GlobalKey<TrackWidgetState>();
-
-  final FSegment segment;
-  SegmentWidget({super.key, required this.segment});
+  final Renderings renderings;
+  const SegmentWidget({super.key, required this.renderings});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +15,7 @@ class SegmentWidget extends StatelessWidget {
             border: Border.all(color: Colors.blue, width: 1.0),
             borderRadius: BorderRadius.circular(8.0),
           ),
-          child: SegmentStack(segment: segment),
+          child: SegmentStack(renderings: renderings),
         ),
       ],
     );

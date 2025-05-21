@@ -11,9 +11,34 @@ class BackendNotifier extends ChangeNotifier {
   }
 }
 
+enum TrackData { track, waypoints }
+
+class FutureRendering extends ChangeNotifier {
+  final Future<String> future;
+  final double currentEpsilon;
+  String? _result;
+
+  FutureRendering({required this.future, required this.currentEpsilon}) {
+    future.then((value) => onCompleted(value));
+  }
+
+  void onCompleted(String value) {
+    _result = value;
+    notifyListeners();
+  }
+
+  bool done() {
+    return _result != null;
+  }
+
+  String result() {
+    assert(_result != null);
+    return _result!;
+  }
+}
+
 class BackendModel extends InheritedWidget {
   final BackendNotifier notifier;
-  //final String frontend;
 
   const BackendModel({super.key, required this.notifier, required super.child});
 
@@ -34,17 +59,27 @@ class BackendModel extends InheritedWidget {
   double epsilon() {
     return _frontend().epsilon();
   }
-  
+
   List<FSegment> segments() {
     return _frontend().segments();
   }
 
-  String renderSegmentWaypoints(FSegment segment) {
+  String renderSegmentWaypointsSync(FSegment segment) {
     return _frontend().renderSegmentWaypointsSync(segment: segment);
   }
 
-  Future<String> renderSegmentTrack(FSegment segment) {
-    return _frontend().renderSegmentTrack(segment: segment);
+  FutureRendering renderSegmentWaypoints(FSegment segment) {
+    return FutureRendering(
+      future: _frontend().renderSegmentWaypoints(segment: segment),
+      currentEpsilon: _frontend().epsilon()
+    );
+  }
+
+  FutureRendering renderSegmentTrack(FSegment segment) {
+    return FutureRendering(
+      future: _frontend().renderSegmentTrack(segment: segment),
+      currentEpsilon: _frontend().epsilon()
+    );
   }
 
   @override

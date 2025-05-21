@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/counter.dart';
+import 'package:ui/src/profile_widget.dart';
 import 'package:ui/src/segment_widget.dart';
 
 class SegmentsWidget extends StatefulWidget {
@@ -13,44 +14,54 @@ class SegmentsWidget extends StatefulWidget {
 }
 
 class SegmentsWidgetState extends State<SegmentsWidget> {
+  List<Renderings> segments = [];
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      updateSegments();
+    });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    assert(BackendModel.maybeOf(context) != null);
-    BackendNotifier notifier = BackendModel.of(context).notifier;
+  void updateSegments() {
+    segments.clear();
     BackendModel backend = BackendModel.of(context);
-    return ListenableBuilder(
-      listenable: notifier,
-      builder: (context,_) {
-        return buildWorker(context, backend);
-      },);
+    var S = backend.segments();
+    for (var segment in S) {
+      var track = backend.renderSegmentTrack(segment);
+      var wp = backend.renderSegmentWaypoints(segment);
+      segments.add(Renderings(track: track, waypoints: wp));
+    }
+    developer.log("made ${segments.length} segments");
+    setState(() {
+    });
   }
 
   void makeMorePoints() {
     BackendModel backend = BackendModel.of(context);
     backend.decrementDelta();
     developer.log("delta=${backend.epsilon()}");
+    updateSegments();
   }
 
   void makeLessPoints() {
     BackendModel backend = BackendModel.of(context);
     backend.incrementDelta();
     developer.log("delta=${backend.epsilon()}");
+    updateSegments();
   }
 
-  Widget buildWorker(BuildContext context, BackendModel backend) {
-    developer.log("delta=${backend.epsilon()}");
-    var segments = backend.segments();
+  @override
+  Widget build(BuildContext context) {
+    BackendModel backend = BackendModel.of(context);
+    developer.log("[segments] [buildWorker] delta=${backend.epsilon()}");
     if (segments.isEmpty) {
       return Text("segments is empty");
     }
     List<Widget> W = [];
-    for (var segment in segments) {
-      W.add(SegmentWidget(segment: segment));
+    for (var renderings in segments) {
+      W.add(SegmentWidget(renderings: renderings));
     }
 
     return Column(
