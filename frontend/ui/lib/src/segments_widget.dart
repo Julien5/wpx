@@ -14,7 +14,7 @@ class SegmentsWidget extends StatefulWidget {
 }
 
 class SegmentsWidgetState extends State<SegmentsWidget> {
-  List<Renderings> segments = [];
+  List<SegmentWidget> segments = [];
 
   @override
   void initState() {
@@ -32,12 +32,13 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
       for (var segment in S) {
         var track = backend.renderSegmentTrack(segment);
         var wp = backend.renderSegmentWaypoints(segment);
-        segments.add(Renderings(track: track, waypoints: wp));
+        segments.add(SegmentWidget(renderings:Renderings(track: track, waypoints: wp)));
       }
     } else {
       for (int i=0; i<S.length; i++) {
         var wp = backend.renderSegmentWaypoints(S[i]);
-        segments[i].waypoints=wp;
+        // this is where we need something like: segments[i].update();
+        segments[i].renderings.waypoints=wp;
       }
     }
     developer.log("made ${segments.length} segments");
@@ -65,16 +66,11 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
     if (segments.isEmpty) {
       return Text("segments is empty");
     }
-    List<Widget> W = [];
-    for (var renderings in segments) {
-      W.add(SegmentWidget(renderings: renderings));
-    }
-
     return Column(
       children: [
         PressButton(label: "more", onCounterPressed: makeMorePoints),
         PressButton(label: "less", onCounterPressed: makeLessPoints),
-        Expanded(child: ListView(children: W)),
+        Expanded(child: ListView(children: segments)),
       ],
     );
   }

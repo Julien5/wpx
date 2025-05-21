@@ -20,6 +20,7 @@ class TrackWidgetState extends State<TrackWidget> {
 
   @override
   Widget build(BuildContext context) {
+    developer.log("build1 ${widget.future.currentEpsilon}...");
     return ListenableBuilder(
       listenable: widget.future,
       builder: (context, _) {
@@ -29,9 +30,10 @@ class TrackWidgetState extends State<TrackWidget> {
   }
 
   Widget buildWorker(BuildContext context) {
+    developer.log("build2 ${widget.future.currentEpsilon}...");
     Widget child;
     if (!widget.future.done()) {
-      child = Text("");//Text("loading ${widget.future.currentEpsilon}...");
+      child = Text("loading ${widget.future.currentEpsilon}...");
     } else {
       child = SvgPicture.string(
         widget.future.result(),
@@ -61,6 +63,7 @@ class SegmentStack extends StatefulWidget {
 class _SegmentStackState extends State<SegmentStack> {
   @override
   Widget build(BuildContext context) {
+    developer.log("build2 ${widget.renderings.track.currentEpsilon}...");
     return Stack(
       children: <Widget>[
         TrackWidget(future: widget.renderings.track),
