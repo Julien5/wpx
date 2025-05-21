@@ -44,16 +44,16 @@ class TrackWidgetState extends State<TrackWidget> {
 
   @override
   void didUpdateWidget(covariant TrackWidget oldWidget) {
-    debugPrint("didUpdateWidget");
+    final renderings = RenderingsModel.of(context);
+    developer.log("DID UPDATE ${renderings.track.segment.id()}");
+    start();
     super.didUpdateWidget(oldWidget);
   }
 
-  @override
+  @override // needed ?
   void didChangeDependencies() {
     final renderings = RenderingsModel.of(context);
-    developer.log(
-      "didChangeDependencies ID:${renderings.track.segment.id()} ID:${renderings.waypoints.segment.id()}",
-    );
+    developer.log("DID CHANGE DEPS ${renderings.track.segment.id()}");
     start();
     super.didChangeDependencies();
   }
@@ -67,7 +67,6 @@ class TrackWidgetState extends State<TrackWidget> {
     } else {
       sender = renderings.waypoints;
     }
-    developer.log("buildd1 ${sender.currentEpsilon()}...");
     return ListenableBuilder(
       listenable: sender,
       builder: (context, _) {
@@ -79,17 +78,15 @@ class TrackWidgetState extends State<TrackWidget> {
   Widget? child;
 
   Widget buildWorker(BuildContext context, FutureRendering future) {
-    developer.log("SVG ..");
-
     if (child == null) {
       child = Text("starting ${future.currentEpsilon()}...");
     }
 
     if (future.done()) {
-      developer.log("SVG .. ${future.result().length}");
+      developer.log("SVG ${widget.trackData} ${future.segment.id()} ${future.result().length}");
       child = SvgPicture.string(future.result(), width: 600, height: 150);
     }
-    ensureStart();
+    //ensureStart();
     return SizedBox(width: 600.0, child: Column(children: [child!]));
   }
 }
@@ -105,11 +102,11 @@ class _SegmentStackState extends State<SegmentStack> {
   @override
   Widget build(BuildContext context) {
     final renderings = RenderingsModel.of(context);
-    developer.log("build2 ${renderings.track.currentEpsilon()}...");
     return Stack(
       children: <Widget>[
         TrackWidget(trackData: TrackData.track),
         TrackWidget(trackData: TrackData.waypoints),
+        Text("ID:${renderings.track.segment.id()}"),
       ],
     );
   }
