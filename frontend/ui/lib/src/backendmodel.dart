@@ -14,41 +14,32 @@ class BackendNotifier extends ChangeNotifier {
 enum TrackData { track, waypoints }
 
 class FutureRendering extends ChangeNotifier {
-  FSegment segment;
-  TrackData trackData;
-  Frontend frontend;
+  final FSegment segment;
+  final TrackData trackData;
+  final Frontend _frontend;
   Future<String>? future;
   String? _result;
-  double epsilon = 0;
 
   FutureRendering({
-    required this.frontend,
+    required Frontend frontend,
     required this.segment,
     required this.trackData,
-  });
-
-  bool equal(FutureRendering other) {
-    return epsilon == other.epsilon &&
-        segment.id() == other.segment.id() &&
-        trackData == other.trackData &&
-        _result == other._result;
-  }
-
-  double currentEpsilon() {
-    return epsilon;
-  }
+  }) : _frontend = frontend;
 
   void start() {
-    epsilon = frontend.epsilon();
     if (trackData == TrackData.track) {
       developer.log("START track rendering for ${segment.id()}");
-      future = frontend.renderSegmentTrack(segment: segment);
+      future = _frontend.renderSegmentTrack(segment: segment);
     } else {
       developer.log("START waypoints rendering for ${segment.id()}");
-      future = frontend.renderSegmentWaypoints(segment: segment);
+      future = _frontend.renderSegmentWaypoints(segment: segment);
     }
     future!.then((value) => onCompleted(value));
     notifyListeners();
+  }
+
+  BigInt id() {
+    return segment.id();
   }
 
   void reset() {
@@ -85,33 +76,34 @@ class FutureRendering extends ChangeNotifier {
   }
 }
 
-class RenderingsModel extends InheritedWidget {
+class Segment extends InheritedWidget {
   final FutureRendering track;
   final FutureRendering waypoints;
-  const RenderingsModel({
+  const Segment({
     super.key,
     required super.child,
     required this.track,
     required this.waypoints,
   });
 
-  @override
-  bool updateShouldNotify(covariant InheritedWidget other) {
-    debugPrint("updateShouldNotify");
-    return true;
-    //var eq = track.equal(other.track) && waypoints.equal(other.waypoints);
-    //    return !eq;
+  BigInt id() {
+    return track.segment.id();
   }
 
-  static RenderingsModel? maybeOf(BuildContext context) {
-    debugPrint("RenderingsModel maybeOf");
-    return context.dependOnInheritedWidgetOfExactType<RenderingsModel>();
+  static Segment? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<Segment>();
   }
 
-  static RenderingsModel of(BuildContext context) {
-    final RenderingsModel? ret = maybeOf(context);
+  static Segment of(BuildContext context) {
+    final Segment? ret = maybeOf(context);
     assert(ret != null);
     return ret!;
+  }
+  
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    assert(false);
+    throw UnimplementedError();
   }
 }
 
@@ -162,8 +154,8 @@ class BackendModel extends InheritedWidget {
     );
   }
 
-  RenderingsModel createRenderingsModel(FSegment segment, Widget child) {
-    return RenderingsModel(
+  Segment createRenderingsModel(FSegment segment, Widget child) {
+    return Segment(
       track: _renderSegmentTrack(segment),
       waypoints: _renderSegmentWaypoints(segment),
       child: child,

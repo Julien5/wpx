@@ -16,6 +16,7 @@ class TrackWidgetState extends State<TrackWidget> {
   @override
   void initState() {
     super.initState();
+    developer.log("TrackWidgetState init state");
     ensureStart();
   }
 
@@ -29,7 +30,7 @@ class TrackWidgetState extends State<TrackWidget> {
     if (!mounted) {
       return;
     }
-    final renderings = RenderingsModel.of(context);
+    final renderings = Segment.of(context);
     if (widget.trackData == TrackData.track) {
       if (renderings.track.needsStart()) {
         renderings.track.start();
@@ -43,24 +44,8 @@ class TrackWidgetState extends State<TrackWidget> {
   }
 
   @override
-  void didUpdateWidget(covariant TrackWidget oldWidget) {
-    final renderings = RenderingsModel.of(context);
-    developer.log("DID UPDATE ${renderings.track.segment.id()}");
-    start();
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override // needed ?
-  void didChangeDependencies() {
-    final renderings = RenderingsModel.of(context);
-    developer.log("DID CHANGE DEPS ${renderings.track.segment.id()}");
-    start();
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final renderings = RenderingsModel.of(context);
+    final renderings = Segment.of(context);
     FutureRendering? sender;
     if (widget.trackData == TrackData.track) {
       sender = renderings.track;
@@ -79,14 +64,16 @@ class TrackWidgetState extends State<TrackWidget> {
 
   Widget buildWorker(BuildContext context, FutureRendering future) {
     if (child == null) {
-      child = Text("starting ${future.currentEpsilon()}...");
+      developer.log("START ${widget.trackData} ${future.id()}");
+      child = Text("START ${widget.trackData} ${future.segment.id()}");
     }
 
     if (future.done()) {
-      developer.log("SVG ${widget.trackData} ${future.segment.id()} ${future.result().length}");
+      developer.log("SVG DONE ${widget.trackData} ${future.id()}");
       child = SvgPicture.string(future.result(), width: 600, height: 150);
     }
-    //ensureStart();
+    developer.log("TrackWidgetState buildWorker");
+    ensureStart();
     return SizedBox(width: 600.0, child: Column(children: [child!]));
   }
 }
@@ -101,12 +88,12 @@ class SegmentStack extends StatefulWidget {
 class _SegmentStackState extends State<SegmentStack> {
   @override
   Widget build(BuildContext context) {
-    final renderings = RenderingsModel.of(context);
+    final renderings = Segment.of(context);
     return Stack(
       children: <Widget>[
         TrackWidget(trackData: TrackData.track),
         TrackWidget(trackData: TrackData.waypoints),
-        Text("ID:${renderings.track.segment.id()}"),
+        Text("ID:${renderings.id()}"),
       ],
     );
   }

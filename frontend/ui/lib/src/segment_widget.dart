@@ -15,8 +15,8 @@ class SegmentWidget extends StatefulWidget {
 class _SegmentWidgetState extends State<SegmentWidget> {
   @override
   Widget build(BuildContext context) {
-    final renderings=RenderingsModel.of(context);
-    developer.log("build4 ${renderings.track.currentEpsilon()}...");
+    final renderings=Segment.of(context);
+    developer.log("[build segment widget] ${renderings.id()}...");
     return Column(
       children: [
         Container(

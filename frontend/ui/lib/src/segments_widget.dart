@@ -13,7 +13,7 @@ class SegmentsWidget extends StatefulWidget {
 }
 
 class SegmentsWidgetState extends State<SegmentsWidget> {
-  List<RenderingsModel> segments = [];
+  List<Segment> segments = [];
 
   @override
   void initState() {
@@ -40,7 +40,6 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
         model.waypoints.reset();
       }
     }
-    developer.log("made ${segments.length} segments");
     setState(() {});
   }
 
