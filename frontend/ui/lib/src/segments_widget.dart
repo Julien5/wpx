@@ -21,7 +21,7 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
   @override
   Widget build(BuildContext context) {
     assert(BackendModel.maybeOf(context) != null);
-    FrontendNotifier notifier = BackendModel.of(context).notifier;
+    BackendNotifier notifier = BackendModel.of(context).notifier;
     BackendModel backend = BackendModel.of(context);
     return ListenableBuilder(
       listenable: notifier,

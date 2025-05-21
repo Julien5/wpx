@@ -18,7 +18,7 @@ Future<void> main() async {
   await RustLib.init();
   Frontend instance = await Frontend.create();
   developer.log("frontend loaded");
-  FrontendNotifier notifier =  FrontendNotifier(frontend:instance);
+  BackendNotifier notifier =  BackendNotifier(frontend:instance);
   runApp(BackendModel(notifier:notifier, child: const MyApp()));
 }
 

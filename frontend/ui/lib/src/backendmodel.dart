@@ -3,52 +3,48 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:ui/src/rust/api/frontend.dart';
 
-class FrontendNotifier extends ChangeNotifier {
+class BackendNotifier extends ChangeNotifier {
   final Frontend frontend;
-  FrontendNotifier({required this.frontend});
+  BackendNotifier({required this.frontend});
   void notify() {
     notifyListeners();
   }
 }
 
 class BackendModel extends InheritedWidget {
-  final FrontendNotifier notifier;
+  final BackendNotifier notifier;
   //final String frontend;
 
   const BackendModel({super.key, required this.notifier, required super.child});
 
-  Frontend frontend() {
+  Frontend _frontend() {
     return notifier.frontend;
   }
 
   void incrementDelta() {
-    frontend().changeParameter(eps: 10.0);
+    _frontend().changeParameter(eps: 10.0);
     notifier.notify();
   }
 
   void decrementDelta() {
-    frontend().changeParameter(eps: -10.0);
+    _frontend().changeParameter(eps: -10.0);
     notifier.notify();
   }
 
   double epsilon() {
-    return frontend().epsilon();
+    return _frontend().epsilon();
   }
-
-  String value() {
-    return "HI";
-  }
-
+  
   List<FSegment> segments() {
-    return frontend().segments();
+    return _frontend().segments();
   }
 
   String renderSegmentWaypoints(FSegment segment) {
-    return frontend().renderSegmentWaypointsSync(segment: segment);
+    return _frontend().renderSegmentWaypointsSync(segment: segment);
   }
 
   Future<String> renderSegmentTrack(FSegment segment) {
-    return frontend().renderSegmentTrack(segment: segment);
+    return _frontend().renderSegmentTrack(segment: segment);
   }
 
   @override
