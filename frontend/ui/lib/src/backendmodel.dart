@@ -14,21 +14,55 @@ class BackendNotifier extends ChangeNotifier {
 enum TrackData { track, waypoints }
 
 class FutureRendering extends ChangeNotifier {
-  final Future<String> future;
-  final double currentEpsilon;
+  FSegment segment;
+  TrackData trackData;
+  Frontend frontend;
+  Future<String>? future;
   String? _result;
 
-  FutureRendering({required this.future, required this.currentEpsilon}) {
-    future.then((value) => onCompleted(value));
+  FutureRendering({
+    required this.frontend,
+    required this.segment,
+    required this.trackData,
+  });
+
+  double currentEpsilon() {
+    return frontend.epsilon();
+  }
+
+  void start() {
+    developer.log("START future");
+    if (trackData == TrackData.track) {
+      future = frontend.renderSegmentTrack(segment: segment);
+    } else {
+      future = frontend.renderSegmentWaypoints(segment: segment);
+    }
+    future!.then((value) => onCompleted(value));
+    notifyListeners();
+  }
+
+  void reset() {
+    future = null;
+    _result = null;
+    notifyListeners();
+  }
+
+  bool started() {
+    return future != null;
   }
 
   void onCompleted(String value) {
     _result = value;
+    future = null;
     notifyListeners();
   }
 
   bool done() {
     return _result != null;
+  }
+
+  bool running() {
+    return future != null && _result == null;
   }
 
   String result() {
@@ -70,15 +104,17 @@ class BackendModel extends InheritedWidget {
 
   FutureRendering renderSegmentWaypoints(FSegment segment) {
     return FutureRendering(
-      future: _frontend().renderSegmentWaypoints(segment: segment),
-      currentEpsilon: _frontend().epsilon()
+      frontend: _frontend(),
+      segment: segment,
+      trackData: TrackData.waypoints,
     );
   }
 
   FutureRendering renderSegmentTrack(FSegment segment) {
     return FutureRendering(
-      future: _frontend().renderSegmentTrack(segment: segment),
-      currentEpsilon: _frontend().epsilon()
+      frontend: _frontend(),
+      segment: segment,
+      trackData: TrackData.track,
     );
   }
 

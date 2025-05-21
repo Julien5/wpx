@@ -113,12 +113,14 @@ impl Backend {
         ret
     }
     pub fn render_segment_track(&mut self, segment: &Segment) -> String {
+        println!("render_segment_track:{}", segment.id);
         let range = &segment.range;
         self.enrichWaypoints();
         let viewBox = ViewBox::from_track(&self.track, &range);
         render::track_profile(&self.track, &range, &viewBox)
     }
     pub fn render_segment_waypoints(&mut self, segment: &Segment) -> String {
+        println!("render_segment_waypoints:{}", segment.id);
         let range = &segment.range;
         self.enrichWaypoints();
         let viewBox = ViewBox::from_track(&self.track, &range);

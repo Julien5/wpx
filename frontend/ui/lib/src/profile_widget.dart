@@ -16,11 +16,30 @@ class TrackWidgetState extends State<TrackWidget> {
   @override
   void initState() {
     super.initState();
+    widget.future.start();
   }
 
   @override
+  void didUpdateWidget(covariant TrackWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    developer.log("didUpdateWidget");
+    if (!widget.future.started() && !widget.future.done()) {
+      widget.future.start();
+    }
+  }
+
+  /*@override
+  void didChangeDependencies() {
+    developer.log("didChangeDependencies");
+    super.didChangeDependencies();
+    if (!widget.future.started() && !widget.future.done()) {
+      widget.future.start();
+    }
+  }*/
+
+  @override
   Widget build(BuildContext context) {
-    developer.log("build1 ${widget.future.currentEpsilon}...");
+    developer.log("buildd1 ${widget.future.currentEpsilon}...");
     return ListenableBuilder(
       listenable: widget.future,
       builder: (context, _) {
@@ -29,19 +48,27 @@ class TrackWidgetState extends State<TrackWidget> {
     );
   }
 
+  Widget? child;
+
   Widget buildWorker(BuildContext context) {
-    developer.log("build2 ${widget.future.currentEpsilon}...");
-    Widget child;
-    if (!widget.future.done()) {
-      child = Text("loading ${widget.future.currentEpsilon}...");
-    } else {
+    developer.log("SVG ..");
+    if (child == null) {
+      child = Text("starting ${widget.future.currentEpsilon()}...");
+    }
+
+    if (!widget.future.done() && !widget.future.started()) {
+      widget.future.start();
+    }
+
+    if (widget.future.done()) {
+      developer.log("SVG .. ${widget.future.result().length}");
       child = SvgPicture.string(
         widget.future.result(),
         width: 600,
         height: 150,
       );
     }
-    return SizedBox(width: 600.0, child: Column(children: [child]));
+    return SizedBox(width: 600.0, child: Column(children: [child!]));
   }
 }
 

@@ -32,13 +32,16 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
       for (var segment in S) {
         var track = backend.renderSegmentTrack(segment);
         var wp = backend.renderSegmentWaypoints(segment);
-        segments.add(SegmentWidget(renderings:Renderings(track: track, waypoints: wp)));
+        track.start();
+        segments.add(
+          SegmentWidget(renderings: Renderings(track: track, waypoints: wp)),
+        );
       }
     } else {
-      for (int i=0; i<S.length; i++) {
-        var wp = backend.renderSegmentWaypoints(S[i]);
+      for (int i = 0; i < S.length; i++) {
+        //var wp = backend.renderSegmentWaypoints(S[i]);
         // this is where we need something like: segments[i].update();
-        segments[i].renderings.waypoints=wp;
+        segments[i].renderings.waypoints.reset();
       }
     }
     developer.log("made ${segments.length} segments");
@@ -62,7 +65,7 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
   @override
   Widget build(BuildContext context) {
     BackendModel backend = BackendModel.of(context);
-    developer.log("[segments] [buildWorker] delta=${backend.epsilon()}");
+    developer.log("[segments] [build] delta=${backend.epsilon()}");
     if (segments.isEmpty) {
       return Text("segments is empty");
     }
