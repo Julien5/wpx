@@ -10,29 +10,36 @@ import 'package:window_size/window_size.dart';
 Future<void> main() async {
   developer.log("START");
   WidgetsFlutterBinding.ensureInitialized();
+  
   if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
     setWindowTitle('WPX');
-    setWindowMinSize(const Size(700, 700));
-    setWindowMaxSize(const Size(700, 700));
+    setWindowMinSize(const Size(700, 400));
+    setWindowMaxSize(const Size(700, 400));
   }
+  
   await RustLib.init();
   Frontend instance = await Frontend.create();
   developer.log("frontend loaded");
-  BackendNotifier notifier =  BackendNotifier(frontend:instance);
-  runApp(BackendModel(notifier:notifier, child: const MyApp()));
+  runApp(MyApp(frontend: instance,));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Frontend frontend;
+  const MyApp({super.key,required this.frontend});
 
   @override
   Widget build(BuildContext context) {
-    BackendModel backend = BackendModel.of(context);
-    return MaterialApp(
-      home: Scaffold(
+    var scaffold=Scaffold(
         appBar: AppBar(title: const Text('WPX')),
-        body: SegmentsWidget(key:ValueKey(backend.epsilon())),
-      ),
+        body: SegmentsWidget(key:ValueKey(frontend.epsilon())),
+      );
+    var home=SegmentsProvider(
+      notifier: FrontendNotifier(frontend: frontend),
+      child: scaffold,
+    );
+
+    return MaterialApp(
+      home: home
     );
   }
 }

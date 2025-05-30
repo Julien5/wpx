@@ -33,9 +33,13 @@ impl Frontend {
         self.backend.render_waypoints()
     }
     pub async fn renderSegmentTrack(&mut self, segment: &FSegment) -> String {
+        let delay = std::time::Duration::from_millis(750);
+        std::thread::sleep(delay);
         self.backend.render_segment_track(&segment._backend)
     }
     pub async fn renderSegmentWaypoints(&mut self, segment: &FSegment) -> String {
+        let delay = std::time::Duration::from_millis(750);
+        std::thread::sleep(delay);
         self.backend.render_segment_waypoints(&segment._backend)
     }
     #[frb(sync)]

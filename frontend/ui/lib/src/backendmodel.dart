@@ -3,21 +3,13 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:ui/src/rust/api/frontend.dart';
 
-class BackendNotifier extends ChangeNotifier {
-  final Frontend frontend;
-  BackendNotifier({required this.frontend});
-  void notify() {
-    notifyListeners();
-  }
-}
-
 enum TrackData { track, waypoints }
 
-class FutureRendering extends ChangeNotifier {
+class FutureRendering with ChangeNotifier {
   final FSegment segment;
   final TrackData trackData;
   final Frontend _frontend;
-  Future<String>? future;
+  Future<String>? _future;
   String? _result;
 
   FutureRendering({
@@ -27,15 +19,14 @@ class FutureRendering extends ChangeNotifier {
   }) : _frontend = frontend;
 
   void start() {
+    developer.log("START rendering for ${segment.id()} $trackData");
     if (trackData == TrackData.track) {
-      developer.log("START track rendering for ${segment.id()}");
-      future = _frontend.renderSegmentTrack(segment: segment);
+      _future = _frontend.renderSegmentTrack(segment: segment);
     } else {
-      developer.log("START waypoints rendering for ${segment.id()}");
-      future = _frontend.renderSegmentWaypoints(segment: segment);
+      _future = _frontend.renderSegmentWaypoints(segment: segment);
     }
-    future!.then((value) => onCompleted(value));
     notifyListeners();
+    _future!.then((value) => onCompleted(value));
   }
 
   BigInt id() {
@@ -43,13 +34,16 @@ class FutureRendering extends ChangeNotifier {
   }
 
   void reset() {
-    future = null;
+    _future = null;
     _result = null;
+    developer.log(
+      "[future rendering] notify for id ${segment.id()} and $trackData",
+    );
     notifyListeners();
   }
 
   bool started() {
-    return future != null;
+    return _future != null;
   }
 
   bool needsStart() {
@@ -58,7 +52,8 @@ class FutureRendering extends ChangeNotifier {
 
   void onCompleted(String value) {
     _result = value;
-    future = null;
+    _future = null;
+    developer.log("DONE rendering for ${segment.id()} $trackData");
     notifyListeners();
   }
 
@@ -72,41 +67,51 @@ class FutureRendering extends ChangeNotifier {
   }
 }
 
-class Segment extends InheritedWidget {
-  final FutureRendering track;
-  final FutureRendering waypoints;
-  const Segment({
-    super.key,
-    required super.child,
-    required this.track,
-    required this.waypoints,
-  });
-
-  BigInt id() {
-    return track.segment.id();
-  }
-
-  static Segment? maybeOf(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<Segment>();
-  }
-
-  static Segment of(BuildContext context) {
-    final Segment? ret = maybeOf(context);
-    assert(ret != null);
-    return ret!;
-  }
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    developer.log("UPDATE SHOULD NOTIFY");
-    return true;
+class FrontendNotifier extends ChangeNotifier {
+  final Frontend frontend;
+  FrontendNotifier({required this.frontend});
+  void notify() {
+    notifyListeners();
   }
 }
 
-class BackendModel extends InheritedWidget {
-  final BackendNotifier notifier;
+class Renderings {
+  final FutureRendering track;
+  final FutureRendering waypoints;
+  const Renderings({
+    required this.track,
+    required this.waypoints,
+  });
+  BigInt id() {
+    return track.segment.id();
+  }
+}
 
-  const BackendModel({super.key, required this.notifier, required super.child});
+class RenderingsProvider extends InheritedWidget {
+  final Renderings renderings;
+  const RenderingsProvider({super.key, required super.child, required this.renderings});
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    // i dont understand this.
+
+    assert(false);
+    return true;
+  }
+  static RenderingsProvider of(BuildContext context) {
+    final RenderingsProvider? ret = context.dependOnInheritedWidgetOfExactType<RenderingsProvider>();
+    assert(ret != null);
+    return ret!;
+  }
+}
+
+class SegmentsProvider extends InheritedWidget {
+  final FrontendNotifier notifier;
+  const SegmentsProvider({
+    super.key,
+    required super.child,
+    required this.notifier,
+  });
 
   Frontend _frontend() {
     return notifier.frontend;
@@ -120,10 +125,6 @@ class BackendModel extends InheritedWidget {
   void decrementDelta() {
     _frontend().changeParameter(eps: -10.0);
     notifier.notify();
-  }
-
-  double epsilon() {
-    return _frontend().epsilon();
   }
 
   List<FSegment> segments() {
@@ -150,27 +151,24 @@ class BackendModel extends InheritedWidget {
     );
   }
 
-  Segment createRenderingsModel(FSegment segment, Widget child) {
-    return Segment(
+  Renderings createRenderings(FSegment segment) {
+    return Renderings(
       track: _renderSegmentTrack(segment),
       waypoints: _renderSegmentWaypoints(segment),
-      child: child,
     );
   }
-
   @override
-  bool updateShouldNotify(covariant BackendModel oldWidget) {
-    var ret = oldWidget.epsilon() != epsilon();
-    developer.log("update=$ret");
-    return ret;
+  bool updateShouldNotify(covariant SegmentsProvider oldWidget) {
+    // i dont understand this.
+    return true;
   }
 
-  static BackendModel? maybeOf(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<BackendModel>();
+  static SegmentsProvider? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<SegmentsProvider>();
   }
 
-  static BackendModel of(BuildContext context) {
-    final BackendModel? ret = maybeOf(context);
+  static SegmentsProvider of(BuildContext context) {
+    final SegmentsProvider? ret = maybeOf(context);
     assert(ret != null);
     return ret!;
   }

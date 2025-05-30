@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/counter.dart';
-import 'package:ui/src/segment_widget.dart';
+import 'package:ui/src/segment_stack.dart';
 
 class SegmentsWidget extends StatefulWidget {
   const SegmentsWidget({super.key});
@@ -13,7 +13,8 @@ class SegmentsWidget extends StatefulWidget {
 }
 
 class SegmentsWidgetState extends State<SegmentsWidget> {
-  List<Segment> segments = [];
+  final List<RenderingsProvider> _segments = [];
+  SegmentsProvider? provider;
 
   @override
   void initState() {
@@ -23,54 +24,86 @@ class SegmentsWidgetState extends State<SegmentsWidget> {
     });
   }
 
+  void postInit() {
+    if (provider != null) {
+      return;
+    }
+    provider = SegmentsProvider.of(context);
+    provider!.notifier.addListener(() {
+      onSegmentsChanged();
+    });
+  }
+
+  @override
+  void dispose() {
+    provider!.notifier.removeListener(() {
+      onSegmentsChanged();
+    });
+    super.dispose();
+  }
+
+  void onSegmentsChanged() {
+    updateSegments();
+  }
+
+  // called immediately after initState() with safe context.
+  @override
+  void didChangeDependencies() {
+    developer.log("[didChangeDependencies]");
+    postInit();
+    super.didChangeDependencies();
+  }
+
   void updateSegments() {
-    BackendModel backend = BackendModel.of(context);
-    var S = backend.segments();
-    if (S.length != segments.length) {
-      segments.clear();
+    var segmentsProvider = SegmentsProvider.of(context);
+    var S = segmentsProvider.segments();
+    if (S.length != _segments.length) {
+      _segments.clear();
       for (var segment in S) {
-        var model = backend.createRenderingsModel(segment, SegmentWidget());
-        segments.add(model);
+        var provider = RenderingsProvider(
+          renderings: segmentsProvider.createRenderings(segment),
+          child: SegmentStack(),
+        );
+        _segments.add(provider);
       }
     } else {
-      for (var model in segments) {
-        model.waypoints.reset();
+      for (var segment in _segments) {
+        segment.renderings.waypoints.reset();
       }
     }
     setState(() {});
   }
 
   void makeMorePoints() {
-    BackendModel backend = BackendModel.of(context);
+    var backend = SegmentsProvider.of(context);
     backend.decrementDelta();
-    developer.log("delta=${backend.epsilon()}");
-    updateSegments();
   }
 
   void makeLessPoints() {
-    BackendModel backend = BackendModel.of(context);
+    var backend = SegmentsProvider.of(context);
     backend.incrementDelta();
-    developer.log("delta=${backend.epsilon()}");
-    updateSegments();
   }
 
   @override
   Widget build(BuildContext context) {
-    BackendModel backend = BackendModel.of(context);
-    developer.log("[segments] [build] delta=${backend.epsilon()}");
-    if (segments.isEmpty) {
+    developer.log("[segments] [build] #segments=${_segments.length}");
+    if (_segments.isEmpty) {
       return Text("segments is empty");
     }
     return Column(
       children: [
-        PressButton(label: "more", onCounterPressed: makeMorePoints),
-        PressButton(label: "less", onCounterPressed: makeLessPoints),
+        Row(
+          children: [
+            PressButton(label: "more", onCounterPressed: makeMorePoints),
+            PressButton(label: "less", onCounterPressed: makeLessPoints),
+          ],
+        ),
         Expanded(
           child: ListView.separated(
-            itemCount: segments.length,
+            itemCount: _segments.length,
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, index) {
-              return segments[index];
+              return _segments[index];
             },
           ),
         ),
