@@ -1,10 +1,9 @@
-import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ui/src/backendmodel.dart';
 
 class FutureRenderingWidget extends StatefulWidget {
-  final FutureRendering future;
+  final FutureRenderer future;
   const FutureRenderingWidget({super.key, required this.future});
 
   @override
@@ -19,23 +18,22 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
     width: 600.0,
     height: 150.0,
     decoration: BoxDecoration(
-      color: Colors.grey.withAlpha(150), // Set the background color to gray
+      color: Colors.grey.withAlpha(150),
     ),
   );
 }
   @override
   Widget build(BuildContext context) {
-    developer.log("[FutureRenderingWidget] [build] ${widget.future.id()}");
     if (widget.future.done()) {
       svg = SvgPicture.string(widget.future.result(), width: 600, height: 150);
     }
     if (!widget.future.done() && svg == null) {
-      return Text("starting");
+      return Text("starting ${widget.future.trackData} ${widget.future.id()}");
     }
 
     if (!widget.future.done()) {
       return Stack(
-        children: <Widget>[grayBackground(),Text("loading ${widget.future.id()}"), svg!],
+        children: <Widget>[grayBackground(),Text("updating ${widget.future.trackData} ${widget.future.id()}"), svg!],
       );
     }
     return svg!;

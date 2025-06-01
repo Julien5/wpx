@@ -1,118 +1,65 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/future_rendering_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class SegmentStack extends StatefulWidget {
+class SegmentStack extends StatelessWidget {
   const SegmentStack({super.key});
 
   @override
-  State<SegmentStack> createState() => _SegmentStackState();
+  Widget build(BuildContext context) {
+    return Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]);
+  }
 }
 
-class _SegmentStackState extends State<SegmentStack> {
-  RenderingsProvider? provider;
-  double visibility = 0;
+class TrackConsumer extends StatelessWidget {
+  const TrackConsumer({super.key});
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  void postInit() {
-    if (provider != null) {
-      return;
-    }
-    provider ??= RenderingsProvider.of(context);
-    provider!.renderings.track.addListener(() {
-      onTrackChanged();
-    });
-    provider!.renderings.waypoints.addListener(() {
-      onWaypointsChanged();
-    });
-  }
-
-  @override
-  void dispose() {
-    provider!.renderings.track.removeListener(() {
-      onTrackChanged();
-    });
-    provider!.renderings.waypoints.removeListener(() {
-      onWaypointsChanged();
-    });
-    super.dispose();
-  }
-
-  // called immediately after initState() with safe context.
-  @override
-  void didChangeDependencies() {
-    developer.log("[didChangeDependencies]");
-    postInit();
-    super.didChangeDependencies();
-  }
-
-  void onTrackChanged() {
-    developer.log("[on track changed]");
-    if (!mounted) {
-      return;
-    }
-    update();
-  }
-
-  void onWaypointsChanged() {
-    developer.log("[on WP changed]");
-    if (!mounted) {
-      return;
-    }
-    update();
-  }
-
-  void update() {
-    developer.log("[update]");
-    if (!mounted) {
-      return;
-    }
-    if (visibility < 0.50) {
-      return;
-    }
-    RenderingsProvider provider = RenderingsProvider.of(context);
-    if (provider.renderings.track.needsStart()) {
-      provider.renderings.track.start();
-    }
-    if (provider.renderings.waypoints.needsStart()) {
-      provider.renderings.waypoints.start();
-    }
-    setState(() {});
-  }
-
-  void onVisibilityChanged(VisibilityInfo info) {
-    developer.log("[on vis changed] ${info.visibleFraction}");
-    if (!mounted) {
-      return;
-    }
-    visibility = info.visibleFraction;
-    update();
-  }
-
-  FutureRenderingWidget createFutureRenderingWidget(FutureRendering future) {
-    return FutureRenderingWidget(future: future);
-  }
-
-  Widget createWaypointsWidget(FutureRendering future) {
-    return VisibilityDetector(
-      key: Key('id:${future.id()}'),
-      onVisibilityChanged: onVisibilityChanged,
-      child: FutureRenderingWidget(future: future),
+  Widget build(BuildContext ctx) {
+    return Consumer<TrackRenderer>(
+      builder: (context, trackRendering, child) {
+        return FutureRenderingWidget(future: trackRendering);
+      },
     );
   }
+}
+
+class WaypointsConsumer extends StatefulWidget {
+  const WaypointsConsumer({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final r = RenderingsProvider.of(context);
-    Widget trackWidget = FutureRenderingWidget(future: r.renderings.track);
-    Widget waypointsWidget = createWaypointsWidget(r.renderings.waypoints);
-    return Stack(children: <Widget>[trackWidget, waypointsWidget]);
+  State<WaypointsConsumer> createState() => _WaypointsConsumerState();
+}
+
+class _WaypointsConsumerState extends State<WaypointsConsumer> {
+  double visibility = 0;
+
+  void onVisibilityChanged(VisibilityInfo info) {
+    if (!mounted) {
+      return;
+    }
+    WaypointsRenderer wp=Provider.of<WaypointsRenderer>(context,listen:false);
+    developer.log("[waypoint consumer] id:${wp.id()} vis:${info.visibleFraction}");
+    wp.updateVisibility(info.visibleFraction);
+  }
+
+  @override
+  Widget build(BuildContext ctx) {
+    return Consumer<WaypointsRenderer>(
+      builder: (context, waypointsRendering, child) {
+        // It would be more accurate to check visibility with a scroll controller
+        // at the list view level. Because "Callbacks are not fired immediately 
+        // on visibility changes."
+        return VisibilityDetector(
+          key: Key('id:${waypointsRendering.id()}'),
+          onVisibilityChanged: onVisibilityChanged,
+          child: FutureRenderingWidget(future: waypointsRendering),
+        );
+      },
+    );
   }
 }

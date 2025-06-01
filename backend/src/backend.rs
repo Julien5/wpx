@@ -37,14 +37,12 @@ impl Backend {
                 _ => {}
             }
         }
-        println!("add automatic waypoints with {}", self._epsilon);
         let indexes = self.track.interesting_indexes(self._epsilon);
         for idx in indexes {
             let wgs = self.track.wgs84[idx].clone();
             let utm = self.track.utm[idx].clone();
             waypoints.push(gpsdata::Waypoint::from_track(wgs, utm, idx));
         }
-        println!("project waypoints");
         let indexes = project::nearest_neighboor(&self.track.utm, &self.waypoints);
         debug_assert_eq!(self.waypoints.len(), indexes.len());
         for k in 0..indexes.len() {
@@ -143,7 +141,6 @@ pub fn worker(filename: &str) {
         let utm = track.utm[idx].clone();
         waypoints.push(gpsdata::Waypoint::from_track(wgs, utm, idx));
     }
-    println!("project waypoints");
     let indexes = project::nearest_neighboor(&track.utm, &waypoints);
     debug_assert_eq!(waypoints.len(), indexes.len());
     for k in 0..indexes.len() {

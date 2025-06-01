@@ -1,113 +1,99 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/counter.dart';
 import 'package:ui/src/segment_stack.dart';
 
-class SegmentsWidget extends StatefulWidget {
-  const SegmentsWidget({super.key});
+class SegmentsView extends StatefulWidget {
+  final SegmentsProvider? segmentsProvider;
+  const SegmentsView({super.key, this.segmentsProvider});
 
   @override
-  State<SegmentsWidget> createState() => SegmentsWidgetState();
+  State<SegmentsView> createState() => SegmentsViewState();
 }
 
-class SegmentsWidgetState extends State<SegmentsWidget> {
+RenderingsProvider createRenderingsProviders(Renderers r, Widget child) {
+  return RenderingsProvider(r, child);
+}
+
+class SegmentsViewState extends State<SegmentsView> {
   final List<RenderingsProvider> _segments = [];
-  SegmentsProvider? provider;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      updateSegments();
-    });
+    _initRenderingProviders(widget.segmentsProvider!);
   }
 
-  void postInit() {
-    if (provider != null) {
-      return;
-    }
-    provider = SegmentsProvider.of(context);
-    provider!.notifier.addListener(() {
-      onSegmentsChanged();
-    });
-  }
-
-  @override
-  void dispose() {
-    provider!.notifier.removeListener(() {
-      onSegmentsChanged();
-    });
-    super.dispose();
-  }
-
-  void onSegmentsChanged() {
-    updateSegments();
-  }
-
-  // called immediately after initState() with safe context.
-  @override
-  void didChangeDependencies() {
-    developer.log("[didChangeDependencies]");
-    postInit();
-    super.didChangeDependencies();
-  }
-
-  void updateSegments() {
-    var segmentsProvider = SegmentsProvider.of(context);
+  void _initRenderingProviders(SegmentsProvider segmentsProvider) {
     var S = segmentsProvider.segments();
-    if (S.length != _segments.length) {
-      _segments.clear();
-      for (var segment in S) {
-        var provider = RenderingsProvider(
-          renderings: segmentsProvider.createRenderings(segment),
-          child: SegmentStack(),
-        );
-        _segments.add(provider);
-      }
-    } else {
-      for (var segment in _segments) {
-        segment.renderings.waypoints.reset();
-      }
+    assert(_segments.isEmpty);
+    for (var renderer in S) {
+      var w = createRenderingsProviders(renderer, SegmentStack());
+      w.renderers.trackRendering.start();
+      _segments.add(w);
     }
-    setState(() {});
-  }
-
-  void makeMorePoints() {
-    var backend = SegmentsProvider.of(context);
-    backend.decrementDelta();
-  }
-
-  void makeLessPoints() {
-    var backend = SegmentsProvider.of(context);
-    backend.incrementDelta();
   }
 
   @override
   Widget build(BuildContext context) {
     developer.log("[segments] [build] #segments=${_segments.length}");
-    if (_segments.isEmpty) {
-      return Text("segments is empty");
-    }
-    return Column(
-      children: [
-        Row(
-          children: [
-            PressButton(label: "more", onCounterPressed: makeMorePoints),
-            PressButton(label: "less", onCounterPressed: makeLessPoints),
-          ],
-        ),
-        Expanded(
-          child: ListView.separated(
-            itemCount: _segments.length,
-            separatorBuilder: (context, index) => const Divider(),
-            itemBuilder: (context, index) {
-              return _segments[index];
-            },
-          ),
-        ),
-      ],
+    return ListView.separated(
+      itemCount: _segments.length,
+      separatorBuilder: (context, index) => const Divider(),
+      itemBuilder: (context, index) {
+        return _segments[index];
+      },
     );
+  }
+}
+
+class SegmentsConsumer extends StatelessWidget {
+  const SegmentsConsumer({super.key});
+
+  @override
+  Widget build(BuildContext ctx) {
+    return Consumer<SegmentsProvider>(
+      builder: (context, segmentsProvider, child) {
+        SegmentsProvider provider = Provider.of<SegmentsProvider>(
+          context,
+          listen: false,
+        );
+        return Column(
+          children: [
+            Buttons(more:provider.decrementDelta, less:provider.incrementDelta),
+            Expanded(child: SegmentsView(segmentsProvider: provider)),
+          ],
+        );
+      },
+    );
+  }
+}
+
+
+class Buttons extends StatelessWidget {
+  final VoidCallback more;
+  final VoidCallback less;
+  const Buttons({super.key, required this.more, required this.less});
+
+  @override
+  Widget build(BuildContext ctx) {
+    return Column(
+          children: [
+            Row(
+              children: [
+                PressButton(
+                  label: "more",
+                  onCounterPressed: more,
+                ),
+                PressButton(
+                  label: "less",
+                  onCounterPressed: less,
+                ),
+              ],
+            ),
+          ]);
   }
 }
