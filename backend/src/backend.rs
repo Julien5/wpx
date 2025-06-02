@@ -151,7 +151,6 @@ pub fn worker(filename: &str) {
     for k in 1..waypoints.len() {
         let k1 = waypoints[k].track_index;
         let k0 = waypoints[k - 1].track_index;
-        println!("{}:{}", k0, k1);
         debug_assert!(k1 >= k0);
     }
     println!("render");

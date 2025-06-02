@@ -148,6 +148,7 @@ fn profile(
     filename: &str,
 ) {
     let data = profile_data(geodata, waypoints, range);
+    println!("write {}", filename);
     std::fs::write(filename, data).expect("Unable to write file");
 }
 
@@ -317,7 +318,6 @@ fn points_table(
         if k > 0 {
             let prev = &waypoints[k - 1];
             let pk = prev.track_index;
-            println!("{}:{}", tk, pk);
             debug_assert!(tk >= pk);
             let d0 = track.distance(pk);
             let d1 = track.distance(tk);
