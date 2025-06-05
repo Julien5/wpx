@@ -127,6 +127,48 @@ impl Track {
     }
 }
 
+pub struct ProfileBoundingBox {
+    pub xmin: f64,
+    pub xmax: f64,
+    pub ymin: f64,
+    pub ymax: f64,
+}
+
+fn snap_ceil(x: f64) -> f64 {
+    (x / 100f64).ceil() * 100f64
+}
+
+fn snap_floor(x: f64) -> f64 {
+    (x / 200f64).floor() * 200f64
+}
+
+impl ProfileBoundingBox {
+    pub fn from_track(track: &Track, range: &std::ops::Range<usize>) -> ProfileBoundingBox {
+        let mut ymin = f64::MAX;
+        let mut ymax = f64::MIN;
+        for k in range.start..range.end {
+            let y = track.elevation(k);
+            ymin = y.min(ymin);
+            ymax = y.max(ymax);
+        }
+        let mut p = ProfileBoundingBox {
+            xmin: track.distance(range.start),
+            xmax: track.distance(range.end - 1),
+            ymin: ymin,
+            ymax: ymax,
+        };
+        p.fix_margins();
+        p
+    }
+
+    fn fix_margins(&mut self) {
+        self.xmin = self.xmin - 10000f64;
+        self.xmax = self.xmax + 10000f64;
+        self.ymin = snap_floor(self.ymin - 20f64);
+        self.ymax = snap_ceil(self.ymax + 20f64).max(snap_floor(self.ymin + 1000f64));
+    }
+}
+
 #[derive(Clone)]
 pub enum WaypointOrigin {
     GPX,

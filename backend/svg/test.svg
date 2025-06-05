@@ -1,0 +1,27 @@
+<svg viewBox="0 0 700 700" width="700" height="700" xmlns="http://www.w3.org/2000/svg">
+
+  <path id="world" stroke="black" stroke-width="4" fill="black"
+		d="M0 0 L1000 0 L1000 1000 L0 1000"/>
+  
+  <g id="world" fill="none" transform="translate(50 50)">
+	<path id="world" stroke="black" stroke-width="4" fill="white"
+		  d="M0 0 L600 0 L600 300 L0 300"/>
+	
+	<g id="SL" fill="none" transform="translate(100 200) scale(-1 -1)">
+	  <path id="bg" d="M0 0 L0,200 L100,200 L100,-100 L0,-100 L0,0" stroke="red" stroke-width="4" fill="blue"/>
+	  <path id="test-sl" d="M0 0 L20,20" stroke="red" stroke-width="4"/>
+	</g>
+
+	<g id="SB" fill="none" transform="translate(100 200)">
+	  <path id="bg" d="M0 0 L500,0 L500,100 L0,100 L0,0" stroke="red" stroke-width="4" fill="blue"/>
+	  <path id="test-sb" d="M0 0 L20,20" stroke="red" stroke-width="4"/>
+	</g>
+
+	<g id="SD" fill="none" transform="translate(100 200) scale(1 -1)">
+	  <path id="bg" d="M0 0 L500,0 L500,200 L0,200 L0,0 L0,0" stroke="red" stroke-width="4" fill="blue"/>
+	  <path id="test-sd" d="M0 0 L20,20" stroke="red" stroke-width="4"/>
+	</g>
+
+  </g>
+  
+</svg> 

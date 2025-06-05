@@ -3,11 +3,11 @@
 use std::str::FromStr;
 
 use crate::gpsdata;
+use crate::gpsdata::ProfileBoundingBox;
 use crate::gpsdata::WaypointOrigin;
 use crate::pdf;
 use crate::project;
 use crate::render;
-use crate::render::ViewBox;
 
 pub struct Backend {
     track: gpsdata::Track,
@@ -84,13 +84,13 @@ impl Backend {
     pub fn render_track(&mut self) -> String {
         self.enrichWaypoints();
         let range = 0..self.track.len();
-        let viewBox = ViewBox::from_track(&self.track, &range);
+        let viewBox = ProfileBoundingBox::from_track(&self.track, &range);
         render::track_profile(&self.track, &range, &viewBox)
     }
     pub fn render_waypoints(&mut self) -> String {
         self.enrichWaypoints();
         let range = 0..self.track.len();
-        let viewBox = ViewBox::from_track(&self.track, &range);
+        let viewBox = ProfileBoundingBox::from_track(&self.track, &range);
         render::waypoints_profile(&self.track, &self.waypoints, &range, &viewBox)
     }
     pub fn segments(&self) -> Vec<Segment> {
@@ -114,15 +114,15 @@ impl Backend {
         println!("render_segment_track:{}", segment.id);
         let range = &segment.range;
         self.enrichWaypoints();
-        let viewBox = ViewBox::from_track(&self.track, &range);
-        render::track_profile(&self.track, &range, &viewBox)
+        let bbox = ProfileBoundingBox::from_track(&self.track, &range);
+        render::track_profile(&self.track, &range, &bbox)
     }
     pub fn render_segment_waypoints(&mut self, segment: &Segment) -> String {
         println!("render_segment_waypoints:{}", segment.id);
         let range = &segment.range;
         self.enrichWaypoints();
-        let viewBox = ViewBox::from_track(&self.track, &range);
-        render::waypoints_profile(&self.track, &self.waypoints, &range, &viewBox)
+        let bbox = ProfileBoundingBox::from_track(&self.track, &range);
+        render::waypoints_profile(&self.track, &self.waypoints, &range, &bbox)
     }
 }
 

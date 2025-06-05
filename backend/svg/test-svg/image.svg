@@ -1,0 +1,91 @@
+<svg height="500" viewBox="0 0 1700 500" width="1700" xmlns="http://www.w3.org/2000/svg">
+<g id="world" shape-rendering="crispEdges" transform="translate(5 5)">
+<g id="frame"/>
+<g id="SL" transform="translate(50 350) scale(-1 -1)">
+<text font-family="sans" text-anchor="end" transform="translate(10 -5) scale(-1 -1)">
+0
+</text>
+<text font-family="sans" text-anchor="end" transform="translate(10 45) scale(-1 -1)">
+200
+</text>
+<text font-family="sans" text-anchor="end" transform="translate(10 95) scale(-1 -1)">
+400
+</text>
+<text font-family="sans" text-anchor="end" transform="translate(10 145) scale(-1 -1)">
+600
+</text>
+<text font-family="sans" text-anchor="end" transform="translate(10 195) scale(-1 -1)">
+800
+</text>
+<text font-family="sans" text-anchor="end" transform="translate(10 245) scale(-1 -1)">
+1000
+</text>
+<text font-family="sans" text-anchor="end" transform="translate(10 295) scale(-1 -1)">
+1200
+</text>
+</g>
+<g id="SB" transform="translate(50 350)">
+<text font-family="sans" text-anchor="middle" transform="translate(200 25)">
+0
+</text>
+<text font-family="sans" text-anchor="middle" transform="translate(400 25)">
+20
+</text>
+<text font-family="sans" text-anchor="middle" transform="translate(600 25)">
+40
+</text>
+<text font-family="sans" text-anchor="middle" transform="translate(800 25)">
+60
+</text>
+<text font-family="sans" text-anchor="middle" transform="translate(1000 25)">
+80
+</text>
+<text font-family="sans" text-anchor="middle" transform="translate(1200 25)">
+100
+</text>
+</g>
+<g id="SD" transform="translate(50 350) scale(1 -1) scale(1 1)">
+<path d="M0,0 L0,350 L1350,350 L1350,0 L0,0" fill="lightgray" id="bg"/>
+<path d="M0,0 L1350,0" stroke="black" stroke-width="3"/>
+<path d="M0,0 L0,350" stroke="black" stroke-width="3"/>
+<path d="M0,350 L1350,350" stroke="black" stroke-width="3"/>
+<path d="M1350,0 L1350,350" stroke="black" stroke-width="3"/>
+<path d="M0,25 L1350,25" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,0 L1350,0" stroke="black" stroke-width="1"/>
+<path d="M0,0 L1350,0" stroke="black" stroke-width="1"/>
+<path d="M0,75 L1350,75" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,50 L1350,50" stroke="black" stroke-width="1"/>
+<path d="M0,50 L1350,50" stroke="black" stroke-width="1"/>
+<path d="M0,125 L1350,125" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,100 L1350,100" stroke="black" stroke-width="1"/>
+<path d="M0,100 L1350,100" stroke="black" stroke-width="1"/>
+<path d="M0,175 L1350,175" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,150 L1350,150" stroke="black" stroke-width="1"/>
+<path d="M0,150 L1350,150" stroke="black" stroke-width="1"/>
+<path d="M0,225 L1350,225" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,200 L1350,200" stroke="black" stroke-width="1"/>
+<path d="M0,200 L1350,200" stroke="black" stroke-width="1"/>
+<path d="M0,275 L1350,275" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,250 L1350,250" stroke="black" stroke-width="1"/>
+<path d="M0,250 L1350,250" stroke="black" stroke-width="1"/>
+<path d="M0,325 L1350,325" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,300 L1350,300" stroke="black" stroke-width="1"/>
+<path d="M0,300 L1350,300" stroke="black" stroke-width="1"/>
+<path d="M-100,0 L-100,350" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,0 L0,350" stroke="black" stroke-width="1"/>
+<path d="M100,0 L100,350" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M200,0 L200,350" stroke="black" stroke-width="1"/>
+<path d="M300,0 L300,350" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M400,0 L400,350" stroke="black" stroke-width="1"/>
+<path d="M500,0 L500,350" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M600,0 L600,350" stroke="black" stroke-width="1"/>
+<path d="M700,0 L700,350" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M800,0 L800,350" stroke="black" stroke-width="1"/>
+<path d="M900,0 L900,350" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M1000,0 L1000,350" stroke="black" stroke-width="1"/>
+<path d="M1100,0 L1100,350" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M1200,0 L1200,350" stroke="black" stroke-width="1"/>
+<path d="M1300,0 L1300,350" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+</g>
+</g>
+</svg>

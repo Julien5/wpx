@@ -1,0 +1,6 @@
+[package]
+name = "test-svg"
+version = "0.1.0"
+
+[dependencies]
+svg = "0.18.0"
