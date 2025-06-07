@@ -1,1 +1,1 @@
-pub mod frontend;
+pub mod bridge;

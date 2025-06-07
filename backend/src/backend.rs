@@ -13,12 +13,20 @@ pub struct Backend {
     track: gpsdata::Track,
     waypoints: Vec<gpsdata::Waypoint>,
     _epsilon: f32,
+    _shift: f64,
 }
 
 #[derive(Clone)]
 pub struct Segment {
     pub id: usize,
     pub range: std::ops::Range<usize>,
+}
+
+pub struct SegmentStatistics {
+    pub length: f64,
+    pub elevation_gain: f64,
+    pub distance_start: f64,
+    pub distance_end: f64,
 }
 
 impl Segment {
@@ -59,15 +67,17 @@ impl Backend {
         self.waypoints = waypoints;
     }
 
-    pub fn new() -> Backend {
-        let filename = String::from_str("/tmp/track.gpx").unwrap();
+    pub fn new(filename: &str) -> Backend {
+        let filename = String::from_str(filename).unwrap();
         let mut gpx = gpsdata::read_gpx(filename.as_str());
         let segment = gpsdata::read_segment(&mut gpx);
         let track = gpsdata::Track::from_segment(&segment);
+        let km = 1000f64;
         let mut ret = Backend {
             track,
             waypoints: gpsdata::read_waypoints(&gpx),
             _epsilon: 70.0f32,
+            _shift: 100f64 * km,
         };
         ret.enrichWaypoints();
         ret
@@ -93,19 +103,20 @@ impl Backend {
         let viewBox = ProfileBoundingBox::from_track(&self.track, &range);
         render::waypoints_profile(&self.track, &self.waypoints, &range, &viewBox)
     }
+
     pub fn segments(&self) -> Vec<Segment> {
         let mut ret = Vec::new();
-        let km = 1000f64;
+
         let mut start = 0f64;
         let mut k = 0usize;
         loop {
-            let end = start + 100f64 * km;
+            let end = start + self._shift;
             let range = self.track.segment(start, end);
             if range.is_empty() {
                 break;
             }
             ret.push(Segment::new(k, range));
-            start = start + 50f64 * km;
+            start = start + self._shift;
             k = k + 1;
         }
         ret
@@ -123,6 +134,15 @@ impl Backend {
         self.enrichWaypoints();
         let bbox = ProfileBoundingBox::from_track(&self.track, &range);
         render::waypoints_profile(&self.track, &self.waypoints, &range, &bbox)
+    }
+    pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
+        let range = &segment.range;
+        SegmentStatistics {
+            length: self.track.distance(range.end - 1) - self.track.distance(range.start),
+            elevation_gain: self.track.elevation_gain(&range),
+            distance_start: self.track.distance(range.start),
+            distance_end: self.track.distance(range.end - 1),
+        }
     }
 }
 

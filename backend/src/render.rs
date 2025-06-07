@@ -7,34 +7,6 @@ use svg::node::element::path::{Command, Data, Position};
 use svg::node::element::Path;
 use svg::Document;
 
-fn to_view(x: f64, y: f64) -> (f64, f64) {
-    ((x / 100f64), 250f64 - (y / 5f64))
-}
-
-pub struct ViewBox {
-    tlx: f64,
-    tly: f64,
-    width: f64,
-    height: f64,
-}
-
-impl ViewBox {
-    pub fn from_track(track: &gpsdata::Track, range: &std::ops::Range<usize>) -> ViewBox {
-        let start = track.distance(range.start);
-        let end = track.distance(range.end - 1);
-        let (TLx, TLy) = to_view(start, 1250f64);
-        let width = end - start;
-        let width = width.max(100000f64);
-        let (W, H) = to_view(width, 0f64);
-        ViewBox {
-            tlx: TLx,
-            tly: TLy,
-            width: W,
-            height: H,
-        }
-    }
-}
-
 pub fn track_profile(
     geodata: &gpsdata::Track,
     range: &std::ops::Range<usize>,

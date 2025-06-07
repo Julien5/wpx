@@ -2,7 +2,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
-import 'package:ui/src/rust/api/frontend.dart';
+import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/rust/frb_generated.dart';
 import 'package:ui/src/segments_widget.dart';
 
@@ -10,14 +10,14 @@ Future<void> main() async {
   developer.log("START");
   WidgetsFlutterBinding.ensureInitialized();
   await RustLib.init();
-  Frontend instance = await Frontend.create();
+  Bridge instance = await Bridge.create();
   developer.log("frontend loaded");
-  runApp(MyApp(frontend: instance,));
+  runApp(MyApp(bridge: instance,));
 }
 
 class MyApp extends StatelessWidget {
-  final Frontend frontend;
-  const MyApp({super.key,required this.frontend});
+  final Bridge bridge;
+  const MyApp({super.key,required this.bridge});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         body: SegmentsConsumer(),
       );
     var home=ChangeNotifierProvider(
-      create: (ctx) => SegmentsProvider(frontend),
+      create: (ctx) => SegmentsProvider(bridge),
       child: scaffold,
     );
 

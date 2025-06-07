@@ -1,4 +1,5 @@
 pub mod backend;
+pub mod elevation;
 pub mod gpsdata;
 pub mod pdf;
 pub mod project;

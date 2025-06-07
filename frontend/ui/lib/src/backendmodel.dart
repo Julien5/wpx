@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/rust/api/frontend.dart';
+import 'package:ui/src/rust/api/bridge.dart';
 
 enum TrackData { track, waypoints }
 
 class FutureRenderer with ChangeNotifier {
-  final FSegment segment;
+  final Segment segment;
   final TrackData trackData;
-  final Frontend _frontend;
+  final Bridge _bridge;
 
   Future<String>? _future;
   String? _result;
 
   FutureRenderer({
-    required Frontend frontend,
+    required Bridge bridge,
     required this.segment,
     required this.trackData,
-  }) : _frontend = frontend;
+  }) : _bridge = bridge;
 
   void start() {
     _result = null;
     if (trackData == TrackData.track) {
-      _future = _frontend.renderSegmentTrack(segment: segment);
+      _future = _bridge.renderSegmentTrack(segment: segment);
     } else {
-      _future = _frontend.renderSegmentWaypoints(segment: segment);
+      _future = _bridge.renderSegmentWaypoints(segment: segment);
     }
     notifyListeners();
     _future!.then((value) => onCompleted(value));
   }
 
   BigInt id() {
-    return segment.id();
+    return segment.id;
   }
 
   bool started() {
@@ -58,15 +58,15 @@ class FutureRenderer with ChangeNotifier {
 }
 
 class TrackRenderer extends FutureRenderer {
-  TrackRenderer(Frontend frontend, FSegment segment)
-    : super(frontend: frontend, segment: segment, trackData: TrackData.track);
+  TrackRenderer(Bridge bridge, Segment segment)
+    : super(bridge: bridge, segment: segment, trackData: TrackData.track);
 }
 
 class WaypointsRenderer extends FutureRenderer {
   double visibility = 0;
-  WaypointsRenderer(Frontend frontend, FSegment segment)
+  WaypointsRenderer(Bridge bridge, Segment segment)
     : super(
-        frontend: frontend,
+        bridge: bridge,
         segment: segment,
         trackData: TrackData.waypoints,
       );
@@ -118,31 +118,31 @@ class RenderingsProvider extends MultiProvider {
 }
 
 class SegmentsProvider extends ChangeNotifier {
-  Frontend? _frontend;
+  Bridge? _bridge;
   final List<Renderers> _segments = [];
 
-  SegmentsProvider(Frontend f) {
-    _frontend = f;
+  SegmentsProvider(Bridge f) {
+    _bridge = f;
     _updateSegments();
   }
 
   void incrementDelta() {
-    _frontend!.changeParameter(eps: 10.0);
+    _bridge!.changeParameter(eps: 10.0);
     _updateSegments();
   }
 
   void decrementDelta() {
-    _frontend!.changeParameter(eps: -10.0);
+    _bridge!.changeParameter(eps: -10.0);
     _updateSegments();
   }
 
   void _updateSegments() {
-    var segments = _frontend!.segments();
+    var segments = _bridge!.segments();
     assert(_segments.isEmpty || _segments.length == segments.length);
     if (_segments.isEmpty) {
       for(var segment in segments) {
-        var t=TrackRenderer(_frontend!,segment);
-        var w=WaypointsRenderer(_frontend!,segment);
+        var t=TrackRenderer(_bridge!,segment);
+        var w=WaypointsRenderer(_bridge!,segment);
         _segments.add(Renderers(t,w));
       }
     } else {
@@ -157,7 +157,7 @@ class SegmentsProvider extends ChangeNotifier {
     return _segments;
   }
 
-  String renderSegmentWaypointsSync(FSegment segment) {
-    return _frontend!.renderSegmentWaypointsSync(segment: segment);
+  String renderSegmentWaypointsSync(Segment segment) {
+    return _bridge!.renderSegmentWaypointsSync(segment: segment);
   }
 }

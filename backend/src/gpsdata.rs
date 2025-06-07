@@ -9,6 +9,8 @@ fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
 use gpx::TrackSegment;
 use std::io::Read;
 
+use crate::elevation;
+
 #[derive(Clone)]
 pub struct UTMPoint(f64, f64);
 
@@ -49,10 +51,27 @@ impl Track {
     pub fn elevation(&self, index: usize) -> f64 {
         self.wgs84[index].2
     }
+    pub fn elevation_gain(&self, range: &std::ops::Range<usize>) -> f64 {
+        // TODO: compute it.
+        let smooth_elevation = elevation::smooth(&self);
+        let mut ret = 0f64;
+        for k in range.start + 1..range.end {
+            let d = smooth_elevation[k] - smooth_elevation[k - 1];
+            //let d = self.elevation(k) - self.elevation(k - 1);
+            if d > 0.0 {
+                ret = ret + d;
+            }
+        }
+        ret
+    }
     pub fn distance(&self, index: usize) -> f64 {
         self._distance[index]
     }
+
     pub fn index_after(&self, distance: f64) -> usize {
+        if distance < 0f64 {
+            return 0;
+        }
         let maxdist = *self._distance.last().unwrap();
         let end = self._distance.len();
         if distance > maxdist {
@@ -63,6 +82,7 @@ impl Track {
         it.position(|&d| d >= distance).unwrap()
     }
     pub fn index_before(&self, distance: f64) -> usize {
+        assert!(distance >= 0f64);
         let maxdist = *self._distance.last().unwrap();
         let end = self._distance.len();
         if distance > maxdist {
@@ -91,6 +111,7 @@ impl Track {
         let wgs84 = Proj::from_proj_string(spec).unwrap();
         let mut utm = Vec::new();
         let mut wgs = Vec::new();
+        let mut dacc = 0f64;
         for k in 0..segment.points.len() {
             let point = &segment.points[k];
             let (lon, lat) = point.point().x_y();
@@ -99,13 +120,10 @@ impl Track {
             let mut p = (lon.to_radians(), lat.to_radians());
             proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
             utm.push(UTMPoint(p.0, p.1));
-
-            if k == 0 {
-                dist.push(0f64);
-            } else {
-                let dloc = distance(wgs[k - 1].0, wgs[k - 1].1, wgs[k].0, wgs[k].1);
-                dist.push(dist[k - 1] + dloc);
+            if k > 0 {
+                dacc += distance(wgs[k - 1].0, wgs[k - 1].1, wgs[k].0, wgs[k].1);
             }
+            dist.push(dacc);
         }
         assert_eq!(dist.len(), wgs.len());
         Track {
@@ -162,8 +180,11 @@ impl ProfileBoundingBox {
     }
 
     fn fix_margins(&mut self) {
-        self.xmin = self.xmin - 10000f64;
-        self.xmax = self.xmax + 10000f64;
+        let km = 1000f64;
+        let shift = 20f64 * km;
+        let margin = 20f64 * km;
+        self.xmin = ((self.xmin - margin) / shift).floor() * shift;
+        self.xmax = ((self.xmax + margin) / shift).ceil() * shift;
         self.ymin = snap_floor(self.ymin - 20f64);
         self.ymax = snap_ceil(self.ymax + 20f64).max(snap_floor(self.ymin + 1000f64));
     }

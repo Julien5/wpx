@@ -15,8 +15,8 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
   Widget grayBackground() {
   return Container(
-    width: 600.0,
-    height: 150.0,
+    width: 1400.0,
+    height: 400.0,
     decoration: BoxDecoration(
       color: Colors.grey.withAlpha(150),
     ),
@@ -25,7 +25,7 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   @override
   Widget build(BuildContext context) {
     if (widget.future.done()) {
-      svg = SvgPicture.string(widget.future.result(), width: 600, height: 150);
+      svg = SvgPicture.string(widget.future.result(), width: 1400, height: 400);
     }
     if (!widget.future.done() && svg == null) {
       return Text("starting ${widget.future.trackData} ${widget.future.id()}");

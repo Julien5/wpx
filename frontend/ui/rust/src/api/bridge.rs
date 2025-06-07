@@ -2,24 +2,28 @@
 
 use flutter_rust_bridge::frb;
 
+// must be exported for mirroring Segment.
+pub use std::ops::Range;
+pub use tracks::backend::Segment;
+
 #[frb(opaque)]
-pub struct Frontend {
+pub struct Bridge {
     backend: tracks::backend::Backend,
 }
 
-#[derive(Clone)]
-#[frb(opaque)]
-pub struct FSegment {
-    _backend: tracks::backend::Segment,
+#[frb(mirror(Segment))]
+pub struct _Segment {
+    pub id: usize,
+    pub range: Range<usize>,
 }
 
 use std::{str::FromStr, time::Duration};
 use tokio::time::sleep;
 
-impl Frontend {
-    pub fn create() -> Frontend {
-        Frontend {
-            backend: tracks::backend::Backend::new(),
+impl Bridge {
+    pub fn create() -> Bridge {
+        Bridge {
+            backend: tracks::backend::Backend::new("/tmp/track.gpx"),
         }
     }
     #[frb(sync)]
@@ -32,19 +36,19 @@ impl Frontend {
     pub async fn renderWaypoints(&mut self) -> String {
         self.backend.render_waypoints()
     }
-    pub async fn renderSegmentTrack(&mut self, segment: &FSegment) -> String {
+    pub async fn renderSegmentTrack(&mut self, segment: &Segment) -> String {
         let delay = std::time::Duration::from_millis(50);
         std::thread::sleep(delay);
-        self.backend.render_segment_track(&segment._backend)
+        self.backend.render_segment_track(&segment)
     }
-    pub async fn renderSegmentWaypoints(&mut self, segment: &FSegment) -> String {
+    pub async fn renderSegmentWaypoints(&mut self, segment: &Segment) -> String {
         let delay = std::time::Duration::from_millis(50);
         std::thread::sleep(delay);
-        self.backend.render_segment_waypoints(&segment._backend)
+        self.backend.render_segment_waypoints(&segment)
     }
     #[frb(sync)]
-    pub fn renderSegmentWaypointsSync(&mut self, segment: &FSegment) -> String {
-        self.backend.render_segment_waypoints(&segment._backend)
+    pub fn renderSegmentWaypointsSync(&mut self, segment: &Segment) -> String {
+        self.backend.render_segment_waypoints(&segment)
     }
     #[frb(sync)]
     pub fn epsilon(&self) -> f32 {
@@ -52,23 +56,8 @@ impl Frontend {
     }
 
     #[frb(sync)]
-    pub fn segments(&self) -> Vec<FSegment> {
-        let segb = self.backend.segments();
-        let mut ret = Vec::new();
-        for s in segb {
-            let f = FSegment {
-                _backend: s.clone(),
-            };
-            ret.push(f);
-        }
-        ret
-    }
-}
-
-impl FSegment {
-    #[frb(sync)]
-    pub fn id(&self) -> usize {
-        self._backend.id
+    pub fn segments(&self) -> Vec<Segment> {
+        self.backend.segments()
     }
 }
 
