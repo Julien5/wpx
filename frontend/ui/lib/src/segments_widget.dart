@@ -61,11 +61,16 @@ class SegmentsConsumer extends StatelessWidget {
           context,
           listen: false,
         );
-        return Column(
-          children: [
-            Buttons(more:provider.decrementDelta, less:provider.incrementDelta),
-            Expanded(child: SegmentsView(segmentsProvider: provider)),
-          ],
+        return Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 1400), // Set max width to 1400
+            child: Column(
+              children: [
+                Buttons(more: provider.decrementDelta, less: provider.incrementDelta),
+                Expanded(child: SegmentsView(segmentsProvider: provider)),
+              ],
+            ),
+          ),
         );
       },
     );

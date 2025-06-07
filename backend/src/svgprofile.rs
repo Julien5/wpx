@@ -235,6 +235,9 @@ pub fn canvas(
         if xd > WD {
             break;
         }
+        if xtick < 0f64 {
+            continue;
+        }
         SD = SD.add(stroke("1", (xd, 0), (xd, HD)));
         SB = SB.add(textx(
             format!("{}", (xtick / 1000f64).floor() as i32).as_str(),
@@ -297,9 +300,8 @@ pub fn canvas(
         .add(SD);
 
     let document = svg::Document::new()
-        .set("width", 1700)
-        .set("height", 500)
-        .set("viewBox", (0, 0, 1700, 500))
+        .set("width", W + 20)
+        .set("height", H)
         .add(world);
 
     document
