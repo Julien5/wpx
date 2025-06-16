@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ui/src/rust/frb_generated.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -5,8 +7,8 @@ import 'package:sprintf/sprintf.dart';
 
 Future<bool> testSegment(Bridge bridge, Segment segment) async {
   String svg = await bridge.renderSegmentTrack(segment: segment);
-  print(sprintf("            ID: %d", [segment.id.toInt()]));
-  print(sprintf("    svg length: %d bytes", [svg.length]));
+  developer.log(sprintf("            ID: %d", [segment.id.toInt()]));
+  developer.log(sprintf("    svg length: %d bytes", [svg.length]));
   return svg.length > 2000;
 }
 

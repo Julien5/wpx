@@ -9,6 +9,7 @@ type Rect = svg::node::element::Path;
 type Circle = svg::node::element::Circle;
 type Path = svg::node::element::Path;
 type Text = svg::node::element::Text;
+use crate::elevation;
 use crate::gpsdata;
 
 fn line(p1: (i32, i32), p2: (i32, i32)) -> Data {
@@ -124,10 +125,10 @@ fn data(
     let mut data = Data::new();
     let start = geodata.index_after(bbox.xmin);
     let end = geodata.index_before(bbox.xmax);
-    // let se = elevation::smooth(geodata);
+    let se = elevation::smooth(geodata);
     for k in start..end {
-        let e = geodata.elevation(k);
-        //let e = se[k];
+        //let e = geodata.elevation(k);
+        let e = se[k];
         let (x, y) = (geodata.distance(k), e);
         let (xg, yg) = toSD((x, y), WD, HD, bbox);
         if data.is_empty() {

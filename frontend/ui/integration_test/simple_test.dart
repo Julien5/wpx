@@ -9,7 +9,7 @@ void main() async {
   setUpAll(() async => await RustLib.init());
   Bridge instance = await Bridge.create();
   testWidgets('Can call rust function', (WidgetTester tester) async {
-    await tester.pumpWidget(MyApp(bridge: instance,));
+    await tester.pumpWidget(Application(bridge: instance,));
     expect(find.textContaining('Result: `Hello, Tom!`'), findsOneWidget);
   });
 }

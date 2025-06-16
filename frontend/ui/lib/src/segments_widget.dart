@@ -63,7 +63,7 @@ class SegmentsConsumer extends StatelessWidget {
         );
         return Center(
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 1400), // Set max width to 1400
+            constraints: const BoxConstraints(maxWidth: 1500), 
             child: Column(
               children: [
                 Buttons(more: provider.decrementDelta, less: provider.incrementDelta),

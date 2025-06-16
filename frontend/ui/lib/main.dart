@@ -5,19 +5,24 @@ import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/rust/frb_generated.dart';
 import 'package:ui/src/segments_widget.dart';
+import 'package:window_size/window_size.dart';
+import 'dart:io';
 
 Future<void> main() async {
   developer.log("START");
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowFrame(Rect.fromLTWH(150, 150, 1600, 900));
+  }
   await RustLib.init();
   Bridge instance = await Bridge.create();
   developer.log("frontend loaded");
-  runApp(MyApp(bridge: instance,));
+  runApp(Application(bridge: instance,));
 }
 
-class MyApp extends StatelessWidget {
+class Application extends StatelessWidget {
   final Bridge bridge;
-  const MyApp({super.key,required this.bridge});
+  const Application({super.key,required this.bridge});
 
   @override
   Widget build(BuildContext context) {

@@ -42,6 +42,9 @@ dependencies:
   visibility_detector: ^0.4.0
   provider: ^6.1.5
   sprintf: ^7.0.0
+  svg_path_parser: ^1.1.2
+  xml: ^6.5.0
+  path_drawing: ^1.0.1
 
 dev_dependencies:
   flutter_test:
