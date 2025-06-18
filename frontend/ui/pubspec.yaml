@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   rust_lib_ui:
     path: rust_builder
-  flutter_rust_bridge: 2.9.0
+  flutter_rust_bridge: 2.10.0
   flutter_svg: ^2.1.0
   window_size: ^0.1.0
   visibility_detector: ^0.4.0

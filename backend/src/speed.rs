@@ -1,4 +1,7 @@
-pub fn kmh(speed:f64) -> f64 {
-	// m/s => kmh
-	speed * 3.6f64 
+pub fn kmh(_mps: f64) -> f64 {
+    // m/s => kmh
+    _mps * 3.6f64
+}
+pub fn mps(_kmh: f64) -> f64 {
+    _kmh / 3.6f64
 }

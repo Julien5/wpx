@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/future_rendering_widget.dart';
+import 'package:ui/src/waypoints_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class SegmentStack extends StatelessWidget {
@@ -11,7 +12,9 @@ class SegmentStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]);
+    var stack = Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]);
+    var wp = SizedBox(height: 250, child: WayPointsConsumer());
+    return Column(children: [stack, wp]);
   }
 }
 
@@ -42,8 +45,13 @@ class _WaypointsConsumerState extends State<WaypointsConsumer> {
     if (!mounted) {
       return;
     }
-    WaypointsRenderer wp=Provider.of<WaypointsRenderer>(context,listen:false);
-    developer.log("[waypoint consumer] id:${wp.id()} vis:${info.visibleFraction}");
+    WaypointsRenderer wp = Provider.of<WaypointsRenderer>(
+      context,
+      listen: false,
+    );
+    developer.log(
+      "[waypoint consumer] id:${wp.id()} vis:${info.visibleFraction}",
+    );
     wp.updateVisibility(info.visibleFraction);
   }
 
@@ -52,7 +60,7 @@ class _WaypointsConsumerState extends State<WaypointsConsumer> {
     return Consumer<WaypointsRenderer>(
       builder: (context, waypointsRendering, child) {
         // It would be more accurate to check visibility with a scroll controller
-        // at the list view level. Because "Callbacks are not fired immediately 
+        // at the list view level. Because "Callbacks are not fired immediately
         // on visibility changes."
         return VisibilityDetector(
           key: Key('id:${waypointsRendering.id()}'),

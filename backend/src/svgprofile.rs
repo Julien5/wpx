@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::backend::WayPoint;
 use crate::gpsdata::ProfileBoundingBox;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
@@ -73,20 +74,16 @@ fn stroke(width: &str, from: (i32, i32), to: (i32, i32)) -> Path {
 
 fn textx(label: &str, pos: (i32, i32)) -> Text {
     let ret = Text::new(label)
-        .set("font-family", "sans")
         .set("text-anchor", "middle")
         .set("transform", format!("translate({} {})", pos.0, pos.1));
     ret
 }
 
 fn texty(label: &str, pos: (i32, i32)) -> Text {
-    let ret = Text::new(label)
-        .set("text-anchor", "end")
-        .set("font-family", "sans")
-        .set(
-            "transform",
-            format!("translate({} {}) scale(-1 -1)", pos.0, pos.1),
-        );
+    let ret = Text::new(label).set("text-anchor", "end").set(
+        "transform",
+        format!("translate({} {}) scale(-1 -1)", pos.0, pos.1),
+    );
     ret
 }
 
@@ -191,17 +188,47 @@ pub fn yticks_dashed(bbox: &ProfileBoundingBox) -> Vec<f64> {
     ret
 }
 
-fn dot((x, y): (i32, i32)) -> Circle {
-    let dot = svg::node::element::Circle::new()
-        .set("cx", x)
-        .set("cy", y)
-        .set("r", 10);
-    dot
+fn waypoint_circle((x, y): (i32, i32), waypoint: &WayPoint) -> Circle {
+    match waypoint.origin {
+        gpsdata::WaypointOrigin::GPX => svg::node::element::Circle::new()
+            .set("cx", x)
+            .set("cy", y)
+            .set("fill", "black")
+            .set("r", 8),
+        gpsdata::WaypointOrigin::DouglasPeucker => svg::node::element::Circle::new()
+            .set("cx", x)
+            .set("cy", y)
+            .set("fill", "gray")
+            .set("stroke", "black")
+            .set("stroke-width", "2")
+            .set("r", 5),
+    }
+}
+
+fn waypoint_text((x, y): (i32, i32), waypoint: &WayPoint) -> Text {
+    let label = &waypoint.name;
+    let ret = Text::new(label).set("text-anchor", "middle").set(
+        "transform",
+        format!("translate({} {}) scale(1 -1)", x, y - 30),
+    );
+    ret
+}
+
+fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &WayPoint) -> Text {
+    let label = format!("{:.0}", waypoint.wgs84.2);
+    let ret = Text::new(label)
+        .set("text-anchor", "middle")
+        .set("font-size", "14")
+        .set(
+            "transform",
+            format!("translate({} {}) scale(1 -1)", x, y + 15),
+        );
+    ret
 }
 
 pub fn canvas(
     geodata: &gpsdata::Track,
-    waypoints: Option<&Vec<gpsdata::Waypoint>>,
+    waypoints: Option<&Vec<WayPoint>>,
     range: &std::ops::Range<usize>,
     bbox: &gpsdata::ProfileBoundingBox,
 ) -> svg::Document {
@@ -285,7 +312,11 @@ pub fn canvas(
                 let e = geodata.elevation(k);
                 //let e = se[k];
                 let (x, y) = toSD((geodata.distance(k), e), WD, HD, bbox);
-                SD = SD.add(dot((x, y)));
+                SD = SD.add(waypoint_circle((x, y), &w));
+                SD = SD.add(waypoint_elevation_text((x, y), &w));
+                if !w.name.is_empty() {
+                    SD = SD.add(waypoint_text((x, y), &w));
+                }
             }
         }
         _ => {}
@@ -294,6 +325,8 @@ pub fn canvas(
     let world = Group::new()
         .set("id", "world")
         .set("shape-rendering", "crispEdges")
+        .set("font-family", "ui-serif")
+        .set("font-size", "16")
         .set("transform", "translate(5 5)")
         .add(BG)
         .add(SL)

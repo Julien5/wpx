@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::backend::{Backend, WayPoint};
 use crate::gpsdata::{self, ProfileBoundingBox, UTMPoint};
 use crate::svgprofile;
 
@@ -18,7 +19,7 @@ pub fn track_profile(
 
 pub fn waypoints_profile(
     geodata: &gpsdata::Track,
-    waypoints: &Vec<gpsdata::Waypoint>,
+    waypoints: &Vec<WayPoint>,
     range: &std::ops::Range<usize>,
     bbox: &ProfileBoundingBox,
 ) -> String {
@@ -28,7 +29,7 @@ pub fn waypoints_profile(
 
 fn profile_data(
     geodata: &gpsdata::Track,
-    waypoints: &Vec<gpsdata::Waypoint>,
+    waypoints: &Vec<WayPoint>,
     range: &std::ops::Range<usize>,
 ) -> String {
     let bbox = ProfileBoundingBox::from_track(geodata, range);
@@ -38,7 +39,7 @@ fn profile_data(
 
 fn profile(
     geodata: &gpsdata::Track,
-    waypoints: &Vec<gpsdata::Waypoint>,
+    waypoints: &Vec<WayPoint>,
     range: &std::ops::Range<usize>,
     filename: &str,
 ) {
@@ -99,7 +100,7 @@ impl BoundingBox {
 
 fn map(
     geodata: &gpsdata::Track,
-    waypoints: &Vec<gpsdata::Waypoint>,
+    waypoints: &Vec<WayPoint>,
     range: &std::ops::Range<usize>,
     filename: &str,
 ) {
@@ -180,7 +181,7 @@ impl Templates {
 fn points_table(
     templates: &Templates,
     track: &gpsdata::Track,
-    waypoints: &Vec<gpsdata::Waypoint>,
+    waypoints: &Vec<WayPoint>,
     range: &std::ops::Range<usize>,
 ) -> String {
     let table = templates.table_points.clone();
@@ -199,36 +200,38 @@ fn points_table(
     let mut lines = Vec::new();
     for k in 0..waypoints.len() {
         let this = &waypoints[k];
-        let tk = this.track_index;
-        if !range.contains(&tk) {
+        if !range.contains(&this.track_index) {
             continue;
         }
         let mut copy = template_line.clone();
-        copy = copy.replace("{name}", format!("{:02}", 1 + lines.len()).as_str());
+        copy = copy.replace("{name}", this.name.as_str());
+        let datetime = chrono::DateTime::from_timestamp(this.time, 0).unwrap();
+        let time_str = format!("{}", datetime.format("%H:%M"));
+
+        copy = copy.replace("{time}", &time_str);
+
         copy = copy.replace(
             "{distance}",
-            format!("{:4.1}", track.distance(tk) / 1000f64).as_str(),
+            format!("{:4.1}", track.distance(this.track_index) / 1000f64).as_str(),
         );
         copy = copy.replace("{time}", "00:00");
-        if k > 0 {
-            let prev = &waypoints[k - 1];
-            let pk = prev.track_index;
-            debug_assert!(tk >= pk);
-            let d0 = track.distance(pk);
-            let d1 = track.distance(tk);
-            debug_assert!(d1 >= d0);
-            let _d = d1 - d0;
-            let e0 = track.wgs84[pk].2;
-            let e1 = track.wgs84[tk].2;
-            let hm = e1 - e0;
-            copy = copy.replace("{d+}", format!("{:.1} m", hm).as_str());
-        } else {
-            copy = copy.replace("{d+}", "0 m");
-        }
+        let hm = this.inter_elevation_gain;
+        copy = copy.replace(
+            "{d+}",
+            format!("{:5.0} m", this.inter_elevation_gain).as_str(),
+        );
+        copy = copy.replace("{slope}", format!("{:2.1} %", this.inter_slope).as_str());
         lines.push(copy);
     }
     let joined = lines.join("\n");
     table.replace(&template_line_orig, joined.as_str())
+}
+
+fn get_basename(filename: &str) -> String {
+    let s = std::path::Path::new(filename)
+        .file_name() // Get the file name component
+        .and_then(|os_str| os_str.to_str());
+    String::from_str(s.unwrap()).unwrap()
 }
 
 fn link(
@@ -240,17 +243,18 @@ fn link(
 ) {
     let mut table = templates.table_large.clone();
     table = table.replace("{table-points}", points_table.as_str());
-    table = table.replace("{profile.svg}", profilesvg);
-    table = table.replace("{map.svg}", mapsvg);
+    table = table.replace("{profile.svg}", get_basename(profilesvg).as_str());
+    table = table.replace("{map.svg}", get_basename(mapsvg).as_str());
     document.push_str(table.as_str());
 }
 
-pub fn compile(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> String {
+pub fn compile(backend: &Backend) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let km = 1000f64;
     let mut start = 0f64;
     let mut k = 0usize;
+    let track = &backend.track;
     loop {
         let end = start + 100f64 * km;
         let range = track.segment(start, end);
@@ -258,10 +262,11 @@ pub fn compile(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> St
             break;
         }
         let p = format!("/tmp/profile-{}.svg", k);
-        profile(&track, &waypoints, &range, p.as_str());
+        let W = backend.get_waypoints();
+        profile(&backend.track, &W, &range, p.as_str());
         let m = format!("/tmp/map-{}.svg", k);
-        map(&track, &waypoints, &range, m.as_str());
-        let table = points_table(&templates, &track, &waypoints, &range);
+        map(&track, &W, &range, m.as_str());
+        let table = points_table(&templates, &track, &W, &range);
         link(&templates, &p, &m, &table, &mut document);
         if range.end == track.len() {
             break;
@@ -273,7 +278,7 @@ pub fn compile(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> St
     String::from_str("/tmp/document.typ").unwrap()
 }
 
-pub fn svg(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> String {
+pub fn svg(track: &gpsdata::Track, waypoints: &Vec<WayPoint>) -> String {
     let km = 1000f64;
     let start = 0f64;
     let end = start + 100f64 * km;

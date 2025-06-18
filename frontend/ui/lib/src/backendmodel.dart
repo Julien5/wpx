@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -120,6 +122,7 @@ class RenderingsProvider extends MultiProvider {
 class SegmentsProvider extends ChangeNotifier {
   Bridge? _bridge;
   final List<Renderers> _segments = [];
+  final List<WayPoint> _waypoints=[];
 
   SegmentsProvider(Bridge f) {
     _bridge = f;
@@ -127,12 +130,12 @@ class SegmentsProvider extends ChangeNotifier {
   }
 
   void incrementDelta() {
-    _bridge!.changeParameter(eps: 10.0);
+    _bridge!.adjustEpsilon(eps: 10.0);
     _updateSegments();
   }
 
   void decrementDelta() {
-    _bridge!.changeParameter(eps: -10.0);
+    _bridge!.adjustEpsilon(eps: -10.0);
     _updateSegments();
   }
 
@@ -150,11 +153,20 @@ class SegmentsProvider extends ChangeNotifier {
         renderers.waypointsRendering.reset();
       }
     }
+    _waypoints.clear();
+    var W=_bridge!.getWayPoints();
+    for(var w in W) {
+      _waypoints.add(w);
+    }
     notifyListeners();
   }
 
   List<Renderers> segments() {
     return _segments;
+  }
+
+  List<WayPoint> waypoints() {
+    return _waypoints;
   }
 
   String renderSegmentWaypointsSync(Segment segment) {

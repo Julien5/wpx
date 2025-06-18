@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_drawing/path_drawing.dart';
@@ -10,7 +9,6 @@ class Transform {
     List<Transform> transforms = [];
     final transformRegex = RegExp(r'(translate\([^)]+\)|scale\([^)]+\))');
 
-    // Match all transformations in order
     for (final match in transformRegex.allMatches(s)) {
       final transform = match.group(0)!;
       if (transform.startsWith('translate')) {
@@ -144,6 +142,8 @@ Color parseColor(String colorName) {
       return Colors.cyan;
     case 'magenta':
       return Colors.purple;
+    case 'gray':
+      return Colors.grey;
     case 'lightgray':
       return const Color.fromARGB(255, 231, 226, 226);
     case 'transparent':
@@ -275,7 +275,11 @@ class TextElement extends Element {
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(color: Colors.black,fontSize: 16.0, fontFamily: "Courier"),
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 16.0,
+          fontFamily: "Courier",
+        ),
       ),
       textDirection: TextDirection.ltr,
       textAlign: textAlign,
@@ -290,7 +294,7 @@ class TextElement extends Element {
     } else if (textAlign == TextAlign.right) {
       dx = -textPainter.width;
     }
-    double dy = -0.5*textPainter.height - 4;
+    double dy = -0.5 * textPainter.height - 4;
     textPainter.paint(canvas, Offset(dx, dy));
   }
 }

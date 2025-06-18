@@ -4,7 +4,9 @@ use flutter_rust_bridge::frb;
 
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
+pub use tracks::backend::gpsdata::UTMPoint;
 pub use tracks::backend::Segment;
+pub use tracks::backend::WayPoint;
 
 #[frb(opaque)]
 pub struct Bridge {
@@ -17,6 +19,20 @@ pub struct _Segment {
     pub range: Range<usize>,
 }
 
+#[frb(mirror(WayPoint))]
+pub struct _WayPoint {
+    wgs84: (f64, f64, f64),
+    utm: UTMPoint,
+    distance: f64,
+    elevation: f64,
+    inter_distance: f64,
+    inter_elevation_gain: f64,
+    inter_slope: f64,
+    name: String,
+    time: i64, // seconds since epoch
+    track_index: usize,
+}
+
 use std::{str::FromStr, time::Duration};
 use tokio::time::sleep;
 
@@ -27,8 +43,24 @@ impl Bridge {
         }
     }
     #[frb(sync)]
-    pub fn changeParameter(&mut self, eps: f32) {
-        self.backend.changeParameter(eps);
+    pub fn adjustEpsilon(&mut self, eps: f32) {
+        self.backend.adjustEpsilon(eps);
+    }
+    #[frb(sync)]
+    pub fn setStartTime(&mut self, seconds_since_epoch: i64) {
+        self.backend.setStartTime(seconds_since_epoch)
+    }
+    #[frb(sync)]
+    pub fn setSpeed(&mut self, meter_per_second: f64) {
+        self.backend.setSpeed(meter_per_second)
+    }
+    #[frb(sync)]
+    pub fn getWayPoints(&mut self) -> Vec<WayPoint> {
+        self.backend.get_waypoints()
+    }
+    #[frb(sync)]
+    pub fn elevation_gain(&mut self, from: usize, to: usize) -> f64 {
+        self.backend.elevation_gain(from, to)
     }
     pub async fn renderTrack(&mut self) -> String {
         self.backend.render_track()
@@ -37,13 +69,13 @@ impl Bridge {
         self.backend.render_waypoints()
     }
     pub async fn renderSegmentTrack(&mut self, segment: &Segment) -> String {
-        let delay = std::time::Duration::from_millis(50);
-        std::thread::sleep(delay);
+        //let delay = std::time::Duration::from_millis(50);
+        //std::thread::sleep(delay);
         self.backend.render_segment_track(&segment)
     }
     pub async fn renderSegmentWaypoints(&mut self, segment: &Segment) -> String {
-        let delay = std::time::Duration::from_millis(50);
-        std::thread::sleep(delay);
+        //let delay = std::time::Duration::from_millis(50);
+        //std::thread::sleep(delay);
         self.backend.render_segment_waypoints(&segment)
     }
     #[frb(sync)]

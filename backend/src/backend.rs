@@ -2,18 +2,24 @@
 
 use std::str::FromStr;
 
+use chrono::TimeZone;
+
+use crate::elevation;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::gpsdata::WaypointOrigin;
-use crate::pdf;
 use crate::project;
 use crate::render;
+use crate::speed;
 
 pub struct Backend {
-    track: gpsdata::Track,
-    waypoints: Vec<gpsdata::Waypoint>,
+    pub track: gpsdata::Track,
+    track_smooth_elevation: Vec<f64>,
+    pub waypoints: Vec<gpsdata::Waypoint>,
     _epsilon: f32,
     _shift: f64,
+    _start_time: i64, // seconds since epoch
+    _speed: f64,      // m/s
 }
 
 #[derive(Clone)]
@@ -29,42 +35,145 @@ pub struct SegmentStatistics {
     pub distance_end: f64,
 }
 
+#[derive(Clone)]
+pub struct WayPoint {
+    pub wgs84: (f64, f64, f64),
+    pub utm: gpsdata::UTMPoint,
+    pub origin: gpsdata::WaypointOrigin,
+    pub distance: f64,
+    pub elevation: f64,
+    pub inter_distance: f64,
+    pub inter_elevation_gain: f64,
+    pub inter_slope: f64,
+    pub name: String,
+    pub time: i64, // seconds since epoch
+    pub track_index: usize,
+}
+
 impl Segment {
     pub fn new(id: usize, range: std::ops::Range<usize>) -> Segment {
         Segment { id, range }
     }
 }
 
+fn waypoint_time(start_time: i64, distance: f64, speed: f64) -> i64 {
+    let dt = (distance / speed).ceil() as i64;
+    start_time + dt
+}
+
 impl Backend {
+    fn create_waypoint(
+        self: &Backend,
+        w: &gpsdata::Waypoint,
+        wprev: Option<&gpsdata::Waypoint>,
+    ) -> WayPoint {
+        let track = &self.track;
+        assert!(w.track_index < track.len());
+        let distance = track.distance(w.track_index);
+        let (inter_distance, inter_elevation_gain, inter_slope) = match wprev {
+            None => (0f64, 0f64, 0f64),
+            Some(prev) => {
+                let dx = track.distance(w.track_index) - track.distance(prev.track_index);
+                let dy = self.elevation_gain(prev.track_index, w.track_index);
+                let slope = match dx {
+                    0f64 => 0f64,
+                    _ => 100f64 * dy / dx,
+                };
+                (dx, dy, slope)
+            }
+        };
+        let name = match &w.name {
+            None => String::from_str("").unwrap(),
+            Some(n) => n.clone(),
+        };
+        WayPoint {
+            wgs84: w.wgs84,
+            utm: w.utm.clone(),
+            origin: w.origin.clone(),
+            distance: distance,
+            inter_distance: inter_distance,
+            inter_elevation_gain: inter_elevation_gain,
+            inter_slope: inter_slope,
+            elevation: track.elevation(w.track_index),
+            name: name,
+            time: waypoint_time(self._start_time, distance, self._speed),
+            track_index: w.track_index,
+        }
+    }
+    pub fn get_waypoints(&self) -> Vec<WayPoint> {
+        let mut ret = Vec::new();
+        for w in &self.waypoints {
+            debug_assert!(w.track_index < self.track.len());
+        }
+        for k in 0..self.waypoints.len() {
+            let w = &self.waypoints[k];
+            let wprev = match k {
+                0 => None,
+                _ => Some(&self.waypoints[k - 1]),
+            };
+            let wp = self.create_waypoint(w, wprev);
+            ret.push(wp.clone());
+        }
+        ret
+    }
+    pub fn setStartTime(&mut self, t: i64) {
+        self._start_time = t;
+    }
+    pub fn setSpeed(&mut self, s: f64) {
+        self._speed = s;
+    }
     fn enrichWaypoints(&mut self) {
         // not fast.
         let mut waypoints = Vec::new();
+        // take GPX waypoints
         for w in &self.waypoints {
             match w.origin {
                 WaypointOrigin::GPX => waypoints.push(w.clone()),
                 _ => {}
             }
         }
+        // add interesting ones (dougles peucker) with epsilon parameter
         let indexes = self.track.interesting_indexes(self._epsilon);
         for idx in indexes {
             let wgs = self.track.wgs84[idx].clone();
             let utm = self.track.utm[idx].clone();
             waypoints.push(gpsdata::Waypoint::from_track(wgs, utm, idx));
         }
-        let indexes = project::nearest_neighboor(&self.track.utm, &self.waypoints);
-        debug_assert_eq!(self.waypoints.len(), indexes.len());
+        // find their indexes...
+        let indexes = project::nearest_neighboor(&self.track.utm, &waypoints);
+        debug_assert_eq!(waypoints.len(), indexes.len());
         for k in 0..indexes.len() {
-            self.waypoints[k].track_index = indexes[k];
+            assert!(indexes[k] < self.track.len());
+            waypoints[k].track_index = indexes[k];
         }
-        // sort
-        self.waypoints
-            .sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
-        for k in 1..self.waypoints.len() {
-            let k1 = self.waypoints[k].track_index;
-            let k0 = self.waypoints[k - 1].track_index;
+        for w in &waypoints {
+            assert!(w.track_index < self.track.len());
+        }
+        // .. and sort them
+        waypoints.sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
+        for k in 1..waypoints.len() {
+            let k1 = waypoints[k].track_index;
+            let k0 = waypoints[k - 1].track_index;
             debug_assert!(k1 >= k0);
         }
+        for w in &waypoints {
+            debug_assert!(w.track_index < self.track.len());
+        }
         self.waypoints = waypoints;
+    }
+
+    pub fn elevation_gain(&self, from: usize, to: usize) -> f64 {
+        let mut ret = 0f64;
+        for k in from..to {
+            if k == 0 {
+                continue;
+            }
+            let d = self.track_smooth_elevation[k] - self.track_smooth_elevation[k - 1];
+            if d > 0f64 {
+                ret += d;
+            }
+        }
+        ret
     }
 
     pub fn new(filename: &str) -> Backend {
@@ -74,16 +183,25 @@ impl Backend {
         let track = gpsdata::Track::from_segment(&segment);
         let km = 1000f64;
         let mut ret = Backend {
-            track,
+            track_smooth_elevation: elevation::smooth(&track),
+            track: track,
             waypoints: gpsdata::read_waypoints(&gpx),
             _epsilon: 70.0f32,
             _shift: 100f64 * km,
+            _start_time: chrono::Utc
+                .with_ymd_and_hms(2024, 4, 4, 8, 0, 0)
+                .unwrap()
+                .timestamp(),
+            _speed: speed::mps(15f64),
         };
         ret.enrichWaypoints();
+        for w in &ret.waypoints {
+            debug_assert!(w.track_index < ret.track.len());
+        }
         ret
     }
 
-    pub fn changeParameter(&mut self, delta: f32) {
+    pub fn adjustEpsilon(&mut self, delta: f32) {
         self._epsilon += delta;
     }
 
@@ -101,7 +219,8 @@ impl Backend {
         self.enrichWaypoints();
         let range = 0..self.track.len();
         let viewBox = ProfileBoundingBox::from_track(&self.track, &range);
-        render::waypoints_profile(&self.track, &self.waypoints, &range, &viewBox)
+        let W = self.get_waypoints();
+        render::waypoints_profile(&self.track, &W, &range, &viewBox)
     }
 
     pub fn segments(&self) -> Vec<Segment> {
@@ -136,7 +255,8 @@ impl Backend {
         let range = &segment.range;
         self.enrichWaypoints();
         let bbox = ProfileBoundingBox::from_track(&self.track, &range);
-        let ret = render::waypoints_profile(&self.track, &self.waypoints, &range, &bbox);
+        let W = self.get_waypoints();
+        let ret = render::waypoints_profile(&self.track, &W, &range, &bbox);
         let filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
         std::fs::write(filename, &ret).expect("Unable to write file");
         ret
@@ -150,38 +270,4 @@ impl Backend {
             distance_end: self.track.distance(range.end - 1),
         }
     }
-}
-
-pub fn worker(filename: &str) {
-    println!("read gpx");
-    let mut gpx = gpsdata::read_gpx(filename);
-    let segment = gpsdata::read_segment(&mut gpx);
-    println!("make track");
-    let track = gpsdata::Track::from_segment(&segment);
-    println!("make waypoints");
-    let mut waypoints = gpsdata::read_waypoints(&gpx);
-    println!("add automatic waypoints");
-    let indexes = track.interesting_indexes(70.0f32);
-    for idx in indexes {
-        let wgs = track.wgs84[idx].clone();
-        let utm = track.utm[idx].clone();
-        waypoints.push(gpsdata::Waypoint::from_track(wgs, utm, idx));
-    }
-    let indexes = project::nearest_neighboor(&track.utm, &waypoints);
-    debug_assert_eq!(waypoints.len(), indexes.len());
-    for k in 0..indexes.len() {
-        waypoints[k].track_index = indexes[k];
-    }
-    // sort
-    waypoints.sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
-    for k in 1..waypoints.len() {
-        let k1 = waypoints[k].track_index;
-        let k0 = waypoints[k - 1].track_index;
-        debug_assert!(k1 >= k0);
-    }
-    println!("render");
-    let typfile = render::compile(&track, &waypoints);
-    println!("make pdf");
-    let pdffile = typfile.replace(".typ", ".pdf");
-    pdf::run(typfile.as_str(), pdffile.as_str());
 }

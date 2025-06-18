@@ -202,6 +202,7 @@ pub struct Waypoint {
     pub utm: UTMPoint,
     pub track_index: usize,
     pub origin: WaypointOrigin,
+    pub name: Option<String>,
 }
 
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
@@ -218,19 +219,20 @@ pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
         let (lon, lat) = w.point().x_y();
         let mut p = (lon.to_radians(), lat.to_radians());
         proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
-        ret.push(Waypoint::from_gpx(w, UTMPoint(p.0, p.1)));
+        ret.push(Waypoint::from_gpx(w, UTMPoint(p.0, p.1), w.name.clone()));
     }
     ret
 }
 
 impl Waypoint {
-    pub fn from_gpx(gpx: &gpx::Waypoint, utm: UTMPoint) -> Waypoint {
+    pub fn from_gpx(gpx: &gpx::Waypoint, utm: UTMPoint, name: Option<String>) -> Waypoint {
         let (lon, lat) = gpx.point().x_y();
         Waypoint {
             wgs84: (lon, lat, gpx.elevation.unwrap()),
             utm: utm,
             track_index: usize::MAX,
             origin: WaypointOrigin::GPX,
+            name: name,
         }
     }
     pub fn from_track(wgs: (f64, f64, f64), utm: UTMPoint, indx: usize) -> Waypoint {
@@ -239,6 +241,7 @@ impl Waypoint {
             utm: utm,
             track_index: indx,
             origin: WaypointOrigin::DouglasPeucker,
+            name: None,
         }
     }
 }

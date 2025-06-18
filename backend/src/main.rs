@@ -7,7 +7,25 @@ pub mod render;
 pub mod speed;
 pub mod svgprofile;
 
+use backend::Backend;
+
 fn main() {
     let filename = "data/blackforest.gpx";
-    backend::worker(filename);
+    println!("read gpx");
+    let backend = Backend::new(filename);
+    let typfile = render::compile(&backend);
+    println!("make pdf");
+    let pdffile = typfile.replace(".typ", ".pdf");
+    pdf::run(typfile.as_str(), pdffile.as_str());
+
+    println!("test backend");
+    let backend = Backend::new(filename);
+    let W = backend.get_waypoints();
+    for w in W {
+        println!(
+            "waypoing dist={:6.2} ele={:5.1}",
+            (w.distance / 1000f64),
+            w.elevation
+        );
+    }
 }
