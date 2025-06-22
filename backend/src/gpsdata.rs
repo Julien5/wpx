@@ -227,8 +227,13 @@ pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
 impl Waypoint {
     pub fn from_gpx(gpx: &gpx::Waypoint, utm: UTMPoint, name: Option<String>) -> Waypoint {
         let (lon, lat) = gpx.point().x_y();
+        let z = match gpx.elevation {
+            Some(_z) => _z,
+            _ => 0f64,
+        };
         Waypoint {
-            wgs84: (lon, lat, gpx.elevation.unwrap()),
+            //wgs84: (lon, lat, gpx.elevation.unwrap()),
+            wgs84: (lon, lat, z),
             utm: utm,
             track_index: usize::MAX,
             origin: WaypointOrigin::GPX,

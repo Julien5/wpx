@@ -326,7 +326,7 @@ pub fn canvas(
         .set("id", "world")
         .set("shape-rendering", "crispEdges")
         .set("font-family", "ui-serif")
-        .set("font-size", "16")
+        .set("font-size", "20")
         .set("transform", "translate(5 5)")
         .add(BG)
         .add(SL)

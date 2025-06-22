@@ -271,7 +271,7 @@ pub fn compile(backend: &Backend) -> String {
         if range.end == track.len() {
             break;
         }
-        start = start + 50f64 * km;
+        start = start + backend.shift;
         k = k + 1;
     }
     let _ = write_file("/tmp/document.typ", document);

@@ -8,10 +8,15 @@ pub mod speed;
 pub mod svgprofile;
 
 use backend::Backend;
+use std::env;
 
 fn main() {
-    let filename = "data/blackforest.gpx";
-    println!("read gpx");
+    let args: Vec<String> = env::args().collect();
+    let mut filename = "data/blackforest.gpx";
+    if args.len() > 1usize {
+        filename = &args[1];
+    }
+    println!("read gpx {}", filename);
     let backend = Backend::new(filename);
     let typfile = render::compile(&backend);
     println!("make pdf");

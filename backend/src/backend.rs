@@ -16,10 +16,10 @@ pub struct Backend {
     pub track: gpsdata::Track,
     track_smooth_elevation: Vec<f64>,
     pub waypoints: Vec<gpsdata::Waypoint>,
-    _epsilon: f32,
-    _shift: f64,
-    _start_time: i64, // seconds since epoch
-    _speed: f64,      // m/s
+    epsilon: f32,
+    pub shift: f64,
+    start_time: i64, // seconds since epoch
+    speed: f64,      // m/s
 }
 
 #[derive(Clone)]
@@ -96,7 +96,7 @@ impl Backend {
             inter_slope: inter_slope,
             elevation: track.elevation(w.track_index),
             name: name,
-            time: waypoint_time(self._start_time, distance, self._speed),
+            time: waypoint_time(self.start_time, distance, self.speed),
             track_index: w.track_index,
         }
     }
@@ -117,10 +117,10 @@ impl Backend {
         ret
     }
     pub fn setStartTime(&mut self, t: i64) {
-        self._start_time = t;
+        self.start_time = t;
     }
     pub fn setSpeed(&mut self, s: f64) {
-        self._speed = s;
+        self.speed = s;
     }
     fn enrichWaypoints(&mut self) {
         // not fast.
@@ -133,7 +133,7 @@ impl Backend {
             }
         }
         // add interesting ones (dougles peucker) with epsilon parameter
-        let indexes = self.track.interesting_indexes(self._epsilon);
+        let indexes = self.track.interesting_indexes(self.epsilon);
         for idx in indexes {
             let wgs = self.track.wgs84[idx].clone();
             let utm = self.track.utm[idx].clone();
@@ -186,13 +186,13 @@ impl Backend {
             track_smooth_elevation: elevation::smooth(&track),
             track: track,
             waypoints: gpsdata::read_waypoints(&gpx),
-            _epsilon: 70.0f32,
-            _shift: 100f64 * km,
-            _start_time: chrono::Utc
+            epsilon: 70.0f32,
+            shift: 100f64 * km,
+            start_time: chrono::Utc
                 .with_ymd_and_hms(2024, 4, 4, 8, 0, 0)
                 .unwrap()
                 .timestamp(),
-            _speed: speed::mps(15f64),
+            speed: speed::mps(15f64),
         };
         ret.enrichWaypoints();
         for w in &ret.waypoints {
@@ -202,11 +202,11 @@ impl Backend {
     }
 
     pub fn adjustEpsilon(&mut self, delta: f32) {
-        self._epsilon += delta;
+        self.epsilon += delta;
     }
 
     pub fn epsilon(&self) -> f32 {
-        self._epsilon
+        self.epsilon
     }
 
     pub fn render_track(&mut self) -> String {
@@ -229,13 +229,13 @@ impl Backend {
         let mut start = 0f64;
         let mut k = 0usize;
         loop {
-            let end = start + self._shift;
+            let end = start + self.shift;
             let range = self.track.segment(start, end);
             if range.is_empty() {
                 break;
             }
             ret.push(Segment::new(k, range));
-            start = start + self._shift;
+            start = start + self.shift;
             k = k + 1;
         }
         ret
