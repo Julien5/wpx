@@ -216,11 +216,9 @@ fn points_table(
         );
         copy = copy.replace("{time}", "00:00");
         let hm = this.inter_elevation_gain;
-        copy = copy.replace(
-            "{d+}",
-            format!("{:5.0} m", this.inter_elevation_gain).as_str(),
-        );
-        copy = copy.replace("{slope}", format!("{:2.1} %", this.inter_slope).as_str());
+        let percent = this.inter_slope;
+        copy = copy.replace("{d+}", format!("{:5.0} m", hm).as_str());
+        copy = copy.replace("{slope}", format!("{:2.1} %", percent).as_str());
         lines.push(copy);
     }
     let joined = lines.join("\n");
