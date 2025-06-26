@@ -8,6 +8,7 @@ pub mod project;
 pub mod render;
 pub mod speed;
 pub mod svgprofile;
+pub mod utm;
 
 use backend::Backend;
 use std::env;
@@ -19,8 +20,8 @@ fn main() {
         filename = &args[1];
     }
     println!("read gpx {}", filename);
-    let backend = Backend::new(filename);
-    let typfile = render::compile(&backend);
+    let mut backend = Backend::new(filename);
+    let typfile = render::compile(&mut backend);
     println!("make pdf");
     let pdffile = typfile.replace(".typ", ".pdf");
     pdf::run(typfile.as_str(), pdffile.as_str());

@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -32,7 +30,7 @@ class FutureRenderer with ChangeNotifier {
   }
 
   BigInt id() {
-    return segment.id;
+    return segment.id();
   }
 
   bool started() {

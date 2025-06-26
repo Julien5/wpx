@@ -1,52 +1,12 @@
 #![allow(non_snake_case)]
 
-use crate::backend::{Backend, WayPoint};
-use crate::gpsdata::{self, ProfileBoundingBox, UTMPoint};
-use crate::svgprofile;
+use crate::backend::{Backend, Segment, WayPoint};
+use crate::gpsdata;
+use crate::utm::UTMPoint;
 
 use svg::node::element::path::{Command, Data, Position};
 use svg::node::element::Path;
 use svg::Document;
-
-pub fn track_profile(
-    geodata: &gpsdata::Track,
-    range: &std::ops::Range<usize>,
-    bbox: &ProfileBoundingBox,
-) -> String {
-    let document = svgprofile::canvas(geodata, None, range, bbox);
-    document.to_string()
-}
-
-pub fn waypoints_profile(
-    geodata: &gpsdata::Track,
-    waypoints: &Vec<WayPoint>,
-    range: &std::ops::Range<usize>,
-    bbox: &ProfileBoundingBox,
-) -> String {
-    let document = svgprofile::canvas(geodata, Some(waypoints), range, bbox);
-    document.to_string()
-}
-
-fn profile_data(
-    geodata: &gpsdata::Track,
-    waypoints: &Vec<WayPoint>,
-    range: &std::ops::Range<usize>,
-) -> String {
-    let bbox = ProfileBoundingBox::from_track(geodata, range);
-    let document = svgprofile::canvas(geodata, Some(&waypoints), range, &bbox);
-    document.to_string()
-}
-
-fn profile(
-    geodata: &gpsdata::Track,
-    waypoints: &Vec<WayPoint>,
-    range: &std::ops::Range<usize>,
-    filename: &str,
-) {
-    let data = profile_data(geodata, waypoints, range);
-    println!("write {}", filename);
-    std::fs::write(filename, data).expect("Unable to write file");
-}
 
 fn to_graphics_coordinates(p: &UTMPoint, ymax: f64) -> (f64, f64) {
     (p.x(), ymax - p.y())
@@ -69,7 +29,7 @@ impl BoundingBox {
     fn height(&self) -> f64 {
         return self.max.1 - self.min.1;
     }
-    fn update(&mut self, p: &gpsdata::UTMPoint) {
+    fn update(&mut self, p: &UTMPoint) {
         if p.x() > self.max.0 {
             self.max.0 = p.x();
         }
@@ -182,7 +142,7 @@ fn points_table(
     templates: &Templates,
     track: &gpsdata::Track,
     waypoints: &Vec<WayPoint>,
-    range: &std::ops::Range<usize>,
+    segment: &Segment,
 ) -> String {
     let table = templates.table_points.clone();
     let mut template_line_orig = String::new();
@@ -200,7 +160,7 @@ fn points_table(
     let mut lines = Vec::new();
     for k in 0..waypoints.len() {
         let this = &waypoints[k];
-        if !range.contains(&this.track_index) {
+        if !segment.profile.shows_waypoint(this) {
             continue;
         }
         let mut copy = template_line.clone();
@@ -214,11 +174,15 @@ fn points_table(
             "{distance}",
             format!("{:4.1}", track.distance(this.track_index) / 1000f64).as_str(),
         );
-        copy = copy.replace("{time}", "00:00");
+        let elevation = this.elevation;
+        copy = copy.replace("{elevation}", format!("{:5.0} m", elevation).as_str());
         let hm = this.inter_elevation_gain;
         let percent = this.inter_slope;
-        copy = copy.replace("{d+}", format!("{:5.0} m", hm).as_str());
-        copy = copy.replace("{slope}", format!("{:2.1} %", percent).as_str());
+        copy = copy.replace("{d+}", format!("{:5.0}", hm).as_str());
+        copy = copy.replace("{slope}", format!("{:2.1}%", percent).as_str());
+        copy = copy.replace("{desc}", "");
+        let dist = this.inter_distance / 1000f64;
+        copy = copy.replace("{dist}", format!("{:2.1}", dist).as_str());
         lines.push(copy);
     }
     let joined = lines.join("\n");
@@ -246,27 +210,27 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn compile(backend: &Backend) -> String {
+pub fn compile(backend: &mut Backend) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
-    let km = 1000f64;
     let mut start = 0f64;
     let mut k = 0usize;
-    let track = &backend.track;
-    loop {
-        let end = start + 100f64 * km;
-        let range = track.segment(start, end);
+    let segments = backend.segments();
+    for segment in &segments {
+        let range = &segment.range;
         if range.is_empty() {
             break;
         }
         let p = format!("/tmp/profile-{}.svg", k);
         let W = backend.get_waypoints();
-        profile(&backend.track, &W, &range, p.as_str());
+        let data = backend.render_segment(segment);
+        println!("write {}", p);
+        std::fs::write(p.as_str(), data).expect("Unable to write file");
         let m = format!("/tmp/map-{}.svg", k);
-        map(&track, &W, &range, m.as_str());
-        let table = points_table(&templates, &track, &W, &range);
+        map(&backend.track, &W, &range, m.as_str());
+        let table = points_table(&templates, &backend.track, &W, &segment);
         link(&templates, &p, &m, &table, &mut document);
-        if range.end == track.len() {
+        if range.end == backend.track.len() {
             break;
         }
         start = start + backend.shift;
@@ -274,12 +238,4 @@ pub fn compile(backend: &Backend) -> String {
     }
     let _ = write_file("/tmp/document.typ", document);
     String::from_str("/tmp/document.typ").unwrap()
-}
-
-pub fn svg(track: &gpsdata::Track, waypoints: &Vec<WayPoint>) -> String {
-    let km = 1000f64;
-    let start = 0f64;
-    let end = start + 100f64 * km;
-    let range = track.segment(start, end);
-    profile_data(&track, &waypoints, &range)
 }

@@ -30,9 +30,30 @@ function frontend() {
 	flutter run --device-id Linux
 }
 
+function run-web() {
+	cd ~/work/projects/desktop/track/profile/frontend/ui
+	dev.flutter-rust
+	mv build build.d
+	rustup target add wasm32-unknown-unknown
+	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web
+	flutter build web --debug
+	mkdir -p build/web/pkg/
+	cp web/pkg/* build/web/pkg/
+	cp server.py build/web/
+	cd build/web
+	PORT=8123
+	killall python3
+	sleep 1
+	python3 server.py &
+	sleep 1
+	firefox "http://localhost:8123/"
+}
+
 function main() {
 	# backend
-	frontend
+	# frontend
+	run-web
 }
 
 init

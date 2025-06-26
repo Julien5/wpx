@@ -4,9 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/rust/frb_generated.dart';
-import 'package:ui/src/segment_stack.dart';
 import 'package:ui/src/segments_widget.dart';
-import 'package:ui/src/waypoints_widget.dart';
+
 import 'package:window_size/window_size.dart';
 import 'dart:io';
 

@@ -7,7 +7,7 @@ import 'package:sprintf/sprintf.dart';
 
 Future<bool> testSegment(Bridge bridge, Segment segment) async {
   String svg = await bridge.renderSegmentTrack(segment: segment);
-  developer.log(sprintf("            ID: %d", [segment.id.toInt()]));
+  developer.log(sprintf("            ID: %d", [segment.id().toInt()]));
   developer.log(sprintf("    svg length: %d bytes", [svg.length]));
   return svg.length > 2000;
 }

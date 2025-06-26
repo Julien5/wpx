@@ -5,12 +5,13 @@ use std::str::FromStr;
 use chrono::TimeZone;
 
 use crate::elevation;
-use crate::gpsdata;
+pub use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::gpsdata::WaypointOrigin;
 use crate::project;
-use crate::render;
 use crate::speed;
+use crate::svgprofile;
+use crate::utm::UTMPoint;
 
 pub struct Backend {
     pub track: gpsdata::Track,
@@ -26,6 +27,13 @@ pub struct Backend {
 pub struct Segment {
     pub id: usize,
     pub range: std::ops::Range<usize>,
+    pub profile: svgprofile::Profile,
+}
+
+impl Segment {
+    pub fn shows_waypoint(&self, wp: &WayPoint) -> bool {
+        self.profile.shows_waypoint(wp)
+    }
 }
 
 pub struct SegmentStatistics {
@@ -38,8 +46,8 @@ pub struct SegmentStatistics {
 #[derive(Clone)]
 pub struct WayPoint {
     pub wgs84: (f64, f64, f64),
-    pub utm: gpsdata::UTMPoint,
-    pub origin: gpsdata::WaypointOrigin,
+    pub utm: UTMPoint,
+    pub origin: WaypointOrigin,
     pub distance: f64,
     pub elevation: f64,
     pub inter_distance: f64,
@@ -51,8 +59,12 @@ pub struct WayPoint {
 }
 
 impl Segment {
-    pub fn new(id: usize, range: std::ops::Range<usize>) -> Segment {
-        Segment { id, range }
+    pub fn new(id: usize, range: std::ops::Range<usize>, bbox: &ProfileBoundingBox) -> Segment {
+        Segment {
+            id,
+            range: range.clone(),
+            profile: svgprofile::Profile::init(&range, &bbox),
+        }
     }
 }
 
@@ -186,7 +198,7 @@ impl Backend {
             track_smooth_elevation: elevation::smooth(&track),
             track: track,
             waypoints: gpsdata::read_waypoints(&gpx),
-            epsilon: 70.0f32,
+            epsilon: 150.0f32,
             shift: 100f64 * km,
             start_time: chrono::Utc
                 .with_ymd_and_hms(2024, 4, 4, 8, 0, 0)
@@ -209,20 +221,6 @@ impl Backend {
         self.epsilon
     }
 
-    pub fn render_track(&mut self) -> String {
-        self.enrichWaypoints();
-        let range = 0..self.track.len();
-        let viewBox = ProfileBoundingBox::from_track(&self.track, &range);
-        render::track_profile(&self.track, &range, &viewBox)
-    }
-    pub fn render_waypoints(&mut self) -> String {
-        self.enrichWaypoints();
-        let range = 0..self.track.len();
-        let viewBox = ProfileBoundingBox::from_track(&self.track, &range);
-        let W = self.get_waypoints();
-        render::waypoints_profile(&self.track, &W, &range, &viewBox)
-    }
-
     pub fn segments(&self) -> Vec<Segment> {
         let mut ret = Vec::new();
 
@@ -234,31 +232,46 @@ impl Backend {
             if range.is_empty() {
                 break;
             }
-            ret.push(Segment::new(k, range));
+            let bbox = ProfileBoundingBox::from_track(&self.track, &range);
+            ret.push(Segment::new(k, range, &bbox));
             start = start + self.shift;
             k = k + 1;
         }
         ret
     }
-    pub fn render_segment_track(&mut self, segment: &Segment) -> String {
+    pub fn render_segment(&mut self, segment: &Segment) -> String {
         println!("render_segment_track:{}", segment.id);
-        let range = &segment.range;
         self.enrichWaypoints();
-        let bbox = ProfileBoundingBox::from_track(&self.track, &range);
-        let ret = render::track_profile(&self.track, &range, &bbox);
-        let filename = std::format!("/tmp/track-{}.svg", segment.id);
+        let mut profile = segment.profile.clone();
+        profile.add_canvas();
+        profile.add_track(&self.track);
+        let W = self.get_waypoints();
+        profile.add_waypoints(&W);
+        let ret = profile.render();
+        let filename = std::format!("/tmp/segment-{}.svg", segment.id);
         std::fs::write(filename, &ret).expect("Unable to write file");
         ret
     }
+    pub fn render_segment_track(&mut self, segment: &Segment) -> String {
+        println!("render_segment_track:{}", segment.id);
+        let mut profile = segment.profile.clone();
+        profile.add_canvas();
+        profile.add_track(&self.track);
+        let ret = profile.render();
+        let filename = std::format!("/tmp/track-{}.svg", segment.id);
+        println!("rendered {}", filename);
+        //std::fs::write(filename, &ret).expect("Unable to write file");
+        ret
+    }
     pub fn render_segment_waypoints(&mut self, segment: &Segment) -> String {
-        println!("render_segment_waypoints:{}", segment.id);
-        let range = &segment.range;
+        println!("render_segment_track:{}", segment.id);
+        let mut profile = segment.profile.clone();
         self.enrichWaypoints();
-        let bbox = ProfileBoundingBox::from_track(&self.track, &range);
         let W = self.get_waypoints();
-        let ret = render::waypoints_profile(&self.track, &W, &range, &bbox);
+        profile.add_waypoints(&W);
+        let ret = profile.render();
         let filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
-        std::fs::write(filename, &ret).expect("Unable to write file");
+        //std::fs::write(filename, &ret).expect("Unable to write file");
         ret
     }
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
@@ -269,5 +282,53 @@ impl Backend {
             distance_start: self.track.distance(range.start),
             distance_end: self.track.distance(range.end - 1),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::backend::Backend;
+    #[test]
+    fn svg_segment_track() {
+        let mut backend = Backend::new("data/blackforest.gpx");
+        let segments = backend.segments();
+        let mut ok_count = 0;
+        for segment in &segments {
+            let svg = backend.render_segment_track(&segment);
+            let reffilename = std::format!("data/ref/track-{}.svg", segment.id);
+            println!("test {}", reffilename);
+            if !std::fs::exists(&reffilename).unwrap() {
+                continue;
+            }
+            let data = std::fs::read_to_string(&reffilename).unwrap();
+            if data == svg {
+                ok_count += 1;
+            } else {
+                println!("test failed");
+            }
+        }
+        assert!(ok_count == segments.len());
+    }
+
+    #[test]
+    fn svg_segment_waypoints() {
+        let mut backend = Backend::new("data/blackforest.gpx");
+        let segments = backend.segments();
+        let mut ok_count = 0;
+        for segment in &segments {
+            let svg = backend.render_segment_waypoints(&segment);
+            let reffilename = std::format!("data/ref/waypoints-{}.svg", segment.id);
+            println!("test {}", reffilename);
+            if !std::fs::exists(&reffilename).unwrap() {
+                continue;
+            }
+            let data = std::fs::read_to_string(&reffilename).unwrap();
+            if data == svg {
+                ok_count += 1;
+            } else {
+                println!("test failed");
+            }
+        }
+        assert!(ok_count == segments.len());
     }
 }

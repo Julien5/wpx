@@ -325,6 +325,7 @@ class MiniSvgWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // FIXME: do not parse in the build method.
     return CustomPaint(
       size: Size(width, height),
       painter: SvgPainter(root: MiniSvgWidget.parse(svg)),

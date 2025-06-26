@@ -15,6 +15,7 @@ class SegmentStack extends StatelessWidget {
     var stack = Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]);
     var wp = SizedBox(height: 250, child: WayPointsConsumer());
     return Column(children: [stack, wp]);
+    //return Column(children: [stack]);
   }
 }
 
@@ -24,8 +25,8 @@ class TrackConsumer extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return Consumer<TrackRenderer>(
-      builder: (context, trackRendering, child) {
-        return FutureRenderingWidget(future: trackRendering);
+      builder: (context, trackRenderer, child) {
+        return FutureRenderingWidget(future: trackRenderer);
       },
     );
   }
@@ -58,14 +59,14 @@ class _WaypointsConsumerState extends State<WaypointsConsumer> {
   @override
   Widget build(BuildContext ctx) {
     return Consumer<WaypointsRenderer>(
-      builder: (context, waypointsRendering, child) {
+      builder: (context, waypointsRenderer, child) {
         // It would be more accurate to check visibility with a scroll controller
         // at the list view level. Because "Callbacks are not fired immediately
         // on visibility changes."
         return VisibilityDetector(
-          key: Key('id:${waypointsRendering.id()}'),
+          key: Key('id:${waypointsRenderer.id()}'),
           onVisibilityChanged: onVisibilityChanged,
-          child: FutureRenderingWidget(future: waypointsRendering),
+          child: FutureRenderingWidget(future: waypointsRenderer),
         );
       },
     );

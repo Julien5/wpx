@@ -4,25 +4,52 @@ use flutter_rust_bridge::frb;
 
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
-pub use tracks::backend::gpsdata::UTMPoint;
-pub use tracks::backend::Segment;
 pub use tracks::backend::WayPoint;
+pub use tracks::gpsdata::WaypointOrigin;
+pub use tracks::utm::UTMPoint;
+
+pub use tracks::backend::Segment as SegmentImplementation;
 
 #[frb(opaque)]
 pub struct Bridge {
     backend: tracks::backend::Backend,
 }
 
-#[frb(mirror(Segment))]
-pub struct _Segment {
-    pub id: usize,
-    pub range: Range<usize>,
+#[frb(opaque)]
+pub struct Segment {
+    _impl: SegmentImplementation,
+}
+
+impl Segment {
+    pub fn create(d: SegmentImplementation) -> Segment {
+        Segment { _impl: d }
+    }
+
+    #[frb(sync)]
+    pub fn id(&self) -> usize {
+        self._impl.id
+    }
+
+    #[frb(sync)]
+    pub fn shows_waypoint(&self, wp: &WayPoint) -> bool {
+        self._impl.shows_waypoint(wp)
+    }
+}
+
+#[frb(mirror(UTMPoint))]
+pub struct _UTMPoint(pub f64, pub f64);
+
+#[frb(mirror(WaypointOrigin))]
+pub enum _WaypointOrigin {
+    GPX,
+    DouglasPeucker,
 }
 
 #[frb(mirror(WayPoint))]
 pub struct _WayPoint {
     wgs84: (f64, f64, f64),
     utm: UTMPoint,
+    origin: WaypointOrigin,
     distance: f64,
     elevation: f64,
     inter_distance: f64,
@@ -54,7 +81,7 @@ impl Bridge {
     pub fn setSpeed(&mut self, meter_per_second: f64) {
         self.backend.setSpeed(meter_per_second)
     }
-    #[frb(sync)]
+    #[frb(sync)] //TODO: add segment parameter
     pub fn getWayPoints(&mut self) -> Vec<WayPoint> {
         self.backend.get_waypoints()
     }
@@ -62,25 +89,19 @@ impl Bridge {
     pub fn elevation_gain(&mut self, from: usize, to: usize) -> f64 {
         self.backend.elevation_gain(from, to)
     }
-    pub async fn renderTrack(&mut self) -> String {
-        self.backend.render_track()
-    }
-    pub async fn renderWaypoints(&mut self) -> String {
-        self.backend.render_waypoints()
-    }
     pub async fn renderSegmentTrack(&mut self, segment: &Segment) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
-        self.backend.render_segment_track(&segment)
+        self.backend.render_segment_track(&segment._impl)
     }
     pub async fn renderSegmentWaypoints(&mut self, segment: &Segment) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
-        self.backend.render_segment_waypoints(&segment)
+        self.backend.render_segment_waypoints(&segment._impl)
     }
     #[frb(sync)]
     pub fn renderSegmentWaypointsSync(&mut self, segment: &Segment) -> String {
-        self.backend.render_segment_waypoints(&segment)
+        self.backend.render_segment_waypoints(&segment._impl)
     }
     #[frb(sync)]
     pub fn epsilon(&self) -> f32 {
@@ -89,7 +110,12 @@ impl Bridge {
 
     #[frb(sync)]
     pub fn segments(&self) -> Vec<Segment> {
-        self.backend.segments()
+        let S = self.backend.segments();
+        let mut ret = Vec::new();
+        for s in S {
+            ret.push(Segment::create(s));
+        }
+        ret
     }
 }
 

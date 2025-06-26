@@ -4,6 +4,7 @@ use crate::backend::WayPoint;
 use crate::gpsdata::ProfileBoundingBox;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
+use svg::Node;
 type Data = svg::node::element::path::Data;
 type Group = svg::node::element::Group;
 type Rect = svg::node::element::Path;
@@ -87,8 +88,9 @@ fn texty(label: &str, pos: (i32, i32)) -> Text {
     ret
 }
 
-fn track(d: Data) -> Path {
+fn trackpath(d: Data) -> Path {
     let p = Path::new()
+        .set("id", "track")
         .set("stroke", "black")
         .set("stroke-width", 2)
         .set("shape-rendering", "geometricPrecision")
@@ -226,117 +228,175 @@ fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &WayPoint) -> Text {
     ret
 }
 
-pub fn canvas(
-    geodata: &gpsdata::Track,
-    waypoints: Option<&Vec<WayPoint>>,
-    range: &std::ops::Range<usize>,
-    bbox: &gpsdata::ProfileBoundingBox,
-) -> svg::Document {
-    let W = 1400;
-    let H = 400;
-    let Mleft = 50;
-    let Mbottom = 50;
-    let WD = W - Mleft;
-    let HD = H - Mbottom;
+#[derive(Clone)]
+pub struct Profile {
+    W: i32,
+    H: i32,
+    Mleft: i32,
+    Mbottom: i32,
+    BG: Group,
+    SL: Group,
+    SB: Group,
+    range: std::ops::Range<usize>,
+    pub SD: Group,
+    bbox: gpsdata::ProfileBoundingBox,
+}
 
-    let BG = Group::new().set("id", "frame");
-
-    let mut SL = Group::new()
-        .set("id", "SL")
-        .set("transform", transformSL(W, H, Mleft, Mbottom));
-
-    let mut SB = Group::new()
-        .set("id", "SB")
-        .set("transform", transformSB(W, H, Mleft, Mbottom));
-
-    let mut SD = Group::new()
-        .set("id", "SD")
-        .set("transform", transformSD(W, H, Mleft, Mbottom, WD))
-        .add(bbrect("bg", "lightgray", (0, 0), (WD, HD)))
-        .add(stroke("3", (0, 0), (WD, 0)))
-        .add(stroke("3", (0, 0), (0, HD)))
-        .add(stroke("3", (0, HD), (WD, HD)))
-        .add(stroke("3", (WD, 0), (WD, HD)));
-
-    for xtick in xticks(bbox) {
-        let xd = toSD((xtick, 0f64), WD, HD, bbox).0;
-        if xd > WD {
-            break;
+impl Profile {
+    pub fn init(range: &std::ops::Range<usize>, bbox: &gpsdata::ProfileBoundingBox) -> Profile {
+        let W = 1400;
+        let H = 400;
+        let Mleft = 50;
+        let Mbottom = 40;
+        Profile {
+            W,
+            H,
+            Mleft,
+            Mbottom,
+            range: range.clone(),
+            bbox: bbox.clone(),
+            BG: Group::new().set("id", "BG"),
+            SL: Group::new()
+                .set("id", "SL")
+                .set("transform", transformSL(W, H, Mleft, Mbottom)),
+            SB: Group::new()
+                .set("id", "SB")
+                .set("transform", transformSB(W, H, Mleft, Mbottom)),
+            SD: Group::new()
+                .set("id", "SD")
+                .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft)),
         }
-        if xtick < 0f64 {
-            continue;
-        }
-        SD = SD.add(stroke("1", (xd, 0), (xd, HD)));
-        SB = SB.add(textx(
-            format!("{}", (xtick / 1000f64).floor() as i32).as_str(),
-            (xd, 25),
-        ));
+    }
+    pub fn toSD(&self, (x, y): (f64, f64)) -> (i32, i32) {
+        assert!(self.bbox.xmin <= self.bbox.xmax);
+        assert!(self.bbox.ymin <= self.bbox.ymax);
+        let f = |x: f64| -> f64 {
+            let a = self.WD() as f64 / (self.bbox.xmax - self.bbox.xmin);
+            let b = -self.bbox.xmin * a;
+            a * x + b
+        };
+        let g = |y: f64| -> f64 {
+            let a = self.HD() as f64 / (self.bbox.ymax - self.bbox.ymin);
+            let b = -self.bbox.ymin * a;
+            a * y + b
+        };
+        (f(x).floor() as i32, g(y).floor() as i32)
+    }
+    pub fn WD(&self) -> i32 {
+        self.W - self.Mleft
+    }
+    pub fn HD(&self) -> i32 {
+        self.H - self.Mbottom
     }
 
-    for xtick in xticks_dashed(bbox) {
-        let xd = toSD((xtick, 0f64), WD, HD, bbox).0;
-        if xd > WD {
-            break;
-        }
-        SD = SD.add(dashed((xd, 0), (xd, HD)));
+    pub fn addSD<T>(&mut self, node: T)
+    where
+        T: Into<Box<dyn svg::Node>>,
+    {
+        self.SD.append(node);
     }
 
-    for ytick in yticks(bbox) {
-        let yd = toSD((bbox.xmin, ytick), WD, HD, bbox).1;
-        if yd > HD {
-            break;
-        }
-        SD = SD.add(stroke("1", (0, yd), (WD, yd)));
-        SL = SL.add(texty(
-            format!("{}", ytick.floor() as i32).as_str(),
-            (10, yd - 5),
-        ));
-    }
+    pub fn render(&self) -> String {
+        let mut world = Group::new()
+            .set("id", "world")
+            .set("shape-rendering", "crispEdges")
+            .set("font-family", "ui-serif")
+            .set("font-size", "20")
+            .set("transform", "translate(5 5)");
+        world.append(self.BG.clone());
+        world.append(self.SL.clone());
+        world.append(self.SB.clone());
+        world.append(self.SD.clone());
 
-    for ytick in yticks_dashed(bbox) {
-        let yd = toSD((bbox.xmin, ytick), WD, HD, bbox).1;
-        if yd > HD {
-            break;
-        }
-        SD = SD.add(dashed((0, yd), (WD, yd)));
-    }
+        let document = svg::Document::new()
+            .set("width", self.W + 20)
+            .set("height", self.H)
+            .add(world);
 
-    SD = SD.add(track(data(geodata, range, (WD, HD), bbox)));
-    match waypoints {
-        Some(W) => {
-            for w in W {
-                let k = w.track_index;
-                if !range.contains(&k) {
-                    continue;
-                }
-                let e = geodata.elevation(k);
-                //let e = se[k];
-                let (x, y) = toSD((geodata.distance(k), e), WD, HD, bbox);
-                SD = SD.add(waypoint_circle((x, y), &w));
-                SD = SD.add(waypoint_elevation_text((x, y), &w));
-                if !w.name.is_empty() {
-                    SD = SD.add(waypoint_text((x, y), &w));
-                }
+        document.to_string()
+    }
+}
+
+impl Profile {
+    pub fn add_canvas(&mut self) {
+        let WD = self.WD();
+        let HD = self.HD();
+        self.SD.append(bbrect("bg", "lightgray", (0, 0), (WD, HD)));
+        self.SD.append(stroke("3", (0, 0), (WD, 0)));
+        self.SD.append(stroke("3", (0, 0), (0, HD)));
+        self.SD.append(stroke("3", (0, HD), (WD, HD)));
+        self.SD.append(stroke("3", (WD, 0), (WD, HD)));
+
+        for xtick in xticks(&self.bbox) {
+            let xd = toSD((xtick, 0f64), WD, HD, &self.bbox).0;
+            if xd > WD {
+                break;
             }
+            if xtick < 0f64 {
+                continue;
+            }
+            self.SD.append(stroke("1", (xd, 0), (xd, HD)));
+            self.SB.append(textx(
+                format!("{}", (xtick / 1000f64).floor() as i32).as_str(),
+                (xd, 25),
+            ));
         }
-        _ => {}
+
+        for xtick in xticks_dashed(&self.bbox) {
+            let xd = toSD((xtick, 0f64), WD, HD, &self.bbox).0;
+            if xd > WD {
+                break;
+            }
+            self.SD.append(dashed((xd, 0), (xd, HD)));
+        }
+
+        for ytick in yticks(&self.bbox) {
+            let yd = toSD((self.bbox.xmin, ytick), WD, HD, &self.bbox).1;
+            if yd > HD {
+                break;
+            }
+            self.SD.append(stroke("1", (0, yd), (WD, yd)));
+            self.SL.append(texty(
+                format!("{}", ytick.floor() as i32).as_str(),
+                (10, yd - 5),
+            ));
+        }
+
+        for ytick in yticks_dashed(&self.bbox) {
+            let yd = toSD((self.bbox.xmin, ytick), WD, HD, &self.bbox).1;
+            if yd > HD {
+                break;
+            }
+            self.SD.append(dashed((0, yd), (WD, yd)));
+        }
     }
 
-    let world = Group::new()
-        .set("id", "world")
-        .set("shape-rendering", "crispEdges")
-        .set("font-family", "ui-serif")
-        .set("font-size", "20")
-        .set("transform", "translate(5 5)")
-        .add(BG)
-        .add(SL)
-        .add(SB)
-        .add(SD);
+    fn add_waypoint(&mut self, w: &WayPoint) {
+        let (x, y) = self.toSD((w.distance, w.elevation));
+        self.addSD(waypoint_circle((x, y), &w));
+        self.addSD(waypoint_elevation_text((x, y), &w));
+        if !w.name.is_empty() {
+            self.addSD(waypoint_text((x, y), &w));
+        }
+    }
+    pub fn shows_waypoint(&self, w: &WayPoint) -> bool {
+        self.bbox.xmin <= w.distance && w.distance <= self.bbox.xmax
+    }
+    pub fn add_waypoints(&mut self, waypoints: &Vec<WayPoint>) {
+        for w in waypoints {
+            if !self.shows_waypoint(w) {
+                continue;
+            }
+            self.add_waypoint(w);
+        }
+    }
 
-    let document = svg::Document::new()
-        .set("width", W + 20)
-        .set("height", H)
-        .add(world);
-
-    document
+    pub fn add_track(&mut self, track: &gpsdata::Track) {
+        self.SD.append(trackpath(data(
+            track,
+            &self.range,
+            (self.WD(), self.HD()),
+            &self.bbox,
+        )))
+    }
 }

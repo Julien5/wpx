@@ -1,0 +1,73 @@
+<svg height="400" width="1420" xmlns="http://www.w3.org/2000/svg">
+<g font-family="ui-serif" font-size="20" id="world" shape-rendering="crispEdges" transform="translate(5 5)">
+<g id="BG"/>
+<g id="SL" transform="translate(50 360) scale(-1 -1)"/>
+<g id="SB" transform="translate(50 360)"/>
+<g id="SD" transform="translate(50 360) scale(1 -1) scale(1 1)">
+<circle cx="192" cy="226" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(192 241) scale(1 -1)">
+693
+</text>
+<circle cx="436" cy="335" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(436 350) scale(1 -1)">
+1025
+</text>
+<circle cx="480" cy="284" fill="black" r="8"/>
+<text font-size="14" text-anchor="middle" transform="translate(480 299) scale(1 -1)">
+868
+</text>
+<text text-anchor="middle" transform="translate(480 254) scale(1 -1)">
+K1
+
+</text>
+<circle cx="483" cy="281" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(483 296) scale(1 -1)">
+859
+</text>
+<circle cx="636" cy="323" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(636 338) scale(1 -1)">
+988
+</text>
+<circle cx="742" cy="166" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(742 181) scale(1 -1)">
+510
+</text>
+<circle cx="791" cy="205" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(791 220) scale(1 -1)">
+628
+</text>
+<circle cx="823" cy="116" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(823 131) scale(1 -1)">
+354
+</text>
+<circle cx="887" cy="70" fill="black" r="8"/>
+<text font-size="14" text-anchor="middle" transform="translate(887 85) scale(1 -1)">
+217
+</text>
+<text text-anchor="middle" transform="translate(887 40) scale(1 -1)">
+K2
+
+</text>
+<circle cx="900" cy="70" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(900 85) scale(1 -1)">
+216
+</text>
+<circle cx="1040" cy="262" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1040 277) scale(1 -1)">
+803
+</text>
+<circle cx="1114" cy="102" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1114 117) scale(1 -1)">
+312
+</text>
+<circle cx="1237" cy="250" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1237 265) scale(1 -1)">
+764
+</text>
+<circle cx="1295" cy="128" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1295 143) scale(1 -1)">
+393
+</text>
+</g>
+</g>
+</svg>

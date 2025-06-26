@@ -1,13 +1,15 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
 class WayPointsView extends StatefulWidget {
   final SegmentsProvider? segmentsProvider;
-  const WayPointsView({super.key, this.segmentsProvider});
+  final Segment? segment;
+  const WayPointsView({super.key, this.segmentsProvider, this.segment});
 
   @override
   State<WayPointsView> createState() => WayPointsViewState();
@@ -21,13 +23,16 @@ class WayPointsViewState extends State<WayPointsView> {
 
   @override
   Widget build(BuildContext context) {
-    List<WayPoint> waypoints = widget.segmentsProvider!.waypoints();
+    List<WayPoint> all = widget.segmentsProvider!.waypoints();
 
-    developer.log(
-      "[WayPointsViewState] [build] #_waypoints=${waypoints!.length}",
-    );
+    List<WayPoint> local = [];
+    for (WayPoint waypoint in all) {
+      if (widget.segment!.showsWaypoint(wp: waypoint)) local.add(waypoint);
+    }
 
-    if (waypoints.isEmpty) {
+    developer.log("[WayPointsViewState] [build] #_waypoints=${local.length}");
+
+    if (local.isEmpty) {
       return const Center(child: Text("No waypoints available"));
     }
 
@@ -44,9 +49,9 @@ class WayPointsViewState extends State<WayPointsView> {
           DataColumn(label: Text('Time')),
         ],
         rows:
-            waypoints.map((waypoint) {
+            local.map((waypoint) {
               var dt = DateTime.fromMillisecondsSinceEpoch(
-                waypoint.time * 1000,
+                waypoint.time.toInt() * 1000,
               );
               return DataRow(
                 cells: [
@@ -55,7 +60,7 @@ class WayPointsViewState extends State<WayPointsView> {
                     Text("${(waypoint.distance / 1000).toStringAsFixed(1)} km"),
                   ), // Distance
                   DataCell(
-                    Text("${waypoint.elevation.toStringAsFixed(0)} m"),
+                    Text("${waypoint.elevation.floor().toStringAsFixed(0)} m"),
                   ), // Elevation
                   DataCell(
                     Text(
@@ -70,7 +75,11 @@ class WayPointsViewState extends State<WayPointsView> {
                   DataCell(
                     Text("${(waypoint.interSlope).toStringAsFixed(1)} %"),
                   ),
-                  DataCell(Text(dt.toIso8601String())),
+                  DataCell(
+                    Text(
+                      DateFormat('HH:mm').format(dt),
+                    ), // Format the DateTime object
+                  ),
                 ],
               );
             }).toList(),
@@ -86,17 +95,20 @@ class WayPointsConsumer extends StatelessWidget {
   Widget build(BuildContext ctx) {
     return Consumer<SegmentsProvider>(
       builder: (context, segmentsProvider, child) {
-        SegmentsProvider provider = Provider.of<SegmentsProvider>(
-          context,
-          listen: false,
-        );
-
+        var wp = Provider.of<WaypointsRenderer>(context, listen: false);
+        // TODO: use wp to get the current segment and use it to get the waypoints.
+        var segment = wp.segment;
         return Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 1500),
             child: Column(
               children: [
-                Expanded(child: WayPointsView(segmentsProvider: provider)),
+                Expanded(
+                  child: WayPointsView(
+                    segmentsProvider: segmentsProvider,
+                    segment: segment,
+                  ),
+                ),
               ],
             ),
           ),

@@ -1,3 +1,4 @@
+use crate::utm::UTMPoint;
 use geo::{Distance, SimplifyIdx};
 
 fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
@@ -11,24 +12,20 @@ use std::io::Read;
 
 use crate::elevation;
 
-#[derive(Clone)]
-pub struct UTMPoint(f64, f64);
-
-impl UTMPoint {
-    pub fn x(&self) -> f64 {
-        self.0
-    }
-    pub fn y(&self) -> f64 {
-        self.1
-    }
-}
-
 pub struct Track {
     pub wgs84: Vec<(f64, f64, f64)>,
     pub utm: Vec<UTMPoint>,
     _distance: Vec<f64>,
 }
 
+#[cfg(target_arch = "wasm32")]
+pub fn read_gpx(_filename: &str) -> Box<gpx::Gpx> {
+    let content = include_bytes!("../data/blackforest.gpx");
+    let reader_mem = std::io::Cursor::new(content);
+    Box::new(gpx::read(reader_mem).unwrap())
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn read_gpx(filename: &str) -> Box<gpx::Gpx> {
     let file = std::fs::File::open(filename).unwrap();
     let mut reader_file = std::io::BufReader::new(file);
@@ -145,6 +142,7 @@ impl Track {
     }
 }
 
+#[derive(Clone)]
 pub struct ProfileBoundingBox {
     pub xmin: f64,
     pub xmax: f64,

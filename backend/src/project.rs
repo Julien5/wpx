@@ -1,8 +1,9 @@
 #![allow(non_snake_case)]
 use crate::gpsdata;
+use crate::utm;
 
 // see https://docs.rs/kd-tree/latest/kd_tree/trait.KdPoint.html
-impl kd_tree::KdPoint for gpsdata::UTMPoint {
+impl kd_tree::KdPoint for utm::UTMPoint {
     type Scalar = f64;
     type Dim = typenum::U2;
     fn at(&self, i: usize) -> Self::Scalar {
@@ -18,7 +19,7 @@ impl kd_tree::KdPoint for gpsdata::UTMPoint {
 }
 
 pub fn nearest_neighboor(
-    track: &Vec<gpsdata::UTMPoint>,
+    track: &Vec<utm::UTMPoint>,
     waypoints: &Vec<gpsdata::Waypoint>,
 ) -> Vec<usize> {
     let tree = kd_tree::KdIndexTree::build_by_ordered_float(track);
