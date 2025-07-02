@@ -64,13 +64,12 @@ use std::{str::FromStr, time::Duration};
 use tokio::time::sleep;
 
 impl Bridge {
-    pub fn create() -> Bridge {
+    pub async fn create() -> Bridge {
         Bridge {
             backend: tracks::backend::Backend::new("/tmp/track.gpx"),
         }
     }
-    #[frb(sync)]
-    pub fn adjustEpsilon(&mut self, eps: f32) {
+    pub async fn adjustEpsilon(&mut self, eps: f32) {
         self.backend.adjustEpsilon(eps);
     }
     #[frb(sync)]

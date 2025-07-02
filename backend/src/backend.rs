@@ -206,15 +206,20 @@ impl Backend {
                 .timestamp(),
             speed: speed::mps(15f64),
         };
-        ret.enrichWaypoints();
+        ret.updateWaypoints();
         for w in &ret.waypoints {
             debug_assert!(w.track_index < ret.track.len());
         }
         ret
     }
 
+    fn updateWaypoints(&mut self) {
+        self.enrichWaypoints();
+    }
+
     pub fn adjustEpsilon(&mut self, delta: f32) {
         self.epsilon += delta;
+        self.updateWaypoints();
     }
 
     pub fn epsilon(&self) -> f32 {
@@ -241,7 +246,6 @@ impl Backend {
     }
     pub fn render_segment(&mut self, segment: &Segment) -> String {
         println!("render_segment_track:{}", segment.id);
-        self.enrichWaypoints();
         let mut profile = segment.profile.clone();
         profile.add_canvas();
         profile.add_track(&self.track);
@@ -266,7 +270,6 @@ impl Backend {
     pub fn render_segment_waypoints(&mut self, segment: &Segment) -> String {
         println!("render_segment_track:{}", segment.id);
         let mut profile = segment.profile.clone();
-        self.enrichWaypoints();
         let W = self.get_waypoints();
         profile.add_waypoints(&W);
         let ret = profile.render();

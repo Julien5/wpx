@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -65,11 +67,7 @@ class TrackRenderer extends FutureRenderer {
 class WaypointsRenderer extends FutureRenderer {
   double visibility = 0;
   WaypointsRenderer(Bridge bridge, Segment segment)
-    : super(
-        bridge: bridge,
-        segment: segment,
-        trackData: TrackData.waypoints,
-      );
+    : super(bridge: bridge, segment: segment, trackData: TrackData.waypoints);
 
   void updateVisibility(double v) {
     visibility = v;
@@ -103,60 +101,66 @@ class Renderers {
 class RenderingsProvider extends MultiProvider {
   final Renderers renderers;
 
-  RenderingsProvider(
-    Renderers r,
-    Widget child, {
-    super.key,
-  }) : renderers = r,
-       super(
-         providers: [
-           ChangeNotifierProvider.value(value: r.trackRendering),
-           ChangeNotifierProvider.value(value: r.waypointsRendering),
-         ],
-         child: child,
-       );
+  RenderingsProvider(Renderers r, Widget child, {super.key})
+    : renderers = r,
+      super(
+        providers: [
+          ChangeNotifierProvider.value(value: r.trackRendering),
+          ChangeNotifierProvider.value(value: r.waypointsRendering),
+        ],
+        child: child,
+      );
 }
 
 class SegmentsProvider extends ChangeNotifier {
   Bridge? _bridge;
   final List<Renderers> _segments = [];
-  final List<WayPoint> _waypoints=[];
+  final List<WayPoint> _waypoints = [];
+  bool updating=false;
 
   SegmentsProvider(Bridge f) {
     _bridge = f;
     _updateSegments();
   }
 
-  void incrementDelta() {
-    _bridge!.adjustEpsilon(eps: 10.0);
+  void incrementDelta() async {
+    await _bridge!.adjustEpsilon(eps: 10.0);
     _updateSegments();
   }
 
-  void decrementDelta() {
-    _bridge!.adjustEpsilon(eps: -10.0);
+  void decrementDelta() async {
+    await _bridge!.adjustEpsilon(eps: -10.0);
     _updateSegments();
   }
 
   void _updateSegments() {
+    if (updating) {
+      developer.log("[skip updating]");
+      return;
+    }
+    updating = true;
+    developer.log("[start update]");
     var segments = _bridge!.segments();
     assert(_segments.isEmpty || _segments.length == segments.length);
     if (_segments.isEmpty) {
-      for(var segment in segments) {
-        var t=TrackRenderer(_bridge!,segment);
-        var w=WaypointsRenderer(_bridge!,segment);
-        _segments.add(Renderers(t,w));
+      for (var segment in segments) {
+        var t = TrackRenderer(_bridge!, segment);
+        var w = WaypointsRenderer(_bridge!, segment);
+        _segments.add(Renderers(t, w));
       }
     } else {
-      for(var renderers in _segments) {
+      for (var renderers in _segments) {
         renderers.waypointsRendering.reset();
       }
     }
     _waypoints.clear();
-    var W=_bridge!.getWayPoints();
-    for(var w in W) {
+    var W = _bridge!.getWayPoints();
+    for (var w in W) {
       _waypoints.add(w);
     }
     notifyListeners();
+    updating = false;
+    developer.log("[done update]");
   }
 
   List<Renderers> segments() {

@@ -27,7 +27,9 @@ class WayPointsViewState extends State<WayPointsView> {
 
     List<WayPoint> local = [];
     for (WayPoint waypoint in all) {
-      if (widget.segment!.showsWaypoint(wp: waypoint)) local.add(waypoint);
+      if (widget.segment!.showsWaypoint(wp: waypoint)) {
+        local.add(waypoint);
+      }
     }
 
     developer.log("[WayPointsViewState] [build] #_waypoints=${local.length}");

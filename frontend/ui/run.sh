@@ -33,7 +33,8 @@ function frontend() {
 function run-web() {
 	cd ~/work/projects/desktop/track/profile/frontend/ui
 	dev.flutter-rust
-	mv build build.d
+	rm -Rf /tmp/build.d
+	mv build /tmp/build.d
 	rustup target add wasm32-unknown-unknown
 	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web
@@ -45,7 +46,7 @@ function run-web() {
 	PORT=8123
 	killall python3
 	sleep 1
-	python3 server.py &
+	python3 server.py http localhost &
 	sleep 1
 	firefox "http://localhost:8123/"
 }

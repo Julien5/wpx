@@ -8,12 +8,15 @@ import 'package:ui/src/segments_widget.dart';
 
 import 'package:window_size/window_size.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart'; // Import kIsWeb
 
 Future<void> main() async {
   developer.log("START");
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    setWindowFrame(Rect.fromLTWH(150, 150, 1600, 900));
+  if (!kIsWeb) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      setWindowFrame(Rect.fromLTWH(150, 150, 1600, 900));
+    }
   }
   await RustLib.init();
   Bridge instance = await Bridge.create();
@@ -28,7 +31,7 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var scaffold = Scaffold(
-      appBar: AppBar(title: const Text('WPX')),
+      appBar: AppBar(title: const Text('WPX 0.0.1')),
       body: SegmentsConsumer(), //WayPointsConsumer(),
     );
     var home = ChangeNotifierProvider(
