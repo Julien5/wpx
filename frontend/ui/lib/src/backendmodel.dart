@@ -116,7 +116,6 @@ class SegmentsProvider extends ChangeNotifier {
   Bridge? _bridge;
   final List<Renderers> _segments = [];
   final List<WayPoint> _waypoints = [];
-  bool updating=false;
 
   SegmentsProvider(Bridge f) {
     _bridge = f;
@@ -134,12 +133,6 @@ class SegmentsProvider extends ChangeNotifier {
   }
 
   void _updateSegments() {
-    if (updating) {
-      developer.log("[skip updating]");
-      return;
-    }
-    updating = true;
-    developer.log("[start update]");
     var segments = _bridge!.segments();
     assert(_segments.isEmpty || _segments.length == segments.length);
     if (_segments.isEmpty) {
@@ -159,8 +152,6 @@ class SegmentsProvider extends ChangeNotifier {
       _waypoints.add(w);
     }
     notifyListeners();
-    updating = false;
-    developer.log("[done update]");
   }
 
   List<Renderers> segments() {
