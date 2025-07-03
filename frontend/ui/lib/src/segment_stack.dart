@@ -12,7 +12,13 @@ class SegmentStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stack = Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]);
+    double width = MediaQuery.sizeOf(context).width;
+    double height = MediaQuery.sizeOf(context).height;
+    developer.log("[stack] ${width}x$height");
+    var stack = Align(
+      alignment: Alignment.center, // Center the Stack horizontally
+      child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
+    );
     var wp = SizedBox(height: 250, child: WayPointsConsumer());
     return Column(children: [stack, wp]);
     //return Column(children: [stack]);

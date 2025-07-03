@@ -32,7 +32,7 @@ class Application extends StatelessWidget {
   Widget build(BuildContext context) {
     var scaffold = Scaffold(
       appBar: AppBar(title: const Text('WPX 0.0.1')),
-      body: SegmentsConsumer(), //WayPointsConsumer(),
+      body: SegmentsConsumer(), 
     );
     var home = ChangeNotifierProvider(
       create: (ctx) => SegmentsProvider(bridge),

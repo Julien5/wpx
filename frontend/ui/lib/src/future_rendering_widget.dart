@@ -14,18 +14,13 @@ class FutureRenderingWidget extends StatefulWidget {
 class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   Widget? svg;
 
-  Widget grayBackground() {
-  return Container(
-    decoration: BoxDecoration(
-      color: Colors.grey.withAlpha(150),
-    ),
-  );
-}
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width / 1.5;
+    Size childSize = Size(width, width / 3);
+    widget.future.setSize(childSize);
     if (widget.future.done()) {
-      //svg = SvgPicture.string(widget.future.result(), width: 1400, height: 400);
-      svg=MiniSvgWidget(svg: widget.future.result(), width: 1900, height: 400);
+      svg = MiniSvgWidget(svg: widget.future.result(), size: childSize);
     }
     if (!widget.future.done() && svg == null) {
       return Text("starting ${widget.future.trackData} ${widget.future.id()}");
@@ -33,7 +28,10 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
     if (!widget.future.done()) {
       return Stack(
-        children: <Widget>[grayBackground(),Text("updating ${widget.future.trackData} ${widget.future.id()}"), svg!],
+        children: <Widget>[
+          Text("updating ${widget.future.trackData} ${widget.future.id()}"),
+          svg!,
+        ],
       );
     }
     return svg!;

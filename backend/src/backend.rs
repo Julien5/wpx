@@ -244,9 +244,10 @@ impl Backend {
         }
         ret
     }
-    pub fn render_segment(&mut self, segment: &Segment) -> String {
+    pub fn render_segment(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         println!("render_segment_track:{}", segment.id);
         let mut profile = segment.profile.clone();
+        profile.reset_size(W, H);
         profile.add_canvas();
         profile.add_track(&self.track);
         let W = self.get_waypoints();
@@ -256,9 +257,10 @@ impl Backend {
         std::fs::write(filename, &ret).expect("Unable to write file");
         ret
     }
-    pub fn render_segment_track(&mut self, segment: &Segment) -> String {
+    pub fn render_segment_track(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         println!("render_segment_track:{}", segment.id);
         let mut profile = segment.profile.clone();
+        profile.reset_size(W, H);
         profile.add_canvas();
         profile.add_track(&self.track);
         let ret = profile.render();
@@ -267,13 +269,15 @@ impl Backend {
         //std::fs::write(filename, &ret).expect("Unable to write file");
         ret
     }
-    pub fn render_segment_waypoints(&mut self, segment: &Segment) -> String {
+    pub fn render_segment_waypoints(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         println!("render_segment_track:{}", segment.id);
         let mut profile = segment.profile.clone();
+        profile.reset_size(W, H);
         let W = self.get_waypoints();
         profile.add_waypoints(&W);
         let ret = profile.render();
-        let filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
+        let _filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
+        // TODO: compile if not wasm
         //std::fs::write(filename, &ret).expect("Unable to write file");
         ret
     }

@@ -49,6 +49,7 @@ class Translate extends Transform {
 abstract class Element {
   List<Transform> T = [];
   List<Element> children = [];
+  final Element? _parent;
 
   void paintElement(Canvas canvas, Size size);
 
@@ -58,10 +59,12 @@ abstract class Element {
     _deinstallTransforms(canvas);
   }
 
-  late XmlElement e;
-  Element(XmlElement pe) : e = pe {
-    if (e.attributes.isNotEmpty) {
-      for (var attr in e.attributes) {
+  final XmlElement _xmlElement;
+  Element(XmlElement xmlElement, Element? parent)
+    : _xmlElement = xmlElement,
+      _parent = parent {
+    if (_xmlElement.attributes.isNotEmpty) {
+      for (var attr in _xmlElement.attributes) {
         switch (attr.name.local) {
           case 'transform':
             T = Transform.readAttribute(attr.value);
@@ -90,17 +93,28 @@ abstract class Element {
     canvas.restore();
   }
 
-  static Element fromXml(XmlElement e) {
+  String? attribute(String name) {
+    var ret = _xmlElement.getAttribute(name);
+    if (ret == null) {
+      if (_parent == null) {
+        return null;
+      }
+      return _parent.attribute(name);
+    }
+    return ret;
+  }
+
+  static Element fromXml(XmlElement e, Element? parent) {
     if (e.name.local == "path") {
-      return PathElement(e);
+      return PathElement(e, parent);
     } else if (e.name.local == "text") {
-      return TextElement(e);
+      return TextElement(e, parent);
     } else if (e.name.local == "circle") {
-      return CircleElement(e);
+      return CircleElement(e, parent);
     } else if (e.name.local == "svg") {
-      return GroupElement(e);
+      return GroupElement(e, parent);
     } else if (e.name.local == "g") {
-      return GroupElement(e);
+      return GroupElement(e, parent);
     } else {
       throw Exception("Unknown element type: ${e.name}");
     }
@@ -108,10 +122,10 @@ abstract class Element {
 }
 
 class GroupElement extends Element {
-  GroupElement(super.e) {
-    for (var child in e.children) {
+  GroupElement(super.xmlElement, super.parent) {
+    for (var child in _xmlElement.children) {
       if (child is XmlElement) {
-        children.add(Element.fromXml(child));
+        children.add(Element.fromXml(child, this));
       }
     }
   }
@@ -160,23 +174,23 @@ class PathElement extends Element {
   late double strokeWidth;
   late Path path;
   late String strokeDasharray;
-  PathElement(super.e) {
-    d = e.getAttribute("d")!;
+  PathElement(super.xmlElement, super.parent) {
+    d = _xmlElement.getAttribute("d")!;
     stroke = Colors.black;
     fill = Colors.transparent;
     strokeWidth = 1.0;
     strokeDasharray = "";
-    if (e.getAttribute("stroke") != null) {
-      stroke = parseColor(e.getAttribute("stroke")!);
+    if (_xmlElement.getAttribute("stroke") != null) {
+      stroke = parseColor(attribute("stroke")!);
     }
-    if (e.getAttribute("fill") != null) {
-      fill = parseColor(e.getAttribute("fill")!);
+    if (_xmlElement.getAttribute("fill") != null) {
+      fill = parseColor(attribute("fill")!);
     }
-    if (e.getAttribute("stroke-width") != null) {
-      strokeWidth = double.parse(e.getAttribute("stroke-width")!);
+    if (_xmlElement.getAttribute("stroke-width") != null) {
+      strokeWidth = double.parse(attribute("stroke-width")!);
     }
-    if (e.getAttribute("stroke-dasharray") != null) {
-      strokeDasharray = e.getAttribute("stroke-dasharray")!;
+    if (_xmlElement.getAttribute("stroke-dasharray") != null) {
+      strokeDasharray = attribute("stroke-dasharray")!;
     }
 
     path = parseSvgPath(d);
@@ -213,22 +227,22 @@ class CircleElement extends Element {
   late double strokeWidth;
   late double cx, cy, r;
 
-  CircleElement(super.e) {
+  CircleElement(super.xmlElement, super.parent) {
     stroke = Colors.black;
     fill = Colors.black;
     strokeWidth = 1.0;
-    if (e.getAttribute("stroke") != null) {
-      stroke = parseColor(e.getAttribute("stroke")!);
+    if (_xmlElement.getAttribute("stroke") != null) {
+      stroke = parseColor(attribute("stroke")!);
     }
-    if (e.getAttribute("fill") != null) {
-      fill = parseColor(e.getAttribute("fill")!);
+    if (_xmlElement.getAttribute("fill") != null) {
+      fill = parseColor(attribute("fill")!);
     }
-    if (e.getAttribute("stroke-width") != null) {
-      strokeWidth = double.parse(e.getAttribute("stroke-width")!);
+    if (_xmlElement.getAttribute("stroke-width") != null) {
+      strokeWidth = double.parse(_xmlElement.getAttribute("stroke-width")!);
     }
-    cx = double.parse(e.getAttribute("cx")!);
-    cy = double.parse(e.getAttribute("cy")!);
-    r = double.parse(e.getAttribute("r")!);
+    cx = double.parse(attribute("cx")!);
+    cy = double.parse(attribute("cy")!);
+    r = double.parse(attribute("r")!);
   }
 
   @override
@@ -262,11 +276,16 @@ TextAlign readTextAlign(String textAnchor) {
 class TextElement extends Element {
   late String text;
   late TextAlign textAlign;
-  TextElement(super.e) {
-    text = e.innerText.trim();
+  late double fontSize;
+  TextElement(super.xmlElement, super.parent) {
+    text = super._xmlElement.innerText.trim();
     textAlign = TextAlign.center;
-    if (e.getAttribute("text-anchor") != null) {
-      textAlign = readTextAlign(e.getAttribute("text-anchor")!);
+    fontSize = 16.0;
+    if (attribute("text-anchor") != null) {
+      textAlign = readTextAlign(attribute("text-anchor")!);
+    }
+    if (attribute("font-size") != null) {
+      fontSize = double.parse(attribute("font-size").toString());
     }
   }
 
@@ -275,9 +294,9 @@ class TextElement extends Element {
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(
+        style: TextStyle(
           color: Colors.black,
-          fontSize: 16.0,
+          fontSize: fontSize,
           fontFamily: "Courier",
         ),
       ),
@@ -303,31 +322,29 @@ Element rootElement() {
   /// read xml from file
   String xml = File('track-0.svg').readAsStringSync();
   XmlDocument doc = XmlDocument.parse(xml);
-  return Element.fromXml(doc.rootElement);
+  return Element.fromXml(doc.rootElement, null);
 }
 
 class MiniSvgWidget extends StatelessWidget {
   final String svg;
-  final double width;
-  final double height;
+  final Size? size;
 
   static Element parse(String s) {
     XmlDocument doc = XmlDocument.parse(s);
-    return Element.fromXml(doc.rootElement);
+    return Element.fromXml(doc.rootElement, null);
   }
 
   const MiniSvgWidget({
     super.key,
     required this.svg,
-    required this.width,
-    required this.height,
+    required this.size,
   });
 
   @override
   Widget build(BuildContext context) {
     // FIXME: do not parse in the build method.
     return CustomPaint(
-      size: Size(width, height),
+      size: size!,
       painter: SvgPainter(root: MiniSvgWidget.parse(svg)),
     );
   }

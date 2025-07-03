@@ -14,8 +14,18 @@ class SegmentsView extends StatefulWidget {
   State<SegmentsView> createState() => SegmentsViewState();
 }
 
-RenderingsProvider createRenderingsProviders(Renderers r, Widget child) {
-  return RenderingsProvider(r, child);
+class RenderingsProvider extends MultiProvider {
+  final Renderers renderers;
+
+  RenderingsProvider(Renderers r, Widget child, {super.key})
+    : renderers = r,
+      super(
+        providers: [
+          ChangeNotifierProvider.value(value: r.trackRendering),
+          ChangeNotifierProvider.value(value: r.waypointsRendering),
+        ],
+        child: child,
+      );
 }
 
 class SegmentsViewState extends State<SegmentsView> {
@@ -31,7 +41,7 @@ class SegmentsViewState extends State<SegmentsView> {
     var S = segmentsProvider.segments();
     assert(_segments.isEmpty);
     for (var renderer in S) {
-      var w = createRenderingsProviders(renderer, SegmentStack());
+      var w = RenderingsProvider(renderer, SegmentStack());
       w.renderers.trackRendering.start();
       _segments.add(w);
     }
@@ -40,12 +50,25 @@ class SegmentsViewState extends State<SegmentsView> {
   @override
   Widget build(BuildContext context) {
     developer.log("[segments] [build] #segments=${_segments.length}");
-    return ListView.separated(
-      itemCount: _segments.length,
-      separatorBuilder: (context, index) => const Divider(),
-      itemBuilder: (context, index) {
-        return _segments[index];
-      },
+    List<Tab> tabs=[];
+    for (var s in _segments) {
+      var id=s.renderers.trackRendering.segment.id();
+      tabs.add(Tab(text: "segment ${id.toInt()}"));
+    }
+    return MaterialApp(
+      home: DefaultTabController(
+        length: _segments.length,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs:tabs,
+            ),
+          ),
+          body: TabBarView(
+            children: _segments,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -57,17 +80,13 @@ class SegmentsConsumer extends StatelessWidget {
   Widget build(BuildContext ctx) {
     return Consumer<SegmentsProvider>(
       builder: (context, segmentsProvider, child) {
-        SegmentsProvider provider = Provider.of<SegmentsProvider>(
-          context,
-          listen: false,
-        );
         return Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 1500), 
             child: Column(
               children: [
-                Buttons(more: provider.decrementDelta, less: provider.incrementDelta),
-                Expanded(child: SegmentsView(segmentsProvider: provider)),
+                Buttons(more: segmentsProvider.decrementDelta, less: segmentsProvider.incrementDelta),
+                Expanded(child: SegmentsView(segmentsProvider: segmentsProvider)),
               ],
             ),
           ),

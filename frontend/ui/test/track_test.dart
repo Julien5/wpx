@@ -6,7 +6,7 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:sprintf/sprintf.dart';
 
 Future<bool> testSegment(Bridge bridge, Segment segment) async {
-  String svg = await bridge.renderSegmentTrack(segment: segment);
+  String svg = await bridge.renderSegmentTrack(segment: segment,w:800,h:200);
   developer.log(sprintf("            ID: %d", [segment.id().toInt()]));
   developer.log(sprintf("    svg length: %d bytes", [svg.length]));
   return svg.length > 2000;

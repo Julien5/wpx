@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ class FutureRenderer with ChangeNotifier {
   final Segment segment;
   final TrackData trackData;
   final Bridge _bridge;
+  Size size=Size(10,10);
 
   Future<String>? _future;
   String? _result;
@@ -23,9 +25,17 @@ class FutureRenderer with ChangeNotifier {
   void start() {
     _result = null;
     if (trackData == TrackData.track) {
-      _future = _bridge.renderSegmentTrack(segment: segment);
+      _future = _bridge.renderSegmentTrack(
+        segment: segment,
+        w: size.width.floor(),
+        h: size.height.floor(),
+      );
     } else {
-      _future = _bridge.renderSegmentWaypoints(segment: segment);
+      _future = _bridge.renderSegmentWaypoints(
+        segment: segment,
+        w: size.width.floor(),
+        h: size.height.floor(),
+      );
     }
     notifyListeners();
     _future!.then((value) => onCompleted(value));
@@ -47,6 +57,19 @@ class FutureRenderer with ChangeNotifier {
     _result = value;
     _future = null;
     notifyListeners();
+  }
+
+  bool setSize(Size newSize) {
+    if (newSize == size) {
+      return false;
+    }
+    size = newSize;
+    _future = null;
+    _result = null;
+    Future.delayed(const Duration(milliseconds: 0), () {
+      start();
+    });
+    return true;
   }
 
   bool done() {
@@ -98,20 +121,6 @@ class Renderers {
       waypointsRendering = waypoints;
 }
 
-class RenderingsProvider extends MultiProvider {
-  final Renderers renderers;
-
-  RenderingsProvider(Renderers r, Widget child, {super.key})
-    : renderers = r,
-      super(
-        providers: [
-          ChangeNotifierProvider.value(value: r.trackRendering),
-          ChangeNotifierProvider.value(value: r.waypointsRendering),
-        ],
-        child: child,
-      );
-}
-
 class SegmentsProvider extends ChangeNotifier {
   Bridge? _bridge;
   final List<Renderers> _segments = [];
@@ -147,8 +156,8 @@ class SegmentsProvider extends ChangeNotifier {
       }
     }
     _waypoints.clear();
-    var W = _bridge!.getWayPoints();
-    for (var w in W) {
+    var WP = _bridge!.getWayPoints();
+    for (var w in WP) {
       _waypoints.add(w);
     }
     notifyListeners();
@@ -162,7 +171,7 @@ class SegmentsProvider extends ChangeNotifier {
     return _waypoints;
   }
 
-  String renderSegmentWaypointsSync(Segment segment) {
-    return _bridge!.renderSegmentWaypointsSync(segment: segment);
+  String renderSegmentWaypointsSync(Segment segment, int w, int h) {
+    return _bridge!.renderSegmentWaypointsSync(segment: segment, w: w, h: h);
   }
 }

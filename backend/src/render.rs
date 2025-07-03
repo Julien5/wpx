@@ -210,7 +210,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn compile(backend: &mut Backend) -> String {
+pub fn compile(backend: &mut Backend, (W, H): (i32, i32)) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let mut start = 0f64;
@@ -222,13 +222,13 @@ pub fn compile(backend: &mut Backend) -> String {
             break;
         }
         let p = format!("/tmp/profile-{}.svg", k);
-        let W = backend.get_waypoints();
-        let data = backend.render_segment(segment);
+        let WP = backend.get_waypoints();
+        let data = backend.render_segment(segment, (W, H));
         println!("write {}", p);
         std::fs::write(p.as_str(), data).expect("Unable to write file");
         let m = format!("/tmp/map-{}.svg", k);
-        map(&backend.track, &W, &range, m.as_str());
-        let table = points_table(&templates, &backend.track, &W, &segment);
+        map(&backend.track, &WP, &range, m.as_str());
+        let table = points_table(&templates, &backend.track, &WP, &segment);
         link(&templates, &p, &m, &table, &mut document);
         if range.end == backend.track.len() {
             break;

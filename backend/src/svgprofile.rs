@@ -246,8 +246,8 @@ impl Profile {
     pub fn init(range: &std::ops::Range<usize>, bbox: &gpsdata::ProfileBoundingBox) -> Profile {
         let W = 1400;
         let H = 400;
-        let Mleft = 50;
-        let Mbottom = 40;
+        let Mleft = ((W as f64) * 0.03f64).floor() as i32;
+        let Mbottom = ((H as f64) / 10f64).floor() as i32;
         Profile {
             W,
             H,
@@ -267,6 +267,26 @@ impl Profile {
                 .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft)),
         }
     }
+
+    pub fn reset_size(&mut self, W: i32, H: i32) {
+        let Mleft = ((W as f64) * 0.05f64).floor() as i32;
+        let Mbottom = ((H as f64) / 10f64).floor() as i32;
+        self.W = W;
+        self.H = H;
+        self.Mleft = Mleft;
+        self.Mbottom = Mbottom;
+        self.BG = Group::new().set("id", "BG");
+        self.SL = Group::new()
+            .set("id", "SL")
+            .set("transform", transformSL(W, H, Mleft, Mbottom));
+        self.SB = Group::new()
+            .set("id", "SB")
+            .set("transform", transformSB(W, H, Mleft, Mbottom));
+        self.SD = Group::new()
+            .set("id", "SD")
+            .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft));
+    }
+
     pub fn toSD(&self, (x, y): (f64, f64)) -> (i32, i32) {
         assert!(self.bbox.xmin <= self.bbox.xmax);
         assert!(self.bbox.ymin <= self.bbox.ymax);
@@ -297,17 +317,25 @@ impl Profile {
     }
 
     pub fn render(&self) -> String {
+        let font_size = if self.W < 500 {
+            10
+        } else if self.W < 750 {
+            12
+        } else {
+            15
+        };
         let mut world = Group::new()
             .set("id", "world")
             .set("shape-rendering", "crispEdges")
             .set("font-family", "ui-serif")
-            .set("font-size", "20")
+            .set("font-size", format!("{}", font_size))
             .set("transform", "translate(5 5)");
         world.append(self.BG.clone());
         world.append(self.SL.clone());
         world.append(self.SB.clone());
         world.append(self.SD.clone());
 
+        println!("font-size:{}", font_size);
         let document = svg::Document::new()
             .set("width", self.W + 20)
             .set("height", self.H)

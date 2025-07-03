@@ -88,19 +88,22 @@ impl Bridge {
     pub fn elevation_gain(&mut self, from: usize, to: usize) -> f64 {
         self.backend.elevation_gain(from, to)
     }
-    pub async fn renderSegmentTrack(&mut self, segment: &Segment) -> String {
+    pub async fn renderSegmentTrack(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
-        self.backend.render_segment_track(&segment._impl)
+        self.backend.render_segment_track(&segment._impl, (W, H))
     }
-    pub async fn renderSegmentWaypoints(&mut self, segment: &Segment) -> String {
+    pub async fn renderSegmentWaypoints(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
-        self.backend.render_segment_waypoints(&segment._impl)
+        println!("{}x{}", W, H);
+        self.backend
+            .render_segment_waypoints(&segment._impl, (W, H))
     }
     #[frb(sync)]
-    pub fn renderSegmentWaypointsSync(&mut self, segment: &Segment) -> String {
-        self.backend.render_segment_waypoints(&segment._impl)
+    pub fn renderSegmentWaypointsSync(&mut self, segment: &Segment, W: i32, H: i32) -> String {
+        self.backend
+            .render_segment_waypoints(&segment._impl, (W, H))
     }
     #[frb(sync)]
     pub fn epsilon(&self) -> f32 {

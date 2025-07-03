@@ -21,7 +21,7 @@ fn main() {
     }
     println!("read gpx {}", filename);
     let mut backend = Backend::new(filename);
-    let typfile = render::compile(&mut backend);
+    let typfile = render::compile(&mut backend, (1400, 400));
     println!("make pdf");
     let pdffile = typfile.replace(".typ", ".pdf");
     pdf::run(typfile.as_str(), pdffile.as_str());
