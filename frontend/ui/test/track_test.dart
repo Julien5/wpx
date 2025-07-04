@@ -19,7 +19,7 @@ void main() {
   });
   test("This is async", () async {
     await RustLib.init();
-    Bridge bridge = await Bridge.create();
+    Bridge bridge = await Bridge.create(filename:"/tmp/track.gpx");
     var S = bridge.segments();
     expect(S.length, equals(6));
     for (Segment segment in S) {

@@ -1,8 +1,6 @@
 import 'dart:developer' as developer;
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
 enum TrackData { track, waypoints }
@@ -126,22 +124,33 @@ class SegmentsProvider extends ChangeNotifier {
   final List<Renderers> _segments = [];
   final List<WayPoint> _waypoints = [];
 
-  SegmentsProvider(Bridge f) {
-    _bridge = f;
+  SegmentsProvider();
+
+  void setFilename(String filename) async {
+    developer.log("filename=$filename");
+    _bridge = await Bridge.create(filename: filename);
+    _updateSegments();
+  }
+
+  void setContent(List<int> content) async {
+    _bridge = await Bridge.fromContent(content: content);
     _updateSegments();
   }
 
   void incrementDelta() async {
+    assert(_bridge!=null);
     await _bridge!.adjustEpsilon(eps: 10.0);
     _updateSegments();
   }
 
   void decrementDelta() async {
+    assert(_bridge!=null);
     await _bridge!.adjustEpsilon(eps: -10.0);
     _updateSegments();
   }
 
   void _updateSegments() {
+    assert(_bridge!=null);
     var segments = _bridge!.segments();
     assert(_segments.isEmpty || _segments.length == segments.length);
     if (_segments.isEmpty) {

@@ -18,14 +18,17 @@ pub struct Track {
     _distance: Vec<f64>,
 }
 
-#[cfg(target_arch = "wasm32")]
-pub fn read_gpx(_filename: &str) -> Box<gpx::Gpx> {
+pub fn read_test_gpx() -> Box<gpx::Gpx> {
     let content = include_bytes!("../data/blackforest.gpx");
     let reader_mem = std::io::Cursor::new(content);
     Box::new(gpx::read(reader_mem).unwrap())
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+pub fn read_gpx_content(bytes: &Vec<u8>) -> Box<gpx::Gpx> {
+    let reader_mem = std::io::Cursor::new(bytes);
+    Box::new(gpx::read(reader_mem).unwrap())
+}
+
 pub fn read_gpx(filename: &str) -> Box<gpx::Gpx> {
     let file = std::fs::File::open(filename).unwrap();
     let mut reader_file = std::io::BufReader::new(file);

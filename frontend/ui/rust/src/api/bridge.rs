@@ -64,9 +64,14 @@ use std::{str::FromStr, time::Duration};
 use tokio::time::sleep;
 
 impl Bridge {
-    pub async fn create() -> Bridge {
+    pub async fn create(filename: &str) -> Bridge {
         Bridge {
-            backend: tracks::backend::Backend::new("/tmp/track.gpx"),
+            backend: tracks::backend::Backend::new(filename),
+        }
+    }
+    pub async fn fromContent(content: &Vec<u8>) -> Bridge {
+        Bridge {
+            backend: tracks::backend::Backend::from_content(content),
         }
     }
     pub async fn adjustEpsilon(&mut self, eps: f32) {
