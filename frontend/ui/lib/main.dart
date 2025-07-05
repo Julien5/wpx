@@ -28,7 +28,7 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var scaffold = Scaffold(
-      appBar: AppBar(title: const Text('WPX 0.0.1')),
+      appBar: AppBar(title: const Text('WPX 0.0.2')),
       body: SegmentsConsumer(),
     );
     var home = ChangeNotifierProvider(

@@ -43,13 +43,11 @@ class SegmentsView extends StatelessWidget {
       var id = s.renderers.trackRendering.segment.id();
       tabs.add(Tab(text: "segment ${id.toInt()}"));
     }
-    return MaterialApp(
-      home: DefaultTabController(
-        length: segments.length,
-        child: Scaffold(
-          appBar: AppBar(bottom: TabBar(tabs: tabs)),
-          body: TabBarView(children: segments),
-        ),
+    return DefaultTabController(
+      length: segments.length,
+      child: Scaffold(
+        appBar: AppBar(bottom: TabBar(tabs: tabs)),
+        body: TabBarView(children: segments),
       ),
     );
   }
@@ -95,6 +93,24 @@ class FindGPXFile extends StatelessWidget {
 class SegmentsConsumer extends StatelessWidget {
   const SegmentsConsumer({super.key});
 
+  List<Widget> childrenChoose(BuildContext ctx, SegmentsProvider provider) {
+    return [FindGPXFile(segmentsProvider: provider)];
+  }
+
+  List<Widget> childrenShow(BuildContext ctx, SegmentsProvider provider) {
+    return [
+      Buttons(more: provider.decrementDelta, less: provider.incrementDelta),
+      Expanded(child: SegmentsView(segmentsProvider: provider)),
+    ];
+  }
+
+  List<Widget> children(BuildContext ctx, SegmentsProvider provider) {
+    if (provider.bridgeIsLoaded()) {
+      return childrenShow(ctx, provider);
+    }
+    return childrenChoose(ctx, provider);
+  }
+
   @override
   Widget build(BuildContext ctx) {
     return Consumer<SegmentsProvider>(
@@ -103,18 +119,7 @@ class SegmentsConsumer extends StatelessWidget {
         return Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 1500),
-            child: Column(
-              children: [
-                FindGPXFile(segmentsProvider: segmentsProvider),
-                Buttons(
-                  more: segmentsProvider.decrementDelta,
-                  less: segmentsProvider.incrementDelta,
-                ),
-                Expanded(
-                  child: SegmentsView(segmentsProvider: segmentsProvider),
-                ),
-              ],
-            ),
+            child: Row(children: children(ctx, segmentsProvider)),
           ),
         );
       },

@@ -132,6 +132,10 @@ class SegmentsProvider extends ChangeNotifier {
     _updateSegments();
   }
 
+  bool bridgeIsLoaded() {
+    return _bridge != null;
+  }
+
   void setContent(List<int> content) async {
     _bridge = await Bridge.fromContent(content: content);
     _updateSegments();
