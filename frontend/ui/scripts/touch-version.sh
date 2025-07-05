@@ -16,10 +16,11 @@ version=$(grep version: pubspec.yaml | sed 's/version: //g' | sed 's/+//g')
 echo "Patching version in js partial urls in main.dart.js"
 sed -i "s/\"main.dart.js\"/\"main.dart.js?v=$version\"/g" build/web/flutter.js
 sed -i "s/\"main.dart.js\"/\"main.dart.js?v=$version\"/g" build/web/flutter_bootstrap.js
+# sed -i "s/\"main.dart.js\"/\"main.dart.js?v=$version\"/g" build/web/flutter_service_worker.js
 sed -i "s/\"main.dart.js\"/\"main.dart.js?v=$version\"/g" build/web/index.html
 
 
 echo "Patching assets loader with v=$version in main.dart.js"
 sed -i "s/self\.window\.fetch(a),/self.window.fetch(a + '?v=$version'),/g" build/web/main.dart.js
-echo "Adding v= to manifest.json"
+echo "Adding v=${version} to manifest.json"
 sed -i 's/"manifest.json"/"manifest.json?v='"$version"'"/' build/web/index.html

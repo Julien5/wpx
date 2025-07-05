@@ -1,6 +1,7 @@
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import ssl
 import sys;
+import os;
 
 class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
@@ -20,6 +21,9 @@ def main():
         mode=sys.argv[1];
     if len(sys.argv) >= 3:
         domain=sys.argv[2];
+    for c in ["build/web", "/home/debian/build/web"]:
+        if os.path.exists(c):
+            os.chdir(c);
     #server_address = (domain, port)
     server_address = ("", port)
 
