@@ -41,6 +41,8 @@ class WayPointsViewState extends State<WayPointsView> {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: DataTable(
+        dataRowMinHeight: 25,
+        dataRowMaxHeight: 25,
         columns: const [
           DataColumn(label: Text('Name')),
           DataColumn(label: Text('KM')),
@@ -93,18 +95,31 @@ class WayPointsViewState extends State<WayPointsView> {
 class WayPointsConsumer extends StatelessWidget {
   const WayPointsConsumer({super.key});
 
+  void unloadModel(SegmentsProvider model) {
+    model.unload();
+  }
+
   @override
   Widget build(BuildContext ctx) {
     return Consumer<SegmentsProvider>(
       builder: (context, segmentsProvider, child) {
         var wp = Provider.of<WaypointsRenderer>(context, listen: false);
+        SegmentsProvider model = Provider.of<SegmentsProvider>(
+          context,
+          listen: false,
+        );
         // TODO: use wp to get the current segment and use it to get the waypoints.
         var segment = wp.segment;
         return Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 1500),
-            child: Column(
+            child: Row(
               children: [
+                ElevatedButton(
+                  onPressed: () => unloadModel(model),
+                  child: Text("unload"),
+                ),
+                SizedBox(width: 30),
                 Expanded(
                   child: WayPointsView(
                     segmentsProvider: segmentsProvider,

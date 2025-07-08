@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/rust/frb_generated.dart';
@@ -18,17 +19,19 @@ Future<void> main() async {
     }
   }
   await RustLib.init();
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
   developer.log("frontend loaded");
-  runApp(Application());
+  runApp(Application(packageInfo: packageInfo,));
 }
 
 class Application extends StatelessWidget {
-  const Application({super.key});
+  final PackageInfo? packageInfo;
+  const Application({super.key,required this.packageInfo});
 
   @override
   Widget build(BuildContext context) {
     var scaffold = Scaffold(
-      appBar: AppBar(title: const Text('WPX 0.0.7')),
+      appBar: AppBar(title: Text('WPX ${packageInfo!.version}')),
       body: SegmentsConsumer(),
     );
     var home = ChangeNotifierProvider(

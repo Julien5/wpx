@@ -20,14 +20,14 @@ fn main() {
         filename = &args[1];
     }
     println!("read gpx {}", filename);
-    let mut backend = Backend::new(filename);
+    let mut backend = Backend::from_filename(filename);
     let typfile = render::compile(&mut backend, (1400, 400));
     println!("make pdf");
     let pdffile = typfile.replace(".typ", ".pdf");
     pdf::run(typfile.as_str(), pdffile.as_str());
 
     println!("test backend");
-    let backend = Backend::new(filename);
+    let backend = Backend::from_filename(filename);
     let W = backend.get_waypoints();
     for w in W {
         println!(

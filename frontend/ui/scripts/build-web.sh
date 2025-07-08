@@ -11,12 +11,16 @@ function init() {
 function build() {
 	cd ~/work/projects/desktop/track/profile/frontend/ui
 	dev.flutter-rust
+	dos2unix pubspec.yaml
+	echo "incrementing build version..."
+	perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)\+(\d+)$/$1.($2)."+".($3+1)/e' pubspec.yaml
+	version=$(grep ^version pubspec.yaml | cut -f2 -d":" | tr -d " ")
 	rm -Rf /tmp/build.d
 	mv build /tmp/build.d
 	rustup target add wasm32-unknown-unknown
 	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web
-	flutter build web --release
+	flutter build web --release --build-name=${version}
 	mkdir -p build/web/pkg/
 	cp web/pkg/* build/web/pkg/
 }

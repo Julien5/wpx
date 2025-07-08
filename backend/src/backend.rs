@@ -212,31 +212,19 @@ impl Backend {
         ret
     }
 
-    // TODO: use from_content
-    pub fn new(filename: &str) -> Backend {
+    pub fn from_filename(filename: &str) -> Backend {
         println!("filename:{}", filename);
-        let filename = String::from_str(filename).unwrap();
-        let mut gpx = gpsdata::read_gpx(filename.as_str());
-        let segment = gpsdata::read_segment(&mut gpx);
-        let track = gpsdata::Track::from_segment(&segment);
-        let km = 1000f64;
-        let mut ret = Backend {
-            track_smooth_elevation: elevation::smooth(&track),
-            track: track,
-            waypoints: gpsdata::read_waypoints(&gpx),
-            epsilon: 150.0f32,
-            shift: 100f64 * km,
-            start_time: chrono::Utc
-                .with_ymd_and_hms(2024, 4, 4, 8, 0, 0)
-                .unwrap()
-                .timestamp(),
-            speed: speed::mps(15f64),
-        };
-        ret.updateWaypoints();
-        for w in &ret.waypoints {
-            debug_assert!(w.track_index < ret.track.len());
-        }
-        ret
+        let mut f = std::fs::File::open(filename).unwrap();
+        let mut buffer = Vec::new();
+        // read the whole file
+        use std::io::prelude::*;
+        f.read_to_end(&mut buffer).unwrap();
+        Self::from_content(&buffer)
+    }
+
+    pub fn demo() -> Backend {
+        let content = include_bytes!("../data/blackforest.gpx");
+        Self::from_content(&content.to_vec())
     }
 
     fn updateWaypoints(&mut self) {

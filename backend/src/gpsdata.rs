@@ -18,12 +18,6 @@ pub struct Track {
     _distance: Vec<f64>,
 }
 
-pub fn read_test_gpx() -> Box<gpx::Gpx> {
-    let content = include_bytes!("../data/blackforest.gpx");
-    let reader_mem = std::io::Cursor::new(content);
-    Box::new(gpx::read(reader_mem).unwrap())
-}
-
 pub fn read_gpx_content(bytes: &Vec<u8>) -> Box<gpx::Gpx> {
     let reader_mem = std::io::Cursor::new(bytes);
     Box::new(gpx::read(reader_mem).unwrap())

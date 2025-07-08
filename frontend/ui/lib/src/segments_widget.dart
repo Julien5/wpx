@@ -22,32 +22,47 @@ class RenderingsProvider extends MultiProvider {
       );
 }
 
-class SegmentsView extends StatelessWidget {
+class SegmentsView extends StatefulWidget {
   final SegmentsProvider? segmentsProvider;
   const SegmentsView({super.key, this.segmentsProvider});
 
   @override
-  Widget build(BuildContext context) {
-    var S = segmentsProvider!.segments();
-    List<RenderingsProvider> segments = [];
-    assert(segments.isEmpty);
+  State<SegmentsView> createState() => SegmentsViewState();
+}
+
+class SegmentsViewState extends State<SegmentsView> {
+  final List<RenderingsProvider> _segments = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initRenderingProviders(widget.segmentsProvider!);
+  }
+
+  void _initRenderingProviders(SegmentsProvider segmentsProvider) {
+    developer.log("[_initRenderingProviders]");
+    var S = segmentsProvider.segments();
+    assert(_segments.isEmpty);
     for (var renderer in S) {
       var w = RenderingsProvider(renderer, SegmentStack());
       w.renderers.trackRendering.start();
-      segments.add(w);
+      _segments.add(w);
     }
+  }
 
-    developer.log("[segments] [build] #segments=${segments.length}");
+  @override
+  Widget build(BuildContext context) {
+    developer.log("[segments] [build] #segments=${_segments.length}");
     List<Tab> tabs = [];
-    for (var s in segments) {
+    for (var s in _segments) {
       var id = s.renderers.trackRendering.segment.id();
       tabs.add(Tab(text: "segment ${id.toInt()}"));
     }
     return DefaultTabController(
-      length: segments.length,
+      length: _segments.length,
       child: Scaffold(
-        appBar: AppBar(bottom: TabBar(tabs: tabs)),
-        body: TabBarView(children: segments),
+        appBar: TabBar(tabs: tabs),
+        body: TabBarView(children: _segments),
       ),
     );
   }
@@ -57,7 +72,7 @@ class FindGPXFile extends StatelessWidget {
   final SegmentsProvider segmentsProvider;
   const FindGPXFile({super.key, required this.segmentsProvider});
 
-  void onPressed() async {
+  void chooseGPX() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.any,
     );
@@ -74,6 +89,10 @@ class FindGPXFile extends StatelessWidget {
     }
   }
 
+  void chooseDemo() async {
+    segmentsProvider.setDemoContent();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -81,9 +100,11 @@ class FindGPXFile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
-            onPressed: onPressed,
+            onPressed: chooseGPX,
             child: const Text("Choose GPX file"),
           ),
+          const SizedBox(height: 20),
+          ElevatedButton(onPressed: chooseDemo, child: const Text("Demo")),
         ],
       ),
     );
@@ -93,18 +114,19 @@ class FindGPXFile extends StatelessWidget {
 class SegmentsConsumer extends StatelessWidget {
   const SegmentsConsumer({super.key});
 
-  List<Widget> childrenChoose(BuildContext ctx, SegmentsProvider provider) {
-    return [FindGPXFile(segmentsProvider: provider)];
+  Widget childrenChoose(BuildContext ctx, SegmentsProvider provider) {
+    return FindGPXFile(segmentsProvider: provider);
   }
 
-  List<Widget> childrenShow(BuildContext ctx, SegmentsProvider provider) {
-    return [
-      Buttons(more: provider.decrementDelta, less: provider.incrementDelta),
-      Expanded(child: SegmentsView(segmentsProvider: provider)),
-    ];
+  Widget childrenShow(BuildContext ctx, SegmentsProvider provider) {
+    return Column(
+      children: [
+        Expanded(child: SegmentsView(segmentsProvider: provider)),
+      ],
+    );
   }
 
-  List<Widget> children(BuildContext ctx, SegmentsProvider provider) {
+  Widget children(BuildContext ctx, SegmentsProvider provider) {
     if (provider.bridgeIsLoaded()) {
       return childrenShow(ctx, provider);
     }
@@ -119,7 +141,7 @@ class SegmentsConsumer extends StatelessWidget {
         return Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 1500),
-            child: Row(children: children(ctx, segmentsProvider)),
+            child: children(ctx, segmentsProvider),
           ),
         );
       },

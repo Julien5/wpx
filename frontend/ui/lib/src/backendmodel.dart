@@ -9,7 +9,7 @@ class FutureRenderer with ChangeNotifier {
   final Segment segment;
   final TrackData trackData;
   final Bridge _bridge;
-  Size size=Size(10,10);
+  Size size = Size(10, 10);
 
   Future<String>? _future;
   String? _result;
@@ -132,8 +132,18 @@ class SegmentsProvider extends ChangeNotifier {
     _updateSegments();
   }
 
+  void setDemoContent() async {
+    _bridge = await Bridge.initDemo();
+    _updateSegments();
+  }
+
   bool bridgeIsLoaded() {
     return _bridge != null;
+  }
+
+  void unload() {
+    _bridge = null;
+    _updateSegments();
   }
 
   void setContent(List<int> content) async {
@@ -142,22 +152,27 @@ class SegmentsProvider extends ChangeNotifier {
   }
 
   void incrementDelta() async {
-    assert(_bridge!=null);
+    assert(_bridge != null);
     await _bridge!.adjustEpsilon(eps: 10.0);
     _updateSegments();
   }
 
   void decrementDelta() async {
-    assert(_bridge!=null);
+    assert(_bridge != null);
     await _bridge!.adjustEpsilon(eps: -10.0);
     _updateSegments();
   }
 
   void _updateSegments() {
-    assert(_bridge!=null);
+    if (_bridge == null) {
+      _segments.clear();
+      _waypoints.clear();
+      notifyListeners();
+      return;
+    }
+    assert(_bridge != null);
     var segments = _bridge!.segments();
-    assert(_segments.isEmpty || _segments.length == segments.length);
-    if (_segments.isEmpty) {
+    if (_segments.length != segments.length) {
       for (var segment in segments) {
         var t = TrackRenderer(_bridge!, segment);
         var w = WaypointsRenderer(_bridge!, segment);

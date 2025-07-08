@@ -16,7 +16,7 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.sizeOf(context).width / 1.5;
+    double width = MediaQuery.sizeOf(context).width - 30;
     Size childSize = Size(width, width / 3);
     widget.future.setSize(childSize);
     if (widget.future.done()) {

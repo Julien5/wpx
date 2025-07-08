@@ -19,9 +19,8 @@ class SegmentStack extends StatelessWidget {
       alignment: Alignment.center, // Center the Stack horizontally
       child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
     );
-    var wp = SizedBox(height: 250, child: WayPointsConsumer());
+    var wp = SizedBox(height: 150, child: WayPointsConsumer());
     return Column(children: [stack, wp]);
-    //return Column(children: [stack]);
   }
 }
 

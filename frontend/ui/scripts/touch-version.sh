@@ -1,9 +1,5 @@
 #!/bin/bash
 
-dos2unix pubspec.yaml
-echo "incrementing build version..."
-perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)\+(\d+)$/$1.($2+1)."+".($3+1)/e' pubspec.yaml
-
 #replace base href
 echo Updating base href
 baseHref="/"
