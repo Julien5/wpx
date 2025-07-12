@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
+import 'package:ui/src/choose_data.dart';
+import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/frb_generated.dart';
-import 'package:ui/src/segments_widget.dart';
 
 import 'package:window_size/window_size.dart';
 import 'dart:io';
@@ -21,24 +22,28 @@ Future<void> main() async {
   await RustLib.init();
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   developer.log("frontend loaded");
-  runApp(Application(packageInfo: packageInfo,));
+  runApp(Application(packageInfo: packageInfo));
 }
 
 class Application extends StatelessWidget {
   final PackageInfo? packageInfo;
-  const Application({super.key,required this.packageInfo});
+  const Application({super.key, required this.packageInfo});
 
   @override
   Widget build(BuildContext context) {
-    var scaffold = Scaffold(
-      appBar: AppBar(title: Text('WPX ${packageInfo!.version}')),
-      body: SegmentsConsumer(),
+    return ChangeNotifierProvider(
+      create: (ctx) => RootModel(),
+      builder: (context, child) {
+        return MaterialApp(
+          title:"WPX",
+          onGenerateRoute: RouteManager.generateRoute,
+          initialRoute: RouteManager.home,
+          home: Scaffold(
+            appBar: AppBar(title: Text('WPX ${packageInfo!.version} ')),
+            body: HomePage()
+          ),
+        );
+      },
     );
-    var home = ChangeNotifierProvider(
-      create: (ctx) => SegmentsProvider(),
-      child: scaffold,
-    );
-
-    return MaterialApp(home: home);
   }
 }

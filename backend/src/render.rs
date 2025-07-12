@@ -165,7 +165,7 @@ fn points_table(
         }
         let mut copy = template_line.clone();
         copy = copy.replace("{name}", this.name.as_str());
-        let datetime = chrono::DateTime::from_timestamp(this.time, 0).unwrap();
+        let datetime = chrono::DateTime::parse_from_rfc3339(this.time.as_str()).unwrap();
         let time_str = format!("{}", datetime.format("%H:%M"));
 
         copy = copy.replace("{time}", &time_str);
@@ -233,7 +233,7 @@ pub fn compile(backend: &mut Backend, (W, H): (i32, i32)) -> String {
         if range.end == backend.track.len() {
             break;
         }
-        start = start + backend.shift;
+        start = start + backend.segment_length;
         k = k + 1;
     }
     let _ = write_file("/tmp/document.typ", document);

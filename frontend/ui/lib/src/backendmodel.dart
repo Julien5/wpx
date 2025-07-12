@@ -1,6 +1,8 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
 enum TrackData { track, waypoints }
@@ -120,30 +122,44 @@ class Renderers {
 }
 
 class SegmentsProvider extends ChangeNotifier {
-  Bridge? _bridge;
+  late Bridge _bridge;
+  late String _filename;
   final List<Renderers> _segments = [];
   final List<WayPoint> _waypoints = [];
 
-  SegmentsProvider();
+  SegmentsProvider() : _filename = "";
 
-  void setFilename(String filename) async {
-    developer.log("filename=$filename");
-    _bridge = await Bridge.create(filename: filename);
-    _updateSegments();
+  static Future<SegmentsProvider> fromFilename(String filename) async {
+    SegmentsProvider ret = SegmentsProvider();
+    ret._filename = filename;
+    developer.log("[filename] $filename");
+    ret._bridge = await Bridge.create(filename: filename);
+    ret._updateSegments();
+    return ret;
   }
 
-  void setDemoContent() async {
-    _bridge = await Bridge.initDemo();
-    _updateSegments();
+  static Future<SegmentsProvider> fromBytes(List<int> bytes) async {
+    SegmentsProvider ret = SegmentsProvider();
+    ret._bridge = await Bridge.fromContent(content: bytes);
+    ret._updateSegments();
+    return ret;
   }
 
-  bool bridgeIsLoaded() {
-    return _bridge != null;
+  static Future<SegmentsProvider> demo() async {
+    SegmentsProvider ret = SegmentsProvider();
+    ret._bridge = await Bridge.initDemo();
+    ret._updateSegments();
+    return ret;
   }
 
-  void unload() {
-    _bridge = null;
-    _updateSegments();
+  String filename() {
+    return _filename;
+  }
+
+  @override
+  void dispose() {
+    developer.log("~SegmentsProvider");
+    super.dispose();
   }
 
   void setContent(List<int> content) async {
@@ -152,30 +168,38 @@ class SegmentsProvider extends ChangeNotifier {
   }
 
   void incrementDelta() async {
-    assert(_bridge != null);
-    await _bridge!.adjustEpsilon(eps: 10.0);
+    await _bridge.adjustEpsilon(eps: 10.0);
     _updateSegments();
   }
 
   void decrementDelta() async {
-    assert(_bridge != null);
-    await _bridge!.adjustEpsilon(eps: -10.0);
+    await _bridge.adjustEpsilon(eps: -10.0);
+    _updateSegments();
+  }
+
+  void setStartTime(DateTime dateTime) {
+    _bridge.setStartTime(iso8601: dateTime.toIso8601String());
+    _updateSegments();
+  }
+
+  void setSegmentLength(double length) {
+    _bridge.setSegmentLength(length: length);
+    _segments.clear();
+    _updateSegments();
+  }
+
+  void setSpeed(double mps) {
+    _bridge.setSpeed(meterPerSecond: mps);
     _updateSegments();
   }
 
   void _updateSegments() {
-    if (_bridge == null) {
-      _segments.clear();
-      _waypoints.clear();
-      notifyListeners();
-      return;
-    }
-    assert(_bridge != null);
-    var segments = _bridge!.segments();
+    var segments = _bridge.segments();
     if (_segments.length != segments.length) {
+      _segments.clear();
       for (var segment in segments) {
-        var t = TrackRenderer(_bridge!, segment);
-        var w = WaypointsRenderer(_bridge!, segment);
+        var t = TrackRenderer(_bridge, segment);
+        var w = WaypointsRenderer(_bridge, segment);
         _segments.add(Renderers(t, w));
       }
     } else {
@@ -184,10 +208,13 @@ class SegmentsProvider extends ChangeNotifier {
       }
     }
     _waypoints.clear();
-    var WP = _bridge!.getWayPoints();
-    for (var w in WP) {
+    var wayPoints = _bridge.getWayPoints();
+    for (var w in wayPoints) {
       _waypoints.add(w);
     }
+    developer.log(
+      "[SegmentsProvider] notifyListeners with ${_segments.length} segments",
+    );
     notifyListeners();
   }
 
@@ -200,6 +227,48 @@ class SegmentsProvider extends ChangeNotifier {
   }
 
   String renderSegmentWaypointsSync(Segment segment, int w, int h) {
-    return _bridge!.renderSegmentWaypointsSync(segment: segment, w: w, h: h);
+    return _bridge.renderSegmentWaypointsSync(segment: segment, w: w, h: h);
+  }
+}
+
+class RootModel extends ChangeNotifier {
+  List<SegmentsProvider> list = [];
+
+  RootModel();
+
+  @override
+  void dispose() {
+    developer.log("~RootModel");
+    super.dispose();
+  }
+
+  void createSegmentsProvider(String filename) async {
+    var ret = await SegmentsProvider.fromFilename(filename);
+    list.add(ret);
+    notifyListeners();
+  }
+
+  void createSegmentsProviderFromBytes(List<int> bytes) async {
+    var ret = await SegmentsProvider.fromBytes(bytes);
+    list.add(ret);
+    notifyListeners();
+  }
+
+  void createSegmentsProviderForDemo() async {
+    var ret = await SegmentsProvider.demo();
+    list.add(ret);
+    notifyListeners();
+  }
+
+  void unload() {
+    list.clear();
+    notifyListeners();
+  }
+
+  SegmentsProvider? provider() {
+    if (list.isEmpty) {
+      return null;
+    }
+    return list.first;
   }
 }

@@ -56,7 +56,7 @@ pub struct _WayPoint {
     inter_elevation_gain: f64,
     inter_slope: f64,
     name: String,
-    time: i64, // seconds since epoch
+    time: String, // iso8601
     track_index: usize,
 }
 
@@ -82,9 +82,17 @@ impl Bridge {
     pub async fn adjustEpsilon(&mut self, eps: f32) {
         self.backend.adjustEpsilon(eps);
     }
+    /* unfortunately, i64 is not portable in dart:
+    - BigInt in dart on the web, and
+    - int in dart for native targets.
+    */
     #[frb(sync)]
-    pub fn setStartTime(&mut self, seconds_since_epoch: i64) {
-        self.backend.setStartTime(seconds_since_epoch)
+    pub fn setStartTime(&mut self, iso8601: String) {
+        self.backend.setStartTime(iso8601)
+    }
+    #[frb(sync)]
+    pub fn setSegmentLength(&mut self, length: f64) {
+        self.backend.setSegmentLength(length);
     }
     #[frb(sync)]
     pub fn setSpeed(&mut self, meter_per_second: f64) {

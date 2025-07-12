@@ -1,11 +1,7 @@
 import 'dart:developer' as developer;
-
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
-import 'package:ui/src/counter.dart';
 import 'package:ui/src/segment_stack.dart';
 
 class RenderingsProvider extends MultiProvider {
@@ -22,90 +18,41 @@ class RenderingsProvider extends MultiProvider {
       );
 }
 
-class SegmentsView extends StatefulWidget {
+class SegmentsView extends StatelessWidget {
   final SegmentsProvider? segmentsProvider;
   const SegmentsView({super.key, this.segmentsProvider});
 
-  @override
-  State<SegmentsView> createState() => SegmentsViewState();
-}
-
-class SegmentsViewState extends State<SegmentsView> {
-  final List<RenderingsProvider> _segments = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _initRenderingProviders(widget.segmentsProvider!);
-  }
-
-  void _initRenderingProviders(SegmentsProvider segmentsProvider) {
+  List<RenderingsProvider> renderingProviders(
+    SegmentsProvider segmentsProvider,
+  ) {
+    List<RenderingsProvider> ret = [];
     developer.log("[_initRenderingProviders]");
     var S = segmentsProvider.segments();
-    assert(_segments.isEmpty);
+    developer.log("[S]=${S.length}");
+    assert(ret.isEmpty);
     for (var renderer in S) {
       var w = RenderingsProvider(renderer, SegmentStack());
       w.renderers.trackRendering.start();
-      _segments.add(w);
+      ret.add(w);
     }
+    developer.log("[renderingProviders] [build] #segments=${ret.length}");
+    return ret;
   }
 
   @override
   Widget build(BuildContext context) {
-    developer.log("[segments] [build] #segments=${_segments.length}");
+    var segments = renderingProviders(segmentsProvider!);
+    developer.log("[segments] [build] #segments=${segments.length}");
     List<Tab> tabs = [];
-    for (var s in _segments) {
+    for (var s in segments) {
       var id = s.renderers.trackRendering.segment.id();
       tabs.add(Tab(text: "segment ${id.toInt()}"));
     }
     return DefaultTabController(
-      length: _segments.length,
+      length: segments.length,
       child: Scaffold(
         appBar: TabBar(tabs: tabs),
-        body: TabBarView(children: _segments),
-      ),
-    );
-  }
-}
-
-class FindGPXFile extends StatelessWidget {
-  final SegmentsProvider segmentsProvider;
-  const FindGPXFile({super.key, required this.segmentsProvider});
-
-  void chooseGPX() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-    );
-    if (result != null) {
-      developer.log("result: ${result.count}");
-      for (var file in result.files) {
-        if (!kIsWeb) {
-          segmentsProvider.setFilename(file.path!);
-        } else {
-          segmentsProvider.setContent(file.bytes!.buffer.asInt8List().toList());
-        }
-        return;
-      }
-    }
-  }
-
-  void chooseDemo() async {
-    segmentsProvider.setDemoContent();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: chooseGPX,
-            child: const Text("Choose GPX file"),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(onPressed: chooseDemo, child: const Text("Demo")),
-        ],
+        body: TabBarView(children: segments),
       ),
     );
   }
@@ -113,35 +60,26 @@ class FindGPXFile extends StatelessWidget {
 
 class SegmentsConsumer extends StatelessWidget {
   const SegmentsConsumer({super.key});
-
-  Widget childrenChoose(BuildContext ctx, SegmentsProvider provider) {
-    return FindGPXFile(segmentsProvider: provider);
-  }
-
-  Widget childrenShow(BuildContext ctx, SegmentsProvider provider) {
-    return Column(
-      children: [
-        Expanded(child: SegmentsView(segmentsProvider: provider)),
-      ],
-    );
-  }
-
-  Widget children(BuildContext ctx, SegmentsProvider provider) {
-    if (provider.bridgeIsLoaded()) {
-      return childrenShow(ctx, provider);
-    }
-    return childrenChoose(ctx, provider);
-  }
-
   @override
   Widget build(BuildContext ctx) {
     return Consumer<SegmentsProvider>(
       builder: (context, segmentsProvider, child) {
-        developer.log("length=${segmentsProvider.segments().length}");
+        developer.log(
+          "[SegmentsConsumer] length=${segmentsProvider.segments().length}",
+        );
         return Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 1500),
-            child: children(ctx, segmentsProvider),
+            child: Column(
+              children: [
+                Expanded(
+                  /*child: Text(
+                    "gpx has ${segmentsProvider.segments().length} segments",
+                  ),*/
+                  child: SegmentsView(segmentsProvider: segmentsProvider),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -149,22 +87,36 @@ class SegmentsConsumer extends StatelessWidget {
   }
 }
 
-class Buttons extends StatelessWidget {
-  final VoidCallback more;
-  final VoidCallback less;
-  const Buttons({super.key, required this.more, required this.less});
+class SegmentsProviderWidget extends StatelessWidget {
+  const SegmentsProviderWidget({super.key});
+
+  Widget wait() {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Segments')),
+      body: Center(child: Column(children: [Text("loading...")])),
+    );
+  }
 
   @override
   Widget build(BuildContext ctx) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            PressButton(label: "more", onCounterPressed: more),
-            PressButton(label: "less", onCounterPressed: less),
-          ],
-        ),
-      ],
+    return Consumer<RootModel>(
+      builder: (context, rootModel, child) {
+        if (rootModel.provider() == null) {
+          return wait();
+        }
+        developer.log(
+          "[SegmentsProviderWidget] ${rootModel.provider()?.filename()} length=${rootModel.provider()?.segments().length}",
+        );
+        return ChangeNotifierProvider.value(
+          value: rootModel.provider(),
+          builder: (context, child) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('Segments')),
+              body: SegmentsConsumer(),
+            );
+          },
+        );
+      },
     );
   }
 }

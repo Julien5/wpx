@@ -7,7 +7,7 @@ void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async => await RustLib.init());
   testWidgets('Can call rust function', (WidgetTester tester) async {
-    await tester.pumpWidget(Application());
+    await tester.pumpWidget(Application(packageInfo: null,));
     expect(find.textContaining('Result: `Hello, Tom!`'), findsOneWidget);
   });
 }

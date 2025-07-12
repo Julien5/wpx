@@ -1,3 +1,5 @@
+pub type DateTime = chrono::DateTime<chrono::Utc>;
+
 #[derive(Clone)]
 pub struct UTMPoint(pub f64, pub f64);
 

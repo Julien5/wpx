@@ -1,9 +1,5 @@
 #![allow(non_snake_case)]
 
-use std::str::FromStr;
-
-use chrono::TimeZone;
-
 use crate::elevation;
 pub use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
@@ -12,15 +8,18 @@ use crate::project;
 use crate::speed;
 use crate::svgprofile;
 use crate::utm::UTMPoint;
+use std::str::FromStr;
+
+type DateTime = crate::utm::DateTime;
 
 pub struct Backend {
     pub track: gpsdata::Track,
     track_smooth_elevation: Vec<f64>,
     pub waypoints: Vec<gpsdata::Waypoint>,
     epsilon: f32,
-    pub shift: f64,
-    start_time: i64, // seconds since epoch
-    speed: f64,      // m/s
+    pub segment_length: f64,
+    start_time: DateTime,
+    speed: f64, // m/s
 }
 
 #[derive(Clone)]
@@ -54,7 +53,7 @@ pub struct WayPoint {
     pub inter_elevation_gain: f64,
     pub inter_slope: f64,
     pub name: String,
-    pub time: i64, // seconds since epoch
+    pub time: String,
     pub track_index: usize,
 }
 
@@ -68,9 +67,10 @@ impl Segment {
     }
 }
 
-fn waypoint_time(start_time: i64, distance: f64, speed: f64) -> i64 {
+fn waypoint_time(start_time: DateTime, distance: f64, speed: f64) -> DateTime {
     let dt = (distance / speed).ceil() as i64;
-    start_time + dt
+    let delta = chrono::TimeDelta::new(dt, 0).unwrap();
+    start_time + delta
 }
 
 impl Backend {
@@ -108,7 +108,7 @@ impl Backend {
             inter_slope: inter_slope,
             elevation: track.elevation(w.track_index),
             name: name,
-            time: waypoint_time(self.start_time, distance, self.speed),
+            time: waypoint_time(self.start_time, distance, self.speed).to_rfc3339(),
             track_index: w.track_index,
         }
     }
@@ -128,11 +128,21 @@ impl Backend {
         }
         ret
     }
-    pub fn setStartTime(&mut self, t: i64) {
-        self.start_time = t;
+    pub fn setStartTime(&mut self, iso8601: String) {
+        use chrono::*;
+        println!("iso:{}", iso8601);
+        let mut fixed = iso8601.clone();
+        if !fixed.ends_with("Z") {
+            fixed = String::from(format!("{}Z", iso8601));
+        }
+        let p: DateTime<Utc> = fixed.parse().unwrap();
+        self.start_time = p;
     }
     pub fn setSpeed(&mut self, s: f64) {
         self.speed = s;
+    }
+    pub fn setSegmentLength(&mut self, length: f64) {
+        self.segment_length = length;
     }
     fn enrichWaypoints(&mut self) {
         // not fast.
@@ -193,16 +203,14 @@ impl Backend {
         let segment = gpsdata::read_segment(&mut gpx);
         let track = gpsdata::Track::from_segment(&segment);
         let km = 1000f64;
+        use chrono::TimeZone;
         let mut ret = Backend {
             track_smooth_elevation: elevation::smooth(&track),
             track: track,
             waypoints: gpsdata::read_waypoints(&gpx),
             epsilon: 150.0f32,
-            shift: 100f64 * km,
-            start_time: chrono::Utc
-                .with_ymd_and_hms(2024, 4, 4, 8, 0, 0)
-                .unwrap()
-                .timestamp(),
+            segment_length: 100f64 * km,
+            start_time: chrono::Utc.with_ymd_and_hms(2024, 4, 4, 8, 0, 0).unwrap(),
             speed: speed::mps(15f64),
         };
         ret.updateWaypoints();
@@ -246,14 +254,14 @@ impl Backend {
         let mut start = 0f64;
         let mut k = 0usize;
         loop {
-            let end = start + self.shift;
+            let end = start + self.segment_length;
             let range = self.track.segment(start, end);
             if range.is_empty() {
                 break;
             }
             let bbox = ProfileBoundingBox::from_track(&self.track, &range);
             ret.push(Segment::new(k, range, &bbox));
-            start = start + self.shift;
+            start = start + self.segment_length;
             k = k + 1;
         }
         ret
@@ -311,11 +319,11 @@ mod tests {
     use crate::backend::Backend;
     #[test]
     fn svg_segment_track() {
-        let mut backend = Backend::new("data/blackforest.gpx");
+        let mut backend = Backend::from_filename("data/blackforest.gpx");
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = backend.render_segment_track(&segment);
+            let svg = backend.render_segment_track(&segment, (1420, 400));
             let reffilename = std::format!("data/ref/track-{}.svg", segment.id);
             println!("test {}", reffilename);
             if !std::fs::exists(&reffilename).unwrap() {
@@ -333,11 +341,11 @@ mod tests {
 
     #[test]
     fn svg_segment_waypoints() {
-        let mut backend = Backend::new("data/blackforest.gpx");
+        let mut backend = Backend::from_filename("data/blackforest.gpx");
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = backend.render_segment_waypoints(&segment);
+            let svg = backend.render_segment_waypoints(&segment, (1420, 400));
             let reffilename = std::format!("data/ref/waypoints-{}.svg", segment.id);
             println!("test {}", reffilename);
             if !std::fs::exists(&reffilename).unwrap() {
@@ -351,5 +359,13 @@ mod tests {
             }
         }
         assert!(ok_count == segments.len());
+    }
+
+    #[test]
+    fn time_iso8601() {
+        let mut backend = Backend::from_filename("data/blackforest.gpx");
+        backend.setStartTime(String::from("2007-03-01T13:00:00Z"));
+        backend.setStartTime(String::from("2025-07-12T06:32:36Z"));
+        backend.setStartTime(String::from("2025-07-12T06:32:36.215033Z"));
     }
 }
