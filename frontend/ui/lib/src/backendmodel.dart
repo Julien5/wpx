@@ -1,8 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
 enum TrackData { track, waypoints }
@@ -190,6 +188,11 @@ class SegmentsProvider extends ChangeNotifier {
 
   void setSpeed(double mps) {
     _bridge.setSpeed(meterPerSecond: mps);
+    _updateSegments();
+  }
+
+  void setSmoothWidth(double width) {
+    _bridge.setSmoothWidth(w: width);
     _updateSegments();
   }
 

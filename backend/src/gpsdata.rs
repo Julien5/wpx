@@ -47,7 +47,7 @@ impl Track {
     }
     pub fn elevation_gain(&self, range: &std::ops::Range<usize>) -> f64 {
         // TODO: compute it.
-        let smooth_elevation = elevation::smooth(&self);
+        let smooth_elevation = elevation::smooth(&self, 200f64);
         let mut ret = 0f64;
         for k in range.start + 1..range.end {
             let d = smooth_elevation[k] - smooth_elevation[k - 1];

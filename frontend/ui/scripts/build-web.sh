@@ -19,7 +19,7 @@ function build() {
 	mv build /tmp/build.d
 	rustup target add wasm32-unknown-unknown
 	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
-	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web
+	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web --release
 	flutter build web --release --build-name=${version}
 	mkdir -p build/web/pkg/
 	cp web/pkg/* build/web/pkg/
@@ -27,14 +27,19 @@ function build() {
 
 function main() {
 	build
-	./scripts/touch-version.sh
-
+	
 	if [ "$1" = "deploy" ]; then
+		./scripts/touch-version.sh
 		tar -zcf /tmp/web.tgz build/web
 		# upload
 		DOMAIN=vps-e637d6c5.vps.ovh.net
 		scp -i ~/.ssh/ovh/id scripts/start-ovh.sh scripts/server.py /tmp/web.tgz debian@${DOMAIN}:/tmp/
 		ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "chmod +x /tmp/start-ovh.sh; /tmp/start-ovh.sh"
+	fi
+
+	if [ "$1" = "serve" ]; then
+		SERVEPY=$(realpath scripts/server.py);
+		python3 ${SERVEPY} http localhost
 	fi
 }
 

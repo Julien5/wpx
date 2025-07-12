@@ -25,13 +25,16 @@ class Selector extends StatelessWidget {
   Widget build(BuildContext ctx) {
     return Center(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center, 
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(text),
           Slider(
             min: min,
             max: max,
-            divisions: math.max(5,(((min-max)/20).floor()*20)), // not good yet.
+            divisions: math.max(
+              5,
+              (((min - max) / 20).floor() * 20),
+            ), // not good yet.
             value: value.clamp(min, max),
             label: text,
             onChanged: onChanged,
@@ -96,10 +99,9 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   }
 
   String segmentLengthAsString() {
-    double km = selectedSegmentLength/1000;
+    double km = selectedSegmentLength / 1000;
     return "Segment length: ${km.toStringAsFixed(1)} km";
   }
-
 
   @override
   Widget build(BuildContext ctx) {
@@ -132,7 +134,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
                   min: 50.0,
                   max: 150.0,
                   text: segmentLengthAsString(),
-                  value: selectedSegmentLength/1000,
+                  value: selectedSegmentLength / 1000,
                   onChanged: (value) {
                     setState(() {
                       selectedSegmentLength = value * 1000;
@@ -180,6 +182,63 @@ class SettingsWidget extends StatelessWidget {
               body: SegmentsSettings(),
             );
           },
+        );
+      },
+    );
+  }
+}
+
+class WidthSettings extends StatefulWidget {
+  const WidthSettings({super.key});
+
+  @override
+  State<WidthSettings> createState() => _WidthSettingsState();
+}
+
+class _WidthSettingsState extends State<WidthSettings> {
+  double width = 200;
+
+  void onDone(BuildContext context) {
+    SegmentsProvider provider = Provider.of<SegmentsProvider>(
+      context,
+      listen: false,
+    );
+    provider.setSmoothWidth(width);
+  }
+
+  String widthAsString() {
+    return "$width m";
+  }
+
+  void onChanged(double value, SegmentsProvider provider) {
+    provider.setSmoothWidth(value);
+    setState(() {
+      width = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext ctx) {
+    return Consumer<SegmentsProvider>(
+      builder: (context, segmentsProvider, child) {
+        developer.log(
+          "[_WidthSettingsState] length=${segmentsProvider.segments().length}",
+        );
+        return Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 1500),
+            child: Column(
+              children: [
+                Selector(
+                  min: 10.0,
+                  max: 1000.0,
+                  text: widthAsString(),
+                  value: width,
+                  onChanged: (value) => onChanged(value,segmentsProvider),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

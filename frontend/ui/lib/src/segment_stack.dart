@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/future_rendering_widget.dart';
+import 'package:ui/src/settings_widget.dart';
 import 'package:ui/src/waypoints_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -20,7 +21,7 @@ class SegmentStack extends StatelessWidget {
       child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
     );
     var wp = SizedBox(height: 150, child: WayPointsConsumer());
-    return Column(children: [stack, wp]);
+    return Column(children: [stack, WidthSettings(),wp]);
   }
 }
 

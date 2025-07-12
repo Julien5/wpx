@@ -2,12 +2,11 @@
 
 use crate::gpsdata;
 
-pub fn smooth(track: &gpsdata::Track) -> Vec<f64> {
+pub fn smooth(track: &gpsdata::Track, W: f64) -> Vec<f64> {
     let L = track.wgs84.len();
     let mut ret = vec![0f64; L];
     let mut start = 0usize;
     let mut end = 0usize;
-    let W = 200f64;
     let mut acc = 0f64;
     for i in 0..track.wgs84.len() {
         while start + 1 < i && (track.distance(i) - track.distance(start)) > W {

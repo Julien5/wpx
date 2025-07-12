@@ -11,7 +11,6 @@ type Rect = svg::node::element::Path;
 type Circle = svg::node::element::Circle;
 type Path = svg::node::element::Path;
 type Text = svg::node::element::Text;
-use crate::elevation;
 use crate::gpsdata;
 
 fn line(p1: (i32, i32), p2: (i32, i32)) -> Data {
@@ -120,11 +119,12 @@ fn data(
     _range: &std::ops::Range<usize>,
     (WD, HD): (i32, i32),
     bbox: &ProfileBoundingBox,
+    smooth: &Vec<f64>,
 ) -> Data {
     let mut data = Data::new();
     let start = geodata.index_after(bbox.xmin);
     let end = geodata.index_before(bbox.xmax);
-    let se = elevation::smooth(geodata);
+    let se = smooth;
     for k in start..end {
         //let e = geodata.elevation(k);
         let e = se[k];
@@ -419,12 +419,13 @@ impl Profile {
         }
     }
 
-    pub fn add_track(&mut self, track: &gpsdata::Track) {
+    pub fn add_track(&mut self, track: &gpsdata::Track, smooth: &Vec<f64>) {
         self.SD.append(trackpath(data(
             track,
             &self.range,
             (self.WD(), self.HD()),
             &self.bbox,
+            smooth,
         )))
     }
 }

@@ -20,6 +20,7 @@ pub struct Backend {
     pub segment_length: f64,
     start_time: DateTime,
     speed: f64, // m/s
+    smooth_width: f64,
 }
 
 #[derive(Clone)]
@@ -198,20 +199,27 @@ impl Backend {
         ret
     }
 
+    pub fn set_smooth_width(&mut self, W: f64) {
+        self.smooth_width = W;
+        self.track_smooth_elevation = elevation::smooth(&self.track, self.smooth_width);
+    }
+
     pub fn from_content(content: &Vec<u8>) -> Backend {
         let mut gpx = gpsdata::read_gpx_content(content);
         let segment = gpsdata::read_segment(&mut gpx);
         let track = gpsdata::Track::from_segment(&segment);
         let km = 1000f64;
         use chrono::TimeZone;
+        let smooth_width_default = 200f64;
         let mut ret = Backend {
-            track_smooth_elevation: elevation::smooth(&track),
+            track_smooth_elevation: elevation::smooth(&track, smooth_width_default),
             track: track,
             waypoints: gpsdata::read_waypoints(&gpx),
             epsilon: 150.0f32,
             segment_length: 100f64 * km,
             start_time: chrono::Utc.with_ymd_and_hms(2024, 4, 4, 8, 0, 0).unwrap(),
             speed: speed::mps(15f64),
+            smooth_width: smooth_width_default,
         };
         ret.updateWaypoints();
         for w in &ret.waypoints {
@@ -271,7 +279,7 @@ impl Backend {
         let mut profile = segment.profile.clone();
         profile.reset_size(W, H);
         profile.add_canvas();
-        profile.add_track(&self.track);
+        profile.add_track(&self.track, &self.track_smooth_elevation);
         let W = self.get_waypoints();
         profile.add_waypoints(&W);
         let ret = profile.render();
@@ -284,7 +292,7 @@ impl Backend {
         let mut profile = segment.profile.clone();
         profile.reset_size(W, H);
         profile.add_canvas();
-        profile.add_track(&self.track);
+        profile.add_track(&self.track, &self.track_smooth_elevation);
         let ret = profile.render();
         let filename = std::format!("/tmp/track-{}.svg", segment.id);
         println!("rendered {}", filename);

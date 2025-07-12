@@ -106,6 +106,11 @@ impl Bridge {
     pub fn elevation_gain(&mut self, from: usize, to: usize) -> f64 {
         self.backend.elevation_gain(from, to)
     }
+
+    pub async fn setSmoothWidth(&mut self, W: f64) {
+        self.backend.set_smooth_width(W);
+    }
+
     pub async fn renderSegmentTrack(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
