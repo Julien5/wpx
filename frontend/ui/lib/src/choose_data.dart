@@ -42,7 +42,8 @@ class _ChooseDataState extends State<ChooseData> {
 
   void chooseGPX(RootModel rootModel) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
+      type: FileType.custom,
+      allowedExtensions: ["gpx"],
     );
     if (result == null) {
       return;

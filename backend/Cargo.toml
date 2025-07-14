@@ -11,3 +11,5 @@ svg = "0.18.0"
 tempfile = "3.19.1"
 typenum = "1.18.0"
 chrono = "0.4.41"
+typst-as-lib = { version = "0.14.4", features = ["typst-kit-embed-fonts", "typst-kit-fonts"] }
+typst-pdf = "0.13.1"

@@ -79,6 +79,9 @@ impl Bridge {
             backend: tracks::backend::Backend::demo(),
         }
     }
+    pub async fn generatePdf(&mut self) -> Vec<u8> {
+        self.backend.generatePdf()
+    }
     pub async fn adjustEpsilon(&mut self, eps: f32) {
         self.backend.adjustEpsilon(eps);
     }

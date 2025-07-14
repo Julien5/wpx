@@ -21,10 +21,18 @@ fn main() {
     }
     println!("read gpx {}", filename);
     let mut backend = Backend::from_filename(filename);
-    let typfile = render::compile(&mut backend, (1400, 400));
-    println!("make pdf");
-    let pdffile = typfile.replace(".typ", ".pdf");
-    pdf::run(typfile.as_str(), pdffile.as_str());
+    let gpxpath = std::path::Path::new(filename);
+    let dir = gpxpath.parent().unwrap().to_str().unwrap();
+    let typbytes = render::compile(&mut backend, (1400, 400));
+    std::fs::write("/tmp/d.typ", &typbytes).expect("Could not write typst.");
+    let pdfbytes = pdf::compile(&typbytes);
+    let pdfname = format!(
+        "{}/{}.pdf",
+        dir,
+        gpxpath.file_stem().unwrap().to_str().unwrap()
+    );
+    println!("make: {}", pdfname);
+    std::fs::write(pdfname, &pdfbytes).expect("Could not write pdf.");
 
     println!("test backend");
     let backend = Backend::from_filename(filename);

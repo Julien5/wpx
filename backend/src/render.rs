@@ -62,8 +62,7 @@ fn map(
     geodata: &gpsdata::Track,
     waypoints: &Vec<WayPoint>,
     range: &std::ops::Range<usize>,
-    filename: &str,
-) {
+) -> String {
     let mut data = Data::new();
     let path = &geodata.utm;
     let mut bbox = BoundingBox::new();
@@ -102,25 +101,10 @@ fn map(
             .set("r", 500);
         document = document.add(dot);
     }
-
-    svg::save(filename, &document).unwrap();
+    document.to_string()
 }
 
-use std::io::prelude::*;
 use std::str::FromStr;
-
-fn read_file(filename: &str) -> String {
-    let mut f = std::fs::File::open(filename).unwrap();
-    let mut c = String::new();
-    f.read_to_string(&mut c).unwrap();
-    c
-}
-
-fn write_file(filename: &str, content: String) -> std::io::Result<()> {
-    let mut f = std::fs::File::create(filename)?;
-    f.write_all(content.as_bytes())?;
-    Ok(())
-}
 
 struct Templates {
     header: String,
@@ -131,9 +115,9 @@ struct Templates {
 impl Templates {
     fn new() -> Templates {
         Templates {
-            header: read_file("templates/header.typ"),
-            table_large: read_file("templates/table-large.typ"),
-            table_points: read_file("templates/table-points.typ"),
+            header: String::from_str(include_str!("../templates/header.typ")).unwrap(),
+            table_large: String::from_str(include_str!("../templates/table-large.typ")).unwrap(),
+            table_points: String::from_str(include_str!("../templates/table-points.typ")).unwrap(),
         }
     }
 }
@@ -189,11 +173,14 @@ fn points_table(
     table.replace(&template_line_orig, joined.as_str())
 }
 
-fn get_basename(filename: &str) -> String {
-    let s = std::path::Path::new(filename)
-        .file_name() // Get the file name component
-        .and_then(|os_str| os_str.to_str());
-    String::from_str(s.unwrap()).unwrap()
+fn get_typst_bytes(ascii: &str) -> String {
+    let mut ret = Vec::new();
+    for c in ascii.chars() {
+        let code = format!("{:?}", c as u32);
+        ret.push(code);
+    }
+    let rc = ret.join(",");
+    format!("bytes(({}))", rc)
 }
 
 fn link(
@@ -205,8 +192,8 @@ fn link(
 ) {
     let mut table = templates.table_large.clone();
     table = table.replace("{table-points}", points_table.as_str());
-    table = table.replace("{profile.svg}", get_basename(profilesvg).as_str());
-    table = table.replace("{map.svg}", get_basename(mapsvg).as_str());
+    table = table.replace("{profile.svg}", get_typst_bytes(profilesvg).as_str());
+    table = table.replace("{map.svg}", get_typst_bytes(mapsvg).as_str());
     document.push_str(table.as_str());
 }
 
@@ -221,13 +208,9 @@ pub fn compile(backend: &mut Backend, (W, H): (i32, i32)) -> String {
         if range.is_empty() {
             break;
         }
-        let p = format!("/tmp/profile-{}.svg", k);
         let WP = backend.get_waypoints();
-        let data = backend.render_segment(segment, (W, H));
-        println!("write {}", p);
-        std::fs::write(p.as_str(), data).expect("Unable to write file");
-        let m = format!("/tmp/map-{}.svg", k);
-        map(&backend.track, &WP, &range, m.as_str());
+        let p = backend.render_segment(segment, (W, H));
+        let m = map(&backend.track, &WP, &range);
         let table = points_table(&templates, &backend.track, &WP, &segment);
         link(&templates, &p, &m, &table, &mut document);
         if range.end == backend.track.len() {
@@ -236,6 +219,5 @@ pub fn compile(backend: &mut Backend, (W, H): (i32, i32)) -> String {
         start = start + backend.segment_length;
         k = k + 1;
     }
-    let _ = write_file("/tmp/document.typ", document);
-    String::from_str("/tmp/document.typ").unwrap()
+    document
 }

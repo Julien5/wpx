@@ -74,7 +74,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       initialTime: TimeOfDay.now(),
     );
 
-    if (picked != null && picked != selectedTime) {
+    if (picked != null) {
       DateTime now = DateTime.now();
       DateTime dateTime = DateTime(
         now.year,
@@ -226,7 +226,7 @@ class _WidthSettingsState extends State<WidthSettings> {
         );
         return Center(
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 1500),
+            constraints: const BoxConstraints(maxWidth: 300),
             child: Column(
               children: [
                 Selector(

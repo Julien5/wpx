@@ -4,7 +4,9 @@ use crate::elevation;
 pub use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::gpsdata::WaypointOrigin;
+use crate::pdf;
 use crate::project;
+use crate::render;
 use crate::speed;
 use crate::svgprofile;
 use crate::utm::UTMPoint;
@@ -283,8 +285,8 @@ impl Backend {
         let W = self.get_waypoints();
         profile.add_waypoints(&W);
         let ret = profile.render();
-        let filename = std::format!("/tmp/segment-{}.svg", segment.id);
-        std::fs::write(filename, &ret).expect("Unable to write file");
+        //let filename = std::format!("/tmp/segment-{}.svg", segment.id);
+        //std::fs::write(filename, &ret).expect("Unable to write file");
         ret
     }
     pub fn render_segment_track(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
@@ -319,6 +321,12 @@ impl Backend {
             distance_start: self.track.distance(range.start),
             distance_end: self.track.distance(range.end - 1),
         }
+    }
+    pub fn generatePdf(&mut self) -> Vec<u8> {
+        let typbytes = render::compile(self, (1400, 400));
+        let ret = pdf::compile(&typbytes);
+        println!("generated {} bytes", ret.len());
+        ret
     }
 }
 
