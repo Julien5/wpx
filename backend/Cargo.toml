@@ -1,6 +1,7 @@
 [package]
 name = "tracks"
 edition = "2021"
+version = "0.1.0"
 
 [dependencies]
 geo = "0.29.3"
@@ -11,5 +12,9 @@ svg = "0.18.0"
 tempfile = "3.19.1"
 typenum = "1.18.0"
 chrono = "0.4.41"
-typst-as-lib = { version = "0.14.4", features = ["typst-kit-embed-fonts", "typst-kit-fonts"] }
-typst-pdf = "0.13.1"
+typst-as-lib = { version = "0.14.4", features = ["typst-kit-embed-fonts", "typst-kit-fonts"], optional=true }
+typst-pdf = { version = "0.13.1", optional=true}
+
+[features]
+# default = ["typstpdf"]
+typstpdf = ["dep:typst-as-lib","dep:typst-pdf"]

@@ -1,5 +1,7 @@
+#[cfg(feature = "typstpdf")]
 use typst_as_lib::{typst_kit_options::TypstKitFontOptions, TypstEngine};
 
+#[cfg(feature = "typstpdf")]
 pub fn compile(document: &str) -> Vec<u8> {
     let template = TypstEngine::builder()
         .main_file(document)
@@ -15,4 +17,9 @@ pub fn compile(document: &str) -> Vec<u8> {
 
     let pdf = typst_pdf::pdf(&doc, &options).expect("Could not generate pdf.");
     pdf
+}
+
+#[cfg(not(feature = "typstpdf"))]
+pub fn compile(_document: &str) -> Vec<u8> {
+    Vec::new()
 }
