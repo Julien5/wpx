@@ -178,7 +178,7 @@ class SettingsWidget extends StatelessWidget {
           value: rootModel.provider(),
           builder: (context, child) {
             return Scaffold(
-              appBar: AppBar(title: const Text('Segments')),
+              appBar: AppBar(title: const Text('Settings')),
               body: SegmentsSettings(),
             );
           },

@@ -1,9 +1,4 @@
 import 'dart:developer' as developer;
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:file_saver/file_saver.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
@@ -12,64 +7,6 @@ import 'package:ui/src/settings_widget.dart';
 import 'package:ui/src/waypoints_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class TestPdfButton extends StatefulWidget {
-  const TestPdfButton({super.key});
-
-  @override
-  State<TestPdfButton> createState() => _TestPdfButtonState();
-}
-
-void savePdf(List<int> data) async {
-  if (kIsWeb) {
-    await FileSaver.instance.saveFile(
-      name: "waypoints",
-      bytes: Uint8List.fromList(data),
-      fileExtension: "pdf",
-      mimeType: MimeType.pdf,
-    );
-  } else if (Platform.isLinux) {
-    var filepath = await FilePicker.platform.saveFile(
-      fileName: "waypoints",
-      type: FileType.custom,
-      allowedExtensions: ["pdf"],
-      bytes: Uint8List.fromList(data),
-    );
-    if (filepath == null) {
-      return;
-    }
-    await Process.run('xdg-open', [filepath]);
-  }
-}
-
-class _TestPdfButtonState extends State<TestPdfButton> {
-  int pdflength = 0;
-
-  void onPressed(SegmentsProvider model) async {
-    if (!mounted) {
-      return;
-    }
-    setState(() {
-      pdflength = 0;
-    });
-    var data = await model.generatePdf();
-    savePdf(data);
-    setState(() {
-      developer.log("pdf length: ${data.length}");
-      pdflength = data.length;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    SegmentsProvider model = Provider.of<SegmentsProvider>(context);
-    return Row(
-      children: [
-        ElevatedButton(onPressed: () => onPressed(model), child: Text("PDF")),
-        Text("length: $pdflength"),
-      ],
-    );
-  }
-}
 
 class SegmentStack extends StatelessWidget {
   const SegmentStack({super.key});
@@ -87,7 +24,7 @@ class SegmentStack extends StatelessWidget {
     return Column(
       children: [
         stack,
-        Row(children: [WidthSettings(), TestPdfButton()]),
+        Row(children: [WidthSettings()]),
         wp,
       ],
     );

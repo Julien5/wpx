@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
+import 'package:ui/src/routes.dart';
 import 'package:ui/src/segment_stack.dart';
 
 class RenderingsProvider extends MultiProvider {
@@ -97,6 +98,15 @@ class SegmentsProviderWidget extends StatelessWidget {
     );
   }
 
+  Widget exportButton(BuildContext context) {
+    return ElevatedButton(
+      child: const Text('GPX/PDF export'),
+      onPressed: () {
+        Navigator.of(context).pushNamed(RouteManager.exportView);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext ctx) {
     return Consumer<RootModel>(
@@ -111,7 +121,10 @@ class SegmentsProviderWidget extends StatelessWidget {
           value: rootModel.provider(),
           builder: (context, child) {
             return Scaffold(
-              appBar: AppBar(title: const Text('Segments')),
+              appBar: AppBar(
+                title: const Text('Segments'),
+                actions: <Widget>[exportButton(context)],
+              ),
               body: SegmentsConsumer(),
             );
           },
