@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::backend::WayPoint;
+use crate::backend::Step;
 use crate::gpsdata::ProfileBoundingBox;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
@@ -190,7 +190,7 @@ pub fn yticks_dashed(bbox: &ProfileBoundingBox) -> Vec<f64> {
     ret
 }
 
-fn waypoint_circle((x, y): (i32, i32), waypoint: &WayPoint) -> Circle {
+fn waypoint_circle((x, y): (i32, i32), waypoint: &Step) -> Circle {
     match waypoint.origin {
         gpsdata::WaypointOrigin::GPX => svg::node::element::Circle::new()
             .set("cx", x)
@@ -207,7 +207,7 @@ fn waypoint_circle((x, y): (i32, i32), waypoint: &WayPoint) -> Circle {
     }
 }
 
-fn waypoint_text((x, y): (i32, i32), waypoint: &WayPoint) -> Text {
+fn waypoint_text((x, y): (i32, i32), waypoint: &Step) -> Text {
     let label = &waypoint.name;
     let ret = Text::new(label).set("text-anchor", "middle").set(
         "transform",
@@ -216,7 +216,7 @@ fn waypoint_text((x, y): (i32, i32), waypoint: &WayPoint) -> Text {
     ret
 }
 
-fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &WayPoint) -> Text {
+fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &Step) -> Text {
     let label = format!("{:.0}", waypoint.wgs84.2);
     let ret = Text::new(label)
         .set("text-anchor", "middle")
@@ -399,7 +399,7 @@ impl Profile {
         }
     }
 
-    fn add_waypoint(&mut self, w: &WayPoint) {
+    fn add_waypoint(&mut self, w: &Step) {
         let (x, y) = self.toSD((w.distance, w.elevation));
         self.addSD(waypoint_circle((x, y), &w));
         self.addSD(waypoint_elevation_text((x, y), &w));
@@ -407,10 +407,10 @@ impl Profile {
             self.addSD(waypoint_text((x, y), &w));
         }
     }
-    pub fn shows_waypoint(&self, w: &WayPoint) -> bool {
+    pub fn shows_waypoint(&self, w: &Step) -> bool {
         self.bbox.xmin <= w.distance && w.distance <= self.bbox.xmax
     }
-    pub fn add_waypoints(&mut self, waypoints: &Vec<WayPoint>) {
+    pub fn add_waypoints(&mut self, waypoints: &Vec<Step>) {
         for w in waypoints {
             if !self.shows_waypoint(w) {
                 continue;

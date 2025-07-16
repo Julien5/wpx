@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::backend::{Backend, Segment, WayPoint};
+use crate::backend::{Backend, Segment, Step};
 use crate::gpsdata;
 use crate::utm::UTMPoint;
 
@@ -58,11 +58,7 @@ impl BoundingBox {
     }
 }
 
-fn map(
-    geodata: &gpsdata::Track,
-    waypoints: &Vec<WayPoint>,
-    range: &std::ops::Range<usize>,
-) -> String {
+fn map(geodata: &gpsdata::Track, waypoints: &Vec<Step>, range: &std::ops::Range<usize>) -> String {
     let mut data = Data::new();
     let path = &geodata.utm;
     let mut bbox = BoundingBox::new();
@@ -125,7 +121,7 @@ impl Templates {
 fn points_table(
     templates: &Templates,
     track: &gpsdata::Track,
-    waypoints: &Vec<WayPoint>,
+    waypoints: &Vec<Step>,
     segment: &Segment,
 ) -> String {
     let table = templates.table_points.clone();

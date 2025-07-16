@@ -11,31 +11,55 @@ pub mod svgprofile;
 pub mod utm;
 
 use backend::Backend;
-use std::env;
+
+use clap::Parser;
+
+/// Search for a pattern in a file and display the lines that contain it.
+#[derive(Parser)]
+struct Cli {
+    #[arg(short, long, value_name = "outdir")]
+    output_directory: Option<std::path::PathBuf>,
+    #[arg(value_name = "gpx")]
+    filename: std::path::PathBuf,
+}
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let mut filename = "data/blackforest.gpx";
-    if args.len() > 1usize {
-        filename = &args[1];
+    let args = Cli::parse();
+    println!("args: {:?}", args.output_directory);
+
+    let mut gpxinput = "data/blackforest.gpx";
+    if args.filename.exists() {
+        gpxinput = args.filename.as_os_str().to_str().unwrap();
     }
-    println!("read gpx {}", filename);
-    let mut backend = Backend::from_filename(filename);
-    let gpxpath = std::path::Path::new(filename);
-    let dir = gpxpath.parent().unwrap().to_str().unwrap();
-    let typbytes = render::compile(&mut backend, (1400, 400));
-    std::fs::write("/tmp/d.typ", &typbytes).expect("Could not write typst.");
-    let pdfbytes = pdf::compile(&typbytes);
+
+    let gpxpath = std::path::Path::new(gpxinput);
+    let mut outdir = gpxpath.parent().unwrap().to_str().unwrap();
+    match &args.output_directory {
+        Some(path) => outdir = path.to_str().unwrap(),
+        _ => {}
+    }
+
+    println!("read gpx {}", gpxinput);
+    println!("outdir   {}", outdir);
+    let mut backend = Backend::from_filename(gpxinput);
+
+    let _gpxname = format!(
+        "{}/{}.gpx",
+        outdir,
+        gpxpath.file_stem().unwrap().to_str().unwrap()
+    );
+
+    let pdfbytes = backend.generatePdf();
     let pdfname = format!(
         "{}/{}.pdf",
-        dir,
+        outdir,
         gpxpath.file_stem().unwrap().to_str().unwrap()
     );
     println!("make: {}", pdfname);
     std::fs::write(pdfname, &pdfbytes).expect("Could not write pdf.");
 
     println!("test backend");
-    let backend = Backend::from_filename(filename);
+    let backend = Backend::from_filename(gpxinput);
     let W = backend.get_waypoints();
     for w in W {
         println!(

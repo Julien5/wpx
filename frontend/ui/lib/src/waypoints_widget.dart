@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class WayPointsView extends StatefulWidget {
   final SegmentsProvider? segmentsProvider;
-  final Segment? segment;
+  final bridge.Segment? segment;
   const WayPointsView({super.key, this.segmentsProvider, this.segment});
 
   @override
@@ -23,10 +23,10 @@ class WayPointsViewState extends State<WayPointsView> {
 
   @override
   Widget build(BuildContext context) {
-    List<WayPoint> all = widget.segmentsProvider!.waypoints();
+    List<bridge.Step> all = widget.segmentsProvider!.waypoints();
 
-    List<WayPoint> local = [];
-    for (WayPoint waypoint in all) {
+    List<bridge.Step> local = [];
+    for (bridge.Step waypoint in all) {
       if (widget.segment!.showsWaypoint(wp: waypoint)) {
         local.add(waypoint);
       }

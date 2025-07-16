@@ -33,7 +33,7 @@ pub struct Segment {
 }
 
 impl Segment {
-    pub fn shows_waypoint(&self, wp: &WayPoint) -> bool {
+    pub fn shows_waypoint(&self, wp: &Step) -> bool {
         self.profile.shows_waypoint(wp)
     }
 }
@@ -46,7 +46,7 @@ pub struct SegmentStatistics {
 }
 
 #[derive(Clone)]
-pub struct WayPoint {
+pub struct Step {
     pub wgs84: (f64, f64, f64),
     pub utm: UTMPoint,
     pub origin: WaypointOrigin,
@@ -81,7 +81,7 @@ impl Backend {
         self: &Backend,
         w: &gpsdata::Waypoint,
         wprev: Option<&gpsdata::Waypoint>,
-    ) -> WayPoint {
+    ) -> Step {
         let track = &self.track;
         assert!(w.track_index < track.len());
         let distance = track.distance(w.track_index);
@@ -101,7 +101,7 @@ impl Backend {
             None => String::from_str("").unwrap(),
             Some(n) => n.clone(),
         };
-        WayPoint {
+        Step {
             wgs84: w.wgs84,
             utm: w.utm.clone(),
             origin: w.origin.clone(),
@@ -115,7 +115,7 @@ impl Backend {
             track_index: w.track_index,
         }
     }
-    pub fn get_waypoints(&self) -> Vec<WayPoint> {
+    pub fn get_waypoints(&self) -> Vec<Step> {
         let mut ret = Vec::new();
         for w in &self.waypoints {
             debug_assert!(w.track_index < self.track.len());
@@ -327,6 +327,9 @@ impl Backend {
         let ret = pdf::compile(&typbytes);
         println!("generated {} bytes", ret.len());
         ret
+    }
+    pub fn generateGpx(&mut self) -> Vec<u8> {
+        Vec::new()
     }
 }
 

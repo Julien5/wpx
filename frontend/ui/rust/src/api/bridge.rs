@@ -4,7 +4,7 @@ use flutter_rust_bridge::frb;
 
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
-pub use tracks::backend::WayPoint;
+pub use tracks::backend::Step;
 pub use tracks::gpsdata::WaypointOrigin;
 pub use tracks::utm::UTMPoint;
 
@@ -31,7 +31,7 @@ impl Segment {
     }
 
     #[frb(sync)]
-    pub fn shows_waypoint(&self, wp: &WayPoint) -> bool {
+    pub fn shows_waypoint(&self, wp: &Step) -> bool {
         self._impl.shows_waypoint(wp)
     }
 }
@@ -45,8 +45,8 @@ pub enum _WaypointOrigin {
     DouglasPeucker,
 }
 
-#[frb(mirror(WayPoint))]
-pub struct _WayPoint {
+#[frb(mirror(Step))]
+pub struct _Step {
     wgs84: (f64, f64, f64),
     utm: UTMPoint,
     origin: WaypointOrigin,
@@ -102,7 +102,7 @@ impl Bridge {
         self.backend.setSpeed(meter_per_second)
     }
     #[frb(sync)] //TODO: add segment parameter
-    pub fn getWayPoints(&mut self) -> Vec<WayPoint> {
+    pub fn getSteps(&mut self) -> Vec<Step> {
         self.backend.get_waypoints()
     }
     #[frb(sync)]

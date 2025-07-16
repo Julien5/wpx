@@ -1,21 +1,22 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:ui/src/rust/api/bridge.dart';
+import 'package:flutter/widgets.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 enum TrackData { track, waypoints }
 
 class FutureRenderer with ChangeNotifier {
-  final Segment segment;
+  final bridge.Segment segment;
   final TrackData trackData;
-  final Bridge _bridge;
+  final bridge.Bridge _bridge;
   Size size = Size(10, 10);
 
   Future<String>? _future;
   String? _result;
 
   FutureRenderer({
-    required Bridge bridge,
+    required bridge.Bridge bridge,
     required this.segment,
     required this.trackData,
   }) : _bridge = bridge;
@@ -81,13 +82,13 @@ class FutureRenderer with ChangeNotifier {
 }
 
 class TrackRenderer extends FutureRenderer {
-  TrackRenderer(Bridge bridge, Segment segment)
+  TrackRenderer(bridge.Bridge bridge, bridge.Segment segment)
     : super(bridge: bridge, segment: segment, trackData: TrackData.track);
 }
 
 class WaypointsRenderer extends FutureRenderer {
   double visibility = 0;
-  WaypointsRenderer(Bridge bridge, Segment segment)
+  WaypointsRenderer(bridge.Bridge bridge, bridge.Segment segment)
     : super(bridge: bridge, segment: segment, trackData: TrackData.waypoints);
 
   void updateVisibility(double v) {
@@ -120,10 +121,10 @@ class Renderers {
 }
 
 class SegmentsProvider extends ChangeNotifier {
-  late Bridge _bridge;
+  late bridge.Bridge _bridge;
   late String _filename;
   final List<Renderers> _segments = [];
-  final List<WayPoint> _waypoints = [];
+  final List<bridge.Step> _waypoints = [];
 
   SegmentsProvider() : _filename = "";
 
@@ -131,21 +132,21 @@ class SegmentsProvider extends ChangeNotifier {
     SegmentsProvider ret = SegmentsProvider();
     ret._filename = filename;
     developer.log("[filename] $filename");
-    ret._bridge = await Bridge.create(filename: filename);
+    ret._bridge = await bridge.Bridge.create(filename: filename);
     ret._updateSegments();
     return ret;
   }
 
   static Future<SegmentsProvider> fromBytes(List<int> bytes) async {
     SegmentsProvider ret = SegmentsProvider();
-    ret._bridge = await Bridge.fromContent(content: bytes);
+    ret._bridge = await bridge.Bridge.fromContent(content: bytes);
     ret._updateSegments();
     return ret;
   }
 
   static Future<SegmentsProvider> demo() async {
     SegmentsProvider ret = SegmentsProvider();
-    ret._bridge = await Bridge.initDemo();
+    ret._bridge = await bridge.Bridge.initDemo();
     ret._updateSegments();
     return ret;
   }
@@ -161,7 +162,7 @@ class SegmentsProvider extends ChangeNotifier {
   }
 
   void setContent(List<int> content) async {
-    _bridge = await Bridge.fromContent(content: content);
+    _bridge = await bridge.Bridge.fromContent(content: content);
     _updateSegments();
   }
 
@@ -205,7 +206,7 @@ class SegmentsProvider extends ChangeNotifier {
       }
     }
     _waypoints.clear();
-    var wayPoints = _bridge.getWayPoints();
+    var wayPoints = _bridge.getSteps();
     for (var w in wayPoints) {
       _waypoints.add(w);
     }
@@ -219,11 +220,11 @@ class SegmentsProvider extends ChangeNotifier {
     return _segments;
   }
 
-  List<WayPoint> waypoints() {
+  List<bridge.Step> waypoints() {
     return _waypoints;
   }
 
-  String renderSegmentWaypointsSync(Segment segment, int w, int h) {
+  String renderSegmentWaypointsSync(bridge.Segment segment, int w, int h) {
     return _bridge.renderSegmentWaypointsSync(segment: segment, w: w, h: h);
   }
 }
