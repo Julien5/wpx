@@ -35,12 +35,23 @@ class Application extends StatelessWidget {
       create: (ctx) => RootModel(),
       builder: (context, child) {
         return MaterialApp(
-          title:"WPX",
+          title: "WPX",
           onGenerateRoute: RouteManager.generateRoute,
           initialRoute: RouteManager.home,
           home: Scaffold(
             appBar: AppBar(title: Text('WPX ${packageInfo!.version} ')),
-            body: HomePage()
+            body: HomePage(),
+          ),
+          theme: ThemeData(
+            pageTransitionsTheme: PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android: ZoomPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
+                //TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+                //TargetPlatform.linux:PredictiveBackPageTransitionsBuilder(),
+              },
+            ),
           ),
         );
       },
