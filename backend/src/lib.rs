@@ -1,6 +1,7 @@
 pub mod backend;
 pub mod elevation;
 pub mod gpsdata;
+pub mod gpxexport;
 pub mod pdf;
 pub mod project;
 pub mod render;

@@ -4,6 +4,7 @@ use crate::elevation;
 pub use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::gpsdata::WaypointOrigin;
+use crate::gpxexport;
 use crate::pdf;
 use crate::project;
 use crate::render;
@@ -115,7 +116,7 @@ impl Backend {
             track_index: w.track_index,
         }
     }
-    pub fn get_waypoints(&self) -> Vec<Step> {
+    pub fn get_steps(&self) -> Vec<Step> {
         let mut ret = Vec::new();
         for w in &self.waypoints {
             debug_assert!(w.track_index < self.track.len());
@@ -282,7 +283,7 @@ impl Backend {
         profile.reset_size(W, H);
         profile.add_canvas();
         profile.add_track(&self.track, &self.track_smooth_elevation);
-        let W = self.get_waypoints();
+        let W = self.get_steps();
         profile.add_waypoints(&W);
         let ret = profile.render();
         //let filename = std::format!("/tmp/segment-{}.svg", segment.id);
@@ -305,7 +306,7 @@ impl Backend {
         println!("render_segment_track:{}", segment.id);
         let mut profile = segment.profile.clone();
         profile.reset_size(W, H);
-        let W = self.get_waypoints();
+        let W = self.get_steps();
         profile.add_waypoints(&W);
         let ret = profile.render();
         let _filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
@@ -329,7 +330,7 @@ impl Backend {
         ret
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
-        Vec::new()
+        gpxexport::generate_pdf(&self.track, &self.waypoints)
     }
 }
 

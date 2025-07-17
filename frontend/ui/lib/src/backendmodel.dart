@@ -191,6 +191,10 @@ class SegmentsProvider extends ChangeNotifier {
     return _bridge.generatePdf();
   }
 
+  Future<List<int>> generateGpx() {
+    return _bridge.generateGpx();
+  }
+
   void _updateSegments() {
     var segments = _bridge.segments();
     if (_segments.length != segments.length) {

@@ -58,8 +58,7 @@ Future<List<int>> generate(SegmentsProvider provider, Type type) async {
     return data;
   }
   assert(type == Type.gpx);
-  //var data = await provider.generatePdf();
-  List<int> data = [];
+  var data = await provider.generateGpx();
   return data;
 }
 

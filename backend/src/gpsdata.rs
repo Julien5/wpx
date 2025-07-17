@@ -8,7 +8,7 @@ fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
 }
 
 use gpx::TrackSegment;
-use std::io::Read;
+use std::{io::Read, str::FromStr};
 
 use crate::elevation;
 
@@ -92,6 +92,15 @@ impl Track {
         let startidx = self.index_after(d0);
         let endidx = self.index_before(d1);
         startidx..endidx
+    }
+
+    pub fn to_segment(&self) -> TrackSegment {
+        let mut ret = TrackSegment::new();
+        for wgs in &self.wgs84 {
+            let w = gpx::Waypoint::new(geo::Point::new(wgs.0, wgs.1));
+            ret.points.push(w);
+        }
+        ret
     }
 
     pub fn from_segment(segment: &TrackSegment) -> Track {
@@ -219,7 +228,21 @@ pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
     ret
 }
 
+fn trim_option(s: Option<String>) -> Option<String> {
+    match s {
+        Some(data) => Some(String::from_str(data.trim()).unwrap()),
+        _ => None,
+    }
+}
+
 impl Waypoint {
+    pub fn to_gpx(&self) -> gpx::Waypoint {
+        let mut ret = gpx::Waypoint::new(geo::Point::new(self.wgs84.0, self.wgs84.1));
+        ret.elevation = Some(self.wgs84.2);
+        ret.name = self.name.clone();
+        ret.description = None;
+        ret
+    }
     pub fn from_gpx(gpx: &gpx::Waypoint, utm: UTMPoint, name: Option<String>) -> Waypoint {
         let (lon, lat) = gpx.point().x_y();
         let z = match gpx.elevation {
@@ -232,7 +255,7 @@ impl Waypoint {
             utm: utm,
             track_index: usize::MAX,
             origin: WaypointOrigin::GPX,
-            name: name,
+            name: trim_option(name),
         }
     }
     pub fn from_track(wgs: (f64, f64, f64), utm: UTMPoint, indx: usize) -> Waypoint {

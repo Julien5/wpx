@@ -82,6 +82,9 @@ impl Bridge {
     pub async fn generatePdf(&mut self) -> Vec<u8> {
         self.backend.generatePdf()
     }
+    pub async fn generateGpx(&mut self) -> Vec<u8> {
+        self.backend.generateGpx()
+    }
     pub async fn adjustEpsilon(&mut self, eps: f32) {
         self.backend.adjustEpsilon(eps);
     }
@@ -103,7 +106,7 @@ impl Bridge {
     }
     #[frb(sync)] //TODO: add segment parameter
     pub fn getSteps(&mut self) -> Vec<Step> {
-        self.backend.get_waypoints()
+        self.backend.get_steps()
     }
     #[frb(sync)]
     pub fn elevation_gain(&mut self, from: usize, to: usize) -> f64 {

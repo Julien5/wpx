@@ -204,7 +204,7 @@ pub fn compile(backend: &mut Backend, (W, H): (i32, i32)) -> String {
         if range.is_empty() {
             break;
         }
-        let WP = backend.get_waypoints();
+        let WP = backend.get_steps();
         let p = backend.render_segment(segment, (W, H));
         let m = map(&backend.track, &WP, &range);
         let table = points_table(&templates, &backend.track, &WP, &segment);
