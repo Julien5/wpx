@@ -38,54 +38,47 @@ class WayPointsViewState extends State<WayPointsView> {
       return const Center(child: Text("No waypoints available"));
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: DataTable(
-        dataRowMinHeight: 25,
-        dataRowMaxHeight: 25,
-        columns: const [
-          DataColumn(label: Text('Name')),
-          DataColumn(label: Text('KM')),
-          DataColumn(label: Text('Elevation')),
-          DataColumn(label: Text('Distance')),
-          DataColumn(label: Text('Gain')),
-          DataColumn(label: Text('Slope')),
-          DataColumn(label: Text('Time')),
-        ],
-        rows:
-            local.map((waypoint) {
-              var dt = DateTime.parse(waypoint.time);
-              return DataRow(
-                cells: [
-                  DataCell(Text(waypoint.name.trim())),
-                  DataCell(
-                    Text("${(waypoint.distance / 1000).toStringAsFixed(1)} km"),
-                  ), // Distance
-                  DataCell(
-                    Text("${waypoint.elevation.floor().toStringAsFixed(0)} m"),
-                  ), // Elevation
-                  DataCell(
-                    Text(
-                      "${(waypoint.interDistance / 1000).toStringAsFixed(1)} km",
-                    ),
+    return DataTable(
+      dataRowMinHeight: 25,
+      dataRowMaxHeight: 25,
+      columns: const [
+        DataColumn(label: Text('Name')),
+        DataColumn(label: Text('KM')),
+        DataColumn(label: Text('Elevation')),
+        DataColumn(label: Text('Distance')),
+        DataColumn(label: Text('Gain')),
+        DataColumn(label: Text('Slope')),
+        DataColumn(label: Text('Time')),
+      ],
+      rows:
+          local.map((waypoint) {
+            var dt = DateTime.parse(waypoint.time);
+            return DataRow(
+              cells: [
+                DataCell(Text(waypoint.name.trim())),
+                DataCell(
+                  Text("${(waypoint.distance / 1000).toStringAsFixed(1)} km"),
+                ), // Distance
+                DataCell(
+                  Text("${waypoint.elevation.floor().toStringAsFixed(0)} m"),
+                ), // Elevation
+                DataCell(
+                  Text(
+                    "${(waypoint.interDistance / 1000).toStringAsFixed(1)} km",
                   ),
-                  DataCell(
-                    Text(
-                      "${(waypoint.interElevationGain).toStringAsFixed(0)} m",
-                    ),
-                  ),
-                  DataCell(
-                    Text("${(waypoint.interSlope).toStringAsFixed(1)} %"),
-                  ),
-                  DataCell(
-                    Text(
-                      DateFormat('HH:mm').format(dt),
-                    ), // Format the DateTime object
-                  ),
-                ],
-              );
-            }).toList(),
-      ),
+                ),
+                DataCell(
+                  Text("${(waypoint.interElevationGain).toStringAsFixed(0)} m"),
+                ),
+                DataCell(Text("${(waypoint.interSlope).toStringAsFixed(1)} %")),
+                DataCell(
+                  Text(
+                    DateFormat('HH:mm').format(dt),
+                  ), // Format the DateTime object
+                ),
+              ],
+            );
+          }).toList(),
     );
   }
 }
@@ -100,14 +93,9 @@ class WayPointsConsumer extends StatelessWidget {
         var wp = Provider.of<WaypointsRenderer>(context, listen: false);
         var segment = wp.segment;
         return Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 1500),
-            child: Center(
-              child: WayPointsView(
-                segmentsProvider: segmentsProvider,
-                segment: segment,
-              ),
-            ),
+          child: WayPointsView(
+            segmentsProvider: segmentsProvider,
+            segment: segment,
           ),
         );
       },

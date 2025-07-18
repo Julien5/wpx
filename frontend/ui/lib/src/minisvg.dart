@@ -334,19 +334,51 @@ class MiniSvgWidget extends StatelessWidget {
     return Element.fromXml(doc.rootElement, null);
   }
 
-  const MiniSvgWidget({
-    super.key,
-    required this.svg,
-    required this.size,
-  });
+  const MiniSvgWidget({super.key, required this.svg, required this.size});
+
+  Widget buildtest(BuildContext context) {
+    // FIXME: do not parse in the build method.
+    return Row(
+      children: <Widget>[
+        Container(
+          // Another fixed-width child.
+          color: const Color(0xffeeee00), // Green
+          width: 420.0, // Changed to width
+          height: 500,
+          alignment: Alignment.center,
+          child: const Text('Fixed Width Content 1'),
+        ),
+        Container(
+          // Another fixed-width child.
+          color: const Color(0xff008000), // Green
+          width: 420.0, // Changed to width
+          height: 500,
+          alignment: Alignment.center,
+          child: const Text('Fixed Width Content 2'),
+        ),
+        Container(
+          // Another fixed-width child.
+          color: const Color(0xffeeee00), // Green
+          width: 420.0, // Changed to width
+          height: 500,
+          alignment: Alignment.center,
+          child: const Text('Fixed Width Content 3'),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    //return buildtest(context);
     // FIXME: do not parse in the build method.
-    return CustomPaint(
+    return Container(
+      width: size!.width+20,
+      alignment: Alignment.center,
+      child:CustomPaint(
       size: size!,
       painter: SvgPainter(root: MiniSvgWidget.parse(svg)),
-    );
+    ));
   }
 }
 

@@ -1,3 +1,6 @@
+import 'dart:developer' as developer;
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ui/src/backendmodel.dart';
@@ -14,13 +17,11 @@ class FutureRenderingWidget extends StatefulWidget {
 class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   Widget? svg;
 
-  @override
-  Widget build(BuildContext context) {
-    double width = MediaQuery.sizeOf(context).width - 30;
-    Size childSize = Size(width, width / 3);
-    widget.future.setSize(childSize);
+  Widget buildWorker(Size parentSize) {
+    Size wantedSize = parentSize;
+    widget.future.setSize(wantedSize);
     if (widget.future.done()) {
-      svg = MiniSvgWidget(svg: widget.future.result(), size: childSize);
+      svg = MiniSvgWidget(svg: widget.future.result(), size: wantedSize);
     }
     if (!widget.future.done() && svg == null) {
       return Text("starting ${widget.future.trackData} ${widget.future.id()}");
@@ -35,5 +36,18 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
       );
     }
     return svg!;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        double w = min(1400,constraints.maxWidth);
+        double h = min(400,constraints.maxHeight);
+        developer.log("constraints: ${constraints}");
+        Size size = Size(w, h);
+        return buildWorker(size);
+      },
+    );
   }
 }

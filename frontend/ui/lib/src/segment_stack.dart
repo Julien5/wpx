@@ -7,7 +7,6 @@ import 'package:ui/src/settings_widget.dart';
 import 'package:ui/src/waypoints_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-
 class SegmentStack extends StatelessWidget {
   const SegmentStack({super.key});
 
@@ -17,15 +16,24 @@ class SegmentStack extends StatelessWidget {
     double height = MediaQuery.sizeOf(context).height;
     developer.log("[stack] ${width}x$height");
     var stack = Align(
-      alignment: Alignment.center, // Center the Stack horizontally
-      child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
+      alignment: Alignment.center,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
+      ),
     );
-    var wp = SizedBox(height: 150, child: WayPointsConsumer());
+    var wp = SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Expanded(child: WayPointsConsumer()),
+    );
     return Column(
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [WidthSettings()],
+        ),
         stack,
-        Row(children: [WidthSettings()]),
-        wp,
+        Expanded(child: wp),
       ],
     );
   }
