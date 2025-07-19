@@ -20,7 +20,7 @@ MimeType mimeType(Type type) {
   if (type == Type.pdf) {
     return MimeType.pdf;
   }
-  return MimeType.text;
+  return MimeType.custom;
 }
 
 FileType fileType(Type type) {
@@ -37,6 +37,7 @@ void fileSave(List<int> data, Type type) async {
       bytes: Uint8List.fromList(data),
       fileExtension: fileExtension(type),
       mimeType: mimeType(type),
+      customMimeType: fileExtension(type)
     );
   } else if (Platform.isLinux) {
     var filepath = await FilePicker.platform.saveFile(
