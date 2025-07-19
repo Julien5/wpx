@@ -26,20 +26,33 @@ function build() {
 }
 
 function main() {
-	build
-	
+	# build
+	MINISERVE=${CARGO_TARGET_DIR}/release/miniserve
 	if [ "$1" = "deploy" ]; then
+		# build miniserve if needed
+		if [ ! -f ${MINISERVE} ]; then
+			pushd ~/projects/sandbox/desktop/track/profile/miniserve
+			cargo build --release
+			scp -i ~/.ssh/ovh/id ${MINISERVE} debian@${DOMAIN}:/tmp/
+			popd
+		fi
 		./scripts/touch-version.sh
 		tar -zcf /tmp/web.tgz build/web
 		# upload
 		DOMAIN=vps-e637d6c5.vps.ovh.net
-		scp -i ~/.ssh/ovh/id scripts/start-ovh.sh scripts/server.py /tmp/web.tgz debian@${DOMAIN}:/tmp/
+		scp -i ~/.ssh/ovh/id scripts/start-ovh.sh /tmp/web.tgz debian@${DOMAIN}:/tmp/
 		ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "chmod +x /tmp/start-ovh.sh; /tmp/start-ovh.sh"
 	fi
 
 	if [ "$1" = "serve" ]; then
-		SERVEPY=$(realpath scripts/server.py);
-		python3 ${SERVEPY} http localhost
+		cd build/web
+		DOMAIN=localhost
+		${MINISERVE} \
+			  --index index.html \
+			  --header "Cross-Origin-Opener-Policy:same-origin" \
+			  --header "Cross-Origin-Embedder-Policy:require-corp" \
+			  --port 8123 \
+			  --verbose 
 	fi
 }
 

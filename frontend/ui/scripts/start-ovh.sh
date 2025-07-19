@@ -10,10 +10,25 @@ fi
 
 cd build/web;
 
-killall python3 || true
+killall miniserve || true
 sleep 1
 
-nohup python3 /tmp/server.py &> /tmp/server.log & 
+function runminiserve() {
+	MINISERVE=/tmp/miniserve
+	DOMAIN=vps-e637d6c5.vps.ovh.net
+	nohup ${MINISERVE} \
+	--tls-cert /tmp/${DOMAIN}.cert  \
+	--tls-key /tmp/${DOMAIN}.key \
+	--index index.html \
+	--header "Cross-Origin-Opener-Policy:same-origin" \
+	--header "Cross-Origin-Embedder-Policy:require-corp" \
+	--port 8123 \
+	--verbose \
+	"$@" \
+	&> /tmp/server.log 
+}
+
+runminiserve &
 sleep 1
 echo ok
 
