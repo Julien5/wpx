@@ -42,9 +42,11 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        double w = min(1400,constraints.maxWidth);
-        double h = min(400,constraints.maxHeight);
-        developer.log("constraints: ${constraints}");
+        double screenwidth = MediaQuery.sizeOf(context).width;
+        double screenheight = MediaQuery.sizeOf(context).height;
+        double w = max(1000,min(screenwidth-50, constraints.maxWidth));
+        double h = min(screenheight / 3, constraints.maxHeight);
+        developer.log("wanted size: ${constraints}");
         Size size = Size(w, h);
         return buildWorker(size);
       },

@@ -39,13 +39,14 @@ class WayPointsViewState extends State<WayPointsView> {
     }
 
     return DataTable(
+      columnSpacing: 10, 
       dataRowMinHeight: 25,
       dataRowMaxHeight: 25,
       columns: const [
-        DataColumn(label: Text('Name')),
+        DataColumn(label: Text('')),
         DataColumn(label: Text('KM')),
-        DataColumn(label: Text('Elevation')),
-        DataColumn(label: Text('Distance')),
+        DataColumn(label: Text('m')),
+        DataColumn(label: Text('Dist.')),
         DataColumn(label: Text('Gain')),
         DataColumn(label: Text('Slope')),
         DataColumn(label: Text('Time')),
