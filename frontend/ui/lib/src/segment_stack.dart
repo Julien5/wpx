@@ -12,9 +12,6 @@ class SegmentStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.sizeOf(context).width;
-    double height = MediaQuery.sizeOf(context).height;
-    developer.log("[stack] ${width}x$height");
     var stack = Align(
       alignment: Alignment.center,
       child: SingleChildScrollView(
@@ -22,9 +19,9 @@ class SegmentStack extends StatelessWidget {
         child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
       ),
     );
-    var wp = SingleChildScrollView(
+    var table = SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      child: Expanded(child: WayPointsConsumer()),
+      child: WayPointsConsumer(),
     );
     return Column(
       children: [
@@ -33,7 +30,7 @@ class SegmentStack extends StatelessWidget {
           children: [WidthSettings()],
         ),
         stack,
-        Expanded(child: wp),
+        Expanded(child: table),
       ],
     );
   }
