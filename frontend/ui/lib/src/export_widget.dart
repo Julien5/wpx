@@ -20,14 +20,14 @@ MimeType mimeType(Type type) {
   if (type == Type.pdf) {
     return MimeType.pdf;
   }
-  return MimeType.custom;
+  return MimeType.text;
 }
 
 FileType fileType(Type type) {
   if (type == Type.pdf) {
-    return FileType.custom;
+    return FileType.any;
   }
-  return FileType.custom;
+  return FileType.any;
 }
 
 void fileSave(List<int> data, Type type) async {

@@ -46,7 +46,7 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
         double screenheight = MediaQuery.sizeOf(context).height;
         double w = max(1000,min(screenwidth-50, constraints.maxWidth));
         double h = min(screenheight / 3, constraints.maxHeight);
-        developer.log("wanted size: ${constraints}");
+        developer.log("wanted size: $constraints");
         Size size = Size(w, h);
         return buildWorker(size);
       },
