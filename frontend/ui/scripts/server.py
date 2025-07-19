@@ -36,6 +36,7 @@ def main():
         print("certfile:",certfile);
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.load_cert_chain(certfile=certfile, keyfile=keyfile)
+        print(context.options);
         context.check_hostname = False
     
     with HTTPServer(server_address, CustomHTTPRequestHandler) as httpd:
