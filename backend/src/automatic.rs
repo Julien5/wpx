@@ -167,6 +167,10 @@ fn waypoints_within_distance(
 fn remove_near_waypoints(track: &gpsdata::Track, W: &mut Waypoints) -> Waypoints {
     let mut hide = std::collections::BTreeSet::new();
     for k in 0..W.len() {
+        // hide around gpx waypoints only
+        if W[k].origin != WaypointOrigin::GPX {
+            continue;
+        }
         let neighbors = waypoints_within_distance(track, W, k, 2000f64);
         for l in neighbors {
             if W[l].origin != WaypointOrigin::GPX {
