@@ -26,7 +26,7 @@ function build() {
 }
 
 function main() {
-	# build
+    build
 	MINISERVE=${CARGO_TARGET_DIR}/release/miniserve
 	if [ "$1" = "deploy" ]; then
 		# build miniserve if needed

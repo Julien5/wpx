@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/routes.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class Selector extends StatelessWidget {
   final String text;
@@ -23,6 +24,7 @@ class Selector extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
+    developer.log("[selector/build] text=$text value=$value");
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -53,18 +55,51 @@ class SegmentsSettings extends StatefulWidget {
 }
 
 class _SegmentsSettingsState extends State<SegmentsSettings> {
-  DateTime selectedTime = DateTime.now();
-  double selectedSpeed = 15 * 1000.0 / 3600;
-  double selectedSegmentLength = 100000;
+  DateTime startTime = DateTime.now();
+  double speed = 15 * 1000.0 / 3600;
+  double segmentLength = 100000;
+  double maxStepSize = 5000;
 
-  void onDone(BuildContext context) {
+   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      readModel();
+      setState((){});
+    });
+  }
+
+  void readModel() {
     SegmentsProvider provider = Provider.of<SegmentsProvider>(
       context,
       listen: false,
     );
-    provider.setStartTime(selectedTime);
-    provider.setSpeed(selectedSpeed);
-    provider.setSegmentLength(selectedSegmentLength);
+    bridge.Parameters parameters = provider.parameters();
+    startTime = DateTime.parse(parameters.startTime);
+    speed = parameters.speed;
+    segmentLength = parameters.segmentLength;
+    maxStepSize = parameters.maxStepSize;
+  }
+
+  void writeModel(BuildContext context) {
+    SegmentsProvider provider = Provider.of<SegmentsProvider>(
+      context,
+      listen: false,
+    );
+    bridge.Parameters oldParameters = provider.parameters();
+    String rfc3339time=startTime.toIso8601String();
+    if (!rfc3339time.endsWith("Z")) {
+      rfc3339time="${rfc3339time}Z";
+    }
+    bridge.Parameters newParameters = bridge.Parameters(
+      speed: speed,
+      startTime: rfc3339time,
+      segmentLength: segmentLength,
+      maxStepSize: maxStepSize,
+      smoothWidth: oldParameters.smoothWidth,
+      epsilon: oldParameters.epsilon,
+    );
+    provider.setParameters(newParameters);
     Navigator.of(context).pushNamed(RouteManager.segmentsView);
   }
 
@@ -84,23 +119,28 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
         picked.minute,
       );
       setState(() {
-        selectedTime = dateTime;
+        startTime = dateTime;
       });
     }
   }
 
   String timeAsString() {
-    return DateFormat('dd.MM HH:mm').format(selectedTime);
+    return DateFormat('dd.MM HH:mm').format(startTime);
   }
 
   String speedAsString() {
-    double kmh = selectedSpeed * 3.6;
+    double kmh = speed * 3.6;
     return "Speed: ${kmh.toStringAsFixed(1)} kmh";
   }
 
   String segmentLengthAsString() {
-    double km = selectedSegmentLength / 1000;
+    double km = segmentLength / 1000;
     return "Segment length: ${km.toStringAsFixed(1)} km";
+  }
+
+  String maxStepSizeAsString() {
+    double km = maxStepSize / 1000;
+    return "max step size: ${km.toStringAsFixed(1)} km";
   }
 
   @override
@@ -123,10 +163,10 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
                   min: 8.0,
                   max: 30.0,
                   text: speedAsString(),
-                  value: selectedSpeed * 3.6,
+                  value: speed * 3.6,
                   onChanged: (value) {
                     setState(() {
-                      selectedSpeed = value * 1000 / 3600;
+                      speed = value * 1000 / 3600;
                     });
                   },
                 ),
@@ -134,15 +174,26 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
                   min: 50.0,
                   max: 150.0,
                   text: segmentLengthAsString(),
-                  value: selectedSegmentLength / 1000,
+                  value: segmentLength / 1000,
                   onChanged: (value) {
                     setState(() {
-                      selectedSegmentLength = value * 1000;
+                      segmentLength = value * 1000;
+                    });
+                  },
+                ),
+                Selector(
+                  min: 5.0,
+                  max: 30.0,
+                  text: maxStepSizeAsString(),
+                  value: maxStepSize / 1000,
+                  onChanged: (value) {
+                    setState(() {
+                      maxStepSize = value * 1000;
                     });
                   },
                 ),
                 ElevatedButton(
-                  onPressed: () => onDone(context),
+                  onPressed: () => writeModel(context),
                   child: const Text("OK"),
                 ),
               ],
@@ -198,12 +249,36 @@ class WidthSettings extends StatefulWidget {
 class _WidthSettingsState extends State<WidthSettings> {
   double width = 200;
 
-  void onDone(BuildContext context) {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SegmentsProvider provider = Provider.of<SegmentsProvider>(
+        context,
+        listen: false,
+      );
+      bridge.Parameters parameters = provider.parameters();
+      setState(() {
+        width = parameters.smoothWidth;
+      });
+    });
+  }
+
+  void writeModel(BuildContext context) {
     SegmentsProvider provider = Provider.of<SegmentsProvider>(
       context,
       listen: false,
     );
-    provider.setSmoothWidth(width);
+    bridge.Parameters oldParameters = provider.parameters();
+    bridge.Parameters newParameters = bridge.Parameters(
+      speed: oldParameters.speed,
+      startTime: oldParameters.startTime,
+      segmentLength: oldParameters.segmentLength,
+      maxStepSize: oldParameters.maxStepSize,
+      smoothWidth: width,
+      epsilon: oldParameters.epsilon,
+    );
+    provider.setParameters(newParameters);
   }
 
   String widthAsString() {
@@ -211,10 +286,10 @@ class _WidthSettingsState extends State<WidthSettings> {
   }
 
   void onChanged(double value, SegmentsProvider provider) {
-    provider.setSmoothWidth(value);
     setState(() {
       width = value;
     });
+    writeModel(context);
   }
 
   @override
@@ -234,7 +309,7 @@ class _WidthSettingsState extends State<WidthSettings> {
                   max: 1000.0,
                   text: widthAsString(),
                   value: width,
-                  onChanged: (value) => onChanged(value,segmentsProvider),
+                  onChanged: (value) => onChanged(value, segmentsProvider),
                 ),
               ],
             ),

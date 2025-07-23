@@ -1,7 +1,8 @@
 #![allow(non_snake_case)]
 
-use crate::backend::{Backend, Segment, Step};
+use crate::backend::{Backend, Segment};
 use crate::gpsdata;
+use crate::step;
 use crate::utm::UTMPoint;
 
 use svg::node::element::path::{Command, Data, Position};
@@ -58,7 +59,11 @@ impl BoundingBox {
     }
 }
 
-fn map(geodata: &gpsdata::Track, waypoints: &Vec<Step>, range: &std::ops::Range<usize>) -> String {
+fn map(
+    geodata: &gpsdata::Track,
+    waypoints: &Vec<step::Step>,
+    range: &std::ops::Range<usize>,
+) -> String {
     let mut data = Data::new();
     let path = &geodata.utm;
     let mut bbox = BoundingBox::new();
@@ -121,7 +126,7 @@ impl Templates {
 fn points_table(
     templates: &Templates,
     track: &gpsdata::Track,
-    waypoints: &Vec<Step>,
+    waypoints: &Vec<step::Step>,
     segment: &Segment,
 ) -> String {
     let table = templates.table_points.clone();
@@ -212,7 +217,7 @@ pub fn compile(backend: &mut Backend, (W, H): (i32, i32)) -> String {
         if range.end == backend.track.len() {
             break;
         }
-        start = start + backend.segment_length;
+        start = start + backend.get_parameters().segment_length;
         k = k + 1;
     }
     document

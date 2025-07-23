@@ -1,9 +1,9 @@
-<svg height="400" width="1420" xmlns="http://www.w3.org/2000/svg">
-<g font-family="ui-serif" font-size="20" id="world" shape-rendering="crispEdges" transform="translate(5 5)">
+<svg height="400" width="1440" xmlns="http://www.w3.org/2000/svg">
+<g font-family="ui-serif" font-size="15" id="world" shape-rendering="crispEdges" transform="translate(5 5)">
 <g id="BG"/>
-<g id="SL" transform="translate(50 360) scale(-1 -1)"/>
-<g id="SB" transform="translate(50 360)"/>
-<g id="SD" transform="translate(50 360) scale(1 -1) scale(1 1)">
+<g id="SL" transform="translate(71 360) scale(-1 -1)"/>
+<g id="SB" transform="translate(71 360)"/>
+<g id="SD" transform="translate(71 360) scale(1 -1) scale(1 1)">
 <circle cx="76" cy="288" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(76 303) scale(1 -1)">
 803
@@ -12,8 +12,8 @@
 <text font-size="14" text-anchor="middle" transform="translate(150 127) scale(1 -1)">
 312
 </text>
-<circle cx="273" cy="275" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(273 290) scale(1 -1)">
+<circle cx="272" cy="275" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(272 290) scale(1 -1)">
 764
 </text>
 <circle cx="330" cy="141" fill="gray" r="5" stroke="black" stroke-width="2"/>
@@ -24,47 +24,47 @@
 <text font-size="14" text-anchor="middle" transform="translate(434 363) scale(1 -1)">
 968
 </text>
-<circle cx="549" cy="215" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(549 230) scale(1 -1)">
+<circle cx="548" cy="215" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(548 230) scale(1 -1)">
 597
 </text>
-<circle cx="553" cy="215" fill="black" r="8"/>
-<text font-size="14" text-anchor="middle" transform="translate(553 230) scale(1 -1)">
+<circle cx="552" cy="215" fill="black" r="8"/>
+<text font-size="14" text-anchor="middle" transform="translate(552 230) scale(1 -1)">
 598
 </text>
-<text text-anchor="middle" transform="translate(553 185) scale(1 -1)">
+<text text-anchor="middle" transform="translate(552 185) scale(1 -1)">
 K3
 </text>
-<circle cx="676" cy="345" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(676 360) scale(1 -1)">
+<circle cx="675" cy="345" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(675 360) scale(1 -1)">
 961
 </text>
-<circle cx="737" cy="224" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(737 239) scale(1 -1)">
+<circle cx="736" cy="224" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(736 239) scale(1 -1)">
 622
 </text>
-<circle cx="919" cy="105" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(919 120) scale(1 -1)">
+<circle cx="918" cy="105" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(918 120) scale(1 -1)">
 293
 </text>
-<circle cx="992" cy="251" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(992 266) scale(1 -1)">
+<circle cx="991" cy="251" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(991 266) scale(1 -1)">
 698
 </text>
-<circle cx="1039" cy="109" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1039 124) scale(1 -1)">
+<circle cx="1038" cy="109" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1038 124) scale(1 -1)">
 303
 </text>
-<circle cx="1109" cy="59" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1109 74) scale(1 -1)">
+<circle cx="1108" cy="59" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1108 74) scale(1 -1)">
 164
 </text>
-<circle cx="1171" cy="153" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1171 168) scale(1 -1)">
+<circle cx="1170" cy="153" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1170 168) scale(1 -1)">
 426
 </text>
-<circle cx="1245" cy="42" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1245 57) scale(1 -1)">
+<circle cx="1244" cy="42" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1244 57) scale(1 -1)">
 118
 </text>
 </g>

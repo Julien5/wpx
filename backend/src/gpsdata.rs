@@ -136,7 +136,7 @@ impl Track {
         }
     }
 
-    pub fn interesting_indexes(&self, epsilon: f32) -> Vec<usize> {
+    pub fn interesting_indexes(&self, epsilon: f64) -> Vec<usize> {
         let mut coords = Vec::new();
         for k in 0..self.len() {
             let x = self.distance(k);
@@ -144,7 +144,7 @@ impl Track {
             coords.push(geo::coord!(x:x, y:y));
         }
         let line = geo::LineString::new(coords);
-        line.simplify_idx(&(epsilon as f64))
+        line.simplify_idx(&epsilon)
     }
 }
 
@@ -194,10 +194,11 @@ impl ProfileBoundingBox {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum WaypointOrigin {
     GPX,
     DouglasPeucker,
+    MaxStepSize,
 }
 
 #[derive(Clone)]
@@ -207,6 +208,7 @@ pub struct Waypoint {
     pub track_index: usize,
     pub origin: WaypointOrigin,
     pub name: Option<String>,
+    pub hide: bool,
 }
 
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
@@ -236,6 +238,21 @@ fn trim_option(s: Option<String>) -> Option<String> {
 }
 
 impl Waypoint {
+    pub fn create(
+        wgs: (f64, f64, f64),
+        utm: UTMPoint,
+        indx: usize,
+        origin: WaypointOrigin,
+    ) -> Waypoint {
+        Waypoint {
+            wgs84: wgs.clone(),
+            utm: utm,
+            track_index: indx,
+            name: None,
+            origin: origin,
+            hide: false,
+        }
+    }
     pub fn to_gpx(&self) -> gpx::Waypoint {
         let mut ret = gpx::Waypoint::new(geo::Point::new(self.wgs84.0, self.wgs84.1));
         ret.elevation = Some(self.wgs84.2);
@@ -256,15 +273,7 @@ impl Waypoint {
             track_index: usize::MAX,
             origin: WaypointOrigin::GPX,
             name: trim_option(name),
-        }
-    }
-    pub fn from_track(wgs: (f64, f64, f64), utm: UTMPoint, indx: usize) -> Waypoint {
-        Waypoint {
-            wgs84: wgs.clone(),
-            utm: utm,
-            track_index: indx,
-            origin: WaypointOrigin::DouglasPeucker,
-            name: None,
+            hide: false,
         }
     }
 }

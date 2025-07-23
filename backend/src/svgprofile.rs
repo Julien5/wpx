@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
-use crate::backend::Step;
 use crate::gpsdata::ProfileBoundingBox;
+use crate::step;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
 use svg::Node;
@@ -190,24 +190,32 @@ pub fn yticks_dashed(bbox: &ProfileBoundingBox) -> Vec<f64> {
     ret
 }
 
-fn waypoint_circle((x, y): (i32, i32), waypoint: &Step) -> Circle {
+fn waypoint_circle((x, y): (i32, i32), waypoint: &step::Step) -> Circle {
+    use gpsdata::WaypointOrigin::*;
     match waypoint.origin {
-        gpsdata::WaypointOrigin::GPX => svg::node::element::Circle::new()
+        GPX => svg::node::element::Circle::new()
             .set("cx", x)
             .set("cy", y)
             .set("fill", "black")
             .set("r", 8),
-        gpsdata::WaypointOrigin::DouglasPeucker => svg::node::element::Circle::new()
+        DouglasPeucker => svg::node::element::Circle::new()
             .set("cx", x)
             .set("cy", y)
             .set("fill", "gray")
             .set("stroke", "black")
             .set("stroke-width", "2")
             .set("r", 5),
+        MaxStepSize => svg::node::element::Circle::new()
+            .set("cx", x)
+            .set("cy", y)
+            .set("fill", "blue")
+            .set("stroke", "black")
+            .set("stroke-width", "2")
+            .set("r", 5),
     }
 }
 
-fn waypoint_text((x, y): (i32, i32), waypoint: &Step) -> Text {
+fn waypoint_text((x, y): (i32, i32), waypoint: &step::Step) -> Text {
     let label = &waypoint.name;
     let ret = Text::new(label).set("text-anchor", "middle").set(
         "transform",
@@ -216,7 +224,7 @@ fn waypoint_text((x, y): (i32, i32), waypoint: &Step) -> Text {
     ret
 }
 
-fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &Step) -> Text {
+fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &step::Step) -> Text {
     let label = format!("{:.0}", waypoint.wgs84.2);
     let ret = Text::new(label)
         .set("text-anchor", "middle")
@@ -399,7 +407,7 @@ impl Profile {
         }
     }
 
-    fn add_waypoint(&mut self, w: &Step) {
+    fn add_waypoint(&mut self, w: &step::Step) {
         let (x, y) = self.toSD((w.distance, w.elevation));
         self.addSD(waypoint_circle((x, y), &w));
         self.addSD(waypoint_elevation_text((x, y), &w));
@@ -407,10 +415,10 @@ impl Profile {
             self.addSD(waypoint_text((x, y), &w));
         }
     }
-    pub fn shows_waypoint(&self, w: &Step) -> bool {
+    pub fn shows_waypoint(&self, w: &step::Step) -> bool {
         self.bbox.xmin <= w.distance && w.distance <= self.bbox.xmax
     }
-    pub fn add_waypoints(&mut self, waypoints: &Vec<Step>) {
+    pub fn add_waypoints(&mut self, waypoints: &Vec<step::Step>) {
         for w in waypoints {
             if !self.shows_waypoint(w) {
                 continue;

@@ -1,13 +1,16 @@
 #![allow(non_snake_case)]
 
+pub mod automatic;
 pub mod backend;
 pub mod elevation;
 pub mod gpsdata;
 pub mod gpxexport;
+pub mod parameters;
 pub mod pdf;
 pub mod project;
 pub mod render;
 pub mod speed;
+pub mod step;
 pub mod svgprofile;
 pub mod utm;
 

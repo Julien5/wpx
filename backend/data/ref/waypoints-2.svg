@@ -1,9 +1,9 @@
-<svg height="400" width="1420" xmlns="http://www.w3.org/2000/svg">
-<g font-family="ui-serif" font-size="20" id="world" shape-rendering="crispEdges" transform="translate(5 5)">
+<svg height="400" width="1440" xmlns="http://www.w3.org/2000/svg">
+<g font-family="ui-serif" font-size="15" id="world" shape-rendering="crispEdges" transform="translate(5 5)">
 <g id="BG"/>
-<g id="SL" transform="translate(50 360) scale(-1 -1)"/>
-<g id="SB" transform="translate(50 360)"/>
-<g id="SD" transform="translate(50 360) scale(1 -1) scale(1 1)">
+<g id="SL" transform="translate(71 360) scale(-1 -1)"/>
+<g id="SB" transform="translate(71 360)"/>
+<g id="SD" transform="translate(71 360) scale(1 -1) scale(1 1)">
 <circle cx="39" cy="251" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(39 266) scale(1 -1)">
 698
@@ -12,16 +12,16 @@
 <text font-size="14" text-anchor="middle" transform="translate(104 124) scale(1 -1)">
 303
 </text>
-<circle cx="203" cy="59" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(203 74) scale(1 -1)">
+<circle cx="202" cy="59" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(202 74) scale(1 -1)">
 164
 </text>
 <circle cx="290" cy="153" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(290 168) scale(1 -1)">
 426
 </text>
-<circle cx="393" cy="42" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(393 57) scale(1 -1)">
+<circle cx="392" cy="42" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(392 57) scale(1 -1)">
 118
 </text>
 <circle cx="977" cy="37" fill="black" r="8"/>

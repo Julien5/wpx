@@ -4,8 +4,9 @@ use flutter_rust_bridge::frb;
 
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
-pub use tracks::backend::Step;
 pub use tracks::gpsdata::WaypointOrigin;
+pub use tracks::parameters::Parameters;
+pub use tracks::step::Step;
 pub use tracks::utm::UTMPoint;
 
 pub use tracks::backend::Segment as SegmentImplementation;
@@ -43,6 +44,17 @@ pub struct _UTMPoint(pub f64, pub f64);
 pub enum _WaypointOrigin {
     GPX,
     DouglasPeucker,
+    MaxStepSize,
+}
+
+#[frb(mirror(Parameters))]
+pub struct _Parameters {
+    pub epsilon: f64,
+    pub max_step_size: f64,
+    pub start_time: String,
+    pub speed: f64,
+    pub segment_length: f64,
+    pub smooth_width: f64,
 }
 
 #[frb(mirror(Step))]
@@ -56,7 +68,7 @@ pub struct _Step {
     inter_elevation_gain: f64,
     inter_slope: f64,
     name: String,
-    time: String, // iso8601
+    time: String, // rfc3339
     track_index: usize,
 }
 
@@ -85,25 +97,6 @@ impl Bridge {
     pub async fn generateGpx(&mut self) -> Vec<u8> {
         self.backend.generateGpx()
     }
-    pub async fn adjustEpsilon(&mut self, eps: f32) {
-        self.backend.adjustEpsilon(eps);
-    }
-    /* unfortunately, i64 is not portable in dart:
-    - BigInt in dart on the web, and
-    - int in dart for native targets.
-    */
-    #[frb(sync)]
-    pub fn setStartTime(&mut self, iso8601: String) {
-        self.backend.setStartTime(iso8601)
-    }
-    #[frb(sync)]
-    pub fn setSegmentLength(&mut self, length: f64) {
-        self.backend.setSegmentLength(length);
-    }
-    #[frb(sync)]
-    pub fn setSpeed(&mut self, meter_per_second: f64) {
-        self.backend.setSpeed(meter_per_second)
-    }
     #[frb(sync)] //TODO: add segment parameter
     pub fn getSteps(&mut self) -> Vec<Step> {
         self.backend.get_steps()
@@ -112,11 +105,14 @@ impl Bridge {
     pub fn elevation_gain(&mut self, from: usize, to: usize) -> f64 {
         self.backend.elevation_gain(from, to)
     }
-
-    pub async fn setSmoothWidth(&mut self, W: f64) {
-        self.backend.set_smooth_width(W);
+    #[frb(sync)]
+    pub fn get_parameters(&mut self) -> Parameters {
+        self.backend.get_parameters()
     }
-
+    #[frb(sync)]
+    pub fn set_parameters(&mut self, parameters: &Parameters) {
+        self.backend.set_parameters(parameters);
+    }
     pub async fn renderSegmentTrack(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
@@ -135,7 +131,7 @@ impl Bridge {
             .render_segment_waypoints(&segment._impl, (W, H))
     }
     #[frb(sync)]
-    pub fn epsilon(&self) -> f32 {
+    pub fn epsilon(&self) -> f64 {
         self.backend.epsilon()
     }
 

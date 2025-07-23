@@ -166,24 +166,12 @@ class SegmentsProvider extends ChangeNotifier {
     _updateSegments();
   }
 
-  void setStartTime(DateTime dateTime) {
-    _bridge.setStartTime(iso8601: dateTime.toIso8601String());
-    _updateSegments();
+  bridge.Parameters parameters() {
+    return _bridge.getParameters();
   }
 
-  void setSegmentLength(double length) {
-    _bridge.setSegmentLength(length: length);
-    _segments.clear();
-    _updateSegments();
-  }
-
-  void setSpeed(double mps) {
-    _bridge.setSpeed(meterPerSecond: mps);
-    _updateSegments();
-  }
-
-  void setSmoothWidth(double width) {
-    _bridge.setSmoothWidth(w: width);
+  void setParameters(bridge.Parameters p) {
+    _bridge.setParameters(parameters: p);
     _updateSegments();
   }
 
