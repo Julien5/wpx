@@ -21,6 +21,8 @@ use clap::Parser;
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
 struct Cli {
+    #[arg(short, long, value_name = "debug")]
+    debug: Option<bool>,
     #[arg(short, long, value_name = "outdir")]
     output_directory: Option<std::path::PathBuf>,
     #[arg(value_name = "gpx")]
@@ -30,6 +32,10 @@ struct Cli {
 fn main() {
     let args = Cli::parse();
     println!("args: {:?}", args.output_directory);
+    let debug = match args.debug {
+        Some(v) => v,
+        None => false,
+    };
 
     let mut gpxinput = "data/blackforest.gpx";
     if args.filename.exists() {
@@ -47,13 +53,7 @@ fn main() {
     println!("outdir   {}", outdir);
     let mut backend = Backend::from_filename(gpxinput);
 
-    let _gpxname = format!(
-        "{}/{}.gpx",
-        outdir,
-        gpxpath.file_stem().unwrap().to_str().unwrap()
-    );
-
-    let pdfbytes = backend.generatePdf();
+    let pdfbytes = backend.generatePdf(debug);
     let pdfname = format!(
         "{}/{}.pdf",
         outdir,

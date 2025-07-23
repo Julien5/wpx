@@ -13,7 +13,7 @@ pub struct Parameters {
 impl Default for Parameters {
     fn default() -> Parameters {
         Parameters {
-            epsilon: 20f64,
+            epsilon: 100f64,
             max_step_size: 15f64 * 1000f64,
             start_time: chrono::offset::Utc::now().to_rfc3339(),
             speed: speed::mps(15f64),

@@ -198,7 +198,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn compile(backend: &mut Backend, (W, H): (i32, i32)) -> String {
+pub fn compile(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let mut start = 0f64;
@@ -211,6 +211,10 @@ pub fn compile(backend: &mut Backend, (W, H): (i32, i32)) -> String {
         }
         let WP = backend.get_steps();
         let p = backend.render_segment(segment, (W, H));
+        if debug {
+            let f = format!("/tmp/segment-{}.svg", segment.id);
+            std::fs::write(&f, &p).unwrap();
+        }
         let m = map(&backend.track, &WP, &range);
         let table = points_table(&templates, &backend.track, &WP, &segment);
         link(&templates, &p, &m, &table, &mut document);

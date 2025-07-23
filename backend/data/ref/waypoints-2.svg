@@ -8,21 +8,57 @@
 <text font-size="14" text-anchor="middle" transform="translate(39 266) scale(1 -1)">
 698
 </text>
+<text text-anchor="middle" transform="translate(39 221) scale(1 -1)">
+DP
+</text>
 <circle cx="104" cy="109" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(104 124) scale(1 -1)">
 303
+</text>
+<text text-anchor="middle" transform="translate(104 79) scale(1 -1)">
+DP
+</text>
+<circle cx="148" cy="138" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(148 153) scale(1 -1)">
+386
+</text>
+<text text-anchor="middle" transform="translate(148 108) scale(1 -1)">
+DP
 </text>
 <circle cx="202" cy="59" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(202 74) scale(1 -1)">
 164
 </text>
+<text text-anchor="middle" transform="translate(202 29) scale(1 -1)">
+DP
+</text>
 <circle cx="290" cy="153" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(290 168) scale(1 -1)">
 426
 </text>
+<text text-anchor="middle" transform="translate(290 123) scale(1 -1)">
+DP
+</text>
 <circle cx="392" cy="42" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(392 57) scale(1 -1)">
 118
+</text>
+<text text-anchor="middle" transform="translate(392 12) scale(1 -1)">
+DP
+</text>
+<circle cx="588" cy="41" fill="blue" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(588 56) scale(1 -1)">
+114
+</text>
+<text text-anchor="middle" transform="translate(588 11) scale(1 -1)">
+S
+</text>
+<circle cx="782" cy="38" fill="blue" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(782 53) scale(1 -1)">
+107
+</text>
+<text text-anchor="middle" transform="translate(782 8) scale(1 -1)">
+S
 </text>
 <circle cx="977" cy="37" fill="black" r="8"/>
 <text font-size="14" text-anchor="middle" transform="translate(977 52) scale(1 -1)">
@@ -30,10 +66,6 @@
 </text>
 <text text-anchor="middle" transform="translate(977 7) scale(1 -1)">
 K4
-</text>
-<circle cx="977" cy="37" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(977 52) scale(1 -1)">
-103
 </text>
 </g>
 </g>

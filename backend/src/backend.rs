@@ -213,11 +213,7 @@ impl Backend {
         profile.add_track(&self.track, &self.track_smooth_elevation);
         let W = self.get_steps();
         profile.add_waypoints(&W);
-        let ret = profile.render();
-        let filename = std::format!("/tmp/segment-{}.svg", segment.id);
-        // TODO: do not compile in wasm.
-        // std::fs::write(filename, &ret).expect("Unable to write file");
-        ret
+        profile.render()
     }
     pub fn render_segment_track(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         println!("render_segment_track:{}", segment.id);
@@ -225,11 +221,7 @@ impl Backend {
         profile.reset_size(W, H);
         profile.add_canvas();
         profile.add_track(&self.track, &self.track_smooth_elevation);
-        let ret = profile.render();
-        let filename = std::format!("/tmp/track-{}.svg", segment.id);
-        println!("rendered {}", filename);
-        //std::fs::write(filename, &ret).expect("Unable to write file");
-        ret
+        profile.render()
     }
     pub fn render_segment_waypoints(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         println!("render_segment_track:{}", segment.id);
@@ -251,8 +243,8 @@ impl Backend {
             distance_end: self.track.distance(range.end - 1),
         }
     }
-    pub fn generatePdf(&mut self) -> Vec<u8> {
-        let typbytes = render::compile(self, (1400, 400));
+    pub fn generatePdf(&mut self, debug: bool) -> Vec<u8> {
+        let typbytes = render::compile(self, debug, (1400, 400));
         let ret = pdf::compile(&typbytes);
         println!("generated {} bytes", ret.len());
         ret

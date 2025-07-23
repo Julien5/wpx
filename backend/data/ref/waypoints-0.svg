@@ -8,9 +8,29 @@
 <text font-size="14" text-anchor="middle" transform="translate(192 241) scale(1 -1)">
 693
 </text>
+<text text-anchor="middle" transform="translate(192 196) scale(1 -1)">
+DP
+</text>
+<circle cx="270" cy="237" fill="blue" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(270 252) scale(1 -1)">
+726
+</text>
+<text text-anchor="middle" transform="translate(270 207) scale(1 -1)">
+S
+</text>
+<circle cx="347" cy="252" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(347 267) scale(1 -1)">
+770
+</text>
+<text text-anchor="middle" transform="translate(347 222) scale(1 -1)">
+DP
+</text>
 <circle cx="436" cy="335" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(436 350) scale(1 -1)">
 1025
+</text>
+<text text-anchor="middle" transform="translate(436 305) scale(1 -1)">
+DP
 </text>
 <circle cx="479" cy="284" fill="black" r="8"/>
 <text font-size="14" text-anchor="middle" transform="translate(479 299) scale(1 -1)">
@@ -19,25 +39,54 @@
 <text text-anchor="middle" transform="translate(479 254) scale(1 -1)">
 K1
 </text>
-<circle cx="483" cy="281" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(483 296) scale(1 -1)">
-859
+<circle cx="566" cy="338" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(566 353) scale(1 -1)">
+1035
+</text>
+<text text-anchor="middle" transform="translate(566 308) scale(1 -1)">
+DP
+</text>
+<circle cx="614" cy="285" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(614 300) scale(1 -1)">
+871
+</text>
+<text text-anchor="middle" transform="translate(614 255) scale(1 -1)">
+DP
 </text>
 <circle cx="635" cy="323" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(635 338) scale(1 -1)">
 988
 </text>
+<text text-anchor="middle" transform="translate(635 293) scale(1 -1)">
+DP
+</text>
 <circle cx="742" cy="166" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(742 181) scale(1 -1)">
 510
+</text>
+<text text-anchor="middle" transform="translate(742 136) scale(1 -1)">
+DP
+</text>
+<circle cx="769" cy="151" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(769 166) scale(1 -1)">
+463
+</text>
+<text text-anchor="middle" transform="translate(769 121) scale(1 -1)">
+DP
 </text>
 <circle cx="790" cy="205" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(790 220) scale(1 -1)">
 628
 </text>
+<text text-anchor="middle" transform="translate(790 175) scale(1 -1)">
+DP
+</text>
 <circle cx="823" cy="116" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(823 131) scale(1 -1)">
 354
+</text>
+<text text-anchor="middle" transform="translate(823 86) scale(1 -1)">
+DP
 </text>
 <circle cx="886" cy="70" fill="black" r="8"/>
 <text font-size="14" text-anchor="middle" transform="translate(886 85) scale(1 -1)">
@@ -46,25 +95,68 @@ K1
 <text text-anchor="middle" transform="translate(886 40) scale(1 -1)">
 K2
 </text>
-<circle cx="900" cy="70" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(900 85) scale(1 -1)">
-216
+<circle cx="939" cy="103" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(939 118) scale(1 -1)">
+316
+</text>
+<text text-anchor="middle" transform="translate(939 73) scale(1 -1)">
+DP
+</text>
+<circle cx="986" cy="231" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(986 246) scale(1 -1)">
+706
+</text>
+<text text-anchor="middle" transform="translate(986 201) scale(1 -1)">
+DP
+</text>
+<circle cx="1005" cy="184" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1005 199) scale(1 -1)">
+563
+</text>
+<text text-anchor="middle" transform="translate(1005 154) scale(1 -1)">
+DP
 </text>
 <circle cx="1040" cy="262" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(1040 277) scale(1 -1)">
 803
 </text>
+<text text-anchor="middle" transform="translate(1040 232) scale(1 -1)">
+DP
+</text>
 <circle cx="1113" cy="102" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(1113 117) scale(1 -1)">
 312
+</text>
+<text text-anchor="middle" transform="translate(1113 72) scale(1 -1)">
+DP
+</text>
+<circle cx="1170" cy="126" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1170 141) scale(1 -1)">
+388
+</text>
+<text text-anchor="middle" transform="translate(1170 96) scale(1 -1)">
+DP
 </text>
 <circle cx="1236" cy="250" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(1236 265) scale(1 -1)">
 764
 </text>
+<text text-anchor="middle" transform="translate(1236 220) scale(1 -1)">
+DP
+</text>
 <circle cx="1294" cy="128" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <text font-size="14" text-anchor="middle" transform="translate(1294 143) scale(1 -1)">
 393
+</text>
+<text text-anchor="middle" transform="translate(1294 98) scale(1 -1)">
+DP
+</text>
+<circle cx="1330" cy="159" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="14" text-anchor="middle" transform="translate(1330 174) scale(1 -1)">
+487
+</text>
+<text text-anchor="middle" transform="translate(1330 129) scale(1 -1)">
+DP
 </text>
 </g>
 </g>
