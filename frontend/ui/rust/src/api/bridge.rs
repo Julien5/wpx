@@ -92,7 +92,7 @@ impl Bridge {
         }
     }
     pub async fn generatePdf(&mut self) -> Vec<u8> {
-        self.backend.generatePdf()
+        self.backend.generatePdf(false)
     }
     pub async fn generateGpx(&mut self) -> Vec<u8> {
         self.backend.generateGpx()

@@ -46,7 +46,7 @@ impl Segment {
         Segment {
             id,
             range: range.clone(),
-            profile: svgprofile::Profile::init(&range, &bbox),
+            profile: svgprofile::Profile::init(&bbox),
         }
     }
 }
@@ -64,7 +64,8 @@ impl Backend {
 
     pub fn set_parameters(self: &mut Backend, parameters: &Parameters) {
         self.parameters = parameters.clone();
-        self.track_smooth_elevation = elevation::smooth(&self.track, self.parameters.smooth_width);
+        self.track_smooth_elevation =
+            elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
         self.waypoints = automatic::generate(&self.track, &self.waypoints, &self.parameters);
     }
 
@@ -157,7 +158,10 @@ impl Backend {
         let parameters = Parameters::default();
         let waypoints = automatic::generate(&track, &gpxwaypoints, &parameters);
         let ret = Backend {
-            track_smooth_elevation: elevation::smooth(&track, default_params.smooth_width),
+            track_smooth_elevation: elevation::smooth_elevation(
+                &track,
+                default_params.smooth_width,
+            ),
             track: track,
             waypoints: waypoints,
             parameters: parameters,

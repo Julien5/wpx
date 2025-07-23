@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::elevation;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::step;
 use svg::node::element::path::Command;
@@ -114,21 +115,60 @@ fn toSD((x, y): (f64, f64), WD: i32, HD: i32, bbox: &gpsdata::ProfileBoundingBox
     (f(x).floor() as i32, g(y).floor() as i32)
 }
 
-fn data(
-    geodata: &gpsdata::Track,
-    _range: &std::ops::Range<usize>,
+fn slope(track: &gpsdata::Track, smooth: &Vec<f64>) -> Vec<f64> {
+    let mut ret = Vec::new();
+    debug_assert!(track.wgs84.len() == smooth.len());
+    for k in 1..track.len() {
+        let dx = track.distance(k) - track.distance(k - 1);
+        let dy = smooth[k] - smooth[k - 1];
+        let slope = match dx {
+            0f64 => 0f64,
+            _ => 100f64 * dy / dx,
+        };
+        ret.push(slope);
+    }
+    ret.push(0f64);
+    debug_assert!(track.wgs84.len() == ret.len());
+    elevation::smooth(track, 1000f64, |index: usize| -> f64 { ret[index] })
+}
+
+fn slopeData(
+    track: &gpsdata::Track,
     (WD, HD): (i32, i32),
     bbox: &ProfileBoundingBox,
     smooth: &Vec<f64>,
 ) -> Data {
     let mut data = Data::new();
-    let start = geodata.index_after(bbox.xmin);
-    let end = geodata.index_before(bbox.xmax);
+    let start = track.index_after(bbox.xmin);
+    let end = track.index_before(bbox.xmax);
+    let se = slope(track, smooth);
+    for k in start..end {
+        let ymid = ((0.5 * (bbox.ymin + bbox.ymax)) / 100f64).floor() * 100f64;
+        let e = ymid + 30f64 * se[k];
+        let (x, y) = (track.distance(k), e);
+        let (xg, yg) = toSD((x, y), WD, HD, bbox);
+        if data.is_empty() {
+            data.append(Command::Move(Position::Absolute, (xg, yg).into()));
+        }
+        data.append(Command::Line(Position::Absolute, (xg, yg).into()));
+    }
+    data
+}
+
+fn smoothData(
+    track: &gpsdata::Track,
+    (WD, HD): (i32, i32),
+    bbox: &ProfileBoundingBox,
+    smooth: &Vec<f64>,
+) -> Data {
+    let mut data = Data::new();
+    let start = track.index_after(bbox.xmin);
+    let end = track.index_before(bbox.xmax);
     let se = smooth;
     for k in start..end {
         //let e = geodata.elevation(k);
         let e = se[k];
-        let (x, y) = (geodata.distance(k), e);
+        let (x, y) = (track.distance(k), e);
         let (xg, yg) = toSD((x, y), WD, HD, bbox);
         if data.is_empty() {
             data.append(Command::Move(Position::Absolute, (xg, yg).into()));
@@ -245,13 +285,12 @@ pub struct Profile {
     BG: Group,
     SL: Group,
     SB: Group,
-    range: std::ops::Range<usize>,
     pub SD: Group,
     bbox: gpsdata::ProfileBoundingBox,
 }
 
 impl Profile {
-    pub fn init(range: &std::ops::Range<usize>, bbox: &gpsdata::ProfileBoundingBox) -> Profile {
+    pub fn init(bbox: &gpsdata::ProfileBoundingBox) -> Profile {
         let W = 1400;
         let H = 400;
         let Mleft = ((W as f64) * 0.03f64).floor() as i32;
@@ -261,7 +300,6 @@ impl Profile {
             H,
             Mleft,
             Mbottom,
-            range: range.clone(),
             bbox: bbox.clone(),
             BG: Group::new().set("id", "BG"),
             SL: Group::new()
@@ -428,12 +466,17 @@ impl Profile {
     }
 
     pub fn add_track(&mut self, track: &gpsdata::Track, smooth: &Vec<f64>) {
-        self.SD.append(trackpath(data(
+        self.addSD(trackpath(smoothData(
             track,
-            &self.range,
             (self.WD(), self.HD()),
             &self.bbox,
             smooth,
-        )))
+        )));
+        self.addSD(trackpath(slopeData(
+            track,
+            (self.WD(), self.HD()),
+            &self.bbox,
+            smooth,
+        )));
     }
 }
