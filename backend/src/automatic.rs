@@ -1,5 +1,4 @@
 #![allow(non_snake_case)]
-use std::str::FromStr;
 
 use crate::gpsdata;
 use crate::gpsdata::Waypoint;
@@ -39,8 +38,7 @@ fn douglas(track: &gpsdata::Track, params: &Parameters) -> Waypoints {
     for idx in indexes {
         let wgs = track.wgs84[idx].clone();
         let utm = track.utm[idx].clone();
-        let mut w = gpsdata::Waypoint::create(wgs, utm, idx, WaypointOrigin::DouglasPeucker);
-        w.name = Some(String::from_str("DP").unwrap());
+        let w = gpsdata::Waypoint::create(wgs, utm, idx, WaypointOrigin::DouglasPeucker);
         ret.push(w);
     }
     ret
@@ -86,13 +84,12 @@ fn max_step_size_subsample(
         let dnstep = d0 + (n as f64) * dstep;
         kn = find_index_with_distance(track, dnstep, kn);
         /* make waypoint at index kn */
-        let mut w = Waypoint::create(
+        let w = Waypoint::create(
             track.wgs84[kn].clone(),
             track.utm[kn].clone(),
             kn,
             gpsdata::WaypointOrigin::MaxStepSize,
         );
-        w.name = Some(String::from_str("S").unwrap());
         ret.push(w);
     }
     ret

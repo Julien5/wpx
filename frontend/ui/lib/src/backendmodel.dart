@@ -216,6 +216,10 @@ class SegmentsProvider extends ChangeNotifier {
     return _waypoints;
   }
 
+  bridge.SegmentStatistics statistics() {
+    return _bridge.statistics();
+  }
+
   String renderSegmentWaypointsSync(bridge.Segment segment, int w, int h) {
     return _bridge.renderSegmentWaypointsSync(segment: segment, w: w, h: h);
   }

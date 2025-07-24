@@ -47,7 +47,7 @@ class SegmentsView extends StatelessWidget {
     List<Tab> tabs = [];
     for (var s in segments) {
       var id = s.renderers.trackRendering.segment.id();
-      tabs.add(Tab(text: "segment ${id.toInt()}"));
+      tabs.add(Tab(text: "Page ${1+id.toInt()}"));
     }
     return DefaultTabController(
       length: segments.length,

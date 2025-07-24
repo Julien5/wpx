@@ -115,7 +115,7 @@ fn toSD((x, y): (f64, f64), WD: i32, HD: i32, bbox: &gpsdata::ProfileBoundingBox
     (f(x).floor() as i32, g(y).floor() as i32)
 }
 
-fn slope(track: &gpsdata::Track, smooth: &Vec<f64>) -> Vec<f64> {
+fn _slope(track: &gpsdata::Track, smooth: &Vec<f64>) -> Vec<f64> {
     let mut ret = Vec::new();
     debug_assert!(track.wgs84.len() == smooth.len());
     for k in 1..track.len() {
@@ -132,7 +132,7 @@ fn slope(track: &gpsdata::Track, smooth: &Vec<f64>) -> Vec<f64> {
     elevation::smooth(track, 1000f64, |index: usize| -> f64 { ret[index] })
 }
 
-fn slopeData(
+fn _slopeData(
     track: &gpsdata::Track,
     (WD, HD): (i32, i32),
     bbox: &ProfileBoundingBox,
@@ -141,7 +141,7 @@ fn slopeData(
     let mut data = Data::new();
     let start = track.index_after(bbox.xmin);
     let end = track.index_before(bbox.xmax);
-    let se = slope(track, smooth);
+    let se = _slope(track, smooth);
     for k in start..end {
         let ymid = ((0.5 * (bbox.ymin + bbox.ymax)) / 100f64).floor() * 100f64;
         let e = ymid + 30f64 * se[k];
@@ -472,11 +472,13 @@ impl Profile {
             &self.bbox,
             smooth,
         )));
-        self.addSD(trackpath(slopeData(
-            track,
-            (self.WD(), self.HD()),
-            &self.bbox,
-            smooth,
+        /*
+            self.addSD(trackpath(slopeData(
+                track,
+                (self.WD(), self.HD()),
+                &self.bbox,
+                smooth,
         )));
+         */
     }
 }

@@ -4,6 +4,7 @@ use flutter_rust_bridge::frb;
 
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
+pub use tracks::backend::SegmentStatistics;
 pub use tracks::gpsdata::WaypointOrigin;
 pub use tracks::parameters::Parameters;
 pub use tracks::step::Step;
@@ -72,6 +73,14 @@ pub struct _Step {
     track_index: usize,
 }
 
+#[frb(mirror(SegmentStatistics))]
+pub struct _SegmentStatistics {
+    pub length: f64,
+    pub elevation_gain: f64,
+    pub distance_start: f64,
+    pub distance_end: f64,
+}
+
 use std::{str::FromStr, time::Duration};
 use tokio::time::sleep;
 
@@ -131,8 +140,8 @@ impl Bridge {
             .render_segment_waypoints(&segment._impl, (W, H))
     }
     #[frb(sync)]
-    pub fn epsilon(&self) -> f64 {
-        self.backend.epsilon()
+    pub fn statistics(&self) -> SegmentStatistics {
+        self.backend.statistics()
     }
 
     #[frb(sync)]

@@ -120,6 +120,8 @@ impl Track {
         for k in 0..segment.points.len() {
             let point = &segment.points[k];
             let (lon, lat) = point.point().x_y();
+            // TODO: handle the case where there is no evelation data
+            // => error message.
             wgs.push((lon, lat, point.elevation.unwrap()));
             debug_assert_eq!(wgs.len(), k + 1);
             let mut p = (lon.to_radians(), lat.to_radians());

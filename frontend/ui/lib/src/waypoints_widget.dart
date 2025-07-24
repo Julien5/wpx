@@ -39,44 +39,30 @@ class WayPointsViewState extends State<WayPointsView> {
     }
 
     return DataTable(
-      columnSpacing: 10, 
+      columnSpacing: 20,
       dataRowMinHeight: 25,
       dataRowMaxHeight: 25,
       columns: const [
-        DataColumn(label: Text('')),
-        DataColumn(label: Text('KM')),
-        DataColumn(label: Text('m')),
-        DataColumn(label: Text('Dist.')),
-        DataColumn(label: Text('Gain')),
-        DataColumn(label: Text('Slope')),
-        DataColumn(label: Text('Time')),
+        DataColumn(label: Text('KM'), numeric: true),
+        DataColumn(label: Text('Time'), numeric: true),
+        DataColumn(label: Text('Dist.'), numeric: true),
+        DataColumn(label: Text('Elev.'), numeric: true),
+        DataColumn(label: Text('Slope'), numeric: true),
       ],
       rows:
           local.map((waypoint) {
             var dt = DateTime.parse(waypoint.time);
+            var km = waypoint.distance / 1000;
+            var ikm = waypoint.interDistance / 1000;
+            var egain = waypoint.interElevationGain;
+            var slope = waypoint.interSlope;
             return DataRow(
               cells: [
-                DataCell(Text(waypoint.name.trim())),
-                DataCell(
-                  Text("${(waypoint.distance / 1000).toStringAsFixed(1)} km"),
-                ), // Distance
-                DataCell(
-                  Text("${waypoint.elevation.floor().toStringAsFixed(0)} m"),
-                ), // Elevation
-                DataCell(
-                  Text(
-                    "${(waypoint.interDistance / 1000).toStringAsFixed(1)} km",
-                  ),
-                ),
-                DataCell(
-                  Text("${(waypoint.interElevationGain).toStringAsFixed(0)} m"),
-                ),
-                DataCell(Text("${(waypoint.interSlope).toStringAsFixed(1)} %")),
-                DataCell(
-                  Text(
-                    DateFormat('HH:mm').format(dt),
-                  ), // Format the DateTime object
-                ),
+                DataCell(Text("${km.toStringAsFixed(0)}")),
+                DataCell(Text(DateFormat('HH:mm').format(dt))),
+                DataCell(Text("${ikm.toStringAsFixed(1)} km")),
+                DataCell(Text("${egain.toStringAsFixed(0)} m")),
+                DataCell(Text("${slope.toStringAsFixed(1)} %")),
               ],
             );
           }).toList(),

@@ -337,7 +337,6 @@ class MiniSvgWidget extends StatelessWidget {
   const MiniSvgWidget({super.key, required this.svg, required this.size});
 
   Widget buildtest(BuildContext context) {
-    // FIXME: do not parse in the build method.
     return Row(
       children: <Widget>[
         Container(

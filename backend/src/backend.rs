@@ -10,7 +10,6 @@ use crate::pdf;
 use crate::render;
 use crate::step;
 use crate::svgprofile;
-use std::str::FromStr;
 
 type DateTime = crate::utm::DateTime;
 
@@ -89,13 +88,13 @@ impl Backend {
                 (dx, dy, slope)
             }
         };
+        use chrono::*;
+        let start_time: DateTime<Utc> = self.parameters.start_time.parse().unwrap();
+        let time = waypoint_time(start_time, distance, self.parameters.speed);
         let name = match &w.name {
-            None => String::from_str("").unwrap(),
+            None => format!("{}", time.format("%H:%M")),
             Some(n) => n.clone(),
         };
-        use chrono::*;
-        println!("s={}", self.parameters.start_time);
-        let start_time: DateTime<Utc> = self.parameters.start_time.parse().unwrap();
         step::Step {
             wgs84: w.wgs84,
             utm: w.utm.clone(),
@@ -106,7 +105,7 @@ impl Backend {
             inter_slope: inter_slope,
             elevation: track.elevation(w.track_index),
             name: name,
-            time: waypoint_time(start_time, distance, self.parameters.speed).to_rfc3339(),
+            time: time.to_rfc3339(),
             track_index: w.track_index,
         }
     }
@@ -247,6 +246,15 @@ impl Backend {
             distance_end: self.track.distance(range.end - 1),
         }
     }
+    pub fn statistics(&self) -> SegmentStatistics {
+        let range = 0..self.track.wgs84.len();
+        SegmentStatistics {
+            length: self.track.distance(range.end - 1) - self.track.distance(range.start),
+            elevation_gain: self.track.elevation_gain(&range),
+            distance_start: self.track.distance(range.start),
+            distance_end: self.track.distance(range.end - 1),
+        }
+    }
     pub fn generatePdf(&mut self, debug: bool) -> Vec<u8> {
         let typbytes = render::compile(self, debug, (1400, 400));
         let ret = pdf::compile(&typbytes);
@@ -290,6 +298,13 @@ mod tests {
         let mut backend = Backend::from_filename("data/blackforest.gpx");
         let segments = backend.segments();
         let mut ok_count = 0;
+        let mut parameters = backend.get_parameters();
+        use chrono::TimeZone;
+        parameters.start_time = chrono::offset::Utc
+            .with_ymd_and_hms(2025, 11, 10, 8, 0, 0)
+            .unwrap()
+            .to_rfc3339();
+        backend.set_parameters(&parameters);
         for segment in &segments {
             let svg = backend.render_segment_waypoints(&segment, (1420, 400));
             let reffilename = std::format!("data/ref/waypoints-{}.svg", segment.id);

@@ -25,10 +25,10 @@ class SegmentStack extends StatelessWidget {
     );
     return Column(
       children: [
-        Row(
+        /*Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [WidthSettings()],
-        ),
+        ),*/
         stack,
         Expanded(child: table),
       ],

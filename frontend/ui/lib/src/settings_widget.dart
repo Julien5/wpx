@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/src/statistics_widget.dart';
 
 class Selector extends StatelessWidget {
   final String text;
@@ -194,7 +195,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
                 ),
                 ElevatedButton(
                   onPressed: () => writeModel(context),
-                  child: const Text("OK"),
+                  child: const Text("Preview"),
                 ),
               ],
             ),
@@ -230,7 +231,7 @@ class SettingsWidget extends StatelessWidget {
           builder: (context, child) {
             return Scaffold(
               appBar: AppBar(title: const Text('Settings')),
-              body: SegmentsSettings(),
+              body: Column(children: [StatisticsWidget(),  SegmentsSettings()])
             );
           },
         );
