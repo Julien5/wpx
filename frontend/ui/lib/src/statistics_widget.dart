@@ -17,24 +17,35 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   Widget build(BuildContext ctx) {
     return Consumer<SegmentsProvider>(
       builder: (context, segmentsProvider, child) {
-        bridge.SegmentStatistics statistics=segmentsProvider.statistics();
-        double km=statistics.distanceEnd/1000;
-        double hm=statistics.elevationGain;
+        bridge.SegmentStatistics statistics = segmentsProvider.statistics();
+        double km = statistics.distanceEnd / 1000;
+        double hm = statistics.elevationGain;
         developer.log(
           "[SegmentsConsumer] length=${segmentsProvider.segments().length}",
         );
-        return DataTable(
-          columnSpacing: 10,
-          dataRowMinHeight: 25,
-          dataRowMaxHeight: 25,
-          columns: const [
-            DataColumn(label: Text('')),
-            DataColumn(label: Text('')),
-          ],
-          rows: [
-            DataRow(cells: [DataCell(Text("distance")), DataCell(Text("${km.toStringAsFixed(1)} km"))]),
-            DataRow(cells: [DataCell(Text("elevation")), DataCell(Text("${hm.toStringAsFixed(1)} m"))])
-          ],
+        return SizedBox(
+          width: 500,
+          child: DataTable(
+            headingRowHeight: 0,
+            columns: const [
+              DataColumn(label: Text("")),
+              DataColumn(label: Text(""), numeric: true),
+            ],
+            rows: [
+              DataRow(
+                cells: [
+                  DataCell(Text("distance")),
+                  DataCell(Text("${km.toStringAsFixed(0)} km")),
+                ],
+              ),
+              DataRow(
+                cells: [
+                  DataCell(Text("elevation")),
+                  DataCell(Text("${hm.toStringAsFixed(0)} m")),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
