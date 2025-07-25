@@ -107,15 +107,14 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: TimeOfDay(hour: startTime.hour, minute: startTime.minute)
     );
 
     if (picked != null) {
-      DateTime now = DateTime.now();
       DateTime dateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
+        startTime.year,
+        startTime.month,
+        startTime.day,
         picked.hour,
         picked.minute,
       );
