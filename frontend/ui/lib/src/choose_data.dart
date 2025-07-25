@@ -86,7 +86,7 @@ class _ChooseDataState extends State<ChooseData> {
   Widget buildFromModel(BuildContext ctx, RootModel rootModel, Widget? child) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ElevatedButton(
             onPressed: () => chooseGPX(rootModel),

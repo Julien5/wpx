@@ -23,24 +23,17 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
         developer.log(
           "[SegmentsConsumer] length=${segmentsProvider.segments().length}",
         );
-        return SizedBox(
-          width: 500,
+        return Container(
+          constraints: const BoxConstraints(maxWidth: 500), // Set max width
           child: DataTable(
-            headingRowHeight: 0,
             columns: const [
-              DataColumn(label: Text("")),
-              DataColumn(label: Text(""), numeric: true),
+              DataColumn(label: Text("distance"), numeric: true),
+              DataColumn(label: Text("elevation"), numeric: true),
             ],
             rows: [
               DataRow(
                 cells: [
-                  DataCell(Text("distance")),
                   DataCell(Text("${km.toStringAsFixed(0)} km")),
-                ],
-              ),
-              DataRow(
-                cells: [
-                  DataCell(Text("elevation")),
                   DataCell(Text("${hm.toStringAsFixed(0)} m")),
                 ],
               ),

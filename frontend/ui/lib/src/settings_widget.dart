@@ -187,21 +187,33 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
               children: [
                 Container(
                   height: 50,
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.center,
                   child: const Text("Start Date:"),
                 ),
-                ElevatedButton(
-                  onPressed: () => _selectDate(context),
-                  child: Text(dateAsString()),
+                Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: ElevatedButton(
+                    onPressed: () => _selectDate(context),
+                    child: Text(dateAsString()),
+                  ),
                 ),
               ],
             ),
             TableRow(
               children: [
-                const Text("Start Time:"),
-                ElevatedButton(
-                  onPressed: () => _selectTime(context),
-                  child: Text(timeAsString()),
+                Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: const Text("Start Time:"),
+                ),
+                Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: ElevatedButton(
+                    onPressed: () => _selectTime(context),
+                    child: Text(timeAsString()),
+                  ),
                 ),
               ],
             ),
@@ -209,7 +221,6 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
         );
         Card card1 = Card(
           elevation: 4, // Add shadow to the card
-          margin: const EdgeInsets.all(16), // Add margin around the card
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // Rounded corners
           ),
@@ -220,8 +231,8 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
         );
         Table table2 = Table(
           columnWidths: const {
-            0: FlexColumnWidth(), // Fixed width for the first column
-            1: FlexColumnWidth(), // Flexible width for the second column
+            0: FlexColumnWidth(1), // Fixed width for the first column
+            1: FlexColumnWidth(2), // Flexible width for the second column
           },
           children: [
             TableRow(
@@ -300,7 +311,6 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
         );
         Card card2 = Card(
           elevation: 4, // Add shadow to the card
-          margin: const EdgeInsets.all(16), // Add margin around the card
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // Rounded corners
           ),
@@ -312,7 +322,6 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
         return Column(
           children: [
             card1,
-            SizedBox(height: 10),
             card2,
             SizedBox(height: 10),
             ElevatedButton(
@@ -349,7 +358,7 @@ class SettingsWidget extends StatelessWidget {
 
         Card card = Card(
           elevation: 4, // Add shadow to the card
-          margin: const EdgeInsets.all(16), // Add margin around the card
+          margin: const EdgeInsets.all(1), // Add margin around the card
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // Rounded corners
           ),
@@ -365,15 +374,12 @@ class SettingsWidget extends StatelessWidget {
             return Scaffold(
               appBar: AppBar(title: const Text('Settings')),
               body: Center(
-                child: SizedBox(
-                  width: 500, 
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 500),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      card,
-                      SizedBox(height: 15),
-                      SegmentsSettings(),
-                    ],
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [card, SizedBox(height: 15), SegmentsSettings()],
                   ),
                 ),
               ),
