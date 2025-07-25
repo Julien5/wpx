@@ -61,11 +61,20 @@ impl Backend {
         self.parameters.clone()
     }
 
+    fn update_waypoints(&mut self) {
+        self.waypoints = automatic::generate(&self.track, &self.waypoints, &self.parameters);
+        self.make_steps();
+        for w in &self.waypoints {
+            debug_assert!(w.track_index < self.track.len());
+        }
+        println!("generated {} waypoints", self.waypoints.len());
+    }
+
     pub fn set_parameters(self: &mut Backend, parameters: &Parameters) {
         self.parameters = parameters.clone();
         self.track_smooth_elevation =
             elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
-        self.waypoints = automatic::generate(&self.track, &self.waypoints, &self.parameters);
+        self.update_waypoints();
     }
 
     fn create_step(
@@ -76,14 +85,14 @@ impl Backend {
         let track = &self.track;
         assert!(w.track_index < track.len());
         let distance = track.distance(w.track_index);
-        let (inter_distance, inter_elevation_gain, inter_slope) = match wprev {
+        let (inter_distance, inter_elevation_gain, inter_slope_prev) = match wprev {
             None => (0f64, 0f64, 0f64),
             Some(prev) => {
                 let dx = track.distance(w.track_index) - track.distance(prev.track_index);
                 let dy = self.elevation_gain(prev.track_index, w.track_index);
                 let slope = match dx {
                     0f64 => 0f64,
-                    _ => 100f64 * dy / dx,
+                    _ => dy / dx,
                 };
                 (dx, dy, slope)
             }
@@ -99,18 +108,18 @@ impl Backend {
             wgs84: w.wgs84,
             utm: w.utm.clone(),
             origin: w.origin.clone(),
-            distance: distance,
-            inter_distance: inter_distance,
-            inter_elevation_gain: inter_elevation_gain,
-            inter_slope: inter_slope,
+            distance,
+            inter_distance,
+            inter_elevation_gain,
+            inter_slope: inter_slope_prev,
             elevation: track.elevation(w.track_index),
-            name: name,
+            name,
             time: time.to_rfc3339(),
             track_index: w.track_index,
         }
     }
-    pub fn get_steps(&self) -> Vec<step::Step> {
-        let mut ret = Vec::new();
+    fn make_steps(&mut self) {
+        let mut steps = Vec::new();
         for w in &self.waypoints {
             debug_assert!(w.track_index < self.track.len());
         }
@@ -120,8 +129,25 @@ impl Backend {
                 0 => None,
                 _ => Some(&self.waypoints[k - 1]),
             };
-            let wp = self.create_step(w, wprev);
-            ret.push(wp.clone());
+            let step = self.create_step(w, wprev);
+            steps.push(step.clone());
+        }
+        for k in 0..self.waypoints.len() {
+            let w = &mut self.waypoints[k];
+            w.step = Some(steps[k].clone());
+        }
+    }
+    pub fn get_steps(&self) -> Vec<step::Step> {
+        let mut ret = Vec::new();
+        for k in 0..self.waypoints.len() {
+            match &self.waypoints[k].step {
+                Some(s) => {
+                    ret.push(s.clone());
+                }
+                None => {
+                    debug_assert!(false);
+                }
+            }
         }
         ret
     }
@@ -135,6 +161,7 @@ impl Backend {
         self.parameters.segment_length = length;
     }
     pub fn elevation_gain(&self, from: usize, to: usize) -> f64 {
+        debug_assert!(from <= to);
         let mut ret = 0f64;
         for k in from..to {
             if k == 0 {
@@ -155,19 +182,16 @@ impl Backend {
         let default_params = Parameters::default();
         let gpxwaypoints = gpsdata::read_waypoints(&gpx);
         let parameters = Parameters::default();
-        let waypoints = automatic::generate(&track, &gpxwaypoints, &parameters);
-        let ret = Backend {
+        let mut ret = Backend {
             track_smooth_elevation: elevation::smooth_elevation(
                 &track,
                 default_params.smooth_width,
             ),
-            track: track,
-            waypoints: waypoints,
-            parameters: parameters,
+            track,
+            waypoints: gpxwaypoints,
+            parameters,
         };
-        for w in &ret.waypoints {
-            debug_assert!(w.track_index < ret.track.len());
-        }
+        ret.update_waypoints();
         ret
     }
 
@@ -262,7 +286,8 @@ impl Backend {
         ret
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
-        gpxexport::generate_pdf(&self.track, &self.waypoints)
+        println!("export {} waypoints", self.waypoints.len());
+        gpxexport::generate(&self.track, &self.waypoints)
     }
 }
 

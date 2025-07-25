@@ -55,7 +55,7 @@ class WayPointsViewState extends State<WayPointsView> {
             var km = waypoint.distance / 1000;
             var ikm = waypoint.interDistance / 1000;
             var egain = waypoint.interElevationGain;
-            var slope = waypoint.interSlope;
+            var slope = 100*waypoint.interSlope;
             return DataRow(
               cells: [
                 DataCell(Text("${km.toStringAsFixed(0)}")),

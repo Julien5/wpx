@@ -1,4 +1,4 @@
-use crate::utm::UTMPoint;
+use crate::{step::Step, utm::UTMPoint};
 use geo::{Distance, SimplifyIdx};
 
 fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
@@ -212,6 +212,7 @@ pub struct Waypoint {
     pub track_index: usize,
     pub origin: WaypointOrigin,
     pub name: Option<String>,
+    pub step: Option<Step>,
     pub hide: bool,
 }
 
@@ -253,17 +254,12 @@ impl Waypoint {
             utm: utm,
             track_index: indx,
             name: None,
+            step: None,
             origin: origin,
             hide: false,
         }
     }
-    pub fn to_gpx(&self) -> gpx::Waypoint {
-        let mut ret = gpx::Waypoint::new(geo::Point::new(self.wgs84.0, self.wgs84.1));
-        ret.elevation = Some(self.wgs84.2);
-        ret.name = self.name.clone();
-        ret.description = None;
-        ret
-    }
+
     pub fn from_gpx(gpx: &gpx::Waypoint, utm: UTMPoint, name: Option<String>) -> Waypoint {
         let (lon, lat) = gpx.point().x_y();
         let z = match gpx.elevation {
@@ -277,6 +273,7 @@ impl Waypoint {
             track_index: usize::MAX,
             origin: WaypointOrigin::GPX,
             name: trim_option(name),
+            step: None,
             hide: false,
         }
     }

@@ -162,7 +162,7 @@ fn points_table(
         let elevation = this.elevation;
         copy = copy.replace("{elevation}", format!("{:5.0} m", elevation).as_str());
         let hm = this.inter_elevation_gain;
-        let percent = this.inter_slope;
+        let percent = 100f64 * this.inter_slope;
         copy = copy.replace("{d+}", format!("{:5.0}", hm).as_str());
         copy = copy.replace("{slope}", format!("{:2.1}%", percent).as_str());
         copy = copy.replace("{desc}", "");

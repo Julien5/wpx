@@ -118,9 +118,10 @@ fn toSD((x, y): (f64, f64), WD: i32, HD: i32, bbox: &gpsdata::ProfileBoundingBox
 fn _slope(track: &gpsdata::Track, smooth: &Vec<f64>) -> Vec<f64> {
     let mut ret = Vec::new();
     debug_assert!(track.wgs84.len() == smooth.len());
-    for k in 1..track.len() {
+    debug_assert!(!smooth.is_empty());
+    for k in 0..(track.len() - 1) {
         let dx = track.distance(k) - track.distance(k - 1);
-        let dy = smooth[k] - smooth[k - 1];
+        let dy = smooth[k] - smooth[k + 1];
         let slope = match dx {
             0f64 => 0f64,
             _ => 100f64 * dy / dx,
@@ -256,10 +257,10 @@ fn waypoint_circle((x, y): (i32, i32), waypoint: &step::Step) -> Circle {
 }
 
 fn waypoint_text((x, y): (i32, i32), waypoint: &step::Step) -> Text {
-    let label = &waypoint.name;
+    let label = waypoint.profileLabel();
     let ret = Text::new(label).set("text-anchor", "middle").set(
         "transform",
-        format!("translate({} {}) scale(1 -1)", x, y - 30),
+        format!("translate({} {}) scale(1 -1)", x, y - 20),
     );
     ret
 }

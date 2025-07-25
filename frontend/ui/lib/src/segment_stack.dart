@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/future_rendering_widget.dart';
-import 'package:ui/src/settings_widget.dart';
 import 'package:ui/src/waypoints_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -25,10 +24,6 @@ class SegmentStack extends StatelessWidget {
     );
     return Column(
       children: [
-        /*Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [WidthSettings()],
-        ),*/
         stack,
         Expanded(child: table),
       ],

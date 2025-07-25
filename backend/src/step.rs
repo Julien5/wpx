@@ -15,3 +15,11 @@ pub struct Step {
     pub time: String,
     pub track_index: usize,
 }
+
+impl Step {
+    pub fn profileLabel(&self) -> String {
+        use chrono::*;
+        let time: DateTime<Utc> = self.time.parse().unwrap();
+        return format!("{}", time.format("%H:%M"));
+    }
+}
