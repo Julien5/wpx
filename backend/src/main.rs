@@ -25,6 +25,8 @@ struct Cli {
     debug: Option<bool>,
     #[arg(short, long, value_name = "outdir")]
     output_directory: Option<std::path::PathBuf>,
+    #[arg(short, long, value_name = "interval_length")]
+    interval_length: Option<i32>,
     #[arg(value_name = "gpx")]
     filename: std::path::PathBuf,
 }
@@ -52,6 +54,15 @@ fn main() {
     println!("read gpx {}", gpxinput);
     println!("outdir   {}", outdir);
     let mut backend = Backend::from_filename(gpxinput);
+
+    let mut parameters = backend.get_parameters();
+    match args.interval_length {
+        Some(length) => {
+            parameters.segment_length = 1000f64 * (length as f64);
+        }
+        _ => {}
+    }
+    backend.set_parameters(&parameters);
 
     let pdfbytes = backend.generatePdf(debug);
     let pdfname = format!(
