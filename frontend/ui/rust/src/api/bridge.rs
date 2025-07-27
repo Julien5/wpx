@@ -7,6 +7,7 @@ pub use std::ops::Range;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::gpsdata::WaypointOrigin;
 pub use tracks::parameters::Parameters;
+pub use tracks::render_device::RenderDevice;
 pub use tracks::step::Step;
 pub use tracks::utm::UTMPoint;
 
@@ -69,6 +70,7 @@ pub struct _Step {
     inter_elevation_gain: f64,
     inter_slope: f64,
     name: String,
+    description: String,
     time: String, // rfc3339
     track_index: usize,
 }
@@ -125,19 +127,20 @@ impl Bridge {
     pub async fn renderSegmentTrack(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
-        self.backend.render_segment_track(&segment._impl, (W, H))
+        self.backend
+            .render_segment_track(&segment._impl, (W, H), RenderDevice::Native)
     }
     pub async fn renderSegmentWaypoints(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
         println!("{}x{}", W, H);
         self.backend
-            .render_segment_waypoints(&segment._impl, (W, H))
+            .render_segment_waypoints(&segment._impl, (W, H), RenderDevice::Native)
     }
     #[frb(sync)]
     pub fn renderSegmentWaypointsSync(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         self.backend
-            .render_segment_waypoints(&segment._impl, (W, H))
+            .render_segment_waypoints(&segment._impl, (W, H), RenderDevice::Native)
     }
     #[frb(sync)]
     pub fn statistics(&self) -> SegmentStatistics {

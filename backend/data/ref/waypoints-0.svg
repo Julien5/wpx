@@ -1,162 +1,162 @@
 <svg height="400" width="1440" xmlns="http://www.w3.org/2000/svg">
-<g font-family="ui-serif" font-size="15" id="world" shape-rendering="crispEdges" transform="translate(5 5)">
+<g font-family="Libertinus Serif" font-size="15" id="world" shape-rendering="crispEdges" transform="translate(5 5)">
 <g id="BG"/>
 <g id="SL" transform="translate(71 360) scale(-1 -1)"/>
 <g id="SB" transform="translate(71 360)"/>
 <g id="SD" transform="translate(71 360) scale(1 -1) scale(1 1)">
-<circle cx="192" cy="226" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(192 241) scale(1 -1)">
+<circle cx="192" cy="166" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(192 181) scale(1 -1)">
 693
 </text>
-<text text-anchor="middle" transform="translate(192 206) scale(1 -1)">
-08:00
+<text font-size="12" text-anchor="middle" transform="translate(192 136) scale(1 -1)">
+   0
 </text>
-<circle cx="270" cy="237" fill="blue" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(270 252) scale(1 -1)">
+<circle cx="270" cy="174" fill="blue" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(270 189) scale(1 -1)">
 726
 </text>
-<text text-anchor="middle" transform="translate(270 217) scale(1 -1)">
-08:32
+<text font-size="12" text-anchor="middle" transform="translate(270 144) scale(1 -1)">
+   8
 </text>
-<circle cx="347" cy="252" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(347 267) scale(1 -1)">
+<circle cx="347" cy="184" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(347 199) scale(1 -1)">
 770
 </text>
-<text text-anchor="middle" transform="translate(347 232) scale(1 -1)">
-09:04
+<text font-size="12" text-anchor="middle" transform="translate(347 154) scale(1 -1)">
+  16
 </text>
-<circle cx="436" cy="335" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(436 350) scale(1 -1)">
+<circle cx="436" cy="245" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(436 260) scale(1 -1)">
 1025
 </text>
-<text text-anchor="middle" transform="translate(436 315) scale(1 -1)">
-09:41
+<text font-size="12" text-anchor="middle" transform="translate(436 215) scale(1 -1)">
+  25
 </text>
-<circle cx="479" cy="284" fill="black" r="8"/>
-<text font-size="14" text-anchor="middle" transform="translate(479 299) scale(1 -1)">
+<circle cx="479" cy="208" fill="black" r="8"/>
+<text font-size="12" text-anchor="middle" transform="translate(479 223) scale(1 -1)">
 868
 </text>
-<text text-anchor="middle" transform="translate(479 264) scale(1 -1)">
-09:59
+<text font-size="12" text-anchor="middle" transform="translate(479 178) scale(1 -1)">
+K1
 </text>
-<circle cx="566" cy="338" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(566 353) scale(1 -1)">
+<circle cx="566" cy="248" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(566 263) scale(1 -1)">
 1035
 </text>
-<text text-anchor="middle" transform="translate(566 318) scale(1 -1)">
-10:35
+<text font-size="12" text-anchor="middle" transform="translate(566 218) scale(1 -1)">
+  39
 </text>
-<circle cx="614" cy="285" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(614 300) scale(1 -1)">
+<circle cx="614" cy="209" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(614 224) scale(1 -1)">
 871
 </text>
-<text text-anchor="middle" transform="translate(614 265) scale(1 -1)">
-10:55
+<text font-size="12" text-anchor="middle" transform="translate(614 179) scale(1 -1)">
+  44
 </text>
-<circle cx="635" cy="323" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(635 338) scale(1 -1)">
+<circle cx="635" cy="237" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(635 252) scale(1 -1)">
 988
 </text>
-<text text-anchor="middle" transform="translate(635 303) scale(1 -1)">
-11:04
+<text font-size="12" text-anchor="middle" transform="translate(635 207) scale(1 -1)">
+  46
 </text>
-<circle cx="742" cy="166" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(742 181) scale(1 -1)">
+<circle cx="742" cy="122" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(742 137) scale(1 -1)">
 510
 </text>
-<text text-anchor="middle" transform="translate(742 146) scale(1 -1)">
-11:48
+<text font-size="12" text-anchor="middle" transform="translate(742 92) scale(1 -1)">
+  57
 </text>
-<circle cx="769" cy="151" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(769 166) scale(1 -1)">
+<circle cx="769" cy="111" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(769 126) scale(1 -1)">
 463
 </text>
-<text text-anchor="middle" transform="translate(769 131) scale(1 -1)">
-11:59
+<text font-size="12" text-anchor="middle" transform="translate(769 81) scale(1 -1)">
+  60
 </text>
-<circle cx="790" cy="205" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(790 220) scale(1 -1)">
+<circle cx="790" cy="150" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(790 165) scale(1 -1)">
 628
 </text>
-<text text-anchor="middle" transform="translate(790 185) scale(1 -1)">
-12:08
+<text font-size="12" text-anchor="middle" transform="translate(790 120) scale(1 -1)">
+  62
 </text>
-<circle cx="823" cy="116" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(823 131) scale(1 -1)">
+<circle cx="823" cy="85" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(823 100) scale(1 -1)">
 354
 </text>
-<text text-anchor="middle" transform="translate(823 96) scale(1 -1)">
-12:21
+<text font-size="12" text-anchor="middle" transform="translate(823 55) scale(1 -1)">
+  65
 </text>
-<circle cx="886" cy="70" fill="black" r="8"/>
-<text font-size="14" text-anchor="middle" transform="translate(886 85) scale(1 -1)">
+<circle cx="886" cy="52" fill="black" r="8"/>
+<text font-size="12" text-anchor="middle" transform="translate(886 67) scale(1 -1)">
 217
 </text>
-<text text-anchor="middle" transform="translate(886 50) scale(1 -1)">
-12:48
+<text font-size="12" text-anchor="middle" transform="translate(886 22) scale(1 -1)">
+K2
 </text>
-<circle cx="939" cy="103" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(939 118) scale(1 -1)">
+<circle cx="939" cy="75" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(939 90) scale(1 -1)">
 316
 </text>
-<text text-anchor="middle" transform="translate(939 83) scale(1 -1)">
-13:10
+<text font-size="12" text-anchor="middle" transform="translate(939 45) scale(1 -1)">
+  77
 </text>
-<circle cx="986" cy="231" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(986 246) scale(1 -1)">
+<circle cx="986" cy="169" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(986 184) scale(1 -1)">
 706
 </text>
-<text text-anchor="middle" transform="translate(986 211) scale(1 -1)">
-13:29
+<text font-size="12" text-anchor="middle" transform="translate(986 139) scale(1 -1)">
+  82
 </text>
-<circle cx="1005" cy="184" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1005 199) scale(1 -1)">
+<circle cx="1005" cy="135" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(1005 150) scale(1 -1)">
 563
 </text>
-<text text-anchor="middle" transform="translate(1005 164) scale(1 -1)">
-13:37
+<text font-size="12" text-anchor="middle" transform="translate(1005 105) scale(1 -1)">
+  84
 </text>
-<circle cx="1040" cy="262" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1040 277) scale(1 -1)">
+<circle cx="1040" cy="192" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(1040 207) scale(1 -1)">
 803
 </text>
-<text text-anchor="middle" transform="translate(1040 242) scale(1 -1)">
-13:51
+<text font-size="12" text-anchor="middle" transform="translate(1040 162) scale(1 -1)">
+  88
 </text>
-<circle cx="1113" cy="102" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1113 117) scale(1 -1)">
+<circle cx="1113" cy="74" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(1113 89) scale(1 -1)">
 312
 </text>
-<text text-anchor="middle" transform="translate(1113 82) scale(1 -1)">
-14:22
+<text font-size="12" text-anchor="middle" transform="translate(1113 44) scale(1 -1)">
+  96
 </text>
-<circle cx="1170" cy="126" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1170 141) scale(1 -1)">
+<circle cx="1170" cy="93" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(1170 108) scale(1 -1)">
 388
 </text>
-<text text-anchor="middle" transform="translate(1170 106) scale(1 -1)">
-14:45
+<text font-size="12" text-anchor="middle" transform="translate(1170 63) scale(1 -1)">
+ 101
 </text>
-<circle cx="1236" cy="250" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1236 265) scale(1 -1)">
+<circle cx="1236" cy="183" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(1236 198) scale(1 -1)">
 764
 </text>
-<text text-anchor="middle" transform="translate(1236 230) scale(1 -1)">
-15:13
+<text font-size="12" text-anchor="middle" transform="translate(1236 153) scale(1 -1)">
+ 108
 </text>
-<circle cx="1294" cy="128" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1294 143) scale(1 -1)">
+<circle cx="1294" cy="94" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(1294 109) scale(1 -1)">
 393
 </text>
-<text text-anchor="middle" transform="translate(1294 108) scale(1 -1)">
-15:37
+<text font-size="12" text-anchor="middle" transform="translate(1294 64) scale(1 -1)">
+ 114
 </text>
-<circle cx="1330" cy="159" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="14" text-anchor="middle" transform="translate(1330 174) scale(1 -1)">
+<circle cx="1330" cy="116" fill="gray" r="5" stroke="black" stroke-width="2"/>
+<text font-size="12" text-anchor="middle" transform="translate(1330 131) scale(1 -1)">
 487
 </text>
-<text text-anchor="middle" transform="translate(1330 139) scale(1 -1)">
-15:52
+<text font-size="12" text-anchor="middle" transform="translate(1330 86) scale(1 -1)">
+ 118
 </text>
 </g>
 </g>

@@ -161,11 +161,11 @@ pub struct ProfileBoundingBox {
 }
 
 fn snap_ceil(x: f64) -> f64 {
-    (x / 100f64).ceil() * 100f64
+    (x / 500f64).ceil() * 500f64
 }
 
 fn snap_floor(x: f64) -> f64 {
-    (x / 200f64).floor() * 200f64
+    (x / 500f64).floor() * 500f64
 }
 
 impl ProfileBoundingBox {
@@ -190,11 +190,11 @@ impl ProfileBoundingBox {
     fn fix_margins(&mut self) {
         let km = 1000f64;
         let shift = 20f64 * km;
-        let margin = 20f64 * km;
+        let margin = 10f64 * km;
         self.xmin = ((self.xmin - margin) / shift).floor() * shift;
         self.xmax = ((self.xmax + margin) / shift).ceil() * shift;
-        self.ymin = snap_floor(self.ymin - 20f64);
-        self.ymax = snap_ceil(self.ymax + 20f64).max(snap_floor(self.ymin + 1000f64));
+        self.ymin = snap_floor(self.ymin - 100f64);
+        self.ymax = snap_ceil(self.ymax + 100f64).max(snap_floor(self.ymin + 500f64));
     }
 }
 
@@ -212,6 +212,7 @@ pub struct Waypoint {
     pub track_index: usize,
     pub origin: WaypointOrigin,
     pub name: Option<String>,
+    pub description: Option<String>,
     pub step: Option<Step>,
     pub hide: bool,
 }
@@ -230,7 +231,12 @@ pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
         let (lon, lat) = w.point().x_y();
         let mut p = (lon.to_radians(), lat.to_radians());
         proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
-        ret.push(Waypoint::from_gpx(w, UTMPoint(p.0, p.1), w.name.clone()));
+        ret.push(Waypoint::from_gpx(
+            w,
+            UTMPoint(p.0, p.1),
+            w.name.clone(),
+            w.description.clone(),
+        ));
     }
     ret
 }
@@ -254,13 +260,19 @@ impl Waypoint {
             utm: utm,
             track_index: indx,
             name: None,
+            description: None,
             step: None,
             origin: origin,
             hide: false,
         }
     }
 
-    pub fn from_gpx(gpx: &gpx::Waypoint, utm: UTMPoint, name: Option<String>) -> Waypoint {
+    pub fn from_gpx(
+        gpx: &gpx::Waypoint,
+        utm: UTMPoint,
+        name: Option<String>,
+        description: Option<String>,
+    ) -> Waypoint {
         let (lon, lat) = gpx.point().x_y();
         let z = match gpx.elevation {
             Some(_z) => _z,
@@ -273,6 +285,7 @@ impl Waypoint {
             track_index: usize::MAX,
             origin: WaypointOrigin::GPX,
             name: trim_option(name),
+            description: trim_option(description),
             step: None,
             hide: false,
         }

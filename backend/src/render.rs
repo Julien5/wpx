@@ -2,6 +2,7 @@
 
 use crate::backend::{Backend, Segment};
 use crate::gpsdata;
+use crate::render_device::RenderDevice;
 use crate::step;
 use crate::utm::UTMPoint;
 
@@ -101,6 +102,12 @@ fn map(
             .set("cy", y)
             .set("r", 500);
         document = document.add(dot);
+        let text = svg::node::element::Text::new(w.profile_label())
+            .set("text-anchor", "left")
+            .set("font-size", "1500")
+            .set("x", x + 700f64)
+            .set("y", y);
+        document = document.add(text);
     }
     document.to_string()
 }
@@ -125,7 +132,7 @@ impl Templates {
 
 fn points_table(
     templates: &Templates,
-    track: &gpsdata::Track,
+    _track: &gpsdata::Track,
     waypoints: &Vec<step::Step>,
     segment: &Segment,
 ) -> String {
@@ -157,7 +164,7 @@ fn points_table(
 
         copy = copy.replace(
             "{distance}",
-            format!("{:4.1}", track.distance(this.track_index) / 1000f64).as_str(),
+            format!("{:4.0}", this.distance / 1000f64).as_str(),
         );
         let elevation = this.elevation;
         copy = copy.replace("{elevation}", format!("{:5.0} m", elevation).as_str());
@@ -165,7 +172,7 @@ fn points_table(
         let percent = 100f64 * this.inter_slope;
         copy = copy.replace("{d+}", format!("{:5.0}", hm).as_str());
         copy = copy.replace("{slope}", format!("{:2.1}%", percent).as_str());
-        copy = copy.replace("{desc}", "");
+        copy = copy.replace("{desc}", this.description.as_str());
         let dist = this.inter_distance / 1000f64;
         copy = copy.replace("{dist}", format!("{:2.1}", dist).as_str());
         lines.push(copy);
@@ -198,7 +205,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn compile(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> String {
+pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let mut start = 0f64;
@@ -210,12 +217,16 @@ pub fn compile(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> String
             break;
         }
         let WP = backend.get_steps();
-        let p = backend.render_segment(segment, (W, H));
+        let p = backend.render_segment(segment, (W, H), RenderDevice::PDF);
         if debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);
             std::fs::write(&f, &p).unwrap();
         }
         let m = map(&backend.track, &WP, &range);
+        if debug {
+            let f = format!("/tmp/map-{}.svg", segment.id);
+            std::fs::write(&f, &m).unwrap();
+        }
         let table = points_table(&templates, &backend.track, &WP, &segment);
         link(&templates, &p, &m, &table, &mut document);
         if range.end == backend.track.len() {

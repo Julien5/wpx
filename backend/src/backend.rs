@@ -8,6 +8,7 @@ use crate::gpxexport;
 use crate::parameters::Parameters;
 use crate::pdf;
 use crate::render;
+use crate::render_device::RenderDevice;
 use crate::step;
 use crate::svgprofile;
 
@@ -101,8 +102,15 @@ impl Backend {
         let start_time: DateTime<Utc> = self.parameters.start_time.parse().unwrap();
         let time = waypoint_time(start_time, distance, self.parameters.speed);
         let name = match &w.name {
-            None => format!("{}", time.format("%H:%M")),
+            None => String::new(),
             Some(n) => n.clone(),
+        };
+        let description = match &w.description {
+            None => name.clone(),
+            Some(desc) => match name.is_empty() {
+                true => format!("{}", desc),
+                false => format!("{} - {}", name, desc),
+            },
         };
         step::Step {
             wgs84: w.wgs84,
@@ -114,6 +122,7 @@ impl Backend {
             inter_slope: inter_slope_prev,
             elevation: track.elevation(w.track_index),
             name,
+            description,
             time: time.to_rfc3339(),
             track_index: w.track_index,
         }
@@ -232,9 +241,15 @@ impl Backend {
         }
         ret
     }
-    pub fn render_segment(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
+    pub fn render_segment(
+        &mut self,
+        segment: &Segment,
+        (W, H): (i32, i32),
+        render_device: RenderDevice,
+    ) -> String {
         println!("render_segment_track:{}", segment.id);
         let mut profile = segment.profile.clone();
+        profile.set_render_device(render_device);
         profile.reset_size(W, H);
         profile.add_canvas();
         profile.add_track(&self.track, &self.track_smooth_elevation);
@@ -242,17 +257,29 @@ impl Backend {
         profile.add_waypoints(&W);
         profile.render()
     }
-    pub fn render_segment_track(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
+    pub fn render_segment_track(
+        &mut self,
+        segment: &Segment,
+        (W, H): (i32, i32),
+        render_device: RenderDevice,
+    ) -> String {
         println!("render_segment_track:{}", segment.id);
         let mut profile = segment.profile.clone();
+        profile.set_render_device(render_device);
         profile.reset_size(W, H);
         profile.add_canvas();
         profile.add_track(&self.track, &self.track_smooth_elevation);
         profile.render()
     }
-    pub fn render_segment_waypoints(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
+    pub fn render_segment_waypoints(
+        &mut self,
+        segment: &Segment,
+        (W, H): (i32, i32),
+        render_device: RenderDevice,
+    ) -> String {
         println!("render_segment_track:{}", segment.id);
         let mut profile = segment.profile.clone();
+        profile.set_render_device(render_device);
         profile.reset_size(W, H);
         profile.add_waypoints(&self.get_steps());
         let ret = profile.render();
@@ -280,7 +307,7 @@ impl Backend {
         }
     }
     pub fn generatePdf(&mut self, debug: bool) -> Vec<u8> {
-        let typbytes = render::compile(self, debug, (1400, 400));
+        let typbytes = render::compile_pdf(self, debug, (1400, 400));
         let ret = pdf::compile(&typbytes, debug);
         println!("generated {} bytes", ret.len());
         ret
@@ -293,14 +320,14 @@ impl Backend {
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::Backend;
+    use crate::{backend::Backend, render_device::RenderDevice};
     #[test]
     fn svg_segment_track() {
         let mut backend = Backend::from_filename("data/blackforest.gpx");
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = backend.render_segment_track(&segment, (1420, 400));
+            let svg = backend.render_segment_track(&segment, (1420, 400), RenderDevice::Native);
             let reffilename = std::format!("data/ref/track-{}.svg", segment.id);
             println!("test {}", reffilename);
             if !std::fs::exists(&reffilename).unwrap() {
@@ -331,7 +358,7 @@ mod tests {
             .to_rfc3339();
         backend.set_parameters(&parameters);
         for segment in &segments {
-            let svg = backend.render_segment_waypoints(&segment, (1420, 400));
+            let svg = backend.render_segment_waypoints(&segment, (1420, 400), RenderDevice::Native);
             let reffilename = std::format!("data/ref/waypoints-{}.svg", segment.id);
             println!("test {}", reffilename);
             if !std::fs::exists(&reffilename).unwrap() {

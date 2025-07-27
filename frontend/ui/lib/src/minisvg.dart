@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_drawing/path_drawing.dart';
@@ -95,13 +96,13 @@ abstract class Element {
 
   String? attribute(String name) {
     var ret = _xmlElement.getAttribute(name);
-    if (ret == null) {
-      if (_parent == null) {
-        return null;
-      }
+    if (ret != null) {
+      return ret;
+    }
+    if (_parent != null) {
       return _parent.attribute(name);
     }
-    return ret;
+    return null;
   }
 
   static Element fromXml(XmlElement e, Element? parent) {
@@ -180,16 +181,16 @@ class PathElement extends Element {
     fill = Colors.transparent;
     strokeWidth = 1.0;
     strokeDasharray = "";
-    if (_xmlElement.getAttribute("stroke") != null) {
+    if (attribute("stroke") != null) {
       stroke = parseColor(attribute("stroke")!);
     }
-    if (_xmlElement.getAttribute("fill") != null) {
+    if (attribute("fill") != null) {
       fill = parseColor(attribute("fill")!);
     }
-    if (_xmlElement.getAttribute("stroke-width") != null) {
+    if (attribute("stroke-width") != null) {
       strokeWidth = double.parse(attribute("stroke-width")!);
     }
-    if (_xmlElement.getAttribute("stroke-dasharray") != null) {
+    if (attribute("stroke-dasharray") != null) {
       strokeDasharray = attribute("stroke-dasharray")!;
     }
 
@@ -231,14 +232,14 @@ class CircleElement extends Element {
     stroke = Colors.black;
     fill = Colors.black;
     strokeWidth = 1.0;
-    if (_xmlElement.getAttribute("stroke") != null) {
+    if (attribute("stroke") != null) {
       stroke = parseColor(attribute("stroke")!);
     }
-    if (_xmlElement.getAttribute("fill") != null) {
+    if (attribute("fill") != null) {
       fill = parseColor(attribute("fill")!);
     }
-    if (_xmlElement.getAttribute("stroke-width") != null) {
-      strokeWidth = double.parse(_xmlElement.getAttribute("stroke-width")!);
+    if (attribute("stroke-width") != null) {
+      strokeWidth = double.parse(attribute("stroke-width")!);
     }
     cx = double.parse(attribute("cx")!);
     cy = double.parse(attribute("cy")!);
@@ -280,13 +281,14 @@ class TextElement extends Element {
   TextElement(super.xmlElement, super.parent) {
     text = super._xmlElement.innerText.trim();
     textAlign = TextAlign.center;
-    fontSize = 16.0;
+    fontSize = 12.0;
     if (attribute("text-anchor") != null) {
       textAlign = readTextAlign(attribute("text-anchor")!);
     }
     if (attribute("font-size") != null) {
       fontSize = double.parse(attribute("font-size").toString());
     }
+    developer.log("font-sizefontSize: $fontSize");
   }
 
   @override
@@ -297,7 +299,7 @@ class TextElement extends Element {
         style: TextStyle(
           color: Colors.black,
           fontSize: fontSize,
-          fontFamily: "Courier",
+          fontFamily: "monospace",
         ),
       ),
       textDirection: TextDirection.ltr,

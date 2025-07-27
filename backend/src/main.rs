@@ -9,6 +9,7 @@ pub mod parameters;
 pub mod pdf;
 pub mod project;
 pub mod render;
+pub mod render_device;
 pub mod speed;
 pub mod step;
 pub mod svgprofile;

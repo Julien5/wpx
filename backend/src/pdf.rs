@@ -2,7 +2,7 @@
 use typst_as_lib::{typst_kit_options::TypstKitFontOptions, TypstEngine};
 
 #[cfg(feature = "typstpdf")]
-pub fn compile(document: &str) -> Vec<u8> {
+pub fn compile(document: &str, debug: bool) -> Vec<u8> {
     if debug {
         std::fs::write("/tmp/document.typst", &document).unwrap();
     }

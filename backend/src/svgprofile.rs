@@ -2,6 +2,7 @@
 
 use crate::elevation;
 use crate::gpsdata::ProfileBoundingBox;
+use crate::render_device::RenderDevice;
 use crate::step;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
@@ -92,7 +93,7 @@ fn trackpath(d: Data) -> Path {
     let p = Path::new()
         .set("id", "track")
         .set("stroke", "black")
-        .set("stroke-width", 2)
+        .set("stroke-width", 3)
         .set("shape-rendering", "geometricPrecision")
         .set("fill", "transparent")
         .set("d", d);
@@ -256,20 +257,26 @@ fn waypoint_circle((x, y): (i32, i32), waypoint: &step::Step) -> Circle {
     }
 }
 
-fn waypoint_text((x, y): (i32, i32), waypoint: &step::Step) -> Text {
-    let label = waypoint.profileLabel();
-    let ret = Text::new(label).set("text-anchor", "middle").set(
-        "transform",
-        format!("translate({} {}) scale(1 -1)", x, y - 20),
-    );
-    ret
+fn waypoint_text((x, y): (i32, i32), waypoint: &step::Step, font_size: f32) -> Option<Text> {
+    let label = waypoint.profile_label();
+    if label.is_empty() {
+        return None;
+    }
+    let ret = Text::new(label)
+        .set("font-size", format!("{}", font_size))
+        .set("text-anchor", "middle")
+        .set(
+            "transform",
+            format!("translate({} {}) scale(1 -1)", x, y - 30),
+        );
+    Some(ret)
 }
 
-fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &step::Step) -> Text {
+fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &step::Step, font_size: f32) -> Text {
     let label = format!("{:.0}", waypoint.wgs84.2);
     let ret = Text::new(label)
         .set("text-anchor", "middle")
-        .set("font-size", "14")
+        .set("font-size", format!("{}", font_size))
         .set(
             "transform",
             format!("translate({} {}) scale(1 -1)", x, y + 15),
@@ -288,9 +295,22 @@ pub struct Profile {
     SB: Group,
     pub SD: Group,
     bbox: gpsdata::ProfileBoundingBox,
+    render_device: RenderDevice,
+    font_size_factor: f32,
 }
 
 impl Profile {
+    pub fn set_render_device(&mut self, render_device: RenderDevice) {
+        self.render_device = render_device;
+        match self.render_device {
+            RenderDevice::Native => {
+                self.font_size_factor = 0.5f32;
+            }
+            _ => {
+                self.font_size_factor = 1f32;
+            }
+        }
+    }
     pub fn init(bbox: &gpsdata::ProfileBoundingBox) -> Profile {
         let W = 1400;
         let H = 400;
@@ -312,6 +332,8 @@ impl Profile {
             SD: Group::new()
                 .set("id", "SD")
                 .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft)),
+            render_device: RenderDevice::Unknown,
+            font_size_factor: 1f32,
         }
     }
 
@@ -364,17 +386,22 @@ impl Profile {
     }
 
     pub fn render(&self) -> String {
-        let font_size = if self.W < 500 {
-            10
-        } else if self.W < 750 {
-            12
+        // adapt font size to small displays
+        let font_size_factor = if self.render_device == RenderDevice::Native {
+            0.5f64
         } else {
-            15
+            1f64
         };
+        let font_size = if self.W < 750 {
+            24f64 * font_size_factor
+        } else {
+            30f64 * font_size_factor
+        };
+        println!("font-size={}", font_size);
         let mut world = Group::new()
             .set("id", "world")
             .set("shape-rendering", "crispEdges")
-            .set("font-family", "ui-serif")
+            .set("font-family", "Libertinus Serif")
             .set("font-size", format!("{}", font_size))
             .set("transform", "translate(5 5)");
         world.append(self.BG.clone());
@@ -448,10 +475,14 @@ impl Profile {
 
     fn add_waypoint(&mut self, w: &step::Step) {
         let (x, y) = self.toSD((w.distance, w.elevation));
+        let font_size = 24f32 * self.font_size_factor;
         self.addSD(waypoint_circle((x, y), &w));
-        self.addSD(waypoint_elevation_text((x, y), &w));
-        if !w.name.is_empty() {
-            self.addSD(waypoint_text((x, y), &w));
+        self.addSD(waypoint_elevation_text((x, y), &w, font_size));
+        match waypoint_text((x, y), &w, font_size) {
+            Some(node) => {
+                self.addSD(node);
+            }
+            None => {}
         }
     }
     pub fn shows_waypoint(&self, w: &step::Step) -> bool {

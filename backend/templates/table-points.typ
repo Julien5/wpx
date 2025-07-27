@@ -1,11 +1,12 @@
         #table(
-            columns: (auto,auto,auto,auto,auto,auto,auto,auto),
-            inset: 3pt,
+            columns: (10mm,auto,15mm,auto,10mm,auto,auto),
+            inset: (x: 2mm,y:1mm),
             stroke: 0.2pt,
             align: (x, y) => (
-                if x == 0 { center }
+                if x == 0 { right }
+                else if x == 6 { left }
                 else { right }
             ),
-            [*NAME*],[*KM*],[*TIME*],[*HM*],[*DIST*],[*D+*],[*SLOPE*],[*DESCRIPTION*],
-            /* #line-template [{name}],[{distance}],[{time}],[{elevation}],[{dist}],[{d+}],[{slope}],[{desc}], */
+            [*KM*],[*TIME*],[*HM*],[*DIST*],[*D+*],[*SLOPE*],[*DESCRIPTION*],
+            /* #line-template [{distance}],[{time}],[{elevation}],[{dist}],[{d+}],[{slope}],[{desc}], */
         )

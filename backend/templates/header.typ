@@ -1,13 +1,13 @@
 #set text(
-    font: "Liberation Mono",
-    size: 9pt
+    font: "Libertinus Serif",
+    size: 10pt
 )
 
 #set page(margin: (
-  top: 1cm,
-  bottom: 1cm,
-  x: 1cm,
+  top: 3mm,
+  bottom: 3mm,
+  x: 3mm,
 ))
 
-#set table.hline(stroke: .6pt)
+#set table.hline(stroke: .3pt)
 
