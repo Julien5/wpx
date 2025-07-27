@@ -3,8 +3,8 @@
 use crate::backend::{Backend, Segment};
 use crate::gpsdata;
 use crate::render_device::RenderDevice;
-use crate::step;
 use crate::utm::UTMPoint;
+use crate::waypoint;
 
 use svg::node::element::path::{Command, Data, Position};
 use svg::node::element::Path;
@@ -62,7 +62,7 @@ impl BoundingBox {
 
 fn map(
     geodata: &gpsdata::Track,
-    waypoints: &Vec<step::Step>,
+    waypoints: &Vec<waypoint::Waypoint>,
     range: &std::ops::Range<usize>,
 ) -> String {
     let mut data = Data::new();
@@ -102,7 +102,7 @@ fn map(
             .set("cy", y)
             .set("r", 500);
         document = document.add(dot);
-        let text = svg::node::element::Text::new(w.profile_label())
+        let text = svg::node::element::Text::new(w.info.as_ref().unwrap().profile_label())
             .set("text-anchor", "left")
             .set("font-size", "1500")
             .set("x", x + 700f64)
@@ -133,7 +133,7 @@ impl Templates {
 fn points_table(
     templates: &Templates,
     _track: &gpsdata::Track,
-    waypoints: &Vec<step::Step>,
+    waypoints: &Vec<waypoint::Waypoint>,
     segment: &Segment,
 ) -> String {
     let table = templates.table_points.clone();
@@ -152,28 +152,29 @@ fn points_table(
     let mut lines = Vec::new();
     for k in 0..waypoints.len() {
         let this = &waypoints[k];
+        let info = this.info.as_ref().unwrap();
         if !segment.profile.shows_waypoint(this) {
             continue;
         }
         let mut copy = template_line.clone();
-        copy = copy.replace("{name}", this.name.as_str());
-        let datetime = chrono::DateTime::parse_from_rfc3339(this.time.as_str()).unwrap();
+        copy = copy.replace("{name}", info.name.as_str());
+        let datetime = chrono::DateTime::parse_from_rfc3339(info.time.as_str()).unwrap();
         let time_str = format!("{}", datetime.format("%H:%M"));
 
         copy = copy.replace("{time}", &time_str);
 
         copy = copy.replace(
             "{distance}",
-            format!("{:4.0}", this.distance / 1000f64).as_str(),
+            format!("{:4.0}", info.distance / 1000f64).as_str(),
         );
-        let elevation = this.elevation;
+        let elevation = info.elevation;
         copy = copy.replace("{elevation}", format!("{:5.0} m", elevation).as_str());
-        let hm = this.inter_elevation_gain;
-        let percent = 100f64 * this.inter_slope;
+        let hm = info.inter_elevation_gain;
+        let percent = 100f64 * info.inter_slope;
         copy = copy.replace("{d+}", format!("{:5.0}", hm).as_str());
         copy = copy.replace("{slope}", format!("{:2.1}%", percent).as_str());
-        copy = copy.replace("{desc}", this.description.as_str());
-        let dist = this.inter_distance / 1000f64;
+        copy = copy.replace("{desc}", info.description.as_str());
+        let dist = info.inter_distance / 1000f64;
         copy = copy.replace("{dist}", format!("{:2.1}", dist).as_str());
         lines.push(copy);
     }
@@ -216,7 +217,7 @@ pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> St
         if range.is_empty() {
             break;
         }
-        let WP = backend.get_steps();
+        let WP = backend.get_waypoints();
         let p = backend.render_segment(segment, (W, H), RenderDevice::PDF);
         if debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);

@@ -93,8 +93,8 @@ class SegmentsProviderWidget extends StatelessWidget {
 
   Widget wait() {
     return Scaffold(
-      appBar: AppBar(title: const Text('Segments')),
-      body: Center(child: Column(children: [Text("loading...")])),
+      appBar: AppBar(title: const Text('Pages')),
+      body: Center(child: Column(children: [const Text("loading...")])),
     );
   }
 
@@ -122,7 +122,7 @@ class SegmentsProviderWidget extends StatelessWidget {
           builder: (context, child) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Segments'),
+                title: const Text('Preview'),
                 actions: <Widget>[exportButton(context)],
               ),
               body: SegmentsConsumer(),

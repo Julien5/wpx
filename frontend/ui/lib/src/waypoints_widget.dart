@@ -23,10 +23,10 @@ class WayPointsViewState extends State<WayPointsView> {
 
   @override
   Widget build(BuildContext context) {
-    List<bridge.Step> all = widget.segmentsProvider!.waypoints();
+    List<bridge.Waypoint> all = widget.segmentsProvider!.waypoints();
 
-    List<bridge.Step> local = [];
-    for (bridge.Step waypoint in all) {
+    List<bridge.Waypoint> local = [];
+    for (bridge.Waypoint waypoint in all) {
       if (widget.segment!.showsWaypoint(wp: waypoint)) {
         local.add(waypoint);
       }
@@ -42,6 +42,7 @@ class WayPointsViewState extends State<WayPointsView> {
       columnSpacing: 20,
       dataRowMinHeight: 25,
       dataRowMaxHeight: 25,
+      headingRowHeight: 30, 
       columns: const [
         DataColumn(label: Text('KM'), numeric: true),
         DataColumn(label: Text('Time'), numeric: true),
@@ -49,23 +50,34 @@ class WayPointsViewState extends State<WayPointsView> {
         DataColumn(label: Text('Elev.'), numeric: true),
         DataColumn(label: Text('Slope'), numeric: true),
       ],
-      rows:
-          local.map((waypoint) {
-            var dt = DateTime.parse(waypoint.time);
-            var km = waypoint.distance / 1000;
-            var ikm = waypoint.interDistance / 1000;
-            var egain = waypoint.interElevationGain;
-            var slope = 100*waypoint.interSlope;
-            return DataRow(
-              cells: [
-                DataCell(Text("${km.toStringAsFixed(0)}")),
-                DataCell(Text(DateFormat('HH:mm').format(dt))),
-                DataCell(Text("${ikm.toStringAsFixed(1)} km")),
-                DataCell(Text("${egain.toStringAsFixed(0)} m")),
-                DataCell(Text("${slope.toStringAsFixed(1)} %")),
-              ],
-            );
-          }).toList(),
+      rows: local.asMap().entries.map((entry) {
+        int index = entry.key;
+        bridge.Waypoint waypoint = entry.value;
+
+        var info = waypoint.info!;
+        var dt = DateTime.parse(info.time);
+        var km = info.distance / 1000;
+        var ikm = info.interDistance / 1000;
+        var egain = info.interElevationGain;
+        var slope = 100 * info.interSlope;
+
+        return DataRow(
+          color: WidgetStateProperty.resolveWith<Color?>(
+            (Set<WidgetState> states) {
+              // Alternate row colors
+              return index.isEven ? const Color.fromARGB(255, 214, 201, 201) : Colors.white;
+            },
+          ),
+          cells: [
+            // ignore: unnecessary_string_interpolations
+            DataCell(Text("${km.toStringAsFixed(0)}")),
+            DataCell(Text(DateFormat('HH:mm').format(dt))),
+            DataCell(Text("${ikm.toStringAsFixed(1)} km")),
+            DataCell(Text("${egain.toStringAsFixed(0)} m")),
+            DataCell(Text("${slope.toStringAsFixed(1)} %")),
+          ],
+        );
+      }).toList(),
     );
   }
 }

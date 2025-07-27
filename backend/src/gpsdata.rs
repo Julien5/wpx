@@ -1,4 +1,5 @@
-use crate::{step::Step, utm::UTMPoint};
+use crate::utm::UTMPoint;
+use crate::waypoint::Waypoint;
 use geo::{Distance, SimplifyIdx};
 
 fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
@@ -8,7 +9,7 @@ fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
 }
 
 use gpx::TrackSegment;
-use std::{io::Read, str::FromStr};
+use std::io::Read;
 
 use crate::elevation;
 
@@ -198,25 +199,6 @@ impl ProfileBoundingBox {
     }
 }
 
-#[derive(Clone, PartialEq)]
-pub enum WaypointOrigin {
-    GPX,
-    DouglasPeucker,
-    MaxStepSize,
-}
-
-#[derive(Clone)]
-pub struct Waypoint {
-    pub wgs84: (f64, f64, f64),
-    pub utm: UTMPoint,
-    pub track_index: usize,
-    pub origin: WaypointOrigin,
-    pub name: Option<String>,
-    pub description: Option<String>,
-    pub step: Option<Step>,
-    pub hide: bool,
-}
-
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
     let mut ret = Vec::new();
     // TODO: remove proj4 duplicate
@@ -239,57 +221,6 @@ pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
         ));
     }
     ret
-}
-
-fn trim_option(s: Option<String>) -> Option<String> {
-    match s {
-        Some(data) => Some(String::from_str(data.trim()).unwrap()),
-        _ => None,
-    }
-}
-
-impl Waypoint {
-    pub fn create(
-        wgs: (f64, f64, f64),
-        utm: UTMPoint,
-        indx: usize,
-        origin: WaypointOrigin,
-    ) -> Waypoint {
-        Waypoint {
-            wgs84: wgs.clone(),
-            utm: utm,
-            track_index: indx,
-            name: None,
-            description: None,
-            step: None,
-            origin: origin,
-            hide: false,
-        }
-    }
-
-    pub fn from_gpx(
-        gpx: &gpx::Waypoint,
-        utm: UTMPoint,
-        name: Option<String>,
-        description: Option<String>,
-    ) -> Waypoint {
-        let (lon, lat) = gpx.point().x_y();
-        let z = match gpx.elevation {
-            Some(_z) => _z,
-            _ => 0f64,
-        };
-        Waypoint {
-            //wgs84: (lon, lat, gpx.elevation.unwrap()),
-            wgs84: (lon, lat, z),
-            utm: utm,
-            track_index: usize::MAX,
-            origin: WaypointOrigin::GPX,
-            name: trim_option(name),
-            description: trim_option(description),
-            step: None,
-            hide: false,
-        }
-    }
 }
 
 #[cfg(test)]

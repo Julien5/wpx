@@ -9,6 +9,6 @@ pub mod project;
 pub mod render;
 pub mod render_device;
 pub mod speed;
-pub mod step;
 pub mod svgprofile;
 pub mod utm;
+pub mod waypoint;

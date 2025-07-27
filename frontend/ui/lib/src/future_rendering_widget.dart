@@ -1,6 +1,3 @@
-import 'dart:developer' as developer;
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ui/src/backendmodel.dart';
@@ -42,11 +39,13 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        double screenwidth = MediaQuery.sizeOf(context).width;
+        /*double screenwidth = MediaQuery.sizeOf(context).width;
         double screenheight = MediaQuery.sizeOf(context).height;
-        double w = min(screenwidth, constraints.maxWidth-100);
-        double h = min(50+screenheight / 3, constraints.maxHeight);
-        developer.log("wanted size: $constraints");
+        double w = max(1000,min(screenwidth, constraints.maxWidth-100));
+        double h = max(285,min(50+screenheight / 3, constraints.maxHeight));
+        */
+        double w = 1000;
+        double h = 285;
         Size size = Size(w, h);
         return buildWorker(size);
       },

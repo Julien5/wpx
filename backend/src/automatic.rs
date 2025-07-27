@@ -1,12 +1,13 @@
 #![allow(non_snake_case)]
 
 use crate::gpsdata;
-use crate::gpsdata::Waypoint;
-use crate::gpsdata::WaypointOrigin;
 use crate::parameters;
 use crate::project;
+use crate::waypoint;
+use crate::waypoint::Waypoint;
+use crate::waypoint::WaypointOrigin;
 
-type Waypoints = Vec<gpsdata::Waypoint>;
+type Waypoints = Vec<Waypoint>;
 type Parameters = parameters::Parameters;
 
 fn sort(ret: &mut Waypoints, track: &gpsdata::Track) {
@@ -38,7 +39,7 @@ fn douglas(track: &gpsdata::Track, params: &Parameters) -> Waypoints {
     for idx in indexes {
         let wgs = track.wgs84[idx].clone();
         let utm = track.utm[idx].clone();
-        let w = gpsdata::Waypoint::create(wgs, utm, idx, WaypointOrigin::DouglasPeucker);
+        let w = waypoint::Waypoint::create(wgs, utm, idx, WaypointOrigin::DouglasPeucker);
         ret.push(w);
     }
     ret
@@ -88,7 +89,7 @@ fn max_step_size_subsample(
             track.wgs84[kn].clone(),
             track.utm[kn].clone(),
             kn,
-            gpsdata::WaypointOrigin::MaxStepSize,
+            waypoint::WaypointOrigin::MaxStepSize,
         );
         ret.push(w);
     }
@@ -140,8 +141,8 @@ fn waypoints_within_distance(
     k: usize,
     dmax: f64,
 ) -> Vec<usize> {
-    let distance_to = |w: &gpsdata::Waypoint| -> f64 { track.distance(w.track_index) };
-    let distance_between = |w1: &gpsdata::Waypoint, w2: &gpsdata::Waypoint| -> f64 {
+    let distance_to = |w: &waypoint::Waypoint| -> f64 { track.distance(w.track_index) };
+    let distance_between = |w1: &waypoint::Waypoint, w2: &waypoint::Waypoint| -> f64 {
         (distance_to(w2) - distance_to(w1)).abs()
     };
     let mut ret = Vec::new();

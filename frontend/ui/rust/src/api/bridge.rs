@@ -5,11 +5,12 @@ use flutter_rust_bridge::frb;
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
 pub use tracks::backend::SegmentStatistics;
-pub use tracks::gpsdata::WaypointOrigin;
 pub use tracks::parameters::Parameters;
 pub use tracks::render_device::RenderDevice;
-pub use tracks::step::Step;
 pub use tracks::utm::UTMPoint;
+pub use tracks::waypoint::Waypoint;
+pub use tracks::waypoint::WaypointInfo;
+pub use tracks::waypoint::WaypointOrigin;
 
 pub use tracks::backend::Segment as SegmentImplementation;
 
@@ -34,7 +35,7 @@ impl Segment {
     }
 
     #[frb(sync)]
-    pub fn shows_waypoint(&self, wp: &Step) -> bool {
+    pub fn shows_waypoint(&self, wp: &Waypoint) -> bool {
         self._impl.shows_waypoint(wp)
     }
 }
@@ -59,8 +60,8 @@ pub struct _Parameters {
     pub smooth_width: f64,
 }
 
-#[frb(mirror(Step))]
-pub struct _Step {
+#[frb(mirror(WaypointInfo))]
+pub struct _WaypointInfo {
     wgs84: (f64, f64, f64),
     utm: UTMPoint,
     origin: WaypointOrigin,
@@ -73,6 +74,17 @@ pub struct _Step {
     description: String,
     time: String, // rfc3339
     track_index: usize,
+}
+
+#[frb(mirror(Waypoint))]
+pub struct _Waypoint {
+    pub wgs84: (f64, f64, f64),
+    pub utm: UTMPoint,
+    pub track_index: usize,
+    pub origin: WaypointOrigin,
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub info: Option<WaypointInfo>,
 }
 
 #[frb(mirror(SegmentStatistics))]
@@ -109,8 +121,8 @@ impl Bridge {
         self.backend.generateGpx()
     }
     #[frb(sync)] //TODO: add segment parameter
-    pub fn getSteps(&mut self) -> Vec<Step> {
-        self.backend.get_steps()
+    pub fn getWaypoints(&mut self) -> Vec<Waypoint> {
+        self.backend.waypoints.clone()
     }
     #[frb(sync)]
     pub fn elevation_gain(&mut self, from: usize, to: usize) -> f64 {

@@ -3,7 +3,7 @@
 use crate::elevation;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::render_device::RenderDevice;
-use crate::step;
+use crate::waypoint;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
 use svg::Node;
@@ -232,8 +232,8 @@ pub fn yticks_dashed(bbox: &ProfileBoundingBox) -> Vec<f64> {
     ret
 }
 
-fn waypoint_circle((x, y): (i32, i32), waypoint: &step::Step) -> Circle {
-    use gpsdata::WaypointOrigin::*;
+fn waypoint_circle((x, y): (i32, i32), waypoint: &waypoint::Waypoint) -> Circle {
+    use waypoint::WaypointOrigin::*;
     match waypoint.origin {
         GPX => svg::node::element::Circle::new()
             .set("cx", x)
@@ -257,8 +257,13 @@ fn waypoint_circle((x, y): (i32, i32), waypoint: &step::Step) -> Circle {
     }
 }
 
-fn waypoint_text((x, y): (i32, i32), waypoint: &step::Step, font_size: f32) -> Option<Text> {
-    let label = waypoint.profile_label();
+fn waypoint_text(
+    (x, y): (i32, i32),
+    waypoint: &waypoint::Waypoint,
+    font_size: f32,
+) -> Option<Text> {
+    let info = waypoint.info.as_ref().unwrap();
+    let label = info.profile_label();
     if label.is_empty() {
         return None;
     }
@@ -272,7 +277,11 @@ fn waypoint_text((x, y): (i32, i32), waypoint: &step::Step, font_size: f32) -> O
     Some(ret)
 }
 
-fn waypoint_elevation_text((x, y): (i32, i32), waypoint: &step::Step, font_size: f32) -> Text {
+fn waypoint_elevation_text(
+    (x, y): (i32, i32),
+    waypoint: &waypoint::Waypoint,
+    font_size: f32,
+) -> Text {
     let label = format!("{:.0}", waypoint.wgs84.2);
     let ret = Text::new(label)
         .set("text-anchor", "middle")
@@ -473,8 +482,9 @@ impl Profile {
         }
     }
 
-    fn add_waypoint(&mut self, w: &step::Step) {
-        let (x, y) = self.toSD((w.distance, w.elevation));
+    fn add_waypoint(&mut self, w: &waypoint::Waypoint) {
+        let info = w.info.as_ref().unwrap();
+        let (x, y) = self.toSD((info.distance, info.elevation));
         let font_size = 24f32 * self.font_size_factor;
         self.addSD(waypoint_circle((x, y), &w));
         self.addSD(waypoint_elevation_text((x, y), &w, font_size));
@@ -485,10 +495,11 @@ impl Profile {
             None => {}
         }
     }
-    pub fn shows_waypoint(&self, w: &step::Step) -> bool {
-        self.bbox.xmin <= w.distance && w.distance <= self.bbox.xmax
+    pub fn shows_waypoint(&self, w: &waypoint::Waypoint) -> bool {
+        let distance = w.info.as_ref().unwrap().distance;
+        self.bbox.xmin <= distance && distance <= self.bbox.xmax
     }
-    pub fn add_waypoints(&mut self, waypoints: &Vec<step::Step>) {
+    pub fn add_waypoints(&mut self, waypoints: &Vec<waypoint::Waypoint>) {
         for w in waypoints {
             if !self.shows_waypoint(w) {
                 continue;

@@ -9,15 +9,15 @@ use crate::parameters::Parameters;
 use crate::pdf;
 use crate::render;
 use crate::render_device::RenderDevice;
-use crate::step;
 use crate::svgprofile;
+use crate::waypoint;
 
 type DateTime = crate::utm::DateTime;
 
 pub struct Backend {
     parameters: Parameters,
     pub track: gpsdata::Track,
-    pub waypoints: Vec<gpsdata::Waypoint>,
+    pub waypoints: Vec<waypoint::Waypoint>,
     track_smooth_elevation: Vec<f64>,
 }
 
@@ -29,7 +29,7 @@ pub struct Segment {
 }
 
 impl Segment {
-    pub fn shows_waypoint(&self, wp: &step::Step) -> bool {
+    pub fn shows_waypoint(&self, wp: &waypoint::Waypoint) -> bool {
         self.profile.shows_waypoint(wp)
     }
 }
@@ -64,11 +64,14 @@ impl Backend {
 
     fn update_waypoints(&mut self) {
         self.waypoints = automatic::generate(&self.track, &self.waypoints, &self.parameters);
-        self.make_steps();
+        self.make_waypoint_infos();
         for w in &self.waypoints {
             debug_assert!(w.track_index < self.track.len());
         }
         println!("generated {} waypoints", self.waypoints.len());
+    }
+    pub fn get_waypoints(&self) -> Vec<waypoint::Waypoint> {
+        return self.waypoints.clone();
     }
 
     pub fn set_parameters(self: &mut Backend, parameters: &Parameters) {
@@ -80,9 +83,9 @@ impl Backend {
 
     fn create_step(
         self: &Backend,
-        w: &gpsdata::Waypoint,
-        wprev: Option<&gpsdata::Waypoint>,
-    ) -> step::Step {
+        w: &waypoint::Waypoint,
+        wprev: Option<&waypoint::Waypoint>,
+    ) -> waypoint::WaypointInfo {
         let track = &self.track;
         assert!(w.track_index < track.len());
         let distance = track.distance(w.track_index);
@@ -112,7 +115,7 @@ impl Backend {
                 false => format!("{} - {}", name, desc),
             },
         };
-        step::Step {
+        waypoint::WaypointInfo {
             wgs84: w.wgs84,
             utm: w.utm.clone(),
             origin: w.origin.clone(),
@@ -127,8 +130,8 @@ impl Backend {
             track_index: w.track_index,
         }
     }
-    fn make_steps(&mut self) {
-        let mut steps = Vec::new();
+    fn make_waypoint_infos(&mut self) {
+        let mut infos = Vec::new();
         for w in &self.waypoints {
             debug_assert!(w.track_index < self.track.len());
         }
@@ -139,17 +142,17 @@ impl Backend {
                 _ => Some(&self.waypoints[k - 1]),
             };
             let step = self.create_step(w, wprev);
-            steps.push(step.clone());
+            infos.push(step.clone());
         }
         for k in 0..self.waypoints.len() {
             let w = &mut self.waypoints[k];
-            w.step = Some(steps[k].clone());
+            w.info = Some(infos[k].clone());
         }
     }
-    pub fn get_steps(&self) -> Vec<step::Step> {
+    pub fn get_waypoint_infos(&self) -> Vec<waypoint::WaypointInfo> {
         let mut ret = Vec::new();
         for k in 0..self.waypoints.len() {
-            match &self.waypoints[k].step {
+            match &self.waypoints[k].info {
                 Some(s) => {
                     ret.push(s.clone());
                 }
@@ -253,7 +256,7 @@ impl Backend {
         profile.reset_size(W, H);
         profile.add_canvas();
         profile.add_track(&self.track, &self.track_smooth_elevation);
-        let W = self.get_steps();
+        let W = self.get_waypoints();
         profile.add_waypoints(&W);
         profile.render()
     }
@@ -281,7 +284,7 @@ impl Backend {
         let mut profile = segment.profile.clone();
         profile.set_render_device(render_device);
         profile.reset_size(W, H);
-        profile.add_waypoints(&self.get_steps());
+        profile.add_waypoints(&self.get_waypoints());
         let ret = profile.render();
         let _filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
         // TODO: compile if not wasm

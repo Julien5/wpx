@@ -124,7 +124,7 @@ class SegmentsProvider extends ChangeNotifier {
   late bridge.Bridge _bridge;
   late String _filename;
   final List<Renderers> _segments = [];
-  final List<bridge.Step> _waypoints = [];
+  final List<bridge.Waypoint> _waypoints = [];
 
   SegmentsProvider() : _filename = "";
 
@@ -198,7 +198,7 @@ class SegmentsProvider extends ChangeNotifier {
       }
     }
     _waypoints.clear();
-    var wayPoints = _bridge.getSteps();
+    var wayPoints = _bridge.getWaypoints();
     for (var w in wayPoints) {
       _waypoints.add(w);
     }
@@ -212,7 +212,7 @@ class SegmentsProvider extends ChangeNotifier {
     return _segments;
   }
 
-  List<bridge.Step> waypoints() {
+  List<bridge.Waypoint> waypoints() {
     return _waypoints;
   }
 

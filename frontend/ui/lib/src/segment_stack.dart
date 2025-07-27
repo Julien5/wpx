@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
@@ -11,20 +12,46 @@ class SegmentStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stack = Align(
-      alignment: Alignment.center,
+    final ScrollController scrollController = ScrollController();
+
+    scrollController.addListener(() {
+      // Calculate visible rows based on scroll position
+      double headerHeight = 56;
+      double scrollOffset = max(scrollController.offset - headerHeight, 0);
+      developer.log("offset: $scrollController.offset");
+      double rowHeight = 25; // Assuming each row has a height of 25
+      int firstVisibleRow = (scrollOffset / rowHeight).floor();
+      int lastVisibleRow =
+          ((scrollOffset +
+                      scrollController.position.viewportDimension -
+                      headerHeight) /
+                  rowHeight)
+              .floor();
+
+      developer.log("Visible rows: $firstVisibleRow to $lastVisibleRow");
+    });
+
+    var stack = SizedBox(
+      height: 310, // Set a fixed height of 450 pixels
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
       ),
     );
+
     var table = SingleChildScrollView(
+      controller: scrollController, // Attach the ScrollController here
       scrollDirection: Axis.vertical,
       child: WayPointsConsumer(),
     );
+
     return Column(
       children: [
         stack,
+        const Divider(
+          height: 1, // Thickness of the divider
+          color: Colors.grey, // Light stroke color
+        ),
         Expanded(child: table),
       ],
     );

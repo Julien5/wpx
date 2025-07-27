@@ -1,9 +1,10 @@
 #![allow(non_snake_case)]
 
 use crate::gpsdata;
+use crate::waypoint;
 
-fn gps_name(w: &gpsdata::Waypoint) -> Option<String> {
-    match &w.step {
+fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
+    match &w.info {
         Some(step) => {
             use chrono::*;
             let t: DateTime<Utc> = step.time.parse().unwrap();
@@ -16,18 +17,18 @@ fn gps_name(w: &gpsdata::Waypoint) -> Option<String> {
     w.name.clone()
 }
 
-fn to_gpx(w: &gpsdata::Waypoint) -> gpx::Waypoint {
+fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     let mut ret = gpx::Waypoint::new(geo::Point::new(w.wgs84.0, w.wgs84.1));
     ret.elevation = Some(w.wgs84.2);
     ret.name = gps_name(w);
-    ret.description = match &w.step {
+    ret.description = match &w.info {
         Some(step) => Some(step.description.clone()),
         _ => w.description.clone(),
     };
     ret
 }
 
-pub fn generate(track: &gpsdata::Track, waypoints: &Vec<gpsdata::Waypoint>) -> Vec<u8> {
+pub fn generate(track: &gpsdata::Track, waypoints: &Vec<waypoint::Waypoint>) -> Vec<u8> {
     let mut G = gpx::Gpx::default();
     G.version = gpx::GpxVersion::Gpx11;
 

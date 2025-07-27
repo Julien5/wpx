@@ -11,9 +11,9 @@ pub mod project;
 pub mod render;
 pub mod render_device;
 pub mod speed;
-pub mod step;
 pub mod svgprofile;
 pub mod utm;
+pub mod waypoint;
 
 use backend::Backend;
 
@@ -85,7 +85,7 @@ fn main() {
 
     println!("test backend");
     let backend = Backend::from_filename(gpxinput);
-    let W = backend.get_steps();
+    let W = backend.get_waypoint_infos();
     for w in W {
         println!(
             "waypoint dist={:6.2} ele={:5.1}",
