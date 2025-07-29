@@ -337,7 +337,7 @@ mod tests {
     use crate::{backend::Backend, render_device::RenderDevice};
     #[test]
     fn svg_segment_track() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx");
+        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
@@ -361,7 +361,7 @@ mod tests {
 
     #[test]
     fn svg_segment_waypoints() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx");
+        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
         let segments = backend.segments();
         let mut ok_count = 0;
         let mut parameters = backend.get_parameters();
@@ -392,7 +392,7 @@ mod tests {
 
     #[test]
     fn time_iso8601() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx");
+        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
         backend.setStartTime(String::from("2007-03-01T13:00:00Z"));
         backend.setStartTime(String::from("2025-07-12T06:32:36Z"));
         backend.setStartTime(String::from("2025-07-12T06:32:36.215033Z"));

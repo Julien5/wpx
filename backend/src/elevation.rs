@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn ele() {
-        let backend = backend::Backend::from_filename("data/blackforest.gpx");
+        let backend = backend::Backend::from_filename("data/blackforest.gpx").expect("fail");
         let S = backend.segments();
         let km = 1000f64;
         for s in &S {
