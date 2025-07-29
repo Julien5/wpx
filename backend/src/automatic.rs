@@ -11,15 +11,33 @@ type Waypoints = Vec<Waypoint>;
 type Parameters = parameters::Parameters;
 
 fn sort(ret: &mut Waypoints, track: &gpsdata::Track) {
-    // find their indexes...
+    // TODO: avoid re-computation of the tree
     let indexes = project::nearest_neighboor(&track.utm, &ret);
     debug_assert_eq!(ret.len(), indexes.len());
     for k in 0..indexes.len() {
         assert!(indexes[k] < track.len());
-        ret[k].track_index = indexes[k];
+        match ret[k].track_index {
+            // the waypoint would be projected to another point of the track.
+            // do not do this.
+            Some(index) => {
+                if index != indexes[k] {
+                    println!("before: {} => distance={}", index, track.distance(index));
+                    println!(
+                        "after: {} => distance={}",
+                        indexes[k],
+                        track.distance(indexes[k])
+                    )
+                }
+                // the two indices can be different if the track has several overlapping segments
+                // debug_assert!(index == indexes[k]);
+            }
+            None => {
+                ret[k].track_index = Some(indexes[k]);
+            }
+        }
     }
     for w in &mut *ret {
-        assert!(w.track_index < track.len());
+        assert!(w.get_track_index() < track.len());
     }
     // .. and sort them
     ret.sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
@@ -29,7 +47,7 @@ fn sort(ret: &mut Waypoints, track: &gpsdata::Track) {
         debug_assert!(k1 >= k0);
     }
     for w in ret {
-        debug_assert!(w.track_index < track.len());
+        debug_assert!(w.get_track_index() < track.len());
     }
 }
 
@@ -101,8 +119,8 @@ fn find_next_index(track: &gpsdata::Track, waypoints: &Waypoints, start: usize) 
         return None;
     }
     for w in waypoints {
-        if w.track_index > start {
-            return Some(w.track_index);
+        if w.get_track_index() > start {
+            return w.track_index;
         }
     }
     Some(track.len() - 1)
@@ -114,7 +132,7 @@ fn max_step_size(track: &gpsdata::Track, waypoints: &Waypoints, params: &Paramet
     let mut k0 = 0;
     let mut k1 = match waypoints.is_empty() {
         true => track.len() - 1,
-        false => waypoints[0].track_index,
+        false => waypoints[0].get_track_index(),
     };
     let mut ret = Waypoints::new();
     loop {
@@ -141,7 +159,7 @@ fn waypoints_within_distance(
     k: usize,
     dmax: f64,
 ) -> Vec<usize> {
-    let distance_to = |w: &waypoint::Waypoint| -> f64 { track.distance(w.track_index) };
+    let distance_to = |w: &waypoint::Waypoint| -> f64 { track.distance(w.get_track_index()) };
     let distance_between = |w1: &waypoint::Waypoint, w2: &waypoint::Waypoint| -> f64 {
         (distance_to(w2) - distance_to(w1)).abs()
     };
@@ -172,7 +190,6 @@ fn remove_near_waypoints(track: &gpsdata::Track, W: &mut Waypoints) -> Waypoints
         let neighbors = waypoints_within_distance(track, W, k, 2000f64);
         for l in neighbors {
             if W[l].origin != WaypointOrigin::GPX {
-                println!("hide {}", l);
                 hide.insert(l);
             }
         }
@@ -197,7 +214,7 @@ pub fn generate(
     sort(&mut ret, &track);
     ret = remove_near_waypoints(&track, &mut ret);
     for w in &ret {
-        debug_assert!(w.track_index < track.len());
+        debug_assert!(w.get_track_index() < track.len());
     }
     ret.extend(max_step_size(track, &ret, params));
     sort(&mut ret, &track);

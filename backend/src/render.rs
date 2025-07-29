@@ -92,7 +92,7 @@ fn map(
         .add(svgpath);
 
     for w in waypoints {
-        let k = w.track_index;
+        let k = w.get_track_index();
         if !range.contains(&k) {
             continue;
         }

@@ -67,7 +67,7 @@ impl Backend {
         self.waypoints = automatic::generate(&self.track, &self.waypoints, &self.parameters);
         self.make_waypoint_infos();
         for w in &self.waypoints {
-            debug_assert!(w.track_index < self.track.len());
+            debug_assert!(w.get_track_index() < self.track.len());
         }
         println!("generated {} waypoints", self.waypoints.len());
     }
@@ -88,13 +88,14 @@ impl Backend {
         wprev: Option<&waypoint::Waypoint>,
     ) -> waypoint::WaypointInfo {
         let track = &self.track;
-        assert!(w.track_index < track.len());
-        let distance = track.distance(w.track_index);
+        assert!(w.get_track_index() < track.len());
+        let distance = track.distance(w.get_track_index());
         let (inter_distance, inter_elevation_gain, inter_slope_prev) = match wprev {
             None => (0f64, 0f64, 0f64),
             Some(prev) => {
-                let dx = track.distance(w.track_index) - track.distance(prev.track_index);
-                let dy = self.elevation_gain(prev.track_index, w.track_index);
+                let dx =
+                    track.distance(w.get_track_index()) - track.distance(prev.get_track_index());
+                let dy = self.elevation_gain(prev.get_track_index(), w.get_track_index());
                 let slope = match dx {
                     0f64 => 0f64,
                     _ => dy / dx,
@@ -124,17 +125,17 @@ impl Backend {
             inter_distance,
             inter_elevation_gain,
             inter_slope: inter_slope_prev,
-            elevation: track.elevation(w.track_index),
+            elevation: track.elevation(w.get_track_index()),
             name,
             description,
             time: time.to_rfc3339(),
-            track_index: w.track_index,
+            track_index: w.get_track_index(),
         }
     }
     fn make_waypoint_infos(&mut self) {
         let mut infos = Vec::new();
         for w in &self.waypoints {
-            debug_assert!(w.track_index < self.track.len());
+            debug_assert!(w.get_track_index() < self.track.len());
         }
         for k in 0..self.waypoints.len() {
             let w = &self.waypoints[k];

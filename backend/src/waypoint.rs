@@ -43,7 +43,7 @@ impl WaypointInfo {
 pub struct Waypoint {
     pub wgs84: (f64, f64, f64),
     pub utm: UTMPoint,
-    pub track_index: usize,
+    pub track_index: Option<usize>,
     pub origin: WaypointOrigin,
     pub name: Option<String>,
     pub description: Option<String>,
@@ -67,7 +67,7 @@ impl Waypoint {
         Waypoint {
             wgs84: wgs.clone(),
             utm: utm,
-            track_index: indx,
+            track_index: Some(indx),
             name: None,
             description: None,
             info: None,
@@ -90,11 +90,15 @@ impl Waypoint {
             //wgs84: (lon, lat, gpx.elevation.unwrap()),
             wgs84: (lon, lat, z),
             utm: utm,
-            track_index: usize::MAX,
+            track_index: None,
             origin: WaypointOrigin::GPX,
             name: trim_option(name),
             description: trim_option(description),
             info: None,
         }
+    }
+
+    pub fn get_track_index(&self) -> usize {
+        self.track_index.unwrap()
     }
 }

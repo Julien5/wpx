@@ -104,7 +104,7 @@ impl Track {
     }
 
     pub fn from_segment(segment: &TrackSegment) -> Result<Track, Error> {
-        let mut dist = Vec::new();
+        let mut _distance = Vec::new();
 
         use proj4rs::proj::Proj;
         let spec = "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs +type=crs";
@@ -133,13 +133,13 @@ impl Track {
             if k > 0 {
                 dacc += distance(wgs[k - 1].0, wgs[k - 1].1, wgs[k].0, wgs[k].1);
             }
-            dist.push(dacc);
+            _distance.push(dacc);
         }
-        assert_eq!(dist.len(), wgs.len());
+        assert_eq!(_distance.len(), wgs.len());
         let ret = Track {
             wgs84: wgs,
             utm,
-            _distance: dist,
+            _distance,
         };
         Ok(ret)
     }
