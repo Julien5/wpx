@@ -4,6 +4,7 @@ use crate::elevation;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::render_device::RenderDevice;
 use crate::waypoint;
+use crate::waypoint::WaypointOrigin;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
 use svg::Node;
@@ -487,7 +488,9 @@ impl Profile {
         let (x, y) = self.toSD((info.distance, info.elevation));
         let font_size = 24f32 * self.font_size_factor;
         self.addSD(waypoint_circle((x, y), &w));
-        self.addSD(waypoint_elevation_text((x, y), &w, font_size));
+        if w.origin == WaypointOrigin::DouglasPeucker {
+            self.addSD(waypoint_elevation_text((x, y), &w, font_size));
+        }
         match waypoint_text((x, y), &w, font_size) {
             Some(node) => {
                 self.addSD(node);
