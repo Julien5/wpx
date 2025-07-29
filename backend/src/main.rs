@@ -3,6 +3,7 @@
 pub mod automatic;
 pub mod backend;
 pub mod elevation;
+pub mod error;
 pub mod gpsdata;
 pub mod gpxexport;
 pub mod parameters;
@@ -32,7 +33,7 @@ struct Cli {
     filename: std::path::PathBuf,
 }
 
-fn main() {
+fn main() -> Result<(), error::Error> {
     let args = Cli::parse();
     println!("args: {:?}", args.output_directory);
     let debug = match args.debug {
@@ -40,9 +41,12 @@ fn main() {
         None => false,
     };
 
-    let mut gpxinput = "data/blackforest.gpx";
+    let gpxinput;
     if args.filename.exists() {
         gpxinput = args.filename.as_os_str().to_str().unwrap();
+    } else {
+        let e = error::Error::GPXNotFound;
+        return Err(e);
     }
 
     let gpxpath = std::path::Path::new(gpxinput);
@@ -54,7 +58,7 @@ fn main() {
 
     println!("read gpx {}", gpxinput);
     println!("outdir   {}", outdir);
-    let mut backend = Backend::from_filename(gpxinput);
+    let mut backend = Backend::from_filename(gpxinput)?;
 
     let mut parameters = backend.get_parameters();
     match args.interval_length {
@@ -84,7 +88,7 @@ fn main() {
     std::fs::write(gpxname, &gpxbytes).expect("Could not write gpx.");
 
     println!("test backend");
-    let backend = Backend::from_filename(gpxinput);
+    let backend = Backend::from_filename(gpxinput)?;
     let W = backend.get_waypoint_infos();
     for w in W {
         println!(
@@ -93,4 +97,5 @@ fn main() {
             w.elevation
         );
     }
+    Ok(())
 }

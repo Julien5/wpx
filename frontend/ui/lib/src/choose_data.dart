@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/routes.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class ChooseData extends StatefulWidget {
   const ChooseData({super.key});
@@ -39,6 +40,7 @@ class FindResult {
 
 class _ChooseDataState extends State<ChooseData> {
   FindResult? findResult;
+  String? errorMessage; // State variable to store the error message
 
   void chooseGPX(RootModel rootModel) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -59,24 +61,53 @@ class _ChooseDataState extends State<ChooseData> {
       }
       break;
     }
-    if (mounted) {
-      onDone(rootModel, findResult!);
-    }
+    onDone(rootModel, findResult!);
   }
 
-  void onDone(RootModel model, FindResult findResult) {
+  Future<void> create(RootModel model, FindResult findResult) async {
     model.unload();
     if (findResult.demo) {
-      model.createSegmentsProviderForDemo();
+      await model.createSegmentsProviderForDemo(); // Await the async call
     } else if (findResult.bytes != null) {
-      model.createSegmentsProviderFromBytes(findResult.bytes!);
+      await model.createSegmentsProviderFromBytes(findResult.bytes!);
     } else if (findResult.filename != null) {
-      model.createSegmentsProvider(findResult.filename!);
+      await model.createSegmentsProvider(findResult.filename!);
     } else {
       assert(false);
     }
-    developer.log("[push]");
-    Navigator.of(context).pushNamed(RouteManager.settingsView);
+  }
+
+  void onDone(RootModel model, FindResult findResult) async {
+    try {
+      await create(model, findResult);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        errorMessage = null; // clears the error message on success
+      });
+      developer.log("[push]");
+      Navigator.of(context).pushNamed(RouteManager.settingsView);
+    } catch (e) {
+      setState(() {
+        errorMessage =makeErrorMessage(e);
+      });
+    }
+  }
+
+  String makeErrorMessage(Object e) {
+    if (e is bridge.Error_MissingElevation) {
+      //bridge.Error_MissingElevation ev=e;
+      var index=e.index;
+      return "The track misses elevation data (at index=$index).";
+    }
+    if (e is bridge.Error_GPXHasNoSegment) {
+      return "The GPX file has no segments.";
+    }
+    if (e is bridge.Error_GPXInvalid) {
+      return "The GPX file is malformed.";
+    }
+    return "An unknown error occurred: ${e.toString()}";
   }
 
   void chooseDemo(RootModel model) {
@@ -92,6 +123,14 @@ class _ChooseDataState extends State<ChooseData> {
             onPressed: () => chooseGPX(rootModel),
             child: const Text("Choose GPX file"),
           ),
+          if (errorMessage != null) // Conditionally display the error message
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                errorMessage!,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () => chooseDemo(rootModel),

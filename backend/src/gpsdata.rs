@@ -1,3 +1,4 @@
+use crate::error::Error;
 use crate::utm::UTMPoint;
 use crate::waypoint::Waypoint;
 use geo::{Distance, SimplifyIdx};
@@ -9,7 +10,6 @@ fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
 }
 
 use gpx::TrackSegment;
-use std::io::Read;
 
 use crate::elevation;
 
@@ -19,24 +19,21 @@ pub struct Track {
     _distance: Vec<f64>,
 }
 
-pub fn read_gpx_content(bytes: &Vec<u8>) -> Box<gpx::Gpx> {
+pub fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, Error> {
     let reader_mem = std::io::Cursor::new(bytes);
-    Box::new(gpx::read(reader_mem).unwrap())
+    match gpx::read(reader_mem) {
+        Ok(d) => Ok(d),
+        Err(_e) => Err(Error::GPXInvalid),
+    }
 }
 
-pub fn read_gpx(filename: &str) -> Box<gpx::Gpx> {
-    let file = std::fs::File::open(filename).unwrap();
-    let mut reader_file = std::io::BufReader::new(file);
-    let mut content: Vec<u8> = Vec::new();
-    let _ = reader_file.read_to_end(&mut content);
-    let reader_mem = std::io::Cursor::new(content);
-    Box::new(gpx::read(reader_mem).unwrap())
-}
-
-pub fn read_segment(gpx: &mut gpx::Gpx) -> Box<gpx::TrackSegment> {
+pub fn read_segment(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
     let mut t0 = gpx.tracks.swap_remove(0);
+    if t0.segments.is_empty() {
+        return Err(Error::GPXHasNoSegment);
+    }
     let s0 = t0.segments.swap_remove(0);
-    Box::new(s0)
+    Ok(s0)
 }
 
 impl Track {
@@ -106,7 +103,7 @@ impl Track {
         ret
     }
 
-    pub fn from_segment(segment: &TrackSegment) -> Track {
+    pub fn from_segment(segment: &TrackSegment) -> Result<Track, Error> {
         let mut dist = Vec::new();
 
         use proj4rs::proj::Proj;
@@ -121,9 +118,14 @@ impl Track {
         for k in 0..segment.points.len() {
             let point = &segment.points[k];
             let (lon, lat) = point.point().x_y();
-            // TODO: handle the case where there is no evelation data
-            // => error message.
-            wgs.push((lon, lat, point.elevation.unwrap()));
+            let elevation = match point.elevation {
+                Some(e) => e,
+                None => {
+                    return Err(Error::MissingElevation { index: k });
+                }
+            };
+
+            wgs.push((lon, lat, elevation));
             debug_assert_eq!(wgs.len(), k + 1);
             let mut p = (lon.to_radians(), lat.to_radians());
             proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
@@ -134,11 +136,12 @@ impl Track {
             dist.push(dacc);
         }
         assert_eq!(dist.len(), wgs.len());
-        Track {
+        let ret = Track {
             wgs84: wgs,
             utm,
             _distance: dist,
-        }
+        };
+        Ok(ret)
     }
 
     pub fn interesting_indexes(&self, epsilon: f64) -> Vec<usize> {

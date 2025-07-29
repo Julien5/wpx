@@ -5,6 +5,7 @@ use flutter_rust_bridge::frb;
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
 pub use tracks::backend::SegmentStatistics;
+pub use tracks::error::Error;
 pub use tracks::parameters::Parameters;
 pub use tracks::render_device::RenderDevice;
 pub use tracks::utm::UTMPoint;
@@ -95,23 +96,34 @@ pub struct _SegmentStatistics {
     pub distance_end: f64,
 }
 
+#[frb(mirror(Error))]
+pub enum _Error {
+    GPXNotFound,
+    GPXInvalid,
+    GPXHasNoSegment,
+    MissingElevation { index: usize },
+}
+
 use std::{str::FromStr, time::Duration};
 use tokio::time::sleep;
 
 impl Bridge {
-    pub async fn create(filename: &str) -> Bridge {
-        Bridge {
-            backend: tracks::backend::Backend::from_filename(filename),
+    pub async fn create(filename: &str) -> Result<Bridge, Error> {
+        match tracks::backend::Backend::from_filename(filename) {
+            Ok(b) => Ok(Bridge { backend: b }),
+            Err(e) => Err(e),
         }
     }
-    pub async fn fromContent(content: &Vec<u8>) -> Bridge {
-        Bridge {
-            backend: tracks::backend::Backend::from_content(content),
+    pub async fn fromContent(content: &Vec<u8>) -> Result<Bridge, Error> {
+        match tracks::backend::Backend::from_content(content) {
+            Ok(b) => Ok(Bridge { backend: b }),
+            Err(e) => Err(e),
         }
     }
-    pub async fn initDemo() -> Bridge {
-        Bridge {
-            backend: tracks::backend::Backend::demo(),
+    pub async fn initDemo() -> Result<Bridge, Error> {
+        match tracks::backend::Backend::demo() {
+            Ok(b) => Ok(Bridge { backend: b }),
+            Err(e) => Err(e),
         }
     }
     pub async fn generatePdf(&mut self) -> Vec<u8> {

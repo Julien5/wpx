@@ -1,6 +1,7 @@
 pub mod automatic;
 pub mod backend;
 pub mod elevation;
+pub mod error;
 pub mod gpsdata;
 pub mod gpxexport;
 pub mod parameters;

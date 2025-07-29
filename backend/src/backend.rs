@@ -2,6 +2,7 @@
 
 use crate::automatic;
 use crate::elevation;
+use crate::error::Error;
 pub use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::gpxexport;
@@ -187,10 +188,20 @@ impl Backend {
         ret
     }
 
-    pub fn from_content(content: &Vec<u8>) -> Backend {
-        let mut gpx = gpsdata::read_gpx_content(content);
-        let segment = gpsdata::read_segment(&mut gpx);
-        let track = gpsdata::Track::from_segment(&segment);
+    pub fn from_content(content: &Vec<u8>) -> Result<Backend, Error> {
+        let mut gpx = gpsdata::read_gpx_content(content)?;
+        let segment = match gpsdata::read_segment(&mut gpx) {
+            Ok(s) => s,
+            Err(e) => {
+                return Err(e);
+            }
+        };
+        let track = match gpsdata::Track::from_segment(&segment) {
+            Ok(t) => t,
+            Err(e) => {
+                return Err(e);
+            }
+        };
         let default_params = Parameters::default();
         let gpxwaypoints = gpsdata::read_waypoints(&gpx);
         let parameters = Parameters::default();
@@ -204,10 +215,10 @@ impl Backend {
             parameters,
         };
         ret.update_waypoints();
-        ret
+        Ok(ret)
     }
 
-    pub fn from_filename(filename: &str) -> Backend {
+    pub fn from_filename(filename: &str) -> Result<Backend, Error> {
         println!("filename:{}", filename);
         let mut f = std::fs::File::open(filename).unwrap();
         let mut buffer = Vec::new();
@@ -217,7 +228,7 @@ impl Backend {
         Self::from_content(&buffer)
     }
 
-    pub fn demo() -> Backend {
+    pub fn demo() -> Result<Backend, Error> {
         let content = include_bytes!("../data/blackforest.gpx");
         Self::from_content(&content.to_vec())
     }

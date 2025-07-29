@@ -236,19 +236,19 @@ class RootModel extends ChangeNotifier {
     super.dispose();
   }
 
-  void createSegmentsProvider(String filename) async {
+  Future<void> createSegmentsProvider(String filename) async {
     var ret = await SegmentsProvider.fromFilename(filename);
     list.add(ret);
     notifyListeners();
   }
 
-  void createSegmentsProviderFromBytes(List<int> bytes) async {
+  Future<void> createSegmentsProviderFromBytes(List<int> bytes) async {
     var ret = await SegmentsProvider.fromBytes(bytes);
     list.add(ret);
     notifyListeners();
   }
 
-  void createSegmentsProviderForDemo() async {
+  Future<void> createSegmentsProviderForDemo() async {
     var ret = await SegmentsProvider.demo();
     list.add(ret);
     notifyListeners();
