@@ -29,6 +29,8 @@ struct Cli {
     output_directory: Option<std::path::PathBuf>,
     #[arg(short, long, value_name = "interval_length")]
     interval_length: Option<i32>,
+    #[arg(short, long, value_name = "max_step_length")]
+    max_step_length: Option<i32>,
     #[arg(value_name = "gpx")]
     filename: std::path::PathBuf,
 }
@@ -67,6 +69,14 @@ fn main() -> Result<(), error::Error> {
         }
         _ => {}
     }
+
+    match args.max_step_length {
+        Some(length) => {
+            parameters.max_step_size = 1000f64 * (length as f64);
+        }
+        _ => {}
+    }
+
     backend.set_parameters(&parameters);
 
     let pdfbytes = backend.generatePdf(debug);
