@@ -2,7 +2,6 @@
 
 use crate::gpsdata;
 use crate::parameters;
-use crate::project;
 use crate::waypoint;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointOrigin;
@@ -10,36 +9,15 @@ use crate::waypoint::WaypointOrigin;
 type Waypoints = Vec<Waypoint>;
 type Parameters = parameters::Parameters;
 
-fn sort(ret: &mut Waypoints, track: &gpsdata::Track) {
+fn order(ret: &mut Waypoints, track: &gpsdata::Track) {
     // TODO: avoid re-computation of the tree
-    let indexes = project::nearest_neighboor(&track.utm, &ret);
-    debug_assert_eq!(ret.len(), indexes.len());
-    for k in 0..indexes.len() {
-        assert!(indexes[k] < track.len());
-        match ret[k].track_index {
-            // the waypoint would be projected to another point of the track.
-            // do not do this.
-            Some(index) => {
-                if index != indexes[k] {
-                    println!("before: {} => distance={}", index, track.distance(index));
-                    println!(
-                        "after: {} => distance={}",
-                        indexes[k],
-                        track.distance(indexes[k])
-                    )
-                }
-                // the two indices can be different if the track has several overlapping segments
-                // debug_assert!(index == indexes[k]);
-            }
-            None => {
-                ret[k].track_index = Some(indexes[k]);
-            }
-        }
+    for k in 0..ret.len() {
+        assert!(ret[k].track_index.is_some());
     }
     for w in &mut *ret {
         assert!(w.get_track_index() < track.len());
     }
-    // .. and sort them
+    // .. and order them
     ret.sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
     for k in 1..ret.len() {
         let k1 = ret[k].track_index;
@@ -190,6 +168,7 @@ fn remove_near_waypoints(track: &gpsdata::Track, W: &mut Waypoints) -> Waypoints
         let neighbors = waypoints_within_distance(track, W, k, 2000f64);
         for l in neighbors {
             if W[l].origin != WaypointOrigin::GPX {
+                println!("hide {}", l);
                 hide.insert(l);
             }
         }
@@ -211,12 +190,12 @@ pub fn generate(
     let mut ret = Vec::new();
     ret.extend(gpxwaypoints(waypoints));
     ret.extend(douglas(track, params));
-    sort(&mut ret, &track);
+    order(&mut ret, &track);
     ret = remove_near_waypoints(&track, &mut ret);
     for w in &ret {
         debug_assert!(w.get_track_index() < track.len());
     }
     ret.extend(max_step_size(track, &ret, params));
-    sort(&mut ret, &track);
+    order(&mut ret, &track);
     ret
 }

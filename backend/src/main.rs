@@ -15,6 +15,7 @@ pub mod speed;
 pub mod svgprofile;
 pub mod utm;
 pub mod waypoint;
+pub mod waypoint_values;
 
 use backend::Backend;
 

@@ -24,12 +24,17 @@ class WayPointsViewState extends State<WayPointsView> {
   @override
   Widget build(BuildContext context) {
     List<bridge.Waypoint> all = widget.segmentsProvider!.waypoints();
-
+    var V=widget.segment!.showsWaypointInTable(waypoints:all);
     List<bridge.Waypoint> local = [];
-    for (bridge.Waypoint waypoint in all) {
-      if (widget.segment!.showsWaypoint(wp: waypoint)) {
-        local.add(waypoint);
+    for (int k = 0; k< all.length; k++) {
+      bridge.Waypoint waypoint=all[k];
+      if (!widget.segment!.showsWaypoint(wp:waypoint)) {
+        continue;
       }
+      if (!V.contains(BigInt.from(k))) {
+        continue;
+      }
+      local.add(waypoint);
     }
 
     developer.log("[WayPointsViewState] [build] #_waypoints=${local.length}");
@@ -42,7 +47,7 @@ class WayPointsViewState extends State<WayPointsView> {
       columnSpacing: 20,
       dataRowMinHeight: 25,
       dataRowMaxHeight: 25,
-      headingRowHeight: 30, 
+      headingRowHeight: 30,
       columns: const [
         DataColumn(label: Text('KM'), numeric: true),
         DataColumn(label: Text('Time'), numeric: true),
@@ -50,34 +55,37 @@ class WayPointsViewState extends State<WayPointsView> {
         DataColumn(label: Text('Elev.'), numeric: true),
         DataColumn(label: Text('Slope'), numeric: true),
       ],
-      rows: local.asMap().entries.map((entry) {
-        int index = entry.key;
-        bridge.Waypoint waypoint = entry.value;
+      rows:
+          local.asMap().entries.map((entry) {
+            int index = entry.key;
+            bridge.Waypoint waypoint = entry.value;
 
-        var info = waypoint.info!;
-        var dt = DateTime.parse(info.time);
-        var km = info.distance / 1000;
-        var ikm = info.interDistance / 1000;
-        var egain = info.interElevationGain;
-        var slope = 100 * info.interSlope;
+            var info = waypoint.info!;
+            var dt = DateTime.parse(info.time);
+            var km = info.distance / 1000;
+            var ikm = info.interDistance / 1000;
+            var egain = info.interElevationGain;
+            var slope = 100 * info.interSlope;
 
-        return DataRow(
-          color: WidgetStateProperty.resolveWith<Color?>(
-            (Set<WidgetState> states) {
-              // Alternate row colors
-              return index.isEven ? const Color.fromARGB(255, 214, 201, 201) : Colors.white;
-            },
-          ),
-          cells: [
-            // ignore: unnecessary_string_interpolations
-            DataCell(Text("${km.toStringAsFixed(0)}")),
-            DataCell(Text(DateFormat('HH:mm').format(dt))),
-            DataCell(Text("${ikm.toStringAsFixed(1)} km")),
-            DataCell(Text("${egain.toStringAsFixed(0)} m")),
-            DataCell(Text("${slope.toStringAsFixed(1)} %")),
-          ],
-        );
-      }).toList(),
+            return DataRow(
+              color: WidgetStateProperty.resolveWith<Color?>((
+                Set<WidgetState> states,
+              ) {
+                // Alternate row colors
+                return index.isEven
+                    ? const Color.fromARGB(255, 214, 201, 201)
+                    : Colors.white;
+              }),
+              cells: [
+                // ignore: unnecessary_string_interpolations
+                DataCell(Text("${km.toStringAsFixed(0)}")),
+                DataCell(Text(DateFormat('HH:mm').format(dt))),
+                DataCell(Text("${ikm.toStringAsFixed(1)} km")),
+                DataCell(Text("${egain.toStringAsFixed(0)} m")),
+                DataCell(Text("${slope.toStringAsFixed(1)} %")),
+              ],
+            );
+          }).toList(),
     );
   }
 }

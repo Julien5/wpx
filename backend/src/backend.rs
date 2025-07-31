@@ -12,6 +12,7 @@ use crate::render;
 use crate::render_device::RenderDevice;
 use crate::svgprofile;
 use crate::waypoint;
+use crate::waypoint_values;
 
 type DateTime = crate::utm::DateTime;
 
@@ -32,6 +33,9 @@ pub struct Segment {
 impl Segment {
     pub fn shows_waypoint(&self, wp: &waypoint::Waypoint) -> bool {
         self.profile.shows_waypoint(wp)
+    }
+    pub fn show_waypoint_in_table(&self, waypoints: &Vec<waypoint::Waypoint>) -> Vec<usize> {
+        self.profile.show_waypoint_in_table(&waypoints)
     }
 }
 
@@ -69,6 +73,7 @@ impl Backend {
         for w in &self.waypoints {
             debug_assert!(w.get_track_index() < self.track.len());
         }
+        waypoint_values::compute_values(&mut self.waypoints, &self.track);
         println!("generated {} waypoints", self.waypoints.len());
     }
     pub fn get_waypoints(&self) -> Vec<waypoint::Waypoint> {
@@ -130,6 +135,7 @@ impl Backend {
             description,
             time: time.to_rfc3339(),
             track_index: w.get_track_index(),
+            value: None,
         }
     }
     fn make_waypoint_infos(&mut self) {
@@ -204,7 +210,8 @@ impl Backend {
             }
         };
         let default_params = Parameters::default();
-        let gpxwaypoints = gpsdata::read_waypoints(&gpx);
+        let mut gpxwaypoints = gpsdata::read_waypoints(&gpx);
+        gpsdata::project_waypoints(&track, &mut gpxwaypoints);
         let parameters = Parameters::default();
         let mut ret = Backend {
             track_smooth_elevation: elevation::smooth_elevation(

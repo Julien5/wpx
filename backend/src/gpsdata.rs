@@ -1,6 +1,8 @@
 use crate::error::Error;
+use crate::project;
 use crate::utm::UTMPoint;
 use crate::waypoint::Waypoint;
+use crate::waypoint::WaypointOrigin;
 use geo::{Distance, SimplifyIdx};
 
 fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
@@ -37,6 +39,17 @@ pub fn read_segment(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
 }
 
 impl Track {
+    pub fn create_on_track(&self, index: usize, origin: WaypointOrigin) -> Waypoint {
+        Waypoint {
+            wgs84: self.wgs84[index].clone(),
+            utm: self.utm[index].clone(),
+            track_index: Some(index),
+            name: None,
+            description: None,
+            info: None,
+            origin,
+        }
+    }
     pub fn len(&self) -> usize {
         self.wgs84.len()
     }
@@ -199,6 +212,14 @@ impl ProfileBoundingBox {
         self.xmax = ((self.xmax + margin) / shift).ceil() * shift;
         self.ymin = snap_floor(self.ymin - 100f64);
         self.ymax = snap_ceil(self.ymax + 100f64).max(snap_floor(self.ymin + 500f64));
+    }
+}
+
+pub fn project_waypoints(track: &Track, waypoints: &mut Vec<Waypoint>) {
+    let indexes = project::nearest_neighboor(&track.utm, &waypoints);
+    debug_assert_eq!(waypoints.len(), indexes.len());
+    for k in 0..indexes.len() {
+        waypoints[k].track_index = Some(indexes[k]);
     }
 }
 

@@ -150,10 +150,18 @@ fn points_table(
     debug_assert!(!template_line.is_empty());
     // TODO: avoid recomputing the automatic points
     let mut lines = Vec::new();
+    let V = segment.profile.show_waypoint_in_table(&waypoints);
     for k in 0..waypoints.len() {
         let this = &waypoints[k];
         let info = this.info.as_ref().unwrap();
         if !segment.profile.shows_waypoint(this) {
+            continue;
+        }
+        /*
+         * TODO: recompute dist and d+ to mirror the distances
+         * since the last waypoint *shown on the table*.
+         */
+        if !V.contains(&k) {
             continue;
         }
         let mut copy = template_line.clone();
@@ -218,6 +226,7 @@ pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> St
             break;
         }
         let WP = backend.get_waypoints();
+        let table = points_table(&templates, &backend.track, &WP, &segment);
         let p = backend.render_segment(segment, (W, H), RenderDevice::PDF);
         if debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);
@@ -228,7 +237,6 @@ pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> St
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();
         }
-        let table = points_table(&templates, &backend.track, &WP, &segment);
         link(&templates, &p, &m, &table, &mut document);
         if range.end == backend.track.len() {
             break;

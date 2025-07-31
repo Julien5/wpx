@@ -262,9 +262,11 @@ fn waypoint_text(
     (x, y): (i32, i32),
     waypoint: &waypoint::Waypoint,
     font_size: f32,
+    offset: i32,
 ) -> Option<Text> {
     let info = waypoint.info.as_ref().unwrap();
     let label = info.profile_label();
+    //let label = format!("{}", info.value.unwrap());
     if label.is_empty() {
         return None;
     }
@@ -273,7 +275,7 @@ fn waypoint_text(
         .set("text-anchor", "middle")
         .set(
             "transform",
-            format!("translate({} {}) scale(1 -1)", x, y - 30),
+            format!("translate({} {}) scale(1 -1)", x, y + offset),
         );
     Some(ret)
 }
@@ -483,15 +485,37 @@ impl Profile {
         }
     }
 
-    fn add_waypoint(&mut self, w: &waypoint::Waypoint) {
+    fn add_waypoint(&mut self, waypoints: &Vec<waypoint::Waypoint>, index: usize, in_table: bool) {
+        let w = &waypoints[index];
         let info = w.info.as_ref().unwrap();
         let (x, y) = self.toSD((info.distance, info.elevation));
         let font_size = 24f32 * self.font_size_factor;
+        let mut is_top = false;
+        if 0 < index && (index + 1) < waypoints.len() {
+            let next = &waypoints[index + 1];
+            let prev = &waypoints[index - 1];
+            // tops
+            if prev.elevation() < w.elevation() && next.elevation() < w.elevation() {
+                is_top = true;
+            }
+        }
         self.addSD(waypoint_circle((x, y), &w));
-        if w.origin == WaypointOrigin::DouglasPeucker {
+        if !in_table {
+            return;
+        }
+
+        let mut label_offset = if self.render_device == RenderDevice::PDF {
+            -30
+        } else {
+            -20
+        };
+        if w.origin == WaypointOrigin::DouglasPeucker && is_top {
+            if self.render_device == RenderDevice::PDF {
+                label_offset = label_offset - 10;
+            }
             self.addSD(waypoint_elevation_text((x, y), &w, font_size));
         }
-        match waypoint_text((x, y), &w, font_size) {
+        match waypoint_text((x, y), &w, font_size, label_offset) {
             Some(node) => {
                 self.addSD(node);
             }
@@ -502,12 +526,29 @@ impl Profile {
         let distance = w.info.as_ref().unwrap().distance;
         self.bbox.xmin <= distance && distance <= self.bbox.xmax
     }
+    pub fn show_waypoint_in_table(&self, waypoints: &Vec<waypoint::Waypoint>) -> Vec<usize> {
+        // the waypoints indices visible in this profile..
+        let mut indices: Vec<usize> = (0..waypoints.len())
+            .collect::<Vec<usize>>()
+            .into_iter()
+            .filter(|k| self.shows_waypoint(&waypoints[*k]))
+            .collect();
+        // sorted by value
+        indices.sort_by_key(|k| waypoints[*k].info.as_ref().unwrap().value.unwrap());
+        indices.truncate(15);
+        indices.sort();
+        indices
+    }
+
     pub fn add_waypoints(&mut self, waypoints: &Vec<waypoint::Waypoint>) {
-        for w in waypoints {
+        let V = self.show_waypoint_in_table(waypoints);
+        for k in 0..waypoints.len() {
+            let w = &waypoints[k];
             if !self.shows_waypoint(w) {
                 continue;
             }
-            self.add_waypoint(w);
+            println!("value[{}]={}", k, w.info.as_ref().unwrap().value.unwrap());
+            self.add_waypoint(&waypoints, k, V.contains(&k));
         }
     }
 

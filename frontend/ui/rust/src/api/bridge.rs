@@ -39,6 +39,11 @@ impl Segment {
     pub fn shows_waypoint(&self, wp: &Waypoint) -> bool {
         self._impl.shows_waypoint(wp)
     }
+
+    #[frb(sync)]
+    pub fn shows_waypoint_in_table(&self, waypoints: &Vec<Waypoint>) -> Vec<usize> {
+        self._impl.show_waypoint_in_table(waypoints)
+    }
 }
 
 #[frb(mirror(UTMPoint))]
@@ -63,25 +68,26 @@ pub struct _Parameters {
 
 #[frb(mirror(WaypointInfo))]
 pub struct _WaypointInfo {
-    wgs84: (f64, f64, f64),
-    utm: UTMPoint,
-    origin: WaypointOrigin,
-    distance: f64,
-    elevation: f64,
-    inter_distance: f64,
-    inter_elevation_gain: f64,
-    inter_slope: f64,
-    name: String,
-    description: String,
-    time: String, // rfc3339
-    track_index: usize,
+    pub wgs84: (f64, f64, f64),
+    pub utm: UTMPoint,
+    pub origin: WaypointOrigin,
+    pub distance: f64,
+    pub elevation: f64,
+    pub inter_distance: f64,
+    pub inter_elevation_gain: f64,
+    pub inter_slope: f64,
+    pub name: String,
+    pub description: String,
+    pub time: String,
+    pub track_index: usize,
+    pub value: Option<usize>,
 }
 
 #[frb(mirror(Waypoint))]
 pub struct _Waypoint {
     pub wgs84: (f64, f64, f64),
     pub utm: UTMPoint,
-    pub track_index: usize,
+    pub track_index: Option<usize>,
     pub origin: WaypointOrigin,
     pub name: Option<String>,
     pub description: Option<String>,

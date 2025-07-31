@@ -23,6 +23,7 @@ pub struct WaypointInfo {
     pub description: String,
     pub time: String,
     pub track_index: usize,
+    pub value: Option<usize>,
 }
 
 impl WaypointInfo {
@@ -100,5 +101,9 @@ impl Waypoint {
 
     pub fn get_track_index(&self) -> usize {
         self.track_index.unwrap()
+    }
+
+    pub fn elevation(&self) -> f64 {
+        self.wgs84.2
     }
 }
