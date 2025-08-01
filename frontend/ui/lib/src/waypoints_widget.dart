@@ -23,7 +23,7 @@ class WayPointsViewState extends State<WayPointsView> {
 
   @override
   Widget build(BuildContext context) {
-    var local=widget.segmentsProvider!.waypointInfos(widget.segment!);
+    var local=widget.segmentsProvider!.waypointTable(widget.segment!);
 
     developer.log("[WayPointsViewState] [build] #_waypoints=${local.length}");
 
@@ -46,7 +46,7 @@ class WayPointsViewState extends State<WayPointsView> {
       rows:
           local.asMap().entries.map((entry) {
             var index=entry.key;
-            var info = entry.value;
+            var info = entry.value.info!;
             var dt = DateTime.parse(info.time);
             var km = info.distance / 1000;
             var ikm = info.interDistance / 1000;

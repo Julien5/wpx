@@ -150,8 +150,8 @@ impl Bridge {
         self.backend.set_parameters(parameters);
     }
     #[frb(sync)]
-    pub fn waypoints_info_table(&self, segment: &Segment) -> Vec<WaypointInfo> {
-        self.backend.get_waypoint_infos(&segment._impl)
+    pub fn waypoints_table(&self, segment: &Segment) -> Vec<Waypoint> {
+        self.backend.get_waypoint_table(&segment._impl)
     }
     pub async fn renderSegmentTrack(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);

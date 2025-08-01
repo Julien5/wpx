@@ -1,116 +1,9 @@
 #![allow(non_snake_case)]
 
 use crate::backend::Backend;
-use crate::gpsdata;
 use crate::render_device::RenderDevice;
-use crate::utm::UTMPoint;
 use crate::waypoint;
-
-use svg::node::element::path::{Command, Data, Position};
-use svg::node::element::Path;
-use svg::Document;
-
-fn to_graphics_coordinates(p: &UTMPoint, ymax: f64) -> (f64, f64) {
-    (p.x(), ymax - p.y())
-}
-
-struct BoundingBox {
-    min: (f64, f64),
-    max: (f64, f64),
-}
-
-impl BoundingBox {
-    fn new() -> BoundingBox {
-        let min = (f64::MAX, f64::MAX);
-        let max = (f64::MIN, f64::MIN);
-        BoundingBox { min, max }
-    }
-    fn width(&self) -> f64 {
-        return self.max.0 - self.min.0;
-    }
-    fn height(&self) -> f64 {
-        return self.max.1 - self.min.1;
-    }
-    fn update(&mut self, p: &UTMPoint) {
-        if p.x() > self.max.0 {
-            self.max.0 = p.x();
-        }
-        if p.y() > self.max.1 {
-            self.max.1 = p.y();
-        }
-        if p.x() < self.min.0 {
-            self.min.0 = p.x();
-        }
-        if p.y() < self.min.1 {
-            self.min.1 = p.y();
-        }
-    }
-    fn fix_aspect_ratio(&mut self) {
-        let X = (self.min.0 + self.max.0) / 2f64;
-        let Y = (self.min.1 + self.max.1) / 2f64;
-        if self.height() > self.width() {
-            let delta = 0.5f64 * (self.height());
-            self.max.0 = X + delta;
-            self.min.0 = X - delta;
-        } else {
-            let delta = 0.5f64 * self.width();
-            self.max.1 = Y + delta;
-            self.min.1 = Y - delta;
-        }
-    }
-}
-
-fn map(
-    geodata: &gpsdata::Track,
-    waypoints: &Vec<waypoint::Waypoint>,
-    range: &std::ops::Range<usize>,
-) -> String {
-    let mut data = Data::new();
-    let path = &geodata.utm;
-    let mut bbox = BoundingBox::new();
-    for k in range.clone() {
-        bbox.update(&geodata.utm[k]);
-    }
-    bbox.fix_aspect_ratio();
-    for k in range.clone() {
-        let p = &path[k];
-        let (xg, yg) = to_graphics_coordinates(p, bbox.max.1);
-        if data.is_empty() {
-            data.append(Command::Move(Position::Absolute, (xg, yg).into()));
-        }
-        data.append(Command::Line(Position::Absolute, (xg, yg).into()));
-    }
-
-    let svgpath = Path::new()
-        .set("fill", "none")
-        .set("stroke", "black")
-        .set("stroke-width", 2)
-        .set("d", data);
-
-    let mut document = Document::new()
-        .set("viewBox", (bbox.min.0, 0, bbox.width(), bbox.height()))
-        .add(svgpath);
-
-    for w in waypoints {
-        let k = w.get_track_index();
-        if !range.contains(&k) {
-            continue;
-        }
-        let (x, y) = to_graphics_coordinates(&w.utm, bbox.max.1);
-        let dot = svg::node::element::Circle::new()
-            .set("cx", x)
-            .set("cy", y)
-            .set("r", 500);
-        document = document.add(dot);
-        let text = svg::node::element::Text::new(w.info.as_ref().unwrap().profile_label())
-            .set("text-anchor", "left")
-            .set("font-size", "1500")
-            .set("x", x + 700f64)
-            .set("y", y);
-        document = document.add(text);
-    }
-    document.to_string()
-}
+use crate::{gpsdata, svgmap};
 
 use std::str::FromStr;
 
@@ -133,7 +26,7 @@ impl Templates {
 fn points_table(
     templates: &Templates,
     _track: &gpsdata::Track,
-    waypoints: &Vec<waypoint::WaypointInfo>,
+    waypoints: &Vec<waypoint::Waypoint>,
 ) -> String {
     let table = templates.table_points.clone();
     let mut template_line_orig = String::new();
@@ -150,7 +43,7 @@ fn points_table(
     // TODO: avoid recomputing the automatic points
     let mut lines = Vec::new();
     for k in 0..waypoints.len() {
-        let info = &waypoints[k];
+        let info = &waypoints[k].info.as_ref().unwrap();
         let mut copy = template_line.clone();
         copy = copy.replace("{name}", info.name.as_str());
         let datetime = chrono::DateTime::parse_from_rfc3339(info.time.as_str()).unwrap();
@@ -207,23 +100,22 @@ pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> St
     let mut start = 0f64;
     let mut k = 0usize;
     let segments = backend.segments();
+    let waypoints = backend.get_waypoints();
     for segment in &segments {
         let range = &segment.range;
         if range.is_empty() {
             break;
         }
-        let WP = backend.get_waypoints();
-        let table = points_table(
-            &templates,
-            &backend.track,
-            &backend.get_waypoint_infos(&segment),
-        );
+        let waypoints_table = backend.get_waypoint_table(&segment);
+        let table = points_table(&templates, &backend.track, &waypoints_table);
         let p = backend.render_segment(segment, (W, H), RenderDevice::PDF);
         if debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);
             std::fs::write(&f, &p).unwrap();
         }
-        let m = map(&backend.track, &WP, &range);
+        let W = 400i32;
+        let H = 400i32;
+        let m = svgmap::map(&backend.track, &waypoints, &segment, W, H);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();

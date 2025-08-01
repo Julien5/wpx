@@ -11,6 +11,7 @@ pub mod render;
 pub mod render_device;
 pub mod segment;
 pub mod speed;
+pub mod svgmap;
 pub mod svgprofile;
 pub mod utm;
 pub mod waypoint;

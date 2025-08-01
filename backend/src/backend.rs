@@ -126,7 +126,7 @@ impl Backend {
             w.info = Some(infos[k].clone());
         }
     }
-    pub fn get_waypoint_infos(&self, segment: &Segment) -> Vec<waypoint::WaypointInfo> {
+    pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<waypoint::Waypoint> {
         let mut ret = Vec::new();
         let waypoints = &self.waypoints;
         let V = waypoints_table::show_waypoints_in_table(&self.waypoints, &segment.profile.bbox);
@@ -136,9 +136,10 @@ impl Backend {
                 continue;
             }
             assert!(waypoints[k].info.is_some());
-            let info = self.create_waypoint_info(&waypoints[k], wprev);
+            let mut copy = waypoints[k].clone();
+            copy.info = Some(self.create_waypoint_info(&waypoints[k], wprev));
             wprev = Some(&self.waypoints[k]);
-            ret.push(info);
+            ret.push(copy);
         }
         ret
     }
