@@ -5,6 +5,7 @@ use crate::gpsdata::ProfileBoundingBox;
 use crate::render_device::RenderDevice;
 use crate::waypoint;
 use crate::waypoint::WaypointOrigin;
+use crate::waypoints_table;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
 use svg::Node;
@@ -306,7 +307,7 @@ pub struct Profile {
     SL: Group,
     SB: Group,
     pub SD: Group,
-    bbox: gpsdata::ProfileBoundingBox,
+    pub bbox: gpsdata::ProfileBoundingBox,
     render_device: RenderDevice,
     font_size_factor: f32,
 }
@@ -523,25 +524,15 @@ impl Profile {
         }
     }
     pub fn shows_waypoint(&self, w: &waypoint::Waypoint) -> bool {
-        let distance = w.info.as_ref().unwrap().distance;
-        self.bbox.xmin <= distance && distance <= self.bbox.xmax
+        waypoints_table::shows_waypoint(w, &self.bbox)
     }
-    pub fn show_waypoint_in_table(&self, waypoints: &Vec<waypoint::Waypoint>) -> Vec<usize> {
-        // the waypoints indices visible in this profile..
-        let mut indices: Vec<usize> = (0..waypoints.len())
-            .collect::<Vec<usize>>()
-            .into_iter()
-            .filter(|k| self.shows_waypoint(&waypoints[*k]))
-            .collect();
-        // sorted by value
-        indices.sort_by_key(|k| waypoints[*k].info.as_ref().unwrap().value.unwrap());
-        indices.truncate(15);
-        indices.sort();
-        indices
+
+    pub fn show_waypoints_in_table(&self, w: &Vec<waypoint::Waypoint>) -> Vec<usize> {
+        waypoints_table::show_waypoints_in_table(w, &self.bbox)
     }
 
     pub fn add_waypoints(&mut self, waypoints: &Vec<waypoint::Waypoint>) {
-        let V = self.show_waypoint_in_table(waypoints);
+        let V = self.show_waypoints_in_table(waypoints);
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
             if !self.shows_waypoint(w) {

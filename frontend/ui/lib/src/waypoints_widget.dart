@@ -23,19 +23,7 @@ class WayPointsViewState extends State<WayPointsView> {
 
   @override
   Widget build(BuildContext context) {
-    List<bridge.Waypoint> all = widget.segmentsProvider!.waypoints();
-    var V=widget.segment!.showsWaypointInTable(waypoints:all);
-    List<bridge.Waypoint> local = [];
-    for (int k = 0; k< all.length; k++) {
-      bridge.Waypoint waypoint=all[k];
-      if (!widget.segment!.showsWaypoint(wp:waypoint)) {
-        continue;
-      }
-      if (!V.contains(BigInt.from(k))) {
-        continue;
-      }
-      local.add(waypoint);
-    }
+    var local=widget.segmentsProvider!.waypointInfos(widget.segment!);
 
     developer.log("[WayPointsViewState] [build] #_waypoints=${local.length}");
 
@@ -57,10 +45,8 @@ class WayPointsViewState extends State<WayPointsView> {
       ],
       rows:
           local.asMap().entries.map((entry) {
-            int index = entry.key;
-            bridge.Waypoint waypoint = entry.value;
-
-            var info = waypoint.info!;
+            var index=entry.key;
+            var info = entry.value;
             var dt = DateTime.parse(info.time);
             var km = info.distance / 1000;
             var ikm = info.interDistance / 1000;

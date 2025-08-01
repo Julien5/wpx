@@ -39,11 +39,6 @@ impl Segment {
     pub fn shows_waypoint(&self, wp: &Waypoint) -> bool {
         self._impl.shows_waypoint(wp)
     }
-
-    #[frb(sync)]
-    pub fn shows_waypoint_in_table(&self, waypoints: &Vec<Waypoint>) -> Vec<usize> {
-        self._impl.show_waypoint_in_table(waypoints)
-    }
 }
 
 #[frb(mirror(UTMPoint))]
@@ -153,6 +148,10 @@ impl Bridge {
     #[frb(sync)]
     pub fn set_parameters(&mut self, parameters: &Parameters) {
         self.backend.set_parameters(parameters);
+    }
+    #[frb(sync)]
+    pub fn waypoints_info_table(&self, segment: &Segment) -> Vec<WaypointInfo> {
+        self.backend.get_waypoint_infos(&segment._impl)
     }
     pub async fn renderSegmentTrack(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);

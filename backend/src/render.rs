@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::backend::{Backend, Segment};
+use crate::backend::Backend;
 use crate::gpsdata;
 use crate::render_device::RenderDevice;
 use crate::utm::UTMPoint;
@@ -133,8 +133,7 @@ impl Templates {
 fn points_table(
     templates: &Templates,
     _track: &gpsdata::Track,
-    waypoints: &Vec<waypoint::Waypoint>,
-    segment: &Segment,
+    waypoints: &Vec<waypoint::WaypointInfo>,
 ) -> String {
     let table = templates.table_points.clone();
     let mut template_line_orig = String::new();
@@ -150,20 +149,8 @@ fn points_table(
     debug_assert!(!template_line.is_empty());
     // TODO: avoid recomputing the automatic points
     let mut lines = Vec::new();
-    let V = segment.profile.show_waypoint_in_table(&waypoints);
     for k in 0..waypoints.len() {
-        let this = &waypoints[k];
-        let info = this.info.as_ref().unwrap();
-        if !segment.profile.shows_waypoint(this) {
-            continue;
-        }
-        /*
-         * TODO: recompute dist and d+ to mirror the distances
-         * since the last waypoint *shown on the table*.
-         */
-        if !V.contains(&k) {
-            continue;
-        }
+        let info = &waypoints[k];
         let mut copy = template_line.clone();
         copy = copy.replace("{name}", info.name.as_str());
         let datetime = chrono::DateTime::parse_from_rfc3339(info.time.as_str()).unwrap();
@@ -226,7 +213,11 @@ pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> St
             break;
         }
         let WP = backend.get_waypoints();
-        let table = points_table(&templates, &backend.track, &WP, &segment);
+        let table = points_table(
+            &templates,
+            &backend.track,
+            &backend.get_waypoint_infos(&segment),
+        );
         let p = backend.render_segment(segment, (W, H), RenderDevice::PDF);
         if debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);

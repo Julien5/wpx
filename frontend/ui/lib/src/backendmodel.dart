@@ -216,6 +216,10 @@ class SegmentsProvider extends ChangeNotifier {
     return _waypoints;
   }
 
+  List<bridge.WaypointInfo> waypointInfos(bridge.Segment segment) {
+    return _bridge.waypointsInfoTable(segment: segment);
+  }
+
   bridge.SegmentStatistics statistics() {
     return _bridge.statistics();
   }

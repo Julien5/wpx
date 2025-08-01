@@ -11,11 +11,13 @@ pub mod pdf;
 pub mod project;
 pub mod render;
 pub mod render_device;
+pub mod segment;
 pub mod speed;
 pub mod svgprofile;
 pub mod utm;
 pub mod waypoint;
 pub mod waypoint_values;
+pub mod waypoints_table;
 
 use backend::Backend;
 
@@ -97,16 +99,5 @@ fn main() -> Result<(), error::Error> {
     );
     println!("make: {}", gpxname);
     std::fs::write(gpxname, &gpxbytes).expect("Could not write gpx.");
-
-    println!("test backend");
-    let backend = Backend::from_filename(gpxinput)?;
-    let W = backend.get_waypoint_infos();
-    for w in W {
-        println!(
-            "waypoint dist={:6.2} ele={:5.1}",
-            (w.distance / 1000f64),
-            w.elevation
-        );
-    }
     Ok(())
 }

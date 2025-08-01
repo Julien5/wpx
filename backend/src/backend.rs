@@ -10,50 +10,19 @@ use crate::parameters::Parameters;
 use crate::pdf;
 use crate::render;
 use crate::render_device::RenderDevice;
-use crate::svgprofile;
 use crate::waypoint;
 use crate::waypoint_values;
+use crate::waypoints_table;
 
 type DateTime = crate::utm::DateTime;
+pub type Segment = crate::segment::Segment;
+pub type SegmentStatistics = crate::segment::SegmentStatistics;
 
 pub struct Backend {
     parameters: Parameters,
     pub track: gpsdata::Track,
     pub waypoints: Vec<waypoint::Waypoint>,
     track_smooth_elevation: Vec<f64>,
-}
-
-#[derive(Clone)]
-pub struct Segment {
-    pub id: usize,
-    pub range: std::ops::Range<usize>,
-    pub profile: svgprofile::Profile,
-}
-
-impl Segment {
-    pub fn shows_waypoint(&self, wp: &waypoint::Waypoint) -> bool {
-        self.profile.shows_waypoint(wp)
-    }
-    pub fn show_waypoint_in_table(&self, waypoints: &Vec<waypoint::Waypoint>) -> Vec<usize> {
-        self.profile.show_waypoint_in_table(&waypoints)
-    }
-}
-
-pub struct SegmentStatistics {
-    pub length: f64,
-    pub elevation_gain: f64,
-    pub distance_start: f64,
-    pub distance_end: f64,
-}
-
-impl Segment {
-    pub fn new(id: usize, range: std::ops::Range<usize>, bbox: &ProfileBoundingBox) -> Segment {
-        Segment {
-            id,
-            range: range.clone(),
-            profile: svgprofile::Profile::init(&bbox),
-        }
-    }
 }
 
 fn waypoint_time(start_time: DateTime, distance: f64, speed: f64) -> DateTime {
@@ -87,7 +56,7 @@ impl Backend {
         self.update_waypoints();
     }
 
-    fn create_step(
+    fn create_waypoint_info(
         self: &Backend,
         w: &waypoint::Waypoint,
         wprev: Option<&waypoint::Waypoint>,
@@ -149,7 +118,7 @@ impl Backend {
                 0 => None,
                 _ => Some(&self.waypoints[k - 1]),
             };
-            let step = self.create_step(w, wprev);
+            let step = self.create_waypoint_info(w, wprev);
             infos.push(step.clone());
         }
         for k in 0..self.waypoints.len() {
@@ -157,17 +126,19 @@ impl Backend {
             w.info = Some(infos[k].clone());
         }
     }
-    pub fn get_waypoint_infos(&self) -> Vec<waypoint::WaypointInfo> {
+    pub fn get_waypoint_infos(&self, segment: &Segment) -> Vec<waypoint::WaypointInfo> {
         let mut ret = Vec::new();
-        for k in 0..self.waypoints.len() {
-            match &self.waypoints[k].info {
-                Some(s) => {
-                    ret.push(s.clone());
-                }
-                None => {
-                    debug_assert!(false);
-                }
+        let waypoints = &self.waypoints;
+        let V = waypoints_table::show_waypoints_in_table(&self.waypoints, &segment.profile.bbox);
+        let mut wprev: Option<&waypoint::Waypoint> = None;
+        for k in 0..waypoints.len() {
+            if !V.contains(&k) {
+                continue;
             }
+            assert!(waypoints[k].info.is_some());
+            let info = self.create_waypoint_info(&waypoints[k], wprev);
+            wprev = Some(&self.waypoints[k]);
+            ret.push(info);
         }
         ret
     }
