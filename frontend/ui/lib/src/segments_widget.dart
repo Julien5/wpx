@@ -32,7 +32,7 @@ class SegmentsView extends StatelessWidget {
     developer.log("[S]=${S.length}");
     assert(ret.isEmpty);
     for (var renderer in S) {
-      var w = RenderingsProvider(renderer, SegmentStack());
+      var w = RenderingsProvider(renderer, SegmentView());
       w.renderers.trackRendering.start();
       ret.add(w);
     }

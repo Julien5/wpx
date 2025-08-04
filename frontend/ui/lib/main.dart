@@ -16,7 +16,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      setWindowFrame(Rect.fromLTWH(150, 150, 1600, 900));
+      setWindowFrame(Rect.fromLTWH(1400, 150, 500, 900));
     }
   }
   await RustLib.init();

@@ -199,7 +199,6 @@ impl Backend {
     }
 
     pub fn from_filename(filename: &str) -> Result<Backend, Error> {
-        println!("filename:{}", filename);
         let mut f = std::fs::File::open(filename).unwrap();
         let mut buffer = Vec::new();
         // read the whole file
@@ -251,6 +250,19 @@ impl Backend {
         profile.add_waypoints(&W);
         profile.render()
     }
+    pub fn render_yaxis_labels_overlay(
+        &mut self,
+        segment: &Segment,
+        (W, H): (i32, i32),
+        render_device: RenderDevice,
+    ) -> String {
+        println!("render_segment_track:{}", segment.id);
+        let mut profile = segment.profile.clone();
+        profile.set_render_device(render_device);
+        profile.reset_size(W, H);
+        profile.add_yaxis_labels_overlay();
+        profile.render()
+    }
     pub fn render_segment_track(
         &mut self,
         segment: &Segment,
@@ -263,7 +275,10 @@ impl Backend {
         profile.reset_size(W, H);
         profile.add_canvas();
         profile.add_track(&self.track, &self.track_smooth_elevation);
-        profile.render()
+        let ret = profile.render();
+        let filename = std::format!("/tmp/segment-{}.svg", segment.id);
+        //std::fs::write(filename, &ret).expect("Unable to write file");
+        ret
     }
     pub fn render_segment_waypoints(
         &mut self,
@@ -277,8 +292,7 @@ impl Backend {
         profile.reset_size(W, H);
         profile.add_waypoints(&self.get_waypoints());
         let ret = profile.render();
-        let _filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
-        // TODO: compile if not wasm
+        //let filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
         //std::fs::write(filename, &ret).expect("Unable to write file");
         ret
     }
@@ -301,7 +315,8 @@ impl Backend {
         }
     }
     pub fn generatePdf(&mut self, debug: bool) -> Vec<u8> {
-        let typbytes = render::compile_pdf(self, debug, (1400, 400));
+        let typbytes = render::compile_pdf(self, debug, (1000, 285));
+        //let typbytes = render::compile_pdf(self, debug, (1400, 400));
         let ret = pdf::compile(&typbytes, debug);
         println!("generated {} bytes", ret.len());
         ret

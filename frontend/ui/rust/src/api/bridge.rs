@@ -153,6 +153,13 @@ impl Bridge {
     pub fn waypoints_table(&self, segment: &Segment) -> Vec<Waypoint> {
         self.backend.get_waypoint_table(&segment._impl)
     }
+    #[frb(sync)]
+    pub fn renderSegmentYAxis(&mut self, segment: &Segment, W: i32, H: i32) -> String {
+        //let delay = std::time::Duration::from_millis(50);
+        //std::thread::sleep(delay);
+        self.backend
+            .render_yaxis_labels_overlay(&segment._impl, (W, H), RenderDevice::Native)
+    }
     pub async fn renderSegmentTrack(&mut self, segment: &Segment, W: i32, H: i32) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);

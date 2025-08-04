@@ -168,7 +168,6 @@ fn remove_near_waypoints(track: &gpsdata::Track, W: &mut Waypoints) -> Waypoints
         let neighbors = waypoints_within_distance(track, W, k, 2000f64);
         for l in neighbors {
             if W[l].origin != WaypointOrigin::GPX {
-                println!("hide {}", l);
                 hide.insert(l);
             }
         }

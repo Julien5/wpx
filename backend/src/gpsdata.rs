@@ -119,12 +119,27 @@ impl Track {
     pub fn from_segment(segment: &TrackSegment) -> Result<Track, Error> {
         let mut _distance = Vec::new();
 
+        // see https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system
+        // we take the first point of each segment
+        // we should wait until we have the user segments (pages) to ensure the same
+        // zone for a minimap.
+        let zone = match segment.points.is_empty() {
+            true => 32i32,
+            false => {
+                let long = segment.points[0].point().x() as f64;
+                (((long + 180f64) / 6f64).floor() + 1f64) as i32
+            }
+        };
+
         use proj4rs::proj::Proj;
-        let spec = "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs +type=crs";
-        let utm32n = Proj::from_proj_string(spec).unwrap();
+        let spec = format!(
+            "+proj=utm +zone={} +datum=WGS84 +units=m +no_defs +type=crs",
+            zone
+        );
+        let utm_spec = Proj::from_proj_string(spec.as_str()).unwrap();
 
         let spec = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-        let wgs84 = Proj::from_proj_string(spec).unwrap();
+        let wgs84_spec = Proj::from_proj_string(spec).unwrap();
         let mut utm = Vec::new();
         let mut wgs = Vec::new();
         let mut dacc = 0f64;
@@ -141,7 +156,7 @@ impl Track {
             wgs.push((lon, lat, elevation));
             debug_assert_eq!(wgs.len(), k + 1);
             let mut p = (lon.to_radians(), lat.to_radians());
-            proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
+            proj4rs::transform::transform(&wgs84_spec, &utm_spec, &mut p).unwrap();
             utm.push(UTMPoint(p.0, p.1));
             if k > 0 {
                 dacc += distance(wgs[k - 1].0, wgs[k - 1].1, wgs[k].0, wgs[k].1);

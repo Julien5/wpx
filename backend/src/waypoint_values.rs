@@ -101,13 +101,6 @@ fn find_max_distance(
             dmax = d;
             kdmax = k;
         }
-        println!(
-            "kdmax:{} dmax:{:.1} [{},{}]",
-            kdmax,
-            dmax / 1000f64,
-            wprev,
-            wnext
-        );
     }
     kdmax
 }
@@ -121,7 +114,6 @@ fn set_soft_value(
     let kdmax = find_max_distance(waypoints, track, values);
     debug_assert!(!values.contains_key(&kdmax));
     values.insert(kdmax, value);
-    println!("kdmax={}", kdmax);
 }
 
 pub fn compute_values(waypoints: &mut Waypoints, track: &gpsdata::Track) {
@@ -142,7 +134,6 @@ pub fn compute_values(waypoints: &mut Waypoints, track: &gpsdata::Track) {
     let mut value = max_value + 1;
     while values.len() < L {
         set_soft_value(waypoints, &track, &mut values, value);
-        //println!("|values|={} ({}) for {}", values.len(), L, value);
         value = value + 1;
     }
     for k in 0..L {

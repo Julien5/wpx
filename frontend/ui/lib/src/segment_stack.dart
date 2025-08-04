@@ -4,18 +4,85 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
 import 'package:ui/src/future_rendering_widget.dart';
+import 'package:ui/src/hardlegend.dart';
+import 'package:ui/src/minisvg.dart';
 import 'package:ui/src/waypoints_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
+class Legend extends StatelessWidget {
+  const Legend({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<TrackRenderer>(
+      builder: (context, trackRenderer, child) {
+        SegmentsProvider model = Provider.of<SegmentsProvider>(context);
+        var size = Size(1000, 285);
+        String svg = model.renderSegmentYAxis(trackRenderer.segment, size);
+        return Stack(children: [MiniSvgWidget(svg: svg, size: size)]);
+      },
+    );
+  }
+}
+
+class SegmentScrollView extends StatelessWidget {
+  const SegmentScrollView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
+    );
+  }
+}
 
 class SegmentStack extends StatelessWidget {
   const SegmentStack({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Print the size of the parent widget
+        developer.log(
+          'Parent size: width=${constraints.maxWidth}, height=${constraints.maxHeight}',
+        );
+
+        var scrollView = SegmentScrollView();
+        var box = SizedBox(
+          height: 285,
+          child: Stack(
+            children: [
+              Positioned.fill(child: scrollView),
+              if (constraints.maxWidth <1000) Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: SizedBox(width: 50, child: Legend()),
+              ),
+            ],
+          ),
+        );
+        return ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 1000, // Constrain the width to a maximum of 1000 pixels
+          ),
+          child: box,
+        );
+      },
+    );
+  }
+}
+
+class SegmentView extends StatelessWidget {
+  const SegmentView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
 
     scrollController.addListener(() {
-      // Calculate visible rows based on scroll position
       double headerHeight = 56;
       double scrollOffset = max(scrollController.offset - headerHeight, 0);
       developer.log("offset: $scrollController.offset");
@@ -31,19 +98,13 @@ class SegmentStack extends StatelessWidget {
       developer.log("Visible rows: $firstVisibleRow to $lastVisibleRow");
     });
 
-    var stack = SizedBox(
-      height: 310, // Set a fixed height of 450 pixels
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
-      ),
-    );
-
     var table = SingleChildScrollView(
       controller: scrollController, // Attach the ScrollController here
       scrollDirection: Axis.vertical,
       child: WayPointsConsumer(),
     );
+
+    var stack = SegmentStack();
 
     return Column(
       children: [

@@ -9,12 +9,14 @@ use crate::waypoints_table;
 use svg::node::element::path::Command;
 use svg::node::element::path::Position;
 use svg::Node;
+
 type Data = svg::node::element::path::Data;
 type Group = svg::node::element::Group;
 type Rect = svg::node::element::Path;
 type Circle = svg::node::element::Circle;
 type Path = svg::node::element::Path;
 type Text = svg::node::element::Text;
+
 use crate::gpsdata;
 
 fn line(p1: (i32, i32), p2: (i32, i32)) -> Data {
@@ -88,6 +90,17 @@ fn texty(label: &str, pos: (i32, i32)) -> Text {
         "transform",
         format!("translate({} {}) scale(-1 -1)", pos.0, pos.1),
     );
+    ret
+}
+
+fn texty_overlay(label: &str, pos: (i32, i32)) -> Text {
+    let ret = Text::new(label)
+        .set("text-anchor", "end")
+        .set(
+            "transform",
+            format!("translate({} {}) scale(-1 -1)", pos.0, pos.1),
+        )
+        .set("font-size", "10");
     ret
 }
 
@@ -310,6 +323,7 @@ pub struct Profile {
     pub bbox: gpsdata::ProfileBoundingBox,
     render_device: RenderDevice,
     font_size_factor: f32,
+    frame_stroke_width: i32,
 }
 
 impl Profile {
@@ -320,14 +334,14 @@ impl Profile {
                 self.font_size_factor = 0.5f32;
             }
             _ => {
-                self.font_size_factor = 1f32;
+                self.font_size_factor = 0.6f32;
             }
         }
     }
     pub fn init(bbox: &gpsdata::ProfileBoundingBox) -> Profile {
         let W = 1400;
         let H = 400;
-        let Mleft = ((W as f64) * 0.03f64).floor() as i32;
+        let Mleft = ((W as f64) * 0.05f64).floor() as i32;
         let Mbottom = ((H as f64) / 10f64).floor() as i32;
         Profile {
             W,
@@ -347,26 +361,34 @@ impl Profile {
                 .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft)),
             render_device: RenderDevice::Unknown,
             font_size_factor: 1f32,
+            frame_stroke_width: 3i32,
         }
     }
 
     pub fn reset_size(&mut self, W: i32, H: i32) {
-        let Mleft = ((W as f64) * 0.05f64).floor() as i32;
-        let Mbottom = ((H as f64) / 10f64).floor() as i32;
+        self.Mleft = ((W as f64) * 0.05f64).floor() as i32;
+        self.Mbottom = ((H as f64) / 10f64).floor() as i32;
         self.W = W;
         self.H = H;
-        self.Mleft = Mleft;
-        self.Mbottom = Mbottom;
+
+        if self.render_device != RenderDevice::PDF {
+            // no "margin before 0"
+            self.bbox.xmin = self.bbox.xmin.max(0f64);
+            self.Mleft = 0;
+        }
         self.BG = Group::new().set("id", "BG");
-        self.SL = Group::new()
-            .set("id", "SL")
-            .set("transform", transformSL(W, H, Mleft, Mbottom));
-        self.SB = Group::new()
-            .set("id", "SB")
-            .set("transform", transformSB(W, H, Mleft, Mbottom));
-        self.SD = Group::new()
-            .set("id", "SD")
-            .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft));
+        self.SL = Group::new().set("id", "SL").set(
+            "transform",
+            transformSL(self.W, self.H, self.Mleft, self.Mbottom),
+        );
+        self.SB = Group::new().set("id", "SB").set(
+            "transform",
+            transformSB(self.W, self.H, self.Mleft, self.Mbottom),
+        );
+        self.SD = Group::new().set("id", "SD").set(
+            "transform",
+            transformSD(self.W, self.H, self.Mleft, self.Mbottom, self.WD()),
+        );
     }
 
     pub fn toSD(&self, (x, y): (f64, f64)) -> (i32, i32) {
@@ -385,10 +407,10 @@ impl Profile {
         (f(x).floor() as i32, g(y).floor() as i32)
     }
     pub fn WD(&self) -> i32 {
-        self.W - self.Mleft
+        self.W - self.Mleft - self.frame_stroke_width / 2
     }
     pub fn HD(&self) -> i32 {
-        self.H - self.Mbottom
+        self.H - self.Mbottom - self.frame_stroke_width / 2
     }
 
     pub fn addSD<T>(&mut self, node: T)
@@ -399,48 +421,71 @@ impl Profile {
     }
 
     pub fn render(&self) -> String {
-        // adapt font size to small displays
-        let font_size_factor = if self.render_device == RenderDevice::Native {
-            0.5f64
-        } else {
-            1f64
-        };
         let font_size = if self.W < 750 {
-            24f64 * font_size_factor
+            24f32 * self.font_size_factor
         } else {
-            30f64 * font_size_factor
+            30f32 * self.font_size_factor
         };
-        println!("font-size={}", font_size);
         let mut world = Group::new()
             .set("id", "world")
             .set("shape-rendering", "crispEdges")
             .set("font-family", "Libertinus Serif")
-            .set("font-size", format!("{}", font_size))
-            .set("transform", "translate(5 5)");
+            .set("font-size", format!("{}", font_size));
         world.append(self.BG.clone());
-        world.append(self.SL.clone());
-        world.append(self.SB.clone());
-        world.append(self.SD.clone());
+        let mut Woutput = self.W;
+        let C = self.SD.get_children();
+        if C.is_some() && !C.unwrap().is_empty() {
+            world.append(self.SB.clone());
+            world.append(self.SD.clone());
+            if (self.Mleft > 0) {
+                world.append(self.SL.clone());
+            }
+        } else {
+            debug_assert!(self.render_device != RenderDevice::PDF);
+            world.append(self.SL.clone());
+            Woutput = 50;
+        }
 
-        println!("font-size:{}", font_size);
         let document = svg::Document::new()
-            .set("width", self.W + 20)
+            .set("width", Woutput)
             .set("height", self.H)
             .add(world);
 
         document.to_string()
     }
-}
 
-impl Profile {
+    pub fn add_yaxis_labels_overlay(&mut self) {
+        let WD = self.WD();
+        let HD = self.HD();
+
+        for ytick in yticks(&self.bbox) {
+            let pos = toSD((self.bbox.xmin, ytick), WD, HD, &self.bbox);
+            let yd = pos.1;
+            if yd > HD {
+                break;
+            }
+            self.SL.append(texty_overlay(
+                format!("{}", ytick.floor() as i32).as_str(),
+                (-30, yd + 1),
+            ));
+        }
+    }
+
     pub fn add_canvas(&mut self) {
         let WD = self.WD();
         let HD = self.HD();
-        self.SD.append(bbrect("bg", "lightgray", (0, 0), (WD, HD)));
-        self.SD.append(stroke("3", (0, 0), (WD, 0)));
-        self.SD.append(stroke("3", (0, 0), (0, HD)));
-        self.SD.append(stroke("3", (0, HD), (WD, HD)));
-        self.SD.append(stroke("3", (WD, 0), (WD, HD)));
+        if self.render_device != RenderDevice::PDF {
+            self.SD.append(bbrect("bg", "lightgray", (0, 0), (WD, HD)));
+        }
+        let stroke_width = format!("{}", self.frame_stroke_width);
+        self.SD
+            .append(stroke(stroke_width.as_str(), (0, 0), (WD, 0)));
+        self.SD
+            .append(stroke(stroke_width.as_str(), (0, 0), (0, HD)));
+        self.SD
+            .append(stroke(stroke_width.as_str(), (0, HD), (WD, HD)));
+        self.SD
+            .append(stroke(stroke_width.as_str(), (WD, 0), (WD, HD)));
 
         for xtick in xticks(&self.bbox) {
             let xd = toSD((xtick, 0f64), WD, HD, &self.bbox).0;
@@ -453,7 +498,7 @@ impl Profile {
             self.SD.append(stroke("1", (xd, 0), (xd, HD)));
             self.SB.append(textx(
                 format!("{}", (xtick / 1000f64).floor() as i32).as_str(),
-                (xd, 25),
+                (xd, 2 + (25f32 * self.font_size_factor).ceil() as i32),
             ));
         }
 
@@ -466,15 +511,22 @@ impl Profile {
         }
 
         for ytick in yticks(&self.bbox) {
+            let yd = toSD((self.bbox.xmin, ytick), self.WD(), self.HD(), &self.bbox).1;
+            if yd > HD {
+                break;
+            }
+            self.SL.append(texty(
+                format!("{}", ytick.floor() as i32).as_str(),
+                (10, yd - 5),
+            ));
+        }
+
+        for ytick in yticks(&self.bbox) {
             let yd = toSD((self.bbox.xmin, ytick), WD, HD, &self.bbox).1;
             if yd > HD {
                 break;
             }
             self.SD.append(stroke("1", (0, yd), (WD, yd)));
-            self.SL.append(texty(
-                format!("{}", ytick.floor() as i32).as_str(),
-                (10, yd - 5),
-            ));
         }
 
         for ytick in yticks_dashed(&self.bbox) {
@@ -538,7 +590,6 @@ impl Profile {
             if !self.shows_waypoint(w) {
                 continue;
             }
-            println!("value[{}]={}", k, w.info.as_ref().unwrap().value.unwrap());
             self.add_waypoint(&waypoints, k, V.contains(&k));
         }
     }

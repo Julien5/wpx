@@ -113,9 +113,9 @@ pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> St
             let f = format!("/tmp/segment-{}.svg", segment.id);
             std::fs::write(&f, &p).unwrap();
         }
-        let W = 400i32;
-        let H = 400i32;
-        let m = svgmap::map(&backend.track, &waypoints, &segment, W, H);
+        let Wm = 400i32;
+        let Hm = 400i32;
+        let m = svgmap::map(&backend.track, &waypoints, &segment, Wm, Hm);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();

@@ -220,6 +220,14 @@ class SegmentsProvider extends ChangeNotifier {
     return _bridge.waypointsTable(segment: segment);
   }
 
+  String renderSegmentYAxis(bridge.Segment segment, Size size) {
+    return _bridge.renderSegmentYAxis(
+      segment: segment,
+      w: size.width.floor(),
+      h: size.height.floor(),
+    );
+  }
+
   bridge.SegmentStatistics statistics() {
     return _bridge.statistics();
   }

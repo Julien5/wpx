@@ -39,7 +39,8 @@ impl BoundingBox {
             self.min.1 = p.y();
         }
     }
-    fn fix_aspect_ratio(&mut self, W: i32, H: i32) {
+    // TODO: take WxH into account
+    fn fix_aspect_ratio(&mut self, _W: i32, _H: i32) {
         let X = (self.min.0 + self.max.0) / 2f64;
         let Y = (self.min.1 + self.max.1) / 2f64;
         if self.height() > self.width() {
@@ -126,11 +127,9 @@ pub fn map(
     let mut document = Document::new().set("viewBox", (0, 0, W, H)).add(svgpath);
 
     let V = waypoints_table::show_waypoints_in_table(&waypoints, &segment.profile.bbox);
-    println!("V={:?}", V);
 
     for k in 0..waypoints.len() {
         let w = &waypoints[k];
-        let index = w.get_track_index();
         if !bbox.contains(&w.utm) {
             continue;
         }

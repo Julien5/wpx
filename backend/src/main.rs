@@ -41,7 +41,6 @@ struct Cli {
 
 fn main() -> Result<(), error::Error> {
     let args = Cli::parse();
-    println!("args: {:?}", args.output_directory);
     let debug = match args.debug {
         Some(v) => v,
         None => false,
@@ -100,5 +99,18 @@ fn main() -> Result<(), error::Error> {
     );
     println!("make: {}", gpxname);
     std::fs::write(gpxname, &gpxbytes).expect("Could not write gpx.");
+
+    let segments = backend.segments();
+    for k in 0..segments.len() {
+        let segment = &segments[k];
+        let bytes = backend.render_yaxis_labels_overlay(
+            &segment,
+            (1000, 285),
+            render_device::RenderDevice::Native,
+        );
+        let name = format!("/tmp/yaxis-{}.svg", k);
+        println!("make: {}", name);
+        std::fs::write(name, &bytes).expect("Could not write gpx.");
+    }
     Ok(())
 }

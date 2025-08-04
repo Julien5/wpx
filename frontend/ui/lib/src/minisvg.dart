@@ -112,6 +112,8 @@ abstract class Element {
       return TextElement(e, parent);
     } else if (e.name.local == "circle") {
       return CircleElement(e, parent);
+    } else if (e.name.local == "rect") { // Add support for <rect>
+      return RectElement(e, parent);
     } else if (e.name.local == "svg") {
       return GroupElement(e, parent);
     } else if (e.name.local == "g") {
@@ -293,6 +295,7 @@ class TextElement extends Element {
 
   @override
   void paintElement(Canvas canvas, Size size) {
+    
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
@@ -317,6 +320,48 @@ class TextElement extends Element {
     }
     double dy = -0.5 * textPainter.height - 4;
     textPainter.paint(canvas, Offset(dx, dy));
+  }
+}
+
+class RectElement extends Element {
+  late double x, y, width, height;
+  late Color stroke;
+  late Color fill;
+  late double strokeWidth;
+
+  RectElement(super.xmlElement, super.parent) {
+    x = double.parse(attribute("x") ?? "0");
+    y = double.parse(attribute("y") ?? "0");
+    width = double.parse(attribute("width") ?? "0");
+    height = double.parse(attribute("height") ?? "0");
+    stroke = Colors.black;
+    fill = Colors.transparent;
+    strokeWidth = 1.0;
+
+    if (attribute("stroke") != null) {
+      stroke = parseColor(attribute("stroke")!);
+    }
+    if (attribute("fill") != null) {
+      fill = parseColor(attribute("fill")!);
+    }
+    if (attribute("stroke-width") != null) {
+      strokeWidth = double.parse(attribute("stroke-width")!);
+    }
+  }
+
+  @override
+  void paintElement(Canvas canvas, Size size) {
+    final paint = Paint()..style = PaintingStyle.stroke;
+    paint.isAntiAlias = true;
+    paint.strokeWidth = strokeWidth;
+    paint.color = stroke;
+
+    if (fill != Colors.transparent) {
+      paint.style = PaintingStyle.fill;
+      paint.color = fill;
+    }
+
+    canvas.drawRect(Rect.fromLTWH(x, y, width, height), paint);
   }
 }
 
@@ -373,13 +418,10 @@ class MiniSvgWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //return buildtest(context);
     // FIXME: do not parse in the build method.
-    return Container(
-      width: size!.width+20,
-      alignment: Alignment.center,
-      child:CustomPaint(
+    return CustomPaint(
       size: size!,
       painter: SvgPainter(root: MiniSvgWidget.parse(svg)),
-    ));
+    );
   }
 }
 
