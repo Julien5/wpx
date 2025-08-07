@@ -1,28 +1,9 @@
 #![allow(non_snake_case)]
 
-pub mod automatic;
-pub mod backend;
-pub mod elevation;
-pub mod error;
-pub mod gpsdata;
-pub mod gpxexport;
-pub mod parameters;
-pub mod pdf;
-pub mod project;
-pub mod render;
-pub mod render_device;
-pub mod segment;
-pub mod speed;
-pub mod svgmap;
-pub mod svgprofile;
-pub mod utm;
-pub mod waypoint;
-pub mod waypoint_values;
-pub mod waypoints_table;
-
-use backend::Backend;
-
 use clap::Parser;
+use tracks::backend::Backend;
+use tracks::error;
+use tracks::render_device;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
