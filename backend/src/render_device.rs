@@ -3,5 +3,4 @@ pub enum RenderDevice {
     Unknown,
     PDF,
     Native,
-    Web,
 }

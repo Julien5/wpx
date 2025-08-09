@@ -106,7 +106,6 @@ pub enum _Error {
 }
 
 use std::{str::FromStr, time::Duration};
-use tokio::time::sleep;
 
 impl Bridge {
     pub async fn create(filename: &str) -> Result<Bridge, Error> {
@@ -153,30 +152,32 @@ impl Bridge {
     pub fn waypoints_table(&self, segment: &Segment) -> Vec<Waypoint> {
         self.backend.get_waypoint_table(&segment._impl)
     }
-    #[frb(sync)]
-    pub fn renderSegmentYAxis(&mut self, segment: &Segment, W: i32, H: i32) -> String {
-        //let delay = std::time::Duration::from_millis(50);
-        //std::thread::sleep(delay);
-        self.backend
-            .render_yaxis_labels_overlay(&segment._impl, (W, H), RenderDevice::Native)
-    }
-    pub async fn renderSegmentTrack(&mut self, segment: &Segment, W: i32, H: i32) -> String {
-        //let delay = std::time::Duration::from_millis(50);
-        //std::thread::sleep(delay);
-        self.backend
-            .render_segment_track(&segment._impl, (W, H), RenderDevice::Native)
-    }
-    pub async fn renderSegmentWaypoints(&mut self, segment: &Segment, W: i32, H: i32) -> String {
+    pub async fn renderSegmentWhat(
+        &mut self,
+        segment: &Segment,
+        what: String,
+        W: i32,
+        H: i32,
+    ) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
         println!("{}x{}", W, H);
         self.backend
-            .render_segment_waypoints(&segment._impl, (W, H), RenderDevice::Native)
+            .render_segment_what(&segment._impl, what, (W, H), RenderDevice::Native)
     }
     #[frb(sync)]
-    pub fn renderSegmentWaypointsSync(&mut self, segment: &Segment, W: i32, H: i32) -> String {
+    pub fn renderSegmentWhatSync(
+        &mut self,
+        segment: &Segment,
+        what: String,
+        W: i32,
+        H: i32,
+    ) -> String {
+        //let delay = std::time::Duration::from_millis(50);
+        //std::thread::sleep(delay);
+        println!("{}x{}", W, H);
         self.backend
-            .render_segment_waypoints(&segment._impl, (W, H), RenderDevice::Native)
+            .render_segment_what(&segment._impl, what, (W, H), RenderDevice::Native)
     }
     #[frb(sync)]
     pub fn statistics(&self) -> SegmentStatistics {
@@ -192,14 +193,6 @@ impl Bridge {
         }
         ret
     }
-}
-
-pub async fn svgCircle() -> String {
-    sleep(Duration::from_secs(1)).await;
-    let s = r#"<svg height="100" width="100" xmlns="http://www.w3.org/2000/svg">
-  <circle r="45" cx="50" cy="50" fill="red" />
-</svg>"#;
-    String::from_str(s).unwrap()
 }
 
 #[flutter_rust_bridge::frb(init)]

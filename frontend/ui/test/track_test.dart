@@ -6,7 +6,12 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:sprintf/sprintf.dart';
 
 Future<bool> testSegment(Bridge bridge, Segment segment) async {
-  String svg = await bridge.renderSegmentTrack(segment: segment,w:800,h:200);
+  String svg = await bridge.renderSegmentWhat(
+    segment: segment,
+    what: "track",
+    w: 800,
+    h: 200,
+  );
   developer.log(sprintf("            ID: %d", [segment.id().toInt()]));
   developer.log(sprintf("    svg length: %d bytes", [svg.length]));
   return svg.length > 2000;
@@ -19,11 +24,11 @@ void main() {
   });
   test("This is async", () async {
     await RustLib.init();
-    Bridge bridge = await Bridge.create(filename:"/tmp/track.gpx");
+    Bridge bridge = await Bridge.create(filename: "/tmp/track.gpx");
     var S = bridge.segments();
     expect(S.length, equals(6));
     for (Segment segment in S) {
-      bool ok = await testSegment(bridge,segment);
+      bool ok = await testSegment(bridge, segment);
       expect(ok, true);
     }
   }, timeout: Timeout(Duration(seconds: 5)));

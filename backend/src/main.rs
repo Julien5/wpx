@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use std::str::FromStr;
+
 use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
@@ -84,8 +86,9 @@ fn main() -> Result<(), error::Error> {
     let segments = backend.segments();
     for k in 0..segments.len() {
         let segment = &segments[k];
-        let bytes = backend.render_yaxis_labels_overlay(
+        let bytes = backend.render_segment_what(
             &segment,
+            String::from_str("ylabels").unwrap(),
             (1000, 285),
             render_device::RenderDevice::Native,
         );

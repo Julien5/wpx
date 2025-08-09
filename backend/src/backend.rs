@@ -234,6 +234,24 @@ impl Backend {
         }
         ret
     }
+    pub fn render_segment_what(
+        &mut self,
+        segment: &Segment,
+        what: String,
+        (W, H): (i32, i32),
+        render_device: RenderDevice,
+    ) -> String {
+        println!("render_segment_what:{} {}", segment.id, what);
+        match what.as_str() {
+            "track" => self.render_segment_track(segment, (W, H), render_device),
+            "waypoints" => self.render_segment_waypoints(segment, (W, H), render_device),
+            "ylabels" => self.render_yaxis_labels_overlay(segment, (W, H), render_device),
+            _ => {
+                assert!(false);
+                String::new()
+            }
+        }
+    }
     pub fn render_segment(
         &mut self,
         segment: &Segment,
@@ -250,7 +268,7 @@ impl Backend {
         profile.add_waypoints(&W);
         profile.render()
     }
-    pub fn render_yaxis_labels_overlay(
+    fn render_yaxis_labels_overlay(
         &mut self,
         segment: &Segment,
         (W, H): (i32, i32),
@@ -263,7 +281,7 @@ impl Backend {
         profile.add_yaxis_labels_overlay();
         profile.render()
     }
-    pub fn render_segment_track(
+    fn render_segment_track(
         &mut self,
         segment: &Segment,
         (W, H): (i32, i32),
@@ -276,11 +294,11 @@ impl Backend {
         profile.add_canvas();
         profile.add_track(&self.track, &self.track_smooth_elevation);
         let ret = profile.render();
-        let filename = std::format!("/tmp/segment-{}.svg", segment.id);
+        //let filename = std::format!("/tmp/segment-{}.svg", segment.id);
         //std::fs::write(filename, &ret).expect("Unable to write file");
         ret
     }
-    pub fn render_segment_waypoints(
+    fn render_segment_waypoints(
         &mut self,
         segment: &Segment,
         (W, H): (i32, i32),

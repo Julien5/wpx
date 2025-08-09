@@ -437,10 +437,9 @@ impl Profile {
         if C.is_some() && !C.unwrap().is_empty() {
             world.append(self.SB.clone());
             world.append(self.SD.clone());
-            if (self.Mleft > 0) {
-                world.append(self.SL.clone());
-            }
+            world.append(self.SL.clone());
         } else {
+            // case render yaxis overlay
             debug_assert!(self.render_device != RenderDevice::PDF);
             world.append(self.SL.clone());
             Woutput = 50;
@@ -477,15 +476,12 @@ impl Profile {
         if self.render_device != RenderDevice::PDF {
             self.SD.append(bbrect("bg", "lightgray", (0, 0), (WD, HD)));
         }
-        let stroke_width = format!("{}", self.frame_stroke_width);
-        self.SD
-            .append(stroke(stroke_width.as_str(), (0, 0), (WD, 0)));
-        self.SD
-            .append(stroke(stroke_width.as_str(), (0, 0), (0, HD)));
-        self.SD
-            .append(stroke(stroke_width.as_str(), (0, HD), (WD, HD)));
-        self.SD
-            .append(stroke(stroke_width.as_str(), (WD, 0), (WD, HD)));
+        let stroke_widths = format!("{}", self.frame_stroke_width);
+        let stroke_width = stroke_widths.as_str();
+        self.SD.append(stroke(stroke_width, (0, 0), (WD, 0)));
+        self.SD.append(stroke(stroke_width, (0, 0), (0, HD)));
+        self.SD.append(stroke(stroke_width, (0, HD), (WD, HD)));
+        self.SD.append(stroke(stroke_width, (WD, 0), (WD, HD)));
 
         for xtick in xticks(&self.bbox) {
             let xd = toSD((xtick, 0f64), WD, HD, &self.bbox).0;

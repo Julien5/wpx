@@ -24,14 +24,16 @@ class FutureRenderer with ChangeNotifier {
   void start() {
     _result = null;
     if (trackData == TrackData.track) {
-      _future = _bridge.renderSegmentTrack(
+      _future = _bridge.renderSegmentWhat(
         segment: segment,
+        what: "track",
         w: size.width.floor(),
         h: size.height.floor(),
       );
     } else {
-      _future = _bridge.renderSegmentWaypoints(
+      _future = _bridge.renderSegmentWhat(
         segment: segment,
+        what: "waypoints",
         w: size.width.floor(),
         h: size.height.floor(),
       );
@@ -221,8 +223,9 @@ class SegmentsProvider extends ChangeNotifier {
   }
 
   String renderSegmentYAxis(bridge.Segment segment, Size size) {
-    return _bridge.renderSegmentYAxis(
+    return _bridge.renderSegmentWhatSync(
       segment: segment,
+      what: "ylabels",
       w: size.width.floor(),
       h: size.height.floor(),
     );
@@ -230,10 +233,6 @@ class SegmentsProvider extends ChangeNotifier {
 
   bridge.SegmentStatistics statistics() {
     return _bridge.statistics();
-  }
-
-  String renderSegmentWaypointsSync(bridge.Segment segment, int w, int h) {
-    return _bridge.renderSegmentWaypointsSync(segment: segment, w: w, h: h);
   }
 }
 

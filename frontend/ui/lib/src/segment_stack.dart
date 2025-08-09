@@ -44,23 +44,19 @@ class SegmentStack extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Print the size of the parent widget
-        developer.log(
-          'Parent size: width=${constraints.maxWidth}, height=${constraints.maxHeight}',
-        );
-
         var scrollView = SegmentScrollView();
         var box = SizedBox(
           height: 285,
           child: Stack(
             children: [
               Positioned.fill(child: scrollView),
-              if (constraints.maxWidth <1000) Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                child: SizedBox(width: 50, child: Legend()),
-              ),
+              if (constraints.maxWidth < 1000)
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: SizedBox(width: 50, child: Legend()),
+                ),
             ],
           ),
         );
