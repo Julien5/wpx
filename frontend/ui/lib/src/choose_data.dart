@@ -90,7 +90,7 @@ class _ChooseDataState extends State<ChooseData> {
       Navigator.of(context).pushNamed(RouteManager.settingsView);
     } catch (e) {
       setState(() {
-        errorMessage =makeErrorMessage(e);
+        errorMessage = makeErrorMessage(e);
       });
     }
   }
@@ -98,7 +98,7 @@ class _ChooseDataState extends State<ChooseData> {
   String makeErrorMessage(Object e) {
     if (e is bridge.Error_MissingElevation) {
       //bridge.Error_MissingElevation ev=e;
-      var index=e.index;
+      var index = e.index;
       return "The track misses elevation data (at index=$index).";
     }
     if (e is bridge.Error_GPXHasNoSegment) {

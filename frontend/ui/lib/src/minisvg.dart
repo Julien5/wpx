@@ -112,7 +112,8 @@ abstract class Element {
       return TextElement(e, parent);
     } else if (e.name.local == "circle") {
       return CircleElement(e, parent);
-    } else if (e.name.local == "rect") { // Add support for <rect>
+    } else if (e.name.local == "rect") {
+      // Add support for <rect>
       return RectElement(e, parent);
     } else if (e.name.local == "svg") {
       return GroupElement(e, parent);
@@ -290,12 +291,10 @@ class TextElement extends Element {
     if (attribute("font-size") != null) {
       fontSize = double.parse(attribute("font-size").toString());
     }
-    developer.log("font-sizefontSize: $fontSize");
   }
 
   @override
   void paintElement(Canvas canvas, Size size) {
-    
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,

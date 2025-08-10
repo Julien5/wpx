@@ -12,10 +12,13 @@ class FutureRenderingWidget extends StatefulWidget {
 }
 
 class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
-  Widget? svg;
+  MiniSvgWidget? svg;
 
   Widget buildWorker(Size parentSize) {
     Size wantedSize = parentSize;
+    if (svg != null && svg!.size != null && wantedSize == svg!.size) {
+      return svg!;
+    }
     widget.future.setSize(wantedSize);
     if (widget.future.done()) {
       svg = MiniSvgWidget(svg: widget.future.result(), size: wantedSize);
