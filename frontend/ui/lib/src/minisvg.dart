@@ -166,6 +166,8 @@ Color parseColor(String colorName) {
       return const Color.fromARGB(255, 231, 226, 226);
     case 'transparent':
       return Colors.transparent;
+    case 'none':
+      return Colors.transparent;
     default:
       throw Exception('Unknown color: $colorName');
   }
@@ -272,8 +274,10 @@ TextAlign readTextAlign(String textAnchor) {
       return TextAlign.right;
     case "start":
       return TextAlign.left;
+    case "left":
+      return TextAlign.left;
     default:
-      throw Exception('Unknown color: $textAnchor');
+      throw Exception('Unknown text anchor: $textAnchor');
   }
 }
 
@@ -281,15 +285,23 @@ class TextElement extends Element {
   late String text;
   late TextAlign textAlign;
   late double fontSize;
+  late double x, y;
   TextElement(super.xmlElement, super.parent) {
     text = super._xmlElement.innerText.trim();
     textAlign = TextAlign.center;
     fontSize = 12.0;
+    x = y = 0;
     if (attribute("text-anchor") != null) {
       textAlign = readTextAlign(attribute("text-anchor")!);
     }
     if (attribute("font-size") != null) {
       fontSize = double.parse(attribute("font-size").toString());
+    }
+    if (attribute("x") != null) {
+      x = double.parse(attribute("x").toString());
+    }
+    if (attribute("y") != null) {
+      y = double.parse(attribute("y").toString());
     }
   }
 
@@ -310,14 +322,14 @@ class TextElement extends Element {
 
     textPainter.layout();
     // Calculate the position based on textAlign
-    double dx = 0;
+    double dx = x;
 
     if (textAlign == TextAlign.center) {
       dx = -textPainter.width / 2;
     } else if (textAlign == TextAlign.right) {
       dx = -textPainter.width;
     }
-    double dy = -0.5 * textPainter.height - 4;
+    double dy = y - 0.5 * textPainter.height - 4;
     textPainter.paint(canvas, Offset(dx, dy));
   }
 }

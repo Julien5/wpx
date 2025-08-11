@@ -99,6 +99,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       maxStepSize: maxStepSize,
       smoothWidth: oldParameters.smoothWidth,
       epsilon: oldParameters.epsilon,
+      debug: oldParameters.debug,
     );
     provider.setParameters(newParameters);
     Navigator.of(context).pushNamed(RouteManager.segmentsView);
@@ -107,7 +108,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: startTime.hour, minute: startTime.minute)
+      initialTime: TimeOfDay(hour: startTime.hour, minute: startTime.minute),
     );
 
     if (picked != null) {
@@ -428,6 +429,7 @@ class _WidthSettingsState extends State<WidthSettings> {
       maxStepSize: oldParameters.maxStepSize,
       smoothWidth: width,
       epsilon: oldParameters.epsilon,
+      debug: oldParameters.debug,
     );
     provider.setParameters(newParameters);
   }

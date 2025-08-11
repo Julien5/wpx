@@ -94,7 +94,8 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> String {
+pub fn compile_pdf(backend: &mut Backend, (W, H): (i32, i32)) -> String {
+    let debug = backend.get_parameters().debug;
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let mut start = 0f64;
@@ -109,7 +110,7 @@ pub fn compile_pdf(backend: &mut Backend, debug: bool, (W, H): (i32, i32)) -> St
         let waypoints_table = backend.get_waypoint_table(&segment);
         let table = points_table(&templates, &backend.track, &waypoints_table);
         let p = backend.render_segment(segment, (W, H), RenderDevice::PDF);
-        if debug {
+        if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);
             std::fs::write(&f, &p).unwrap();
         }

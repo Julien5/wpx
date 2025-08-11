@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
-enum TrackData { track, waypoints }
+enum TrackData { track, waypoints, map }
 
 class FutureRenderer with ChangeNotifier {
   final bridge.Segment segment;
@@ -30,10 +30,17 @@ class FutureRenderer with ChangeNotifier {
         w: size.width.floor(),
         h: size.height.floor(),
       );
-    } else {
+    } else if (trackData == TrackData.waypoints) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "waypoints",
+        w: size.width.floor(),
+        h: size.height.floor(),
+      );
+    } else if (trackData == TrackData.map) {
+      _future = _bridge.renderSegmentWhat(
+        segment: segment,
+        what: "map",
         w: size.width.floor(),
         h: size.height.floor(),
       );
@@ -89,37 +96,35 @@ class TrackRenderer extends FutureRenderer {
 }
 
 class WaypointsRenderer extends FutureRenderer {
-  double visibility = 0;
   WaypointsRenderer(bridge.Bridge bridge, bridge.Segment segment)
     : super(bridge: bridge, segment: segment, trackData: TrackData.waypoints);
-
-  void updateVisibility(double v) {
-    visibility = v;
-    _update();
-  }
 
   void reset() {
     _future = null;
     _result = null;
-    _update();
+    start();
   }
+}
 
-  void _update() {
-    if (visibility < 0.5) {
-      return;
-    }
-    if (needsStart()) {
-      start();
-    }
+class MapRenderer extends FutureRenderer {
+  MapRenderer(bridge.Bridge bridge, bridge.Segment segment)
+    : super(bridge: bridge, segment: segment, trackData: TrackData.map);
+
+  void reset() {
+    _future = null;
+    _result = null;
+    start();
   }
 }
 
 class Renderers {
   final TrackRenderer trackRendering;
   final WaypointsRenderer waypointsRendering;
-  Renderers(TrackRenderer track, WaypointsRenderer waypoints)
+  final MapRenderer mapRendering;
+  Renderers(TrackRenderer track, WaypointsRenderer waypoints, MapRenderer map)
     : trackRendering = track,
-      waypointsRendering = waypoints;
+      waypointsRendering = waypoints,
+      mapRendering = map;
 }
 
 class SegmentsProvider extends ChangeNotifier {
@@ -192,13 +197,15 @@ class SegmentsProvider extends ChangeNotifier {
       for (var segment in segments) {
         var t = TrackRenderer(_bridge, segment);
         var w = WaypointsRenderer(_bridge, segment);
-        _segments.add(Renderers(t, w));
-      }
-    } else {
-      for (var renderers in _segments) {
-        renderers.waypointsRendering.reset();
+        var m = MapRenderer(_bridge, segment);
+        _segments.add(Renderers(t, w, m));
       }
     }
+    for (var renderers in _segments) {
+      renderers.waypointsRendering.reset();
+      renderers.mapRendering.reset();
+    }
+
     _waypoints.clear();
     var wayPoints = _bridge.getWaypoints();
     for (var w in wayPoints) {

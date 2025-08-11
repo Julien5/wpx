@@ -7,7 +7,6 @@ import 'package:ui/src/future_rendering_widget.dart';
 import 'package:ui/src/hardlegend.dart';
 import 'package:ui/src/minisvg.dart';
 import 'package:ui/src/waypoints_widget.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class Legend extends StatelessWidget {
   const Legend({super.key});
@@ -74,43 +73,77 @@ class SegmentStack extends StatelessWidget {
 class SegmentView extends StatelessWidget {
   const SegmentView({super.key});
 
+  Widget rowWithMap(Widget table) {
+    var hspace = const Expanded(child: SizedBox(width: 10));
+    var _map = Container(
+      // Another fixed-width child.
+      color: const Color(0xfff01f01),
+      width: 300, // Changed to width
+      height: 300,
+      alignment: Alignment.center,
+      child: const Text('Fixed Width Content 3'),
+    );
+    var map = MapConsumer();
+    var row = Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [hspace, map, hspace, table, hspace],
+      ),
+    );
+    return row;
+  }
+
+  Widget rowWithoutMap(Widget table) {
+    var row = Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [table],
+      ),
+    );
+    return row;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final ScrollController scrollController = ScrollController();
 
-    scrollController.addListener(() {
-      double headerHeight = 56;
-      double scrollOffset = max(scrollController.offset - headerHeight, 0);
-      developer.log("offset: $scrollController.offset");
-      double rowHeight = 25; // Assuming each row has a height of 25
-      int firstVisibleRow = (scrollOffset / rowHeight).floor();
-      int lastVisibleRow =
-          ((scrollOffset +
-                      scrollController.position.viewportDimension -
-                      headerHeight) /
-                  rowHeight)
-              .floor();
+        scrollController.addListener(() {
+          double headerHeight = 56;
+          double scrollOffset = max(scrollController.offset - headerHeight, 0);
+          developer.log("offset: $scrollController.offset");
+          double rowHeight = 25; // Assuming each row has a height of 25
+          int firstVisibleRow = (scrollOffset / rowHeight).floor();
+          int lastVisibleRow =
+              ((scrollOffset +
+                          scrollController.position.viewportDimension -
+                          headerHeight) /
+                      rowHeight)
+                  .floor();
 
-      developer.log("Visible rows: $firstVisibleRow to $lastVisibleRow");
-    });
+          developer.log("Visible rows: $firstVisibleRow to $lastVisibleRow");
+        });
 
-    var table = SingleChildScrollView(
-      controller: scrollController, // Attach the ScrollController here
-      scrollDirection: Axis.vertical,
-      child: WayPointsConsumer(),
-    );
+        var table = SingleChildScrollView(
+          controller: scrollController, // Attach the ScrollController here
+          scrollDirection: Axis.vertical,
+          child: WayPointsConsumer(),
+        );
 
-    var stack = SegmentStack();
-
-    return Column(
-      children: [
-        stack,
-        const Divider(
+        var stack = SegmentStack();
+        Widget? row;
+        if (constraints.maxWidth > 1000) {
+          row = rowWithMap(table);
+        } else {
+          row = rowWithoutMap(table);
+        }
+        var hline = const Divider(
           height: 1, // Thickness of the divider
           color: Colors.grey, // Light stroke color
-        ),
-        Expanded(child: table),
-      ],
+        );
+        return Column(children: [stack, hline, row]);
+      },
     );
   }
 }
@@ -128,6 +161,19 @@ class TrackConsumer extends StatelessWidget {
   }
 }
 
+class MapConsumer extends StatelessWidget {
+  const MapConsumer({super.key});
+
+  @override
+  Widget build(BuildContext ctx) {
+    return Consumer<MapRenderer>(
+      builder: (context, mapRenderer, child) {
+        return FutureRenderingWidget(future: mapRenderer);
+      },
+    );
+  }
+}
+
 class WaypointsConsumer extends StatefulWidget {
   const WaypointsConsumer({super.key});
 
@@ -136,22 +182,6 @@ class WaypointsConsumer extends StatefulWidget {
 }
 
 class _WaypointsConsumerState extends State<WaypointsConsumer> {
-  double visibility = 0;
-
-  void onVisibilityChanged(VisibilityInfo info) {
-    if (!mounted) {
-      return;
-    }
-    WaypointsRenderer wp = Provider.of<WaypointsRenderer>(
-      context,
-      listen: false,
-    );
-    developer.log(
-      "[waypoint consumer] id:${wp.id()} vis:${info.visibleFraction}",
-    );
-    wp.updateVisibility(info.visibleFraction);
-  }
-
   @override
   Widget build(BuildContext ctx) {
     return Consumer<WaypointsRenderer>(
@@ -159,11 +189,7 @@ class _WaypointsConsumerState extends State<WaypointsConsumer> {
         // It would be more accurate to check visibility with a scroll controller
         // at the list view level. Because "Callbacks are not fired immediately
         // on visibility changes."
-        return VisibilityDetector(
-          key: Key('id:${waypointsRenderer.id()}'),
-          onVisibilityChanged: onVisibilityChanged,
-          child: FutureRenderingWidget(future: waypointsRenderer),
-        );
+        return FutureRenderingWidget(future: waypointsRenderer);
       },
     );
   }

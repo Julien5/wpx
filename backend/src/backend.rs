@@ -10,6 +10,7 @@ use crate::parameters::Parameters;
 use crate::pdf;
 use crate::render;
 use crate::render_device::RenderDevice;
+use crate::svgmap;
 use crate::waypoint;
 use crate::waypoint_values;
 use crate::waypoints_table;
@@ -246,6 +247,7 @@ impl Backend {
             "track" => self.render_segment_track(segment, (W, H), render_device),
             "waypoints" => self.render_segment_waypoints(segment, (W, H), render_device),
             "ylabels" => self.render_yaxis_labels_overlay(segment, (W, H), render_device),
+            "map" => self.render_segment_map(segment, (W, H)),
             _ => {
                 assert!(false);
                 String::new()
@@ -258,7 +260,7 @@ impl Backend {
         (W, H): (i32, i32),
         render_device: RenderDevice,
     ) -> String {
-        println!("render_segment_track:{}", segment.id);
+        println!("render_segment:{}", segment.id);
         let mut profile = segment.profile.clone();
         profile.set_render_device(render_device);
         profile.reset_size(W, H);
@@ -294,8 +296,10 @@ impl Backend {
         profile.add_canvas();
         profile.add_track(&self.track, &self.track_smooth_elevation);
         let ret = profile.render();
-        //let filename = std::format!("/tmp/segment-{}.svg", segment.id);
-        //std::fs::write(filename, &ret).expect("Unable to write file");
+        if self.get_parameters().debug {
+            let filename = std::format!("/tmp/segment-{}.svg", segment.id);
+            std::fs::write(filename, &ret).expect("Unable to write file");
+        }
         ret
     }
     fn render_segment_waypoints(
@@ -310,8 +314,20 @@ impl Backend {
         profile.reset_size(W, H);
         profile.add_waypoints(&self.get_waypoints());
         let ret = profile.render();
-        //let filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
-        //std::fs::write(filename, &ret).expect("Unable to write file");
+        if self.get_parameters().debug {
+            let filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
+            std::fs::write(filename, &ret).expect("Unable to write file");
+        }
+        ret
+    }
+
+    pub fn render_segment_map(&self, segment: &Segment, (W, H): (i32, i32)) -> String {
+        let waypoints = self.get_waypoints();
+        let ret = svgmap::map(&self.track, &waypoints, &segment, W, H);
+        if self.get_parameters().debug {
+            let filename = std::format!("/tmp/map-{}.svg", segment.id);
+            std::fs::write(filename, &ret).expect("Unable to write file");
+        }
         ret
     }
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
@@ -332,10 +348,10 @@ impl Backend {
             distance_end: self.track.distance(range.end - 1),
         }
     }
-    pub fn generatePdf(&mut self, debug: bool) -> Vec<u8> {
-        let typbytes = render::compile_pdf(self, debug, (1000, 285));
+    pub fn generatePdf(&mut self) -> Vec<u8> {
+        let typbytes = render::compile_pdf(self, (1000, 285));
         //let typbytes = render::compile_pdf(self, debug, (1400, 400));
-        let ret = pdf::compile(&typbytes, debug);
+        let ret = pdf::compile(&typbytes, self.get_parameters().debug);
         println!("generated {} bytes", ret.len());
         ret
     }

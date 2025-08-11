@@ -2,6 +2,7 @@ use crate::speed;
 
 #[derive(Clone)]
 pub struct Parameters {
+    pub debug: bool,
     pub epsilon: f64,
     pub max_step_size: f64,
     pub start_time: String,
@@ -19,6 +20,7 @@ impl Default for Parameters {
             speed: speed::mps(15f64),
             segment_length: 100f64 * 1000f64,
             smooth_width: 200f64,
+            debug: true,
         }
     }
 }

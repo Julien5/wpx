@@ -53,6 +53,7 @@ pub enum _WaypointOrigin {
 
 #[frb(mirror(Parameters))]
 pub struct _Parameters {
+    pub debug: bool,
     pub epsilon: f64,
     pub max_step_size: f64,
     pub start_time: String,
@@ -105,8 +106,6 @@ pub enum _Error {
     MissingElevation { index: usize },
 }
 
-use std::{str::FromStr, time::Duration};
-
 impl Bridge {
     pub async fn create(filename: &str) -> Result<Bridge, Error> {
         match tracks::backend::Backend::from_filename(filename) {
@@ -127,7 +126,7 @@ impl Bridge {
         }
     }
     pub async fn generatePdf(&mut self) -> Vec<u8> {
-        self.backend.generatePdf(false)
+        self.backend.generatePdf()
     }
     pub async fn generateGpx(&mut self) -> Vec<u8> {
         self.backend.generateGpx()

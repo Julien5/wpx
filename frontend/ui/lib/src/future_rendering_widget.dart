@@ -16,9 +16,6 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
   Widget buildWorker(Size parentSize) {
     Size wantedSize = parentSize;
-    if (svg != null && svg!.size != null && wantedSize == svg!.size) {
-      return svg!;
-    }
     widget.future.setSize(wantedSize);
     if (widget.future.done()) {
       svg = MiniSvgWidget(svg: widget.future.result(), size: wantedSize);
@@ -49,6 +46,10 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
         */
         double w = 1000;
         double h = 285;
+        if (widget.future is MapRenderer) {
+          w = 300;
+          h = 300;
+        }
         Size size = Size(w, h);
         return buildWorker(size);
       },

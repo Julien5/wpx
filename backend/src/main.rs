@@ -24,10 +24,6 @@ struct Cli {
 
 fn main() -> Result<(), error::Error> {
     let args = Cli::parse();
-    let debug = match args.debug {
-        Some(v) => v,
-        None => false,
-    };
 
     let gpxinput;
     if args.filename.exists() {
@@ -63,9 +59,16 @@ fn main() -> Result<(), error::Error> {
         _ => {}
     }
 
+    match args.debug {
+        Some(d) => {
+            parameters.debug = d;
+        }
+        _ => {}
+    }
+
     backend.set_parameters(&parameters);
 
-    let pdfbytes = backend.generatePdf(debug);
+    let pdfbytes = backend.generatePdf();
     let pdfname = format!(
         "{}/{}.pdf",
         outdir,
