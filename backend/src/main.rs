@@ -1,11 +1,8 @@
 #![allow(non_snake_case)]
 
-use std::str::FromStr;
-
 use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
-use tracks::render_device;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -18,6 +15,8 @@ struct Cli {
     interval_length: Option<i32>,
     #[arg(short, long, value_name = "max_step_length")]
     max_step_length: Option<i32>,
+    #[arg(short, long, value_name = "experiment_labels")]
+    experiment_labels: Option<bool>,
     #[arg(value_name = "gpx")]
     filename: std::path::PathBuf,
 }
@@ -86,18 +85,18 @@ fn main() -> Result<(), error::Error> {
     println!("make: {}", gpxname);
     std::fs::write(gpxname, &gpxbytes).expect("Could not write gpx.");
 
-    let segments = backend.segments();
-    for k in 0..segments.len() {
-        let segment = &segments[k];
-        let bytes = backend.render_segment_what(
-            &segment,
-            String::from_str("ylabels").unwrap(),
-            (1000, 285),
-            render_device::RenderDevice::Native,
-        );
-        let name = format!("/tmp/yaxis-{}.svg", k);
-        println!("make: {}", name);
-        std::fs::write(name, &bytes).expect("Could not write gpx.");
+    match args.experiment_labels {
+        Some(b) => {
+            if b {
+                let segments = backend.segments();
+                for k in 0..segments.len() {
+                    let segment = &segments[k];
+                    backend.experiment_labels(&segment);
+                }
+            }
+        }
+        _ => {}
     }
+
     Ok(())
 }

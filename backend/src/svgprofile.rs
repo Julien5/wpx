@@ -81,15 +81,17 @@ fn stroke(width: &str, from: (i32, i32), to: (i32, i32)) -> Path {
 fn textx(label: &str, pos: (i32, i32)) -> Text {
     let ret = Text::new(label)
         .set("text-anchor", "middle")
-        .set("transform", format!("translate({} {})", pos.0, pos.1));
+        .set("x", pos.0)
+        .set("y", pos.1);
     ret
 }
 
-fn texty(label: &str, pos: (i32, i32)) -> Text {
-    let ret = Text::new(label).set("text-anchor", "end").set(
-        "transform",
-        format!("translate({} {}) scale(-1 -1)", pos.0, pos.1),
-    );
+fn ytick_text(label: &str, pos: (i32, i32)) -> Text {
+    let ret = Text::new(label)
+        .set("text-anchor", "end")
+        .set("transform", format!("scale(-1 -1)"))
+        .set("x", -pos.0)
+        .set("y", -pos.1);
     ret
 }
 
@@ -285,6 +287,7 @@ fn waypoint_text(
         return None;
     }
     let ret = Text::new(label)
+        .set("id", "wp-text")
         .set("font-size", format!("{}", font_size))
         .set("text-anchor", "middle")
         .set(
@@ -301,12 +304,12 @@ fn waypoint_elevation_text(
 ) -> Text {
     let label = format!("{:.0}", waypoint.wgs84.2);
     let ret = Text::new(label)
+        .set("id", "wp-elevation-text")
         .set("text-anchor", "middle")
         .set("font-size", format!("{}", font_size))
-        .set(
-            "transform",
-            format!("translate({} {}) scale(1 -1)", x, y + 15),
-        );
+        .set("transform", "scale(1 -1)") // scale-y = -1 to get the text upright
+        .set("x", format!("{}", x))
+        .set("y", format!("{}", -y - 15));
     ret
 }
 
@@ -366,6 +369,7 @@ impl Profile {
     }
 
     pub fn reset_size(&mut self, W: i32, H: i32) {
+        // TODO: code duplication with init()
         self.Mleft = ((W as f64) * 0.05f64).floor() as i32;
         self.Mbottom = ((H as f64) / 10f64).floor() as i32;
         self.W = W;
@@ -420,12 +424,16 @@ impl Profile {
         self.SD.append(node);
     }
 
-    pub fn render(&self) -> String {
-        let font_size = if self.W < 750 {
+    fn font_size(&self) -> f32 {
+        if self.W < 750 {
             24f32 * self.font_size_factor
         } else {
             30f32 * self.font_size_factor
-        };
+        }
+    }
+
+    pub fn render(&self) -> String {
+        let font_size = self.font_size();
         let mut world = Group::new()
             .set("id", "world")
             .set("shape-rendering", "crispEdges")
@@ -450,6 +458,14 @@ impl Profile {
             .set("height", self.H)
             .add(world);
 
+        document.to_string()
+    }
+
+    pub fn renderSD(&self) -> String {
+        let document = svg::Document::new()
+            .set("width", self.W)
+            .set("height", self.H)
+            .add(self.SD.clone());
         document.to_string()
     }
 
@@ -511,7 +527,7 @@ impl Profile {
             if yd > HD {
                 break;
             }
-            self.SL.append(texty(
+            self.SL.append(ytick_text(
                 format!("{}", ytick.floor() as i32).as_str(),
                 (10, yd - 5),
             ));

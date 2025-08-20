@@ -94,7 +94,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn compile_pdf(backend: &mut Backend, (W, H): (i32, i32)) -> String {
+pub fn make_typst_document(backend: &mut Backend, (W, H): (i32, i32)) -> String {
     let debug = backend.get_parameters().debug;
     let templates = Templates::new();
     let mut document = templates.header.clone();
@@ -116,7 +116,7 @@ pub fn compile_pdf(backend: &mut Backend, (W, H): (i32, i32)) -> String {
         }
         let Wm = 400i32;
         let Hm = 400i32;
-        let m = svgmap::map(&backend.track, &waypoints, &segment, Wm, Hm);
+        let m = svgmap::map(&backend.track, &waypoints, &segment, Wm, Hm, debug);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();
