@@ -101,7 +101,6 @@ pub fn make_typst_document(backend: &mut Backend, (W, H): (i32, i32)) -> String 
     let mut start = 0f64;
     let mut k = 0usize;
     let segments = backend.segments();
-    let waypoints = backend.get_waypoints();
     for segment in &segments {
         let range = &segment.range;
         if range.is_empty() {
@@ -116,7 +115,7 @@ pub fn make_typst_document(backend: &mut Backend, (W, H): (i32, i32)) -> String 
         }
         let Wm = 400i32;
         let Hm = 400i32;
-        let m = svgmap::map(&backend.track, &waypoints, &segment, Wm, Hm, debug);
+        let m = svgmap::map(&backend, &segment, Wm, Hm, debug);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();

@@ -325,9 +325,9 @@ class TextElement extends Element {
     double dx = x;
 
     if (textAlign == TextAlign.center) {
-      dx = -textPainter.width / 2;
+      dx = x-textPainter.width / 2;
     } else if (textAlign == TextAlign.right) {
-      dx = -textPainter.width;
+      dx = x-textPainter.width;
     }
     double dy = y - 0.5 * textPainter.height - 4;
     textPainter.paint(canvas, Offset(dx, dy));

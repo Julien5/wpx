@@ -20,7 +20,16 @@ impl Default for Parameters {
             speed: speed::mps(15f64),
             segment_length: 100f64 * 1000f64,
             smooth_width: 200f64,
-            debug: true,
+            debug: false,
         }
+    }
+}
+
+#[derive(Clone)]
+pub struct ExperimentalParameters {}
+
+impl Default for ExperimentalParameters {
+    fn default() -> ExperimentalParameters {
+        ExperimentalParameters {}
     }
 }

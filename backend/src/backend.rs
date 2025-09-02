@@ -6,6 +6,7 @@ use crate::error::Error;
 pub use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::gpxexport;
+use crate::parameters::ExperimentalParameters;
 use crate::parameters::Parameters;
 use crate::pdf;
 use crate::render;
@@ -21,6 +22,7 @@ pub type SegmentStatistics = crate::segment::SegmentStatistics;
 
 pub struct Backend {
     parameters: Parameters,
+    eparameters: ExperimentalParameters,
     pub track: gpsdata::Track,
     pub waypoints: Vec<waypoint::Waypoint>,
     track_smooth_elevation: Vec<f64>,
@@ -35,6 +37,10 @@ fn waypoint_time(start_time: DateTime, distance: f64, speed: f64) -> DateTime {
 impl Backend {
     pub fn get_parameters(self: &Backend) -> Parameters {
         self.parameters.clone()
+    }
+
+    pub fn get_eparameters(self: &Backend) -> ExperimentalParameters {
+        self.eparameters.clone()
     }
 
     fn update_waypoints(&mut self) {
@@ -55,6 +61,10 @@ impl Backend {
         self.track_smooth_elevation =
             elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
         self.update_waypoints();
+    }
+
+    pub fn set_eparameters(self: &mut Backend, eparameters: &ExperimentalParameters) {
+        self.eparameters = eparameters.clone();
     }
 
     fn create_waypoint_info(
@@ -154,11 +164,10 @@ impl Backend {
         self.parameters.segment_length = length;
     }
     pub fn experiment_labels(&self, segment: &Segment) {
-        let waypoints = self.get_waypoints();
         let debug = self.get_parameters().debug;
         let W = 400;
         let H = W;
-        let ret = svgmap::map(&self.track, &waypoints, &segment, W, H, debug);
+        let ret = svgmap::map(&self, &segment, W, H, debug);
         let filename = std::format!("/tmp/map-labels-{}.svg", segment.id);
         std::fs::write(filename, &ret).expect("Unable to write file");
 
@@ -208,6 +217,7 @@ impl Backend {
         let mut gpxwaypoints = gpsdata::read_waypoints(&gpx);
         gpsdata::project_waypoints(&track, &mut gpxwaypoints);
         let parameters = Parameters::default();
+        let eparameters = ExperimentalParameters::default();
         let mut ret = Backend {
             track_smooth_elevation: elevation::smooth_elevation(
                 &track,
@@ -216,6 +226,7 @@ impl Backend {
             track,
             waypoints: gpxwaypoints,
             parameters,
+            eparameters,
         };
         ret.update_waypoints();
         Ok(ret)
@@ -344,9 +355,8 @@ impl Backend {
     }
 
     pub fn render_segment_map(&self, segment: &Segment, (W, H): (i32, i32)) -> String {
-        let waypoints = self.get_waypoints();
         let debug = self.get_parameters().debug;
-        let ret = svgmap::map(&self.track, &waypoints, &segment, W, H, debug);
+        let ret = svgmap::map(&self, &segment, W, H, debug);
         if self.get_parameters().debug {
             let filename = std::format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(filename, &ret).expect("Unable to write file");

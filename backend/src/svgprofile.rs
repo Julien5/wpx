@@ -110,8 +110,8 @@ fn trackpath(d: Data) -> Path {
     let p = Path::new()
         .set("id", "track")
         .set("stroke", "black")
-        .set("stroke-width", 3)
-        .set("shape-rendering", "geometricPrecision")
+        .set("stroke-width", 2)
+        //.set("shape-rendering", "geometricPrecision")
         .set("fill", "transparent")
         .set("d", d);
     p

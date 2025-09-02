@@ -4,91 +4,91 @@
 <g id="SB" transform="translate(0 360)"/>
 <g id="SD" transform="translate(0 360) scale(1 -1) scale(1 1)">
 <circle cx="0" cy="165" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(0 145) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(0 145) scale(1 -1)">
    0
 </text>
 <circle cx="95" cy="173" fill="blue" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(95 153) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(95 153) scale(1 -1)">
    8
 </text>
 <circle cx="190" cy="184" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(190 164) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(190 164) scale(1 -1)">
   16
 </text>
 <circle cx="298" cy="245" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(298 260) scale(1 -1)">
+<text font-size="12" id="wp-elevation-text" text-anchor="middle" transform="scale(1 -1)" x="298" y="-260">
 1025
 </text>
-<text font-size="12" text-anchor="middle" transform="translate(298 225) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(298 225) scale(1 -1)">
   25
 </text>
 <circle cx="352" cy="207" fill="black" r="8"/>
-<text font-size="12" text-anchor="middle" transform="translate(352 187) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(352 187) scale(1 -1)">
 K1
 </text>
 <circle cx="458" cy="247" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(458 262) scale(1 -1)">
+<text font-size="12" id="wp-elevation-text" text-anchor="middle" transform="scale(1 -1)" x="458" y="-262">
 1035
 </text>
-<text font-size="12" text-anchor="middle" transform="translate(458 227) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(458 227) scale(1 -1)">
   39
 </text>
 <circle cx="518" cy="208" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <circle cx="543" cy="236" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(543 251) scale(1 -1)">
+<text font-size="12" id="wp-elevation-text" text-anchor="middle" transform="scale(1 -1)" x="543" y="-251">
 988
 </text>
-<text font-size="12" text-anchor="middle" transform="translate(543 216) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(543 216) scale(1 -1)">
   46
 </text>
 <circle cx="674" cy="122" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <circle cx="707" cy="110" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <circle cx="733" cy="150" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(733 165) scale(1 -1)">
+<text font-size="12" id="wp-elevation-text" text-anchor="middle" transform="scale(1 -1)" x="733" y="-165">
 628
 </text>
-<text font-size="12" text-anchor="middle" transform="translate(733 130) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(733 130) scale(1 -1)">
   62
 </text>
 <circle cx="773" cy="84" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <circle cx="851" cy="51" fill="black" r="8"/>
-<text font-size="12" text-anchor="middle" transform="translate(851 31) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(851 31) scale(1 -1)">
 K2
 </text>
 <circle cx="916" cy="75" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <circle cx="973" cy="169" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(973 184) scale(1 -1)">
+<text font-size="12" id="wp-elevation-text" text-anchor="middle" transform="scale(1 -1)" x="973" y="-184">
 706
 </text>
-<text font-size="12" text-anchor="middle" transform="translate(973 149) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(973 149) scale(1 -1)">
   82
 </text>
 <circle cx="997" cy="134" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <circle cx="1039" cy="192" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(1039 207) scale(1 -1)">
+<text font-size="12" id="wp-elevation-text" text-anchor="middle" transform="scale(1 -1)" x="1039" y="-207">
 803
 </text>
-<text font-size="12" text-anchor="middle" transform="translate(1039 172) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(1039 172) scale(1 -1)">
   88
 </text>
 <circle cx="1130" cy="74" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(1130 54) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(1130 54) scale(1 -1)">
   96
 </text>
 <circle cx="1199" cy="92" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(1199 72) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(1199 72) scale(1 -1)">
  101
 </text>
 <circle cx="1280" cy="182" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(1280 197) scale(1 -1)">
+<text font-size="12" id="wp-elevation-text" text-anchor="middle" transform="scale(1 -1)" x="1280" y="-197">
 764
 </text>
-<text font-size="12" text-anchor="middle" transform="translate(1280 162) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(1280 162) scale(1 -1)">
  108
 </text>
 <circle cx="1351" cy="94" fill="gray" r="5" stroke="black" stroke-width="2"/>
 <circle cx="1395" cy="116" fill="gray" r="5" stroke="black" stroke-width="2"/>
-<text font-size="12" text-anchor="middle" transform="translate(1395 96) scale(1 -1)">
+<text font-size="12" id="wp-text" text-anchor="middle" transform="translate(1395 96) scale(1 -1)">
  118
 </text>
 </g>
