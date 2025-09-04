@@ -242,7 +242,7 @@ impl Backend {
     }
 
     pub fn demo() -> Result<Backend, Error> {
-        let content = include_bytes!("../data/blackforest.gpx");
+        let content = include_bytes!("../data/ref/roland.gpx");
         Self::from_content(&content.to_vec())
     }
 
