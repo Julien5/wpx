@@ -46,7 +46,6 @@ fn main() -> Result<(), error::Error> {
     let mut backend = Backend::from_filename(gpxinput)?;
 
     let mut parameters = backend.get_parameters();
-    let mut eparameters = backend.get_eparameters();
     match args.interval_length {
         Some(length) => {
             parameters.segment_length = 1000f64 * (length as f64);
@@ -76,7 +75,6 @@ fn main() -> Result<(), error::Error> {
     }
 
     backend.set_parameters(&parameters);
-    backend.set_eparameters(&eparameters);
 
     let pdfbytes = backend.generatePdf();
     let pdfname = format!(

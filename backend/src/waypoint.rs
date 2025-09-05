@@ -7,6 +7,7 @@ pub enum WaypointOrigin {
     GPX,
     DouglasPeucker,
     MaxStepSize,
+    OpenStreetMap,
 }
 
 #[derive(Clone)]
@@ -50,6 +51,8 @@ pub struct Waypoint {
     pub description: Option<String>,
     pub info: Option<WaypointInfo>,
 }
+
+pub type Waypoints = Vec<Waypoint>;
 
 fn trim_option(s: Option<String>) -> Option<String> {
     match s {

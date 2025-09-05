@@ -365,7 +365,7 @@ fn build_graph(points: &Vec<PointFeature>, polyline: &Polyline) -> Graph {
     ret
 }
 
-fn candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rectangle {
+fn _candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rectangle {
     let mut debug_bb = svg::node::element::Rectangle::new();
     let bb = &candidate.bbox;
     debug_bb = debug_bb.set("x", bb.x_min());
@@ -386,14 +386,14 @@ pub fn place_labels(
     let sorted = graph.debug();
     for item in sorted {
         let (k, others) = item;
-        let name = &points[k].label.text;
-        let othersnames: Vec<_> = others
+        let _name = &points[k].label.text;
+        let _othersnames: Vec<_> = others
             .into_iter()
             .map(|i| points[i].label.text.clone())
             .collect();
-        println!("[{k:2} name:{:20}] order:{:?}", name, othersnames)
+        // println!("[{k:2} name:{:20}] order:{:?}", name, othersnames)
     }
-    let mut debug = svg::node::element::Group::new();
+    let debug = svg::node::element::Group::new();
     for k in 0..points.len() {
         let target_text = &points[k].label.text;
         if target_text.is_empty() {
@@ -428,16 +428,17 @@ pub fn place_labels(
         match best_candidate {
             Some(candidate) => {
                 let bbox = &candidate.bbox;
-                let dothers = &candidate.dothers;
+                /*let dothers = &candidate.dothers;
                 let dtarget = &candidate.dtarget;
                 println!(
-                    "[{k}={:12}] c({:.1},{:.1}) d_t={:.1} d_o = {:.1}]",
-                    target_text,
-                    bbox.x_min(),
-                    bbox.y_max(),
-                    dtarget,
-                    dothers
+                        "[{k}={:12}] c({:.1},{:.1}) d_t={:.1} d_o = {:.1}]",
+                        target_text,
+                        bbox.x_min(),
+                        bbox.y_max(),
+                        dtarget,
+                        dothers
                 );
+                    */
                 points[k].label.bbox = bbox.clone();
             }
             _ => {
@@ -479,7 +480,6 @@ mod tests {
         let mut found = false;
         for c in candidates {
             let good = c.top_left.0 > target.circle.cx && c.top_left.1 > target.circle.cy;
-            println!("{}", c.to_string());
             if good {
                 found = true;
             }

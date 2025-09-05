@@ -2,11 +2,13 @@
 
 use std::str::FromStr;
 
+use crate::gpsdata_osm::OSMType;
 use crate::label_placement::Circle;
 use crate::label_placement::Label;
 use crate::label_placement::Polyline;
 use crate::segment;
 use crate::utm::UTMPoint;
+use crate::waypoint::WaypointOrigin;
 use crate::{backend, waypoints_table};
 
 use svg::node::element::path::Data;
@@ -97,7 +99,7 @@ impl UTMBoundingBox {
     }
 }
 
-fn readid(id: &str) -> (&str, &str) {
+fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
@@ -153,6 +155,9 @@ impl Map {
             if !bbox.contains(&w.utm) {
                 continue;
             }
+            if w.origin != WaypointOrigin::GPX {
+                continue;
+            }
             let mut svgPoint = PointFeature::new();
             let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
             svgPoint.circle.id = format!("wp-{}/circle", k);
@@ -168,6 +173,52 @@ impl Map {
             }
             points.push(svgPoint);
         }
+
+        let cities = backend.osmwaypoints.get(&OSMType::City).unwrap();
+        for k in 0..cities.len() {
+            let w = &cities[k];
+            if !bbox.contains(&w.utm) {
+                continue;
+            }
+            let mut svgPoint = PointFeature::new();
+            let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
+            let n = points.len();
+            svgPoint.circle.id = format!("wp-{}/circle", n);
+            svgPoint.circle.cx = x;
+            svgPoint.circle.cy = y;
+            svgPoint.id = format!("wp-{}", n);
+            let label = w.name.clone().unwrap();
+            println!("add city: {}", label);
+            svgPoint.label.set_text(label.trim());
+            //svgPoint.label.set_text("city");
+            svgPoint.label.id = format!("wp-{}/text", k);
+            points.push(svgPoint);
+        }
+
+        let passes = backend.osmwaypoints.get(&OSMType::MountainPass).unwrap();
+        for k in 0..passes.len() {
+            let w = &passes[k];
+            if !bbox.contains(&w.utm) {
+                continue;
+            }
+            let mut svgPoint = PointFeature::new();
+            let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
+            let n = points.len();
+            svgPoint.circle.id = format!("wp-{}/circle", n);
+            svgPoint.circle.cx = x;
+            svgPoint.circle.cy = y;
+            svgPoint.id = format!("wp-{}", n);
+            if w.name.is_none() {
+                continue;
+            }
+            let label = w.name.clone().unwrap();
+            println!("add city: {}", label);
+            svgPoint.label.set_text(label.trim());
+            //svgPoint.label.set_text("city");
+            svgPoint.label.id = format!("wp-{}/text", k);
+            points.push(svgPoint);
+        }
+
         let debug = crate::label_placement::place_labels(&mut points, &polyline);
         Map {
             polyline,
@@ -190,7 +241,7 @@ impl Map {
                 Event::Tag(tag::Circle, _, attributes) => {
                     if attributes.contains_key("id") {
                         let id = attributes.get("id").unwrap().clone().to_string();
-                        let (p_id, _p_attr) = readid(id.as_str());
+                        let (p_id, _p_attr) = _readid(id.as_str());
                         current_circle.id = String::from_str(p_id).unwrap();
                         current_circle.circle = Circle::_from_attributes(&attributes);
                         println!("{}: {:?}", id, attributes);

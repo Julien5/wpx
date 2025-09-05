@@ -1,11 +1,11 @@
 use crate::error::Error;
-use crate::project;
 use crate::utm::UTMPoint;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointOrigin;
+use crate::waypoint::Waypoints;
 use geo::{Distance, SimplifyIdx};
 
-fn distance(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
+pub fn distance_wgs84(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
     let p1 = geo::Point::new(x1, y1);
     let p2 = geo::Point::new(x2, y2);
     geo::Haversine::distance(p1, p2)
@@ -159,7 +159,7 @@ impl Track {
             proj4rs::transform::transform(&wgs84_spec, &utm_spec, &mut p).unwrap();
             utm.push(UTMPoint(p.0, p.1));
             if k > 0 {
-                dacc += distance(wgs[k - 1].0, wgs[k - 1].1, wgs[k].0, wgs[k].1);
+                dacc += distance_wgs84(wgs[k - 1].0, wgs[k - 1].1, wgs[k].0, wgs[k].1);
             }
             _distance.push(dacc);
         }
@@ -230,15 +230,7 @@ impl ProfileBoundingBox {
     }
 }
 
-pub fn project_waypoints(track: &Track, waypoints: &mut Vec<Waypoint>) {
-    let indexes = project::nearest_neighboor(&track.utm, &waypoints);
-    debug_assert_eq!(waypoints.len(), indexes.len());
-    for k in 0..indexes.len() {
-        waypoints[k].track_index = Some(indexes[k]);
-    }
-}
-
-pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<Waypoint> {
+pub fn read_waypoints(gpx: &gpx::Gpx) -> Waypoints {
     let mut ret = Vec::new();
     // TODO: remove proj4 duplicate
     use proj4rs::proj::Proj;

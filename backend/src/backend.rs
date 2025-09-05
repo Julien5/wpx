@@ -3,16 +3,20 @@
 use crate::automatic;
 use crate::elevation;
 use crate::error::Error;
-pub use crate::gpsdata;
+use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
+use crate::gpsdata_osm;
+use crate::gpsdata_osm::OSMWaypoints;
 use crate::gpxexport;
-use crate::parameters::ExperimentalParameters;
 use crate::parameters::Parameters;
 use crate::pdf;
+use crate::project;
 use crate::render;
 use crate::render_device::RenderDevice;
 use crate::svgmap;
-use crate::waypoint;
+use crate::waypoint::Waypoint;
+use crate::waypoint::WaypointInfo;
+use crate::waypoint::Waypoints;
 use crate::waypoint_values;
 use crate::waypoints_table;
 
@@ -22,9 +26,9 @@ pub type SegmentStatistics = crate::segment::SegmentStatistics;
 
 pub struct Backend {
     parameters: Parameters,
-    eparameters: ExperimentalParameters,
     pub track: gpsdata::Track,
-    pub waypoints: Vec<waypoint::Waypoint>,
+    pub waypoints: Waypoints,
+    pub osmwaypoints: OSMWaypoints,
     track_smooth_elevation: Vec<f64>,
 }
 
@@ -39,10 +43,6 @@ impl Backend {
         self.parameters.clone()
     }
 
-    pub fn get_eparameters(self: &Backend) -> ExperimentalParameters {
-        self.eparameters.clone()
-    }
-
     fn update_waypoints(&mut self) {
         self.waypoints = automatic::generate(&self.track, &self.waypoints, &self.parameters);
         self.make_waypoint_infos();
@@ -52,7 +52,7 @@ impl Backend {
         waypoint_values::compute_values(&mut self.waypoints, &self.track);
         println!("generated {} waypoints", self.waypoints.len());
     }
-    pub fn get_waypoints(&self) -> Vec<waypoint::Waypoint> {
+    pub fn get_waypoints(&self) -> Vec<Waypoint> {
         return self.waypoints.clone();
     }
 
@@ -63,15 +63,11 @@ impl Backend {
         self.update_waypoints();
     }
 
-    pub fn set_eparameters(self: &mut Backend, eparameters: &ExperimentalParameters) {
-        self.eparameters = eparameters.clone();
-    }
-
     fn create_waypoint_info(
         self: &Backend,
-        w: &waypoint::Waypoint,
-        wprev: Option<&waypoint::Waypoint>,
-    ) -> waypoint::WaypointInfo {
+        w: &Waypoint,
+        wprev: Option<&Waypoint>,
+    ) -> WaypointInfo {
         let track = &self.track;
         assert!(w.get_track_index() < track.len());
         let distance = track.distance(w.get_track_index());
@@ -102,7 +98,7 @@ impl Backend {
                 false => format!("{} - {}", name, desc),
             },
         };
-        waypoint::WaypointInfo {
+        WaypointInfo {
             wgs84: w.wgs84,
             utm: w.utm.clone(),
             origin: w.origin.clone(),
@@ -137,11 +133,11 @@ impl Backend {
             w.info = Some(infos[k].clone());
         }
     }
-    pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<waypoint::Waypoint> {
+    pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {
         let mut ret = Vec::new();
         let waypoints = &self.waypoints;
         let V = waypoints_table::show_waypoints_in_table(&self.waypoints, &segment.profile.bbox);
-        let mut wprev: Option<&waypoint::Waypoint> = None;
+        let mut wprev: Option<&Waypoint> = None;
         for k in 0..waypoints.len() {
             if !V.contains(&k) {
                 continue;
@@ -215,9 +211,9 @@ impl Backend {
         };
         let default_params = Parameters::default();
         let mut gpxwaypoints = gpsdata::read_waypoints(&gpx);
-        gpsdata::project_waypoints(&track, &mut gpxwaypoints);
+        project::project_on_track(&track, &mut gpxwaypoints);
+        let osmwaypoints = gpsdata_osm::read(&track, 2000f64);
         let parameters = Parameters::default();
-        let eparameters = ExperimentalParameters::default();
         let mut ret = Backend {
             track_smooth_elevation: elevation::smooth_elevation(
                 &track,
@@ -225,8 +221,8 @@ impl Backend {
             ),
             track,
             waypoints: gpxwaypoints,
+            osmwaypoints,
             parameters,
-            eparameters,
         };
         ret.update_waypoints();
         Ok(ret)

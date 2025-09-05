@@ -1,0 +1,271 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-09-04T04:13:02Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 29950833,
+  "lat": 47.9209556,
+  "lon": 9.7542772,
+  "tags": {
+    "ele": "588",
+    "name": "Bad Waldsee",
+    "name:sr": "Бад Валдзе",
+    "place": "town",
+    "population": "19596",
+    "postal_code": "88339",
+    "website": "https://www.bad-waldsee.de/",
+    "wikidata": "Q515423",
+    "wikipedia": "de:Bad Waldsee"
+  }
+},
+{
+  "type": "node",
+  "id": 31372616,
+  "lat": 48.0984413,
+  "lon": 9.7899938,
+  "tags": {
+    "ele": "533",
+    "name": "Biberach an der Riß",
+    "name:de": "Biberach an der Riß",
+    "name:ru": "Биберах-на-Рисе",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Biberach an der Riß",
+    "openGeoDB:community_identification_number": "08426021",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "14449",
+    "openGeoDB:telephone_area_code": "07351",
+    "place": "town",
+    "population": "31419",
+    "postal_code": "88400",
+    "wikidata": "Q16069",
+    "wikipedia": "de:Biberach an der Riß"
+  }
+},
+{
+  "type": "node",
+  "id": 31372619,
+  "lat": 48.0711222,
+  "lon": 9.9512104,
+  "tags": {
+    "name": "Ochsenhausen",
+    "name:prefix": "Stadt",
+    "place": "town",
+    "population": "8985",
+    "wikidata": "Q522526"
+  }
+},
+{
+  "type": "node",
+  "id": 34557695,
+  "lat": 48.0373762,
+  "lon": 10.7282761,
+  "tags": {
+    "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Buchloe",
+    "name:als": "Buechloe",
+    "name:ar": "بوشلو",
+    "name:fa": "بوشلو",
+    "name:ja": "ブーフローエ",
+    "name:ru": "Бухлоэ",
+    "name:sr": "Бухло",
+    "name:zh": "布洛埃",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Buchloe",
+    "openGeoDB:community_identification_number": "09777121",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "15097",
+    "openGeoDB:name": "Buchloe",
+    "openGeoDB:population": "11983",
+    "openGeoDB:postal_codes": "86807",
+    "openGeoDB:sort_name": "BUCHLOE",
+    "openGeoDB:telephone_area_code": "08241",
+    "openGeoDB:type": "Stadt",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.0367322",
+    "opengeodb:lon": "10.7281583",
+    "place": "town",
+    "population": "11983",
+    "wikidata": "Q265110",
+    "wikipedia": "de:Buchloe"
+  }
+},
+{
+  "type": "node",
+  "id": 59863856,
+  "lat": 47.9084031,
+  "lon": 9.8966021,
+  "tags": {
+    "name": "Bad Wurzach",
+    "name:de": "Bad Wurzach",
+    "name:ru": "Бад-Вурцах",
+    "old_name": "Wurtzach",
+    "place": "town",
+    "wikidata": "Q56440026"
+  }
+},
+{
+  "type": "node",
+  "id": 115212629,
+  "lat": 47.9417348,
+  "lon": 10.2999793,
+  "tags": {
+    "name": "Ottobeuren",
+    "place": "town",
+    "population": "8672",
+    "wikidata": "Q532455"
+  }
+},
+{
+  "type": "node",
+  "id": 240036844,
+  "lat": 47.9863099,
+  "lon": 10.1808016,
+  "tags": {
+    "ele": "601",
+    "name": "Memmingen",
+    "name:bar": "Memmingen",
+    "name:ja": "メミンゲン",
+    "name:ko": "메밍겐",
+    "name:ml": "മെമ്മിങ്കൻ",
+    "name:ru": "Мемминген",
+    "name:sr": "Меминген",
+    "name:zh": "梅明根",
+    "openGeoDB:community_identification_number": "09764000",
+    "openGeoDB:license_plate_code": "MM",
+    "openGeoDB:loc_id": "20818",
+    "openGeoDB:telephone_area_code": "08331",
+    "place": "town",
+    "population": "45343",
+    "postal_code": "87700",
+    "wikidata": "Q14825",
+    "wikipedia": "de:Memmingen"
+  }
+},
+{
+  "type": "node",
+  "id": 240052220,
+  "lat": 48.1432420,
+  "lon": 10.2540507,
+  "tags": {
+    "name": "Babenhausen",
+    "place": "town",
+    "wikidata": "Q566620"
+  }
+},
+{
+  "type": "node",
+  "id": 240078045,
+  "lat": 47.8803788,
+  "lon": 10.6222460,
+  "tags": {
+    "ele": "678",
+    "name": "Kaufbeuren",
+    "name:de": "Kaufbeuren",
+    "name:fa": "کاوفبویرن",
+    "name:ja": "カウフボイレン",
+    "name:kk": "Кауфбойрен",
+    "name:ru": "Кауфбойрен",
+    "name:sr": "Кауфбојрен",
+    "name:zh": "考夫博伊伦",
+    "place": "town",
+    "population": "41759",
+    "postal_code": "87600",
+    "wikidata": "Q131676361"
+  }
+},
+{
+  "type": "node",
+  "id": 470319784,
+  "lat": 48.0059852,
+  "lon": 10.5921263,
+  "tags": {
+    "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Bad Wörishofen",
+    "name:als": "Werishofe",
+    "name:ar": "باد فوريسهوفن",
+    "name:fa": "باد وریسهوفن",
+    "name:ru": "Бад-Вёрисхофен",
+    "name:sr": "Бад Верисхофен",
+    "name:zh": "巴特沃里斯霍芬",
+    "openGeoDB:community_identification_number": "09778116",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "14015",
+    "openGeoDB:telephone_area_code": "08247",
+    "place": "town",
+    "population": "13925",
+    "postal_code": "86825",
+    "wikidata": "Q504579",
+    "wikipedia": "de:Bad Wörishofen"
+  }
+},
+{
+  "type": "node",
+  "id": 1683130862,
+  "lat": 48.0601151,
+  "lon": 10.6394156,
+  "tags": {
+    "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Türkheim",
+    "name:als": "Tirke",
+    "name:fa": "تورکهایم",
+    "name:ru": "Тюркхайм",
+    "name:sr": "Тиркхајм",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Türkheim",
+    "openGeoDB:community_identification_number": "09778203",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "25137",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Türkheim, Wertach",
+    "openGeoDB:population": "6644",
+    "openGeoDB:postal_codes": "86842",
+    "openGeoDB:sort_name": "TUERKHEIM",
+    "openGeoDB:telephone_area_code": "08245",
+    "openGeoDB:type": "Markt",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "town",
+    "population": "6998",
+    "wikidata": "Q552257",
+    "wikipedia": "de:Türkheim"
+  }
+},
+{
+  "type": "node",
+  "id": 1685809860,
+  "lat": 48.0464164,
+  "lon": 10.4882504,
+  "tags": {
+    "name": "Mindelheim",
+    "name:als": "Mindelhoi",
+    "name:ar": "ميندلهايم",
+    "name:de": "Mindelheim",
+    "name:fa": "میندلهایم",
+    "name:hy": "Մինդելհայմ",
+    "name:ka": "მინდელჰაიმი",
+    "name:la": "Mindelhemium",
+    "name:ru": "Миндельхайм",
+    "name:sr": "Минделхајм",
+    "name:zh": "明德尔海姆",
+    "place": "town",
+    "population": "15108",
+    "website": "https://www.mindelheim.de",
+    "wikidata": "Q518579",
+    "wikipedia": "de:Mindelheim"
+  }
+}
+
+  ]
+}

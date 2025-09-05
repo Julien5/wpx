@@ -1,7 +1,9 @@
 #![allow(non_snake_case)]
 
+use crate::gpsdata::Track;
 use crate::utm;
 use crate::waypoint;
+use crate::waypoint::Waypoints;
 
 // see https://docs.rs/kd-tree/latest/kd_tree/trait.KdPoint.html
 impl kd_tree::KdPoint for utm::UTMPoint {
@@ -30,6 +32,14 @@ pub fn nearest_neighboor(
         ret.push(*N.unwrap().item);
     }
     ret
+}
+
+pub fn project_on_track(track: &Track, waypoints: &mut Waypoints) {
+    let indexes = nearest_neighboor(&track.utm, &waypoints);
+    debug_assert_eq!(waypoints.len(), indexes.len());
+    for k in 0..indexes.len() {
+        waypoints[k].track_index = Some(indexes[k]);
+    }
 }
 
 #[cfg(test)]

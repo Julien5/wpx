@@ -70,10 +70,11 @@ fn points_table(
     table.replace(&template_line_orig, joined.as_str())
 }
 
-fn get_typst_bytes(ascii: &str) -> String {
+fn get_typst_bytes(utf8: &str) -> String {
     let mut ret = Vec::new();
-    for c in ascii.chars() {
-        let code = format!("{:?}", c as u32);
+    let chars = utf8.as_bytes();
+    for c in chars {
+        let code = format!("{:?}", *c as u32);
         ret.push(code);
     }
     let rc = ret.join(",");
@@ -91,6 +92,7 @@ fn link(
     table = table.replace("{table-points}", points_table.as_str());
     table = table.replace("{profile.svg}", get_typst_bytes(profilesvg).as_str());
     table = table.replace("{map.svg}", get_typst_bytes(mapsvg).as_str());
+    //table = table.replace("{map.svg}", format!("\"{}\"", "map-0.svg").as_str());
     document.push_str(table.as_str());
 }
 

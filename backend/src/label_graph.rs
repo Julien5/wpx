@@ -106,6 +106,7 @@ impl Graph {
                 .map(|x| x.to_string())
                 .collect::<Vec<_>>()
                 .join(", ");
+
             match self.candidates.get(node) {
                 Some(candidates) => {
                     println!("node: {:1} edges:{:5} |C|={}", node, list, candidates.len())
@@ -175,11 +176,13 @@ impl Graph {
                 Some(best_index) => {
                     let candidates = self.candidates.get(&m).unwrap();
                     let best_candidate = candidates[best_index].clone();
-                    println!(
-                        "[node:{m:2}] => candidate:{best_index} from {:2} [{}]",
-                        candidates.len(),
-                        best_candidate.bbox
+                    /*
+                        println!(
+                            "[node:{m:2}] => candidate:{best_index} from {:2} [{}]",
+                            candidates.len(),
+                            best_candidate.bbox
                     );
+                        */
                     ret.insert(m, best_candidate.clone());
                     self.select(&m, &best_candidate);
                 }
@@ -207,25 +210,25 @@ impl Graph {
                 });
                 for index in 0..sorted.len() {
                     match self.candidate_blocks_any(node, index) {
-                        Some(other_node) => {
-                            println!(
+                        Some(_other_node) => {
+                            /*println!(
                                 "[node:{node:2}] [candidate:{index:2}] blocks [{other_node:2}]"
-                            );
+                            );*/
                             continue;
                         }
                         None => {}
                     }
-                    println!(
+                    /*println!(
                         "[node:{node:2}] [candidate:{index:2}] it bests from #={}",
                         candidates.len()
-                    );
+                    );*/
                     return Some(index);
                 }
-                println!("all candidates of {node} block some other.");
+                //println!("all candidates of {node} block some other.");
                 None
             }
             _ => {
-                println!("{node} has no candidate.");
+                //println!("{node} has no candidate.");
                 None
             }
         }

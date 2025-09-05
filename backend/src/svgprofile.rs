@@ -271,6 +271,13 @@ fn waypoint_circle((x, y): (i32, i32), waypoint: &waypoint::Waypoint) -> Circle 
             .set("stroke", "black")
             .set("stroke-width", "2")
             .set("r", 5),
+        OpenStreetMap => svg::node::element::Circle::new()
+            .set("cx", x)
+            .set("cy", y)
+            .set("fill", "gray")
+            .set("stroke", "black")
+            .set("stroke-width", "1")
+            .set("r", 5),
     }
 }
 

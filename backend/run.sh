@@ -9,7 +9,7 @@ function pdf() {
 	echo "args:"$@
 	file=data/blackforest.gpx
 	if [ -f "$1" ]; then
-	   file=$1
+	   file="$1"
 	   shift
 	fi
 	echo make pdf
@@ -18,7 +18,7 @@ function pdf() {
 		  --debug true \
 		  --interval-length 180 \
 		  "$@" \
-		  ${file}
+		  "${file}"
 	${TYPST} compile /tmp/document.typst
 	echo xdg-open /tmp/document.pdf 
 }

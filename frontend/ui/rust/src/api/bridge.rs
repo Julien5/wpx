@@ -45,10 +45,11 @@ impl Segment {
 pub struct _UTMPoint(pub f64, pub f64);
 
 #[frb(mirror(WaypointOrigin))]
-pub enum _WaypointOrigin {
+pub enum WaypointOrigin {
     GPX,
     DouglasPeucker,
     MaxStepSize,
+    City,
 }
 
 #[frb(mirror(Parameters))]

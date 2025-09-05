@@ -1,4 +1,4 @@
-pub fn kmh(_mps: f64) -> f64 {
+pub fn _kmh(_mps: f64) -> f64 {
     // m/s => kmh
     _mps * 3.6f64
 }

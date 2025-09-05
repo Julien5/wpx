@@ -2,10 +2,9 @@
 use std::collections::HashMap;
 
 use crate::gpsdata;
-use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointOrigin;
+use crate::waypoint::Waypoints;
 
-type Waypoints = Vec<Waypoint>;
 type Values = HashMap<usize, usize>;
 
 pub fn hard_value(waypoints: &Waypoints, _track: &gpsdata::Track, index: usize) -> Option<usize> {
