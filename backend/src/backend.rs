@@ -14,6 +14,7 @@ use crate::project;
 use crate::render;
 use crate::render_device::RenderDevice;
 use crate::svgmap;
+use crate::svgprofile;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
@@ -42,7 +43,6 @@ impl Backend {
     pub fn get_parameters(self: &Backend) -> Parameters {
         self.parameters.clone()
     }
-
     fn update_waypoints(&mut self) {
         self.waypoints = automatic::generate(&self.track, &self.waypoints, &self.parameters);
         self.make_waypoint_infos();
@@ -60,6 +60,7 @@ impl Backend {
         self.parameters = parameters.clone();
         self.track_smooth_elevation =
             elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
+        self.osmwaypoints = gpsdata_osm::read(&self.track, 1000f64);
         self.update_waypoints();
     }
 
@@ -136,7 +137,7 @@ impl Backend {
     pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {
         let mut ret = Vec::new();
         let waypoints = &self.waypoints;
-        let V = waypoints_table::show_waypoints_in_table(&self.waypoints, &segment.profile.bbox);
+        let V = waypoints_table::show_waypoints_in_table(&self.waypoints, &segment.bbox);
         let mut wprev: Option<&Waypoint> = None;
         for k in 0..waypoints.len() {
             if !V.contains(&k) {
@@ -158,26 +159,6 @@ impl Backend {
     }
     pub fn setSegmentLength(&mut self, length: f64) {
         self.parameters.segment_length = length;
-    }
-    pub fn experiment_labels(&self, segment: &Segment) {
-        let debug = self.get_parameters().debug;
-        let W = 400;
-        let H = W;
-        let ret = svgmap::map(&self, &segment, W, H, debug);
-        let filename = std::format!("/tmp/map-labels-{}.svg", segment.id);
-        std::fs::write(filename, &ret).expect("Unable to write file");
-
-        {
-            let mut profile = segment.profile.clone();
-            profile.set_render_device(RenderDevice::Native);
-            profile.reset_size(1000, 400);
-            profile.add_track(&self.track, &self.track_smooth_elevation);
-            let W = self.get_waypoints();
-            profile.add_waypoints(&W);
-            let ret = profile.renderSD();
-            let filename = std::format!("/tmp/profile-labels-{}.svg", segment.id);
-            std::fs::write(filename, &ret).expect("Unable to write file");
-        }
     }
 
     pub fn elevation_gain(&self, from: usize, to: usize) -> f64 {
@@ -212,7 +193,7 @@ impl Backend {
         let default_params = Parameters::default();
         let mut gpxwaypoints = gpsdata::read_waypoints(&gpx);
         project::project_on_track(&track, &mut gpxwaypoints);
-        let osmwaypoints = gpsdata_osm::read(&track, 2000f64);
+        let osmwaypoints = gpsdata_osm::read(&track, 1000f64);
         let parameters = Parameters::default();
         let mut ret = Backend {
             track_smooth_elevation: elevation::smooth_elevation(
@@ -273,8 +254,7 @@ impl Backend {
     ) -> String {
         println!("render_segment_what:{} {}", segment.id, what);
         match what.as_str() {
-            "track" => self.render_segment_track(segment, (W, H), render_device),
-            "waypoints" => self.render_segment_waypoints(segment, (W, H), render_device),
+            "profile" => self.render_segment(segment, (W, H), render_device),
             "ylabels" => self.render_yaxis_labels_overlay(segment, (W, H), render_device),
             "map" => self.render_segment_map(segment, (W, H)),
             _ => {
@@ -290,14 +270,13 @@ impl Backend {
         render_device: RenderDevice,
     ) -> String {
         println!("render_segment:{}", segment.id);
-        let mut profile = segment.profile.clone();
-        profile.set_render_device(render_device);
-        profile.reset_size(W, H);
-        profile.add_canvas();
-        profile.add_track(&self.track, &self.track_smooth_elevation);
-        let W = self.get_waypoints();
-        profile.add_waypoints(&W);
-        profile.render()
+        let debug = self.get_parameters().debug;
+        let ret = svgprofile::profile(&self, &segment, W, H, render_device, debug);
+        if self.get_parameters().debug {
+            let filename = std::format!("/tmp/profile-{}.svg", segment.id);
+            std::fs::write(filename, &ret).expect("Unable to write file");
+        }
+        ret
     }
     fn render_yaxis_labels_overlay(
         &mut self,
@@ -306,50 +285,17 @@ impl Backend {
         render_device: RenderDevice,
     ) -> String {
         println!("render_segment_track:{}", segment.id);
-        let mut profile = segment.profile.clone();
+        let mut profile = svgprofile::ProfileView::init(&segment.bbox);
         profile.set_render_device(render_device);
-        profile.reset_size(W, H);
+        profile.reset_size(W as f64, H as f64);
         profile.add_yaxis_labels_overlay();
-        profile.render()
-    }
-    fn render_segment_track(
-        &mut self,
-        segment: &Segment,
-        (W, H): (i32, i32),
-        render_device: RenderDevice,
-    ) -> String {
-        println!("render_segment_track:{}", segment.id);
-        let mut profile = segment.profile.clone();
-        profile.set_render_device(render_device);
-        profile.reset_size(W, H);
-        profile.add_canvas();
-        profile.add_track(&self.track, &self.track_smooth_elevation);
         let ret = profile.render();
         if self.get_parameters().debug {
-            let filename = std::format!("/tmp/segment-{}.svg", segment.id);
+            let filename = std::format!("/tmp/yaxis-{}.svg", segment.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
         }
         ret
     }
-    fn render_segment_waypoints(
-        &mut self,
-        segment: &Segment,
-        (W, H): (i32, i32),
-        render_device: RenderDevice,
-    ) -> String {
-        println!("render_segment_track:{}", segment.id);
-        let mut profile = segment.profile.clone();
-        profile.set_render_device(render_device);
-        profile.reset_size(W, H);
-        profile.add_waypoints(&self.get_waypoints());
-        let ret = profile.render();
-        if self.get_parameters().debug {
-            let filename = std::format!("/tmp/waypoints-{}.svg", segment.id);
-            std::fs::write(filename, &ret).expect("Unable to write file");
-        }
-        ret
-    }
-
     pub fn render_segment_map(&self, segment: &Segment, (W, H): (i32, i32)) -> String {
         let debug = self.get_parameters().debug;
         let ret = svgmap::map(&self, &segment, W, H, debug);
@@ -392,7 +338,7 @@ impl Backend {
 
 #[cfg(test)]
 mod tests {
-    use crate::{backend::Backend, render_device::RenderDevice};
+    use crate::{backend::Backend, gpsdata_osm, render_device::RenderDevice};
     #[test]
     fn svg_segment_track() {
         let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
@@ -418,29 +364,48 @@ mod tests {
     }
 
     #[test]
-    fn svg_segment_waypoints() {
+    fn svg_profile() {
         let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
         let segments = backend.segments();
         let mut ok_count = 0;
-        let mut parameters = backend.get_parameters();
-        use chrono::TimeZone;
-        parameters.start_time = chrono::offset::Utc
-            .with_ymd_and_hms(2025, 11, 10, 8, 0, 0)
-            .unwrap()
-            .to_rfc3339();
-        backend.set_parameters(&parameters);
         for segment in &segments {
-            let svg = backend.render_segment_waypoints(&segment, (1420, 400), RenderDevice::Native);
-            let reffilename = std::format!("data/ref/waypoints-{}.svg", segment.id);
+            let svg = backend.render_segment(&segment, (1420, 400), RenderDevice::Native);
+            let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
             println!("test {}", reffilename);
-            if !std::fs::exists(&reffilename).unwrap() {
-                continue;
-            }
-            let data = std::fs::read_to_string(&reffilename).unwrap();
+            let data = if std::fs::exists(&reffilename).unwrap() {
+                std::fs::read_to_string(&reffilename).unwrap()
+            } else {
+                String::new()
+            };
             if data == svg {
                 ok_count += 1;
             } else {
-                let tmpfilename = std::format!("/tmp/waypoints-{}.svg", segment.id);
+                let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id);
+                std::fs::write(&tmpfilename, svg).unwrap();
+                println!("test failed: {} {}", tmpfilename, reffilename);
+            }
+        }
+        assert!(ok_count == segments.len());
+    }
+
+    #[test]
+    fn svg_map() {
+        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
+        let segments = backend.segments();
+        let mut ok_count = 0;
+        for segment in &segments {
+            let svg = backend.render_segment_map(&segment, (400, 400));
+            let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
+            println!("test {}", reffilename);
+            let data = if std::fs::exists(&reffilename).unwrap() {
+                std::fs::read_to_string(&reffilename).unwrap()
+            } else {
+                String::new()
+            };
+            if data == svg {
+                ok_count += 1;
+            } else {
+                let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id);
                 std::fs::write(&tmpfilename, svg).unwrap();
                 println!("test failed: {} {}", tmpfilename, reffilename);
             }

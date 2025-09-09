@@ -228,6 +228,16 @@ impl ProfileBoundingBox {
         self.ymin = snap_floor(self.ymin - 100f64);
         self.ymax = snap_ceil(self.ymax + 100f64).max(snap_floor(self.ymin + 500f64));
     }
+
+    pub fn contains(&self, x: f64, y: f64) -> bool {
+        if x < self.xmin || x > self.xmax {
+            return false;
+        }
+        if y < self.ymin || y > self.ymax {
+            return false;
+        }
+        true
+    }
 }
 
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Waypoints {

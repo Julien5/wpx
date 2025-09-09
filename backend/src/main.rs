@@ -17,8 +17,6 @@ struct Cli {
     start_time: Option<String>,
     #[arg(long, value_name = "max_step_length")]
     max_step_length: Option<i32>,
-    #[arg(long, value_name = "experiment_labels")]
-    experiment_labels: Option<bool>,
     #[arg(value_name = "gpx")]
     filename: std::path::PathBuf,
 }
@@ -93,19 +91,6 @@ fn main() -> Result<(), error::Error> {
     );
     println!("make: {}", gpxname);
     std::fs::write(gpxname, &gpxbytes).expect("Could not write gpx.");
-
-    match args.experiment_labels {
-        Some(b) => {
-            if b {
-                let segments = backend.segments();
-                for k in 0..segments.len() {
-                    let segment = &segments[k];
-                    backend.experiment_labels(&segment);
-                }
-            }
-        }
-        _ => {}
-    }
 
     Ok(())
 }

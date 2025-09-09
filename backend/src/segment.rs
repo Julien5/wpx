@@ -1,5 +1,4 @@
 use crate::gpsdata;
-use crate::svgprofile;
 use crate::waypoint;
 use crate::waypoints_table;
 
@@ -7,15 +6,18 @@ use crate::waypoints_table;
 pub struct Segment {
     pub id: usize,
     pub range: std::ops::Range<usize>,
-    pub profile: svgprofile::Profile,
+    pub bbox: gpsdata::ProfileBoundingBox,
 }
 
 impl Segment {
     pub fn shows_waypoint(&self, wp: &waypoint::Waypoint) -> bool {
-        self.profile.shows_waypoint(wp)
+        match wp.track_index {
+            Some(index) => self.range.contains(&index),
+            _ => false,
+        }
     }
     pub fn show_waypoints_in_table(&self, waypoints: &Vec<waypoint::Waypoint>) -> Vec<usize> {
-        waypoints_table::show_waypoints_in_table(&waypoints, &self.profile.bbox)
+        waypoints_table::show_waypoints_in_table(&waypoints, &self.bbox)
     }
 }
 
@@ -35,7 +37,7 @@ impl Segment {
         Segment {
             id,
             range: range.clone(),
-            profile: svgprofile::Profile::init(&bbox),
+            bbox: bbox.clone(),
         }
     }
 }

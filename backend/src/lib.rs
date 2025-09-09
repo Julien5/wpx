@@ -5,8 +5,6 @@ pub mod error;
 pub mod gpsdata;
 mod gpsdata_osm;
 mod gpxexport;
-mod label_candidates;
-mod label_graph;
 mod label_placement;
 pub mod parameters;
 mod pdf;

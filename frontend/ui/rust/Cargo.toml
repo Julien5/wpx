@@ -9,8 +9,8 @@ crate-type = ["cdylib", "staticlib"]
 [dependencies]
 flutter_rust_bridge = "=2.11.1"
 tokio = { version = "1.45", features = ["time"] }
-tracks = { version = "*", path = "../../../backend", features=["typstpdf"] }
-# tracks = { version = "*", path = "../../../backend" }
+#tracks = { version = "*", path = "../../../backend", features=["typstpdf"] }
+tracks = { version = "*", path = "../../../backend" }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

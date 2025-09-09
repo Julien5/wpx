@@ -229,13 +229,9 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
             child: table1,
           ),
         );
-        Table table2 = Table(
-          columnWidths: const {
-            0: FlexColumnWidth(1), // Fixed width for the first column
-            1: FlexColumnWidth(2), // Flexible width for the second column
-          },
+        Column table2 = Column(
           children: [
-            TableRow(
+            Row(
               children: [
                 Container(
                   height: 60,
@@ -259,7 +255,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
                 ),
               ],
             ),
-            TableRow(
+            Row(
               children: [
                 Container(
                   height: 60,
@@ -283,7 +279,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
                 ),
               ],
             ),
-            TableRow(
+            Row(
               children: [
                 Container(
                   height: 60,

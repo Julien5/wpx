@@ -12,8 +12,7 @@ class RenderingsProvider extends MultiProvider {
     : renderers = r,
       super(
         providers: [
-          ChangeNotifierProvider.value(value: r.trackRendering),
-          ChangeNotifierProvider.value(value: r.waypointsRendering),
+          ChangeNotifierProvider.value(value: r.profileRendering),
           ChangeNotifierProvider.value(value: r.mapRendering),
         ],
         child: child,
@@ -34,7 +33,7 @@ class SegmentsView extends StatelessWidget {
     assert(ret.isEmpty);
     for (var renderer in S) {
       var w = RenderingsProvider(renderer, SegmentView());
-      w.renderers.trackRendering.start();
+      w.renderers.profileRendering.start();
       ret.add(w);
     }
     developer.log("[renderingProviders] [build] #segments=${ret.length}");
@@ -47,7 +46,7 @@ class SegmentsView extends StatelessWidget {
     developer.log("[segments] [build] #segments=${segments.length}");
     List<Tab> tabs = [];
     for (var s in segments) {
-      var id = s.renderers.trackRendering.segment.id();
+      var id = s.renderers.profileRendering.segment.id();
       tabs.add(Tab(text: "Page ${1 + id.toInt()}"));
     }
     return DefaultTabController(

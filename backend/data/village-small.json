@@ -1,0 +1,4424 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-09-05T08:11:34Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 31372617,
+  "lat": 48.1355236,
+  "lon": 9.8846843,
+  "tags": {
+    "ele": "544",
+    "name": "Maselheim",
+    "place": "village",
+    "population": "4575",
+    "postal_code": "88437",
+    "wikidata": "Q538658",
+    "wikipedia": "de:Maselheim"
+  }
+},
+{
+  "type": "node",
+  "id": 31382966,
+  "lat": 48.1537438,
+  "lon": 9.8683942,
+  "tags": {
+    "name": "Sulmingen",
+    "place": "village",
+    "wikidata": "Q2364670",
+    "wikipedia": "de:Sulmingen"
+  }
+},
+{
+  "type": "node",
+  "id": 31382967,
+  "lat": 48.1535467,
+  "lon": 9.8563501,
+  "tags": {
+    "name": "Äpfingen",
+    "place": "village",
+    "wikidata": "Q255489",
+    "wikipedia": "de:Äpfingen"
+  }
+},
+{
+  "type": "node",
+  "id": 31382968,
+  "lat": 48.1206885,
+  "lon": 9.8649630,
+  "tags": {
+    "name": "Laupertshausen",
+    "place": "village",
+    "wikidata": "Q1278014",
+    "wikipedia": "de:Laupertshausen"
+  }
+},
+{
+  "type": "node",
+  "id": 31382969,
+  "lat": 48.1105255,
+  "lon": 9.8630576,
+  "tags": {
+    "name": "Ellmannsweiler",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 31382970,
+  "lat": 48.1500776,
+  "lon": 9.8959514,
+  "tags": {
+    "name": "Heggbach",
+    "place": "village",
+    "wikidata": "Q473836",
+    "wikimedia_commons": "Category:Heggbach Abbey",
+    "wikipedia": "de:Kloster Heggbach"
+  }
+},
+{
+  "type": "node",
+  "id": 34557408,
+  "lat": 48.1420572,
+  "lon": 10.7595148,
+  "tags": {
+    "is_in": "Augsburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Langerringen",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Langerringen",
+    "openGeoDB:community_identification_number": "09772170",
+    "openGeoDB:is_in": "Augsburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "479",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "A",
+    "openGeoDB:loc_id": "19952",
+    "openGeoDB:name": "Langerringen",
+    "openGeoDB:population": "3780",
+    "openGeoDB:postal_codes": "86853",
+    "openGeoDB:sort_name": "LANGERRINGEN",
+    "openGeoDB:telephone_area_code": "08232",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.1479335",
+    "opengeodb:lon": "10.7571408",
+    "place": "village",
+    "population": "3780"
+  }
+},
+{
+  "type": "node",
+  "id": 34557678,
+  "lat": 48.1369591,
+  "lon": 10.7548883,
+  "tags": {
+    "name": "Westerringen",
+    "place": "village",
+    "wikidata": "Q131311376"
+  }
+},
+{
+  "type": "node",
+  "id": 34557679,
+  "lat": 48.1194776,
+  "lon": 10.7430334,
+  "tags": {
+    "created_by": "JOSM",
+    "name": "Falkenberg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34557681,
+  "lat": 48.0928840,
+  "lon": 10.7411259,
+  "tags": {
+    "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Lamerdingen",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Buchloe",
+    "openGeoDB:community_identification_number": "09777145",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "19872",
+    "openGeoDB:name": "Lamerdingen",
+    "openGeoDB:population": "1840",
+    "openGeoDB:postal_codes": "86862",
+    "openGeoDB:sort_name": "LAMERDINGEN",
+    "openGeoDB:telephone_area_code": "08248",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.0930422",
+    "opengeodb:lon": "10.7405135",
+    "place": "village",
+    "population": "1840"
+  }
+},
+{
+  "type": "node",
+  "id": 34557682,
+  "lat": 48.1049834,
+  "lon": 10.7726383,
+  "tags": {
+    "name": "Schwabmühlhausen",
+    "place": "village",
+    "wikidata": "Q2252639",
+    "wikipedia": "de:Schwabmühlhausen"
+  }
+},
+{
+  "type": "node",
+  "id": 34557683,
+  "lat": 48.1215488,
+  "lon": 10.7153709,
+  "tags": {
+    "name": "Gennach",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34557689,
+  "lat": 48.0849102,
+  "lon": 10.7679145,
+  "tags": {
+    "is_in": "Lamerdingen,Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Kleinkitzighofen",
+    "place": "village",
+    "wikidata": "Q130214204"
+  }
+},
+{
+  "type": "node",
+  "id": 34557690,
+  "lat": 48.0855704,
+  "lon": 10.7854821,
+  "tags": {
+    "is_in": "Lamerdingen,Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Großkitzighofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34557697,
+  "lat": 48.1327323,
+  "lon": 10.6603367,
+  "tags": {
+    "name": "Siebnach",
+    "place": "village",
+    "wikipedia": "de:Siebnach"
+  }
+},
+{
+  "type": "node",
+  "id": 34815575,
+  "lat": 48.0758478,
+  "lon": 9.8784041,
+  "tags": {
+    "name": "Ringschnait",
+    "place": "village",
+    "postal_code": "88400",
+    "wikidata": "Q16336089"
+  }
+},
+{
+  "type": "node",
+  "id": 34817641,
+  "lat": 48.1725443,
+  "lon": 9.8624925,
+  "tags": {
+    "name": "Baltringen",
+    "place": "village",
+    "postal_code": "88487",
+    "website": "https://www.mietingen.de/",
+    "wikidata": "Q805802",
+    "wikipedia": "de:Mietingen#Baltringen"
+  }
+},
+{
+  "type": "node",
+  "id": 34817643,
+  "lat": 48.1130576,
+  "lon": 9.8227905,
+  "tags": {
+    "name": "Mettenberg",
+    "place": "village",
+    "wikidata": "Q19963125",
+    "wikipedia": "de:Mettenberg (Biberach)"
+  }
+},
+{
+  "type": "node",
+  "id": 34817655,
+  "lat": 48.1715557,
+  "lon": 9.7912710,
+  "tags": {
+    "name": "Schemmerhofen",
+    "name:prefix": "Gemeinde",
+    "place": "village",
+    "population": "7543"
+  }
+},
+{
+  "type": "node",
+  "id": 34817664,
+  "lat": 48.1548727,
+  "lon": 9.9458072,
+  "tags": {
+    "name": "Schönebürg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34817674,
+  "lat": 48.1101571,
+  "lon": 9.9466952,
+  "tags": {
+    "name": "Reinstetten",
+    "place": "village",
+    "wikidata": "Q47501749"
+  }
+},
+{
+  "type": "node",
+  "id": 34818674,
+  "lat": 48.0940641,
+  "lon": 10.0209323,
+  "tags": {
+    "name": "Edelbeuren",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34818677,
+  "lat": 48.1325734,
+  "lon": 10.0817241,
+  "tags": {
+    "name": "Kirchberg an der Iller",
+    "name:prefix": "Gemeinde",
+    "place": "village",
+    "population": "1896"
+  }
+},
+{
+  "type": "node",
+  "id": 34818678,
+  "lat": 48.1464642,
+  "lon": 10.0932359,
+  "tags": {
+    "name": "Sinningen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34818681,
+  "lat": 48.0668675,
+  "lon": 10.0729669,
+  "tags": {
+    "name": "Bonlanden",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34818683,
+  "lat": 48.0647577,
+  "lon": 9.9747128,
+  "tags": {
+    "name": "Erlenmoos",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Ochsenhausen",
+    "openGeoDB:community_identification_number": "08426043",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "16290",
+    "openGeoDB:name": "Erlenmoos",
+    "openGeoDB:population": "1660",
+    "openGeoDB:postal_codes": "88416",
+    "openGeoDB:sort_name": "ERLENMOOS",
+    "openGeoDB:telephone_area_code": "07352",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.0641835",
+    "opengeodb:lon": "9.9748651",
+    "place": "village",
+    "population": "1660"
+  }
+},
+{
+  "type": "node",
+  "id": 34818684,
+  "lat": 48.0633816,
+  "lon": 10.0192422,
+  "tags": {
+    "name": "Edenbachen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34818685,
+  "lat": 48.0465092,
+  "lon": 9.9675693,
+  "tags": {
+    "name": "Oberstetten",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34818686,
+  "lat": 48.0532492,
+  "lon": 9.9775277,
+  "tags": {
+    "created_by": "JOSM",
+    "name": "Eichbühl",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 34818687,
+  "lat": 48.0146714,
+  "lon": 10.0325434,
+  "tags": {
+    "name": "Rot an der Rot",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Rot-Tannheim",
+    "openGeoDB:community_identification_number": "08426100",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "23330",
+    "openGeoDB:name": "Rot an der Rot",
+    "openGeoDB:population": "4410",
+    "openGeoDB:postal_codes": "88430",
+    "openGeoDB:sort_name": "ROT",
+    "openGeoDB:telephone_area_code": "08395",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.0146714",
+    "opengeodb:lon": "10.0325434",
+    "place": "village",
+    "population": "4410",
+    "wikidata": "Q527998",
+    "wikipedia": "de:Rot an der Rot"
+  }
+},
+{
+  "type": "node",
+  "id": 34818690,
+  "lat": 48.0336442,
+  "lon": 9.9225297,
+  "tags": {
+    "name": "Rottum",
+    "place": "village",
+    "wikidata": "Q1720635",
+    "wikipedia": "de:Rottum (Steinhausen an der Rottum)"
+  }
+},
+{
+  "type": "node",
+  "id": 34818691,
+  "lat": 48.0110802,
+  "lon": 9.9088740,
+  "tags": {
+    "name": "Bellamont",
+    "place": "village",
+    "wikidata": "Q815791",
+    "wikipedia": "de:Bellamont"
+  }
+},
+{
+  "type": "node",
+  "id": 34818692,
+  "lat": 47.9971566,
+  "lon": 9.8924105,
+  "tags": {
+    "name": "Füramoos",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Biberach an der Riß",
+    "openGeoDB:community_identification_number": "08426038",
+    "openGeoDB:is_in": "Eberhardzell,Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "15907",
+    "openGeoDB:layer": "9",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "21",
+    "openGeoDB:name": "Füramoos",
+    "openGeoDB:postal_codes": "88436",
+    "openGeoDB:sort_name": "FUERAMOOS",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "47.9970525",
+    "opengeodb:lon": "9.8930105",
+    "place": "village",
+    "wikidata": "Q38252285",
+    "wikipedia": "de:Füramoos"
+  }
+},
+{
+  "type": "node",
+  "id": 34818693,
+  "lat": 48.0456390,
+  "lon": 9.8812550,
+  "tags": {
+    "name": "Mittelbuch",
+    "place": "village",
+    "postal_code": "88416"
+  }
+},
+{
+  "type": "node",
+  "id": 34818695,
+  "lat": 48.0734531,
+  "lon": 9.8043871,
+  "tags": {
+    "name": "Rißegg",
+    "place": "village",
+    "wikidata": "Q7336349"
+  }
+},
+{
+  "type": "node",
+  "id": 34818696,
+  "lat": 48.0384553,
+  "lon": 9.8018745,
+  "tags": {
+    "name": "Schweinhausen",
+    "place": "village",
+    "postal_code": "88454"
+  }
+},
+{
+  "type": "node",
+  "id": 34818698,
+  "lat": 48.0877864,
+  "lon": 9.7479621,
+  "tags": {
+    "name": "Mittelbiberach",
+    "openGeoDB:auto_update": "population",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Biberach an der Riß",
+    "openGeoDB:community_identification_number": "08426074",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "20959",
+    "openGeoDB:name": "Mittelbiberach",
+    "openGeoDB:population": "3862",
+    "openGeoDB:postal_codes": "88441",
+    "openGeoDB:sort_name": "MITTELBIBERACH",
+    "openGeoDB:telephone_area_code": "07351",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.0874469",
+    "opengeodb:lon": "9.7479621",
+    "place": "village",
+    "population": "3862",
+    "wikidata": "Q539825",
+    "wikipedia": "de:Mittelbiberach"
+  }
+},
+{
+  "type": "node",
+  "id": 34818699,
+  "lat": 48.0917752,
+  "lon": 9.7054382,
+  "tags": {
+    "name": "Stafflangen",
+    "place": "village",
+    "postal_code": "88400",
+    "wikidata": "Q14912406",
+    "wikipedia": "de:Stafflangen"
+  }
+},
+{
+  "type": "node",
+  "id": 34818700,
+  "lat": 48.1232504,
+  "lon": 9.7678372,
+  "tags": {
+    "name": "Birkenhard",
+    "place": "village",
+    "postal_code": "88447"
+  }
+},
+{
+  "type": "node",
+  "id": 34818703,
+  "lat": 48.0288506,
+  "lon": 9.6966531,
+  "tags": {
+    "name": "Steinhausen",
+    "place": "village",
+    "postal_code": "88427",
+    "wikidata": "Q2340809",
+    "wikipedia": "de:Steinhausen (Bad Schussenried)"
+  }
+},
+{
+  "type": "node",
+  "id": 34818705,
+  "lat": 48.0257978,
+  "lon": 9.7420620,
+  "tags": {
+    "name": "Ingoldingen",
+    "openGeoDB:auto_update": "population",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Bad Schussenried-Ingoldingen",
+    "openGeoDB:community_identification_number": "08426062",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "18841",
+    "openGeoDB:name": "Ingoldingen",
+    "openGeoDB:population": "2693",
+    "openGeoDB:postal_codes": "88456",
+    "openGeoDB:sort_name": "INGOLDINGEN",
+    "openGeoDB:telephone_area_code": "07355",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.0254402",
+    "opengeodb:lon": "9.7422838",
+    "place": "village",
+    "population": "2693",
+    "postal_code": "88456"
+  }
+},
+{
+  "type": "node",
+  "id": 34818706,
+  "lat": 48.1594125,
+  "lon": 9.7665800,
+  "tags": {
+    "name": "Alberweiler",
+    "place": "village",
+    "population": "788",
+    "postal_code": "88433",
+    "source:population": "http://www.schemmerhofen.de/,Lde/Home/Gemeinde+_+Daten/Alberweiler.html",
+    "website": "http://www.schemmerhofen.de/,Lde/Home/Gemeinde+_+Daten/Alberweiler.html"
+  }
+},
+{
+  "type": "node",
+  "id": 35466351,
+  "lat": 48.0604731,
+  "lon": 9.9276749,
+  "tags": {
+    "name": "Hattenburg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 35474593,
+  "lat": 48.0998667,
+  "lon": 9.8109183,
+  "tags": {
+    "name": "Bergerhausen",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Biberach an der Riß",
+    "openGeoDB:community_identification_number": "08426021",
+    "openGeoDB:is_in": "Biberach an der Riß,Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "14449",
+    "openGeoDB:layer": "9",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "23",
+    "openGeoDB:name": "Bergerhausen",
+    "openGeoDB:postal_codes": "88400",
+    "openGeoDB:sort_name": "BERGERHAUSEN",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.1000688",
+    "opengeodb:lon": "9.8101111",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 57230932,
+  "lat": 48.1373876,
+  "lon": 10.5815961,
+  "tags": {
+    "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Markt Wald",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:community_identification_number": "09778169",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "20667",
+    "openGeoDB:name": "Markt Wald",
+    "openGeoDB:population": "2315",
+    "openGeoDB:postal_codes": "86865",
+    "openGeoDB:sort_name": "WALD",
+    "openGeoDB:telephone_area_code": "08262",
+    "openGeoDB:type": "Markt",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.1333683",
+    "opengeodb:lon": "10.5833105",
+    "place": "village",
+    "population": "2315"
+  }
+},
+{
+  "type": "node",
+  "id": 57505170,
+  "lat": 48.0182732,
+  "lon": 9.9444749,
+  "tags": {
+    "name": "Englisweiler",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 57567671,
+  "lat": 47.9642813,
+  "lon": 9.7248590,
+  "tags": {
+    "name": "Michelwinnaden",
+    "place": "village",
+    "postal_code": "88339",
+    "wikidata": "Q17578451",
+    "wikipedia": "de:Michelwinnaden"
+  }
+},
+{
+  "type": "node",
+  "id": 57567674,
+  "lat": 47.9862933,
+  "lon": 9.7378959,
+  "tags": {
+    "name": "Winterstettendorf",
+    "place": "village",
+    "postal_code": "88456",
+    "wikidata": "Q1714142",
+    "wikipedia": "de:Winterstettendorf"
+  }
+},
+{
+  "type": "node",
+  "id": 57567676,
+  "lat": 47.9849795,
+  "lon": 9.7759983,
+  "tags": {
+    "name": "Oberessendorf",
+    "place": "village",
+    "wikidata": "Q38317069",
+    "wikipedia": "de:Oberessendorf"
+  }
+},
+{
+  "type": "node",
+  "id": 57567678,
+  "lat": 48.0066640,
+  "lon": 9.7412847,
+  "tags": {
+    "name": "Winterstettenstadt",
+    "place": "village",
+    "postal_code": "88456",
+    "wikidata": "Q1263870",
+    "wikipedia": "de:Winterstettenstadt"
+  }
+},
+{
+  "type": "node",
+  "id": 57567679,
+  "lat": 48.0066418,
+  "lon": 9.7716719,
+  "tags": {
+    "name": "Unteressendorf",
+    "place": "village",
+    "postal_code": "88454"
+  }
+},
+{
+  "type": "node",
+  "id": 57567681,
+  "lat": 48.0365019,
+  "lon": 9.7103057,
+  "tags": {
+    "name": "Muttensweiler",
+    "place": "village",
+    "postal_code": "88456"
+  }
+},
+{
+  "type": "node",
+  "id": 57567683,
+  "lat": 48.0352156,
+  "lon": 9.7728900,
+  "tags": {
+    "name": "Degernau",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 57567689,
+  "lat": 48.0659227,
+  "lon": 9.7844629,
+  "tags": {
+    "name": "Rindenmoos",
+    "place": "village",
+    "postal_code": "88400"
+  }
+},
+{
+  "type": "node",
+  "id": 57567692,
+  "lat": 48.0661066,
+  "lon": 9.7621848,
+  "tags": {
+    "name": "Reute",
+    "place": "village",
+    "postal_code": "88441"
+  }
+},
+{
+  "type": "node",
+  "id": 58801706,
+  "lat": 47.8881570,
+  "lon": 10.1362627,
+  "tags": {
+    "name": "Maria Steinbach",
+    "place": "village",
+    "postal_code": "87764"
+  }
+},
+{
+  "type": "node",
+  "id": 58801712,
+  "lat": 47.9042266,
+  "lon": 10.1564211,
+  "tags": {
+    "name": "Kronburg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 58801725,
+  "lat": 47.9023776,
+  "lon": 10.1258422,
+  "tags": {
+    "name": "Illerbeuren",
+    "place": "village",
+    "postal_code": "87758"
+  }
+},
+{
+  "type": "node",
+  "id": 58801729,
+  "lat": 47.8972699,
+  "lon": 10.1176274,
+  "tags": {
+    "name": "Lautrach",
+    "place": "village",
+    "postal_code": "87763",
+    "wikidata": "Q32089976"
+  }
+},
+{
+  "type": "node",
+  "id": 58801732,
+  "lat": 47.9127921,
+  "lon": 10.1304241,
+  "tags": {
+    "name": "Greuth",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 58801735,
+  "lat": 47.9214164,
+  "lon": 10.1224069,
+  "tags": {
+    "name": "Kardorf",
+    "place": "village",
+    "postal_code": "87758"
+  }
+},
+{
+  "type": "node",
+  "id": 58801739,
+  "lat": 47.9403637,
+  "lon": 10.0904735,
+  "tags": {
+    "name": "Aitrach",
+    "name:prefix": "Gemeinde",
+    "place": "village",
+    "population": "2596",
+    "wikidata": "Q410980",
+    "wikipedia": "de:Aitrach"
+  }
+},
+{
+  "type": "node",
+  "id": 58801747,
+  "lat": 47.9458330,
+  "lon": 10.0818668,
+  "tags": {
+    "name": "Marstetten",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 58801938,
+  "lat": 47.9759721,
+  "lon": 10.0483422,
+  "tags": {
+    "name": "Haslach",
+    "place": "village",
+    "wikidata": "Q1358503",
+    "wikipedia": "de:Haslach (Rot an der Rot)"
+  }
+},
+{
+  "type": "node",
+  "id": 58802244,
+  "lat": 48.0460702,
+  "lon": 10.1231318,
+  "tags": {
+    "name": "Oberopfingen",
+    "place": "village",
+    "wikidata": "Q1608528",
+    "wikipedia": "de:Oberopfingen"
+  }
+},
+{
+  "type": "node",
+  "id": 58802248,
+  "lat": 48.0585700,
+  "lon": 10.1289310,
+  "tags": {
+    "name": "Unteropfingen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 59863681,
+  "lat": 47.9679378,
+  "lon": 9.8182503,
+  "tags": {
+    "TMC:cid_58:tabcd_1:Class": "Area",
+    "TMC:cid_58:tabcd_1:LCLversion": "9.00",
+    "TMC:cid_58:tabcd_1:LocationCode": "52855",
+    "name": "Mühlhausen",
+    "place": "village",
+    "wikidata": "Q38317072",
+    "wikipedia": "de:Mühlhausen (Eberhardzell)"
+  }
+},
+{
+  "type": "node",
+  "id": 59864430,
+  "lat": 48.0276993,
+  "lon": 10.0315647,
+  "tags": {
+    "name": "Mettenberg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 59864431,
+  "lat": 48.0261180,
+  "lon": 10.0413540,
+  "tags": {
+    "name": "Zell an der Rot",
+    "place": "village",
+    "wikidata": "Q187569",
+    "wikipedia": "de:Zell an der Rot"
+  }
+},
+{
+  "type": "node",
+  "id": 59866457,
+  "lat": 48.1631274,
+  "lon": 10.0786558,
+  "tags": {
+    "name": "Oberbalzheim",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 59867189,
+  "lat": 48.0241558,
+  "lon": 9.9552574,
+  "tags": {
+    "name": "Steinhausen an der Rottum",
+    "name:prefix": "Gemeinde",
+    "place": "village",
+    "population": "1898",
+    "wikidata": "Q534139",
+    "wikipedia": "de:Steinhausen an der Rottum"
+  }
+},
+{
+  "type": "node",
+  "id": 59867190,
+  "lat": 48.0263646,
+  "lon": 9.9274316,
+  "tags": {
+    "name": "Ehrensberg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 60199316,
+  "lat": 48.1377045,
+  "lon": 9.6991205,
+  "tags": {
+    "name": "Attenweiler",
+    "name:prefix": "Gemeinde",
+    "place": "village",
+    "population": "1723",
+    "postal_code": "88448"
+  }
+},
+{
+  "type": "node",
+  "id": 60199319,
+  "lat": 48.1493977,
+  "lon": 9.6689467,
+  "tags": {
+    "name": "Rupertshofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 66839555,
+  "lat": 47.8956659,
+  "lon": 9.7210401,
+  "tags": {
+    "name": "Gaisbeuren",
+    "place": "village",
+    "postal_code": "88339"
+  }
+},
+{
+  "type": "node",
+  "id": 71172233,
+  "lat": 47.8999691,
+  "lon": 9.6998684,
+  "tags": {
+    "name": "Reute",
+    "place": "village",
+    "postal_code": "88339",
+    "wikidata": "Q2146642",
+    "wikipedia": "de:Reute (Bad Waldsee)"
+  }
+},
+{
+  "type": "node",
+  "id": 82397431,
+  "lat": 47.8969961,
+  "lon": 10.7038094,
+  "tags": {
+    "name": "Thalhofen an der Gennach",
+    "official_name": "Thalhofen a. d. Gennach",
+    "place": "village",
+    "wikidata": "Q109672848",
+    "wikipedia": "de:Thalhofen an der Gennach"
+  }
+},
+{
+  "type": "node",
+  "id": 82397446,
+  "lat": 47.8900597,
+  "lon": 10.7158345,
+  "tags": {
+    "ele": "726",
+    "name": "Stöttwang",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Westendorf",
+    "openGeoDB:community_identification_number": "09777172",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "24634",
+    "openGeoDB:telephone_area_code": "08345",
+    "place": "village",
+    "population": "1789",
+    "postal_code": "87677",
+    "wikidata": "Q512055",
+    "wikipedia": "de:Stöttwang"
+  }
+},
+{
+  "type": "node",
+  "id": 82397455,
+  "lat": 47.9192002,
+  "lon": 10.7000609,
+  "tags": {
+    "name": "Dösingen",
+    "place": "village",
+    "wikidata": "Q105885457",
+    "wikipedia": "de:Dösingen"
+  }
+},
+{
+  "type": "node",
+  "id": 82397461,
+  "lat": 47.9215952,
+  "lon": 10.6677446,
+  "tags": {
+    "ele": "660",
+    "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Germaringen",
+    "openGeoDB:community_identification_number": "09777130",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "16964",
+    "openGeoDB:telephone_area_code": "08341",
+    "place": "village",
+    "population": "3777",
+    "postal_code": "87656",
+    "wikidata": "Q531957",
+    "wikipedia": "de:Germaringen"
+  }
+},
+{
+  "type": "node",
+  "id": 82666336,
+  "lat": 47.9704782,
+  "lon": 10.6212463,
+  "tags": {
+    "name": "Schlingen",
+    "place": "village",
+    "wikidata": "Q1285510",
+    "wikipedia": "de:Schlingen"
+  }
+},
+{
+  "type": "node",
+  "id": 82666337,
+  "lat": 47.9162463,
+  "lon": 10.6091542,
+  "tags": {
+    "name": "Leinau",
+    "place": "village",
+    "wikidata": "Q113078345"
+  }
+},
+{
+  "type": "node",
+  "id": 82666339,
+  "lat": 47.9297443,
+  "lon": 10.6129031,
+  "tags": {
+    "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Pforzen",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Pforzen",
+    "openGeoDB:community_identification_number": "09777158",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "22431",
+    "openGeoDB:name": "Pforzen",
+    "openGeoDB:population": "2097",
+    "openGeoDB:postal_codes": "87666",
+    "openGeoDB:sort_name": "PFORZEN",
+    "openGeoDB:telephone_area_code": "08346",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "47.9285291",
+    "opengeodb:lon": "10.6141892",
+    "place": "village",
+    "population": "2097"
+  }
+},
+{
+  "type": "node",
+  "id": 82666341,
+  "lat": 47.9082759,
+  "lon": 10.5720573,
+  "tags": {
+    "de:amtlicher_gemeindeschluessel": "09777139",
+    "ele": "755",
+    "name": "Irsee",
+    "place": "village",
+    "population": "1507",
+    "population:date": "2019-09-30",
+    "postal_code": "87660",
+    "wikidata": "Q510845",
+    "wikimedia_commons": "Category:Irsee",
+    "wikipedia": "de:Irsee"
+  }
+},
+{
+  "type": "node",
+  "id": 82666359,
+  "lat": 47.9423784,
+  "lon": 10.6400064,
+  "tags": {
+    "name": "Zellerberg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 98816356,
+  "lat": 48.1687038,
+  "lon": 9.6866072,
+  "tags": {
+    "name": "Oggelsbeuren",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 100019073,
+  "lat": 47.9059383,
+  "lon": 9.7653424,
+  "tags": {
+    "name": "Unterurbach",
+    "place": "village",
+    "postal_code": "88339"
+  }
+},
+{
+  "type": "node",
+  "id": 100019074,
+  "lat": 47.8983077,
+  "lon": 9.7685404,
+  "tags": {
+    "name": "Mittelurbach",
+    "place": "village",
+    "postal_code": "88339",
+    "wikidata": "Q112143888",
+    "wikipedia": "de:Mittelurbach"
+  }
+},
+{
+  "type": "node",
+  "id": 102053101,
+  "lat": 47.8982218,
+  "lon": 10.2072067,
+  "tags": {
+    "name": "Zell",
+    "place": "village",
+    "population": "1070"
+  }
+},
+{
+  "type": "node",
+  "id": 102053870,
+  "lat": 47.8933244,
+  "lon": 10.2671595,
+  "tags": {
+    "name": "Wolfertschwenden",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 115209762,
+  "lat": 47.9697438,
+  "lon": 10.2652560,
+  "tags": {
+    "name": "Hawangen",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Ottobeuren",
+    "openGeoDB:community_identification_number": "09778149",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "18013",
+    "openGeoDB:name": "Hawangen",
+    "openGeoDB:population": "1242",
+    "openGeoDB:postal_codes": "87749",
+    "openGeoDB:sort_name": "HAWANGEN",
+    "openGeoDB:telephone_area_code": "08332",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "47.9697438",
+    "opengeodb:lon": "10.265256",
+    "place": "village",
+    "population": "1242",
+    "wikidata": "Q529033",
+    "wikipedia": "de:Hawangen"
+  }
+},
+{
+  "type": "node",
+  "id": 115210384,
+  "lat": 47.9893817,
+  "lon": 10.2112859,
+  "tags": {
+    "ele": "600",
+    "name": "Memmingerberg",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Memmingerberg",
+    "openGeoDB:community_identification_number": "09778171",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "20819",
+    "openGeoDB:telephone_area_code": "08331",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 115210791,
+  "lat": 48.0035750,
+  "lon": 10.2197519,
+  "tags": {
+    "name": "Trunkelsberg",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Memmingerberg",
+    "openGeoDB:community_identification_number": "09778202",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "25124",
+    "openGeoDB:name": "Trunkelsberg",
+    "openGeoDB:population": "1785",
+    "openGeoDB:postal_codes": "87779",
+    "openGeoDB:sort_name": "TRUNKELSBERG",
+    "openGeoDB:telephone_area_code": "08331",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.0020268",
+    "opengeodb:lon": "10.2147942",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 115211339,
+  "lat": 48.0153264,
+  "lon": 10.2455297,
+  "tags": {
+    "name": "Schwaighausen",
+    "place": "village",
+    "population": "298",
+    "postal_code": "87752"
+  }
+},
+{
+  "type": "node",
+  "id": 115213800,
+  "lat": 47.9234050,
+  "lon": 10.2008430,
+  "tags": {
+    "name": "Woringen",
+    "place": "village",
+    "population": "1890",
+    "postal_code": "87789"
+  }
+},
+{
+  "type": "node",
+  "id": 115214216,
+  "lat": 47.9424953,
+  "lon": 10.2777939,
+  "tags": {
+    "name": "Brüchlins",
+    "place": "village",
+    "wikidata": "Q995935",
+    "wikipedia": "de:Brüchlins"
+  }
+},
+{
+  "type": "node",
+  "id": 115216642,
+  "lat": 48.0147270,
+  "lon": 10.1614941,
+  "tags": {
+    "ele": "585",
+    "name": "Steinheim",
+    "name:de": "Steinheim",
+    "place": "village",
+    "population": "2866",
+    "postal_code": "87700",
+    "wikidata": "Q2340856",
+    "wikipedia": "de:Steinheim (Memmingen)"
+  }
+},
+{
+  "type": "node",
+  "id": 115217156,
+  "lat": 47.9718380,
+  "lon": 10.0849323,
+  "tags": {
+    "name": "Mooshausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 208146916,
+  "lat": 47.9213112,
+  "lon": 9.7998613,
+  "tags": {
+    "name": "Haisterkirch",
+    "place": "village",
+    "wikidata": "Q65179928",
+    "wikipedia": "de:Haisterkirch"
+  }
+},
+{
+  "type": "node",
+  "id": 208146923,
+  "lat": 47.9042402,
+  "lon": 9.8309280,
+  "tags": {
+    "name": "Haidgau",
+    "old_name": "Heidgau",
+    "place": "village",
+    "population": "972",
+    "postal_code": "88410"
+  }
+},
+{
+  "type": "node",
+  "id": 240024727,
+  "lat": 47.9484351,
+  "lon": 10.3943101,
+  "tags": {
+    "name": "Markt Rettenbach",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:community_identification_number": "09778168",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "20660",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Markt Rettenbach",
+    "openGeoDB:population": "3696",
+    "openGeoDB:postal_codes": "87733",
+    "openGeoDB:sort_name": "RETTENBACH",
+    "openGeoDB:telephone_area_code": "08392",
+    "openGeoDB:type": "Markt",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "3696",
+    "wikidata": "Q32123248"
+  }
+},
+{
+  "type": "node",
+  "id": 240030586,
+  "lat": 47.9455572,
+  "lon": 10.2388429,
+  "tags": {
+    "name": "Lachen",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Memmingerberg",
+    "openGeoDB:community_identification_number": "09778162",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "19842",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Lachen",
+    "openGeoDB:population": "1399",
+    "openGeoDB:postal_codes": "87760",
+    "openGeoDB:sort_name": "LACHEN",
+    "openGeoDB:telephone_area_code": "08331",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1399",
+    "postal_code": "87760"
+  }
+},
+{
+  "type": "node",
+  "id": 240030716,
+  "lat": 48.0611033,
+  "lon": 10.6810316,
+  "tags": {
+    "name": "Amberg",
+    "name:ru": "Амберг",
+    "name:sr": "Амберг",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Türkheim",
+    "openGeoDB:community_identification_number": "09778111",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "13649",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Amberg bei Buchloe",
+    "openGeoDB:population": "1316",
+    "openGeoDB:postal_codes": "86854",
+    "openGeoDB:sort_name": "AMBERG",
+    "openGeoDB:telephone_area_code": "08241",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1316",
+    "wikidata": "Q457139",
+    "wikipedia": "de:Amberg (Schwaben)"
+  }
+},
+{
+  "type": "node",
+  "id": 240031442,
+  "lat": 48.0923659,
+  "lon": 10.1511083,
+  "tags": {
+    "name": "Pleß",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240034377,
+  "lat": 47.8926582,
+  "lon": 10.0774080,
+  "tags": {
+    "name": "Aichstetten",
+    "name:prefix": "Gemeinde",
+    "place": "village",
+    "population": "2788",
+    "wikidata": "Q403756",
+    "wikipedia": "de:Aichstetten"
+  }
+},
+{
+  "type": "node",
+  "id": 240036772,
+  "lat": 47.9996294,
+  "lon": 10.0849321,
+  "tags": {
+    "name": "Tannheim",
+    "name:prefix": "Gemeinde",
+    "place": "village",
+    "population": "2369",
+    "website": "http://www.gemeinde-tannheim.de",
+    "wikidata": "Q177338",
+    "wikipedia": "de:Tannheim (Württemberg)"
+  }
+},
+{
+  "type": "node",
+  "id": 240037932,
+  "lat": 48.0540277,
+  "lon": 10.4167283,
+  "tags": {
+    "name": "Kammlach",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240043599,
+  "lat": 48.0751126,
+  "lon": 10.1954542,
+  "tags": {
+    "is_in": "Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Boos",
+    "place": "village",
+    "postal_code": "87737",
+    "website": "https://www.vgem-boos.de/",
+    "wikidata": "Q705785",
+    "wikipedia": "de:Boos (Schwaben)"
+  }
+},
+{
+  "type": "node",
+  "id": 240049851,
+  "lat": 48.0005416,
+  "lon": 10.1325355,
+  "tags": {
+    "name": "Buxheim",
+    "place": "village",
+    "population": "3011",
+    "population:date": "31. Dez. 2008",
+    "postal_code": "87740",
+    "source:population": "wikipedia"
+  }
+},
+{
+  "type": "node",
+  "id": 240050489,
+  "lat": 48.0732097,
+  "lon": 10.1527079,
+  "tags": {
+    "name": "Fellheim",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240050524,
+  "lat": 48.1460838,
+  "lon": 10.1709699,
+  "tags": {
+    "is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Osterberg",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Altenstadt, Markt",
+    "openGeoDB:community_identification_number": "09775142",
+    "openGeoDB:is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "266",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "NU",
+    "openGeoDB:loc_id": "22205",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Osterberg bei Illertissen",
+    "openGeoDB:population": "860",
+    "openGeoDB:postal_codes": "89296",
+    "openGeoDB:sort_name": "OSTERBERG",
+    "openGeoDB:telephone_area_code": "08337",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "860"
+  }
+},
+{
+  "type": "node",
+  "id": 240052249,
+  "lat": 47.8743013,
+  "lon": 10.5341514,
+  "tags": {
+    "name": "Friesenried",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Eggenthal",
+    "openGeoDB:community_identification_number": "09777128",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "16732",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Friesenried",
+    "openGeoDB:population": "1534",
+    "openGeoDB:postal_codes": "87654",
+    "openGeoDB:sort_name": "FRIESENRIED",
+    "openGeoDB:telephone_area_code": "08347",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1534"
+  }
+},
+{
+  "type": "node",
+  "id": 240053309,
+  "lat": 48.1073657,
+  "lon": 10.1133599,
+  "tags": {
+    "name": "Dettingen an der Iller",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Illertal",
+    "openGeoDB:community_identification_number": "08426031",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "15545",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Dettingen an der Iller",
+    "openGeoDB:population": "2273",
+    "openGeoDB:postal_codes": "88451",
+    "openGeoDB:sort_name": "DETTINGEN",
+    "openGeoDB:telephone_area_code": "07354",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2273"
+  }
+},
+{
+  "type": "node",
+  "id": 240053684,
+  "lat": 48.1285979,
+  "lon": 9.7971973,
+  "tags": {
+    "name": "Warthausen",
+    "openGeoDB:auto_update": "population",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Biberach an der Riß",
+    "openGeoDB:community_identification_number": "08426128",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "25718",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Warthausen (an der Riß)",
+    "openGeoDB:population": "4761",
+    "openGeoDB:postal_codes": "88447",
+    "openGeoDB:sort_name": "WARTHAUSEN",
+    "openGeoDB:telephone_area_code": "07351",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "4761"
+  }
+},
+{
+  "type": "node",
+  "id": 240053758,
+  "lat": 48.0884013,
+  "lon": 10.4273041,
+  "tags": {
+    "name": "Oberrieden",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240056262,
+  "lat": 48.0657045,
+  "lon": 10.5822533,
+  "tags": {
+    "name": "Rammingen",
+    "place": "village",
+    "population": "1377"
+  }
+},
+{
+  "type": "node",
+  "id": 240061688,
+  "lat": 48.0245956,
+  "lon": 10.4421593,
+  "tags": {
+    "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Stetten",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Dirlewang",
+    "openGeoDB:community_identification_number": "09778199",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "24602",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Stetten, Schwaben",
+    "openGeoDB:population": "1366",
+    "openGeoDB:postal_codes": "87778",
+    "openGeoDB:sort_name": "STETTEN",
+    "openGeoDB:telephone_area_code": "08261",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1366"
+  }
+},
+{
+  "type": "node",
+  "id": 240065665,
+  "lat": 47.9146521,
+  "lon": 10.5123286,
+  "tags": {
+    "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Eggenthal",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Eggenthal",
+    "openGeoDB:community_identification_number": "09777124",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "15984",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Eggenthal, Schwaben",
+    "openGeoDB:population": "1295",
+    "openGeoDB:postal_codes": "87653",
+    "openGeoDB:sort_name": "EGGENTHAL",
+    "openGeoDB:telephone_area_code": "08347",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1295",
+    "wikidata": "Q516289",
+    "wikipedia": "de:Eggenthal"
+  }
+},
+{
+  "type": "node",
+  "id": 240066548,
+  "lat": 48.0438365,
+  "lon": 10.0830714,
+  "tags": {
+    "name": "Berkheim",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Illertal",
+    "openGeoDB:community_identification_number": "08426019",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "14353",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Berkheim (Kreis Biberach an der Riß)",
+    "openGeoDB:population": "2682",
+    "openGeoDB:postal_codes": "88450",
+    "openGeoDB:sort_name": "BERKHEIM",
+    "openGeoDB:telephone_area_code": "08395",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2682"
+  }
+},
+{
+  "type": "node",
+  "id": 240066684,
+  "lat": 48.1201210,
+  "lon": 10.2258052,
+  "tags": {
+    "name": "Winterrieden",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240071925,
+  "lat": 48.0385578,
+  "lon": 10.3360363,
+  "tags": {
+    "name": "Erkheim",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240074814,
+  "lat": 47.9442831,
+  "lon": 10.5426151,
+  "tags": {
+    "name": "Baisweil",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Eggenthal",
+    "openGeoDB:community_identification_number": "09777114",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "14048",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Baisweil",
+    "openGeoDB:population": "1330",
+    "openGeoDB:postal_codes": "87650",
+    "openGeoDB:sort_name": "BAISWEIL",
+    "openGeoDB:telephone_area_code": "08340",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1330"
+  }
+},
+{
+  "type": "node",
+  "id": 240074990,
+  "lat": 48.0018325,
+  "lon": 10.5025804,
+  "tags": {
+    "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Dirlewang",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Dirlewang",
+    "openGeoDB:community_identification_number": "09778127",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "15647",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Dirlewang",
+    "openGeoDB:population": "2116",
+    "openGeoDB:postal_codes": "87742",
+    "openGeoDB:sort_name": "DIRLEWANG",
+    "openGeoDB:telephone_area_code": "08267",
+    "openGeoDB:type": "Markt",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2116",
+    "wikidata": "Q548510",
+    "wikipedia": "de:Dirlewang"
+  }
+},
+{
+  "type": "node",
+  "id": 240075259,
+  "lat": 47.8777154,
+  "lon": 10.2215159,
+  "tags": {
+    "name": "Bad Grönenbach",
+    "place": "village",
+    "population": "3425",
+    "postal_code": "87730",
+    "website": "https://www.bad-groenenbach.de"
+  }
+},
+{
+  "type": "node",
+  "id": 240080722,
+  "lat": 47.9521343,
+  "lon": 10.6472352,
+  "tags": {
+    "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Rieden",
+    "openGeoDB:auto_update": "population,place,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Pforzen",
+    "openGeoDB:community_identification_number": "09777164",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "23087",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Rieden bei Kaufbeuren",
+    "openGeoDB:population": "1339",
+    "openGeoDB:postal_codes": "87668",
+    "openGeoDB:sort_name": "RIEDEN",
+    "openGeoDB:telephone_area_code": "08346",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1339"
+  }
+},
+{
+  "type": "node",
+  "id": 240081428,
+  "lat": 48.0871502,
+  "lon": 10.2864764,
+  "tags": {
+    "name": "Egg an der Günz",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240084192,
+  "lat": 48.1739457,
+  "lon": 10.1910782,
+  "tags": {
+    "is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Oberroth",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Buch",
+    "openGeoDB:community_identification_number": "09775141",
+    "openGeoDB:is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "266",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "NU",
+    "openGeoDB:loc_id": "21984",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Oberroth bei Illertissen",
+    "openGeoDB:population": "841",
+    "openGeoDB:postal_codes": "89294",
+    "openGeoDB:sort_name": "OBERROTH",
+    "openGeoDB:telephone_area_code": "07343",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "841"
+  }
+},
+{
+  "type": "node",
+  "id": 240084256,
+  "lat": 48.0167000,
+  "lon": 10.3000000,
+  "tags": {
+    "name": "Westerheim",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Erkheim",
+    "openGeoDB:community_identification_number": "09778214",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "26030",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Westerheim",
+    "openGeoDB:population": "2066",
+    "openGeoDB:postal_codes": "87784",
+    "openGeoDB:sort_name": "WESTERHEIM",
+    "openGeoDB:telephone_area_code": "08336",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2066",
+    "wikidata": "Q566584",
+    "wikipedia": "de:Westerheim (Schwaben)"
+  }
+},
+{
+  "type": "node",
+  "id": 240084405,
+  "lat": 47.9670993,
+  "lon": 10.2095269,
+  "tags": {
+    "ele": "608",
+    "name": "Benningen",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Memmingerberg",
+    "openGeoDB:community_identification_number": "09778118",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "14279",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Benningen bei Memmingen",
+    "openGeoDB:population": "2092",
+    "openGeoDB:postal_codes": "87734",
+    "openGeoDB:sort_name": "BENNINGEN",
+    "openGeoDB:telephone_area_code": "08331",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2200",
+    "postal_code": "87734",
+    "source": "http://www.benningen-allgaeu.de/grussw.html",
+    "website": "https://www.benningen-allgaeu.de/"
+  }
+},
+{
+  "type": "node",
+  "id": 240086748,
+  "lat": 47.8920369,
+  "lon": 10.6702271,
+  "tags": {
+    "name": "Mauerstetten",
+    "openGeoDB:auto_update": "population,place,is_in",
+    "openGeoDB:community_identification_number": "09777152",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "20723",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Mauerstetten bei Kaufbeuren",
+    "openGeoDB:population": "2954",
+    "openGeoDB:postal_codes": "87665",
+    "openGeoDB:sort_name": "MAUERSTETTEN",
+    "openGeoDB:telephone_area_code": "08341",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2954"
+  }
+},
+{
+  "type": "node",
+  "id": 240089870,
+  "lat": 48.1040879,
+  "lon": 10.6535987,
+  "tags": {
+    "name": "Ettringen",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:community_identification_number": "09778137",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "16377",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Ettringen, Wertach",
+    "openGeoDB:population": "3339",
+    "openGeoDB:postal_codes": "86833",
+    "openGeoDB:sort_name": "ETTRINGEN",
+    "openGeoDB:telephone_area_code": "08249",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "3339"
+  }
+},
+{
+  "type": "node",
+  "id": 240091953,
+  "lat": 48.1499349,
+  "lon": 10.3096389,
+  "tags": {
+    "name": "Kirchhaslach",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240093741,
+  "lat": 48.1062638,
+  "lon": 10.3015948,
+  "tags": {
+    "name": "Oberschönegg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240093847,
+  "lat": 47.8965316,
+  "lon": 10.4144412,
+  "tags": {
+    "name": "Ronsberg",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:community_identification_number": "09777165",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "23279",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Ronsberg",
+    "openGeoDB:population": "1660",
+    "openGeoDB:postal_codes": "87671",
+    "openGeoDB:sort_name": "RONSBERG",
+    "openGeoDB:telephone_area_code": "08306",
+    "openGeoDB:type": "Markt",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1660"
+  }
+},
+{
+  "type": "node",
+  "id": 240094153,
+  "lat": 47.9631250,
+  "lon": 10.4665607,
+  "tags": {
+    "name": "Unteregg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240094907,
+  "lat": 47.8874443,
+  "lon": 10.7517700,
+  "tags": {
+    "name": "Frankenhofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240096908,
+  "lat": 48.1677834,
+  "lon": 10.5165068,
+  "tags": {
+    "name": "Eppishausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240102931,
+  "lat": 48.1197648,
+  "lon": 10.4544650,
+  "tags": {
+    "name": "Pfaffenhausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240103009,
+  "lat": 48.1359081,
+  "lon": 10.4020197,
+  "tags": {
+    "name": "Breitenbrunn",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240109368,
+  "lat": 48.0772325,
+  "lon": 10.1287591,
+  "tags": {
+    "ele": "551",
+    "name": "Kirchdorf an der Iller",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Illertal",
+    "openGeoDB:community_identification_number": "08426066",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "19272",
+    "openGeoDB:telephone_area_code": "07354",
+    "place": "village",
+    "population": "3610",
+    "postal_code": "88457",
+    "wikidata": "Q522302",
+    "wikipedia": "de:Kirchdorf an der Iller"
+  }
+},
+{
+  "type": "node",
+  "id": 240111647,
+  "lat": 47.9985660,
+  "lon": 10.7268020,
+  "tags": {
+    "created_by": "Potlatch 0.7a",
+    "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Jengen",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Buchloe",
+    "openGeoDB:community_identification_number": "09777140",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "18933",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Jengen",
+    "openGeoDB:population": "2354",
+    "openGeoDB:postal_codes": "86860",
+    "openGeoDB:sort_name": "JENGEN",
+    "openGeoDB:telephone_area_code": "08241",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2354"
+  }
+},
+{
+  "type": "node",
+  "id": 240112220,
+  "lat": 48.1269871,
+  "lon": 10.4771031,
+  "tags": {
+    "name": "Salgen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240112547,
+  "lat": 48.0244440,
+  "lon": 10.2586779,
+  "tags": {
+    "name": "Holzgünz",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Memmingerberg",
+    "openGeoDB:community_identification_number": "09778151",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "18613",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Holzgünz",
+    "openGeoDB:population": "1127",
+    "openGeoDB:postal_codes": "87752",
+    "openGeoDB:sort_name": "HOLZGUENZ",
+    "openGeoDB:telephone_area_code": "08393",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "postal_code": "87752"
+  }
+},
+{
+  "type": "node",
+  "id": 240112852,
+  "lat": 48.0202541,
+  "lon": 10.4946034,
+  "tags": {
+    "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Apfeltrach",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Dirlewang",
+    "openGeoDB:community_identification_number": "09778113",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "13706",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Apfeltrach",
+    "openGeoDB:population": "982",
+    "openGeoDB:postal_codes": "87742",
+    "openGeoDB:sort_name": "APFELTRACH",
+    "openGeoDB:telephone_area_code": "08261",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "997"
+  }
+},
+{
+  "type": "node",
+  "id": 240115998,
+  "lat": 48.0626649,
+  "lon": 9.8303920,
+  "tags": {
+    "name": "Ummendorf",
+    "openGeoDB:auto_update": "population",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Biberach an der Riß",
+    "openGeoDB:community_identification_number": "08426120",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "25217",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Ummendorf (Kreis Biberach an der Riß)",
+    "openGeoDB:population": "4210",
+    "openGeoDB:postal_codes": "88444",
+    "openGeoDB:sort_name": "UMMENDORF",
+    "openGeoDB:telephone_area_code": "07351",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "4210",
+    "postal_code": "88444",
+    "wikidata": "Q514885",
+    "wikipedia": "de:Ummendorf (bei Biberach)"
+  }
+},
+{
+  "type": "node",
+  "id": 240122001,
+  "lat": 47.9334613,
+  "lon": 10.7166391,
+  "tags": {
+    "name": "Westendorf",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Westendorf",
+    "openGeoDB:community_identification_number": "09777182",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "26020",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Westendorf bei Kaufbeuren",
+    "openGeoDB:population": "1875",
+    "openGeoDB:postal_codes": "87679",
+    "openGeoDB:sort_name": "WESTENDORF",
+    "openGeoDB:telephone_area_code": "08344",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240123239,
+  "lat": 48.0257292,
+  "lon": 9.7879058,
+  "tags": {
+    "name": "Hochdorf",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Biberach an der Riß",
+    "openGeoDB:community_identification_number": "08426058",
+    "openGeoDB:is_in": "Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "367",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "BC",
+    "openGeoDB:loc_id": "18404",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Hochdorf (Riß)",
+    "openGeoDB:population": "2083",
+    "openGeoDB:postal_codes": "88454",
+    "openGeoDB:sort_name": "HOCHDORF",
+    "openGeoDB:telephone_area_code": "07355",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2083",
+    "postal_code": "88454"
+  }
+},
+{
+  "type": "node",
+  "id": 240124027,
+  "lat": 48.1726598,
+  "lon": 10.4753126,
+  "tags": {
+    "name": "Kirchheim in Schwaben",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 240124635,
+  "lat": 48.0900171,
+  "lon": 10.0729945,
+  "tags": {
+    "name": "Erolzheim",
+    "place": "village",
+    "population": "3094"
+  }
+},
+{
+  "type": "node",
+  "id": 240126802,
+  "lat": 48.1578052,
+  "lon": 10.1127146,
+  "tags": {
+    "name": "Altenstadt",
+    "place": "village",
+    "population": "5075",
+    "wikidata": "Q31877710"
+  }
+},
+{
+  "type": "node",
+  "id": 240127841,
+  "lat": 47.8816355,
+  "lon": 10.3006322,
+  "tags": {
+    "name": "Böhen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 246252644,
+  "lat": 48.0787509,
+  "lon": 10.0455921,
+  "tags": {
+    "name": "Bechtenrot",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 252726927,
+  "lat": 47.9768810,
+  "lon": 9.9412786,
+  "tags": {
+    "name": "Ellwangen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 252726964,
+  "lat": 47.9396009,
+  "lon": 9.9340686,
+  "tags": {
+    "name": "Dietmanns",
+    "place": "village",
+    "population": "791",
+    "postal_code": "88410"
+  }
+},
+{
+  "type": "node",
+  "id": 252731571,
+  "lat": 47.9502367,
+  "lon": 9.8706297,
+  "tags": {
+    "name": "Unterschwarzach",
+    "old_name": "Unter-Schwarzach",
+    "place": "village",
+    "population": "1401",
+    "postal_code": "88410"
+  }
+},
+{
+  "type": "node",
+  "id": 252731573,
+  "lat": 47.9491658,
+  "lon": 9.8500436,
+  "tags": {
+    "name": "Eggmannsried",
+    "old_name": "Ettmanns; Ettmes; Ebbisried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 252864175,
+  "lat": 48.0207962,
+  "lon": 10.1312801,
+  "tags": {
+    "name": "Egelsee",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 252865761,
+  "lat": 47.9976181,
+  "lon": 10.0043363,
+  "tags": {
+    "name": "Spindelwag",
+    "place": "village",
+    "wikidata": "Q1310986",
+    "wikipedia": "de:Spindelwag"
+  }
+},
+{
+  "type": "node",
+  "id": 252898280,
+  "lat": 47.9480309,
+  "lon": 9.9859908,
+  "tags": {
+    "name": "Hauerz",
+    "old_name": "Hawartz",
+    "place": "village",
+    "population": "1128",
+    "postal_code": "88410"
+  }
+},
+{
+  "type": "node",
+  "id": 252900284,
+  "lat": 47.9507918,
+  "lon": 9.9730545,
+  "tags": {
+    "name": "Rupprechts",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 252912381,
+  "lat": 48.0194110,
+  "lon": 9.8706904,
+  "tags": {
+    "name": "Dietenwengen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 254077482,
+  "lat": 47.9354446,
+  "lon": 9.8167448,
+  "tags": {
+    "name": "Osterhofen",
+    "place": "village",
+    "wikidata": "Q65183870",
+    "wikipedia": "de:Osterhofen (Bad Waldsee)"
+  }
+},
+{
+  "type": "node",
+  "id": 256717376,
+  "lat": 47.8830231,
+  "lon": 9.8008414,
+  "tags": {
+    "name": "Mennisweiler",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 256723309,
+  "lat": 47.8909171,
+  "lon": 9.9715016,
+  "tags": {
+    "name": "Seibranz",
+    "old_name": "Sybrandß",
+    "place": "village",
+    "postal_code": "88410"
+  }
+},
+{
+  "type": "node",
+  "id": 260760634,
+  "lat": 48.1730455,
+  "lon": 10.1459705,
+  "tags": {
+    "name": "Dattenhausen",
+    "place": "village",
+    "wikidata": "Q133305905",
+    "wikipedia": "de:Dattenhausen (Altenstadt)"
+  }
+},
+{
+  "type": "node",
+  "id": 261610353,
+  "lat": 47.8708169,
+  "lon": 10.6894784,
+  "tags": {
+    "name": "Gennachhausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 267897661,
+  "lat": 47.9040713,
+  "lon": 10.6625418,
+  "tags": {
+    "name": "Steinholz",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 268220083,
+  "lat": 48.1650318,
+  "lon": 10.1221346,
+  "tags": {
+    "name": "Illereichen",
+    "place": "village",
+    "wikidata": "Q19286064",
+    "wikipedia": "de:Illereichen"
+  }
+},
+{
+  "type": "node",
+  "id": 268421443,
+  "lat": 48.1620724,
+  "lon": 10.7194164,
+  "tags": {
+    "is_in": "Augsburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Hiltenfingen",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Langerringen",
+    "openGeoDB:community_identification_number": "09772157",
+    "openGeoDB:is_in": "Augsburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "479",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "A",
+    "openGeoDB:loc_id": "18346",
+    "openGeoDB:name": "Hiltenfingen",
+    "openGeoDB:population": "1536",
+    "openGeoDB:postal_codes": "86856",
+    "openGeoDB:sort_name": "HILTENFINGEN",
+    "openGeoDB:telephone_area_code": "08232",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.1617609",
+    "opengeodb:lon": "10.7180604",
+    "place": "village",
+    "population": "1536"
+  }
+},
+{
+  "type": "node",
+  "id": 269126761,
+  "lat": 47.9099315,
+  "lon": 10.7540917,
+  "tags": {
+    "name": "Aufkirch",
+    "place": "village",
+    "postal_code": "87662",
+    "wikidata": "Q759759",
+    "wikipedia": "de:Aufkirch (Kaltental)"
+  }
+},
+{
+  "type": "node",
+  "id": 269126762,
+  "lat": 47.9176644,
+  "lon": 10.7434396,
+  "tags": {
+    "name": "Blonhofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 269133208,
+  "lat": 47.9705826,
+  "lon": 10.7900555,
+  "tags": {
+    "name": "Waalhaupten",
+    "place": "village",
+    "wikidata": "Q19965053",
+    "wikipedia": "de:Waalhaupten"
+  }
+},
+{
+  "type": "node",
+  "id": 274792249,
+  "lat": 47.8836120,
+  "lon": 9.9457685,
+  "tags": {
+    "name": "Gospoldshofen",
+    "place": "village",
+    "population": "619",
+    "postal_code": "88410"
+  }
+},
+{
+  "type": "node",
+  "id": 274792487,
+  "lat": 47.8906149,
+  "lon": 9.8641377,
+  "tags": {
+    "name": "Ziegelbach",
+    "place": "village",
+    "population": "925",
+    "postal_code": "88410"
+  }
+},
+{
+  "type": "node",
+  "id": 289163496,
+  "lat": 48.0015485,
+  "lon": 10.6429366,
+  "tags": {
+    "name": "Stockheim",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 291567486,
+  "lat": 48.1606879,
+  "lon": 10.2227153,
+  "tags": {
+    "is_in": "Babenhausen,Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Unterschönegg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 291568144,
+  "lat": 48.1237025,
+  "lon": 10.1526034,
+  "tags": {
+    "name": "Weiler",
+    "place": "village",
+    "wikidata": "Q1750609",
+    "wikipedia": "de:Weiler (Osterberg)"
+  }
+},
+{
+  "type": "node",
+  "id": 293266727,
+  "lat": 48.1430292,
+  "lon": 10.1211642,
+  "tags": {
+    "created_by": "is_in-bot",
+    "name": "Filzingen",
+    "place": "village",
+    "wikidata": "Q48616299"
+  }
+},
+{
+  "type": "node",
+  "id": 305452694,
+  "lat": 47.9831362,
+  "lon": 10.6350501,
+  "tags": {
+    "name": "Frankenhofen",
+    "place": "village",
+    "wikidata": "Q1303652",
+    "wikipedia": "de:Frankenhofen (Bad Wörishofen)"
+  }
+},
+{
+  "type": "node",
+  "id": 306008323,
+  "lat": 48.0131966,
+  "lon": 10.7861382,
+  "tags": {
+    "name": "Bronnen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 309601553,
+  "lat": 47.9061895,
+  "lon": 10.7083949,
+  "tags": {
+    "name": "Linden",
+    "place": "village",
+    "wikidata": "Q109682699",
+    "wikipedia": "de:Linden (Stöttwang)"
+  }
+},
+{
+  "type": "node",
+  "id": 312806234,
+  "lat": 47.8875899,
+  "lon": 10.5178602,
+  "tags": {
+    "name": "Blöcktach",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 313011298,
+  "lat": 47.9469207,
+  "lon": 10.5969772,
+  "tags": {
+    "name": "Ingenried",
+    "place": "village",
+    "wikidata": "Q29657271"
+  }
+},
+{
+  "type": "node",
+  "id": 319733198,
+  "lat": 47.8786152,
+  "lon": 10.7446832,
+  "tags": {
+    "name": "Osterzell",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Westendorf",
+    "openGeoDB:community_identification_number": "09777157",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "22231",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Osterzell",
+    "openGeoDB:population": "669",
+    "openGeoDB:postal_codes": "87662",
+    "openGeoDB:sort_name": "OSTERZELL",
+    "openGeoDB:telephone_area_code": "08344",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "669"
+  }
+},
+{
+  "type": "node",
+  "id": 319733399,
+  "lat": 47.8714764,
+  "lon": 10.7511206,
+  "tags": {
+    "name": "Stocken",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 319733400,
+  "lat": 47.8672733,
+  "lon": 10.7474298,
+  "tags": {
+    "name": "Oberzell",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 319733827,
+  "lat": 47.8989899,
+  "lon": 10.7482881,
+  "tags": {
+    "name": "Helmishofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 325475263,
+  "lat": 48.1301521,
+  "lon": 9.8111942,
+  "tags": {
+    "name": "Oberhöfen",
+    "place": "village",
+    "wikidata": "Q7074744"
+  }
+},
+{
+  "type": "node",
+  "id": 332619671,
+  "lat": 47.8951618,
+  "lon": 10.1439567,
+  "tags": {
+    "name": "Wagsberg",
+    "place": "village",
+    "postal_code": "87758"
+  }
+},
+{
+  "type": "node",
+  "id": 344601576,
+  "lat": 47.9363720,
+  "lon": 10.2361296,
+  "tags": {
+    "name": "Albishofen",
+    "place": "village",
+    "population": "318"
+  }
+},
+{
+  "type": "node",
+  "id": 344601577,
+  "lat": 47.9520675,
+  "lon": 10.2253533,
+  "tags": {
+    "name": "Herbishofen",
+    "place": "village",
+    "wikidata": "Q19285423",
+    "wikipedia": "de:Herbishofen"
+  }
+},
+{
+  "type": "node",
+  "id": 349213710,
+  "lat": 48.0261664,
+  "lon": 10.7761005,
+  "tags": {
+    "is_in": "Buchloe,Landkreis Ostallgäu,Schwaben,Bayern,Deutschland",
+    "name": "Honsolgen",
+    "place": "village",
+    "wikidata": "Q57982939"
+  }
+},
+{
+  "type": "node",
+  "id": 349214202,
+  "lat": 48.0172537,
+  "lon": 10.7151660,
+  "tags": {
+    "image": "https://commons.wikimedia.org/wiki/Category:Lindenberg_(Buchloe)?uselang=de",
+    "is_in": "Buchloe,Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Lindenberg",
+    "place": "village",
+    "population": "1578",
+    "postal_code": "86807",
+    "wikidata": "Q1423599",
+    "wikipedia": "de:Lindenberg (Buchloe)"
+  }
+},
+{
+  "type": "node",
+  "id": 351894522,
+  "lat": 47.8784020,
+  "lon": 10.4339247,
+  "tags": {
+    "name": "Willofs",
+    "place": "village",
+    "wikidata": "Q120201264"
+  }
+},
+{
+  "type": "node",
+  "id": 351897420,
+  "lat": 47.9293011,
+  "lon": 10.3970266,
+  "tags": {
+    "name": "Engetried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 355312860,
+  "lat": 47.8707943,
+  "lon": 10.6667162,
+  "tags": {
+    "name": "Frankenried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 357855136,
+  "lat": 47.9471711,
+  "lon": 10.7784996,
+  "tags": {
+    "name": "Lengenfeld",
+    "place": "village",
+    "wikidata": "Q1817637",
+    "wikipedia": "de:Lengenfeld (Oberostendorf)"
+  }
+},
+{
+  "type": "node",
+  "id": 365727251,
+  "lat": 47.9680207,
+  "lon": 10.5344109,
+  "tags": {
+    "name": "Lauchdorf",
+    "place": "village",
+    "wikidata": "Q43375924",
+    "wikipedia": "de:Lauchdorf"
+  }
+},
+{
+  "type": "node",
+  "id": 366585807,
+  "lat": 47.9030343,
+  "lon": 10.2576060,
+  "tags": {
+    "name": "Niederdorf",
+    "place": "village",
+    "postal_code": "87787"
+  }
+},
+{
+  "type": "node",
+  "id": 366598686,
+  "lat": 47.9196636,
+  "lon": 10.2494547,
+  "tags": {
+    "name": "Dietratried",
+    "place": "village",
+    "postal_code": "87787"
+  }
+},
+{
+  "type": "node",
+  "id": 366598743,
+  "lat": 47.9304729,
+  "lon": 10.2352591,
+  "tags": {
+    "name": "Goßmannshofen",
+    "place": "village",
+    "population": "190"
+  }
+},
+{
+  "type": "node",
+  "id": 366676841,
+  "lat": 48.1183672,
+  "lon": 10.2548968,
+  "tags": {
+    "name": "Klosterbeuren",
+    "place": "village",
+    "wikidata": "Q1776375",
+    "wikipedia": "de:Klosterbeuren"
+  }
+},
+{
+  "type": "node",
+  "id": 369096875,
+  "lat": 48.0454287,
+  "lon": 10.4521239,
+  "tags": {
+    "is_in": "Mindelheim,Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Oberauerbach",
+    "place": "village",
+    "wikidata": "Q2009105",
+    "wikipedia": "de:Oberauerbach (Mindelheim)"
+  }
+},
+{
+  "type": "node",
+  "id": 369097267,
+  "lat": 48.0522238,
+  "lon": 10.4555928,
+  "tags": {
+    "name": "Unterauerbach",
+    "place": "village",
+    "wikidata": "Q130618933"
+  }
+},
+{
+  "type": "node",
+  "id": 369109519,
+  "lat": 48.0727040,
+  "lon": 10.4626313,
+  "tags": {
+    "is_in": "Mindelheim,Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Westernach",
+    "place": "village",
+    "wikidata": "Q1533011",
+    "wikipedia": "de:Westernach (Mindelheim)"
+  }
+},
+{
+  "type": "node",
+  "id": 370682628,
+  "lat": 48.0500705,
+  "lon": 10.4160105,
+  "tags": {
+    "name": "Oberkammlach",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 370682708,
+  "lat": 48.0583206,
+  "lon": 10.4166569,
+  "tags": {
+    "name": "Unterkammlach",
+    "place": "village",
+    "wikidata": "Q130901026"
+  }
+},
+{
+  "type": "node",
+  "id": 371219669,
+  "lat": 47.9980501,
+  "lon": 10.4619665,
+  "tags": {
+    "name": "Saulengrain",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 371773599,
+  "lat": 48.0911893,
+  "lon": 10.3601882,
+  "tags": {
+    "name": "Baumgärtle",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 371773972,
+  "lat": 48.0778147,
+  "lon": 10.3482261,
+  "tags": {
+    "name": "Arlesried",
+    "place": "village",
+    "wikidata": "Q110586337",
+    "wikipedia": "de:Arlesried"
+  }
+},
+{
+  "type": "node",
+  "id": 373441405,
+  "lat": 48.1501883,
+  "lon": 10.5042747,
+  "tags": {
+    "name": "Mörgen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 373448769,
+  "lat": 48.1439530,
+  "lon": 10.4808042,
+  "tags": {
+    "name": "Bronnen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 376028796,
+  "lat": 47.9717950,
+  "lon": 10.4324647,
+  "tags": {
+    "name": "Eutenhausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 376033024,
+  "lat": 47.9886438,
+  "lon": 10.4364636,
+  "tags": {
+    "name": "Mussenhausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 376033046,
+  "lat": 48.0048016,
+  "lon": 10.4324403,
+  "tags": {
+    "name": "Erisried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 376035638,
+  "lat": 48.0248230,
+  "lon": 10.4470049,
+  "tags": {
+    "name": "Stetten",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 378340555,
+  "lat": 47.9795927,
+  "lon": 10.4565577,
+  "tags": {
+    "name": "Köngetried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 379591721,
+  "lat": 48.1421644,
+  "lon": 10.4354985,
+  "tags": {
+    "name": "Schöneberg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 384680129,
+  "lat": 48.1219236,
+  "lon": 10.1292590,
+  "tags": {
+    "name": "Kellmünz an der Iller",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Altenstadt, Markt",
+    "openGeoDB:community_identification_number": "09775132",
+    "openGeoDB:is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "266",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "NU",
+    "openGeoDB:loc_id": "19186",
+    "openGeoDB:name": "Kellmünz an der Iller",
+    "openGeoDB:population": "1364",
+    "openGeoDB:postal_codes": "89293",
+    "openGeoDB:sort_name": "KELLMUENZ",
+    "openGeoDB:telephone_area_code": "08337",
+    "openGeoDB:type": "Markt",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.1220788",
+    "opengeodb:lon": "10.1278672",
+    "place": "village",
+    "population": "1364"
+  }
+},
+{
+  "type": "node",
+  "id": 386888194,
+  "lat": 48.0089793,
+  "lon": 10.5364800,
+  "tags": {
+    "name": "Altensteig",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 387901042,
+  "lat": 48.0327518,
+  "lon": 10.6390684,
+  "tags": {
+    "name": "Irsingen",
+    "place": "village",
+    "wikidata": "Q1673238",
+    "wikipedia": "de:Irsingen (Türkheim)"
+  }
+},
+{
+  "type": "node",
+  "id": 388129038,
+  "lat": 48.0970975,
+  "lon": 10.4588862,
+  "tags": {
+    "name": "Egelhofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 388368960,
+  "lat": 47.9244404,
+  "lon": 10.4691058,
+  "tags": {
+    "name": "Bayersried",
+    "place": "village",
+    "wikidata": "Q18148042"
+  }
+},
+{
+  "type": "node",
+  "id": 388845128,
+  "lat": 48.1086609,
+  "lon": 10.4317837,
+  "tags": {
+    "name": "Unterrieden",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 389992986,
+  "lat": 47.9435363,
+  "lon": 10.4582112,
+  "tags": {
+    "name": "Oberegg",
+    "place": "village",
+    "wikidata": "Q17590657",
+    "wikipedia": "de:Oberegg (Unteregg)"
+  }
+},
+{
+  "type": "node",
+  "id": 389992990,
+  "lat": 47.9608846,
+  "lon": 10.5053238,
+  "tags": {
+    "name": "Warmisried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 389992993,
+  "lat": 47.9306759,
+  "lon": 10.4481522,
+  "tags": {
+    "name": "Rappen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 392134419,
+  "lat": 47.9971468,
+  "lon": 10.5244442,
+  "tags": {
+    "is_in": "Dirlewang",
+    "name": "Helchenried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 392910779,
+  "lat": 47.9573877,
+  "lon": 10.4521331,
+  "tags": {
+    "name": "Bittenau",
+    "place": "village",
+    "wikidata": "Q878915",
+    "wikipedia": "de:Bittenau"
+  }
+},
+{
+  "type": "node",
+  "id": 415401928,
+  "lat": 48.0233637,
+  "lon": 10.4266003,
+  "tags": {
+    "name": "Kirchstetten",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 417770417,
+  "lat": 48.1240781,
+  "lon": 10.4264299,
+  "tags": {
+    "name": "Weilbach",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 418480591,
+  "lat": 48.0297591,
+  "lon": 10.4021270,
+  "tags": {
+    "name": "Höllberg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 418481021,
+  "lat": 48.0245089,
+  "lon": 10.3932685,
+  "tags": {
+    "name": "Rufen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 421919176,
+  "lat": 48.0208821,
+  "lon": 10.5649942,
+  "tags": {
+    "name": "Dorschhausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 423218414,
+  "lat": 48.1508180,
+  "lon": 10.6118804,
+  "tags": {
+    "is_in": "Markt Wald,Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Steinekirch",
+    "place": "village",
+    "wikidata": "Q130722239"
+  }
+},
+{
+  "type": "node",
+  "id": 423218417,
+  "lat": 48.1478234,
+  "lon": 10.5978183,
+  "tags": {
+    "name": "Anhofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 423742309,
+  "lat": 47.9651191,
+  "lon": 10.3914387,
+  "tags": {
+    "name": "Gottenau",
+    "place": "village",
+    "wikidata": "Q1538915",
+    "wikipedia": "de:Gottenau (Markt Rettenbach)"
+  }
+},
+{
+  "type": "node",
+  "id": 423742311,
+  "lat": 47.9592125,
+  "lon": 10.4048061,
+  "tags": {
+    "name": "Lannenberg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 423742313,
+  "lat": 47.9759355,
+  "lon": 10.3623029,
+  "tags": {
+    "name": "Frechenrieden",
+    "place": "village",
+    "wikidata": "Q13365034",
+    "wikipedia": "de:Frechenrieden"
+  }
+},
+{
+  "type": "node",
+  "id": 423742317,
+  "lat": 47.9946641,
+  "lon": 10.3426438,
+  "tags": {
+    "name": "Attenhausen",
+    "place": "village",
+    "wikidata": "Q42843579",
+    "wikipedia": "de:Attenhausen (Sontheim)"
+  }
+},
+{
+  "type": "node",
+  "id": 428584894,
+  "lat": 48.0248230,
+  "lon": 10.3488339,
+  "tags": {
+    "name": "Schlegelsberg",
+    "place": "village",
+    "wikidata": "Q2238665",
+    "wikipedia": "de:Schlegelsberg (Erkheim)"
+  }
+},
+{
+  "type": "node",
+  "id": 428584905,
+  "lat": 48.0457173,
+  "lon": 10.3577233,
+  "tags": {
+    "name": "Dankelsried",
+    "place": "village",
+    "wikidata": "Q19277813",
+    "wikipedia": "de:Dankelsried"
+  }
+},
+{
+  "type": "node",
+  "id": 433877339,
+  "lat": 47.9803766,
+  "lon": 10.3091310,
+  "tags": {
+    "name": "Stephansried",
+    "place": "village",
+    "wikidata": "Q2344398",
+    "wikipedia": "de:Stephansried"
+  }
+},
+{
+  "type": "node",
+  "id": 437868936,
+  "lat": 48.0866944,
+  "lon": 10.5470243,
+  "tags": {
+    "name": "Mattsies",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 440647279,
+  "lat": 47.9630539,
+  "lon": 10.3784727,
+  "tags": {
+    "name": "Altisried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 440691571,
+  "lat": 47.9431673,
+  "lon": 10.2470018,
+  "tags": {
+    "name": "Theinselberg",
+    "place": "village",
+    "postal_code": "87760",
+    "wikidata": "Q1565142",
+    "wikipedia": "de:Theinselberg"
+  }
+},
+{
+  "type": "node",
+  "id": 441332154,
+  "lat": 48.0381330,
+  "lon": 10.5776897,
+  "tags": {
+    "is_in": "Bad Wörishofen,Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Kirchdorf",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 442916351,
+  "lat": 48.1674199,
+  "lon": 10.5651035,
+  "tags": {
+    "name": "Immelstetten",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 454193050,
+  "lat": 47.9381001,
+  "lon": 10.3228530,
+  "tags": {
+    "name": "Guggenberg",
+    "place": "village",
+    "wikidata": "Q1553331",
+    "wikipedia": "de:Guggenberg (Ottobeuren)"
+  }
+},
+{
+  "type": "node",
+  "id": 475983403,
+  "lat": 48.0025325,
+  "lon": 10.5626274,
+  "tags": {
+    "name": "Schöneschach",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 480476543,
+  "lat": 48.1682536,
+  "lon": 10.3649351,
+  "tags": {
+    "name": "Weiler",
+    "place": "village",
+    "wikidata": "Q2555613",
+    "wikipedia": "de:Weiler (Waltenhausen)"
+  }
+},
+{
+  "type": "node",
+  "id": 493412107,
+  "lat": 48.1550345,
+  "lon": 10.5898361,
+  "tags": {
+    "name": "Oberneufnach",
+    "place": "village",
+    "wikidata": "Q15058234",
+    "wikipedia": "de:Oberneufnach"
+  }
+},
+{
+  "type": "node",
+  "id": 493412115,
+  "lat": 48.1472157,
+  "lon": 10.5796053,
+  "tags": {
+    "name": "Bürgle",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 506913834,
+  "lat": 47.9247454,
+  "lon": 10.3857845,
+  "tags": {
+    "name": "Linden",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 506913836,
+  "lat": 47.9013849,
+  "lon": 10.3858760,
+  "tags": {
+    "name": "Zadels",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 519486785,
+  "lat": 48.0734000,
+  "lon": 10.3118194,
+  "tags": {
+    "name": "Frickenhausen",
+    "place": "village",
+    "wikidata": "Q43302056",
+    "wikipedia": "de:Frickenhausen (Lauben)"
+  }
+},
+{
+  "type": "node",
+  "id": 527893424,
+  "lat": 48.1322741,
+  "lon": 10.6145045,
+  "tags": {
+    "name": "Schnerzhofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 529023456,
+  "lat": 48.1082257,
+  "lon": 10.2728225,
+  "tags": {
+    "name": "Engishausen",
+    "place": "village",
+    "wikidata": "Q17493605",
+    "wikipedia": "de:Engishausen"
+  }
+},
+{
+  "type": "node",
+  "id": 539725998,
+  "lat": 48.1202813,
+  "lon": 10.3179712,
+  "tags": {
+    "name": "Stolzenhofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 570177690,
+  "lat": 47.9374427,
+  "lon": 10.3664699,
+  "tags": {
+    "name": "Eheim",
+    "place": "village",
+    "wikidata": "Q1299326",
+    "wikipedia": "de:Eheim (Ottobeuren)"
+  }
+},
+{
+  "type": "node",
+  "id": 617659966,
+  "lat": 48.1400723,
+  "lon": 10.3063359,
+  "tags": {
+    "name": "Greimeltshofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 622546372,
+  "lat": 47.9009958,
+  "lon": 10.3620271,
+  "tags": {
+    "name": "Ollarzried",
+    "place": "village",
+    "wikidata": "Q2020945",
+    "wikipedia": "de:Ollarzried"
+  }
+},
+{
+  "type": "node",
+  "id": 622546377,
+  "lat": 47.9451695,
+  "lon": 10.3475054,
+  "tags": {
+    "name": "Betzisried",
+    "place": "village",
+    "wikidata": "Q850657",
+    "wikipedia": "de:Betzisried"
+  }
+},
+{
+  "type": "node",
+  "id": 677555319,
+  "lat": 48.0594464,
+  "lon": 10.7290308,
+  "tags": {
+    "is_in": "Lamerdingen,Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Dillishausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 760263753,
+  "lat": 48.0445144,
+  "lon": 9.8495266,
+  "tags": {
+    "name": "Fischbach",
+    "place": "village",
+    "postal_code": "88444"
+  }
+},
+{
+  "type": "node",
+  "id": 885816750,
+  "lat": 48.1604716,
+  "lon": 10.3196050,
+  "tags": {
+    "name": "Herretshofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 925374448,
+  "lat": 47.9226866,
+  "lon": 9.6933828,
+  "tags": {
+    "name": "Untermöllenbronn",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1163902291,
+  "lat": 48.0868892,
+  "lon": 10.6380409,
+  "tags": {
+    "name": "Berg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1255212245,
+  "lat": 48.0914384,
+  "lon": 10.2165311,
+  "tags": {
+    "alt_name": "Unterreichau",
+    "name": "Reichau",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1255212246,
+  "lat": 48.0935166,
+  "lon": 10.2236980,
+  "tags": {
+    "alt_name": "Oberreichau",
+    "name": "Reichau",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1258835706,
+  "lat": 47.8725057,
+  "lon": 10.2710670,
+  "tags": {
+    "name": "Ittelsburg",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1449088274,
+  "lat": 47.9047365,
+  "lon": 10.1188574,
+  "tags": {
+    "name": "Neuwelt",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1683135089,
+  "lat": 48.0394782,
+  "lon": 10.6721251,
+  "tags": {
+    "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Wiedergeltingen",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Türkheim",
+    "openGeoDB:community_identification_number": "09778216",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "26097",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Wiedergeltingen",
+    "openGeoDB:population": "1376",
+    "openGeoDB:postal_codes": "86879",
+    "openGeoDB:sort_name": "WIEDERGELTINGEN",
+    "openGeoDB:telephone_area_code": "08241",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "1376"
+  }
+},
+{
+  "type": "node",
+  "id": 1683158036,
+  "lat": 48.0463457,
+  "lon": 10.7783020,
+  "tags": {
+    "name": "Holzhausen bei Buchloe",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1685790674,
+  "lat": 47.9985964,
+  "lon": 10.6712000,
+  "tags": {
+    "is_in": "Jengen,Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Weicht",
+    "place": "village",
+    "postal_code": "86860",
+    "wikidata": "Q2554953",
+    "wikipedia": "de:Weicht (Jengen)"
+  }
+},
+{
+  "type": "node",
+  "id": 1685792817,
+  "lat": 47.9839687,
+  "lon": 10.6685380,
+  "tags": {
+    "is_in": "Jengen,Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Beckstetten",
+    "place": "village",
+    "wikidata": "Q109659967"
+  }
+},
+{
+  "type": "node",
+  "id": 1685792818,
+  "lat": 47.9943334,
+  "lon": 10.7001466,
+  "tags": {
+    "is_in": "Jengen,Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Weinhausen",
+    "place": "village",
+    "wikidata": "Q109661404",
+    "wikipedia": "de:Weinhausen (Jengen)"
+  }
+},
+{
+  "type": "node",
+  "id": 1685797512,
+  "lat": 47.9670677,
+  "lon": 10.7005346,
+  "tags": {
+    "name": "Ketterschwang",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1685801327,
+  "lat": 47.9885166,
+  "lon": 10.7361717,
+  "tags": {
+    "name": "Ummenhofen",
+    "place": "village",
+    "wikidata": "Q15133018",
+    "wikipedia": "de:Ummenhofen (Jengen)"
+  }
+},
+{
+  "type": "node",
+  "id": 1685801329,
+  "lat": 47.9417196,
+  "lon": 10.7433825,
+  "tags": {
+    "name": "Oberostendorf",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Westendorf",
+    "openGeoDB:community_identification_number": "09777155",
+    "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "274",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "OAL",
+    "openGeoDB:loc_id": "21963",
+    "openGeoDB:name": "Oberostendorf",
+    "openGeoDB:population": "1296",
+    "openGeoDB:postal_codes": "86869",
+    "openGeoDB:sort_name": "OBEROSTENDORF",
+    "openGeoDB:telephone_area_code": "08344",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "47.9337266",
+    "opengeodb:lon": "10.7141573",
+    "place": "village",
+    "population": "1296"
+  }
+},
+{
+  "type": "node",
+  "id": 1685801340,
+  "lat": 47.9520152,
+  "lon": 10.7307690,
+  "tags": {
+    "is_in": "Oberostendorf,Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Unterostendorf",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1685801341,
+  "lat": 47.9503467,
+  "lon": 10.7152104,
+  "tags": {
+    "name": "Gutenberg",
+    "place": "village",
+    "wikidata": "Q15111973",
+    "wikipedia": "de:Gutenberg (Oberostendorf)"
+  }
+},
+{
+  "type": "node",
+  "id": 1685801347,
+  "lat": 47.9738503,
+  "lon": 10.7340924,
+  "tags": {
+    "name": "Eurishofen",
+    "place": "village",
+    "postal_code": "86860",
+    "wikidata": "Q61439127",
+    "wikipedia": "de:Eurishofen"
+  }
+},
+{
+  "type": "node",
+  "id": 1685801351,
+  "lat": 47.9371922,
+  "lon": 10.6786023,
+  "tags": {
+    "name": "Untergermaringen",
+    "place": "village",
+    "wikidata": "Q130900550"
+  }
+},
+{
+  "type": "node",
+  "id": 1685806535,
+  "lat": 48.1217254,
+  "lon": 10.5379813,
+  "tags": {
+    "name": "Zaisertshofen",
+    "place": "village",
+    "wikidata": "Q43302020"
+  }
+},
+{
+  "type": "node",
+  "id": 1685808447,
+  "lat": 48.1019964,
+  "lon": 10.5613528,
+  "tags": {
+    "ele": "575",
+    "name": "Tussenhausen",
+    "place": "village",
+    "population": "1263",
+    "population:date": "2019",
+    "wikidata": "Q547229",
+    "wikimedia_commons": "Category:Tussenhausen",
+    "wikipedia": "de:Tussenhausen"
+  }
+},
+{
+  "type": "node",
+  "id": 1685809861,
+  "lat": 48.0776727,
+  "lon": 10.5066764,
+  "tags": {
+    "is_in": "Mindelheim,Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Nassenbeuren",
+    "place": "village",
+    "wikidata": "Q1965971",
+    "wikipedia": "de:Nassenbeuren"
+  }
+},
+{
+  "type": "node",
+  "id": 1685809862,
+  "lat": 48.1060832,
+  "lon": 10.4827854,
+  "tags": {
+    "name": "Hausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1685811388,
+  "lat": 48.0240900,
+  "lon": 10.5317279,
+  "tags": {
+    "name": "Mindelau",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1699952944,
+  "lat": 48.0404945,
+  "lon": 10.2920310,
+  "tags": {
+    "name": "Günz",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1699952997,
+  "lat": 48.1610901,
+  "lon": 10.3949638,
+  "tags": {
+    "name": "Loppenhausen",
+    "place": "village",
+    "wikidata": "Q1576900",
+    "wikipedia": "de:Loppenhausen"
+  }
+},
+{
+  "type": "node",
+  "id": 1699953048,
+  "lat": 48.1612009,
+  "lon": 10.2884806,
+  "tags": {
+    "name": "Olgishofen",
+    "place": "village",
+    "population": "159"
+  }
+},
+{
+  "type": "node",
+  "id": 1699953072,
+  "lat": 48.0411546,
+  "lon": 10.2803886,
+  "tags": {
+    "name": "Rummeltshausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1699953087,
+  "lat": 48.0096285,
+  "lon": 10.3506016,
+  "tags": {
+    "name": "Sontheim",
+    "name:de": "Sontheim",
+    "name:ru": "Зонтайм",
+    "openGeoDB:auto_update": "population,place,name,is_in",
+    "openGeoDB:community_identification_number": "09778196",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "24368",
+    "openGeoDB:location": "political_structure",
+    "openGeoDB:name": "Sontheim bei Memmingen",
+    "openGeoDB:population": "2502",
+    "openGeoDB:postal_codes": "87776",
+    "openGeoDB:sort_name": "SONTHEIM",
+    "openGeoDB:telephone_area_code": "08336",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "place": "village",
+    "population": "2502",
+    "wikidata": "Q547468",
+    "wikipedia": "de:Sontheim (Schwaben)"
+  }
+},
+{
+  "type": "node",
+  "id": 1699953117,
+  "lat": 48.0056447,
+  "lon": 10.2662240,
+  "tags": {
+    "name": "Ungerhausen",
+    "openGeoDB:auto_update": "population,is_in",
+    "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Memmingerberg",
+    "openGeoDB:community_identification_number": "09778205",
+    "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "openGeoDB:is_in_loc_id": "475",
+    "openGeoDB:layer": "6",
+    "openGeoDB:license_plate_code": "MN",
+    "openGeoDB:loc_id": "25224",
+    "openGeoDB:name": "Ungerhausen",
+    "openGeoDB:population": "1072",
+    "openGeoDB:postal_codes": "87781",
+    "openGeoDB:sort_name": "UNGERHAUSEN",
+    "openGeoDB:telephone_area_code": "08393",
+    "openGeoDB:type": "Gemeinde",
+    "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+    "opengeodb:lat": "48.0056447",
+    "opengeodb:lon": "10.266224",
+    "place": "village",
+    "population": "1072",
+    "postal_code": "87781"
+  }
+},
+{
+  "type": "node",
+  "id": 1699953151,
+  "lat": 48.1307721,
+  "lon": 10.2717704,
+  "tags": {
+    "name": "Weinried",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1700232365,
+  "lat": 48.1170084,
+  "lon": 10.3903014,
+  "tags": {
+    "name": "Bedernau",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1700232385,
+  "lat": 48.0586171,
+  "lon": 10.3196798,
+  "tags": {
+    "name": "Daxberg",
+    "place": "village",
+    "wikidata": "Q1178960",
+    "wikipedia": "de:Daxberg (Erkheim)"
+  }
+},
+{
+  "type": "node",
+  "id": 1700232386,
+  "lat": 48.1053687,
+  "lon": 10.3143625,
+  "tags": {
+    "name": "Dietershofen",
+    "place": "village",
+    "wikidata": "Q1223130",
+    "wikipedia": "de:Dietershofen bei Babenhausen"
+  }
+},
+{
+  "type": "node",
+  "id": 1700232425,
+  "lat": 48.1263520,
+  "lon": 10.3638756,
+  "tags": {
+    "name": "Fürbuch",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 1700232438,
+  "lat": 48.0854583,
+  "lon": 10.3830856,
+  "tags": {
+    "name": "Hohenreuten",
+    "place": "village",
+    "wikidata": "Q1623778",
+    "wikipedia": "de:Hohenreuten"
+  }
+},
+{
+  "type": "node",
+  "id": 1700232446,
+  "lat": 48.0965728,
+  "lon": 10.3024284,
+  "tags": {
+    "name": "Inneberg",
+    "place": "village",
+    "wikidata": "Q17576014",
+    "wikipedia": "de:Inneberg"
+  }
+},
+{
+  "type": "node",
+  "id": 1700232452,
+  "lat": 48.0576950,
+  "lon": 10.2903168,
+  "tags": {
+    "name": "Lauben",
+    "place": "village",
+    "population": "1411",
+    "postal_code": "87761",
+    "website": "https://www.gemeinde-lauben.de/",
+    "wikidata": "Q705720",
+    "wikipedia": "de:Lauben (Landkreis Unterallgäu)"
+  }
+},
+{
+  "type": "node",
+  "id": 1700248206,
+  "lat": 48.1537007,
+  "lon": 9.7399544,
+  "tags": {
+    "alt_name": "Assmannshardt",
+    "name": "Aßmannshardt",
+    "note": "Die neue Rechtschreibung mit \"ss\" wird zunehmend auch auf offiziellen Schildern verwendet - fälschlicherweise, denn Eigennamen werden nicht geändert. Siehe § 8 der Hauptsatzung der Gemeinde Schemmerhofen.",
+    "place": "village",
+    "population": "895",
+    "postal_code": "88433",
+    "source:population": "http://www.schemmerhofen.de/,Lde/Home/Gemeinde+_+Daten/Assmannshart.html",
+    "website": "https://www.schemmerhofen.de/,Lde/Home/Gemeinde+_+Daten/Assmannshart.html"
+  }
+},
+{
+  "type": "node",
+  "id": 1947765947,
+  "lat": 47.8796318,
+  "lon": 10.3421469,
+  "tags": {
+    "name": "Günzegg",
+    "place": "village",
+    "wikidata": "Q58975322",
+    "wikipedia": "de:Günzegg"
+  }
+},
+{
+  "type": "node",
+  "id": 2026128932,
+  "lat": 47.9525340,
+  "lon": 10.3216077,
+  "tags": {
+    "name": "Langenberg",
+    "place": "village",
+    "wikidata": "Q1804996",
+    "wikipedia": "de:Langenberg (Ottobeuren)"
+  }
+},
+{
+  "type": "node",
+  "id": 2068601745,
+  "lat": 47.8711979,
+  "lon": 9.8067758,
+  "tags": {
+    "name": "Molpertshaus",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 2153209191,
+  "lat": 47.9955959,
+  "lon": 10.7764549,
+  "tags": {
+    "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+    "name": "Waal",
+    "place": "village",
+    "population": "2200"
+  }
+},
+{
+  "type": "node",
+  "id": 2222233809,
+  "lat": 48.1246842,
+  "lon": 9.9617522,
+  "tags": {
+    "name": "Hürbel",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 2371289736,
+  "lat": 47.8990538,
+  "lon": 9.7926380,
+  "tags": {
+    "name": "Hittisweiler",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 2595495450,
+  "lat": 48.0368466,
+  "lon": 10.1570671,
+  "tags": {
+    "name": "Heimertingen",
+    "place": "village",
+    "postal_code": "87751",
+    "website": "https://www.vgem-boos.de/",
+    "wikidata": "Q548558",
+    "wikipedia": "de:Heimertingen"
+  }
+},
+{
+  "type": "node",
+  "id": 2595495457,
+  "lat": 48.0578993,
+  "lon": 10.1839587,
+  "tags": {
+    "name": "Niederrieden",
+    "place": "village",
+    "postal_code": "87767",
+    "website": "https://www.vgem-boos.de/",
+    "wikidata": "Q547576",
+    "wikipedia": "de:Niederrieden"
+  }
+},
+{
+  "type": "node",
+  "id": 2685562360,
+  "lat": 47.8834146,
+  "lon": 9.7208316,
+  "tags": {
+    "name": "Atzenreute",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 2820153340,
+  "lat": 48.0039811,
+  "lon": 9.8233669,
+  "tags": {
+    "name": "Eberhardzell",
+    "place": "village",
+    "postal_code": "88436",
+    "wikidata": "Q201907",
+    "wikipedia": "de:Eberhardzell"
+  }
+},
+{
+  "type": "node",
+  "id": 2974745848,
+  "lat": 47.9972852,
+  "lon": 10.8009408,
+  "tags": {
+    "name": "Emmenhausen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 2999388129,
+  "lat": 47.9466465,
+  "lon": 10.2218754,
+  "tags": {
+    "name": "Hetzlinshofen",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 3574694395,
+  "lat": 47.8907187,
+  "lon": 9.6904913,
+  "tags": {
+    "name": "Kümmerazhofen",
+    "place": "village",
+    "postal_code": "88339"
+  }
+},
+{
+  "type": "node",
+  "id": 3642221283,
+  "lat": 47.8800662,
+  "lon": 10.2555879,
+  "tags": {
+    "name": "Thal",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 4458826210,
+  "lat": 48.0295072,
+  "lon": 10.0854834,
+  "tags": {
+    "name": "Illerbachen",
+    "place": "village",
+    "wikidata": "Q1658776",
+    "wikipedia": "de:Illerbachen"
+  }
+},
+{
+  "type": "node",
+  "id": 6383959749,
+  "lat": 47.8868464,
+  "lon": 10.0487862,
+  "tags": {
+    "ele": "625",
+    "name": "Altmannshofen",
+    "openGeoDB:loc_id": "Q442568",
+    "openGeoDB:postal_codes": "88317",
+    "place": "village",
+    "wikidata": "Q442568",
+    "wikipedia": "de:Altmannshofen"
+  }
+},
+{
+  "type": "node",
+  "id": 10299001194,
+  "lat": 48.0843672,
+  "lon": 9.9925545,
+  "tags": {
+    "name": "Laubach",
+    "place": "village"
+  }
+},
+{
+  "type": "node",
+  "id": 13042190289,
+  "lat": 48.1153162,
+  "lon": 9.9965384,
+  "tags": {
+    "name": "Gutenzell",
+    "place": "village"
+  }
+}
+
+  ]
+}

@@ -5,7 +5,7 @@ use crate::utm::UTMPoint;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointOrigin;
 use crate::waypoint::Waypoints;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fmt;
 
 use proj4rs::Proj;
@@ -13,18 +13,24 @@ use serde_json::Value;
 
 fn read_tags(tags: &serde_json::Value) -> (Option<String>, Option<f64>) {
     let map = tags.as_object().unwrap();
-    let mut name = match map.get("name") {
-        Some(value) => Some(value.as_str().unwrap().to_string()),
-        None => None,
-    };
-    if name.is_none() {
-        name = match map.get("loc_name") {
-            Some(value) => Some(value.as_str().unwrap().to_string()),
-            None => None,
-        };
+    let mut name = None;
+    for (k, v) in map {
+        if k.contains("name") {
+            name = Some(v.as_str().unwrap().to_string());
+            break;
+        }
     }
     let ele = match map.get("ele") {
-        Some(value) => Some(value.as_str().unwrap().parse::<f64>().unwrap()),
+        Some(value) => {
+            let s = value.as_str().unwrap();
+            match s.parse::<f64>() {
+                Ok(f) => Some(f),
+                Err(e) => {
+                    println!("could not parse as f64: {} because {}", s, e);
+                    None
+                }
+            }
+        }
         None => None,
     };
     (name, ele)
@@ -62,17 +68,17 @@ impl fmt::Display for OSMPoint {
     }
 }
 
-fn read_element(element: &serde_json::Value) -> Result<OSMPoint, &'static str> {
+fn read_element(element: &serde_json::Value) -> Result<OSMPoint, String> {
     assert!(element.is_object());
     let map = element.as_object().unwrap();
     match map.get("type") {
         Some(value) => {
             if value != "node" {
-                return Err("no city");
+                return Err(format!("found {} (no node)", value));
             }
         }
         None => {
-            return Err("no city");
+            return Err(format!("no city"));
         }
     }
     let lat = read_f64(map, "lat");
@@ -93,8 +99,8 @@ fn read_elements(elements: &serde_json::Value) -> Vec<OSMPoint> {
     for e in elements.as_array().unwrap() {
         match read_element(e) {
             Ok(city) => ret.push(city),
-            Err(msg) => {
-                println!("{}", msg);
+            Err(_msg) => {
+                //println!("{} with {}", msg, e);
             }
         }
     }
@@ -142,13 +148,14 @@ fn read_osm_points(content: &[u8]) -> Waypoints {
     ret
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum OSMType {
     City,
     MountainPass,
+    Village,
 }
 
-pub type OSMWaypoints = HashMap<OSMType, Waypoints>;
+pub type OSMWaypoints = BTreeMap<OSMType, Waypoints>;
 
 fn retain(waypoints: &mut Waypoints, track: &Track, delta: f64) {
     project::project_on_track(track, waypoints);
@@ -162,12 +169,16 @@ fn retain(waypoints: &mut Waypoints, track: &Track, delta: f64) {
 }
 
 pub fn read(track: &Track, distance: f64) -> OSMWaypoints {
-    let mut ret = HashMap::new();
+    let mut ret = OSMWaypoints::new();
     let mut cities = read_osm_points(include_bytes!("../data/cities-south.json"));
-    retain(&mut cities, track, distance);
+    retain(&mut cities, track, 10f64 * distance);
     let mut passes = read_osm_points(include_bytes!("../data/moutain-pass-south.json"));
-    retain(&mut passes, track, distance);
+    retain(&mut passes, track, 2f64 * distance);
     ret.insert(OSMType::City, cities);
     ret.insert(OSMType::MountainPass, passes);
+    //let mut villages = read_osm_points(include_bytes!("../data/village-south.json"));
+    let mut villages = read_osm_points(include_bytes!("../data/village-test.json"));
+    retain(&mut villages, track, distance * 0.5f64);
+    ret.insert(OSMType::Village, villages);
     ret
 }

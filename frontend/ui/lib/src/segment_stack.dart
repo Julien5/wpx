@@ -13,7 +13,7 @@ class Legend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TrackRenderer>(
+    return Consumer<ProfileRenderer>(
       builder: (context, trackRenderer, child) {
         SegmentsProvider model = Provider.of<SegmentsProvider>(context);
         var size = Size(1000, 285);
@@ -31,7 +31,7 @@ class SegmentScrollView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Stack(children: <Widget>[TrackConsumer(), WaypointsConsumer()]),
+      child: Stack(children: <Widget>[ProfileConsumer()]),
     );
   }
 }
@@ -153,9 +153,9 @@ class TrackConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<TrackRenderer>(
-      builder: (context, trackRenderer, child) {
-        return FutureRenderingWidget(future: trackRenderer);
+    return Consumer<ProfileRenderer>(
+      builder: (context, profileRenderer, child) {
+        return FutureRenderingWidget(future: profileRenderer);
       },
     );
   }
@@ -174,22 +174,22 @@ class MapConsumer extends StatelessWidget {
   }
 }
 
-class WaypointsConsumer extends StatefulWidget {
-  const WaypointsConsumer({super.key});
+class ProfileConsumer extends StatefulWidget {
+  const ProfileConsumer({super.key});
 
   @override
-  State<WaypointsConsumer> createState() => _WaypointsConsumerState();
+  State<ProfileConsumer> createState() => _ProfileConsumerState();
 }
 
-class _WaypointsConsumerState extends State<WaypointsConsumer> {
+class _ProfileConsumerState extends State<ProfileConsumer> {
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<WaypointsRenderer>(
-      builder: (context, waypointsRenderer, child) {
+    return Consumer<ProfileRenderer>(
+      builder: (context, pRenderer, child) {
         // It would be more accurate to check visibility with a scroll controller
         // at the list view level. Because "Callbacks are not fired immediately
         // on visibility changes."
-        return FutureRenderingWidget(future: waypointsRenderer);
+        return FutureRenderingWidget(future: pRenderer);
       },
     );
   }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
-enum TrackData { track, waypoints, map }
+enum TrackData { profile,  map }
 
 class FutureRenderer with ChangeNotifier {
   final bridge.Segment segment;
@@ -23,17 +23,10 @@ class FutureRenderer with ChangeNotifier {
 
   void start() {
     _result = null;
-    if (trackData == TrackData.track) {
+    if (trackData == TrackData.profile) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
-        what: "track",
-        w: size.width.floor(),
-        h: size.height.floor(),
-      );
-    } else if (trackData == TrackData.waypoints) {
-      _future = _bridge.renderSegmentWhat(
-        segment: segment,
-        what: "waypoints",
+        what: "profile",
         w: size.width.floor(),
         h: size.height.floor(),
       );
@@ -90,14 +83,9 @@ class FutureRenderer with ChangeNotifier {
   }
 }
 
-class TrackRenderer extends FutureRenderer {
-  TrackRenderer(bridge.Bridge bridge, bridge.Segment segment)
-    : super(bridge: bridge, segment: segment, trackData: TrackData.track);
-}
-
-class WaypointsRenderer extends FutureRenderer {
-  WaypointsRenderer(bridge.Bridge bridge, bridge.Segment segment)
-    : super(bridge: bridge, segment: segment, trackData: TrackData.waypoints);
+class ProfileRenderer extends FutureRenderer {
+  ProfileRenderer(bridge.Bridge bridge, bridge.Segment segment)
+    : super(bridge: bridge, segment: segment, trackData: TrackData.profile);
 
   void reset() {
     _future = null;
@@ -118,12 +106,10 @@ class MapRenderer extends FutureRenderer {
 }
 
 class Renderers {
-  final TrackRenderer trackRendering;
-  final WaypointsRenderer waypointsRendering;
+  final ProfileRenderer profileRendering;
   final MapRenderer mapRendering;
-  Renderers(TrackRenderer track, WaypointsRenderer waypoints, MapRenderer map)
-    : trackRendering = track,
-      waypointsRendering = waypoints,
+  Renderers(ProfileRenderer profile, MapRenderer map)
+    : profileRendering = profile,
       mapRendering = map;
 }
 
@@ -195,14 +181,13 @@ class SegmentsProvider extends ChangeNotifier {
     if (_segments.length != segments.length) {
       _segments.clear();
       for (var segment in segments) {
-        var t = TrackRenderer(_bridge, segment);
-        var w = WaypointsRenderer(_bridge, segment);
+        var t = ProfileRenderer(_bridge, segment);
         var m = MapRenderer(_bridge, segment);
-        _segments.add(Renderers(t, w, m));
+        _segments.add(Renderers(t, m));
       }
     }
     for (var renderers in _segments) {
-      renderers.waypointsRendering.reset();
+      renderers.profileRendering.reset();
       renderers.mapRendering.reset();
     }
 

@@ -2,16 +2,13 @@
 
 use std::str::FromStr;
 
-use crate::gpsdata_osm::OSMType;
-use crate::label_placement::Circle;
-use crate::label_placement::Label;
-use crate::label_placement::Polyline;
+use crate::label_placement::bbox::LabelBoundingBox;
+use crate::label_placement::{Circle, Label, Polyline};
 use crate::segment;
 use crate::utm::UTMPoint;
 use crate::waypoint::WaypointOrigin;
 use crate::{backend, waypoints_table};
 
-use svg::node::element::path::Data;
 use svg::Document;
 
 struct UTMBoundingBox {
@@ -107,21 +104,54 @@ use crate::label_placement::set_attr;
 use crate::label_placement::Attributes;
 use crate::label_placement::PointFeature;
 
-pub struct Map {
+fn generate_candidates_bboxes(point: &PointFeature) -> Vec<LabelBoundingBox> {
+    let mut ret = Vec::new();
+    let width = point.width();
+    let height = point.height();
+    let dtarget_min = 1f64;
+    let dtarget_max = 20f64;
+    let d0 = dtarget_max;
+    let (cx, cy) = point.center();
+    let xmin = cx - d0 - width;
+    let ymin = cy - d0 - height;
+    let xmax = cx + d0;
+    let ymax = cy + d0;
+    let dp = 5f64;
+    let countx = ((xmax - xmin) / dp).ceil() as i32;
+    let county = ((ymax - ymin) / dp).ceil() as i32;
+    let dx = dp;
+    let dy = dp;
+    for nx in 0..countx {
+        for ny in 0..county {
+            let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
+            let bb = LabelBoundingBox::new_tlwh(tl, width, height);
+            if bb.contains((cx, cy)) {
+                continue;
+            }
+            if bb.distance((cx, cy)) < dtarget_min {
+                continue;
+            }
+            ret.push(bb);
+        }
+    }
+    ret
+}
+
+struct MapData {
     polyline: Polyline,
     points: Vec<PointFeature>,
     document: Attributes,
     debug: svg::node::element::Group,
 }
 
-impl Map {
+impl MapData {
     pub fn make(
         backend: &backend::Backend,
         segment: &segment::Segment,
         W: i32,
         H: i32,
         _debug: bool,
-    ) -> Map {
+    ) -> MapData {
         let geodata = &backend.track;
         let waypoints = backend.get_waypoints();
         let path = &geodata.utm;
@@ -148,7 +178,7 @@ impl Map {
         set_attr(&mut document, "width", format!("{W}").as_str());
         set_attr(&mut document, "height", format!("{H}").as_str());
 
-        let V = waypoints_table::show_waypoints_in_table(&waypoints, &segment.profile.bbox);
+        let V = waypoints_table::show_waypoints_in_table(&waypoints, &segment.bbox);
         let mut points = Vec::new();
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
@@ -158,150 +188,147 @@ impl Map {
             if w.origin != WaypointOrigin::GPX {
                 continue;
             }
-            let mut svgPoint = PointFeature::new();
+            if !range.contains(&w.track_index.unwrap()) {
+                continue;
+            }
             let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
-            svgPoint.circle.id = format!("wp-{}/circle", k);
-            svgPoint.circle.cx = x;
-            svgPoint.circle.cy = y;
-            svgPoint.id = format!("wp-{}", k);
+            let mut circle = Circle::new();
+            circle.id = format!("wp-{}/circle", k);
+            circle.cx = x;
+            circle.cy = y;
+            let id = format!("wp-{}", k);
+            let mut label = Label::new();
             if V.contains(&k) {
-                let label = w.info.as_ref().unwrap().profile_label();
-                svgPoint.label.set_text(label.trim());
-                svgPoint.label.id = format!("wp-{}/text", k);
+                label.set_text(w.info.as_ref().unwrap().profile_label().trim());
+                label.id = format!("wp-{}/text", k);
             } else {
-                svgPoint.circle.fill = Some(String::from_str("blue").unwrap());
+                circle.fill = Some(String::from_str("blue").unwrap());
             }
-            points.push(svgPoint);
+            points.push(PointFeature::new(id, circle, label));
         }
 
-        let cities = backend.osmwaypoints.get(&OSMType::City).unwrap();
-        for k in 0..cities.len() {
-            let w = &cities[k];
-            if !bbox.contains(&w.utm) {
-                continue;
+        for (kind, osmpoints) in &backend.osmwaypoints {
+            for k in 0..osmpoints.len() {
+                let w = &osmpoints[k];
+                if !bbox.contains(&w.utm) {
+                    continue;
+                }
+                if w.name.is_none() {
+                    continue;
+                }
+                if !range.contains(&w.track_index.unwrap()) {
+                    continue;
+                }
+                let mut circle = Circle::new();
+                let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
+                let n = points.len();
+                circle.id = format!("wp-{}/circle", n);
+                circle.cx = x;
+                circle.cy = y;
+                let id = format!("wp-{}", n);
+                use crate::gpsdata_osm::OSMType::*;
+                match kind {
+                    City => {
+                        circle.r = 5f64;
+                        circle.fill = Some("Gray".to_string());
+                    }
+                    Village => {
+                        circle.r = 3f64;
+                        circle.fill = Some("Gray".to_string());
+                    }
+                    MountainPass => {
+                        circle.r = 3f64;
+                        circle.fill = Some("Blue".to_string());
+                    }
+                }
+                let mut label = Label::new();
+                label.set_text(w.name.clone().unwrap().trim());
+                label.id = format!("wp-{}/text", k);
+                points.push(PointFeature::new(id, circle, label));
             }
-            let mut svgPoint = PointFeature::new();
-            let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
-            let n = points.len();
-            svgPoint.circle.id = format!("wp-{}/circle", n);
-            svgPoint.circle.cx = x;
-            svgPoint.circle.cy = y;
-            svgPoint.id = format!("wp-{}", n);
-            let label = w.name.clone().unwrap();
-            println!("add city: {}", label);
-            svgPoint.label.set_text(label.trim());
-            //svgPoint.label.set_text("city");
-            svgPoint.label.id = format!("wp-{}/text", k);
-            points.push(svgPoint);
         }
-
-        let passes = backend.osmwaypoints.get(&OSMType::MountainPass).unwrap();
-        for k in 0..passes.len() {
-            let w = &passes[k];
-            if !bbox.contains(&w.utm) {
-                continue;
-            }
-            let mut svgPoint = PointFeature::new();
-            let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
-            let n = points.len();
-            svgPoint.circle.id = format!("wp-{}/circle", n);
-            svgPoint.circle.cx = x;
-            svgPoint.circle.cy = y;
-            svgPoint.id = format!("wp-{}", n);
-            if w.name.is_none() {
-                continue;
-            }
-            let label = w.name.clone().unwrap();
-            println!("add city: {}", label);
-            svgPoint.label.set_text(label.trim());
-            //svgPoint.label.set_text("city");
-            svgPoint.label.id = format!("wp-{}/text", k);
-            points.push(svgPoint);
-        }
-
-        let debug = crate::label_placement::place_labels(&mut points, &polyline);
-        Map {
+        let debug = crate::label_placement::place_labels_gen(
+            &mut points,
+            generate_candidates_bboxes,
+            &polyline,
+        );
+        MapData {
             polyline,
             points,
             document,
             debug,
         }
     }
-    fn _import(filename: std::path::PathBuf) -> Map {
-        use svg::node::element::tag;
-        use svg::parser::Event;
-        let mut polyline = crate::svgmap::Polyline::new();
-        let mut document = Attributes::new();
-        let mut content = String::new();
-        let mut points = Vec::new();
-        let mut current_circle = PointFeature::new();
-        let mut current_text_attributes = Attributes::new();
-        for event in svg::open(filename, &mut content).unwrap() {
-            match event {
-                Event::Tag(tag::Circle, _, attributes) => {
-                    if attributes.contains_key("id") {
-                        let id = attributes.get("id").unwrap().clone().to_string();
-                        let (p_id, _p_attr) = _readid(id.as_str());
-                        current_circle.id = String::from_str(p_id).unwrap();
-                        current_circle.circle = Circle::_from_attributes(&attributes);
-                        println!("{}: {:?}", id, attributes);
-                    }
-                }
-                Event::Tag(tag::Text, _, attributes) => {
-                    if attributes.contains_key("id") {
-                        let id = attributes.get("id").unwrap();
-                        current_text_attributes = attributes.clone();
-                        println!("{}: {:?}", id, attributes);
-                    }
-                }
-                Event::Text(data) => {
-                    println!("Event::Text {:?}", data);
-                    current_circle.label = Label::_from_attributes(&current_text_attributes, data);
-                    current_text_attributes.clear();
-                    debug_assert!(!current_circle.id.is_empty());
-                    points.push(current_circle);
-                    current_circle = PointFeature::new();
-                }
-                Event::Tag(tag::Path, _, attributes) => {
-                    if attributes.contains_key("id") {
-                        let id = attributes.get("id").unwrap();
-                        println!("{}: {:?} attributes", id, attributes.len());
-                    }
-                    polyline = crate::svgmap::Polyline::_from_attributes(&attributes);
-                    let data = attributes.get("d").unwrap();
-                    let data = Data::parse(data).unwrap();
-                    use svg::node::element::path::Command;
-                    for command in data.iter() {
-                        match command {
-                            &Command::Move(..) => { /* … */ }
-                            &Command::Line(..) => { /* … */ }
-                            _ => {}
+    /*
+        fn _import(filename: std::path::PathBuf) -> MapData {
+            use svg::node::element::tag;
+            use svg::parser::Event;
+            let mut polyline = crate::svgmap::Polyline::new();
+            let mut document = Attributes::new();
+            let mut content = String::new();
+            let mut points = Vec::new();
+            let mut current_circle = PointFeature::new();
+            let mut current_text_attributes = Attributes::new();
+            for event in svg::open(filename, &mut content).unwrap() {
+                match event {
+                    Event::Tag(tag::Circle, _, attributes) => {
+                        if attributes.contains_key("id") {
+                            let id = attributes.get("id").unwrap().clone().to_string();
+                            let (p_id, _p_attr) = _readid(id.as_str());
+                            current_circle.id = String::from_str(p_id).unwrap();
+                            current_circle.circle = Circle::_from_attributes(&attributes);
                         }
                     }
-                }
-                Event::Tag(tag::SVG, _, attributes) => {
-                    if !attributes.is_empty() {
-                        document = attributes.clone();
+                    Event::Tag(tag::Text, _, attributes) => {
+                        if attributes.contains_key("id") {
+                            // let id = attributes.get("id").unwrap();
+                            current_text_attributes = attributes.clone();
+                        }
                     }
-                }
-                _ => {
-                    println!("event {:?}", event);
+                    Event::Text(data) => {
+                        current_circle.label = Label::_from_attributes(&current_text_attributes, data);
+                        current_text_attributes.clear();
+                        debug_assert!(!current_circle.id.is_empty());
+                        points.push(current_circle);
+                        current_circle = PointFeature::new();
+                    }
+                    Event::Tag(tag::Path, _, attributes) => {
+                        if attributes.contains_key("id") {
+                            let id = attributes.get("id").unwrap();
+                        }
+                        polyline = crate::svgmap::Polyline::_from_attributes(&attributes);
+                        let data = attributes.get("d").unwrap();
+                        let data = Data::parse(data).unwrap();
+                        use svg::node::element::path::Command;
+                        for command in data.iter() {
+                            match command {
+                                &Command::Move(..) => { /* … */ }
+                                &Command::Line(..) => { /* … */ }
+                                _ => {}
+                            }
+                        }
+                    }
+                    Event::Tag(tag::SVG, _, attributes) => {
+                        if !attributes.is_empty() {
+                            document = attributes.clone();
+                        }
+                    }
+                    _ => {}
                 }
             }
-        }
 
-        Map {
-            polyline,
-            points,
-            document,
-            debug: svg::node::element::Group::new(),
-        }
+            MapData {
+                polyline,
+                points,
+                document,
+                debug: svg::node::element::Group::new(),
+            }
     }
+        */
 
     pub fn render(self) -> String {
         let mut document = Document::new();
         for (k, v) in self.document {
-            // println!("export {} -> {}", k, v);
             document = document.set(k, v);
         }
 
@@ -311,19 +338,9 @@ impl Map {
         }
         document = document.add(svgpath);
 
+        let mut points_group = svg::node::element::Group::new();
         for point in self.points {
-            let mut circle = svg::node::element::Circle::new();
-            for (k, v) in point.circle.to_attributes() {
-                circle = circle.set(k, v);
-            }
-            document = document.add(circle);
-            let text = format!("{}", point.label.text);
-            let mut label = svg::node::element::Text::new(text);
-            for (k, v) in point.label.to_attributes(point.circle.cx) {
-                label = label.set(k, v);
-            }
-
-            document = document.add(label);
+            point.render_in_group(&mut points_group);
             /*let mut debug_bb = svg::node::element::Rectangle::new();
             let bb = point.label.bounding_box();
             debug_bb = debug_bb.set("x", bb.x_min());
@@ -333,9 +350,10 @@ impl Map {
             debug_bb = debug_bb.set("fill", "transparent");
             debug_bb = debug_bb.set("stroke-width", "1");
             debug_bb = debug_bb.set("stroke", "blue");
-            document = document.add(debug_bb);
+            points_group = points_group.append(debug_bb);
             */
         }
+        document = document.add(points_group);
         document = document.add(self.debug);
         document.to_string()
     }
@@ -348,6 +366,47 @@ pub fn map(
     H: i32,
     debug: bool,
 ) -> String {
-    let svgMap = Map::make(backend, segment, W, H, debug);
+    let svgMap = MapData::make(backend, segment, W, H, debug);
     svgMap.render()
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::label_placement::*;
+
+    use super::*;
+
+    #[test]
+    fn test_bbox() {
+        let id = String::new();
+        let target = PointFeature::new(
+            id.clone(),
+            Circle {
+                id: id.clone(),
+                cx: 0f64,
+                cy: 0f64,
+                r: 1f64,
+                fill: None,
+            },
+            Label {
+                id: id.clone(),
+                bbox: LabelBoundingBox {
+                    top_left: (0f64, 0f64),
+                    bottom_right: (10f64, 16f64),
+                },
+                text: String::from_str("hi").unwrap(),
+            },
+        );
+        let candidates = generate_candidates_bboxes(&target);
+        let mut found = false;
+        assert!(!candidates.is_empty());
+        for c in candidates {
+            let center = target.center();
+            let good = c.top_left.0 > target.center().0 && c.top_left.1 > target.center().1;
+            if good {
+                found = true;
+            }
+        }
+        assert!(found);
+    }
 }

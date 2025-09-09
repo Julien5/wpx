@@ -83,7 +83,7 @@ class WayPointsConsumer extends StatelessWidget {
   Widget build(BuildContext ctx) {
     return Consumer<SegmentsProvider>(
       builder: (context, segmentsProvider, child) {
-        var wp = Provider.of<WaypointsRenderer>(context, listen: false);
+        var wp = Provider.of<ProfileRenderer>(context, listen: false);
         var segment = wp.segment;
         return Center(
           child: WayPointsView(
