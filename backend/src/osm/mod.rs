@@ -88,13 +88,25 @@ fn cache_filename(bbox: &WGS84BoundingBox, kind: &str) -> String {
     format!("{}/{}/{}", root, s, kind)
 }
 
-fn download_chunk_real(bbox: &WGS84BoundingBox, kind: &str) -> osmpoint::OSMPoints {
+fn download_chunk_real(
+    bbox: &WGS84BoundingBox,
+    kind: &str,
+) -> std::result::Result<osmpoint::OSMPoints, std::io::Error> {
     use download::*;
     let bboxparam = osm3(&bbox);
-    if kind == "passes" {
-        return parse_osm_content(passes(&bboxparam).unwrap().as_bytes());
+    let result = if kind == "passes" {
+        parse_osm_content(passes(&bboxparam).unwrap().as_bytes())
+    } else {
+        parse_osm_content(places(&bboxparam, kind).unwrap().as_bytes())
+    };
+    match result {
+        Ok(points) => Ok(points),
+        Err(e) => {
+            println!("could not download {} (ignore)", kind);
+            println!("reason: {}", e.to_string());
+            Err(std::io::Error::new(std::io::ErrorKind::InvalidData, kind))
+        }
     }
-    parse_osm_content(places(&bboxparam, kind).unwrap().as_bytes())
 }
 
 fn hit_cache(bbox: &WGS84BoundingBox, kind: &str) -> bool {
@@ -115,16 +127,9 @@ fn read_chunk_cache(bbox: &WGS84BoundingBox, kind: &str) -> Option<osmpoint::OSM
     }
 }
 
-fn download_chunk(bboxes: &Vec<WGS84BoundingBox>, kind: &str) -> osmpoint::OSMPoints {
-    if bboxes.is_empty() {
-        return osmpoint::OSMPoints::new();
-    }
-    let bbox = bounding_box(&bboxes);
-    let osmpoints = download_chunk_real(&bbox, kind);
-    println!("downloading once for {:20}: {:3}", kind, bboxes.len());
-    // TODO: n^2 => make faster
+fn write_points(bboxes: &Vec<WGS84BoundingBox>, points: &OSMPoints, kind: &str) {
     for atom in bboxes {
-        let local = osmpoints
+        let local = points
             .clone()
             .points
             .iter()
@@ -141,6 +146,21 @@ fn download_chunk(bboxes: &Vec<WGS84BoundingBox>, kind: &str) -> osmpoint::OSMPo
         let out = OSMPoints { points: local };
         fs::write(path, out.as_string()).unwrap();
     }
+}
+
+fn download_chunk(bboxes: &Vec<WGS84BoundingBox>, kind: &str) -> osmpoint::OSMPoints {
+    if bboxes.is_empty() {
+        return osmpoint::OSMPoints::new();
+    }
+    let bbox = bounding_box(&bboxes);
+    let osmpoints = match download_chunk_real(&bbox, kind) {
+        Ok(points) => {
+            println!("downloading once for {:20}: {:3}", kind, bboxes.len());
+            write_points(bboxes, &points, kind);
+            points
+        }
+        Err(e) => OSMPoints::new(),
+    };
     osmpoints
 }
 
@@ -148,7 +168,7 @@ fn read(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
     let osmpoints = match read_chunk_cache(bbox, kind) {
         Some(d) => d,
         None => {
-            assert!(false);
+            // "could not find any data for {} (download probably failed) => skip",
             OSMPoints::new()
         }
     };
@@ -186,7 +206,6 @@ fn process(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
         let points = read(&atom, &kind);
         ret.extend(points);
     }
-    debug_assert!(!ret.is_empty());
     ret
 }
 

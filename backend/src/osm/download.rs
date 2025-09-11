@@ -128,15 +128,14 @@ fn read_downloaded_elements(elements: &serde_json::Value) -> OSMPoints {
     OSMPoints { points: ret }
 }
 
-pub fn parse_osm_content(content: &[u8]) -> OSMPoints {
-    let json: serde_json::Value =
-        serde_json::from_slice(content).expect("JSON was not well-formatted");
+pub fn parse_osm_content(content: &[u8]) -> serde_json::Result<OSMPoints> {
+    let json: serde_json::Value = serde_json::from_slice(content)?;
     assert!(json.is_object());
     //assert!(json.as_object().unwrap().len() == 1);
     let mut ret = Vec::new();
     let map = json.as_object().unwrap();
     ret.extend(read_downloaded_elements(map.get("elements").unwrap()).points);
-    osmpoint::OSMPoints { points: ret }
+    Ok(osmpoint::OSMPoints { points: ret })
 }
 
 #[cfg(test)]
