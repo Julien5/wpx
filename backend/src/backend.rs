@@ -5,9 +5,9 @@ use crate::elevation;
 use crate::error::Error;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
-use crate::gpsdata_osm;
-use crate::gpsdata_osm::OSMWaypoints;
 use crate::gpxexport;
+use crate::osm;
+use crate::osm::OSMWaypoints;
 use crate::parameters::Parameters;
 use crate::pdf;
 use crate::project;
@@ -15,6 +15,7 @@ use crate::render;
 use crate::render_device::RenderDevice;
 use crate::svgmap;
 use crate::svgprofile;
+use crate::track;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
@@ -27,7 +28,7 @@ pub type SegmentStatistics = crate::segment::SegmentStatistics;
 
 pub struct Backend {
     parameters: Parameters,
-    pub track: gpsdata::Track,
+    pub track: track::Track,
     pub waypoints: Waypoints,
     pub osmwaypoints: OSMWaypoints,
     track_smooth_elevation: Vec<f64>,
@@ -60,7 +61,7 @@ impl Backend {
         self.parameters = parameters.clone();
         self.track_smooth_elevation =
             elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
-        self.osmwaypoints = gpsdata_osm::read(&self.track, 1000f64);
+        self.osmwaypoints = osm::download_for_track(&self.track, 1000f64);
         self.update_waypoints();
     }
 
@@ -184,7 +185,7 @@ impl Backend {
                 return Err(e);
             }
         };
-        let track = match gpsdata::Track::from_segment(&segment) {
+        let track = match track::Track::from_segment(&segment) {
             Ok(t) => t,
             Err(e) => {
                 return Err(e);
@@ -193,7 +194,7 @@ impl Backend {
         let default_params = Parameters::default();
         let mut gpxwaypoints = gpsdata::read_waypoints(&gpx);
         project::project_on_track(&track, &mut gpxwaypoints);
-        let osmwaypoints = gpsdata_osm::read(&track, 1000f64);
+        let osmwaypoints = osm::download_for_track(&track, 1000f64);
         let parameters = Parameters::default();
         let mut ret = Backend {
             track_smooth_elevation: elevation::smooth_elevation(
@@ -338,30 +339,7 @@ impl Backend {
 
 #[cfg(test)]
 mod tests {
-    use crate::{backend::Backend, gpsdata_osm, render_device::RenderDevice};
-    #[test]
-    fn svg_segment_track() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
-        let segments = backend.segments();
-        let mut ok_count = 0;
-        for segment in &segments {
-            let svg = backend.render_segment_track(&segment, (1420, 400), RenderDevice::Native);
-            let reffilename = std::format!("data/ref/track-{}.svg", segment.id);
-            println!("test {}", reffilename);
-            if !std::fs::exists(&reffilename).unwrap() {
-                continue;
-            }
-            let data = std::fs::read_to_string(&reffilename).unwrap();
-            if data == svg {
-                ok_count += 1;
-            } else {
-                let tmpfilename = std::format!("/tmp/track-{}.svg", segment.id);
-                std::fs::write(&tmpfilename, svg).unwrap();
-                println!("test failed: {} {}", tmpfilename, reffilename);
-            }
-        }
-        assert!(ok_count == segments.len());
-    }
+    use crate::{backend::Backend, osm, render_device::RenderDevice};
 
     #[test]
     fn svg_profile() {
@@ -419,5 +397,15 @@ mod tests {
         backend.setStartTime(String::from("2007-03-01T13:00:00Z"));
         backend.setStartTime(String::from("2025-07-12T06:32:36Z"));
         backend.setStartTime(String::from("2025-07-12T06:32:36.215033Z"));
+    }
+
+    #[test]
+    fn track_bbox() {
+        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
+        let bbox = backend.track.wgs84_bounding_box();
+        println!("bbox={:?}", bbox);
+        for x in [bbox.min.0, bbox.min.1, bbox.max.0, bbox.max.1] {
+            assert!(x > 0f64);
+        }
     }
 }

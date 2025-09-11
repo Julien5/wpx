@@ -14,6 +14,7 @@ use crate::label_placement::PointFeature;
 use crate::label_placement::Polyline;
 use crate::render_device::RenderDevice;
 use crate::segment;
+use crate::track;
 use crate::waypoint::WaypointOrigin;
 use crate::waypoints_table;
 use svg::Node;
@@ -115,7 +116,7 @@ fn _toSD((x, y): (f64, f64), WD: f64, HD: f64, bbox: &gpsdata::ProfileBoundingBo
     (f(x), g(y))
 }
 
-fn _slope(track: &gpsdata::Track, smooth: &Vec<f64>) -> Vec<f64> {
+fn _slope(track: &track::Track, smooth: &Vec<f64>) -> Vec<f64> {
     let mut ret = Vec::new();
     debug_assert!(track.wgs84.len() == smooth.len());
     debug_assert!(!smooth.is_empty());
@@ -556,7 +557,7 @@ impl ProfileModel {
                 circle.cx = xg;
                 circle.cy = yg;
                 let id = format!("wp-{}", n);
-                use crate::gpsdata_osm::OSMType::*;
+                use crate::osmpoint::OSMType::*;
                 match kind {
                     City => {
                         circle.r = 5f64;

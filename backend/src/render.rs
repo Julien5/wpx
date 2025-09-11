@@ -2,8 +2,8 @@
 
 use crate::backend::Backend;
 use crate::render_device::RenderDevice;
-use crate::waypoint;
-use crate::{gpsdata, svgmap};
+use crate::svgmap;
+use crate::{track, waypoint};
 
 use std::str::FromStr;
 
@@ -25,7 +25,7 @@ impl Templates {
 
 fn points_table(
     templates: &Templates,
-    _track: &gpsdata::Track,
+    _track: &track::Track,
     waypoints: &Vec<waypoint::Waypoint>,
 ) -> String {
     let table = templates.table_points.clone();

@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::gpsdata;
+use crate::track;
 use crate::waypoint;
 
 fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
@@ -28,7 +28,7 @@ fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     ret
 }
 
-pub fn generate(track: &gpsdata::Track, waypoints: &Vec<waypoint::Waypoint>) -> Vec<u8> {
+pub fn generate(track: &track::Track, waypoints: &Vec<waypoint::Waypoint>) -> Vec<u8> {
     let mut G = gpx::Gpx::default();
     G.version = gpx::GpxVersion::Gpx11;
 

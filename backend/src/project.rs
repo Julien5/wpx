@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::gpsdata::Track;
+use crate::track::Track;
 use crate::utm;
 use crate::waypoint;
 use crate::waypoint::Waypoints;

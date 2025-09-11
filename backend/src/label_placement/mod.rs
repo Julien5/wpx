@@ -179,9 +179,9 @@ impl Circle {
     pub fn to_attributes(&self) -> Attributes {
         let mut ret = Attributes::new();
         set_attr(&mut ret, "id", self.id.as_str());
-        set_attr(&mut ret, "cx", format!("{}", self.cx).as_str());
-        set_attr(&mut ret, "cy", format!("{}", self.cy).as_str());
-        set_attr(&mut ret, "r", format!("{}", self.r).as_str());
+        set_attr(&mut ret, "cx", format!("{:.3}", self.cx).as_str());
+        set_attr(&mut ret, "cy", format!("{:.3}", self.cy).as_str());
+        set_attr(&mut ret, "r", format!("{:.3}", self.r).as_str());
         match &self.fill {
             Some(value) => {
                 set_attr(&mut ret, "fill", format!("{}", value.clone()).as_str());
@@ -230,8 +230,8 @@ impl Label {
         let y = self.bbox.bottom_right.1 - 2f64;
         set_attr(&mut ret, "id", self.id.as_str());
         set_attr(&mut ret, "font-size", format!("{:.1}", FONTSIZE).as_str());
-        set_attr(&mut ret, "x", format!("{}", x).as_str());
-        set_attr(&mut ret, "y", format!("{}", y).as_str());
+        set_attr(&mut ret, "x", format!("{:.3}", x).as_str());
+        set_attr(&mut ret, "y", format!("{:.3}", y).as_str());
         ret
     }
 }

@@ -1,12 +1,12 @@
 #![allow(non_snake_case)]
 
-use crate::gpsdata;
+use crate::track;
 
 /*
  * converted to rust from gpxstudio:
  * https://github.com/gpxstudio/gpx.studio/blob/main/gpx/src/gpx.ts#L1945
  */
-pub fn smooth(track: &gpsdata::Track, W: f64, signal: impl Fn(usize) -> f64) -> Vec<f64> {
+pub fn smooth(track: &track::Track, W: f64, signal: impl Fn(usize) -> f64) -> Vec<f64> {
     let L = track.wgs84.len();
     let mut ret = vec![0f64; L];
     let mut start = 0usize;
@@ -31,7 +31,7 @@ pub fn smooth(track: &gpsdata::Track, W: f64, signal: impl Fn(usize) -> f64) -> 
     ret
 }
 
-pub fn smooth_elevation(track: &gpsdata::Track, W: f64) -> Vec<f64> {
+pub fn smooth_elevation(track: &track::Track, W: f64) -> Vec<f64> {
     smooth(track, W, |index: usize| -> f64 { track.elevation(index) })
 }
 

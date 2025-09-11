@@ -1,13 +1,13 @@
 #![allow(non_snake_case)]
 use std::collections::HashMap;
 
-use crate::gpsdata;
+use crate::track;
 use crate::waypoint::WaypointOrigin;
 use crate::waypoint::Waypoints;
 
 type Values = HashMap<usize, usize>;
 
-pub fn hard_value(waypoints: &Waypoints, _track: &gpsdata::Track, index: usize) -> Option<usize> {
+pub fn hard_value(waypoints: &Waypoints, _track: &track::Track, index: usize) -> Option<usize> {
     let L = waypoints.len();
     let w = &waypoints[index];
     let mut ret = 0;
@@ -78,7 +78,7 @@ fn next_with_value(waypoints: &mut Waypoints, values: &Values, start: usize, inc
 
 fn find_max_distance(
     waypoints: &mut Waypoints,
-    track: &gpsdata::Track,
+    track: &track::Track,
     values: &mut Values,
 ) -> usize {
     let mut dmax = 0f64;
@@ -106,7 +106,7 @@ fn find_max_distance(
 
 fn set_soft_value(
     waypoints: &mut Waypoints,
-    track: &gpsdata::Track,
+    track: &track::Track,
     values: &mut Values,
     value: usize,
 ) {
@@ -115,7 +115,7 @@ fn set_soft_value(
     values.insert(kdmax, value);
 }
 
-pub fn compute_values(waypoints: &mut Waypoints, track: &gpsdata::Track) {
+pub fn compute_values(waypoints: &mut Waypoints, track: &track::Track) {
     let mut values = Values::new();
     let mut max_value = 0;
     let L = waypoints.len();

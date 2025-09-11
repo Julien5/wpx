@@ -10,4 +10,7 @@ impl UTMPoint {
     pub fn y(&self) -> f64 {
         self.1
     }
+    pub fn xy(&self) -> (f64, f64) {
+        (self.0, self.1)
+    }
 }

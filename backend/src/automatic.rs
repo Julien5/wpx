@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
-use crate::gpsdata;
 use crate::parameters;
+use crate::track;
 use crate::waypoint;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointOrigin;
@@ -9,7 +9,7 @@ use crate::waypoint::WaypointOrigin;
 type Waypoints = Vec<Waypoint>;
 type Parameters = parameters::Parameters;
 
-fn order(ret: &mut Waypoints, track: &gpsdata::Track) {
+fn order(ret: &mut Waypoints, track: &track::Track) {
     // TODO: avoid re-computation of the tree
     for k in 0..ret.len() {
         assert!(ret[k].track_index.is_some());
@@ -29,7 +29,7 @@ fn order(ret: &mut Waypoints, track: &gpsdata::Track) {
     }
 }
 
-fn douglas(track: &gpsdata::Track, params: &Parameters) -> Waypoints {
+fn douglas(track: &track::Track, params: &Parameters) -> Waypoints {
     let mut ret = Vec::new();
     let indexes = track.interesting_indexes(params.epsilon);
     for idx in indexes {
@@ -53,7 +53,7 @@ fn gpxwaypoints(waypoints: &Waypoints) -> Waypoints {
     ret
 }
 
-fn find_index_with_distance(track: &gpsdata::Track, dist: f64, from: usize) -> usize {
+fn find_index_with_distance(track: &track::Track, dist: f64, from: usize) -> usize {
     for k in from..track.len() {
         if track.distance(k) > dist {
             return k;
@@ -63,7 +63,7 @@ fn find_index_with_distance(track: &gpsdata::Track, dist: f64, from: usize) -> u
 }
 
 fn max_step_size_subsample(
-    track: &gpsdata::Track,
+    track: &track::Track,
     k0: usize,
     k1: usize,
     params: &Parameters,
@@ -92,7 +92,7 @@ fn max_step_size_subsample(
     ret
 }
 
-fn find_next_index(track: &gpsdata::Track, waypoints: &Waypoints, start: usize) -> Option<usize> {
+fn find_next_index(track: &track::Track, waypoints: &Waypoints, start: usize) -> Option<usize> {
     if start >= (track.len() - 1) {
         return None;
     }
@@ -104,7 +104,7 @@ fn find_next_index(track: &gpsdata::Track, waypoints: &Waypoints, start: usize) 
     Some(track.len() - 1)
 }
 
-fn max_step_size(track: &gpsdata::Track, waypoints: &Waypoints, params: &Parameters) -> Waypoints {
+fn max_step_size(track: &track::Track, waypoints: &Waypoints, params: &Parameters) -> Waypoints {
     debug_assert!(!track.wgs84.is_empty());
 
     let mut k0 = 0;
@@ -132,7 +132,7 @@ fn max_step_size(track: &gpsdata::Track, waypoints: &Waypoints, params: &Paramet
 }
 
 fn waypoints_within_distance(
-    track: &gpsdata::Track,
+    track: &track::Track,
     W: &Waypoints,
     k: usize,
     dmax: f64,
@@ -158,7 +158,7 @@ fn waypoints_within_distance(
     ret
 }
 
-fn remove_near_waypoints(track: &gpsdata::Track, W: &mut Waypoints) -> Waypoints {
+fn remove_near_waypoints(track: &track::Track, W: &mut Waypoints) -> Waypoints {
     let mut hide = std::collections::BTreeSet::new();
     for k in 0..W.len() {
         // hide around gpx waypoints only
@@ -181,11 +181,7 @@ fn remove_near_waypoints(track: &gpsdata::Track, W: &mut Waypoints) -> Waypoints
     ret
 }
 
-pub fn generate(
-    track: &gpsdata::Track,
-    waypoints: &Waypoints,
-    params: &Parameters,
-) -> Vec<Waypoint> {
+pub fn generate(track: &track::Track, waypoints: &Waypoints, params: &Parameters) -> Vec<Waypoint> {
     let mut ret = Vec::new();
     ret.extend(gpxwaypoints(waypoints));
     ret.extend(douglas(track, params));

@@ -2,6 +2,7 @@
 
 use std::str::FromStr;
 
+use crate::bbox::BoundingBox;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::{Circle, Label, Polyline};
 use crate::segment;
@@ -11,89 +12,23 @@ use crate::{backend, waypoints_table};
 
 use svg::Document;
 
-struct UTMBoundingBox {
-    min: (f64, f64),
-    max: (f64, f64),
-}
+fn to_graphics_coordinates(bbox: &BoundingBox, p: &UTMPoint, W: i32, H: i32) -> (f64, f64) {
+    let xmin = bbox.min.0;
+    let xmax = bbox.max.0;
+    let ymin = bbox.min.1;
+    let ymax = bbox.max.1;
 
-impl UTMBoundingBox {
-    fn new() -> UTMBoundingBox {
-        let min = (f64::MAX, f64::MAX);
-        let max = (f64::MIN, f64::MIN);
-        UTMBoundingBox { min, max }
-    }
-    fn width(&self) -> f64 {
-        return self.max.0 - self.min.0;
-    }
-    fn height(&self) -> f64 {
-        return self.max.1 - self.min.1;
-    }
-    fn update(&mut self, p: &UTMPoint) {
-        if p.x() > self.max.0 {
-            self.max.0 = p.x();
-        }
-        if p.y() > self.max.1 {
-            self.max.1 = p.y();
-        }
-        if p.x() < self.min.0 {
-            self.min.0 = p.x();
-        }
-        if p.y() < self.min.1 {
-            self.min.1 = p.y();
-        }
-    }
-    // TODO: take WxH into account
-    fn fix_aspect_ratio(&mut self, _W: i32, _H: i32) {
-        let X = (self.min.0 + self.max.0) / 2f64;
-        let Y = (self.min.1 + self.max.1) / 2f64;
-        if self.height() > self.width() {
-            let delta = 0.5f64 * (self.height());
-            self.max.0 = X + delta;
-            self.min.0 = X - delta;
-        } else {
-            let delta = 0.5f64 * self.width();
-            self.max.1 = Y + delta;
-            self.min.1 = Y - delta;
-        }
-        let margin = 2000f64;
-        self.max.0 = self.max.0 + margin;
-        self.max.1 = self.max.1 + margin;
-        self.min.0 = self.min.0 - margin;
-        self.min.1 = self.min.1 - margin;
-    }
-    fn to_graphics_coordinates(&self, p: &UTMPoint, W: i32, H: i32) -> (f64, f64) {
-        let xmin = self.min.0;
-        let xmax = self.max.0;
-        let ymin = self.min.1;
-        let ymax = self.max.1;
-
-        let f = |x: f64| -> f64 {
-            let a = W as f64 / (xmax - xmin);
-            let b = -a * xmin;
-            a * x + b
-        };
-        let g = |y: f64| -> f64 {
-            let a = H as f64 / (ymin - ymax);
-            let b = -a * ymax;
-            a * y + b
-        };
-        (f(p.x()), g(p.y()))
-    }
-    fn contains(&self, p: &UTMPoint) -> bool {
-        if p.x() < self.min.0 {
-            return false;
-        }
-        if p.x() > self.max.0 {
-            return false;
-        }
-        if p.y() < self.min.1 {
-            return false;
-        }
-        if p.y() > self.max.1 {
-            return false;
-        }
-        return true;
-    }
+    let f = |x: f64| -> f64 {
+        let a = W as f64 / (xmax - xmin);
+        let b = -a * xmin;
+        a * x + b
+    };
+    let g = |y: f64| -> f64 {
+        let a = H as f64 / (ymin - ymax);
+        let b = -a * ymax;
+        a * y + b
+    };
+    (f(p.x()), g(p.y()))
 }
 
 fn _readid(id: &str) -> (&str, &str) {
@@ -155,17 +90,17 @@ impl MapData {
         let geodata = &backend.track;
         let waypoints = backend.get_waypoints();
         let path = &geodata.utm;
-        let mut bbox = UTMBoundingBox::new();
+        let mut bbox = BoundingBox::new();
         let range = &segment.range;
         for k in range.start..range.end {
-            bbox.update(&geodata.utm[k]);
+            bbox.update(&geodata.utm[k].xy());
         }
         bbox.fix_aspect_ratio(W, H);
         let mut polyline = Polyline::new();
         // todo: path in the bbox, which more than the path in the range.
         for k in range.start..range.end {
             let p = &path[k];
-            let (xg, yg) = bbox.to_graphics_coordinates(p, W, H);
+            let (xg, yg) = to_graphics_coordinates(&bbox, p, W, H);
             polyline.points.push((xg, yg));
         }
 
@@ -182,7 +117,7 @@ impl MapData {
         let mut points = Vec::new();
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
-            if !bbox.contains(&w.utm) {
+            if !bbox.contains(&w.utm.xy()) {
                 continue;
             }
             if w.origin != WaypointOrigin::GPX {
@@ -191,7 +126,7 @@ impl MapData {
             if !range.contains(&w.track_index.unwrap()) {
                 continue;
             }
-            let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
+            let (x, y) = to_graphics_coordinates(&bbox, &w.utm, W, H);
             let mut circle = Circle::new();
             circle.id = format!("wp-{}/circle", k);
             circle.cx = x;
@@ -210,7 +145,7 @@ impl MapData {
         for (kind, osmpoints) in &backend.osmwaypoints {
             for k in 0..osmpoints.len() {
                 let w = &osmpoints[k];
-                if !bbox.contains(&w.utm) {
+                if !bbox.contains(&w.utm.xy()) {
                     continue;
                 }
                 if w.name.is_none() {
@@ -220,13 +155,13 @@ impl MapData {
                     continue;
                 }
                 let mut circle = Circle::new();
-                let (x, y) = bbox.to_graphics_coordinates(&w.utm, W, H);
+                let (x, y) = to_graphics_coordinates(&bbox, &w.utm, W, H);
                 let n = points.len();
                 circle.id = format!("wp-{}/circle", n);
                 circle.cx = x;
                 circle.cy = y;
                 let id = format!("wp-{}", n);
-                use crate::gpsdata_osm::OSMType::*;
+                use crate::osmpoint::OSMType::*;
                 match kind {
                     City => {
                         circle.r = 5f64;
