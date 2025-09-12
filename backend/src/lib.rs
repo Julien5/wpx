@@ -8,7 +8,6 @@ pub mod gpsdata;
 mod gpxexport;
 mod label_placement;
 mod osm;
-mod osmpoint;
 pub mod parameters;
 mod pdf;
 mod project;

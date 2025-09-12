@@ -58,11 +58,8 @@ impl OSMPoints {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-
-    use crate::osmpoint;
-
     use super::*;
+    use serde_json::json;
 
     fn testpoint() -> OSMPoint {
         OSMPoint {
@@ -84,7 +81,7 @@ mod tests {
     fn points() {
         let p1 = testpoint();
         let p2 = testpoint();
-        let points = osmpoint::OSMPoints {
+        let points = OSMPoints {
             points: vec![p1, p2],
         };
         let data = json!(points);

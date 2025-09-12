@@ -161,7 +161,7 @@ impl MapData {
                 circle.cx = x;
                 circle.cy = y;
                 let id = format!("wp-{}", n);
-                use crate::osmpoint::OSMType::*;
+                use super::osm::osmpoint::OSMType::*;
                 match kind {
                     City => {
                         circle.r = 5f64;

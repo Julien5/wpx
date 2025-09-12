@@ -557,7 +557,7 @@ impl ProfileModel {
                 circle.cx = xg;
                 circle.cy = yg;
                 let id = format!("wp-{}", n);
-                use crate::osmpoint::OSMType::*;
+                use super::osm::osmpoint::OSMType::*;
                 match kind {
                     City => {
                         circle.r = 5f64;

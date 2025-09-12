@@ -18,20 +18,6 @@ pub struct Track {
 // (long,lat)
 pub type WGS84BoundingBox = super::bbox::BoundingBox;
 
-pub fn _osm(bbox: &WGS84BoundingBox) -> String {
-    format!(
-        "({}, {},{},{})",
-        bbox.min.1, bbox.min.0, bbox.max.1, bbox.max.0
-    )
-}
-
-pub fn osm3(bbox: &WGS84BoundingBox) -> String {
-    format!(
-        "({:0.3},{:0.3},{:0.3},{:0.3})",
-        bbox.min.1, bbox.min.0, bbox.max.1, bbox.max.0
-    )
-}
-
 impl Track {
     pub fn create_on_track(&self, index: usize, origin: WaypointOrigin) -> Waypoint {
         Waypoint {

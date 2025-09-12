@@ -16,7 +16,7 @@ function pdf() {
 	time cargo run -- \
 		  --output-directory /tmp/ \
 		  --debug true \
-		  --interval-length 180 \
+		  --interval-length 100 \
 		  "$@" \
 		  "${file}"
 	${TYPST} compile /tmp/document.typst

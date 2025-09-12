@@ -98,17 +98,16 @@ pub fn bounding_box(boxes: &Vec<BoundingBox>) -> BoundingBox {
 
 #[cfg(test)]
 mod tests {
-    use crate::{backend::Backend, track::osm3};
-
     use super::*;
 
     #[test]
     fn snaptest() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
+        let mut backend =
+            crate::backend::Backend::from_filename("data/blackforest.gpx").expect("fail");
         let mut bbox = backend.track.wgs84_bounding_box();
         let bboxes = split(&bbox, &0.1f64)
             .iter()
-            .map(|(index, bbox)| osm3(&bbox))
+            .map(|(index, bbox)| crate::osm::osm3(&bbox))
             .collect::<Vec<_>>();
         assert!(bboxes.contains(&"(49.000,8.400,49.100,8.500)".to_string()));
         assert_eq!(bboxes.len(), 60);

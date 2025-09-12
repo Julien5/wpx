@@ -1,7 +1,7 @@
 use reqwest::blocking::Client;
 use serde_json::Value;
 
-use crate::osmpoint::{self, OSMPoint, OSMPoints};
+use super::osmpoint::*;
 
 fn dl_worker(req: &str) -> Option<String> {
     println!("download:{}", req);
@@ -135,7 +135,7 @@ pub fn parse_osm_content(content: &[u8]) -> serde_json::Result<OSMPoints> {
     let mut ret = Vec::new();
     let map = json.as_object().unwrap();
     ret.extend(read_downloaded_elements(map.get("elements").unwrap()).points);
-    Ok(osmpoint::OSMPoints { points: ret })
+    Ok(super::osmpoint::OSMPoints { points: ret })
 }
 
 #[cfg(test)]
