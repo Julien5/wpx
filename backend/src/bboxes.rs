@@ -100,10 +100,11 @@ pub fn bounding_box(boxes: &Vec<BoundingBox>) -> BoundingBox {
 mod tests {
     use super::*;
 
-    #[test]
-    fn snaptest() {
-        let mut backend =
-            crate::backend::Backend::from_filename("data/blackforest.gpx").expect("fail");
+    #[tokio::test]
+    async fn snaptest() {
+        let mut backend = crate::backend::Backend::from_filename("data/blackforest.gpx")
+            .await
+            .expect("fail");
         let mut bbox = backend.track.wgs84_bounding_box();
         let bboxes = split(&bbox, &0.1f64)
             .iter()

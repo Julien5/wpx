@@ -21,7 +21,9 @@ struct Cli {
     filename: std::path::PathBuf,
 }
 
-fn main() -> Result<(), error::Error> {
+#[tokio::main(flavor = "current_thread")]
+async fn main() -> Result<(), error::Error> {
+    env_logger::init();
     let args = Cli::parse();
 
     let gpxinput;
@@ -39,9 +41,9 @@ fn main() -> Result<(), error::Error> {
         _ => {}
     }
 
-    println!("read gpx {}", gpxinput);
-    println!("outdir   {}", outdir);
-    let mut backend = Backend::from_filename(gpxinput)?;
+    log::info!("read gpx {}", gpxinput);
+    log::info!("outdir   {}", outdir);
+    let mut backend = Backend::from_filename(gpxinput).await?;
 
     let mut parameters = backend.get_parameters();
     match args.interval_length {
@@ -73,6 +75,9 @@ fn main() -> Result<(), error::Error> {
     }
 
     backend.set_parameters(&parameters);
+    let stats = backend.statistics();
+    log::info!("length = {:.1} km", stats.length / 1000f64);
+    log::info!("elevation gain = {:.1} km", stats.elevation_gain);
 
     let pdfbytes = backend.generatePdf();
     let pdfname = format!(
@@ -80,7 +85,7 @@ fn main() -> Result<(), error::Error> {
         outdir,
         gpxpath.file_stem().unwrap().to_str().unwrap()
     );
-    println!("make: {}", pdfname);
+    log::info!("make: {}", pdfname);
     std::fs::write(pdfname, &pdfbytes).expect("Could not write pdf.");
 
     let gpxbytes = backend.generateGpx();
@@ -89,7 +94,7 @@ fn main() -> Result<(), error::Error> {
         outdir,
         gpxpath.file_stem().unwrap().to_str().unwrap()
     );
-    println!("make: {}", gpxname);
+    log::info!("make: {}", gpxname);
     std::fs::write(gpxname, &gpxbytes).expect("Could not write gpx.");
 
     Ok(())

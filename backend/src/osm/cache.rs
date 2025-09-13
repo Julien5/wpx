@@ -1,5 +1,3 @@
-use std::path::{Path, PathBuf};
-
 use super::osmpoint::*;
 use crate::track::WGS84BoundingBox;
 
@@ -26,26 +24,57 @@ pub fn cache_filename(bbox: &WGS84BoundingBox, kind: &str) -> String {
     s = s.replace(")", "");
     s = s.replace(",", "/");
 
-    let root = format!("{}/{}", cache_dir(), "WPX");
-    format!("{}/{}/{}", root, s, kind)
+    format!("{}/{}", s, kind)
 }
 
-pub(crate) fn read_chunk_cache(
-    bbox: &WGS84BoundingBox,
-    kind: &str,
-) -> Option<super::osmpoint::OSMPoints> {
+fn cache_path(filename: &String) -> String {
+    format!("{}/{}", cache_dir(), filename)
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+async fn write_worker(filename: &String, data: String) {
+    super::filesystem::write(&cache_path(filename), data)
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+async fn read_worker(filename: &String) -> Option<String> {
+    super::filesystem::read(&cache_path(filename))
+}
+
+#[cfg(target_arch = "wasm32")]
+async fn write_worker(path: &String, data: String) {
+    super::indexdb::write(&path, data).await
+}
+
+#[cfg(target_arch = "wasm32")]
+async fn read_worker(path: &String) -> Option<String> {
+    super::indexdb::read(&path).await
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+async fn hit_cache_worker(filename: &String) -> bool {
+    super::filesystem::hit_cache(&cache_path(filename))
+}
+
+#[cfg(target_arch = "wasm32")]
+async fn hit_cache_worker(path: &String) -> bool {
+    super::indexdb::hit_cache(&path).await
+}
+
+pub async fn hit_cache(bbox: &WGS84BoundingBox, kind: &str) -> bool {
     let filename = cache_filename(bbox, kind);
-    let path = Path::new(filename.as_str());
-    if !path.exists() {
-        return None;
-    }
-    match std::fs::read_to_string(path) {
-        Ok(data) => Some(OSMPoints::from_string(&data)),
+    return hit_cache_worker(&filename).await;
+}
+
+pub async fn read(bbox: &WGS84BoundingBox, kind: &str) -> Option<OSMPoints> {
+    let filename = cache_filename(bbox, kind);
+    match read_worker(&filename).await {
+        Some(data) => Some(OSMPoints::from_string(&data)),
         _ => None,
     }
 }
 
-pub(crate) fn write_chunk_cache(bboxes: &Vec<WGS84BoundingBox>, points: &OSMPoints, kind: &str) {
+pub async fn write(bboxes: &Vec<WGS84BoundingBox>, points: &OSMPoints, kind: &str) {
     for atom in bboxes {
         let local = points
             .clone()
@@ -58,10 +87,7 @@ pub(crate) fn write_chunk_cache(bboxes: &Vec<WGS84BoundingBox>, points: &OSMPoin
             .cloned()
             .collect::<Vec<_>>();
         let path = cache_filename(atom, kind);
-        let pathbuf = PathBuf::from(&path);
-        let dirname = pathbuf.parent().unwrap().to_str().unwrap();
-        let _ = std::fs::create_dir_all(dirname);
         let out = OSMPoints { points: local };
-        std::fs::write(path, out.as_string()).unwrap();
+        write_worker(&path, out.as_string()).await;
     }
 }

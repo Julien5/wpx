@@ -49,7 +49,14 @@ impl OSMPoints {
         OSMPoints { points: Vec::new() }
     }
     pub fn from_string(data: &String) -> OSMPoints {
-        serde_json::from_str(data.as_str()).unwrap()
+        match serde_json::from_str(data.as_str()) {
+            Ok(points) => points,
+            Err(e) => {
+                log::error!("could not read osmpoints from: {}", data);
+                log::error!("because: {:?}", e);
+                OSMPoints::new()
+            }
+        }
     }
     pub fn as_string(&self) -> String {
         json!(self).to_string()
@@ -74,7 +81,7 @@ mod tests {
     fn point() {
         let p = testpoint();
         let data = json!(p);
-        println!("{}", data)
+        log::info!("{}", data)
     }
 
     #[test]
@@ -85,6 +92,6 @@ mod tests {
             points: vec![p1, p2],
         };
         let data = json!(points);
-        println!("{}", data)
+        log::info!("{}", data)
     }
 }

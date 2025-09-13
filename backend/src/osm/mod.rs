@@ -1,21 +1,18 @@
 mod cache;
 mod download;
+mod filesystem;
+mod indexdb;
 pub mod osmpoint;
 
-use crate::bboxes::bounding_box;
-use crate::bboxes::split;
+use crate::bboxes::*;
 use crate::gpsdata::distance_wgs84;
 use crate::project;
-use crate::track::Track;
-use crate::track::WGS84BoundingBox;
+use crate::track::*;
 use crate::utm::UTMPoint;
-use crate::waypoint::Waypoint;
-use crate::waypoint::WaypointOrigin;
-use crate::waypoint::Waypoints;
+use crate::waypoint::*;
 use cache::*;
 use osmpoint::*;
 use std::collections::BTreeMap;
-use std::path::Path;
 
 use proj4rs::Proj;
 
@@ -66,55 +63,49 @@ pub fn convert_osmpoints(osmpoints: &OSMPoints) -> Waypoints {
     ret
 }
 
-fn download_chunk_real(
+async fn download_chunk_real(
     bbox: &WGS84BoundingBox,
     kind: &str,
 ) -> std::result::Result<OSMPoints, std::io::Error> {
     use download::*;
     let bboxparam = osm3(&bbox);
     let result = if kind == "passes" {
-        parse_osm_content(passes(&bboxparam).unwrap().as_bytes())
+        parse_osm_content(passes(&bboxparam).await.unwrap().as_bytes())
     } else {
-        parse_osm_content(places(&bboxparam, kind).unwrap().as_bytes())
+        parse_osm_content(places(&bboxparam, kind).await.unwrap().as_bytes())
     };
     match result {
         Ok(points) => Ok(points),
         Err(e) => {
-            println!("could not download {} (ignore)", kind);
-            println!("reason: {}", e.to_string());
+            log::info!("could not download {} (ignore)", kind);
+            log::info!("reason: {}", e.to_string());
             Err(std::io::Error::new(std::io::ErrorKind::InvalidData, kind))
         }
     }
 }
 
-fn hit_cache(bbox: &WGS84BoundingBox, kind: &str) -> bool {
-    let filename = cache_filename(bbox, kind);
-    let path = Path::new(filename.as_str());
-    path.exists()
-}
-
-fn download_chunk(bboxes: &Vec<WGS84BoundingBox>, kind: &str) -> OSMPoints {
+async fn download_chunk(bboxes: &Vec<WGS84BoundingBox>, kind: &str) -> OSMPoints {
     if bboxes.is_empty() {
         return OSMPoints::new();
     }
     let bbox = bounding_box(&bboxes);
-    let osmpoints = match download_chunk_real(&bbox, kind) {
+    let osmpoints = match download_chunk_real(&bbox, kind).await {
         Ok(points) => {
-            println!("downloaded {:3} {:20}", points.points.len(), kind);
-            cache::write_chunk_cache(bboxes, &points, kind);
+            log::info!("downloaded {:3} {:20}", points.points.len(), kind);
+            cache::write(bboxes, &points, kind).await;
             points
         }
         Err(e) => {
-            println!("error downloading for {:20}: {:?}", kind, e);
-            println!("assuming there is no {}", kind);
+            log::info!("error downloading for {:20}: {:?}", kind, e);
+            log::info!("assuming there is no {}", kind);
             OSMPoints::new()
         }
     };
     osmpoints
 }
 
-fn read(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
-    let osmpoints = match cache::read_chunk_cache(bbox, kind) {
+async fn read(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
+    let osmpoints = match cache::read(bbox, kind).await {
         Some(d) => d,
         None => {
             // "could not find any data for {} (download probably failed) => skip",
@@ -124,35 +115,34 @@ fn read(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
     convert_osmpoints(&osmpoints)
 }
 
-fn reducebbox(bbox: &WGS84BoundingBox, kind: &str, step: &f64) -> Vec<WGS84BoundingBox> {
+async fn reducebbox(bbox: &WGS84BoundingBox, kind: &str, step: &f64) -> Vec<WGS84BoundingBox> {
     let many = split(&bbox, step);
     let mut uncached = Vec::new();
     for (_index, atom) in many {
-        if !hit_cache(&atom, kind) {
+        if !(cache::hit_cache(&atom, kind).await) {
             uncached.push(atom.clone());
         }
     }
     uncached
 }
 
-fn process(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
+async fn process(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
     let step = if kind == "village" {
         0.05f64 // ~ 5km
     } else {
         0.2f64 // ~ 20km
     };
     let atoms = split(&bbox, &step);
-    // download missing
-    let not_cached = reducebbox(&bbox, &kind, &step);
+    let not_cached = reducebbox(&bbox, &kind, &step).await;
     if !not_cached.is_empty() {
-        println!("atoms:{}", atoms.len());
-        println!("not in cache:{}", not_cached.len());
+        log::info!("atoms:{}", atoms.len());
+        log::info!("not in cache:{}", not_cached.len());
     }
-    download_chunk(&not_cached, kind);
+    download_chunk(&not_cached, kind).await;
     let mut ret = Vec::new();
-    println!("about to read {:20} atoms:{:3}", kind, atoms.len());
+    log::info!("about to read {:20} atoms:{:3}", kind, atoms.len());
     for (_index, atom) in atoms {
-        let points = read(&atom, &kind);
+        let points = read(&atom, &kind).await;
         ret.extend(points);
     }
     ret
@@ -160,20 +150,20 @@ fn process(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
 
 pub type OSMWaypoints = BTreeMap<OSMType, Waypoints>;
 
-pub fn download_for_track(track: &Track, distance: f64) -> OSMWaypoints {
+pub async fn download_for_track(track: &Track, distance: f64) -> OSMWaypoints {
     let mut ret = OSMWaypoints::new();
     let bbox = track.wgs84_bounding_box();
     assert!(!bbox.empty());
 
-    let mut cities = process(&bbox, "town");
+    let mut cities = process(&bbox, "town").await;
     retain(&mut cities, track, 10f64 * distance);
     ret.insert(OSMType::City, cities);
 
-    let mut passes = process(&bbox, "passes");
+    let mut passes = process(&bbox, "passes").await;
     retain(&mut passes, track, 2f64 * distance);
     ret.insert(OSMType::MountainPass, passes);
 
-    let mut villages = process(&bbox, "village");
+    let mut villages = process(&bbox, "village").await;
     retain(&mut villages, track, distance * 0.5f64);
     ret.insert(OSMType::Village, villages);
 

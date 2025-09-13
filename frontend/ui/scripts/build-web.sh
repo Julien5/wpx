@@ -21,11 +21,13 @@ function build() {
 	rustup target add wasm32-unknown-unknown
 	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen generate
-	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web --release
-	flutter build web --release --build-name=${version}
+	local RELEASE="--release"
+	RELEASE=
+	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web ${RELEASE}
+	flutter build web ${RELEASE} --build-name=${version}
 	mkdir -p build/web/pkg/
-	cp -v $(find /opt/flutter/ -name "flutter.js.map") build/web/
-	cp web/pkg/* build/web/pkg/
+	cp -Rv $(find /opt/flutter/ -name "flutter.js.map") build/web/
+	cp -Rf web/pkg/* build/web/pkg/
 	tar -zcf /tmp/web.tgz build/web
 }
  

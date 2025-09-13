@@ -402,7 +402,7 @@ pub fn place_labels_gen(
                 let bbox = &candidate.bbox;
                 /*let dothers = &candidate.dothers;
                 let dtarget = &candidate.dtarget;
-                println!(
+                log::info!(
                         "[{k}={:12}] c({:.1},{:.1}) d_t={:.1} d_o = {:.1}]",
                         target_text,
                         bbox.x_min(),
@@ -414,7 +414,7 @@ pub fn place_labels_gen(
                 points[k].label.bbox = bbox.clone();
             }
             _ => {
-                println!("failed to find any candidate for [{}]", target_text);
+                log::info!("failed to find any candidate for [{}]", target_text);
             }
         }
     }

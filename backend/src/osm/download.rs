@@ -1,10 +1,11 @@
-use reqwest::blocking::Client;
+use reqwest::Client;
 use serde_json::Value;
 
 use super::osmpoint::*;
+use log;
 
-fn dl_worker(req: &str) -> Option<String> {
-    println!("download:{}", req);
+async fn dl_worker(req: &str) -> Option<String> {
+    log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
     let client = Client::new();
     let response = client
@@ -26,15 +27,18 @@ fn dl_worker(req: &str) -> Option<String> {
         .header("Priority", "u=0")
         .body(format!("data={}", urlencoding::encode(&req)))
         .send()
+        .await
         .unwrap();
 
-    let text = response.text();
+    let text = response.text().await;
 
-    if true {
-        let filename = std::format!("/tmp/dl.data");
-        let data = text.as_ref().unwrap().clone();
-        std::fs::write(filename, data).expect("Unable to write file");
+    /*
+        if true {
+            let filename = std::format!("/tmp/dl.data");
+            let data = text.as_ref().unwrap().clone();
+            std::fs::write(filename, data).expect("Unable to write file");
     }
+        */
 
     match text {
         Ok(json) => Some(json),
@@ -42,22 +46,22 @@ fn dl_worker(req: &str) -> Option<String> {
     }
 }
 
-pub fn places(bbox: &str, place: &str) -> Option<String> {
+pub async fn places(bbox: &str, place: &str) -> Option<String> {
     let timeout = 250;
     let req = format!(
         "[out:json][timeout:{}];nwr[\"place\"=\"{}\"]{};out geom;",
         timeout, place, bbox
     );
-    dl_worker(&req)
+    dl_worker(&req).await
 }
 
-pub fn passes(bbox: &str) -> Option<String> {
+pub async fn passes(bbox: &str) -> Option<String> {
     let timeout = 250;
     let req = format!(
         "[out:json][timeout:{}];node[mountain_pass=\"yes\"]{};out geom;",
         timeout, bbox
     );
-    dl_worker(&req)
+    dl_worker(&req).await
 }
 
 fn read_f64(map: &serde_json::Map<String, Value>, name: &str) -> f64 {
@@ -79,7 +83,7 @@ fn read_tags(tags: &serde_json::Value) -> (Option<String>, Option<f64>) {
             match s.parse::<f64>() {
                 Ok(f) => Some(f),
                 Err(e) => {
-                    println!("could not parse as f64: {} because {}", s, e);
+                    log::info!("could not parse as f64: {} because {}", s, e);
                     None
                 }
             }
@@ -121,7 +125,7 @@ fn read_downloaded_elements(elements: &serde_json::Value) -> OSMPoints {
         match read_download_element(e) {
             Ok(city) => ret.push(city),
             Err(_msg) => {
-                //println!("{} with {}", msg, e);
+                //log::info!("{} with {}", msg, e);
             }
         }
     }
@@ -150,6 +154,6 @@ mod tests {
         let place = "village";
         let json = ""; //dl(&bbox, place).unwrap();
         let json = ""; //dl_passes(&bbox).unwrap();
-        println!("ret={}", json);
+        log::info!("ret={}", json);
     }
 }

@@ -1,0 +1,16 @@
+[package]
+name = "rust_lib_test_async"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.11.1"
+indexed_db_futures = "0.6.4"
+tokio = {version="1.47.1", features=["time"]}
+wasmtimer = "0.4.3"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

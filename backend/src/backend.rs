@@ -51,7 +51,7 @@ impl Backend {
             debug_assert!(w.get_track_index() < self.track.len());
         }
         waypoint_values::compute_values(&mut self.waypoints, &self.track);
-        println!("generated {} waypoints", self.waypoints.len());
+        log::info!("generated {} waypoints", self.waypoints.len());
     }
     pub fn get_waypoints(&self) -> Vec<Waypoint> {
         return self.waypoints.clone();
@@ -61,7 +61,6 @@ impl Backend {
         self.parameters = parameters.clone();
         self.track_smooth_elevation =
             elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
-        self.osmwaypoints = osm::download_for_track(&self.track, 1000f64);
         self.update_waypoints();
     }
 
@@ -177,7 +176,7 @@ impl Backend {
         ret
     }
 
-    pub fn from_content(content: &Vec<u8>) -> Result<Backend, Error> {
+    pub async fn from_content(content: &Vec<u8>) -> Result<Backend, Error> {
         let mut gpx = gpsdata::read_gpx_content(content)?;
         let segment = match gpsdata::read_segment(&mut gpx) {
             Ok(s) => s,
@@ -194,7 +193,7 @@ impl Backend {
         let default_params = Parameters::default();
         let mut gpxwaypoints = gpsdata::read_waypoints(&gpx);
         project::project_on_track(&track, &mut gpxwaypoints);
-        let osmwaypoints = osm::download_for_track(&track, 1000f64);
+        let osmwaypoints = osm::download_for_track(&track, 1000f64).await;
         let parameters = Parameters::default();
         let mut ret = Backend {
             track_smooth_elevation: elevation::smooth_elevation(
@@ -210,18 +209,18 @@ impl Backend {
         Ok(ret)
     }
 
-    pub fn from_filename(filename: &str) -> Result<Backend, Error> {
+    pub async fn from_filename(filename: &str) -> Result<Backend, Error> {
         let mut f = std::fs::File::open(filename).unwrap();
         let mut buffer = Vec::new();
         // read the whole file
         use std::io::prelude::*;
         f.read_to_end(&mut buffer).unwrap();
-        Self::from_content(&buffer)
+        Self::from_content(&buffer).await
     }
 
-    pub fn demo() -> Result<Backend, Error> {
+    pub async fn demo() -> Result<Backend, Error> {
         let content = include_bytes!("../data/ref/roland.gpx");
-        Self::from_content(&content.to_vec())
+        Self::from_content(&content.to_vec()).await
     }
 
     pub fn epsilon(&self) -> f64 {
@@ -253,13 +252,13 @@ impl Backend {
         (W, H): (i32, i32),
         render_device: RenderDevice,
     ) -> String {
-        println!("render_segment_what:{} {}", segment.id, what);
+        log::info!("render_segment_what:{} {}", segment.id, what);
         match what.as_str() {
             "profile" => self.render_segment(segment, (W, H), render_device),
             "ylabels" => self.render_yaxis_labels_overlay(segment, (W, H), render_device),
             "map" => self.render_segment_map(segment, (W, H)),
             _ => {
-                assert!(false);
+                // assert!(false);
                 String::new()
             }
         }
@@ -270,7 +269,7 @@ impl Backend {
         (W, H): (i32, i32),
         render_device: RenderDevice,
     ) -> String {
-        println!("render_segment:{}", segment.id);
+        log::info!("render_segment:{}", segment.id);
         let debug = self.get_parameters().debug;
         let ret = svgprofile::profile(&self, &segment, W, H, render_device, debug);
         if self.get_parameters().debug {
@@ -285,7 +284,7 @@ impl Backend {
         (W, H): (i32, i32),
         render_device: RenderDevice,
     ) -> String {
-        println!("render_segment_track:{}", segment.id);
+        log::info!("render_segment_track:{}", segment.id);
         let mut profile = svgprofile::ProfileView::init(&segment.bbox);
         profile.set_render_device(render_device);
         profile.reset_size(W as f64, H as f64);
@@ -308,6 +307,7 @@ impl Backend {
     }
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
         let range = &segment.range;
+        assert!(range.end > 0);
         SegmentStatistics {
             length: self.track.distance(range.end - 1) - self.track.distance(range.start),
             elevation_gain: self.track.elevation_gain(&range),
@@ -317,6 +317,7 @@ impl Backend {
     }
     pub fn statistics(&self) -> SegmentStatistics {
         let range = 0..self.track.wgs84.len();
+        assert!(range.end > 0);
         SegmentStatistics {
             length: self.track.distance(range.end - 1) - self.track.distance(range.start),
             elevation_gain: self.track.elevation_gain(&range),
@@ -328,11 +329,11 @@ impl Backend {
         let typbytes = render::make_typst_document(self, (1000, 285));
         //let typbytes = render::compile_pdf(self, debug, (1400, 400));
         let ret = pdf::compile(&typbytes, self.get_parameters().debug);
-        println!("generated {} bytes", ret.len());
+        log::info!("generated {} bytes", ret.len());
         ret
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
-        println!("export {} waypoints", self.waypoints.len());
+        log::info!("export {} waypoints", self.waypoints.len());
         gpxexport::generate(&self.track, &self.waypoints)
     }
 }
@@ -341,15 +342,17 @@ impl Backend {
 mod tests {
     use crate::{backend::Backend, osm, render_device::RenderDevice};
 
-    #[test]
-    fn svg_profile() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
+    #[tokio::test]
+    async fn svg_profile() {
+        let mut backend = Backend::from_filename("data/blackforest.gpx")
+            .await
+            .expect("fail");
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
             let svg = backend.render_segment(&segment, (1420, 400), RenderDevice::Native);
             let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
-            println!("test {}", reffilename);
+            log::info!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {
                 std::fs::read_to_string(&reffilename).unwrap()
             } else {
@@ -360,21 +363,23 @@ mod tests {
             } else {
                 let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id);
                 std::fs::write(&tmpfilename, svg).unwrap();
-                println!("test failed: {} {}", tmpfilename, reffilename);
+                log::info!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
         assert!(ok_count == segments.len());
     }
 
-    #[test]
-    fn svg_map() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
+    #[tokio::test]
+    async fn svg_map() {
+        let mut backend = Backend::from_filename("data/blackforest.gpx")
+            .await
+            .expect("fail");
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
             let svg = backend.render_segment_map(&segment, (400, 400));
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
-            println!("test {}", reffilename);
+            log::info!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {
                 std::fs::read_to_string(&reffilename).unwrap()
             } else {
@@ -385,25 +390,29 @@ mod tests {
             } else {
                 let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id);
                 std::fs::write(&tmpfilename, svg).unwrap();
-                println!("test failed: {} {}", tmpfilename, reffilename);
+                log::info!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
         assert!(ok_count == segments.len());
     }
 
-    #[test]
-    fn time_iso8601() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
+    #[tokio::test]
+    async fn time_iso8601() {
+        let mut backend = Backend::from_filename("data/blackforest.gpx")
+            .await
+            .expect("fail");
         backend.setStartTime(String::from("2007-03-01T13:00:00Z"));
         backend.setStartTime(String::from("2025-07-12T06:32:36Z"));
         backend.setStartTime(String::from("2025-07-12T06:32:36.215033Z"));
     }
 
-    #[test]
-    fn track_bbox() {
-        let mut backend = Backend::from_filename("data/blackforest.gpx").expect("fail");
+    #[tokio::test]
+    async fn track_bbox() {
+        let mut backend = Backend::from_filename("data/blackforest.gpx")
+            .await
+            .expect("fail");
         let bbox = backend.track.wgs84_bounding_box();
-        println!("bbox={:?}", bbox);
+        log::info!("bbox={:?}", bbox);
         for x in [bbox.min.0, bbox.min.1, bbox.max.0, bbox.max.1] {
             assert!(x > 0f64);
         }

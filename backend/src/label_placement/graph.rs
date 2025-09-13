@@ -77,7 +77,7 @@ impl Graph {
             let neighbors_candidates = self.candidates.get_mut(&b).unwrap();
             for cb in neighbors_candidates.clone() {
                 if selected.bbox.overlap(&cb.bbox) {
-                    //println!("remove candidate of {b} because of overlap: {}", cb.bbox);
+                    //log::info!("remove candidate of {b} because of overlap: {}", cb.bbox);
                 }
             }
             neighbors_candidates.retain(|cb| !selected.bbox.overlap(&cb.bbox));
@@ -164,24 +164,24 @@ impl Graph {
                 for index in 0..sorted.len() {
                     match self.candidate_blocks_any(node, index) {
                         Some(_other_node) => {
-                            /*println!(
+                            /*log::info!(
                                 "[node:{node:2}] [candidate:{index:2}] blocks [{other_node:2}]"
                             );*/
                             continue;
                         }
                         None => {}
                     }
-                    /*println!(
+                    /*log::info!(
                         "[node:{node:2}] [candidate:{index:2}] it bests from #={}",
                         candidates.len()
                     );*/
                     return Some(index);
                 }
-                //println!("all candidates of {node} block some other.");
+                //log::info!("all candidates of {node} block some other.");
                 None
             }
             _ => {
-                //println!("{node} has no candidate.");
+                //log::info!("{node} has no candidate.");
                 None
             }
         }
@@ -233,7 +233,7 @@ mod tests {
         graph.build_map();
 
         assert!(graph.max_node() == 2);
-        println!("select {} {}", 1, "cc1");
+        log::info!("select {} {}", 1, "cc1");
         graph.select(&2, &cc1);
         assert!(!graph.map.contains_key(&2));
         assert!(graph.candidates.get(&0).unwrap().len() == 1);
@@ -241,6 +241,6 @@ mod tests {
         assert!(graph.candidates.get(&3).unwrap().len() == 1);
         assert!(graph.map.get(&0).unwrap().len() == 1);
         assert!(graph.map.get(&1).unwrap().len() == 1);
-        println!("max node {}", graph.max_node());
+        log::info!("max node {}", graph.max_node());
     }
 }

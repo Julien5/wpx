@@ -13,6 +13,7 @@ function pdf() {
 	   shift
 	fi
 	echo make pdf
+	export RUST_LOG=debug
 	time cargo run -- \
 		  --output-directory /tmp/ \
 		  --debug true \

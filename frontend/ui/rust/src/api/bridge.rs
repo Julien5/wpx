@@ -109,19 +109,19 @@ pub enum _Error {
 
 impl Bridge {
     pub async fn create(filename: &str) -> Result<Bridge, Error> {
-        match tracks::backend::Backend::from_filename(filename) {
+        match tracks::backend::Backend::from_filename(filename).await {
             Ok(b) => Ok(Bridge { backend: b }),
             Err(e) => Err(e),
         }
     }
     pub async fn fromContent(content: &Vec<u8>) -> Result<Bridge, Error> {
-        match tracks::backend::Backend::from_content(content) {
+        match tracks::backend::Backend::from_content(content).await {
             Ok(b) => Ok(Bridge { backend: b }),
             Err(e) => Err(e),
         }
     }
     pub async fn initDemo() -> Result<Bridge, Error> {
-        match tracks::backend::Backend::demo() {
+        match tracks::backend::Backend::demo().await {
             Ok(b) => Ok(Bridge { backend: b }),
             Err(e) => Err(e),
         }

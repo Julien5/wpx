@@ -39,14 +39,16 @@ pub fn smooth_elevation(track: &track::Track, W: f64) -> Vec<f64> {
 mod tests {
     use crate::backend;
 
-    #[test]
-    fn ele() {
-        let backend = backend::Backend::from_filename("data/blackforest.gpx").expect("fail");
+    #[tokio::test]
+    async fn ele() {
+        let backend = backend::Backend::from_filename("data/blackforest.gpx")
+            .await
+            .expect("fail");
         let S = backend.segments();
         let km = 1000f64;
         for s in &S {
             let stat = backend.segment_statistics(s);
-            println!(
+            log::info!(
                 "{0} {1:8.1} -> {2:8.1}:  {3:8.1}",
                 s.id,
                 stat.distance_start / km,
