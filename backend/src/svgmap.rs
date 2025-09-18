@@ -81,7 +81,7 @@ struct MapData {
 
 impl MapData {
     pub fn make(
-        backend: &backend::Backend,
+        backend: &backend::BackendData,
         segment: &segment::Segment,
         W: i32,
         H: i32,
@@ -295,7 +295,7 @@ impl MapData {
 }
 
 pub fn map(
-    backend: &backend::Backend,
+    backend: &backend::BackendData,
     segment: &segment::Segment,
     W: i32,
     H: i32,

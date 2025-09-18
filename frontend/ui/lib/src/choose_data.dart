@@ -65,13 +65,12 @@ class _ChooseDataState extends State<ChooseData> {
   }
 
   Future<void> create(RootModel model, FindResult findResult) async {
-    model.unload();
     if (findResult.demo) {
-      await model.createSegmentsProviderForDemo(); // Await the async call
+      await model.loadDemo(); // Await the async call
     } else if (findResult.bytes != null) {
-      await model.createSegmentsProviderFromBytes(findResult.bytes!);
+      //await model.createSegmentsProviderFromBytes(findResult.bytes!);
     } else if (findResult.filename != null) {
-      await model.createSegmentsProvider(findResult.filename!);
+      //await model.createSegmentsProvider(findResult.filename!);
     } else {
       assert(false);
     }
@@ -119,6 +118,7 @@ class _ChooseDataState extends State<ChooseData> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          StreamWidget(),
           ElevatedButton(
             onPressed: () => chooseGPX(rootModel),
             child: const Text("Choose GPX file"),
@@ -146,6 +146,53 @@ class _ChooseDataState extends State<ChooseData> {
     return Consumer<RootModel>(
       builder: (context, rootModel, child) {
         return buildFromModel(context, rootModel, child);
+      },
+    );
+  }
+}
+
+class StreamWidget extends StatefulWidget {
+  const StreamWidget({super.key});
+
+  @override
+  State<StreamWidget> createState() => _StreamWidgetState();
+}
+
+class _StreamWidgetState extends State<StreamWidget> {
+  EventModel? model;
+  @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    try {
+      setState(() {
+        model = Provider.of<RootModel>(context, listen: false).eventModel();
+      });
+    } catch (e) {
+      developer.log("Error: RootModel not found in context. Exception: $e");
+    }
+  });
+}
+
+  @override
+  Widget build(BuildContext context) {
+    if (model == null) {
+      return Text("loading..");
+    }
+    return StreamBuilder<String>(
+      stream: model!.stream,
+      builder: (context, snap) {
+        final error = snap.error;
+        String text = "<null>";
+        if (error != null) {
+          text = error.toString();
+          developer.log("error: ${error.toString()}");
+        }
+        final data = snap.data;
+        if (data != null) {
+          text = data;
+        }
+        return Text('text=$text');
       },
     );
   }

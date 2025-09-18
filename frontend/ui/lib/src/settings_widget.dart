@@ -71,11 +71,11 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   }
 
   void readModel() {
-    SegmentsProvider provider = Provider.of<SegmentsProvider>(
+    RootModel rootModel = Provider.of<RootModel>(
       context,
       listen: false,
     );
-    bridge.Parameters parameters = provider.parameters();
+    bridge.Parameters parameters = rootModel.parameters();
     startTime = DateTime.parse(parameters.startTime);
     speed = parameters.speed;
     segmentLength = parameters.segmentLength;
@@ -83,11 +83,11 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   }
 
   void writeModel(BuildContext context) {
-    SegmentsProvider provider = Provider.of<SegmentsProvider>(
+    RootModel rootModel = Provider.of<RootModel>(
       context,
       listen: false,
     );
-    bridge.Parameters oldParameters = provider.parameters();
+    bridge.Parameters oldParameters = rootModel.parameters();
     String rfc3339time = startTime.toIso8601String();
     if (!rfc3339time.endsWith("Z")) {
       rfc3339time = "${rfc3339time}Z";
@@ -101,7 +101,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       epsilon: oldParameters.epsilon,
       debug: oldParameters.debug,
     );
-    provider.setParameters(newParameters);
+    rootModel.setParameters(newParameters);
     Navigator.of(context).pushNamed(RouteManager.segmentsView);
   }
 
@@ -172,161 +172,156 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
 
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<SegmentsProvider>(
-      builder: (context, segmentsProvider, child) {
-        developer.log(
-          "[SegmentsConsumer] length=${segmentsProvider.segments().length}",
-        );
-        Table table1 = Table(
-          columnWidths: const {
-            0: FlexColumnWidth(), // Fixed width for the first column
-            1: FlexColumnWidth(), // Flexible width for the second column
-          },
-          children: [
-            TableRow(
-              children: [
-                Container(
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: const Text("Start Date:"),
-                ),
-                Container(
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                    onPressed: () => _selectDate(context),
-                    child: Text(dateAsString()),
-                  ),
-                ),
-              ],
-            ),
-            TableRow(
-              children: [
-                Container(
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: const Text("Start Time:"),
-                ),
-                Container(
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                    onPressed: () => _selectTime(context),
-                    child: Text(timeAsString()),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-        Card card1 = Card(
-          elevation: 4, // Add shadow to the card
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8), // Rounded corners
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16), // Add padding inside the card
-            child: table1,
-          ),
-        );
-        Column table2 = Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  height: 60,
-                  alignment: Alignment.centerLeft,
-                  child: Text(speedAsString()),
-                ),
-                Container(
-                  height: 60,
-                  alignment: Alignment.centerLeft,
-                  child: Selector(
-                    min: 8.0,
-                    max: 30.0,
-                    text: "",
-                    value: speed * 3.6,
-                    onChanged: (value) {
-                      setState(() {
-                        speed = value * 1000 / 3600;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Container(
-                  height: 60,
-                  alignment: Alignment.centerLeft,
-                  child: Text(segmentLengthAsString()),
-                ),
-                Container(
-                  height: 60,
-                  alignment: Alignment.centerLeft,
-                  child: Selector(
-                    min: 50.0,
-                    max: 150.0,
-                    text: "",
-                    value: segmentLength / 1000,
-                    onChanged: (value) {
-                      setState(() {
-                        segmentLength = value * 1000;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Container(
-                  height: 60,
-                  alignment: Alignment.centerLeft,
-                  child: Text(maxStepSizeAsString()),
-                ),
-                Container(
-                  height: 60,
-                  alignment: Alignment.centerLeft,
-                  child: Selector(
-                    min: 5.0,
-                    max: 30.0,
-                    text: "",
-                    value: maxStepSize / 1000,
-                    onChanged: (value) {
-                      setState(() {
-                        maxStepSize = value * 1000;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-        Card card2 = Card(
-          elevation: 4, // Add shadow to the card
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8), // Rounded corners
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16), // Add padding inside the card
-            child: table2,
-          ),
-        );
-        return Column(
-          children: [
-            card1,
-            card2,
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => writeModel(context),
-              child: const Text("Preview"),
-            ),
-          ],
-        );
+    RootModel model = Provider.of<RootModel>(ctx);
+    developer.log("[SegmentsConsumer] length=${model.segments().length}");
+    Table table1 = Table(
+      columnWidths: const {
+        0: FlexColumnWidth(), // Fixed width for the first column
+        1: FlexColumnWidth(), // Flexible width for the second column
       },
+      children: [
+        TableRow(
+          children: [
+            Container(
+              height: 50,
+              alignment: Alignment.center,
+              child: const Text("Start Date:"),
+            ),
+            Container(
+              height: 50,
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                onPressed: () => _selectDate(context),
+                child: Text(dateAsString()),
+              ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            Container(
+              height: 50,
+              alignment: Alignment.center,
+              child: const Text("Start Time:"),
+            ),
+            Container(
+              height: 50,
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                onPressed: () => _selectTime(context),
+                child: Text(timeAsString()),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+    Card card1 = Card(
+      elevation: 4, // Add shadow to the card
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), // Rounded corners
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16), // Add padding inside the card
+        child: table1,
+      ),
+    );
+    Column table2 = Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              height: 60,
+              alignment: Alignment.centerLeft,
+              child: Text(speedAsString()),
+            ),
+            Container(
+              height: 60,
+              alignment: Alignment.centerLeft,
+              child: Selector(
+                min: 8.0,
+                max: 30.0,
+                text: "",
+                value: speed * 3.6,
+                onChanged: (value) {
+                  setState(() {
+                    speed = value * 1000 / 3600;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Container(
+              height: 60,
+              alignment: Alignment.centerLeft,
+              child: Text(segmentLengthAsString()),
+            ),
+            Container(
+              height: 60,
+              alignment: Alignment.centerLeft,
+              child: Selector(
+                min: 50.0,
+                max: 150.0,
+                text: "",
+                value: segmentLength / 1000,
+                onChanged: (value) {
+                  setState(() {
+                    segmentLength = value * 1000;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Container(
+              height: 60,
+              alignment: Alignment.centerLeft,
+              child: Text(maxStepSizeAsString()),
+            ),
+            Container(
+              height: 60,
+              alignment: Alignment.centerLeft,
+              child: Selector(
+                min: 5.0,
+                max: 30.0,
+                text: "",
+                value: maxStepSize / 1000,
+                onChanged: (value) {
+                  setState(() {
+                    maxStepSize = value * 1000;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+    Card card2 = Card(
+      elevation: 4, // Add shadow to the card
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), // Rounded corners
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16), // Add padding inside the card
+        child: table2,
+      ),
+    );
+    return Column(
+      children: [
+        card1,
+        card2,
+        SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: () => writeModel(context),
+          child: const Text("Preview"),
+        ),
+      ],
     );
   }
 }
@@ -343,128 +338,30 @@ class SettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<RootModel>(
-      builder: (context, rootModel, child) {
-        if (rootModel.provider() == null) {
-          return wait();
-        }
-        developer.log(
-          "[SegmentsProviderWidget] ${rootModel.provider()?.filename()} length=${rootModel.provider()?.segments().length}",
-        );
-
-        Card card = Card(
-          elevation: 4, // Add shadow to the card
-          margin: const EdgeInsets.all(1), // Add margin around the card
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8), // Rounded corners
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16), // Add padding inside the card
-            child: StatisticsWidget(),
-          ),
-        );
-
-        return ChangeNotifierProvider.value(
-          value: rootModel.provider(),
-          builder: (context, child) {
-            return Scaffold(
-              appBar: AppBar(title: const Text('Settings')),
-              body: Center(
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [card, SizedBox(height: 15), SegmentsSettings()],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
+    Card card = Card(
+      elevation: 4, // Add shadow to the card
+      margin: const EdgeInsets.all(1), // Add margin around the card
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), // Rounded corners
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16), // Add padding inside the card
+        child: StatisticsWidget(),
+      ),
     );
-  }
-}
 
-class WidthSettings extends StatefulWidget {
-  const WidthSettings({super.key});
-
-  @override
-  State<WidthSettings> createState() => _WidthSettingsState();
-}
-
-class _WidthSettingsState extends State<WidthSettings> {
-  double width = 200;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      SegmentsProvider provider = Provider.of<SegmentsProvider>(
-        context,
-        listen: false,
-      );
-      bridge.Parameters parameters = provider.parameters();
-      setState(() {
-        width = parameters.smoothWidth;
-      });
-    });
-  }
-
-  void writeModel(BuildContext context) {
-    SegmentsProvider provider = Provider.of<SegmentsProvider>(
-      context,
-      listen: false,
-    );
-    bridge.Parameters oldParameters = provider.parameters();
-    bridge.Parameters newParameters = bridge.Parameters(
-      speed: oldParameters.speed,
-      startTime: oldParameters.startTime,
-      segmentLength: oldParameters.segmentLength,
-      maxStepSize: oldParameters.maxStepSize,
-      smoothWidth: width,
-      epsilon: oldParameters.epsilon,
-      debug: oldParameters.debug,
-    );
-    provider.setParameters(newParameters);
-  }
-
-  String widthAsString() {
-    return "$width m";
-  }
-
-  void onChanged(double value, SegmentsProvider provider) {
-    setState(() {
-      width = value;
-    });
-    writeModel(context);
-  }
-
-  @override
-  Widget build(BuildContext ctx) {
-    return Consumer<SegmentsProvider>(
-      builder: (context, segmentsProvider, child) {
-        developer.log(
-          "[_WidthSettingsState] length=${segmentsProvider.segments().length}",
-        );
-        return Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 500),
-            child: Column(
-              children: [
-                Selector(
-                  min: 10.0,
-                  max: 1000.0,
-                  text: widthAsString(),
-                  value: width,
-                  onChanged: (value) => onChanged(value, segmentsProvider),
-                ),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [card, SizedBox(height: 15), SegmentsSettings()],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

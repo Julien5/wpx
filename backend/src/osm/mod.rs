@@ -1,6 +1,7 @@
 mod cache;
 mod download;
 mod filesystem;
+#[cfg(target_arch = "wasm32")]
 mod indexdb;
 pub mod osmpoint;
 
@@ -10,7 +11,6 @@ use crate::project;
 use crate::track::*;
 use crate::utm::UTMPoint;
 use crate::waypoint::*;
-use cache::*;
 use osmpoint::*;
 use std::collections::BTreeMap;
 

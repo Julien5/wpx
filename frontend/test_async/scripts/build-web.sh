@@ -28,7 +28,7 @@ function build() {
  
 function main() {
     build
-	./tools/start-ovh.sh 
+	./scripts/start-ovh.sh 
 }
 
 init

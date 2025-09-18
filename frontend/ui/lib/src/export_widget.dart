@@ -37,7 +37,7 @@ void fileSave(List<int> data, Type type) async {
       bytes: Uint8List.fromList(data),
       fileExtension: fileExtension(type),
       mimeType: mimeType(type),
-      customMimeType: fileExtension(type)
+      customMimeType: fileExtension(type),
     );
   } else if (Platform.isLinux) {
     var filepath = await FilePicker.platform.saveFile(
@@ -53,14 +53,10 @@ void fileSave(List<int> data, Type type) async {
   }
 }
 
-Future<List<int>> generate(SegmentsProvider provider, Type type) async {
-  if (type == Type.pdf) {
-    var data = await provider.generatePdf();
-    return data;
-  }
-  assert(type == Type.gpx);
-  var data = await provider.generateGpx();
-  return data;
+Future<List<int>> generate(RootModel root, Type type) async {
+  // TODO
+  List<int> L = List.empty();
+  return L;
 }
 
 class ExportButton extends StatefulWidget {
@@ -74,14 +70,14 @@ class ExportButton extends StatefulWidget {
 class _ExportButtonState extends State<ExportButton> {
   int length = 0;
 
-  void onPressed(SegmentsProvider provider) async {
+  void onPressed(RootModel root) async {
     if (!mounted) {
       return;
     }
     setState(() {
       length = 0;
     });
-    var data = await generate(provider, widget.type);
+    var data = await generate(root, widget.type);
     fileSave(data, widget.type);
     setState(() {
       developer.log("export length: ${data.length}");
@@ -91,14 +87,14 @@ class _ExportButtonState extends State<ExportButton> {
 
   @override
   Widget build(BuildContext context) {
-    SegmentsProvider model = Provider.of<SegmentsProvider>(context);
+    RootModel model = Provider.of<RootModel>(context);
     return Row(
       children: [
         ElevatedButton(
           onPressed: () => onPressed(model),
           child: Text(fileExtension(widget.type)),
         ),
-        SizedBox(width: 20,),
+        SizedBox(width: 20),
         Text("length: $length"),
       ],
     );
@@ -106,79 +102,38 @@ class _ExportButtonState extends State<ExportButton> {
 }
 
 class ExportWidget extends StatelessWidget {
-  final SegmentsProvider segmentsProvider;
-
-  const ExportWidget({super.key, required this.segmentsProvider});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-
-      children: [ExportButton(type: Type.pdf),SizedBox(height:20), ExportButton(type: Type.gpx)],
-    );
-  }
-}
-
-class ExportConsumer extends StatelessWidget {
-  const ExportConsumer({super.key});
+  const ExportWidget({super.key});
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<SegmentsProvider>(
-      builder: (context, segmentsProvider, child) {
-        developer.log(
-          "[ExportConsumer] length=${segmentsProvider.segments().length}",
-        );
-        return Center(
-          child: Row(
+    Widget column = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ExportButton(type: Type.pdf),
+        SizedBox(height: 20),
+        ExportButton(type: Type.gpx),
+      ],
+    );
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: ExportWidget(segmentsProvider: segmentsProvider),
-                  ),
-                ],
-              ),
-            ],
+            children: [Expanded(child: column)],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
 
-class ExportProviderWidget extends StatelessWidget {
-  const ExportProviderWidget({super.key});
-
-  Widget wait() {
+class ExportScaffold extends StatelessWidget {
+  const ExportScaffold({super.key});
+  @override
+  Widget build(BuildContext ctx) {
     return Scaffold(
       appBar: AppBar(title: const Text('Export')),
-      body: Center(child: Column(children: [Text("loading...")])),
-    );
-  }
-
-  @override
-  Widget build(BuildContext ctx) {
-    return Consumer<RootModel>(
-      builder: (context, rootModel, child) {
-        if (rootModel.provider() == null) {
-          return wait();
-        }
-        developer.log(
-          "[SegmentsProviderWidget] ${rootModel.provider()?.filename()} length=${rootModel.provider()?.segments().length}",
-        );
-        return ChangeNotifierProvider.value(
-          value: rootModel.provider(),
-          builder: (context, child) {
-            return Scaffold(
-              appBar: AppBar(title: const Text('Export')),
-              body: ExportConsumer(),
-            );
-          },
-        );
-      },
+      body: ExportWidget(),
     );
   }
 }

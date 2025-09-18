@@ -7,6 +7,7 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
+anyhow = "1.0.99"
 flutter_rust_bridge = "=2.11.1"
 indexed_db_futures = "0.6.4"
 tokio = {version="1.47.1", features=["time"]}

@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::backend::Backend;
+use crate::backend::BackendData;
 use crate::render_device::RenderDevice;
 use crate::svgmap;
 use crate::{track, waypoint};
@@ -96,7 +96,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn make_typst_document(backend: &mut Backend, (W, H): (i32, i32)) -> String {
+pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> String {
     let debug = backend.get_parameters().debug;
     let templates = Templates::new();
     let mut document = templates.header.clone();

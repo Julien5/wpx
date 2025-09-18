@@ -19,6 +19,21 @@ pub use tracks::backend::Segment as SegmentImplementation;
 pub struct Bridge {
     backend: tracks::backend::Backend,
 }
+use crate::frb_generated::StreamSink;
+
+#[frb(opaque)]
+#[derive(Clone)]
+pub struct EventSender {
+    sink: StreamSink<String>,
+}
+
+use tracks::backend::Sender;
+
+impl Sender for EventSender {
+    fn send(&mut self, data: &String) {
+        let _ = self.sink.add(data.clone());
+    }
+}
 
 #[frb(opaque)]
 pub struct Segment {
@@ -107,24 +122,28 @@ pub enum _Error {
     MissingElevation { index: usize },
 }
 
+use tracks::backend;
 impl Bridge {
-    pub async fn create(filename: &str) -> Result<Bridge, Error> {
-        match tracks::backend::Backend::from_filename(filename).await {
-            Ok(b) => Ok(Bridge { backend: b }),
-            Err(e) => Err(e),
+    #[frb(sync)]
+    pub fn make() -> Bridge {
+        Bridge {
+            backend: backend::Backend::make(),
         }
     }
-    pub async fn fromContent(content: &Vec<u8>) -> Result<Bridge, Error> {
-        match tracks::backend::Backend::from_content(content).await {
-            Ok(b) => Ok(Bridge { backend: b }),
-            Err(e) => Err(e),
-        }
+    #[frb(sync)]
+    pub fn set_sink(&mut self, sink: StreamSink<String>) -> anyhow::Result<()> {
+        let cell = Box::new(EventSender { sink });
+        self.backend.set_sink(cell);
+        Ok(())
     }
-    pub async fn initDemo() -> Result<Bridge, Error> {
-        match tracks::backend::Backend::demo().await {
-            Ok(b) => Ok(Bridge { backend: b }),
-            Err(e) => Err(e),
-        }
+    pub async fn load_filename(&mut self, filename: &str) -> Result<(), Error> {
+        self.backend.load_filename(filename).await
+    }
+    pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
+        self.backend.load_content(content).await
+    }
+    pub async fn load_demo(&mut self) -> Result<(), Error> {
+        self.backend.load_demo().await
     }
     pub async fn generatePdf(&mut self) -> Vec<u8> {
         self.backend.generatePdf()
@@ -133,12 +152,8 @@ impl Bridge {
         self.backend.generateGpx()
     }
     #[frb(sync)] //TODO: add segment parameter
-    pub fn getWaypoints(&mut self) -> Vec<Waypoint> {
-        self.backend.waypoints.clone()
-    }
-    #[frb(sync)]
-    pub fn elevation_gain(&mut self, from: usize, to: usize) -> f64 {
-        self.backend.elevation_gain(from, to)
+    pub fn get_waypoints(&mut self) -> Vec<Waypoint> {
+        self.backend.get_waypoints()
     }
     #[frb(sync)]
     pub fn get_parameters(&mut self) -> Parameters {

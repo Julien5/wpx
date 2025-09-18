@@ -459,7 +459,7 @@ struct ProfileModel {
 
 impl ProfileModel {
     pub fn make(
-        backend: &backend::Backend,
+        backend: &backend::BackendData,
         segment: &segment::Segment,
         W: f64,
         H: f64,
@@ -597,7 +597,7 @@ impl ProfileModel {
 }
 
 pub fn profile(
-    backend: &backend::Backend,
+    backend: &backend::BackendData,
     segment: &segment::Segment,
     W: i32,
     H: i32,

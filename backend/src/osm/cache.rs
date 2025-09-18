@@ -8,12 +8,13 @@ fn cache_dir() -> String {
 
 #[cfg(not(test))]
 fn cache_dir() -> String {
-    dirs::cache_dir()
+    let standart_cache_dir = dirs::cache_dir()
         .unwrap()
         .as_os_str()
         .to_str()
         .unwrap()
-        .to_string()
+        .to_string();
+    return format!("{}/{}", standart_cache_dir, "WPX");
 }
 
 pub fn cache_filename(bbox: &WGS84BoundingBox, kind: &str) -> String {

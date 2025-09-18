@@ -16,7 +16,7 @@ fn identifier(filename: &String) -> String {
 
 const DATABASE: &str = "db";
 const STORE: &str = "store";
-const TRANSACTION: &str = "store";
+//const TRANSACTION: &str = "store";
 
 async fn opendb() -> Option<Database> {
     match Database::open(DATABASE)

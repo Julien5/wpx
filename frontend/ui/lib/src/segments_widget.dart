@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
+import 'package:ui/src/futurerenderer.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/segment_stack.dart';
 
@@ -14,26 +15,25 @@ class RenderingsProvider extends MultiProvider {
         providers: [
           ChangeNotifierProvider.value(value: r.profileRendering),
           ChangeNotifierProvider.value(value: r.mapRendering),
+          ChangeNotifierProvider.value(value: r.yaxisRendering),
         ],
         child: child,
       );
 }
 
 class SegmentsView extends StatelessWidget {
-  final SegmentsProvider? segmentsProvider;
-  const SegmentsView({super.key, this.segmentsProvider});
+  const SegmentsView({super.key});
 
-  List<RenderingsProvider> renderingProviders(
-    SegmentsProvider segmentsProvider,
-  ) {
+  List<RenderingsProvider> renderingProviders(RootModel rootModel) {
     List<RenderingsProvider> ret = [];
     developer.log("[_initRenderingProviders]");
-    var S = segmentsProvider.segments();
+    rootModel.updateSegments();
+    var S = rootModel.segments();
     developer.log("[S]=${S.length}");
     assert(ret.isEmpty);
-    for (var renderer in S) {
-      var w = RenderingsProvider(renderer, SegmentView());
-      w.renderers.profileRendering.start();
+    for (var segment in S.keys) {
+      var data = S[segment]!;
+      var w = RenderingsProvider(data.renderers, SegmentView());
       ret.add(w);
     }
     developer.log("[renderingProviders] [build] #segments=${ret.length}");
@@ -42,7 +42,8 @@ class SegmentsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var segments = renderingProviders(segmentsProvider!);
+    var rootModel = Provider.of<RootModel>(context);
+    var segments = renderingProviders(rootModel);
     developer.log("[segments] [build] #segments=${segments.length}");
     List<Tab> tabs = [];
     for (var s in segments) {
@@ -63,40 +64,26 @@ class SegmentsConsumer extends StatelessWidget {
   const SegmentsConsumer({super.key});
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<SegmentsProvider>(
-      builder: (context, segmentsProvider, child) {
-        developer.log(
-          "[SegmentsConsumer] length=${segmentsProvider.segments().length}",
-        );
-        return Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 1500),
-            child: Column(
-              children: [
-                Expanded(
-                  /*child: Text(
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 1500),
+        child: Column(
+          children: [
+            Expanded(
+              /*child: Text(
                     "gpx has ${segmentsProvider.segments().length} segments",
                   ),*/
-                  child: SegmentsView(segmentsProvider: segmentsProvider),
-                ),
-              ],
+              child: SegmentsView(),
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 }
 
-class SegmentsProviderWidget extends StatelessWidget {
-  const SegmentsProviderWidget({super.key});
-
-  Widget wait() {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Pages')),
-      body: Center(child: Column(children: [const Text("loading...")])),
-    );
-  }
+class SegmentsScaffold extends StatelessWidget {
+  const SegmentsScaffold({super.key});
 
   Widget exportButton(BuildContext context) {
     return ElevatedButton(
@@ -109,27 +96,12 @@ class SegmentsProviderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<RootModel>(
-      builder: (context, rootModel, child) {
-        if (rootModel.provider() == null) {
-          return wait();
-        }
-        developer.log(
-          "[SegmentsProviderWidget] ${rootModel.provider()?.filename()} length=${rootModel.provider()?.segments().length}",
-        );
-        return ChangeNotifierProvider.value(
-          value: rootModel.provider(),
-          builder: (context, child) {
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Preview'),
-                actions: <Widget>[exportButton(context)],
-              ),
-              body: SegmentsConsumer(),
-            );
-          },
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Preview'),
+        actions: <Widget>[exportButton(ctx)],
+      ),
+      body: SegmentsConsumer(),
     );
   }
 }

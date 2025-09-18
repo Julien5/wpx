@@ -1,78 +1,96 @@
+use flutter_rust_bridge::frb;
+
+#[frb(sync)] // Synchronous mode for simplicity of the demo
+pub fn greet(name: String) -> String {
+    format!("Hello, {name}!")
+}
+
+#[frb(init)]
+pub fn init_app() {
+    // Default utilities - feel free to customize
+    flutter_rust_bridge::setup_default_user_utils();
+}
+
+/* async */
+
 #[cfg(not(target_family = "wasm"))]
 use tokio::time::*;
 #[cfg(target_family = "wasm")]
 use wasmtimer::tokio::*;
 
-use std::time::Duration;
-
-#[flutter_rust_bridge::frb(sync)] // Synchronous mode for simplicity of the demo
-pub fn greet(name: String) -> String {
-    format!("Hello, {name}!")
+pub async fn process(count: &i32) -> i32 {
+    println!("start async sleep");
+    sleep(std::time::Duration::from_millis(1000)).await;
+    println!("end async sleep");
+    count + 7
 }
 
-use indexed_db_futures::database::Database;
-use indexed_db_futures::prelude::*;
-use indexed_db_futures::transaction::TransactionMode;
+/* stream */
 
-async fn processdb() -> indexed_db_futures::OpenDbResult<()> {
-    let db = Database::open("my_db")
-        .with_version(2u8)
-        .with_on_upgrade_needed(|event, db| {
-            // Convert versions from floats to integers to allow using them in match expressions
-            let old_version = event.old_version() as u64;
-            let new_version = event.new_version().map(|v| v as u64);
+const SEC: std::time::Duration = std::time::Duration::from_millis(100);
 
-            match (old_version, new_version) {
-                (0, Some(1)) => {
-                    db.create_object_store("my_store")
-                        .with_auto_increment(true)
-                        .build()?;
-                }
-                (prev, Some(2)) => {
-                    if prev == 1 {
-                        let _ = db.delete_object_store("my_store");
-                    }
-
-                    db.create_object_store("my_other_store").build()?;
-                }
-                _ => {}
-            }
-
-            Ok(())
-        })
-        .await?;
-
-    // Populate some data
-    let transaction = db
-        .transaction("my_other_store")
-        .with_mode(TransactionMode::Readwrite)
-        .build()?;
-
-    let store = transaction.object_store("my_other_store")?;
-
-    store
-        .put("a primitive value that doesn't need serde")
-        .with_key("my_key")
-        .await?;
-
-    // Unlike JS, transactions ROLL BACK INSTEAD OF COMMITTING BY DEFAULT
-    transaction.commit().await?;
-
-    // Read some data
-    let transaction = db.transaction("my_other_store").build()?;
-    let store = transaction.object_store("my_other_store")?;
-
+use crate::frb_generated::StreamSink;
+pub fn ticksink(sink: StreamSink<String>) -> anyhow::Result<()> {
+    let mut ticks = 0;
+    loop {
+        let _ = sink.add(format!("ticks={}", ticks));
+        let _ = std::thread::sleep(SEC);
+        if ticks == i32::MAX {
+            break;
+        }
+        ticks += 1;
+        println!("rust {:2}", ticks);
+    }
     Ok(())
 }
 
-pub async fn process(count: &i32) -> i32 {
-    sleep(Duration::from_millis(1000)).await;
-    processdb().await;
-    count + 1
+#[frb(opaque)]
+#[derive(Clone)]
+pub struct EventSender {
+    sink: StreamSink<String>,
 }
 
-#[flutter_rust_bridge::frb(init)]
-pub fn init_app() {
-    // Default utilities - feel free to customize
-    flutter_rust_bridge::setup_default_user_utils();
+pub trait Sender {
+    fn send(&mut self, data: &String);
+}
+
+pub type SenderHandler = std::sync::Arc<dyn Sender + Send + Sync>;
+
+impl Sender for EventSender {
+    fn send(&mut self, data: &String) {
+        let _ = self.sink.add(data.clone());
+    }
+}
+
+#[frb(opaque)]
+pub struct Backend {
+    pub sender: Option<SenderHandler>,
+}
+
+impl Backend {
+    #[frb(sync)]
+    pub fn make() -> Backend {
+        Backend { sender: None }
+    }
+    #[frb(sync)]
+    pub fn set_sink(&mut self, sink: StreamSink<String>) -> anyhow::Result<()> {
+        self.sender = Some(std::sync::Arc::new(EventSender { sink }));
+        Ok(())
+    }
+
+    async fn send(&mut self, data: &String) {
+        let _ = std::sync::Arc::get_mut(self.sender.as_mut().unwrap())
+            .unwrap()
+            .send(&data);
+        let tick = std::time::Duration::from_millis(0);
+        let _ = wasmtimer::tokio::sleep(tick).await;
+    }
+
+    pub async fn long_process(&mut self) {
+        println!("long_process");
+        for step in 0..1000000 {
+            self.send(&format!("process: {}", step)).await;
+            println!("rust:step: {}", step);
+        }
+    }
 }

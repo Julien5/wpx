@@ -45,8 +45,7 @@ function make-dist() {
 
 function runminiserve() {
 	local CARGO_TARGET_DIR=$HOME/delme/rust-targets
-	for a in /tmp/miniserve \
-			 ${CARGO_TARGET_DIR}/release/miniserve; do
+	for a in /tmp/miniserve ${CARGO_TARGET_DIR}/release/miniserve /opt/miniserve; do
 		if [ -f ${a} ]; then
 			MINISERVE=${a}
 			break;

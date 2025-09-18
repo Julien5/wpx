@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/backendmodel.dart';
+import 'package:ui/src/futurerenderer.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
-class WayPointsView extends StatefulWidget {
-  final SegmentsProvider? segmentsProvider;
+class WayPointsTable extends StatefulWidget {
   final bridge.Segment? segment;
-  const WayPointsView({super.key, this.segmentsProvider, this.segment});
+  const WayPointsTable({super.key, this.segment});
 
   @override
-  State<WayPointsView> createState() => WayPointsViewState();
+  State<WayPointsTable> createState() => WayPointsTableState();
 }
 
-class WayPointsViewState extends State<WayPointsView> {
+class WayPointsTableState extends State<WayPointsTable> {
   @override
   void initState() {
     super.initState();
@@ -23,7 +23,10 @@ class WayPointsViewState extends State<WayPointsView> {
 
   @override
   Widget build(BuildContext context) {
-    var local=widget.segmentsProvider!.waypointTable(widget.segment!);
+    RootModel rootModel = Provider.of<RootModel>(context);
+    var segments = rootModel.segments();
+    var segment = segments[widget.segment];
+    var local = segment!.tableWaypoints;
 
     developer.log("[WayPointsViewState] [build] #_waypoints=${local.length}");
 
@@ -45,7 +48,7 @@ class WayPointsViewState extends State<WayPointsView> {
       ],
       rows:
           local.asMap().entries.map((entry) {
-            var index=entry.key;
+            var index = entry.key;
             var info = entry.value.info!;
             var dt = DateTime.parse(info.time);
             var km = info.distance / 1000;
@@ -81,16 +84,10 @@ class WayPointsConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<SegmentsProvider>(
-      builder: (context, segmentsProvider, child) {
-        var wp = Provider.of<ProfileRenderer>(context, listen: false);
+    return Consumer<ProfileRenderer>(
+      builder: (context, wp, child) {
         var segment = wp.segment;
-        return Center(
-          child: WayPointsView(
-            segmentsProvider: segmentsProvider,
-            segment: segment,
-          ),
-        );
+        return Center(child: WayPointsTable(segment: segment));
       },
     );
   }

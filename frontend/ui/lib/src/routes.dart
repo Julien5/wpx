@@ -16,13 +16,13 @@ class RouteManager {
         return MaterialPageRoute(builder: (_) => const HomePage());
 
       case segmentsView:
-        return MaterialPageRoute(builder: (_) => SegmentsProviderWidget());
+        return MaterialPageRoute(builder: (_) => SegmentsScaffold());
 
       case settingsView:
         return MaterialPageRoute(builder: (_) => SettingsWidget());
 
       case exportView:
-        return MaterialPageRoute(builder: (_) => ExportProviderWidget());
+        return MaterialPageRoute(builder: (_) => ExportScaffold());
 
       default:
         return MaterialPageRoute(

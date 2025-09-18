@@ -102,10 +102,12 @@ mod tests {
 
     #[tokio::test]
     async fn snaptest() {
-        let mut backend = crate::backend::Backend::from_filename("data/blackforest.gpx")
+        let mut backend = crate::backend::Backend::make();
+        backend
+            .load_filename("data/blackforest.gpx")
             .await
             .expect("fail");
-        let mut bbox = backend.track.wgs84_bounding_box();
+        let mut bbox = backend.d().track.wgs84_bounding_box();
         let bboxes = split(&bbox, &0.1f64)
             .iter()
             .map(|(index, bbox)| crate::osm::osm3(&bbox))
