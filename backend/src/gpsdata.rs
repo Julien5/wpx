@@ -20,12 +20,36 @@ pub fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, Error> {
 }
 
 pub fn read_segment(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
-    let mut t0 = gpx.tracks.swap_remove(0);
-    if t0.segments.is_empty() {
+    let tracks = &mut gpx.tracks;
+    tracks.sort_by_key(|track| {
+        let zero = "A".to_string();
+        let infinity = "ziel".to_string();
+        if track.name.is_none() {
+            return zero;
+        }
+        let name = track.name.as_ref().unwrap().to_lowercase();
+        if name.contains("end") {
+            return infinity;
+        }
+        if name.contains("ziel") {
+            return infinity;
+        }
+        if name.contains("start") {
+            return zero;
+        }
+        return name;
+    });
+    let mut ret = gpx::TrackSegment::new();
+    for track in tracks {
+        let points = &track.segments.first().unwrap().points;
+        for k in 0..points.len() {
+            ret.points.push(points[k].clone());
+        }
+    }
+    if ret.points.is_empty() {
         return Err(Error::GPXHasNoSegment);
     }
-    let s0 = t0.segments.swap_remove(0);
-    Ok(s0)
+    Ok(ret)
 }
 
 #[derive(Clone)]

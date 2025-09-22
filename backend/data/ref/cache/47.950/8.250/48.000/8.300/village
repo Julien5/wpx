@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":47.9624362,"lon":8.2710482,"name":"Eisenbach"},{"ele":null,"lat":47.9652531,"lon":8.2960273,"name":"Bubenbach"}]}
+{"points":[{"lat":47.9624362,"lon":8.2710482,"tags":{"name":"Eisenbach","name:prefix":"Gemeinde","name:ru":"Айзенбах","place":"village","population":"2270","wikidata":"Q117878","wikipedia":"de:Eisenbach (Hochschwarzwald)"}},{"lat":47.9652531,"lon":8.2960273,"tags":{"name":"Bubenbach","place":"village","wikidata":"Q117133480","wikipedia":"de:Bubenbach (Eisenbach)"}}]}

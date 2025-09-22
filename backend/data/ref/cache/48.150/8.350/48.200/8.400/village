@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":48.1612253,"lon":8.3781371,"name":"Buchenberg"},{"ele":675.0,"lat":48.1904993,"lon":8.3514397,"name":"Tennenbronn"}]}
+{"points":[{"lat":48.1612253,"lon":8.3781371,"tags":{"name":"Buchenberg","place":"village","postal_code":"78126","short_name":"Buchenberg"}},{"lat":48.1904993,"lon":8.3514397,"tags":{"ele":"675","name":"Tennenbronn","openGeoDB:telephone_area_code":"07729","place":"village","population":"3527","postal_code":"78144","wikidata":"Q515678","wikipedia":"de:Tennenbronn"}}]}

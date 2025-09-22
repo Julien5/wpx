@@ -9,8 +9,15 @@ fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
             use chrono::*;
             let t: DateTime<Utc> = step.time.parse().unwrap();
             let time = format!("{}", t.format("%H:%M"));
-            let slope = format!("{:.1}", 100f64 * step.inter_slope);
-            return Some(format!("{}-{}%", time, slope));
+            let percent = 100f64 * step.inter_slope;
+            let info = if percent > 1f64 {
+                format!("{:.1}%", percent)
+            } else if w.name.is_some() {
+                format!("{}", w.name.as_ref().unwrap())
+            } else {
+                format!("{:.1}%", percent)
+            };
+            return Some(format!("{}-{}", time, info));
         }
         _ => {}
     }

@@ -64,7 +64,7 @@ fn next_with_value(waypoints: &mut Waypoints, values: &Values, start: usize, inc
     let mut ret = move_index(start, inc);
     loop {
         if ret >= waypoints.len() {
-            return waypoints.len();
+            return waypoints.len() - 1;
         }
         if ret == 0 {
             return 0;

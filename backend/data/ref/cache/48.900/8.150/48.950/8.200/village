@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":48.9003169,"lon":8.1988679,"name":"Steinmauern"},{"ele":null,"lat":48.931255,"lon":8.1531464,"name":"Mothern"}]}
+{"points":[{"lat":48.9003169,"lon":8.1988679,"tags":{"name":"Steinmauern","place":"village","population":"3111","population:date":"2017-12-31","postal_code":"76479","wikidata":"Q81679","wikipedia":"de:Steinmauern"}},{"lat":48.931255,"lon":8.1531464,"tags":{"name":"Mothern","name:vmf":"Modere","place":"village","population":"1915","population:date":"2021","source:population":"INSEE 2024"}}]}

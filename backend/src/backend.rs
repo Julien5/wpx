@@ -185,7 +185,12 @@ impl BackendData {
         self.parameters.clone()
     }
     fn update_waypoints(&mut self) {
-        self.waypoints = automatic::generate(&self.track, &self.waypoints, &self.parameters);
+        self.waypoints = automatic::generate(
+            &self.track,
+            &self.waypoints,
+            &self.osmwaypoints,
+            &self.parameters,
+        );
         self.make_waypoint_infos();
         for w in &self.waypoints {
             debug_assert!(w.get_track_index() < self.track.len());
@@ -314,10 +319,6 @@ impl BackendData {
             }
         }
         ret
-    }
-
-    pub fn epsilon(&self) -> f64 {
-        self.parameters.epsilon
     }
 
     pub fn segments(&self) -> Vec<Segment> {
@@ -460,7 +461,7 @@ mod tests {
             } else {
                 let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id);
                 std::fs::write(&tmpfilename, svg).unwrap();
-                log::info!("test failed: {} {}", tmpfilename, reffilename);
+                println!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
         assert!(ok_count == segments.len());
@@ -489,7 +490,7 @@ mod tests {
             } else {
                 let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id);
                 std::fs::write(&tmpfilename, svg).unwrap();
-                log::info!("test failed: {} {}", tmpfilename, reffilename);
+                println!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
         assert!(ok_count == segments.len());

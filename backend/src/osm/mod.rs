@@ -45,7 +45,7 @@ pub fn convert_osmpoints(osmpoints: &OSMPoints) -> Waypoints {
         let (lon, lat) = (city.lon, city.lat);
         let mut p = (lon.to_radians(), lat.to_radians());
         proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
-        let ele = match city.ele {
+        let ele = match city.ele() {
             Some(m) => m,
             None => 0f64,
         };
@@ -53,7 +53,7 @@ pub fn convert_osmpoints(osmpoints: &OSMPoints) -> Waypoints {
             wgs84: (lon, lat, ele),
             utm: UTMPoint(p.0, p.1),
             track_index: None,
-            name: city.name.clone(),
+            name: city.name().clone(),
             description: None,
             info: None,
             origin: WaypointOrigin::OpenStreetMap,
@@ -104,7 +104,7 @@ async fn download_chunk(bboxes: &Vec<WGS84BoundingBox>, kind: &str) -> OSMPoints
     osmpoints
 }
 
-async fn read(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
+async fn read(bbox: &WGS84BoundingBox, kind: &str) -> OSMPoints {
     let osmpoints = match cache::read(bbox, kind).await {
         Some(d) => d,
         None => {
@@ -112,7 +112,7 @@ async fn read(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
             OSMPoints::new()
         }
     };
-    convert_osmpoints(&osmpoints)
+    osmpoints
 }
 
 async fn reducebbox(bbox: &WGS84BoundingBox, kind: &str, step: &f64) -> Vec<WGS84BoundingBox> {
@@ -126,7 +126,7 @@ async fn reducebbox(bbox: &WGS84BoundingBox, kind: &str, step: &f64) -> Vec<WGS8
     uncached
 }
 
-async fn process(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
+async fn process(bbox: &WGS84BoundingBox, kind: &str) -> OSMPoints {
     let step = if kind == "village" {
         0.05f64 // ~ 5km
     } else {
@@ -143,9 +143,9 @@ async fn process(bbox: &WGS84BoundingBox, kind: &str) -> Waypoints {
     log::info!("about to read {:20} atoms:{:3}", kind, atoms.len());
     for (_index, atom) in atoms {
         let points = read(&atom, &kind).await;
-        ret.extend(points);
+        ret.extend(points.points);
     }
-    ret
+    OSMPoints { points: ret }
 }
 
 pub type OSMWaypoints = BTreeMap<OSMType, Waypoints>;
@@ -155,17 +155,22 @@ pub async fn download_for_track(track: &Track, distance: f64) -> OSMWaypoints {
     let bbox = track.wgs84_bounding_box();
     assert!(!bbox.empty());
 
-    let mut cities = process(&bbox, "town").await;
+    let mut cities = convert_osmpoints(&process(&bbox, "town").await);
     retain(&mut cities, track, 10f64 * distance);
     ret.insert(OSMType::City, cities);
 
-    let mut passes = process(&bbox, "passes").await;
+    let mut passes = convert_osmpoints(&process(&bbox, "passes").await);
     retain(&mut passes, track, 2f64 * distance);
     ret.insert(OSMType::MountainPass, passes);
 
     let mut villages = process(&bbox, "village").await;
-    retain(&mut villages, track, distance * 0.5f64);
-    ret.insert(OSMType::Village, villages);
+    villages.points.retain(|p| match p.population() {
+        Some(number) => number >= 1000,
+        None => false,
+    });
+    let mut v = convert_osmpoints(&villages);
+    retain(&mut v, track, distance * 0.5f64);
+    ret.insert(OSMType::Village, v);
 
     ret
 }

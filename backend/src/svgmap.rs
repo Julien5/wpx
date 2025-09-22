@@ -182,16 +182,22 @@ impl MapData {
                 points.push(PointFeature::new(id, circle, label));
             }
         }
-        let debug = crate::label_placement::place_labels_gen(
+        let result = crate::label_placement::place_labels_gen(
             &mut points,
             generate_candidates_bboxes,
             &polyline,
         );
+        let mut placed_points = Vec::new();
+        for k in 0..points.len() {
+            if !result.failed_indices.contains(&k) {
+                placed_points.push(points[k].clone());
+            }
+        }
         MapData {
             polyline,
-            points,
+            points: placed_points,
             document,
-            debug,
+            debug: result.debug,
         }
     }
     /*

@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":48.8240204,"lon":8.4154902,"name":"Bernbach"},{"ele":null,"lat":48.8432296,"lon":8.4481702,"name":"Schielberg"}]}
+{"points":[{"lat":48.8240204,"lon":8.4154902,"tags":{"name":"Bernbach","place":"village"}},{"lat":48.8432296,"lon":8.4481702,"tags":{"created_by":"JOSM","is_in":"Marxzell,Karlsruhe,Karlsruhe,Baden-Württemberg,Bundesrepublik Deutschland,Europe","name":"Schielberg","place":"village"}}]}

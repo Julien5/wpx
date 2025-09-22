@@ -68,29 +68,18 @@ fn read_f64(map: &serde_json::Map<String, Value>, name: &str) -> f64 {
     map.get(name).unwrap().as_f64().unwrap()
 }
 
-fn read_tags(tags: &serde_json::Value) -> (Option<String>, Option<f64>) {
+fn read_tags(tags: &serde_json::Value) -> Tags {
+    let mut ret = Tags::new();
     let map = tags.as_object().unwrap();
-    let mut name = None;
     for (k, v) in map {
-        if k.contains("name") {
-            name = Some(v.as_str().unwrap().to_string());
-            break;
+        match v.as_str() {
+            Some(text) => {
+                ret.insert(k.to_string(), text.to_string());
+            }
+            None => {}
         }
     }
-    let ele = match map.get("ele") {
-        Some(value) => {
-            let s = value.as_str().unwrap();
-            match s.parse::<f64>() {
-                Ok(f) => Some(f),
-                Err(e) => {
-                    log::info!("could not parse as f64: {} because {}", s, e);
-                    None
-                }
-            }
-        }
-        None => None,
-    };
-    (name, ele)
+    ret
 }
 
 fn read_download_element(element: &serde_json::Value) -> Result<OSMPoint, String> {
@@ -108,13 +97,8 @@ fn read_download_element(element: &serde_json::Value) -> Result<OSMPoint, String
     }
     let lat = read_f64(map, "lat");
     let lon = read_f64(map, "lon");
-    let (name, ele) = read_tags(map.get("tags").unwrap());
-    let city = OSMPoint {
-        lat,
-        lon,
-        ele,
-        name,
-    };
+    let tags = read_tags(map.get("tags").unwrap());
+    let city = OSMPoint { lat, lon, tags };
     Ok(city)
 }
 

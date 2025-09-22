@@ -13,14 +13,19 @@ pub fn show_waypoints_in_table(
     bbox: &gpsdata::ProfileBoundingBox,
 ) -> Vec<usize> {
     // the waypoints indices visible in this profile..
-    let mut indices: Vec<usize> = (0..waypoints.len())
+    let indices: Vec<usize> = (0..waypoints.len())
         .collect::<Vec<usize>>()
         .into_iter()
-        .filter(|k| shows_waypoint(&waypoints[*k], bbox))
+        .filter(|k| {
+            shows_waypoint(&waypoints[*k], bbox)
+                && waypoints[*k].origin == waypoint::WaypointOrigin::GPX
+        })
         .collect();
+    /*
     // sorted by value
     indices.sort_by_key(|k| waypoints[*k].info.as_ref().unwrap().value.unwrap());
     indices.truncate(15);
     indices.sort();
+    */
     indices
 }

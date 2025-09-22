@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":47.9602409,"lon":8.3894629,"name":"Hubertshofen"},{"ele":null,"lat":47.9576901,"lon":8.3637878,"name":"Mistelbrunn"}]}
+{"points":[{"lat":47.9602409,"lon":8.3894629,"tags":{"name":"Hubertshofen","place":"village","wikidata":"Q47516634"}},{"lat":47.9576901,"lon":8.3637878,"tags":{"name":"Mistelbrunn","place":"village"}}]}

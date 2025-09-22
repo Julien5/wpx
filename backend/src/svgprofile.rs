@@ -577,9 +577,18 @@ impl ProfileModel {
                 points.push(PointFeature::new(id, circle, label));
             }
         }
-        let _ =
+        let result =
             label_placement::place_labels_gen(&mut points, generate_candidates_bboxes, &polyline);
-        ProfileModel { polyline, points }
+        let mut placed_points = Vec::new();
+        for k in 0..points.len() {
+            if !result.failed_indices.contains(&k) {
+                placed_points.push(points[k].clone());
+            }
+        }
+        ProfileModel {
+            polyline,
+            points: placed_points,
+        }
     }
 
     pub fn render_in_sd(self, SD: &mut svg::node::element::Group) {

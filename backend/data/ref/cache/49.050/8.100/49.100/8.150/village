@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":49.0663877,"lon":8.1150442,"name":"Freckenfeld"},{"ele":null,"lat":49.0711967,"lon":8.1463809,"name":"Minfeld"},{"ele":null,"lat":49.0977236,"lon":8.1144699,"name":"Winden"}]}
+{"points":[{"lat":49.0663877,"lon":8.1150442,"tags":{"name":"Freckenfeld","place":"village","population":"1576"}},{"lat":49.0711967,"lon":8.1463809,"tags":{"name":"Minfeld","place":"village","population":"1582"}},{"lat":49.0977236,"lon":8.1144699,"tags":{"name":"Winden","place":"village","population":"1051"}}]}

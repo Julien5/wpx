@@ -98,7 +98,6 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       segmentLength: segmentLength,
       maxStepSize: maxStepSize,
       smoothWidth: oldParameters.smoothWidth,
-      epsilon: oldParameters.epsilon,
       debug: oldParameters.debug,
     );
     rootModel.setParameters(newParameters);

@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":48.3248452,"lon":8.4829038,"name":"Römlinsdorf"},{"ele":null,"lat":48.3265067,"lon":8.4636224,"name":"Peterzell"}]}
+{"points":[{"lat":48.3248452,"lon":8.4829038,"tags":{"name":"Römlinsdorf","place":"village","postal_code":"72275"}},{"lat":48.3265067,"lon":8.4636224,"tags":{"name":"Peterzell","place":"village","postal_code":"72275","source":"survey","wikipedia":"de:Peterzell (Alpirsbach)"}}]}

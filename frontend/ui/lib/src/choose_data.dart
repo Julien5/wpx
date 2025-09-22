@@ -68,7 +68,7 @@ class _ChooseDataState extends State<ChooseData> {
     if (findResult.demo) {
       await model.loadDemo(); // Await the async call
     } else if (findResult.bytes != null) {
-      //await model.createSegmentsProviderFromBytes(findResult.bytes!);
+      await model.loadContent(findResult.bytes!);
     } else if (findResult.filename != null) {
       //await model.createSegmentsProvider(findResult.filename!);
     } else {

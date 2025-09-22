@@ -377,13 +377,21 @@ fn _candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rect
     debug_bb
 }
 
+pub struct PlacementResult {
+    pub debug: svg::node::element::Group,
+    pub failed_indices: Vec<usize>,
+}
+
 pub fn place_labels_gen(
     points: &mut Vec<PointFeature>,
     gen: CandidatesGenerator,
     polyline: &Polyline,
-) -> svg::node::element::Group {
+) -> PlacementResult {
     let mut graph = build_graph_gen(points, gen, polyline);
-    let debug = svg::node::element::Group::new();
+    let mut ret = PlacementResult {
+        debug: svg::node::element::Group::new(),
+        failed_indices: Vec::new(),
+    };
     for k in 0..points.len() {
         let target_text = &points[k].text();
         if target_text.is_empty() {
@@ -415,8 +423,9 @@ pub fn place_labels_gen(
             }
             _ => {
                 log::info!("failed to find any candidate for [{}]", target_text);
+                ret.failed_indices.push(k);
             }
         }
     }
-    debug
+    ret
 }

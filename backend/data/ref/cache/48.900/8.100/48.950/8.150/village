@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":48.9196671,"lon":8.1484455,"name":"Munchhausen"},{"ele":null,"lat":48.9354309,"lon":8.1028449,"name":"Wintzenbach"}]}
+{"points":[{"lat":48.9196671,"lon":8.1484455,"tags":{"name":"Munchhausen","name:de":"Münchhausen","place":"village","population":"812","population:date":"2021","source:population":"INSEE 2024"}},{"lat":48.9354309,"lon":8.1028449,"tags":{"name":"Wintzenbach","name:de":"Winzenbach","place":"village","population":"528","population:date":"2021","source:population":"INSEE 2024"}}]}

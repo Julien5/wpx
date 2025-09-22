@@ -1,1 +1,1 @@
-{"points":[{"ele":null,"lat":48.6850731,"lon":8.364313,"name":"Gausbach"},{"ele":null,"lat":48.6790385,"lon":8.3594916,"name":"Forbach"}]}
+{"points":[{"lat":48.6850731,"lon":8.364313,"tags":{"name":"Gausbach","place":"village"}},{"lat":48.6790385,"lon":8.3594916,"tags":{"name":"Forbach","name:prefix":"Gemeinde","place":"village","population":"5589","website":"https://www.forbach.de/"}}]}

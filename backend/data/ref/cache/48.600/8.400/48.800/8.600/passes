@@ -1,1 +1,1 @@
-{"points":[{"ele":933.0,"lat":48.7142435,"lon":8.4248967,"name":"Schwarzmiss"},{"ele":540.0,"lat":48.7836532,"lon":8.4025448,"name":"Käppele"}]}
+{"points":[{"lat":48.7142435,"lon":8.4248967,"tags":{"ele":"933","mountain_pass":"yes","name":"Schwarzmiss","natural":"saddle"}},{"lat":48.7836532,"lon":8.4025448,"tags":{"ele":"540","expected_lwn_route_relations":"3","lwn_name":"Käppele","mountain_pass":"yes","name":"Käppele","natural":"saddle","network:type":"node_network","wikidata":"Q1701017","wikipedia":"de:Käppele (Pass)"}}]}

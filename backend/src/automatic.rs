@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::osm::OSMWaypoints;
 use crate::parameters;
 use crate::track;
 use crate::waypoint;
@@ -29,9 +30,9 @@ fn order(ret: &mut Waypoints, track: &track::Track) {
     }
 }
 
-fn douglas(track: &track::Track, params: &Parameters) -> Waypoints {
+fn douglas(track: &track::Track) -> Waypoints {
     let mut ret = Vec::new();
-    let indexes = track.interesting_indexes(params.epsilon);
+    let indexes = track.interesting_indexes(10f64);
     for idx in indexes {
         let wgs = track.wgs84[idx].clone();
         let utm = track.utm[idx].clone();
@@ -181,10 +182,35 @@ fn remove_near_waypoints(track: &track::Track, W: &mut Waypoints) -> Waypoints {
     ret
 }
 
-pub fn generate(track: &track::Track, waypoints: &Waypoints, params: &Parameters) -> Vec<Waypoint> {
+fn select_osm(osm: &OSMWaypoints, track: &track::Track) -> Waypoints {
+    let mut ret = Waypoints::new();
+    for (_kind, osmpoints) in osm {
+        for k in 0..osmpoints.len() {
+            let p = &osmpoints[k];
+            assert!(p.track_index.is_some());
+            let q = track.wgs84[p.track_index.unwrap()];
+            let d = crate::gpsdata::distance_wgs84(p.wgs84.0, p.wgs84.1, q.0, q.1);
+            if d > 500f64 {
+                continue;
+            }
+            let mut projected = p.clone();
+            projected.wgs84 = q;
+            ret.push(projected);
+        }
+    }
+    ret
+}
+
+pub fn generate(
+    track: &track::Track,
+    waypoints: &Waypoints,
+    osm: &OSMWaypoints,
+    params: &Parameters,
+) -> Vec<Waypoint> {
     let mut ret = Vec::new();
     ret.extend(gpxwaypoints(waypoints));
-    ret.extend(douglas(track, params));
+    ret.extend(douglas(track));
+    ret.extend(select_osm(osm, track));
     order(&mut ret, &track);
     ret = remove_near_waypoints(&track, &mut ret);
     for w in &ret {

@@ -49,6 +49,10 @@ class RootModel extends ChangeNotifier {
     await _bridge.loadDemo();
   }
 
+  Future<void> loadContent(List<int> bytes) async {
+    await _bridge.loadContent(content: bytes);
+  }
+
   bridge.Parameters parameters() {
     return _bridge.getParameters();
   }

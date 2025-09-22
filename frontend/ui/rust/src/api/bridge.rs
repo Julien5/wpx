@@ -70,7 +70,6 @@ pub enum _WaypointOrigin {
 #[frb(mirror(Parameters))]
 pub struct _Parameters {
     pub debug: bool,
-    pub epsilon: f64,
     pub max_step_size: f64,
     pub start_time: String,
     pub speed: f64,
