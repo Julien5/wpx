@@ -480,7 +480,7 @@ impl ProfileModel {
         let start = track.index_after(bbox.xmin);
         let end = track.index_before(bbox.xmax);
         for k in start..end {
-            let e = track.wgs84[k].2;
+            let e = track.wgs84[k].z();
             let (x, y) = (track.distance(k), e);
             let (xg, yg) = _toSD((x, y), W, H, &bbox);
             polyline.points.push((xg, yg));
@@ -534,8 +534,8 @@ impl ProfileModel {
                 let index = w.track_index.unwrap();
                 let trackpoint = &track.wgs84[index];
                 let x = track.distance(index);
-                let y = trackpoint.2;
-                let delta = distance_wgs84(w.wgs84.0, w.wgs84.1, trackpoint.0, trackpoint.1);
+                let delta = distance_wgs84(&w.wgs84, &trackpoint);
+                let y = trackpoint.z();
                 let maxdelta = 500f64;
                 if delta > maxdelta {
                     continue;

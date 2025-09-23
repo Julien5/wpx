@@ -1,6 +1,34 @@
 use std::str::FromStr;
 
-use crate::utm::UTMPoint;
+#[derive(Clone, Debug)]
+pub struct WGS84Point(f64, f64, f64);
+
+impl WGS84Point {
+    pub fn new(lon: &f64, lat: &f64, ele: &f64) -> WGS84Point {
+        WGS84Point(*lon, *lat, *ele)
+    }
+    pub fn from_xy(xy: &(f64, f64)) -> WGS84Point {
+        WGS84Point(xy.0, xy.1, 0f64)
+    }
+    pub fn x(&self) -> f64 {
+        return self.0;
+    }
+    pub fn y(&self) -> f64 {
+        return self.1;
+    }
+    pub fn z(&self) -> f64 {
+        return self.2;
+    }
+    pub fn xy(&self) -> (f64, f64) {
+        (self.0, self.1)
+    }
+    pub fn latitude(&self) -> f64 {
+        return self.y();
+    }
+    pub fn longitude(&self) -> f64 {
+        return self.x();
+    }
+}
 
 #[derive(Clone, PartialEq)]
 pub enum WaypointOrigin {
@@ -12,8 +40,7 @@ pub enum WaypointOrigin {
 
 #[derive(Clone)]
 pub struct WaypointInfo {
-    pub wgs84: (f64, f64, f64),
-    pub utm: UTMPoint,
+    pub wgs84: WGS84Point,
     pub origin: WaypointOrigin,
     pub distance: f64,
     pub elevation: f64,
@@ -43,8 +70,7 @@ impl WaypointInfo {
 
 #[derive(Clone)]
 pub struct Waypoint {
-    pub wgs84: (f64, f64, f64),
-    pub utm: UTMPoint,
+    pub wgs84: WGS84Point,
     pub track_index: Option<usize>,
     pub origin: WaypointOrigin,
     pub name: Option<String>,
@@ -62,15 +88,9 @@ fn trim_option(s: Option<String>) -> Option<String> {
 }
 
 impl Waypoint {
-    pub fn create(
-        wgs: (f64, f64, f64),
-        utm: UTMPoint,
-        indx: usize,
-        origin: WaypointOrigin,
-    ) -> Waypoint {
+    pub fn create(wgs: WGS84Point, indx: usize, origin: WaypointOrigin) -> Waypoint {
         Waypoint {
             wgs84: wgs.clone(),
-            utm: utm,
             track_index: Some(indx),
             name: None,
             description: None,
@@ -81,7 +101,6 @@ impl Waypoint {
 
     pub fn from_gpx(
         gpx: &gpx::Waypoint,
-        utm: UTMPoint,
         name: Option<String>,
         description: Option<String>,
     ) -> Waypoint {
@@ -92,8 +111,7 @@ impl Waypoint {
         };
         Waypoint {
             //wgs84: (lon, lat, gpx.elevation.unwrap()),
-            wgs84: (lon, lat, z),
-            utm: utm,
+            wgs84: WGS84Point::new(&lon, &lat, &z),
             track_index: None,
             origin: WaypointOrigin::GPX,
             name: trim_option(name),

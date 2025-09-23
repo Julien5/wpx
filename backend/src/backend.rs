@@ -245,8 +245,7 @@ impl BackendData {
             },
         };
         WaypointInfo {
-            wgs84: w.wgs84,
-            utm: w.utm.clone(),
+            wgs84: w.wgs84.clone(),
             origin: w.origin.clone(),
             distance,
             inter_distance,

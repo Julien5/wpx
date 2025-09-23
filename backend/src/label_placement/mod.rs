@@ -387,6 +387,7 @@ pub fn place_labels_gen(
     gen: CandidatesGenerator,
     polyline: &Polyline,
 ) -> PlacementResult {
+    log::trace!("place labels");
     let mut graph = build_graph_gen(points, gen, polyline);
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),

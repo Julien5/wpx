@@ -5,10 +5,10 @@ use std::str::FromStr;
 use crate::bbox::BoundingBox;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::{Circle, Label, Polyline};
-use crate::segment;
 use crate::utm::UTMPoint;
-use crate::waypoint::WaypointOrigin;
+use crate::waypoint::{WGS84Point, WaypointOrigin};
 use crate::{backend, waypoints_table};
+use crate::{segment, utm};
 
 use svg::Document;
 
@@ -89,17 +89,26 @@ impl MapData {
     ) -> MapData {
         let geodata = &backend.track;
         let waypoints = backend.get_waypoints();
-        let path = &geodata.utm;
-        let mut bbox = BoundingBox::new();
+        let mut bbox84 = BoundingBox::new();
         let range = &segment.range;
         for k in range.start..range.end {
-            bbox.update(&geodata.utm[k].xy());
+            bbox84.update(&geodata.wgs84[k].xy());
+        }
+        let projection = utm::UTMProjection::make(WGS84Point::from_xy(&bbox84.middle()));
+
+        let mut bbox = BoundingBox::new();
+        let mut path = Vec::new();
+        for k in range.start..range.end {
+            let w = &geodata.wgs84[k];
+            let utm = projection.project(w);
+            path.push(utm.clone());
+            bbox.update(&utm.xy());
         }
         bbox.fix_aspect_ratio(W, H);
+
         let mut polyline = Polyline::new();
         // todo: path in the bbox, which more than the path in the range.
-        for k in range.start..range.end {
-            let p = &path[k];
+        for p in &path {
             let (xg, yg) = to_graphics_coordinates(&bbox, p, W, H);
             polyline.points.push((xg, yg));
         }
@@ -117,7 +126,8 @@ impl MapData {
         let mut points = Vec::new();
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
-            if !bbox.contains(&w.utm.xy()) {
+            let utm = projection.project(&w.wgs84);
+            if !bbox.contains(&utm.xy()) {
                 continue;
             }
             if w.origin != WaypointOrigin::GPX {
@@ -126,7 +136,7 @@ impl MapData {
             if !range.contains(&w.track_index.unwrap()) {
                 continue;
             }
-            let (x, y) = to_graphics_coordinates(&bbox, &w.utm, W, H);
+            let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H);
             let mut circle = Circle::new();
             circle.id = format!("wp-{}/circle", k);
             circle.cx = x;
@@ -145,7 +155,8 @@ impl MapData {
         for (kind, osmpoints) in &backend.osmwaypoints {
             for k in 0..osmpoints.len() {
                 let w = &osmpoints[k];
-                if !bbox.contains(&w.utm.xy()) {
+                let utm = projection.project(&w.wgs84);
+                if !bbox.contains(&utm.xy()) {
                     continue;
                 }
                 if w.name.is_none() {
@@ -155,7 +166,7 @@ impl MapData {
                     continue;
                 }
                 let mut circle = Circle::new();
-                let (x, y) = to_graphics_coordinates(&bbox, &w.utm, W, H);
+                let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H);
                 let n = points.len();
                 circle.id = format!("wp-{}/circle", n);
                 circle.cx = x;

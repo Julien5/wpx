@@ -35,8 +35,7 @@ fn douglas(track: &track::Track) -> Waypoints {
     let indexes = track.interesting_indexes(10f64);
     for idx in indexes {
         let wgs = track.wgs84[idx].clone();
-        let utm = track.utm[idx].clone();
-        let w = waypoint::Waypoint::create(wgs, utm, idx, WaypointOrigin::DouglasPeucker);
+        let w = waypoint::Waypoint::create(wgs, idx, WaypointOrigin::DouglasPeucker);
         ret.push(w);
     }
     ret
@@ -84,7 +83,6 @@ fn max_step_size_subsample(
         /* make waypoint at index kn */
         let w = Waypoint::create(
             track.wgs84[kn].clone(),
-            track.utm[kn].clone(),
             kn,
             waypoint::WaypointOrigin::MaxStepSize,
         );
@@ -188,8 +186,8 @@ fn select_osm(osm: &OSMWaypoints, track: &track::Track) -> Waypoints {
         for k in 0..osmpoints.len() {
             let p = &osmpoints[k];
             assert!(p.track_index.is_some());
-            let q = track.wgs84[p.track_index.unwrap()];
-            let d = crate::gpsdata::distance_wgs84(p.wgs84.0, p.wgs84.1, q.0, q.1);
+            let q = track.wgs84[p.track_index.unwrap()].clone();
+            let d = crate::gpsdata::distance_wgs84(&p.wgs84, &q);
             if d > 500f64 {
                 continue;
             }

@@ -1,17 +1,16 @@
 use geo::SimplifyIdx;
 use gpx::TrackSegment;
 
+use super::waypoint::WGS84Point;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
 
 use super::elevation;
-use super::utm::UTMPoint;
 use super::waypoint::Waypoint;
 use super::waypoint::WaypointOrigin;
 
 pub struct Track {
-    pub wgs84: Vec<(f64, f64, f64)>,
-    pub utm: Vec<UTMPoint>,
+    pub wgs84: Vec<WGS84Point>,
     _distance: Vec<f64>,
 }
 
@@ -22,7 +21,6 @@ impl Track {
     pub fn create_on_track(&self, index: usize, origin: WaypointOrigin) -> Waypoint {
         Waypoint {
             wgs84: self.wgs84[index].clone(),
-            utm: self.utm[index].clone(),
             track_index: Some(index),
             name: None,
             description: None,
@@ -39,13 +37,13 @@ impl Track {
             .wgs84
             .iter()
             .map(|p| {
-                ret.update(&(p.0, p.1));
+                ret.update(&(p.x(), p.y()));
             })
             .collect();
         ret
     }
     pub fn elevation(&self, index: usize) -> f64 {
-        self.wgs84[index].2
+        self.wgs84[index].z()
     }
     pub fn elevation_gain(&self, range: &std::ops::Range<usize>) -> f64 {
         // TODO: compute it.
@@ -101,7 +99,7 @@ impl Track {
     pub fn to_segment(&self) -> TrackSegment {
         let mut ret = TrackSegment::new();
         for wgs in &self.wgs84 {
-            let w = gpx::Waypoint::new(geo::Point::new(wgs.0, wgs.1));
+            let w = gpx::Waypoint::new(geo::Point::new(wgs.x(), wgs.y()));
             ret.points.push(w);
         }
         ret
@@ -109,29 +107,6 @@ impl Track {
 
     pub fn from_segment(segment: &TrackSegment) -> Result<Track, error::Error> {
         let mut _distance = Vec::new();
-
-        // see https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system
-        // we take the first point of each segment
-        // we should wait until we have the user segments (pages) to ensure the same
-        // zone for a minimap.
-        let zone = match segment.points.is_empty() {
-            true => 32i32,
-            false => {
-                let long = segment.points[0].point().x() as f64;
-                (((long + 180f64) / 6f64).floor() + 1f64) as i32
-            }
-        };
-
-        use proj4rs::proj::Proj;
-        let spec = format!(
-            "+proj=utm +zone={} +datum=WGS84 +units=m +no_defs +type=crs",
-            zone
-        );
-        let utm_spec = Proj::from_proj_string(spec.as_str()).unwrap();
-
-        let spec = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-        let wgs84_spec = Proj::from_proj_string(spec).unwrap();
-        let mut utm = Vec::new();
         let mut wgs = Vec::new();
         let mut dacc = 0f64;
         for k in 0..segment.points.len() {
@@ -144,20 +119,16 @@ impl Track {
                 }
             };
 
-            wgs.push((lon, lat, elevation));
+            wgs.push(WGS84Point::new(&lon, &lat, &elevation));
             debug_assert_eq!(wgs.len(), k + 1);
-            let mut p = (lon.to_radians(), lat.to_radians());
-            proj4rs::transform::transform(&wgs84_spec, &utm_spec, &mut p).unwrap();
-            utm.push(UTMPoint(p.0, p.1));
             if k > 0 {
-                dacc += distance_wgs84(wgs[k - 1].0, wgs[k - 1].1, wgs[k].0, wgs[k].1);
+                dacc += distance_wgs84(&wgs[k - 1], &wgs[k]);
             }
             _distance.push(dacc);
         }
         assert_eq!(_distance.len(), wgs.len());
         let ret = Track {
             wgs84: wgs,
-            utm,
             _distance,
         };
         Ok(ret)

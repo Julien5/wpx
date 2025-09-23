@@ -1,13 +1,13 @@
 use crate::error::Error;
 use crate::track;
-use crate::utm::UTMPoint;
+use crate::waypoint::WGS84Point;
 use crate::waypoint::Waypoint;
 use crate::waypoint::Waypoints;
 use geo::Distance;
 
-pub fn distance_wgs84(x1: f64, y1: f64, x2: f64, y2: f64) -> f64 {
-    let p1 = geo::Point::new(x1, y1);
-    let p2 = geo::Point::new(x2, y2);
+pub fn distance_wgs84(p1: &WGS84Point, p2: &WGS84Point) -> f64 {
+    let p1 = geo::Point::new(p1.x(), p1.y());
+    let p2 = geo::Point::new(p2.x(), p2.y());
     geo::Haversine::distance(p1, p2)
 }
 
@@ -111,23 +111,8 @@ impl ProfileBoundingBox {
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Waypoints {
     let mut ret = Vec::new();
     // TODO: remove proj4 duplicate
-    use proj4rs::proj::Proj;
-    let spec = "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs +type=crs";
-    let utm32n = Proj::from_proj_string(spec).unwrap();
-
-    let spec = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-    let wgs84 = Proj::from_proj_string(spec).unwrap();
-
     for w in &gpx.waypoints {
-        let (lon, lat) = w.point().x_y();
-        let mut p = (lon.to_radians(), lat.to_radians());
-        proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
-        ret.push(Waypoint::from_gpx(
-            w,
-            UTMPoint(p.0, p.1),
-            w.name.clone(),
-            w.description.clone(),
-        ));
+        ret.push(Waypoint::from_gpx(w, w.name.clone(), w.description.clone()));
     }
     ret
 }

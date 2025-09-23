@@ -16,6 +16,12 @@ impl BoundingBox {
     pub fn max(&self) -> (f64, f64) {
         self.max
     }
+    pub fn middle(&self) -> (f64, f64) {
+        (
+            0.5f64 * (self.min.0 + self.max.0),
+            0.5f64 * (self.min.1 + self.max.1),
+        )
+    }
     pub fn new() -> BoundingBox {
         let min = (f64::MAX, f64::MAX);
         let max = (f64::MIN, f64::MIN);
@@ -49,7 +55,7 @@ impl BoundingBox {
             self.max.1 = y + delta;
             self.min.1 = y - delta;
         }
-        let margin = 2000f64;
+        let margin = 0f64; //2000f64;
         self.max.0 = self.max.0 + margin;
         self.max.1 = self.max.1 + margin;
         self.min.0 = self.min.0 - margin;

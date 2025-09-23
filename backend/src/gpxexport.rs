@@ -25,8 +25,8 @@ fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
 }
 
 fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
-    let mut ret = gpx::Waypoint::new(geo::Point::new(w.wgs84.0, w.wgs84.1));
-    ret.elevation = Some(w.wgs84.2);
+    let mut ret = gpx::Waypoint::new(geo::Point::new(w.wgs84.x(), w.wgs84.y()));
+    ret.elevation = Some(w.wgs84.z());
     ret.name = gps_name(w);
     ret.description = match &w.info {
         Some(step) => Some(step.description.clone()),

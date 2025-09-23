@@ -9,12 +9,9 @@ use crate::bboxes::*;
 use crate::gpsdata::distance_wgs84;
 use crate::project;
 use crate::track::*;
-use crate::utm::UTMPoint;
 use crate::waypoint::*;
 use osmpoint::*;
 use std::collections::BTreeMap;
-
-use proj4rs::Proj;
 
 pub fn osm3(bbox: &WGS84BoundingBox) -> String {
     format!(
@@ -24,34 +21,39 @@ pub fn osm3(bbox: &WGS84BoundingBox) -> String {
 }
 
 fn retain(waypoints: &mut Waypoints, track: &Track, delta: f64) {
+    // TODO: make that faster, by holding the tree (?)
     project::project_on_track(track, waypoints);
     waypoints.retain(|w| {
+        if w.track_index.is_none() {
+            return false;
+        }
         let index = w.track_index.unwrap();
-        let p1 = (track.wgs84[index].0, track.wgs84[index].1);
-        let p2 = (w.wgs84.0, w.wgs84.1);
-        let d = distance_wgs84(p1.0, p1.1, p2.0, p2.1);
+        let d = distance_wgs84(&track.wgs84[index], &w.wgs84);
+        match w.name.as_ref() {
+            Some(name) => {
+                if name.contains("Brest") || name.contains("Carhaix") {
+                    log::info!("name={name} => d={} delta={}", d, delta);
+                    log::info!("p1={:?}", &w.wgs84);
+                    log::info!("p2={:?}", &track.wgs84[index]);
+                }
+            }
+            _ => {}
+        }
         d < delta
     })
 }
 
 pub fn convert_osmpoints(osmpoints: &OSMPoints) -> Waypoints {
+    log::trace!("project points");
     let mut ret = Vec::new();
-    // TODO: fix proj!
-    let spec = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
-    let wgs84 = Proj::from_proj_string(spec).unwrap();
-    let spec = "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs +type=crs";
-    let utm32n = Proj::from_proj_string(spec).unwrap();
     for city in &osmpoints.points {
         let (lon, lat) = (city.lon, city.lat);
-        let mut p = (lon.to_radians(), lat.to_radians());
-        proj4rs::transform::transform(&wgs84, &utm32n, &mut p).unwrap();
         let ele = match city.ele() {
             Some(m) => m,
             None => 0f64,
         };
         let w = Waypoint {
-            wgs84: (lon, lat, ele),
-            utm: UTMPoint(p.0, p.1),
+            wgs84: WGS84Point::new(&lon, &lat, &ele),
             track_index: None,
             name: city.name().clone(),
             description: None,
@@ -60,6 +62,7 @@ pub fn convert_osmpoints(osmpoints: &OSMPoints) -> Waypoints {
         };
         ret.push(w);
     }
+    log::trace!("project points done");
     ret
 }
 
@@ -140,11 +143,12 @@ async fn process(bbox: &WGS84BoundingBox, kind: &str) -> OSMPoints {
     }
     download_chunk(&not_cached, kind).await;
     let mut ret = Vec::new();
-    log::info!("about to read {:20} atoms:{:3}", kind, atoms.len());
+    log::trace!("about to read {:20} atoms:{:3}", kind, atoms.len());
     for (_index, atom) in atoms {
         let points = read(&atom, &kind).await;
         ret.extend(points.points);
     }
+    log::trace!("done");
     OSMPoints { points: ret }
 }
 
