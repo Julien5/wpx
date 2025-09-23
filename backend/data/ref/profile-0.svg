@@ -73,15 +73,19 @@ Bräunlingen
 <text font-size="16.0" id="wp-6/text" text-anchor="start" x="354.345" y="122.833">
 Furtwangen
 </text>
-<circle cx="515.907" cy="147.726" fill="Gray" id="wp-5/circle" r="3.000"/>
+<circle cx="1280.972" cy="176.358" fill="Blue" id="wp-5/circle" r="3.000"/>
+<text font-size="16.0" id="wp-5/text" text-anchor="start" x="1282.972" y="173.358">
+Freiersberg
+</text>
+<circle cx="515.907" cy="147.726" fill="Gray" id="wp-6/circle" r="3.000"/>
 <text font-size="16.0" id="wp-0/text" text-anchor="start" x="517.907" y="179.726">
 Schonach
 </text>
-<circle cx="882.317" cy="300.877" fill="Gray" id="wp-6/circle" r="3.000"/>
+<circle cx="882.317" cy="300.877" fill="Gray" id="wp-7/circle" r="3.000"/>
 <text font-size="16.0" id="wp-1/text" text-anchor="start" x="884.317" y="317.877">
 Fischerbach
 </text>
-<circle cx="811.929" cy="297.005" fill="Gray" id="wp-7/circle" r="3.000"/>
+<circle cx="811.929" cy="297.005" fill="Gray" id="wp-8/circle" r="3.000"/>
 <text font-size="16.0" id="wp-2/text" text-anchor="start" x="813.929" y="294.005">
 Mühlenbach
 </text>

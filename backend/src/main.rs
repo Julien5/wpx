@@ -7,12 +7,14 @@ use tracks::error;
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
 struct Cli {
-    #[arg(short, long, value_name = "debug")]
+    #[arg(long, value_name = "debug")]
     debug: Option<bool>,
-    #[arg(short, long, value_name = "outdir")]
+    #[arg(long, value_name = "outdir")]
     output_directory: Option<std::path::PathBuf>,
-    #[arg(short, long, value_name = "interval_length")]
-    interval_length: Option<i32>,
+    #[arg(long, value_name = "segment_length")]
+    segment_length: Option<i32>,
+    #[arg(long, value_name = "segment_overlap")]
+    segment_overlap: Option<i32>,
     #[arg(long, value_name = "start_time")]
     start_time: Option<String>,
     #[arg(long, value_name = "max_step_length")]
@@ -47,9 +49,16 @@ async fn main() -> Result<(), error::Error> {
     backend.load_filename(gpxinput).await?;
 
     let mut parameters = backend.get_parameters();
-    match args.interval_length {
+    match args.segment_length {
         Some(length) => {
             parameters.segment_length = 1000f64 * (length as f64);
+        }
+        _ => {}
+    }
+
+    match args.segment_overlap {
+        Some(length) => {
+            parameters.segment_overlap = 1000f64 * (length as f64);
         }
         _ => {}
     }

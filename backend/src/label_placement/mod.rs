@@ -115,6 +115,8 @@ impl PartialEq for PointFeature {
 impl Eq for PointFeature {}
 use std::str::FromStr;
 
+use crate::bbox::BoundingBox;
+
 impl PointFeature {
     pub fn new(id: String, circle: Circle, label: Label) -> PointFeature {
         PointFeature { id, circle, label }
@@ -217,17 +219,17 @@ impl Label {
 
     pub fn to_attributes(&self, cx: f64) -> Attributes {
         let mut ret = Attributes::new();
-        let mut x = self.bbox.top_left.0 + 2f64;
+        let mut x = self.bbox.x_min() + 2f64;
         let anchor = if self.bounding_box().x_max() < cx {
             "end"
         } else {
             "start"
         };
         if anchor == "end" {
-            x = self.bbox.bottom_right.0 - 2f64;
+            x = self.bbox.x_max() - 2f64;
         }
         set_attr(&mut ret, "text-anchor", anchor);
-        let y = self.bbox.bottom_right.1 - 2f64;
+        let y = self.bbox.y_max() - 2f64;
         set_attr(&mut ret, "id", self.id.as_str());
         set_attr(&mut ret, "font-size", format!("{:.1}", FONTSIZE).as_str());
         set_attr(&mut ret, "x", format!("{:.3}", x).as_str());
@@ -327,8 +329,11 @@ fn generate_all_candidates(
     return ret;
 }
 
-fn filter_sort_candidates(candidates: &mut Candidates, polyline: &Polyline) {
+fn filter_sort_candidates(candidates: &mut Candidates, bbox: &BoundingBox, polyline: &Polyline) {
     candidates.retain(|c| {
+        if !bbox.contains_other(&c.bbox.bbox) {
+            return false;
+        }
         if polyline_hits_bbox(polyline, &c.bbox) {
             return false;
         }
@@ -343,6 +348,7 @@ fn filter_sort_candidates(candidates: &mut Candidates, polyline: &Polyline) {
 fn build_graph_gen(
     points: &Vec<PointFeature>,
     gen: CandidatesGenerator,
+    bbox: &BoundingBox,
     polyline: &Polyline,
 ) -> Graph {
     let mut ret = Graph::new();
@@ -351,7 +357,7 @@ fn build_graph_gen(
             continue;
         }
         let mut candidates = generate_all_candidates(gen, points, k);
-        filter_sort_candidates(&mut candidates, polyline);
+        filter_sort_candidates(&mut candidates, bbox, polyline);
         let selected_indices = candidate::select_candidates(&candidates);
         let selected_candidates: Vec<_> = selected_indices
             .into_iter()
@@ -385,10 +391,11 @@ pub struct PlacementResult {
 pub fn place_labels_gen(
     points: &mut Vec<PointFeature>,
     gen: CandidatesGenerator,
+    bbox: &BoundingBox,
     polyline: &Polyline,
 ) -> PlacementResult {
     log::trace!("place labels");
-    let mut graph = build_graph_gen(points, gen, polyline);
+    let mut graph = build_graph_gen(points, gen, bbox, polyline);
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),
         failed_indices: Vec::new(),

@@ -12,21 +12,27 @@ use crate::{segment, utm};
 
 use svg::Document;
 
-fn to_graphics_coordinates(bbox: &BoundingBox, p: &UTMPoint, W: i32, H: i32) -> (f64, f64) {
+fn to_graphics_coordinates(
+    bbox: &BoundingBox,
+    p: &UTMPoint,
+    W: i32,
+    H: i32,
+    margin: i32,
+) -> (f64, f64) {
     let xmin = bbox.min.0;
     let xmax = bbox.max.0;
     let ymin = bbox.min.1;
     let ymax = bbox.max.1;
 
     let f = |x: f64| -> f64 {
-        let a = W as f64 / (xmax - xmin);
+        let a = (W - 2 * margin) as f64 / (xmax - xmin);
         let b = -a * xmin;
-        a * x + b
+        margin as f64 + a * x + b
     };
     let g = |y: f64| -> f64 {
-        let a = H as f64 / (ymin - ymax);
+        let a = (H - 2 * margin) as f64 / (ymin - ymax);
         let b = -a * ymax;
-        a * y + b
+        margin as f64 + a * y + b
     };
     (f(p.x()), g(p.y()))
 }
@@ -104,12 +110,15 @@ impl MapData {
             path.push(utm.clone());
             bbox.update(&utm.xy());
         }
+
+        let margin = 10i32;
+
         bbox.fix_aspect_ratio(W, H);
 
         let mut polyline = Polyline::new();
         // todo: path in the bbox, which more than the path in the range.
         for p in &path {
-            let (xg, yg) = to_graphics_coordinates(&bbox, p, W, H);
+            let (xg, yg) = to_graphics_coordinates(&bbox, p, W, H, margin);
             polyline.points.push((xg, yg));
         }
 
@@ -117,10 +126,10 @@ impl MapData {
         set_attr(
             &mut document,
             "viewBox",
-            format!("(0, 0, {W}, {H})").as_str(),
+            format!("(0, 0, {}, {})", W, H).as_str(),
         );
-        set_attr(&mut document, "width", format!("{W}").as_str());
-        set_attr(&mut document, "height", format!("{H}").as_str());
+        set_attr(&mut document, "width", format!("{}", W).as_str());
+        set_attr(&mut document, "height", format!("{}", H).as_str());
 
         let V = waypoints_table::show_waypoints_in_table(&waypoints, &segment.bbox);
         let mut points = Vec::new();
@@ -136,7 +145,7 @@ impl MapData {
             if !range.contains(&w.track_index.unwrap()) {
                 continue;
             }
-            let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H);
+            let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H, margin);
             let mut circle = Circle::new();
             circle.id = format!("wp-{}/circle", k);
             circle.cx = x;
@@ -166,7 +175,7 @@ impl MapData {
                     continue;
                 }
                 let mut circle = Circle::new();
-                let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H);
+                let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H, margin);
                 let n = points.len();
                 circle.id = format!("wp-{}/circle", n);
                 circle.cx = x;
@@ -196,6 +205,7 @@ impl MapData {
         let result = crate::label_placement::place_labels_gen(
             &mut points,
             generate_candidates_bboxes,
+            &BoundingBox::init((0f64, 0f64), (W as f64, H as f64)),
             &polyline,
         );
         let mut placed_points = Vec::new();
@@ -342,10 +352,7 @@ mod tests {
             },
             Label {
                 id: id.clone(),
-                bbox: LabelBoundingBox {
-                    top_left: (0f64, 0f64),
-                    bottom_right: (10f64, 16f64),
-                },
+                bbox: LabelBoundingBox::new_tlbr((0f64, 0f64), (10f64, 16f64)),
                 text: String::from_str("hi").unwrap(),
             },
         );
@@ -354,7 +361,7 @@ mod tests {
         assert!(!candidates.is_empty());
         for c in candidates {
             let center = target.center();
-            let good = c.top_left.0 > target.center().0 && c.top_left.1 > target.center().1;
+            let good = c.x_min() > target.center().0 && c.y_min() > target.center().1;
             if good {
                 found = true;
             }

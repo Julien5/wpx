@@ -169,7 +169,7 @@ impl Backend {
     }
 
     pub async fn load_demo(&mut self) -> Result<(), Error> {
-        let content = include_bytes!("../data/ref/roland.gpx");
+        let content = include_bytes!("../data/ref/roland-nowaypoints.gpx");
         self.load_content(&content.to_vec()).await
     }
 }
@@ -204,6 +204,9 @@ impl BackendData {
 
     pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {
         self.parameters = parameters.clone();
+        if self.parameters.segment_overlap > self.parameters.segment_length {
+            assert!(false);
+        }
         self.track_smooth_elevation =
             elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
         self.update_waypoints();
@@ -333,7 +336,7 @@ impl BackendData {
             }
             let bbox = ProfileBoundingBox::from_track(&self.track, &range);
             ret.push(Segment::new(k, range, &bbox));
-            start = start + self.parameters.segment_length;
+            start = start + self.parameters.segment_length - self.parameters.segment_overlap;
             k = k + 1;
         }
         ret

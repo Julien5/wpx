@@ -8,7 +8,7 @@ pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
 pub use tracks::parameters::Parameters;
 pub use tracks::render_device::RenderDevice;
-pub use tracks::utm::UTMPoint;
+pub use tracks::waypoint::WGS84Point;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
 pub use tracks::waypoint::WaypointOrigin;
@@ -56,9 +56,6 @@ impl Segment {
     }
 }
 
-#[frb(mirror(UTMPoint))]
-pub struct _UTMPoint(pub f64, pub f64);
-
 #[frb(mirror(WaypointOrigin))]
 pub enum _WaypointOrigin {
     GPX,
@@ -74,13 +71,13 @@ pub struct _Parameters {
     pub start_time: String,
     pub speed: f64,
     pub segment_length: f64,
+    pub segment_overlap: f64,
     pub smooth_width: f64,
 }
 
 #[frb(mirror(WaypointInfo))]
 pub struct _WaypointInfo {
-    pub wgs84: (f64, f64, f64),
-    pub utm: UTMPoint,
+    pub wgs84: WGS84Point,
     pub origin: WaypointOrigin,
     pub distance: f64,
     pub elevation: f64,
@@ -96,8 +93,7 @@ pub struct _WaypointInfo {
 
 #[frb(mirror(Waypoint))]
 pub struct _Waypoint {
-    pub wgs84: (f64, f64, f64),
-    pub utm: UTMPoint,
+    pub wgs84: WGS84Point,
     pub track_index: Option<usize>,
     pub origin: WaypointOrigin,
     pub name: Option<String>,

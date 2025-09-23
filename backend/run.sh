@@ -18,7 +18,8 @@ function pdf() {
 	time cargo run -- \
 		  --output-directory /tmp/ \
 		  --debug true \
-		  --interval-length 125 \
+		  --segment-length 100 \
+		  --segment-overlap 0 \
 		  "$@" \
 		  "${file}"
 	${TYPST} compile /tmp/document.typst

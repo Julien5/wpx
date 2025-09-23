@@ -3,6 +3,7 @@
 use std::str::FromStr;
 
 use crate::backend;
+use crate::bbox::BoundingBox;
 use crate::elevation;
 use crate::gpsdata::distance_wgs84;
 use crate::gpsdata::ProfileBoundingBox;
@@ -476,7 +477,6 @@ impl ProfileModel {
         let track = &backend.track;
         let range = &segment.range;
         let mut polyline = Polyline::new();
-        // todo: path in the bbox, which more than the path in the range.
         let start = track.index_after(bbox.xmin);
         let end = track.index_before(bbox.xmax);
         for k in start..end {
@@ -509,9 +509,9 @@ impl ProfileModel {
             if w.origin != WaypointOrigin::GPX {
                 continue;
             }
-            if !range.contains(&index) {
+            /*if !range.contains(&index) {
                 continue;
-            }
+            }*/
             let (xg, yg) = _toSD((x, y), W, H, &bbox);
             let mut circle = label_placement::Circle::new();
             circle.id = format!("wp-{}/circle", k);
@@ -546,9 +546,9 @@ impl ProfileModel {
                 if w.name.is_none() {
                     continue;
                 }
-                if !range.contains(&w.track_index.unwrap()) {
+                /*if !range.contains(&w.track_index.unwrap()) {
                     continue;
-                }
+                }*/
                 let (xg, yg) = _toSD((x, y), W, H, &bbox);
                 let n = points.len();
                 let mut circle = label_placement::Circle::new();
@@ -577,8 +577,12 @@ impl ProfileModel {
                 points.push(PointFeature::new(id, circle, label));
             }
         }
-        let result =
-            label_placement::place_labels_gen(&mut points, generate_candidates_bboxes, &polyline);
+        let result = label_placement::place_labels_gen(
+            &mut points,
+            generate_candidates_bboxes,
+            &BoundingBox::init((0f64, 0f64), (W as f64, H as f64)),
+            &polyline,
+        );
         let mut placed_points = Vec::new();
         for k in 0..points.len() {
             if !result.failed_indices.contains(&k) {

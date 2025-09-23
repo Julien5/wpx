@@ -7,6 +7,7 @@ pub struct Parameters {
     pub start_time: String,
     pub speed: f64,
     pub segment_length: f64,
+    pub segment_overlap: f64,
     pub smooth_width: f64,
 }
 
@@ -17,6 +18,7 @@ impl Default for Parameters {
             start_time: chrono::offset::Utc::now().to_rfc3339(),
             speed: speed::mps(15f64),
             segment_length: 100f64 * 1000f64,
+            segment_overlap: 10f64 * 1000f64,
             smooth_width: 200f64,
             debug: false,
         }

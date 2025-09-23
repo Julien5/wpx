@@ -96,6 +96,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       speed: speed,
       startTime: rfc3339time,
       segmentLength: segmentLength,
+      segmentOverlap: segmentLength/10.0,
       maxStepSize: maxStepSize,
       smoothWidth: oldParameters.smoothWidth,
       debug: oldParameters.debug,

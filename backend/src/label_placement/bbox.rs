@@ -6,30 +6,25 @@ pub fn distance((x1, y1): (f64, f64), (x2, y2): (f64, f64)) -> f64 {
 
 #[derive(Clone)]
 pub struct LabelBoundingBox {
-    pub top_left: (f64, f64),
-    pub bottom_right: (f64, f64),
+    pub bbox: BoundingBox,
 }
 
 impl LabelBoundingBox {
     pub fn zero() -> Self {
         LabelBoundingBox {
-            top_left: (0f64, 0f64),
-            bottom_right: (0f64, 0f64),
+            bbox: BoundingBox::new(),
         }
     }
-
     pub fn new_tlbr(top_left: (f64, f64), bottom_right: (f64, f64)) -> Self {
         LabelBoundingBox {
-            top_left,
-            bottom_right,
+            bbox: BoundingBox::init(top_left, bottom_right),
         }
     }
 
     pub fn new_tlwh(top_left: (f64, f64), width: f64, height: f64) -> Self {
         let bottom_right = (top_left.0 + width, top_left.1 + height);
         LabelBoundingBox {
-            top_left,
-            bottom_right,
+            bbox: BoundingBox::init(top_left, bottom_right),
         }
     }
 
@@ -37,16 +32,14 @@ impl LabelBoundingBox {
         let top_left = (bottom_left.0, bottom_left.1 - height);
         let bottom_right = (bottom_left.0 + width, bottom_left.1);
         LabelBoundingBox {
-            top_left,
-            bottom_right,
+            bbox: BoundingBox::init(top_left, bottom_right),
         }
     }
 
     pub fn _new_brwh(bottom_right: (f64, f64), width: f64, height: f64) -> Self {
         let top_left = (bottom_right.0 - width, bottom_right.1 - height);
         LabelBoundingBox {
-            top_left,
-            bottom_right,
+            bbox: BoundingBox::init(top_left, bottom_right),
         }
     }
 
@@ -54,17 +47,16 @@ impl LabelBoundingBox {
         let top_left = (top_right.0 - width, top_right.1);
         let bottom_right = (top_right.0, top_right.1 + height);
         LabelBoundingBox {
-            top_left,
-            bottom_right,
+            bbox: BoundingBox::init(top_left, bottom_right),
         }
     }
 
     pub fn x_min(&self) -> f64 {
-        self.top_left.0
+        self.bbox.min().0
     }
 
     pub fn y_min(&self) -> f64 {
-        self.top_left.1
+        self.bbox.min().1
     }
 
     fn bottom_left(&self) -> (f64, f64) {
@@ -83,11 +75,11 @@ impl LabelBoundingBox {
     }
 
     pub fn x_max(&self) -> f64 {
-        self.bottom_right.0
+        self.bbox.max().0
     }
 
     pub fn y_max(&self) -> f64 {
-        self.bottom_right.1
+        self.bbox.max().1
     }
 
     pub fn width(&self) -> f64 {
@@ -136,8 +128,8 @@ impl LabelBoundingBox {
     }
     fn overlap_self(&self, other: &Self) -> bool {
         for p in [
-            self.top_left,
-            self.bottom_right,
+            self.bbox.min(),
+            self.bbox.max(),
             self.bottom_left(),
             self.top_right(),
         ] {
@@ -181,18 +173,20 @@ impl LabelBoundingBox {
 
 impl PartialEq for LabelBoundingBox {
     fn eq(&self, other: &Self) -> bool {
-        self.top_left == other.top_left && self.bottom_right == other.bottom_right
+        self.bbox.min() == other.bbox.min() && self.bbox.max() == other.bbox.max()
     }
 }
 
 use std::fmt;
+
+use crate::bbox::BoundingBox;
 impl fmt::Display for LabelBoundingBox {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "LabelBoundingBox {{ top_left: ({:.2}, {:.2}), (w,h): ({:.2}, {:.2}) }}",
-            self.top_left.0,
-            self.top_left.1,
+            self.bbox.min().0,
+            self.bbox.min().1,
             self.width(),
             self.height()
         )

@@ -92,6 +92,7 @@ impl ProfileBoundingBox {
         let shift = 20f64 * km;
         let margin = 10f64 * km;
         self.xmin = ((self.xmin - margin) / shift).floor() * shift;
+        self.xmin = self.xmin.max(0f64);
         self.xmax = ((self.xmax + margin) / shift).ceil() * shift;
         self.ymin = snap_floor(self.ymin - 100f64);
         self.ymax = snap_ceil(self.ymax + 100f64).max(snap_floor(self.ymin + 500f64));

@@ -22,6 +22,21 @@ impl BoundingBox {
             0.5f64 * (self.min.1 + self.max.1),
         )
     }
+    pub fn contains_other(&self, other: &Self) -> bool {
+        if other.max.0 > self.max.0 {
+            return false;
+        }
+        if other.max.1 > self.max.1 {
+            return false;
+        }
+        if other.min.0 < self.min.0 {
+            return false;
+        }
+        if other.min.1 < self.min.1 {
+            return false;
+        }
+        true
+    }
     pub fn new() -> BoundingBox {
         let min = (f64::MAX, f64::MAX);
         let max = (f64::MIN, f64::MIN);
@@ -75,6 +90,12 @@ impl BoundingBox {
             return false;
         }
         return true;
+    }
+    pub fn enlarge(&mut self, delta: &f64) {
+        self.min.0 -= delta;
+        self.min.1 -= delta;
+        self.max.0 += delta;
+        self.max.1 += delta;
     }
 }
 
