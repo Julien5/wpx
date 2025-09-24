@@ -101,22 +101,6 @@ fn texty_overlay(label: &str, pos: (f64, f64)) -> Text {
     ret
 }
 
-fn _toSD((x, y): (f64, f64), WD: f64, HD: f64, bbox: &gpsdata::ProfileBoundingBox) -> (f64, f64) {
-    assert!(bbox.xmin <= bbox.xmax);
-    assert!(bbox.ymin <= bbox.ymax);
-    let f = |x: f64| -> f64 {
-        let a = WD as f64 / (bbox.xmax - bbox.xmin);
-        let b = -bbox.xmin * a;
-        a * x + b
-    };
-    let g = |y: f64| -> f64 {
-        let a = HD as f64 / (bbox.ymin - bbox.ymax);
-        let b = -bbox.ymax * a;
-        a * y + b
-    };
-    (f(x), g(y))
-}
-
 fn _slope(track: &track::Track, smooth: &Vec<f64>) -> Vec<f64> {
     let mut ret = Vec::new();
     debug_assert!(track.wgs84.len() == smooth.len());
@@ -135,59 +119,121 @@ fn _slope(track: &track::Track, smooth: &Vec<f64>) -> Vec<f64> {
     elevation::smooth(track, 1000f64, |index: usize| -> f64 { ret[index] })
 }
 
-fn xticks(bbox: &ProfileBoundingBox) -> Vec<f64> {
+fn snap_ceil(x: f64, step: f64) -> f64 {
+    (x / step).ceil() * step
+}
+
+fn snap_floor(x: f64, step: f64) -> f64 {
+    (x / step).floor() * step
+}
+
+/* *** */
+
+fn xtick_delta(bbox: &ProfileBoundingBox, W: f64) -> f64 {
+    let min = 50f64 * bbox.width() / W;
+    for candidate in [1, 2, 10, 20, 50, 100, 250] {
+        let ret = 1000f64 * candidate as f64;
+        if ret > min {
+            return ret;
+        }
+    }
+    100f64
+}
+
+fn xticks_all(bbox: &ProfileBoundingBox, W: f64) -> Vec<f64> {
     let mut ret = Vec::new();
-    let _D = bbox.xmax - bbox.xmin;
-    let delta = 20000f64;
-    let p0 = ((bbox.xmin / delta).ceil() * delta).floor();
-    let mut p = p0;
-    while p < bbox.xmax.floor() {
+    let _D = bbox.width();
+    let delta = xtick_delta(bbox, W);
+    let mut start = snap_floor(bbox.min.0, delta);
+    start = start.max(0f64);
+    let mut stop = snap_ceil(bbox.max.0, delta);
+    let mut p = start;
+    while p <= stop {
         ret.push(p);
         p = p + delta;
     }
     ret
 }
 
-fn xticks_dashed(bbox: &ProfileBoundingBox) -> Vec<f64> {
-    let mut ret = Vec::new();
-    let _D = bbox.xmax - bbox.xmin;
-    let delta = 20000f64;
-    let p0 = ((bbox.xmin / delta).ceil() * delta).floor();
-    let mut p = p0;
-    while p < bbox.xmax.floor() {
-        ret.push(p + delta / 2f64);
-        p = p + delta;
-    }
+fn xticks_dashed(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
+    let mut ret = xticks_all(bbox, H);
+    let mut k = 0;
+    ret.retain(|_x| {
+        k += 1;
+        (k % 2) == 0
+    });
     ret
 }
 
-fn yticks(bbox: &ProfileBoundingBox) -> Vec<f64> {
+fn xticks(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
+    let mut ret = xticks_all(bbox, H);
+    let mut k = 0;
+    ret.retain(|_y| {
+        k += 1;
+        (k % 2) != 0
+    });
+    ret
+}
+
+/* ** */
+
+fn ytick_delta(bbox: &ProfileBoundingBox, H: f64) -> f64 {
+    let min = 20f64 * bbox.height() / H;
+    for candidate in [10, 20, 50, 100, 200, 250, 500, 1000] {
+        let ret = candidate as f64;
+        if ret > min {
+            return ret;
+        }
+    }
+    100f64
+}
+
+fn yticks_all(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
     let mut ret = Vec::new();
-    let _D = bbox.ymax - bbox.ymin;
-    let delta = 200f64;
-    let p0 = ((bbox.ymin / delta).ceil() * delta).floor();
-    let mut p = p0;
-    while p < bbox.ymax.floor() {
+    let _D = bbox.max.1 - bbox.min.1;
+    let delta = ytick_delta(bbox, H);
+    let mut start = snap_floor(bbox.min.1, delta) - delta;
+    start = start.max(0f64);
+    let mut stop = snap_ceil(bbox.max.1, delta) + 2f64 * delta;
+    while stop - start < 200f64 {
+        start -= delta;
+        start = start.max(0f64);
+        stop += delta;
+    }
+
+    let mut p = start;
+    while p <= stop {
         ret.push(p);
         p = p + delta;
     }
     ret
 }
 
-fn yticks_dashed(bbox: &ProfileBoundingBox) -> Vec<f64> {
-    let mut ret = Vec::new();
-    let _D = bbox.ymax - bbox.ymin;
-    let delta = 200f64;
-    let p0 = ((bbox.ymin / delta).ceil() * delta).floor();
-    let mut p = p0;
-    while p < bbox.ymax.floor() {
-        ret.push(p + delta / 2f64);
-        p = p + delta;
-    }
+fn yticks_dashed(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
+    let mut ret = yticks_all(bbox, H);
+    let mut k = 0;
+    ret.retain(|_y| {
+        k += 1;
+        (k % 2) == 0
+    });
     ret
 }
 
-#[derive(Clone)]
+fn yticks(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
+    let mut ret = yticks_all(bbox, H);
+    let mut k = 0;
+    ret.retain(|_y| {
+        k += 1;
+        (k % 2) != 0
+    });
+    ret
+}
+
+struct ProfileModel {
+    polyline: Polyline,
+    points: Vec<PointFeature>,
+}
+
 pub struct ProfileView {
     W: f64,
     H: f64,
@@ -197,35 +243,51 @@ pub struct ProfileView {
     SL: Group,
     SB: Group,
     pub SD: Group,
-    pub bbox: gpsdata::ProfileBoundingBox,
+    pub bboxdata: gpsdata::ProfileBoundingBox,
+    pub bboxview: gpsdata::ProfileBoundingBox,
     render_device: RenderDevice,
     font_size_factor: f64,
     frame_stroke_width: f64,
+    model: Option<ProfileModel>,
+}
+
+fn fix_ymargins(bbox: &ProfileBoundingBox, H: f64) -> ProfileBoundingBox {
+    let ticks = yticks(bbox, H);
+    let mut ret = bbox.clone();
+    ret.min.1 = ticks.first().unwrap().clone();
+    ret.max.1 = ticks.last().unwrap().clone();
+    ret
 }
 
 impl ProfileView {
-    pub fn set_render_device(&mut self, render_device: RenderDevice) {
-        self.render_device = render_device;
-        match self.render_device {
+    pub fn init(
+        bbox: &gpsdata::ProfileBoundingBox,
+        _W: i32,
+        _H: i32,
+        render_device: RenderDevice,
+    ) -> ProfileView {
+        let W = _W as f64;
+        let H = _H as f64;
+        let mut Mleft = (W * 0.05f64).floor() as f64;
+        let mut font_size_factor = 1f64;
+        let Mbottom = (H / 10f64).floor() as f64;
+        match render_device {
             RenderDevice::Native => {
-                self.font_size_factor = 0.5f64;
+                font_size_factor = 0.5f64;
+                Mleft = 0f64; // hide ylabels
             }
             _ => {
-                self.font_size_factor = 0.6f64;
+                font_size_factor = 0.6f64;
             }
         }
-    }
-    pub fn init(bbox: &gpsdata::ProfileBoundingBox) -> ProfileView {
-        let W = 1400f64;
-        let H = 400f64;
-        let Mleft = ((W as f64) * 0.05f64).floor() as f64;
-        let Mbottom = ((H as f64) / 10f64).floor() as f64;
+
         ProfileView {
             W,
             H,
             Mleft,
             Mbottom,
-            bbox: bbox.clone(),
+            bboxview: fix_ymargins(bbox, H),
+            bboxdata: bbox.clone(),
             BG: Group::new().set("id", "BG"),
             SL: Group::new()
                 .set("id", "SL")
@@ -236,60 +298,31 @@ impl ProfileView {
             SD: Group::new()
                 .set("id", "SD")
                 .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft)),
-            render_device: RenderDevice::Unknown,
-            font_size_factor: 1f64,
+            render_device,
+            font_size_factor,
             frame_stroke_width: 3f64,
+            model: None,
         }
     }
 
-    pub fn reset_size(&mut self, W: f64, H: f64) {
-        // TODO: code duplication with init()
-        self.Mleft = ((W as f64) * 0.05f64).floor() as f64;
-        self.Mbottom = ((H as f64) / 10f64).floor() as f64;
-        self.W = W;
-        self.H = H;
-        if self.render_device != RenderDevice::PDF {
-            // no "margin before 0"
-            self.bbox.xmin = self.bbox.xmin.max(0f64);
-            self.Mleft = 0f64;
-        }
-        self.BG = Group::new().set("id", "BG");
-        self.SL = Group::new().set("id", "SL").set(
-            "transform",
-            transformSL(self.W, self.H, self.Mleft, self.Mbottom),
-        );
-        self.SB = Group::new().set("id", "SB").set(
-            "transform",
-            transformSB(self.W, self.H, self.Mleft, self.Mbottom),
-        );
-        self.SD = Group::new().set("id", "SD").set(
-            "transform",
-            transformSD(self.W, self.H, self.Mleft, self.Mbottom, self.WD()),
-        );
-    }
-
-    fn toSD(&self, (x, y): (f64, f64)) -> (f64, f64) {
-        assert!(self.bbox.xmin <= self.bbox.xmax);
-        assert!(self.bbox.ymin <= self.bbox.ymax);
-        let f = |x: f64| -> f64 {
-            let a = self.WD() as f64 / (self.bbox.xmax - self.bbox.xmin);
-            let b = -self.bbox.xmin * a;
+    fn toSD(&self, (x, y): &(f64, f64)) -> (f64, f64) {
+        let f = |x: &f64| -> f64 {
+            let a = self.WD() as f64 / (self.bboxview.width());
+            let b = -self.bboxview.min.0 * a;
             a * x + b
         };
-        let g = |y: f64| -> f64 {
-            let a = self.HD() as f64 / (self.bbox.ymin - self.bbox.ymax);
-            let b = -self.bbox.ymax * a;
+        let g = |y: &f64| -> f64 {
+            let a = -self.HD() as f64 / self.bboxview.height();
+            let b = -self.bboxview.max.1 * a;
             a * y + b
         };
         (f(x), g(y))
     }
 
-    fn toSL(&self, y: f64) -> f64 {
-        assert!(self.bbox.xmin <= self.bbox.xmax);
-        assert!(self.bbox.ymin <= self.bbox.ymax);
-        let g = |y: f64| -> f64 {
-            let a = self.HD() as f64 / (self.bbox.ymin - self.bbox.ymax);
-            let b = -self.bbox.ymax * a;
+    fn toSL(&self, y: &f64) -> f64 {
+        let g = |y: &f64| -> f64 {
+            let a = self.HD() as f64 / (self.bboxview.min.1 - self.bboxview.max.1);
+            let b = -self.bboxview.max.1 * a;
             a * y + b
         };
         g(y)
@@ -340,8 +373,8 @@ impl ProfileView {
     }
 
     pub fn add_yaxis_labels_overlay(&mut self) {
-        for ytick in yticks(&self.bbox) {
-            let pos = self.toSD((self.bbox.xmin, ytick));
+        for ytick in yticks(&self.bboxdata, self.H) {
+            let pos = self.toSD(&(self.bboxview.min.0, ytick));
             let yd = pos.1;
             if yd > self.HD() {
                 break;
@@ -369,8 +402,16 @@ impl ProfileView {
         self.SD.append(stroke(stroke_width, (0f64, HD), (WD, HD)));
         self.SD.append(stroke(stroke_width, (WD, 0f64), (WD, HD)));
 
-        for xtick in xticks(&self.bbox) {
-            let xg = self.toSD((xtick, 0f64)).0;
+        let _xticks = xticks(&self.bboxdata, self.W);
+        let _xticks_dashed = xticks_dashed(&self.bboxdata, self.W);
+        let _yticks = yticks(&self.bboxdata, self.H);
+        let _yticks_dashed = yticks_dashed(&self.bboxdata, self.H);
+
+        log::debug!(" x={:?}", _xticks);
+        log::debug!("xd={:?}", _xticks_dashed);
+
+        for xtick in _xticks {
+            let xg = self.toSD(&(xtick, 0f64)).0;
             if xg > WD {
                 break;
             }
@@ -384,105 +425,72 @@ impl ProfileView {
             ));
         }
 
-        for xtick in xticks_dashed(&self.bbox) {
-            let xd = self.toSD((xtick, 0f64)).0;
+        for xtick in _xticks_dashed {
+            let xd = self.toSD(&(xtick, 0f64)).0;
             if xd > WD {
                 break;
             }
             self.SD.append(dashed((xd, 0f64), (xd, HD)));
         }
 
-        for ytick in yticks(&self.bbox) {
+        for ytick in &_yticks {
             let yd = self.toSL(ytick);
-            if yd < 0f64 {
-                break;
-            }
             self.SL.append(ytick_text(
                 format!("{}", ytick.floor() as f64).as_str(),
-                (self.Mleft, yd + 5f64),
+                (self.Mleft - 5f64, yd + 5f64),
             ));
         }
 
-        for ytick in yticks(&self.bbox) {
-            let yd = self.toSD((self.bbox.xmin, ytick)).1;
-            if yd > HD {
-                break;
-            }
+        for ytick in &_yticks {
+            let yd = self.toSD(&(self.bboxview.min.0, *ytick)).1;
             self.SD.append(stroke("1", (0f64, yd), (WD, yd)));
         }
 
-        for ytick in yticks_dashed(&self.bbox) {
-            let yd = self.toSD((self.bbox.xmin, ytick)).1;
-            if yd > HD {
-                break;
-            }
+        for ytick in &_yticks_dashed {
+            let yd = self.toSD(&(self.bboxview.min.0, *ytick)).1;
             self.SD.append(dashed((0f64, yd), (WD, yd)));
         }
     }
-}
 
-fn generate_candidates_bboxes(point: &PointFeature) -> Vec<LabelBoundingBox> {
-    let mut ret = Vec::new();
-    let width = point.width();
-    let height = point.height();
-    let dtarget_min = 1f64;
-    let dtarget_max = 20f64;
-    let d0 = 2f64 * dtarget_max;
-    let (cx, cy) = point.center();
-    let xmin = cx;
-    let ymin = cy - d0 - height;
-    let xmax = cx + d0;
-    let ymax = cy + d0;
-    let dp = 5f64;
-    let _countx = ((xmax - xmin) / dp).ceil() as i32;
-    let county = ((ymax - ymin) / dp).ceil() as i32;
-    let dx = dp;
-    let dy = dp;
-    let nx = 0;
-    for ny in 0..county {
-        let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
-        let bb = LabelBoundingBox::new_blwh(tl, width, height);
-        if bb.contains((cx, cy)) {
-            continue;
+    pub fn render_model(&mut self) {
+        let model = self.model.as_ref().unwrap();
+        let mut svgpath = svg::node::element::Path::new();
+        for (k, v) in model.polyline.to_attributes().clone() {
+            svgpath = svgpath.set(k, v);
         }
-        if bb.distance((cx, cy)) < dtarget_min {
-            continue;
+        self.SD.append(svgpath);
+        let mut points_group = svg::node::element::Group::new();
+        for point in &model.points {
+            point.render_in_group(&mut points_group);
         }
-        ret.push(bb);
+        self.SD.append(points_group);
     }
-    ret
-}
 
-struct ProfileModel {
-    polyline: Polyline,
-    points: Vec<PointFeature>,
-}
-
-impl ProfileModel {
-    pub fn make(
+    pub fn add_track(
+        &mut self,
         backend: &backend::BackendData,
         segment: &segment::Segment,
         W: f64,
         H: f64,
-        render_device: RenderDevice,
+        _render_device: RenderDevice,
         _debug: bool,
-    ) -> ProfileModel {
+    ) {
         let waypoints = backend.get_waypoints();
-        let mut bbox = segment.bbox.clone();
+        let bbox = &self.bboxview;
 
-        if render_device != RenderDevice::PDF {
-            bbox.xmin = bbox.xmin.max(0f64);
-        }
+        /*if render_device != RenderDevice::PDF {
+            bbox.min.0 = bbox.min.0.max(0f64);
+        }*/
 
         let track = &backend.track;
-        let range = &segment.range;
+        let _range = &segment.range;
         let mut polyline = Polyline::new();
-        let start = track.index_after(bbox.xmin);
-        let end = track.index_before(bbox.xmax);
+        let start = track.index_after(bbox.min.0);
+        let end = track.index_before(bbox.max.0);
         for k in start..end {
             let e = track.wgs84[k].z();
             let (x, y) = (track.distance(k), e);
-            let (xg, yg) = _toSD((x, y), W, H, &bbox);
+            let (xg, yg) = self.toSD(&(x, y));
             polyline.points.push((xg, yg));
         }
 
@@ -500,10 +508,10 @@ impl ProfileModel {
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
             let info = w.info.as_ref().unwrap();
-            let index = w.track_index.unwrap();
+            let _index = w.track_index.unwrap();
             let x = info.distance;
             let y = info.elevation;
-            if !bbox.contains(x, y) {
+            if !bbox.contains(&(x, y)) {
                 continue;
             }
             if w.origin != WaypointOrigin::GPX {
@@ -512,7 +520,7 @@ impl ProfileModel {
             /*if !range.contains(&index) {
                 continue;
             }*/
-            let (xg, yg) = _toSD((x, y), W, H, &bbox);
+            let (xg, yg) = self.toSD(&(x, y));
             let mut circle = label_placement::Circle::new();
             circle.id = format!("wp-{}/circle", k);
             circle.cx = xg;
@@ -540,7 +548,7 @@ impl ProfileModel {
                 if delta > maxdelta {
                     continue;
                 }
-                if !bbox.contains(x, y) {
+                if !bbox.contains(&(x, y)) {
                     continue;
                 }
                 if w.name.is_none() {
@@ -549,7 +557,7 @@ impl ProfileModel {
                 /*if !range.contains(&w.track_index.unwrap()) {
                     continue;
                 }*/
-                let (xg, yg) = _toSD((x, y), W, H, &bbox);
+                let (xg, yg) = self.toSD(&(x, y));
                 let n = points.len();
                 let mut circle = label_placement::Circle::new();
                 let mut label = label_placement::Label::new();
@@ -589,24 +597,44 @@ impl ProfileModel {
                 placed_points.push(points[k].clone());
             }
         }
-        ProfileModel {
+        self.model = Some(ProfileModel {
             polyline,
             points: placed_points,
-        }
+        });
     }
+}
 
-    pub fn render_in_sd(self, SD: &mut svg::node::element::Group) {
-        let mut svgpath = svg::node::element::Path::new();
-        for (k, v) in self.polyline.to_attributes() {
-            svgpath = svgpath.set(k, v);
+fn generate_candidates_bboxes(point: &PointFeature) -> Vec<LabelBoundingBox> {
+    let mut ret = Vec::new();
+    let width = point.width();
+    let height = point.height();
+    let dtarget_min = 1f64;
+    let dtarget_max = 20f64;
+    let d0 = 2f64 * dtarget_max;
+    let (cx, cy) = point.center();
+    let xmin = cx;
+    let ymin = cy - d0 - height;
+    let xmax = cx + d0;
+    let ymax = cy + d0;
+    let dp = 5f64;
+    let countx = ((xmax - xmin) / dp).ceil() as i32;
+    let county = ((ymax - ymin) / dp).ceil() as i32;
+    let dx = dp;
+    let dy = dp;
+    for nx in 0..countx {
+        for ny in 0..county {
+            let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
+            let bb = LabelBoundingBox::new_blwh(tl, width, height);
+            if bb.contains((cx, cy)) {
+                continue;
+            }
+            if bb.distance((cx, cy)) < dtarget_min {
+                continue;
+            }
+            ret.push(bb);
         }
-        SD.append(svgpath);
-        let mut points_group = svg::node::element::Group::new();
-        for point in self.points {
-            point.render_in_group(&mut points_group);
-        }
-        SD.append(points_group);
     }
+    ret
 }
 
 pub fn profile(
@@ -617,11 +645,9 @@ pub fn profile(
     render_device: RenderDevice,
     debug: bool,
 ) -> String {
-    let mut view = ProfileView::init(&segment.bbox);
-    view.set_render_device(render_device.clone());
-    view.reset_size(W as f64, H as f64);
+    let mut view = ProfileView::init(&segment.bbox, W, H, render_device.clone());
     view.add_canvas();
-    let model = ProfileModel::make(
+    view.add_track(
         &backend,
         &segment,
         view.WD() as f64,
@@ -629,6 +655,6 @@ pub fn profile(
         render_device.clone(),
         debug,
     );
-    model.render_in_sd(&mut view.SD);
+    view.render_model();
     view.render()
 }

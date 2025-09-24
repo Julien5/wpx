@@ -335,6 +335,7 @@ impl BackendData {
                 break;
             }
             let bbox = ProfileBoundingBox::from_track(&self.track, &range);
+            log::debug!("segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
             ret.push(Segment::new(k, range, &bbox));
             start = start + self.parameters.segment_length - self.parameters.segment_overlap;
             k = k + 1;
@@ -381,9 +382,7 @@ impl BackendData {
         render_device: RenderDevice,
     ) -> String {
         log::info!("render_segment_track:{}", segment.id);
-        let mut profile = svgprofile::ProfileView::init(&segment.bbox);
-        profile.set_render_device(render_device);
-        profile.reset_size(W as f64, H as f64);
+        let mut profile = svgprofile::ProfileView::init(&segment.bbox, W, H, render_device);
         profile.add_yaxis_labels_overlay();
         let ret = profile.render();
         if self.get_parameters().debug {

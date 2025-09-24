@@ -5,6 +5,26 @@ set -e
 
 TYPST=/opt/typst/typst-x86_64-unknown-linux-musl/typst
 
+function segment-length() {
+	local file=$1
+	shift
+	if [[ "${file}" = *jerome* ]]; then
+		echo 35
+		return
+	fi
+	echo 110
+}
+
+function segment-overlap() {
+	local file=$1
+	shift
+	if [[ "${file}" = *jerome* ]]; then
+		echo 5
+		return
+	fi
+	echo 10
+}
+
 function pdf() {
 	echo "args:"$@
 	file=data/blackforest.gpx
@@ -18,8 +38,8 @@ function pdf() {
 	time cargo run -- \
 		  --output-directory /tmp/ \
 		  --debug true \
-		  --segment-length 100 \
-		  --segment-overlap 0 \
+		  --segment-length $(segment-length ${file}) \
+		  --segment-overlap $(segment-overlap ${file}) \
 		  "$@" \
 		  "${file}"
 	${TYPST} compile /tmp/document.typst

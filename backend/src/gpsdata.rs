@@ -1,3 +1,4 @@
+use crate::bbox::BoundingBox;
 use crate::error::Error;
 use crate::track;
 use crate::waypoint::WGS84Point;
@@ -52,21 +53,7 @@ pub fn read_segment(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
     Ok(ret)
 }
 
-#[derive(Clone)]
-pub struct ProfileBoundingBox {
-    pub xmin: f64,
-    pub xmax: f64,
-    pub ymin: f64,
-    pub ymax: f64,
-}
-
-fn snap_ceil(x: f64) -> f64 {
-    (x / 500f64).ceil() * 500f64
-}
-
-fn snap_floor(x: f64) -> f64 {
-    (x / 500f64).floor() * 500f64
-}
+pub type ProfileBoundingBox = BoundingBox;
 
 impl ProfileBoundingBox {
     pub fn from_track(track: &track::Track, range: &std::ops::Range<usize>) -> ProfileBoundingBox {
@@ -77,35 +64,9 @@ impl ProfileBoundingBox {
             ymin = y.min(ymin);
             ymax = y.max(ymax);
         }
-        let mut p = ProfileBoundingBox {
-            xmin: track.distance(range.start),
-            xmax: track.distance(range.end - 1),
-            ymin: ymin,
-            ymax: ymax,
-        };
-        p.fix_margins();
-        p
-    }
-
-    fn fix_margins(&mut self) {
-        let km = 1000f64;
-        let shift = 20f64 * km;
-        let margin = 10f64 * km;
-        self.xmin = ((self.xmin - margin) / shift).floor() * shift;
-        self.xmin = self.xmin.max(0f64);
-        self.xmax = ((self.xmax + margin) / shift).ceil() * shift;
-        self.ymin = snap_floor(self.ymin - 100f64);
-        self.ymax = snap_ceil(self.ymax + 100f64).max(snap_floor(self.ymin + 500f64));
-    }
-
-    pub fn contains(&self, x: f64, y: f64) -> bool {
-        if x < self.xmin || x > self.xmax {
-            return false;
-        }
-        if y < self.ymin || y > self.ymax {
-            return false;
-        }
-        true
+        let xmin = track.distance(range.start);
+        let xmax = track.distance(range.end - 1);
+        BoundingBox::init((xmin, ymin), (xmax, ymax))
     }
 }
 

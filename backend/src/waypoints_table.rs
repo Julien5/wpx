@@ -5,7 +5,7 @@ use crate::waypoint;
 
 pub fn shows_waypoint(w: &waypoint::Waypoint, bbox: &gpsdata::ProfileBoundingBox) -> bool {
     let distance = w.info.as_ref().unwrap().distance;
-    bbox.xmin <= distance && distance <= bbox.xmax
+    bbox.min.0 <= distance && distance <= bbox.max.0
 }
 
 pub fn show_waypoints_in_table(
