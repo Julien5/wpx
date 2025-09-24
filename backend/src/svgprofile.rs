@@ -4,18 +4,13 @@ use std::str::FromStr;
 
 use crate::backend;
 use crate::bbox::BoundingBox;
-use crate::elevation;
 use crate::gpsdata::distance_wgs84;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::label_placement;
 use crate::label_placement::bbox::LabelBoundingBox;
-use crate::label_placement::set_attr;
-use crate::label_placement::Attributes;
-use crate::label_placement::PointFeature;
-use crate::label_placement::Polyline;
+use crate::label_placement::*;
 use crate::render_device::RenderDevice;
 use crate::segment;
-use crate::track;
 use crate::waypoint::WaypointOrigin;
 use crate::waypoints_table;
 use svg::Node;
@@ -101,24 +96,6 @@ fn texty_overlay(label: &str, pos: (f64, f64)) -> Text {
     ret
 }
 
-fn _slope(track: &track::Track, smooth: &Vec<f64>) -> Vec<f64> {
-    let mut ret = Vec::new();
-    debug_assert!(track.wgs84.len() == smooth.len());
-    debug_assert!(!smooth.is_empty());
-    for k in 0..(track.len() - 1) {
-        let dx = track.distance(k) - track.distance(k - 1);
-        let dy = smooth[k] - smooth[k + 1];
-        let slope = match dx {
-            0f64 => 0f64,
-            _ => 100f64 * dy / dx,
-        };
-        ret.push(slope);
-    }
-    ret.push(0f64);
-    debug_assert!(track.wgs84.len() == ret.len());
-    elevation::smooth(track, 1000f64, |index: usize| -> f64 { ret[index] })
-}
-
 fn snap_ceil(x: f64, step: f64) -> f64 {
     (x / step).ceil() * step
 }
@@ -126,8 +103,6 @@ fn snap_ceil(x: f64, step: f64) -> f64 {
 fn snap_floor(x: f64, step: f64) -> f64 {
     (x / step).floor() * step
 }
-
-/* *** */
 
 fn xtick_delta(bbox: &ProfileBoundingBox, W: f64) -> f64 {
     let min = 50f64 * bbox.width() / W;
@@ -146,7 +121,7 @@ fn xticks_all(bbox: &ProfileBoundingBox, W: f64) -> Vec<f64> {
     let delta = xtick_delta(bbox, W);
     let mut start = snap_floor(bbox.min.0, delta);
     start = start.max(0f64);
-    let mut stop = snap_ceil(bbox.max.0, delta);
+    let stop = snap_ceil(bbox.max.0, delta);
     let mut p = start;
     while p <= stop {
         ret.push(p);
@@ -190,7 +165,6 @@ fn ytick_delta(bbox: &ProfileBoundingBox, H: f64) -> f64 {
 
 fn yticks_all(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
     let mut ret = Vec::new();
-    let _D = bbox.max.1 - bbox.min.1;
     let delta = ytick_delta(bbox, H);
     let mut start = snap_floor(bbox.min.1, delta) - delta;
     start = start.max(0f64);

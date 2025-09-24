@@ -50,7 +50,13 @@ class RootModel extends ChangeNotifier {
   }
 
   Future<void> loadContent(List<int> bytes) async {
+    developer.log("load ${bytes.length} bytes");
     await _bridge.loadContent(content: bytes);
+  }
+
+  Future<void> loadFilename(String filename) async {
+    developer.log("load $filename");
+    await _bridge.loadFilename(filename: filename);
   }
 
   bridge.Parameters parameters() {
@@ -70,7 +76,7 @@ class RootModel extends ChangeNotifier {
   }
 
   void updateSegments() {
-    assert(_segments.isEmpty);
+    _segments.clear();
     var segments = _bridge.segments();
 
     for (var segment in segments) {

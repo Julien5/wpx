@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_drawing/path_drawing.dart';
@@ -294,7 +295,7 @@ class TextElement extends Element {
       textAlign = readTextAlign(attribute("text-anchor")!);
     }
     if (attribute("font-size") != null) {
-      fontSize = double.parse(attribute("font-size").toString());
+      fontSize = (double.parse(attribute("font-size").toString())*0.8).floorToDouble();
     }
     if (attribute("x") != null) {
       x = double.parse(attribute("x").toString());
@@ -312,7 +313,7 @@ class TextElement extends Element {
         style: TextStyle(
           color: Colors.black,
           fontSize: fontSize,
-          fontFamily: "monospace",
+          fontFamily: "sans"
         ),
       ),
       textDirection: TextDirection.ltr,
