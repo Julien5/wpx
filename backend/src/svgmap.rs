@@ -2,12 +2,12 @@
 
 use std::str::FromStr;
 
+use crate::backend;
 use crate::bbox::BoundingBox;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::{Circle, Label, Polyline};
 use crate::utm::UTMPoint;
 use crate::waypoint::{WGS84Point, WaypointOrigin};
-use crate::{backend, waypoints_table};
 use crate::{segment, utm};
 
 use svg::Document;
@@ -131,7 +131,6 @@ impl MapData {
         set_attr(&mut document, "width", format!("{}", W).as_str());
         set_attr(&mut document, "height", format!("{}", H).as_str());
 
-        let V = waypoints_table::show_waypoints_in_table(&waypoints, &segment.bbox);
         let mut points = Vec::new();
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
@@ -152,7 +151,7 @@ impl MapData {
             circle.cy = y;
             let id = format!("wp-{}", k);
             let mut label = Label::new();
-            if V.contains(&k) {
+            if segment.shows_waypoint(&w) {
                 label.set_text(w.info.as_ref().unwrap().profile_label().trim());
                 label.id = format!("wp-{}/text", k);
             } else {

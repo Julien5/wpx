@@ -1,4 +1,3 @@
-mod automatic;
 pub mod backend;
 mod bbox;
 mod bboxes;
@@ -12,7 +11,6 @@ pub mod parameters;
 mod pdf;
 mod project;
 mod render;
-pub mod render_device;
 mod segment;
 mod speed;
 mod svgmap;
@@ -20,5 +18,3 @@ mod svgprofile;
 mod track;
 pub mod utm;
 pub mod waypoint;
-mod waypoint_values;
-mod waypoints_table;

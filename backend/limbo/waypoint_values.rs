@@ -7,7 +7,7 @@ use crate::waypoint::Waypoints;
 
 type Values = HashMap<usize, usize>;
 
-pub fn hard_value(waypoints: &Waypoints, _track: &track::Track, index: usize) -> Option<usize> {
+fn hard_value(waypoints: &Waypoints, _track: &track::Track, index: usize) -> Option<usize> {
     let L = waypoints.len();
     let w = &waypoints[index];
     let mut ret = 0;
@@ -115,7 +115,7 @@ fn set_soft_value(
     values.insert(kdmax, value);
 }
 
-pub fn compute_values(waypoints: &mut Waypoints, track: &track::Track) {
+pub fn _compute_values(waypoints: &mut Waypoints, track: &track::Track) {
     let mut values = Values::new();
     let mut max_value = 0;
     let L = waypoints.len();

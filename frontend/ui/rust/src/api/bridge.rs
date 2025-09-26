@@ -7,7 +7,6 @@ pub use std::ops::Range;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
 pub use tracks::parameters::Parameters;
-pub use tracks::render_device::RenderDevice;
 pub use tracks::waypoint::WGS84Point;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
@@ -173,7 +172,7 @@ impl Bridge {
         //std::thread::sleep(delay);
         println!("{}x{}", W, H);
         self.backend
-            .render_segment_what(&segment._impl, what, (W, H), RenderDevice::Native)
+            .render_segment_what(&segment._impl, what, (W, H))
     }
     #[frb(sync)]
     pub fn renderSegmentWhatSync(
@@ -187,7 +186,7 @@ impl Bridge {
         //std::thread::sleep(delay);
         println!("{}x{}", W, H);
         self.backend
-            .render_segment_what(&segment._impl, what, (W, H), RenderDevice::Native)
+            .render_segment_what(&segment._impl, what, (W, H))
     }
     #[frb(sync)]
     pub fn statistics(&self) -> SegmentStatistics {

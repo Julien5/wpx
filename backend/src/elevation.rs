@@ -35,6 +35,22 @@ pub fn smooth_elevation(track: &track::Track, W: f64) -> Vec<f64> {
     smooth(track, W, |index: usize| -> f64 { track.elevation(index) })
 }
 
+pub fn elevation_gain(smooth: &Vec<f64>, from: usize, to: usize) -> f64 {
+    // log::trace!("{} - {} / {}", from, to, smooth.len());
+    debug_assert!(from <= to);
+    let mut ret = 0f64;
+    for k in from..to {
+        if k == 0 {
+            continue;
+        }
+        let d = smooth[k] - smooth[k - 1];
+        if d > 0f64 {
+            ret += d;
+        }
+    }
+    ret
+}
+
 #[cfg(test)]
 mod tests {
     use crate::backend;

@@ -1,7 +1,6 @@
 #![allow(non_snake_case)]
 
 use crate::backend::BackendData;
-use crate::render_device::RenderDevice;
 use crate::svgmap;
 use crate::{track, waypoint};
 
@@ -108,9 +107,10 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         if range.is_empty() {
             break;
         }
-        let waypoints_table = backend.get_waypoint_table(&segment);
+        let mut waypoints_table = backend.get_waypoint_table(&segment);
+        waypoints_table.truncate(15);
         let table = points_table(&templates, &backend.track, &waypoints_table);
-        let p = backend.render_segment(segment, (W, H), RenderDevice::PDF);
+        let p = backend.render_segment(segment, (W, H));
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);
             std::fs::write(&f, &p).unwrap();

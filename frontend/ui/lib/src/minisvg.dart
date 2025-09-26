@@ -289,7 +289,7 @@ class TextElement extends Element {
   TextElement(super.xmlElement, super.parent) {
     text = super._xmlElement.innerText.trim();
     textAlign = TextAlign.center;
-    fontSize = 12.0;
+    fontSize = 32.0;
     x = y = 0;
     if (attribute("text-anchor") != null) {
       textAlign = readTextAlign(attribute("text-anchor")!);
@@ -313,7 +313,6 @@ class TextElement extends Element {
         style: TextStyle(
           color: Colors.black,
           fontSize: fontSize,
-          fontFamily: "sans"
         ),
       ),
       textDirection: TextDirection.ltr,

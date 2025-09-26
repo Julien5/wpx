@@ -9,10 +9,8 @@ use crate::gpsdata::ProfileBoundingBox;
 use crate::label_placement;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::*;
-use crate::render_device::RenderDevice;
 use crate::segment;
 use crate::waypoint::WaypointOrigin;
-use crate::waypoints_table;
 use svg::Node;
 
 type Data = svg::node::element::path::Data;
@@ -152,8 +150,8 @@ fn xticks(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
 
 /* ** */
 
-fn ytick_delta(bbox: &ProfileBoundingBox, H: f64) -> f64 {
-    let min = 20f64 * bbox.height() / H;
+fn ytick_delta(height: &f64, H: f64) -> f64 {
+    let min = 20f64 * height / H;
     for candidate in [10, 20, 50, 100, 200, 250, 500, 1000] {
         let ret = candidate as f64;
         if ret > min {
@@ -165,11 +163,11 @@ fn ytick_delta(bbox: &ProfileBoundingBox, H: f64) -> f64 {
 
 fn yticks_all(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
     let mut ret = Vec::new();
-    let delta = ytick_delta(bbox, H);
+    let delta = ytick_delta(&bbox.height().max(750f64), H);
     let mut start = snap_floor(bbox.min.1, delta) - delta;
     start = start.max(0f64);
     let mut stop = snap_ceil(bbox.max.1, delta) + 2f64 * delta;
-    while stop - start < 200f64 {
+    while stop - start < 750f64 {
         start -= delta;
         start = start.max(0f64);
         stop += delta;
@@ -219,8 +217,6 @@ pub struct ProfileView {
     pub SD: Group,
     pub bboxdata: gpsdata::ProfileBoundingBox,
     pub bboxview: gpsdata::ProfileBoundingBox,
-    render_device: RenderDevice,
-    font_size_factor: f64,
     frame_stroke_width: f64,
     model: Option<ProfileModel>,
 }
@@ -234,26 +230,11 @@ fn fix_ymargins(bbox: &ProfileBoundingBox, H: f64) -> ProfileBoundingBox {
 }
 
 impl ProfileView {
-    pub fn init(
-        bbox: &gpsdata::ProfileBoundingBox,
-        _W: i32,
-        _H: i32,
-        render_device: RenderDevice,
-    ) -> ProfileView {
+    pub fn init(bbox: &gpsdata::ProfileBoundingBox, _W: i32, _H: i32) -> ProfileView {
         let W = _W as f64;
         let H = _H as f64;
-        let mut Mleft = (W * 0.05f64).floor() as f64;
-        let mut font_size_factor = 1f64;
+        let Mleft = (W * 0.05f64).floor() as f64;
         let Mbottom = (H / 10f64).floor() as f64;
-        match render_device {
-            RenderDevice::Native => {
-                font_size_factor = 0.5f64;
-                Mleft = 0f64; // hide ylabels
-            }
-            _ => {
-                font_size_factor = 0.6f64;
-            }
-        }
 
         ProfileView {
             W,
@@ -272,8 +253,6 @@ impl ProfileView {
             SD: Group::new()
                 .set("id", "SD")
                 .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft)),
-            render_device,
-            font_size_factor,
             frame_stroke_width: 3f64,
             model: None,
         }
@@ -311,9 +290,9 @@ impl ProfileView {
 
     fn font_size(&self) -> f64 {
         if self.W < 750f64 {
-            24f64 * self.font_size_factor
+            12f64
         } else {
-            30f64 * self.font_size_factor
+            18f64
         }
     }
 
@@ -322,7 +301,6 @@ impl ProfileView {
         let mut world = Group::new()
             .set("id", "world")
             .set("shape-rendering", "crispEdges")
-            .set("font-family", "Libertinus Serif")
             .set("font-size", format!("{}", font_size));
         world.append(self.BG.clone());
         let mut Woutput = self.W;
@@ -333,7 +311,6 @@ impl ProfileView {
             world.append(self.SL.clone());
         } else {
             // case render yaxis overlay
-            debug_assert!(self.render_device != RenderDevice::PDF);
             world.append(self.SL.clone());
             Woutput = 50f64;
         }
@@ -363,10 +340,6 @@ impl ProfileView {
     pub fn add_canvas(&mut self) {
         let WD = self.WD();
         let HD = self.HD();
-        if self.render_device != RenderDevice::PDF {
-            self.SD
-                .append(bbrect("bg", "lightgray", (0f64, 0f64), (WD, HD)));
-        }
         let stroke_widths = format!("{}", self.frame_stroke_width);
         let stroke_width = stroke_widths.as_str();
         self.SD
@@ -395,7 +368,7 @@ impl ProfileView {
             self.SD.append(stroke("1", (xg, 0f64), (xg, HD)));
             self.SB.append(textx(
                 format!("{}", (xtick / 1000f64).floor() as f64).as_str(),
-                (xg, 2f64 + 25f64 * self.font_size_factor),
+                (xg, 2f64 + 15f64),
             ));
         }
 
@@ -446,7 +419,6 @@ impl ProfileView {
         segment: &segment::Segment,
         W: f64,
         H: f64,
-        _render_device: RenderDevice,
         _debug: bool,
     ) {
         let waypoints = backend.get_waypoints();
@@ -477,7 +449,6 @@ impl ProfileView {
         set_attr(&mut document, "width", format!("{W}").as_str());
         set_attr(&mut document, "height", format!("{H}").as_str());
 
-        let V = waypoints_table::show_waypoints_in_table(&waypoints, &segment.bbox);
         let mut points = Vec::new();
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
@@ -501,7 +472,7 @@ impl ProfileView {
             circle.cy = yg;
             let id = format!("wp-{}", k);
             let mut label = label_placement::Label::new();
-            if V.contains(&k) {
+            if segment.shows_waypoint(&w) {
                 label.set_text(w.info.as_ref().unwrap().profile_label().trim());
                 label.id = format!("wp-{}/text", k);
             } else {
@@ -616,17 +587,15 @@ pub fn profile(
     segment: &segment::Segment,
     W: i32,
     H: i32,
-    render_device: RenderDevice,
     debug: bool,
 ) -> String {
-    let mut view = ProfileView::init(&segment.bbox, W, H, render_device.clone());
+    let mut view = ProfileView::init(&segment.bbox, W, H);
     view.add_canvas();
     view.add_track(
         &backend,
         &segment,
         view.WD() as f64,
         view.HD() as f64,
-        render_device.clone(),
         debug,
     );
     view.render_model();

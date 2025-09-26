@@ -2,13 +2,10 @@
 
 use crate::osm::OSMWaypoints;
 use crate::parameters;
+use crate::parameters::Parameters;
 use crate::track;
 use crate::waypoint;
-use crate::waypoint::Waypoint;
-use crate::waypoint::WaypointOrigin;
-
-type Waypoints = Vec<Waypoint>;
-type Parameters = parameters::Parameters;
+use crate::waypoint::*;
 
 fn order(ret: &mut Waypoints, track: &track::Track) {
     // TODO: avoid re-computation of the tree
@@ -199,7 +196,7 @@ fn select_osm(osm: &OSMWaypoints, track: &track::Track) -> Waypoints {
     ret
 }
 
-pub fn generate(
+pub fn _generate(
     track: &track::Track,
     waypoints: &Waypoints,
     osm: &OSMWaypoints,

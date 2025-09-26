@@ -1,6 +1,5 @@
 use crate::gpsdata;
 use crate::waypoint;
-use crate::waypoints_table;
 
 #[derive(Clone)]
 pub struct Segment {
@@ -15,9 +14,6 @@ impl Segment {
             Some(index) => self.range.contains(&index),
             _ => false,
         }
-    }
-    pub fn show_waypoints_in_table(&self, waypoints: &Vec<waypoint::Waypoint>) -> Vec<usize> {
-        waypoints_table::show_waypoints_in_table(&waypoints, &self.bbox)
     }
 }
 
