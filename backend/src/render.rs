@@ -117,7 +117,15 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         }
         let Wm = 400i32;
         let Hm = 400i32;
-        let m = svgmap::map(&backend, &segment, Wm, Hm, debug);
+        let m = svgmap::map(
+            &backend.track,
+            &backend.inputpoints,
+            &backend.select_points_for_map(),
+            &segment,
+            Wm,
+            Hm,
+            debug,
+        );
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();

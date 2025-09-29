@@ -6,14 +6,16 @@ use crate::gpsdata;
 use crate::gpsdata::distance_wgs84;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::gpxexport;
+use crate::inputpoint::InputPoint;
+use crate::inputpoint::InputPoints;
+use crate::inputpoint::InputType;
 use crate::osm;
-use crate::osm::OSMWaypoints;
 use crate::parameters::Parameters;
 use crate::pdf;
+use crate::profile;
 use crate::project;
 use crate::render;
 use crate::svgmap;
-use crate::svgprofile;
 use crate::track;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
@@ -25,8 +27,7 @@ pub type SegmentStatistics = crate::segment::SegmentStatistics;
 pub struct BackendData {
     pub parameters: Parameters,
     pub track: track::Track,
-    pub gpxwaypoints: Waypoints,
-    pub osmwaypoints: OSMWaypoints,
+    pub inputpoints: InputPoints,
     pub track_smooth_elevation: Vec<f64>,
 }
 
@@ -130,24 +131,25 @@ impl Backend {
         };
         let default_params = Parameters::default();
         self.send(&"read waypoints".to_string()).await;
-        let mut gpxwaypoints = gpsdata::read_waypoints(&gpx);
-        project::project_on_track(&track, &mut gpxwaypoints);
+
         self.send(&"download osm data".to_string()).await;
-        let osmwaypoints = osm::download_for_track(&track, 1000f64).await;
+        let mut inputpoints = osm::download_for_track(&track).await;
+        inputpoints
+            .points
+            .extend_from_slice(&gpsdata::read_waypoints(&gpx));
+        project::project_on_track::<InputPoint>(&track, &mut inputpoints.points);
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
-        let mut data = BackendData {
+        let data = BackendData {
             track_smooth_elevation: elevation::smooth_elevation(
                 &track,
                 default_params.smooth_width,
             ),
             track,
-            gpxwaypoints,
-            osmwaypoints,
+            inputpoints,
             parameters,
         };
         self.send(&"update waypoints".to_string()).await;
-        data.update_waypoints();
         self.backend_data = Some(data);
         self.send(&"done".to_string()).await;
         Ok(())
@@ -172,21 +174,26 @@ impl BackendData {
     pub fn get_parameters(self: &BackendData) -> Parameters {
         self.parameters.clone()
     }
-    fn update_waypoints(&mut self) {
+    fn export_points(&self) -> Waypoints {
+        let mut ret = Waypoints::new();
+        let subset = self.select_points_for_profile();
+        for k in subset {
+            ret.push(self.inputpoints.points[k].waypoint());
+        }
+        project::project_on_track::<Waypoint>(&self.track, &mut ret);
+        ret.retain(|w| w.track_index.is_some());
+        ret.sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
         WaypointInfo::make_waypoint_infos(
-            &mut self.gpxwaypoints,
+            &mut ret,
             &self.track,
             &self.track_smooth_elevation,
             &self.parameters.start_time,
             &self.parameters.speed,
         );
-        for w in &self.gpxwaypoints {
-            debug_assert!(w.get_track_index() < self.track.len());
-        }
-        log::info!("generated {} waypoints", self.gpxwaypoints.len());
+        ret
     }
     pub fn get_waypoints(&self) -> Vec<Waypoint> {
-        return self.gpxwaypoints.clone();
+        self.export_points()
     }
 
     pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {
@@ -196,27 +203,10 @@ impl BackendData {
         }
         self.track_smooth_elevation =
             elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
-        self.update_waypoints();
     }
 
     pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {
-        let mut waypoints = self.gpxwaypoints.clone();
-        for (_kind, points) in &self.osmwaypoints {
-            waypoints.extend_from_slice(points);
-        }
-        waypoints.retain(|w| {
-            let p = &self.track.wgs84[w.track_index.unwrap()];
-            let q = &w.wgs84;
-            distance_wgs84(p, q) < 250f64
-        });
-        waypoints.sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
-        WaypointInfo::make_waypoint_infos(
-            &mut waypoints,
-            &self.track,
-            &self.track_smooth_elevation,
-            &self.parameters.start_time,
-            &self.parameters.speed,
-        );
+        let mut waypoints = self.export_points();
         waypoints.retain(|w| segment.shows_waypoint(&w));
         waypoints
     }
@@ -241,9 +231,10 @@ impl BackendData {
             if range.is_empty() {
                 break;
             }
-            let bbox = ProfileBoundingBox::from_track(&self.track, &range);
+            let profile_bbox = ProfileBoundingBox::from_track(&self.track, &range);
+            let map_bbox = svgmap::bounding_box(&self.track, &range);
             log::debug!("segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
-            ret.push(Segment::new(k, range, &bbox));
+            ret.push(Segment::new(k, range, &profile_bbox, &map_bbox));
             start = start + self.parameters.segment_length - self.parameters.segment_overlap;
             k = k + 1;
         }
@@ -266,10 +257,87 @@ impl BackendData {
             }
         }
     }
+
+    // use segment ?
+    fn select_points_for_profile(&self) -> Vec<usize> {
+        let mut ret = Vec::new();
+        let points = &self.inputpoints.points;
+        for k in 0..points.len() {
+            let p = &points[k];
+            // use only if there are no other points shown
+            if p.kind() == InputType::Hamlet {
+                continue;
+            }
+            if p.kind() == InputType::GPX {
+                ret.push(k);
+                continue;
+            }
+            let mut distance = f64::MAX;
+            match p.track_index {
+                Some(index) => {
+                    let ptrack = &self.track.wgs84[index];
+                    distance = distance_wgs84(ptrack, &p.wgs84);
+                }
+                None => {}
+            }
+            if distance < 500f64 {
+                ret.push(k);
+                continue;
+            }
+            if p.population().is_some() {
+                let pop = p.population().unwrap();
+                if pop > 100000 && distance < 5000f64 {
+                    ret.push(k);
+                    continue;
+                }
+                if pop > 10000 && distance < 2000f64 {
+                    ret.push(k);
+                    continue;
+                }
+                if pop > 1000 && distance < 1000f64 {
+                    ret.push(k);
+                    continue;
+                }
+            }
+            if distance < 500f64 {
+                ret.push(k);
+                continue;
+            }
+        }
+        ret
+    }
+
+    pub fn select_points_for_map(&self) -> Vec<usize> {
+        let mut ret = Vec::new();
+        let profile_indices = self.select_points_for_profile();
+        let points = &self.inputpoints.points;
+        for k in 0..points.len() {
+            if profile_indices.contains(&k) {
+                ret.push(k);
+                continue;
+            }
+            let p = &points[k];
+            if p.kind() == InputType::City {
+                ret.push(k);
+                continue;
+            }
+        }
+        ret
+    }
+
     pub fn render_segment(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         log::info!("render_segment:{}", segment.id);
         let debug = self.get_parameters().debug;
-        let ret = svgprofile::profile(&self, &segment, W, H, debug);
+        let subset = self.select_points_for_profile();
+        let ret = profile::profile(
+            &self.track,
+            &self.inputpoints,
+            &subset,
+            &segment,
+            W,
+            H,
+            debug,
+        );
         if self.get_parameters().debug {
             let filename = std::format!("/tmp/profile-{}.svg", segment.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
@@ -278,7 +346,7 @@ impl BackendData {
     }
     fn render_yaxis_labels_overlay(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         log::info!("render_segment_track:{}", segment.id);
-        let mut profile = svgprofile::ProfileView::init(&segment.bbox, W, H);
+        let mut profile = profile::ProfileView::init(&segment.profile_bbox, W, H);
         profile.add_yaxis_labels_overlay();
         let ret = profile.render();
         if self.get_parameters().debug {
@@ -289,7 +357,16 @@ impl BackendData {
     }
     pub fn render_segment_map(&self, segment: &Segment, (W, H): (i32, i32)) -> String {
         let debug = self.get_parameters().debug;
-        let ret = svgmap::map(&self, &segment, W, H, debug);
+        let subset = self.select_points_for_map();
+        let ret = svgmap::map(
+            &self.track,
+            &self.inputpoints,
+            &subset,
+            &segment,
+            W,
+            H,
+            debug,
+        );
         if self.get_parameters().debug {
             let filename = std::format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
@@ -324,8 +401,8 @@ impl BackendData {
         ret
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
-        log::info!("export {} waypoints", self.gpxwaypoints.len());
-        gpxexport::generate(&self.track, &self.gpxwaypoints)
+        log::info!("export {} waypoints", self.inputpoints.points.len());
+        gpxexport::generate(&self.track, &self.inputpoints)
     }
 }
 

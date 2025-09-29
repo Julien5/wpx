@@ -7,10 +7,10 @@ pub use std::ops::Range;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
 pub use tracks::parameters::Parameters;
-pub use tracks::waypoint::WGS84Point;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
 pub use tracks::waypoint::WaypointOrigin;
+pub use tracks::wgs84point::WGS84Point;
 
 pub use tracks::backend::Segment as SegmentImplementation;
 

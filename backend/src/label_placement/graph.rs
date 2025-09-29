@@ -1,5 +1,6 @@
 use super::candidate::Candidate;
 use super::candidate::Candidates;
+use super::PointFeature;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 
@@ -12,6 +13,7 @@ type Map = BTreeMap<Node, Edges>;
 pub struct Graph {
     pub map: Map,
     pub candidates: CandidateMap,
+    pub features: Vec<PointFeature>,
 }
 
 impl Graph {
@@ -19,6 +21,7 @@ impl Graph {
         Self {
             map: Map::new(),
             candidates: CandidateMap::new(),
+            features: Vec::new(),
         }
     }
     fn intersect(&self, a: &Node, b: &Node) -> bool {
@@ -75,32 +78,36 @@ impl Graph {
             // remove candidates of b that overlap with the
             // selected a candidate
             let neighbors_candidates = self.candidates.get_mut(&b).unwrap();
-            for cb in neighbors_candidates.clone() {
-                if selected.bbox.overlap(&cb.bbox) {
-                    //log::info!("remove candidate of {b} because of overlap: {}", cb.bbox);
-                }
+            /*
+                for cb in neighbors_candidates.clone() {
+                    if selected.bbox.overlap(&cb.bbox) {
+                        log::info!("remove candidate of {b} because of overlap: {}", cb.bbox);
+                    }
             }
+                */
+            assert!(!neighbors_candidates.is_empty());
+            let first = neighbors_candidates.first().unwrap().clone();
             neighbors_candidates.retain(|cb| !selected.bbox.overlap(&cb.bbox));
+            if neighbors_candidates.is_empty() {
+                neighbors_candidates.push(first);
+            }
         }
         // remove a
         self.remove_node(a);
     }
     pub fn max_node(&self) -> Node {
-        *self
+        assert!(!self.map.is_empty());
+        let node = *self
             .map
             .iter()
             .map(|(node, edges)| (node, edges.len()))
             .max_by_key(|(_node, len)| *len)
             .unwrap()
-            .0
+            .0;
+        node
     }
 
-    pub fn candidate_blocks_other(
-        &self,
-        node: &Node,
-        candidate_index: usize,
-        other: &Node,
-    ) -> bool {
+    fn candidate_blocks_other(&self, node: &Node, candidate_index: usize, other: &Node) -> bool {
         let this_candidate = &self.candidates.get(node).unwrap()[candidate_index];
         let other_candidates = &self.candidates.get(other).unwrap();
         let other_has_label = !other_candidates.is_empty();
@@ -116,7 +123,7 @@ impl Graph {
         true
     }
 
-    pub fn candidate_blocks_any(&self, node: &Node, candidate_index: usize) -> Option<Node> {
+    fn candidate_blocks_any(&self, node: &Node, candidate_index: usize) -> Option<Node> {
         let nodes: Vec<_> = self.map.keys().collect();
         for other in nodes {
             if other == node {
@@ -132,7 +139,14 @@ impl Graph {
     pub fn solve(&mut self) -> HashMap<Node, Candidate> {
         let mut ret = HashMap::new();
         while !self.map.is_empty() {
+            //log::trace!("selecting..");
             let m = self.max_node();
+            /*log::trace!(
+                "placing:{} ({} conflict edges) (priority {})",
+                &self.features[m].label.text,
+                self.map.get(&m).unwrap().len(),
+                &self.features[m].priority
+            );*/
             match self.best_candidate_for_node(&m) {
                 Some(best_index) => {
                     let candidates = self.candidates.get(&m).unwrap();
@@ -141,6 +155,7 @@ impl Graph {
                     self.select(&m, &best_candidate);
                 }
                 None => {
+                    assert!(false);
                     self.remove_node(&m);
                 }
             }
@@ -148,24 +163,45 @@ impl Graph {
         ret
     }
 
-    pub fn best_candidate_for_node(&self, node: &Node) -> Option<usize> {
+    pub fn _debug(&self) {
+        let nodes: Vec<_> = self.candidates.keys().cloned().collect();
+        for node in nodes {
+            let candidates = self.candidates.get(&node).unwrap();
+            let rcand = self.map.get(&node);
+            let edged_candidates = match rcand {
+                None => 0,
+                Some(list) => list.len(),
+            };
+            log::debug!(
+                "[{}] => {} candidates (edges:{})",
+                self.features[node].text(),
+                candidates.len(),
+                edged_candidates
+            );
+        }
+    }
+
+    fn best_candidate_for_node(&self, node: &Node) -> Option<usize> {
         match self.candidates.get(node) {
             Some(candidates) => {
                 if candidates.is_empty() {
+                    assert!(false);
                     return None;
                 }
                 let mut sorted: Vec<_> = (0..candidates.len()).collect();
+                //log::trace!("sort candidates..");
                 sorted.sort_by(|i, j| {
                     let ci = &candidates[*i];
                     let cj = &candidates[*j];
                     assert!(ci.partial_cmp(cj).is_some());
                     ci.partial_cmp(cj).unwrap()
                 });
+                //log::trace!("select one candidate");
                 for index in 0..sorted.len() {
                     match self.candidate_blocks_any(node, index) {
                         Some(_other_node) => {
                             /*log::info!(
-                                "[node:{node:2}] [candidate:{index:2}] blocks [{other_node:2}]"
+                                "[node:{node:2}] [candidate:{index:2}] blocks [{_other_node:2}]"
                             );*/
                             continue;
                         }
@@ -177,8 +213,8 @@ impl Graph {
                     );*/
                     return Some(index);
                 }
-                //log::info!("all candidates of {node} block some other.");
-                None
+                log::info!("all candidates of {node} block some other => take the first one");
+                return Some(0);
             }
             _ => {
                 //log::info!("{node} has no candidate.");

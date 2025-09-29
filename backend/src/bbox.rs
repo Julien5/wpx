@@ -91,6 +91,27 @@ impl BoundingBox {
         }
         return true;
     }
+    pub fn points(&self) -> [(f64, f64); 4] {
+        [
+            self.min(),
+            self.max(),
+            (self.min.0, self.max.1),
+            (self.min.1, self.max.0),
+        ]
+    }
+    pub fn hits_other(&self, other: &Self) -> bool {
+        for p in other.points() {
+            if self.contains(&p) {
+                return true;
+            }
+        }
+        for p in self.points() {
+            if other.contains(&p) {
+                return true;
+            }
+        }
+        false
+    }
     pub fn enlarge(&mut self, delta: &f64) {
         self.min.0 -= delta;
         self.min.1 -= delta;
@@ -101,11 +122,11 @@ impl BoundingBox {
 
 impl fmt::Debug for BoundingBox {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("WGS84BoundingBox")
-            .field("minlon", &self.min.0)
-            .field("minlat", &self.min.1)
-            .field("maxlon", &self.max.0)
-            .field("maxlat", &self.max.1)
+        f.debug_struct("BoundingBox")
+            .field("min.0", &self.min.0)
+            .field("min.1", &self.min.1)
+            .field("max.0", &self.max.0)
+            .field("max.1", &self.max.1)
             .finish()
     }
 }

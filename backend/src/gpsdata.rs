@@ -1,9 +1,8 @@
 use crate::bbox::BoundingBox;
 use crate::error::Error;
+use crate::inputpoint::InputPoint;
 use crate::track;
-use crate::waypoint::WGS84Point;
-use crate::waypoint::Waypoint;
-use crate::waypoint::Waypoints;
+use crate::wgs84point::WGS84Point;
 use geo::Distance;
 
 pub fn distance_wgs84(p1: &WGS84Point, p2: &WGS84Point) -> f64 {
@@ -70,11 +69,15 @@ impl ProfileBoundingBox {
     }
 }
 
-pub fn read_waypoints(gpx: &gpx::Gpx) -> Waypoints {
+pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<InputPoint> {
     let mut ret = Vec::new();
-    // TODO: remove proj4 duplicate
     for w in &gpx.waypoints {
-        ret.push(Waypoint::from_gpx(w, w.name.clone(), w.description.clone()));
+        let (lon, lat) = w.point().x_y();
+        ret.push(InputPoint::from_gpx(
+            &WGS84Point::new(&lon, &lat, &0f64),
+            &w.name,
+            &w.description,
+        ));
     }
     ret
 }

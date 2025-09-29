@@ -1,36 +1,6 @@
 use std::str::FromStr;
 
-use crate::{elevation, track};
-
-#[derive(Clone, Debug)]
-pub struct WGS84Point(f64, f64, f64);
-
-impl WGS84Point {
-    pub fn new(lon: &f64, lat: &f64, ele: &f64) -> WGS84Point {
-        WGS84Point(*lon, *lat, *ele)
-    }
-    pub fn from_xy(xy: &(f64, f64)) -> WGS84Point {
-        WGS84Point(xy.0, xy.1, 0f64)
-    }
-    pub fn x(&self) -> f64 {
-        return self.0;
-    }
-    pub fn y(&self) -> f64 {
-        return self.1;
-    }
-    pub fn z(&self) -> f64 {
-        return self.2;
-    }
-    pub fn xy(&self) -> (f64, f64) {
-        (self.0, self.1)
-    }
-    pub fn latitude(&self) -> f64 {
-        return self.y();
-    }
-    pub fn longitude(&self) -> f64 {
-        return self.x();
-    }
-}
+use crate::{elevation, track, wgs84point::WGS84Point};
 
 #[derive(Clone, PartialEq)]
 pub enum WaypointOrigin {
@@ -127,7 +97,7 @@ impl Waypoint {
     }
 
     pub fn elevation(&self) -> f64 {
-        self.wgs84.2
+        self.wgs84.z()
     }
 }
 

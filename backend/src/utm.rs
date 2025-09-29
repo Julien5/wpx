@@ -1,4 +1,4 @@
-use crate::waypoint::WGS84Point;
+use crate::wgs84point::WGS84Point;
 
 pub type DateTime = chrono::DateTime<chrono::Utc>;
 

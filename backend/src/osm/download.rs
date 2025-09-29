@@ -1,7 +1,11 @@
 use reqwest::Client;
 use serde_json::Value;
 
-use super::osmpoint::*;
+use crate::{
+    inputpoint::{InputPoint, InputPoints, Tags},
+    wgs84point::WGS84Point,
+};
+
 use log;
 
 async fn dl_worker(req: &str) -> Option<String> {
@@ -46,22 +50,20 @@ async fn dl_worker(req: &str) -> Option<String> {
     }
 }
 
-pub async fn places(bbox: &str, place: &str) -> Option<String> {
+pub async fn all(bbox: &str) -> Option<String> {
     let timeout = 250;
-    let req = format!(
-        "[out:json][timeout:{}];nwr[\"place\"=\"{}\"]{};out geom;",
-        timeout, place, bbox
-    );
-    dl_worker(&req).await
-}
-
-pub async fn passes(bbox: &str) -> Option<String> {
-    let timeout = 250;
-    let req = format!(
-        "[out:json][timeout:{}];node[mountain_pass=\"yes\"]{};out geom;",
-        timeout, bbox
-    );
-    dl_worker(&req).await
+    let header = format!("[out:json][timeout:{}]", timeout);
+    let mut reqs = Vec::new();
+    reqs.push(format!("node[\"mountain_pass\"=\"yes\"]{}", bbox));
+    reqs.push(format!("node[\"natural\"=\"peak\"]{}", bbox));
+    reqs.push(format!("nwr[\"place\"=\"city\"]{}", bbox));
+    reqs.push(format!("nwr[\"place\"=\"town\"]{}", bbox));
+    reqs.push(format!("nwr[\"place\"=\"village\"]{}", bbox));
+    reqs.push(format!("nwr[\"place\"=\"hamlet\"]{}", bbox));
+    let body = reqs.join(";");
+    let footer = "out geom".to_string();
+    let request = format!("{};({};);{};", header, body, footer);
+    dl_worker(&request).await
 }
 
 fn read_f64(map: &serde_json::Map<String, Value>, name: &str) -> f64 {
@@ -82,7 +84,7 @@ fn read_tags(tags: &serde_json::Value) -> Tags {
     ret
 }
 
-fn read_download_element(element: &serde_json::Value) -> Result<OSMPoint, String> {
+fn read_download_element(element: &serde_json::Value) -> Result<InputPoint, String> {
     assert!(element.is_object());
     let map = element.as_object().unwrap();
     match map.get("type") {
@@ -98,32 +100,36 @@ fn read_download_element(element: &serde_json::Value) -> Result<OSMPoint, String
     let lat = read_f64(map, "lat");
     let lon = read_f64(map, "lon");
     let tags = read_tags(map.get("tags").unwrap());
-    let city = OSMPoint { lat, lon, tags };
+    let city = InputPoint {
+        wgs84: WGS84Point::new_lonlat(&lon, &lat),
+        tags,
+        track_index: None,
+    };
     Ok(city)
 }
 
-fn read_downloaded_elements(elements: &serde_json::Value) -> OSMPoints {
+fn read_downloaded_elements(elements: &serde_json::Value) -> InputPoints {
     assert!(elements.is_array());
     let mut ret = Vec::new();
     for e in elements.as_array().unwrap() {
         match read_download_element(e) {
-            Ok(city) => ret.push(city),
+            Ok(point) => ret.push(point),
             Err(_msg) => {
                 //log::info!("{} with {}", msg, e);
             }
         }
     }
-    OSMPoints { points: ret }
+    InputPoints { points: ret }
 }
 
-pub fn parse_osm_content(content: &[u8]) -> serde_json::Result<OSMPoints> {
+pub fn parse_osm_content(content: &[u8]) -> serde_json::Result<InputPoints> {
     let json: serde_json::Value = serde_json::from_slice(content)?;
     assert!(json.is_object());
     //assert!(json.as_object().unwrap().len() == 1);
     let mut ret = Vec::new();
     let map = json.as_object().unwrap();
     ret.extend(read_downloaded_elements(map.get("elements").unwrap()).points);
-    Ok(super::osmpoint::OSMPoints { points: ret })
+    Ok(InputPoints { points: ret })
 }
 
 #[cfg(test)]

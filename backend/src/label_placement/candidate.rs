@@ -36,10 +36,10 @@ fn cat(x: f64) -> f64 {
 use std::cmp::Ordering;
 impl PartialOrd for Candidate {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        let t1 = cat(self.dtarget);
-        let t2 = cat(other.dtarget);
-        if t1 != t2 {
-            return t1.partial_cmp(&t2);
+        let dtarget1 = cat(self.dtarget);
+        let dtarget2 = cat(other.dtarget);
+        if dtarget1 != dtarget2 {
+            return dtarget1.partial_cmp(&dtarget2);
         }
         let t1 = -self.dothers;
         let t2 = -other.dothers;

@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::inputpoint::InputPoints;
 use crate::track;
 use crate::waypoint;
 
@@ -29,13 +30,13 @@ fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     ret.elevation = Some(w.wgs84.z());
     ret.name = gps_name(w);
     ret.description = match &w.info {
-        Some(step) => Some(step.description.clone()),
+        Some(info) => Some(info.description.clone()),
         _ => w.description.clone(),
     };
     ret
 }
 
-pub fn generate(track: &track::Track, waypoints: &Vec<waypoint::Waypoint>) -> Vec<u8> {
+pub fn generate(track: &track::Track, waypoints: &InputPoints) -> Vec<u8> {
     let mut G = gpx::Gpx::default();
     G.version = gpx::GpxVersion::Gpx11;
 
@@ -44,8 +45,8 @@ pub fn generate(track: &track::Track, waypoints: &Vec<waypoint::Waypoint>) -> Ve
     track.segments.push(segment);
     G.tracks.push(track);
 
-    for w in waypoints {
-        let g = to_gpx(&w);
+    for w in &waypoints.points {
+        let g = to_gpx(&w.waypoint());
         G.waypoints.push(g);
     }
 

@@ -1,7 +1,7 @@
 use geo::SimplifyIdx;
 use gpx::TrackSegment;
 
-use super::waypoint::WGS84Point;
+use super::wgs84point::WGS84Point;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
 

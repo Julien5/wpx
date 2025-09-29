@@ -1,18 +1,18 @@
 #![allow(non_snake_case)]
 
-use std::str::FromStr;
-
-use crate::backend;
 use crate::bbox::BoundingBox;
+use crate::gpsdata::distance_wgs84;
+use crate::inputpoint::{InputPoints, InputType};
 use crate::label_placement::bbox::LabelBoundingBox;
-use crate::label_placement::{Circle, Label, Polyline};
+use crate::label_placement::*;
+use crate::track::Track;
 use crate::utm::UTMPoint;
-use crate::waypoint::{WGS84Point, WaypointOrigin};
+use crate::wgs84point::WGS84Point;
 use crate::{segment, utm};
 
 use svg::Document;
 
-fn to_graphics_coordinates(
+pub fn to_graphics_coordinates(
     bbox: &BoundingBox,
     p: &UTMPoint,
     W: i32,
@@ -85,27 +85,31 @@ struct MapData {
     debug: svg::node::element::Group,
 }
 
+pub fn bounding_box(track: &Track, range: &std::ops::Range<usize>) -> BoundingBox {
+    let mut bbox84 = BoundingBox::new();
+    for k in range.start..range.end {
+        bbox84.update(&track.wgs84[k].xy());
+    }
+    bbox84
+}
+
 impl MapData {
     pub fn make(
-        backend: &backend::BackendData,
+        track: &Track,
+        inputpoints: &InputPoints,
+        subset: &Vec<usize>,
         segment: &segment::Segment,
         W: i32,
         H: i32,
         _debug: bool,
     ) -> MapData {
-        let geodata = &backend.track;
-        let waypoints = backend.get_waypoints();
-        let mut bbox84 = BoundingBox::new();
-        let range = &segment.range;
-        for k in range.start..range.end {
-            bbox84.update(&geodata.wgs84[k].xy());
-        }
+        let bbox84 = &segment.map_bbox;
         let projection = utm::UTMProjection::make(WGS84Point::from_xy(&bbox84.middle()));
 
         let mut bbox = BoundingBox::new();
         let mut path = Vec::new();
-        for k in range.start..range.end {
-            let w = &geodata.wgs84[k];
+        for k in segment.range.start..segment.range.end {
+            let w = &track.wgs84[k];
             let utm = projection.project(w);
             path.push(utm.clone());
             bbox.update(&utm.xy());
@@ -132,74 +136,66 @@ impl MapData {
         set_attr(&mut document, "height", format!("{}", H).as_str());
 
         let mut points = Vec::new();
-        for k in 0..waypoints.len() {
-            let w = &waypoints[k];
+        let inputpoints = &inputpoints.points;
+        for k in subset {
+            let w = &inputpoints[*k];
             let utm = projection.project(&w.wgs84);
             if !bbox.contains(&utm.xy()) {
                 continue;
             }
-            if w.origin != WaypointOrigin::GPX {
+            if w.name().is_none() {
                 continue;
             }
-            if !range.contains(&w.track_index.unwrap()) {
+            let index = w.track_index;
+            if index.is_some() && !segment.range.contains(&index.unwrap()) {
                 continue;
             }
-            let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H, margin);
+            let delta = match w.track_index {
+                Some(index) => {
+                    let trackpoint = &track.wgs84[index];
+                    distance_wgs84(trackpoint, &w.wgs84)
+                }
+                None => f64::MAX,
+            };
+
             let mut circle = Circle::new();
-            circle.id = format!("wp-{}/circle", k);
+            let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H, margin);
+            let n = points.len();
+            circle.id = format!("wp-{}/circle", n);
             circle.cx = x;
             circle.cy = y;
-            let id = format!("wp-{}", k);
+            let id = format!("wp-{}", n);
+            match w.kind() {
+                InputType::City => {
+                    circle.r = 5f64;
+                    circle.fill = Some("Gray".to_string());
+                }
+                InputType::Village | InputType::Hamlet => {
+                    circle.r = 2f64;
+                    circle.fill = Some("Gray".to_string());
+                }
+                InputType::MountainPass => {
+                    circle.r = 3f64;
+                    circle.fill = Some("Blue".to_string());
+                }
+                InputType::Peak => {
+                    circle.r = 3f64;
+                    circle.fill = Some("Red".to_string());
+                }
+                InputType::GPX => {
+                    circle.r = 4f64;
+                    circle.fill = Some("Black".to_string());
+                }
+            }
             let mut label = Label::new();
-            if segment.shows_waypoint(&w) {
-                label.set_text(w.info.as_ref().unwrap().profile_label().trim());
-                label.id = format!("wp-{}/text", k);
-            } else {
-                circle.fill = Some(String::from_str("blue").unwrap());
-            }
-            points.push(PointFeature::new(id, circle, label));
-        }
-
-        for (kind, osmpoints) in &backend.osmwaypoints {
-            for k in 0..osmpoints.len() {
-                let w = &osmpoints[k];
-                let utm = projection.project(&w.wgs84);
-                if !bbox.contains(&utm.xy()) {
-                    continue;
-                }
-                if w.name.is_none() {
-                    continue;
-                }
-                if !range.contains(&w.track_index.unwrap()) {
-                    continue;
-                }
-                let mut circle = Circle::new();
-                let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H, margin);
-                let n = points.len();
-                circle.id = format!("wp-{}/circle", n);
-                circle.cx = x;
-                circle.cy = y;
-                let id = format!("wp-{}", n);
-                use super::osm::osmpoint::OSMType::*;
-                match kind {
-                    City => {
-                        circle.r = 5f64;
-                        circle.fill = Some("Gray".to_string());
-                    }
-                    Village => {
-                        circle.r = 3f64;
-                        circle.fill = Some("Gray".to_string());
-                    }
-                    MountainPass => {
-                        circle.r = 3f64;
-                        circle.fill = Some("Blue".to_string());
-                    }
-                }
-                let mut label = Label::new();
-                label.set_text(w.name.clone().unwrap().trim());
-                label.id = format!("wp-{}/text", k);
-                points.push(PointFeature::new(id, circle, label));
-            }
+            label.set_text(w.short_name().clone().unwrap().trim());
+            label.id = format!("wp-{}/text", k);
+            points.push(PointFeature::new(
+                id,
+                circle,
+                label,
+                priority_from_delta(delta, w.kind()),
+            ));
         }
         let result = crate::label_placement::place_labels_gen(
             &mut points,
@@ -209,7 +205,7 @@ impl MapData {
         );
         let mut placed_points = Vec::new();
         for k in 0..points.len() {
-            if !result.failed_indices.contains(&k) {
+            if result.placed_indices.contains(&k) {
                 placed_points.push(points[k].clone());
             }
         }
@@ -321,21 +317,23 @@ impl MapData {
 }
 
 pub fn map(
-    backend: &backend::BackendData,
+    track: &Track,
+    inputpoints: &InputPoints,
+    subset: &Vec<usize>,
     segment: &segment::Segment,
     W: i32,
     H: i32,
     debug: bool,
 ) -> String {
-    let svgMap = MapData::make(backend, segment, W, H, debug);
+    let svgMap = MapData::make(track, inputpoints, subset, segment, W, H, debug);
     svgMap.render()
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::label_placement::*;
+    use std::str::FromStr;
 
-    use super::*;
+    use crate::{label_placement::*, svgmap::generate_candidates_bboxes};
 
     #[test]
     fn test_bbox() {
@@ -354,6 +352,7 @@ mod tests {
                 bbox: LabelBoundingBox::new_tlbr((0f64, 0f64), (10f64, 16f64)),
                 text: String::from_str("hi").unwrap(),
             },
+            0i32,
         );
         let candidates = generate_candidates_bboxes(&target);
         let mut found = false;

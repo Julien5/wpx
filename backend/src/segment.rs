@@ -1,3 +1,4 @@
+use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::waypoint;
 
@@ -5,7 +6,8 @@ use crate::waypoint;
 pub struct Segment {
     pub id: usize,
     pub range: std::ops::Range<usize>,
-    pub bbox: gpsdata::ProfileBoundingBox,
+    pub profile_bbox: gpsdata::ProfileBoundingBox,
+    pub map_bbox: BoundingBox,
 }
 
 impl Segment {
@@ -29,11 +31,13 @@ impl Segment {
         id: usize,
         range: std::ops::Range<usize>,
         bbox: &gpsdata::ProfileBoundingBox,
+        mbbox: &BoundingBox,
     ) -> Segment {
         Segment {
             id,
             range: range.clone(),
-            bbox: bbox.clone(),
+            profile_bbox: bbox.clone(),
+            map_bbox: mbbox.clone(),
         }
     }
 }
