@@ -6,11 +6,7 @@ mod indexdb;
 pub mod osmpoint;
 
 use crate::bboxes::*;
-use crate::gpsdata::distance_wgs84;
-use crate::inputpoint::InputPoint;
 use crate::inputpoint::InputPoints;
-use crate::inputpoint::InputType;
-use crate::project;
 use crate::track::*;
 
 pub fn osm3(bbox: &WGS84BoundingBox) -> String {
@@ -100,29 +96,6 @@ async fn process(bbox: &WGS84BoundingBox) -> InputPoints {
 pub async fn download_for_track(track: &Track) -> InputPoints {
     let bbox = track.wgs84_bounding_box();
     assert!(!bbox.empty());
-    let mut ret = process(&bbox).await;
-    project::project_on_track::<InputPoint>(track, &mut ret.points);
-    // prefiltering is not very good ("Walke")
-    ret.points.retain(|w| {
-        if w.kind() == InputType::City {
-            return true;
-        }
-        if w.kind() == InputType::Hamlet {
-            return false;
-        }
-        // no filtering on the population, "Walke"
-        // if w.kind() == InputType::Village ...
-        match w.track_index {
-            Some(index) => {
-                let p1 = &w.wgs84;
-                let p2 = &track.wgs84[index];
-                return distance_wgs84(p1, p2) < 1000f64;
-            }
-            None => {
-                return false;
-            }
-        }
-    });
-
+    let ret = process(&bbox).await;
     ret
 }

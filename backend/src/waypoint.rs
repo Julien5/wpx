@@ -101,7 +101,7 @@ impl Waypoint {
     }
 }
 
-type DateTime = crate::utm::DateTime;
+type DateTime = crate::mercator::DateTime;
 
 fn waypoint_time(start_time: DateTime, distance: &f64, speed: &f64) -> DateTime {
     let dt = (distance / speed).ceil() as i64;

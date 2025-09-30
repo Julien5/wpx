@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
+    mercator::MercatorPoint,
     waypoint::{Waypoint, WaypointOrigin},
     wgs84point::WGS84Point,
 };
@@ -21,11 +22,12 @@ pub enum InputType {
     GPX,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
 pub struct InputPoint {
     pub wgs84: WGS84Point,
+    pub euclidian: MercatorPoint,
     pub tags: Tags,
-    pub track_index: Option<usize>,
+    pub track_index: std::cell::Cell<Option<usize>>,
 }
 
 fn read<T>(data: Option<&String>) -> Option<T>
@@ -64,8 +66,17 @@ fn shorten_name(name: &String) -> String {
 */
 
 impl InputPoint {
+    pub fn from_wgs84(wgs84: &WGS84Point, euclidean: &MercatorPoint) -> InputPoint {
+        InputPoint {
+            wgs84: wgs84.clone(),
+            euclidian: euclidean.clone(),
+            track_index: std::cell::Cell::new(None),
+            tags: Tags::new(),
+        }
+    }
     pub fn from_gpx(
         wgs84: &WGS84Point,
+        euclidean: &MercatorPoint,
         name: &Option<String>,
         description: &Option<String>,
     ) -> InputPoint {
@@ -82,8 +93,9 @@ impl InputPoint {
         }
         InputPoint {
             wgs84: wgs84.clone(),
-            track_index: None,
+            track_index: std::cell::Cell::new(None),
             tags,
+            euclidian: euclidean.clone(),
         }
     }
     pub fn ele(&self) -> Option<f64> {
@@ -172,7 +184,7 @@ impl InputPoint {
     pub fn waypoint(&self) -> Waypoint {
         Waypoint {
             wgs84: self.wgs84.clone(),
-            track_index: self.track_index,
+            track_index: self.track_index.get(),
             name: self.name().clone(),
             description: None,
             info: None,
@@ -229,13 +241,13 @@ impl InputPoints {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::json;
 
     fn testpoint() -> InputPoint {
         InputPoint {
             wgs84: WGS84Point::new(&1.0f64, &1.1f64, &0f64),
+            euclidian: MercatorPoint::from_xy(&(0f64, 0f64)),
             tags: Tags::new(),
-            track_index: None,
+            track_index: std::cell::Cell::new(None),
         }
     }
 

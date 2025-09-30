@@ -32,6 +32,8 @@ wasm-logger = "0.2.0"
 env_logger = "0.11.8"
 wasmtimer = "0.4.3"
 sphere-knn = "0.1.0"
+rstar = "0.12.2"
+num-traits = "0.2.19"
 
 
 [features]

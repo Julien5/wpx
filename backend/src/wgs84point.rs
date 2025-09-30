@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Copy)]
 pub struct WGS84Point(f64, f64, f64);
 
 impl WGS84Point {
@@ -30,5 +30,13 @@ impl WGS84Point {
     }
     pub fn longitude(&self) -> f64 {
         return self.x();
+    }
+
+    pub fn nth_mut(&mut self, index: usize) -> &mut f64 {
+        match index {
+            0 => &mut self.0,
+            1 => &mut self.1,
+            _ => unreachable!(),
+        }
     }
 }

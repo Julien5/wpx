@@ -120,7 +120,7 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         let m = svgmap::map(
             &backend.track,
             &backend.inputpoints,
-            &backend.select_points_for_map(),
+            &backend.select_points_for_map(segment),
             &segment,
             Wm,
             Hm,

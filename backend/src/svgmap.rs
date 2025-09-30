@@ -5,16 +5,15 @@ use crate::gpsdata::distance_wgs84;
 use crate::inputpoint::{InputPoints, InputType};
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::*;
+use crate::mercator::MercatorPoint;
 use crate::track::Track;
-use crate::utm::UTMPoint;
-use crate::wgs84point::WGS84Point;
-use crate::{segment, utm};
+use crate::{mercator, segment};
 
 use svg::Document;
 
 pub fn to_graphics_coordinates(
     bbox: &BoundingBox,
-    p: &UTMPoint,
+    p: &MercatorPoint,
     W: i32,
     H: i32,
     margin: i32,
@@ -86,11 +85,11 @@ struct MapData {
 }
 
 pub fn bounding_box(track: &Track, range: &std::ops::Range<usize>) -> BoundingBox {
-    let mut bbox84 = BoundingBox::new();
+    let mut bbox = BoundingBox::new();
     for k in range.start..range.end {
-        bbox84.update(&track.wgs84[k].xy());
+        bbox.update(&track.euclidian[k].xy());
     }
-    bbox84
+    bbox
 }
 
 impl MapData {
@@ -104,7 +103,7 @@ impl MapData {
         _debug: bool,
     ) -> MapData {
         let bbox84 = &segment.map_bbox;
-        let projection = utm::UTMProjection::make(WGS84Point::from_xy(&bbox84.middle()));
+        let projection = mercator::WebMercatorProjection::make();
 
         let mut bbox = BoundingBox::new();
         let mut path = Vec::new();
@@ -146,11 +145,11 @@ impl MapData {
             if w.name().is_none() {
                 continue;
             }
-            let index = w.track_index;
+            let index = w.track_index.get();
             if index.is_some() && !segment.range.contains(&index.unwrap()) {
                 continue;
             }
-            let delta = match w.track_index {
+            let delta = match index {
                 Some(index) => {
                     let trackpoint = &track.wgs84[index];
                     distance_wgs84(trackpoint, &w.wgs84)
@@ -333,7 +332,10 @@ pub fn map(
 mod tests {
     use std::str::FromStr;
 
-    use crate::{label_placement::*, svgmap::generate_candidates_bboxes};
+    use crate::{
+        label_placement::{Circle, Label, LabelBoundingBox, PointFeature},
+        svgmap::generate_candidates_bboxes,
+    };
 
     #[test]
     fn test_bbox() {

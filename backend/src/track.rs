@@ -4,6 +4,8 @@ use gpx::TrackSegment;
 use super::wgs84point::WGS84Point;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
+use crate::mercator;
+use crate::mercator::MercatorPoint;
 
 use super::elevation;
 use super::waypoint::Waypoint;
@@ -11,6 +13,7 @@ use super::waypoint::WaypointOrigin;
 
 pub struct Track {
     pub wgs84: Vec<WGS84Point>,
+    pub euclidian: Vec<MercatorPoint>,
     _distance: Vec<f64>,
 }
 
@@ -109,6 +112,8 @@ impl Track {
         let mut _distance = Vec::new();
         let mut wgs = Vec::new();
         let mut dacc = 0f64;
+        let projection = mercator::WebMercatorProjection::make();
+        let mut euclidean = Vec::new();
         for k in 0..segment.points.len() {
             let point = &segment.points[k];
             let (lon, lat) = point.point().x_y();
@@ -119,7 +124,10 @@ impl Track {
                 }
             };
 
-            wgs.push(WGS84Point::new(&lon, &lat, &elevation));
+            let w = WGS84Point::new(&lon, &lat, &elevation);
+            euclidean.push(projection.project(&w));
+            wgs.push(w);
+
             debug_assert_eq!(wgs.len(), k + 1);
             if k > 0 {
                 dacc += distance_wgs84(&wgs[k - 1], &wgs[k]);
@@ -129,6 +137,7 @@ impl Track {
         assert_eq!(_distance.len(), wgs.len());
         let ret = Track {
             wgs84: wgs,
+            euclidian: euclidean,
             _distance,
         };
         Ok(ret)

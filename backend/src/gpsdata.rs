@@ -1,8 +1,8 @@
 use crate::bbox::BoundingBox;
 use crate::error::Error;
 use crate::inputpoint::InputPoint;
-use crate::track;
 use crate::wgs84point::WGS84Point;
+use crate::{mercator, track};
 use geo::Distance;
 
 pub fn distance_wgs84(p1: &WGS84Point, p2: &WGS84Point) -> f64 {
@@ -71,10 +71,13 @@ impl ProfileBoundingBox {
 
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<InputPoint> {
     let mut ret = Vec::new();
+    let projection = mercator::WebMercatorProjection::make();
     for w in &gpx.waypoints {
         let (lon, lat) = w.point().x_y();
+        let wgs = WGS84Point::new(&lon, &lat, &0f64);
         ret.push(InputPoint::from_gpx(
-            &WGS84Point::new(&lon, &lat, &0f64),
+            &wgs,
+            &projection.project(&wgs),
             &w.name,
             &w.description,
         ));

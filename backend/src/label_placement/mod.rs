@@ -466,7 +466,7 @@ fn place_labels_gen_worker(
     bbox: &BoundingBox,
     obstacles: &Obstacles,
 ) -> PlacementResult {
-    log::trace!("build label graph");
+    //log::trace!("build label graph");
     let mut graph = build_graph_gen(points, priority, gen, bbox, &obstacles);
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),
@@ -478,7 +478,7 @@ fn place_labels_gen_worker(
             continue;
         }
     }
-    log::trace!("solve label graph [{}]", graph.map.len(),);
+    //log::trace!("solve label graph [{}]", graph.map.len(),);
     let best_candidates = graph.solve();
     for k in 0..points.len() {
         let target_text = &points[k].text();

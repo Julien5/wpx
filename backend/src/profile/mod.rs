@@ -268,10 +268,10 @@ impl ProfileView {
         log::info!("osmpoints={}", inputpoints.len());
         for k in subset {
             let w = &inputpoints[*k];
-            if w.track_index.is_none() {
+            if w.track_index.get().is_none() {
                 continue;
             }
-            let index = w.track_index.unwrap();
+            let index = w.track_index.get().unwrap();
             let trackpoint = &track.wgs84[index];
             let delta = distance_wgs84(trackpoint, &w.wgs84);
             if delta > 1000f64 {

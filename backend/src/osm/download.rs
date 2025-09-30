@@ -3,6 +3,7 @@ use serde_json::Value;
 
 use crate::{
     inputpoint::{InputPoint, InputPoints, Tags},
+    mercator,
     wgs84point::WGS84Point,
 };
 
@@ -84,7 +85,10 @@ fn read_tags(tags: &serde_json::Value) -> Tags {
     ret
 }
 
-fn read_download_element(element: &serde_json::Value) -> Result<InputPoint, String> {
+fn read_download_element(
+    element: &serde_json::Value,
+    projection: &mercator::WebMercatorProjection,
+) -> Result<InputPoint, String> {
     assert!(element.is_object());
     let map = element.as_object().unwrap();
     match map.get("type") {
@@ -100,19 +104,23 @@ fn read_download_element(element: &serde_json::Value) -> Result<InputPoint, Stri
     let lat = read_f64(map, "lat");
     let lon = read_f64(map, "lon");
     let tags = read_tags(map.get("tags").unwrap());
-    let city = InputPoint {
-        wgs84: WGS84Point::new_lonlat(&lon, &lat),
+    let wgs = WGS84Point::new_lonlat(&lon, &lat);
+    let euclidean = projection.project(&wgs);
+    let ret = InputPoint {
+        wgs84: wgs,
+        euclidian: euclidean,
         tags,
-        track_index: None,
+        track_index: std::cell::Cell::new(None),
     };
-    Ok(city)
+    Ok(ret)
 }
 
 fn read_downloaded_elements(elements: &serde_json::Value) -> InputPoints {
     assert!(elements.is_array());
     let mut ret = Vec::new();
+    let projection = mercator::WebMercatorProjection::make();
     for e in elements.as_array().unwrap() {
-        match read_download_element(e) {
+        match read_download_element(e, &projection) {
             Ok(point) => ret.push(point),
             Err(_msg) => {
                 //log::info!("{} with {}", msg, e);

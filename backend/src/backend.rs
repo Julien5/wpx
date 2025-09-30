@@ -6,14 +6,13 @@ use crate::gpsdata;
 use crate::gpsdata::distance_wgs84;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::gpxexport;
-use crate::inputpoint::InputPoint;
 use crate::inputpoint::InputPoints;
 use crate::inputpoint::InputType;
+use crate::locate;
 use crate::osm;
 use crate::parameters::Parameters;
 use crate::pdf;
 use crate::profile;
-use crate::project;
 use crate::render;
 use crate::svgmap;
 use crate::track;
@@ -25,6 +24,8 @@ pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
 
 pub struct BackendData {
+    pub inputpoints_tree: locate::Locate,
+    pub track_tree: locate::Locate,
     pub parameters: Parameters,
     pub track: track::Track,
     pub inputpoints: InputPoints,
@@ -137,10 +138,14 @@ impl Backend {
         inputpoints
             .points
             .extend_from_slice(&gpsdata::read_waypoints(&gpx));
-        project::project_on_track::<InputPoint>(&track, &mut inputpoints.points);
+        // project::project_on_track::<InputPoint>(&track, &mut inputpoints.points);
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
+        let pointstree = locate::Locate::from_points(&inputpoints);
+        let tracktree = locate::Locate::from_track(&track);
         let data = BackendData {
+            inputpoints_tree: pointstree,
+            track_tree: tracktree,
             track_smooth_elevation: elevation::smooth_elevation(
                 &track,
                 default_params.smooth_width,
@@ -174,13 +179,12 @@ impl BackendData {
     pub fn get_parameters(self: &BackendData) -> Parameters {
         self.parameters.clone()
     }
-    fn export_points(&self) -> Waypoints {
+    fn export_points(&self, subset: &Vec<usize>) -> Waypoints {
+        log::trace!("export points");
         let mut ret = Waypoints::new();
-        let subset = self.select_points_for_profile();
         for k in subset {
-            ret.push(self.inputpoints.points[k].waypoint());
+            ret.push(self.inputpoints.points[*k].waypoint());
         }
-        project::project_on_track::<Waypoint>(&self.track, &mut ret);
         ret.retain(|w| w.track_index.is_some());
         ret.sort_by(|w1, w2| w1.track_index.cmp(&w2.track_index));
         WaypointInfo::make_waypoint_infos(
@@ -193,7 +197,10 @@ impl BackendData {
         ret
     }
     pub fn get_waypoints(&self) -> Vec<Waypoint> {
-        self.export_points()
+        log::trace!("get waypoints");
+        let segment = self.complete_track_segment();
+        let subset = self.select_points_for_profile(&segment);
+        self.export_points(&subset)
     }
 
     pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {
@@ -206,9 +213,8 @@ impl BackendData {
     }
 
     pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {
-        let mut waypoints = self.export_points();
-        waypoints.retain(|w| segment.shows_waypoint(&w));
-        waypoints
+        let subset = self.select_points_for_profile(segment);
+        self.export_points(&subset)
     }
     pub fn setStartTime(&mut self, rfc3339: String) {
         self.parameters.start_time = rfc3339;
@@ -258,12 +264,22 @@ impl BackendData {
         }
     }
 
-    // use segment ?
-    fn select_points_for_profile(&self) -> Vec<usize> {
+    fn select_points_for_profile(&self, segment: &Segment) -> Vec<usize> {
         let mut ret = Vec::new();
-        let points = &self.inputpoints.points;
-        for k in 0..points.len() {
-            let p = &points[k];
+        let mut bbox = segment.map_bbox.clone();
+        bbox.enlarge(&5000f64);
+        let subset = self.inputpoints_tree.find_points_in_bbox(&bbox);
+        for k in &subset {
+            if self.inputpoints.points[*k].track_index.get().is_some() {
+                continue;
+            }
+            let index = self
+                .track_tree
+                .nearest_neighbor(&self.inputpoints.points[*k].euclidian);
+            self.inputpoints.points[*k].track_index.set(index);
+        }
+        for k in subset {
+            let p = &self.inputpoints.points[k];
             // use only if there are no other points shown
             if p.kind() == InputType::Hamlet {
                 continue;
@@ -273,7 +289,7 @@ impl BackendData {
                 continue;
             }
             let mut distance = f64::MAX;
-            match p.track_index {
+            match p.track_index.get() {
                 Some(index) => {
                     let ptrack = &self.track.wgs84[index];
                     distance = distance_wgs84(ptrack, &p.wgs84);
@@ -303,13 +319,23 @@ impl BackendData {
                 ret.push(k);
                 continue;
             }
+            // log::trace!("too far:{:?} d={:.1}", p.name(), distance);
         }
         ret
     }
 
-    pub fn select_points_for_map(&self) -> Vec<usize> {
+    fn complete_track_segment(&self) -> Segment {
+        let len = self.track.wgs84.len();
+        assert!(len > 0);
+        let range = self.track.segment(0f64, self.track.distance(len - 1));
+        let profile_bbox = ProfileBoundingBox::from_track(&self.track, &range);
+        let map_bbox = svgmap::bounding_box(&self.track, &range);
+        Segment::new(usize::MAX, range, &profile_bbox, &map_bbox)
+    }
+
+    pub fn select_points_for_map(&self, segment: &Segment) -> Vec<usize> {
         let mut ret = Vec::new();
-        let profile_indices = self.select_points_for_profile();
+        let profile_indices = self.select_points_for_profile(segment);
         let points = &self.inputpoints.points;
         for k in 0..points.len() {
             if profile_indices.contains(&k) {
@@ -328,7 +354,7 @@ impl BackendData {
     pub fn render_segment(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         log::info!("render_segment:{}", segment.id);
         let debug = self.get_parameters().debug;
-        let subset = self.select_points_for_profile();
+        let subset = self.select_points_for_profile(segment);
         let ret = profile::profile(
             &self.track,
             &self.inputpoints,
@@ -357,7 +383,7 @@ impl BackendData {
     }
     pub fn render_segment_map(&self, segment: &Segment, (W, H): (i32, i32)) -> String {
         let debug = self.get_parameters().debug;
-        let subset = self.select_points_for_map();
+        let subset = self.select_points_for_map(segment);
         let ret = svgmap::map(
             &self.track,
             &self.inputpoints,
