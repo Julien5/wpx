@@ -8,7 +8,7 @@ use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::distance_wgs84;
 use crate::gpsdata::ProfileBoundingBox;
-use crate::inputpoint::InputPoints;
+use crate::inputpoint::InputPoint;
 use crate::inputpoint::InputType;
 use crate::label_placement;
 use crate::label_placement::bbox::LabelBoundingBox;
@@ -40,8 +40,8 @@ pub struct ProfileView {
 fn fix_ymargins(bbox: &ProfileBoundingBox, H: f64) -> ProfileBoundingBox {
     let ticks = ticks::yticks(bbox, H);
     let mut ret = bbox.clone();
-    ret.min.1 = ticks.first().unwrap().clone();
-    ret.max.1 = ticks.last().unwrap().clone();
+    ret._min.1 = ticks.first().unwrap().clone();
+    ret._max.1 = ticks.last().unwrap().clone();
     ret
 }
 
@@ -77,12 +77,12 @@ impl ProfileView {
     fn toSD(&self, (x, y): &(f64, f64)) -> (f64, f64) {
         let f = |x: &f64| -> f64 {
             let a = self.WD() as f64 / (self.bboxview.width());
-            let b = -self.bboxview.min.0 * a;
+            let b = -self.bboxview._min.0 * a;
             a * x + b
         };
         let g = |y: &f64| -> f64 {
             let a = -self.HD() as f64 / self.bboxview.height();
-            let b = -self.bboxview.max.1 * a;
+            let b = -self.bboxview._max.1 * a;
             a * y + b
         };
         (f(x), g(y))
@@ -90,8 +90,8 @@ impl ProfileView {
 
     fn toSL(&self, y: &f64) -> f64 {
         let g = |y: &f64| -> f64 {
-            let a = self.HD() as f64 / (self.bboxview.min.1 - self.bboxview.max.1);
-            let b = -self.bboxview.max.1 * a;
+            let a = self.HD() as f64 / (self.bboxview._min.1 - self.bboxview._max.1);
+            let b = -self.bboxview._max.1 * a;
             a * y + b
         };
         g(y)
@@ -141,7 +141,7 @@ impl ProfileView {
 
     pub fn add_yaxis_labels_overlay(&mut self) {
         for ytick in ticks::yticks(&self.bboxdata, self.H) {
-            let pos = self.toSD(&(self.bboxview.min.0, ytick));
+            let pos = self.toSD(&(self.bboxview._min.0, ytick));
             let yd = pos.1;
             if yd > self.HD() {
                 break;
@@ -169,9 +169,6 @@ impl ProfileView {
         let _xticks_dashed = ticks::xticks_dashed(&self.bboxdata, self.W);
         let _yticks = ticks::yticks(&self.bboxdata, self.H);
         let _yticks_dashed = ticks::yticks_dashed(&self.bboxdata, self.H);
-
-        log::debug!(" x={:?}", _xticks);
-        log::debug!("xd={:?}", _xticks_dashed);
 
         for xtick in _xticks {
             let xg = self.toSD(&(xtick, 0f64)).0;
@@ -205,12 +202,12 @@ impl ProfileView {
         }
 
         for ytick in &_yticks {
-            let yd = self.toSD(&(self.bboxview.min.0, *ytick)).1;
+            let yd = self.toSD(&(self.bboxview._min.0, *ytick)).1;
             self.SD.append(stroke("1", (0f64, yd), (WD, yd)));
         }
 
         for ytick in &_yticks_dashed {
-            let yd = self.toSD(&(self.bboxview.min.0, *ytick)).1;
+            let yd = self.toSD(&(self.bboxview._min.0, *ytick)).1;
             self.SD.append(dashed((0f64, yd), (WD, yd)));
         }
     }
@@ -232,8 +229,7 @@ impl ProfileView {
     pub fn add_track(
         &mut self,
         track: &Track,
-        inputpoints: &InputPoints,
-        subset: &Vec<usize>,
+        inputpoints: &Vec<InputPoint>,
         W: f64,
         H: f64,
         _debug: bool,
@@ -245,8 +241,8 @@ impl ProfileView {
         }*/
 
         let mut polyline = Polyline::new();
-        let start = track.index_after(bbox.min.0);
-        let end = track.index_before(bbox.max.0);
+        let start = track.index_after(bbox._min.0);
+        let end = track.index_before(bbox._max.0);
         for k in start..end {
             let e = track.wgs84[k].z();
             let (x, y) = (track.distance(k), e);
@@ -264,14 +260,12 @@ impl ProfileView {
         set_attr(&mut document, "height", format!("{H}").as_str());
 
         let mut points = Vec::new();
-        let inputpoints = &inputpoints.points;
-        log::info!("osmpoints={}", inputpoints.len());
-        for k in subset {
-            let w = &inputpoints[*k];
-            if w.track_index.get().is_none() {
+        for k in 0..inputpoints.len() {
+            let w = &inputpoints[k];
+            if w.track_index.is_none() {
                 continue;
             }
-            let index = w.track_index.get().unwrap();
+            let index = w.track_index.unwrap();
             let trackpoint = &track.wgs84[index];
             let delta = distance_wgs84(trackpoint, &w.wgs84);
             if delta > 1000f64 {
@@ -319,7 +313,7 @@ impl ProfileView {
                 }
             }
 
-            label.set_text(inputpoints[*k].short_name().unwrap().as_str());
+            label.set_text(inputpoints[k].short_name().unwrap().as_str());
             label.id = format!("wp-{}/text", k);
             points.push(PointFeature::new(
                 id,
@@ -356,14 +350,13 @@ fn generate_candidates_bboxes(point: &PointFeature) -> Vec<LabelBoundingBox> {
     let dtarget_max = 20f64;
     let d0 = 2f64 * dtarget_max;
     let (cx, cy) = point.center();
-    let xmin = cx;
+    let xmin = cx - width;
     let ymin = cy - d0 - height;
-    let xmax = cx + d0;
     let ymax = cy + d0;
     let dp = 5f64;
-    let countx = ((xmax - xmin) / dp).ceil() as i32;
+    let countx = (width / dp).ceil() as i32;
     let county = ((ymax - ymin) / dp).ceil() as i32;
-    let dx = dp;
+    let dx = width / (countx as f64);
     let dy = dp;
     for nx in 0..countx {
         for ny in 0..county {
@@ -383,8 +376,7 @@ fn generate_candidates_bboxes(point: &PointFeature) -> Vec<LabelBoundingBox> {
 
 pub fn profile(
     track: &Track,
-    inputpoints: &InputPoints,
-    subset: &Vec<usize>,
+    inputpoints: &Vec<InputPoint>,
     segment: &segment::Segment,
     W: i32,
     H: i32,
@@ -394,8 +386,7 @@ pub fn profile(
     view.add_canvas();
     view.add_track(
         &track,
-        &inputpoints,
-        subset,
+        inputpoints,
         view.WD() as f64,
         view.HD() as f64,
         debug,

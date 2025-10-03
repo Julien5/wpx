@@ -48,11 +48,6 @@ impl Segment {
     pub fn id(&self) -> usize {
         self._impl.id
     }
-
-    #[frb(sync)]
-    pub fn shows_waypoint(&self, wp: &Waypoint) -> bool {
-        self._impl.shows_waypoint(wp)
-    }
 }
 
 #[frb(mirror(WaypointOrigin))]
@@ -146,8 +141,8 @@ impl Bridge {
         self.backend.generateGpx()
     }
     #[frb(sync)] //TODO: add segment parameter
-    pub fn get_waypoints(&mut self) -> Vec<Waypoint> {
-        self.backend.get_waypoints()
+    pub fn get_waypoints(&mut self, segment: &Segment) -> Vec<Waypoint> {
+        self.backend.get_waypoints(&segment._impl)
     }
     #[frb(sync)]
     pub fn get_parameters(&mut self) -> Parameters {

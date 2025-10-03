@@ -1,4 +1,4 @@
-use crate::wgs84point::WGS84Point;
+use crate::{track::WGS84BoundingBox, wgs84point::WGS84Point};
 use serde::{Deserialize, Serialize};
 
 pub type DateTime = chrono::DateTime<chrono::Utc>;
@@ -51,5 +51,43 @@ impl WebMercatorProjection {
         );
         proj4rs::transform::transform(&self.wgs84_spec, &self.dst_spec, &mut p).unwrap();
         MercatorPoint(p.0, p.1)
+    }
+    pub fn unproject(&self, merc: &MercatorPoint) -> WGS84Point {
+        let mut p = (merc.0, merc.1);
+        proj4rs::transform::transform(&self.dst_spec, &self.wgs84_spec, &mut p).unwrap();
+        let ret = WGS84Point::new(&p.0.to_degrees(), &p.1.to_degrees(), &0f64);
+        log::trace!("unproject {:?} to {:?}", merc, ret);
+        ret
+    }
+}
+
+pub type EuclideanBoundingBox = super::bbox::BoundingBox;
+
+impl EuclideanBoundingBox {
+    pub fn unproject(&self) -> WGS84BoundingBox {
+        let proj = WebMercatorProjection::make();
+        let min = proj.unproject(&MercatorPoint::from_xy(&self.get_min()));
+        let max = proj.unproject(&MercatorPoint::from_xy(&self.get_max()));
+        WGS84BoundingBox::init(min.xy(), max.xy())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    fn approx(f: (f64, f64)) -> String {
+        format!("{:.4},{:.4}", f.0, f.1)
+    }
+
+    use super::*;
+    #[test]
+    fn project_unproject() {
+        // Mercator=EPSG:3857
+        // WGS84=EPSG:4326
+        let euc = MercatorPoint::from_xy(&(909111.0f64, 6217006.0f64));
+        let wgs = WGS84Point::from_xy(&(8.1876716, 48.676003));
+        let proj = WebMercatorProjection::make();
+        let eucp = proj.project(&wgs);
+        let wgsp = proj.unproject(&eucp);
+        debug_assert_eq!(approx(wgs.xy()), approx(wgsp.xy()));
     }
 }

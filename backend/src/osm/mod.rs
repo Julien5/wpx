@@ -6,13 +6,14 @@ mod indexdb;
 pub mod osmpoint;
 
 use crate::bboxes::*;
-use crate::inputpoint::InputPoints;
+use crate::inputpoint::{InputPointMap, InputPoints};
+use crate::mercator::EuclideanBoundingBox;
 use crate::track::*;
 
-pub fn osm3(bbox: &WGS84BoundingBox) -> String {
+fn osm3(bbox: &WGS84BoundingBox) -> String {
     format!(
         "({:0.3},{:0.3},{:0.3},{:0.3})",
-        bbox.min.1, bbox.min.0, bbox.max.1, bbox.max.0
+        bbox._min.1, bbox._min.0, bbox._max.1, bbox._max.0
     )
 }
 
@@ -32,14 +33,17 @@ async fn download_chunk_real(
     }
 }
 
-async fn download_chunk(bboxes: &Vec<WGS84BoundingBox>) -> InputPoints {
+async fn download_chunk(bboxes: &Vec<EuclideanBoundingBox>) -> InputPoints {
     if bboxes.is_empty() {
         return InputPoints::new();
     }
-    let bbox = bounding_box(&bboxes);
-    let osmpoints = match download_chunk_real(&bbox).await {
+    let eucbbox = bounding_box(&bboxes);
+    let wgsbbox = eucbbox.unproject();
+
+    log::info!("downloading for {} tiles", bboxes.len());
+    let osmpoints = match download_chunk_real(&wgsbbox).await {
         Ok(points) => {
-            log::info!("downloaded {:3}", points.points.len());
+            log::info!("downloaded {:3} points", points.points.len());
             cache::write(bboxes, &points).await;
             points
         }
@@ -52,7 +56,7 @@ async fn download_chunk(bboxes: &Vec<WGS84BoundingBox>) -> InputPoints {
     osmpoints
 }
 
-async fn read(bbox: &WGS84BoundingBox) -> InputPoints {
+async fn read(bbox: &EuclideanBoundingBox) -> InputPoints {
     let osmpoints = match cache::read(bbox).await {
         Some(d) => d,
         None => {
@@ -63,38 +67,38 @@ async fn read(bbox: &WGS84BoundingBox) -> InputPoints {
     osmpoints
 }
 
-async fn reducebbox(bbox: &WGS84BoundingBox, step: &f64) -> Vec<WGS84BoundingBox> {
-    let many = split(&bbox, step);
+async fn remove_cache(tiles: &BoundingBoxes) -> Vec<EuclideanBoundingBox> {
     let mut uncached = Vec::new();
-    for (_index, atom) in many {
-        if !(cache::hit_cache(&atom).await) {
-            uncached.push(atom.clone());
+    for (_index, tile) in tiles {
+        if !(cache::hit_cache(&tile).await) {
+            uncached.push(tile.clone());
         }
     }
     uncached
 }
 
-async fn process(bbox: &WGS84BoundingBox) -> InputPoints {
-    let step = 0.05f64;
-    let atoms = split(&bbox, &step);
-    let not_cached = reducebbox(&bbox, &step).await;
+async fn process(bbox: &EuclideanBoundingBox) -> InputPointMap {
+    let tiles = split(&bbox, &BBOXWIDTH);
+    let not_cached = remove_cache(&tiles).await;
     if !not_cached.is_empty() {
-        log::info!("atoms:{}", atoms.len());
-        log::info!("not in cache:{}", not_cached.len());
+        log::info!(
+            "there are {} tiles, {} not in cache",
+            tiles.len(),
+            not_cached.len()
+        );
     }
     download_chunk(&not_cached).await;
-    let mut ret = Vec::new();
-    log::trace!("about to read atoms:{:3}", atoms.len());
-    for (_index, atom) in atoms {
-        let points = read(&atom).await;
-        ret.extend(points.points);
+    let mut ret = InputPointMap::new();
+    log::trace!("about to read {} tiles", tiles.len());
+    for (_index, tile) in tiles {
+        let points = read(&tile).await;
+        ret.insert_points(&tile, &points.points);
     }
-    log::trace!("done");
-    InputPoints { points: ret }
+    ret
 }
 
-pub async fn download_for_track(track: &Track) -> InputPoints {
-    let bbox = track.wgs84_bounding_box();
+pub async fn download_for_track(track: &Track) -> InputPointMap {
+    let bbox = track.euclidean_bounding_box();
     assert!(!bbox.empty());
     let ret = process(&bbox).await;
     ret

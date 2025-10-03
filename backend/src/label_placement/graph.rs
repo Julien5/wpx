@@ -213,7 +213,7 @@ impl Graph {
                     );*/
                     return Some(index);
                 }
-                log::info!("all candidates of {node} block some other => take the first one");
+                //log::info!("all candidates of {node} block some other => take the first one");
                 return Some(0);
             }
             _ => {

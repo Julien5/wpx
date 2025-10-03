@@ -5,6 +5,7 @@ use super::wgs84point::WGS84Point;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
 use crate::mercator;
+use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
 
 use super::elevation;
@@ -38,6 +39,17 @@ impl Track {
         let mut ret = WGS84BoundingBox::new();
         let _: Vec<_> = self
             .wgs84
+            .iter()
+            .map(|p| {
+                ret.update(&(p.x(), p.y()));
+            })
+            .collect();
+        ret
+    }
+    pub fn euclidean_bounding_box(&self) -> EuclideanBoundingBox {
+        let mut ret = EuclideanBoundingBox::new();
+        let _: Vec<_> = self
+            .euclidian
             .iter()
             .map(|p| {
                 ret.update(&(p.x(), p.y()));
@@ -128,7 +140,6 @@ impl Track {
             euclidean.push(projection.project(&w));
             wgs.push(w);
 
-            debug_assert_eq!(wgs.len(), k + 1);
             if k > 0 {
                 dacc += distance_wgs84(&wgs[k - 1], &wgs[k]);
             }

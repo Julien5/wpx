@@ -64,25 +64,25 @@ impl rstar::PointDistance for IndexedPoint {
         dx * dx + dy * dy
     }
 
-    fn contains_point(&self, point: &[f64; 2]) -> bool {
+    fn contains_point(&self, _point: &[f64; 2]) -> bool {
         false
     }
 }
 
-fn indexed_points(points: &InputPoints) -> Vec<IndexedPoint> {
+fn indexed_points(points: &Vec<InputPoint>) -> Vec<IndexedPoint> {
     let mut ret = Vec::new();
-    for k in 0..points.points.len() {
+    for k in 0..points.len() {
         ret.push(IndexedPoint {
-            coord: points.points[k].euclidian.clone(),
+            coord: points[k].euclidian.clone(),
             index: k,
         });
     }
     ret
 }
 
-fn indexed_track(points: &Track) -> Vec<IndexedPoint> {
+fn indexed_track(points: &Track, range: &std::ops::Range<usize>) -> Vec<IndexedPoint> {
     let mut ret = Vec::new();
-    for k in 0..points.wgs84.len() {
+    for k in range.start..range.end {
         ret.push(IndexedPoint {
             coord: points.euclidian[k].clone(),
             index: k,
@@ -91,6 +91,7 @@ fn indexed_track(points: &Track) -> Vec<IndexedPoint> {
     ret
 }
 
+#[derive(Clone)]
 pub struct Locate {
     tree: RTree<IndexedPoint>,
 }
@@ -100,13 +101,13 @@ fn coord(point: &MercatorPoint) -> [f64; 2] {
 }
 
 impl Locate {
-    pub fn from_points(points: &InputPoints) -> Locate {
+    pub fn from_points(points: &Vec<InputPoint>) -> Locate {
         let ipoints = indexed_points(points);
         let tree = RTree::bulk_load(ipoints);
         Locate { tree }
     }
-    pub fn from_track(track: &Track) -> Locate {
-        let ipoints = indexed_track(track);
+    pub fn from_track(track: &Track, range: &std::ops::Range<usize>) -> Locate {
+        let ipoints = indexed_track(track, range);
         let tree = RTree::bulk_load(ipoints);
         Locate { tree }
     }
@@ -119,8 +120,8 @@ impl Locate {
     }
     pub fn find_points_in_bbox(&self, bbox: &BoundingBox) -> Vec<usize> {
         let mut ret = Vec::new();
-        let min = coord(&MercatorPoint::from_xy(&bbox.min()));
-        let max = coord(&MercatorPoint::from_xy(&bbox.max()));
+        let min = coord(&MercatorPoint::from_xy(&bbox.get_min()));
+        let max = coord(&MercatorPoint::from_xy(&bbox.get_max()));
         let aabb = AABB::from_corners(min, max);
         for p in self.tree.locate_in_envelope(&aabb) {
             ret.push(p.index);

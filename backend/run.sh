@@ -34,7 +34,9 @@ function pdf() {
 	fi
 	echo make pdf
 	export RUST_LOG=trace
-	cargo build
+	cargo build 
+	export CARGO_PROFILE_RELEASE_DEBUG=true
+	set -x
 	time cargo run -- \
 		  --output-directory /tmp/ \
 		  --debug true \

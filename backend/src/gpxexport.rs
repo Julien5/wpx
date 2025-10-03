@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::inputpoint::InputPoints;
+use crate::inputpoint::InputPointMap;
 use crate::track;
 use crate::waypoint;
 
@@ -36,7 +36,7 @@ fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     ret
 }
 
-pub fn generate(track: &track::Track, waypoints: &InputPoints) -> Vec<u8> {
+pub fn generate(track: &track::Track, waypoints: &InputPointMap) -> Vec<u8> {
     let mut G = gpx::Gpx::default();
     G.version = gpx::GpxVersion::Gpx11;
 
@@ -45,7 +45,7 @@ pub fn generate(track: &track::Track, waypoints: &InputPoints) -> Vec<u8> {
     track.segments.push(segment);
     G.tracks.push(track);
 
-    for w in &waypoints.points {
+    for w in &waypoints.as_vector() {
         let g = to_gpx(&w.waypoint());
         G.waypoints.push(g);
     }

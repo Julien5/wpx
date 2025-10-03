@@ -2,12 +2,12 @@
 
 use crate::bbox::BoundingBox;
 use crate::gpsdata::distance_wgs84;
-use crate::inputpoint::{InputPoints, InputType};
+use crate::inputpoint::{InputPoint, InputType};
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::*;
-use crate::mercator::MercatorPoint;
+use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
+use crate::segment;
 use crate::track::Track;
-use crate::{mercator, segment};
 
 use svg::Document;
 
@@ -18,10 +18,10 @@ pub fn to_graphics_coordinates(
     H: i32,
     margin: i32,
 ) -> (f64, f64) {
-    let xmin = bbox.min.0;
-    let xmax = bbox.max.0;
-    let ymin = bbox.min.1;
-    let ymax = bbox.max.1;
+    let xmin = bbox._min.0;
+    let xmax = bbox._max.0;
+    let ymin = bbox._min.1;
+    let ymax = bbox._max.1;
 
     let f = |x: f64| -> f64 {
         let a = (W - 2 * margin) as f64 / (xmax - xmin);
@@ -84,7 +84,7 @@ struct MapData {
     debug: svg::node::element::Group,
 }
 
-pub fn bounding_box(track: &Track, range: &std::ops::Range<usize>) -> BoundingBox {
+pub fn bounding_box(track: &Track, range: &std::ops::Range<usize>) -> EuclideanBoundingBox {
     let mut bbox = BoundingBox::new();
     for k in range.start..range.end {
         bbox.update(&track.euclidian[k].xy());
@@ -95,28 +95,21 @@ pub fn bounding_box(track: &Track, range: &std::ops::Range<usize>) -> BoundingBo
 impl MapData {
     pub fn make(
         track: &Track,
-        inputpoints: &InputPoints,
-        subset: &Vec<usize>,
+        inputpoints: &Vec<InputPoint>,
         segment: &segment::Segment,
         W: i32,
         H: i32,
         _debug: bool,
     ) -> MapData {
-        let bbox84 = &segment.map_bbox;
-        let projection = mercator::WebMercatorProjection::make();
+        let mut bbox = segment.map_bbox.clone();
+        bbox.fix_aspect_ratio(W, H);
 
-        let mut bbox = BoundingBox::new();
         let mut path = Vec::new();
         for k in segment.range.start..segment.range.end {
-            let w = &track.wgs84[k];
-            let utm = projection.project(w);
-            path.push(utm.clone());
-            bbox.update(&utm.xy());
+            path.push(track.euclidian[k].clone());
         }
 
         let margin = 10i32;
-
-        bbox.fix_aspect_ratio(W, H);
 
         let mut polyline = Polyline::new();
         // todo: path in the bbox, which more than the path in the range.
@@ -135,17 +128,16 @@ impl MapData {
         set_attr(&mut document, "height", format!("{}", H).as_str());
 
         let mut points = Vec::new();
-        let inputpoints = &inputpoints.points;
-        for k in subset {
-            let w = &inputpoints[*k];
-            let utm = projection.project(&w.wgs84);
-            if !bbox.contains(&utm.xy()) {
+        for k in 0..inputpoints.len() {
+            let w = &inputpoints[k];
+            let euclidean = w.euclidian.clone();
+            if !bbox.contains(&euclidean.xy()) {
                 continue;
             }
             if w.name().is_none() {
                 continue;
             }
-            let index = w.track_index.get();
+            let index = w.track_index;
             if index.is_some() && !segment.range.contains(&index.unwrap()) {
                 continue;
             }
@@ -158,7 +150,7 @@ impl MapData {
             };
 
             let mut circle = Circle::new();
-            let (x, y) = to_graphics_coordinates(&bbox, &utm, W, H, margin);
+            let (x, y) = to_graphics_coordinates(&bbox, &euclidean, W, H, margin);
             let n = points.len();
             circle.id = format!("wp-{}/circle", n);
             circle.cx = x;
@@ -317,14 +309,13 @@ impl MapData {
 
 pub fn map(
     track: &Track,
-    inputpoints: &InputPoints,
-    subset: &Vec<usize>,
+    inputpoints: &Vec<InputPoint>,
     segment: &segment::Segment,
     W: i32,
     H: i32,
     debug: bool,
 ) -> String {
-    let svgMap = MapData::make(track, inputpoints, subset, segment, W, H, debug);
+    let svgMap = MapData::make(track, inputpoints, segment, W, H, debug);
     svgMap.render()
 }
 

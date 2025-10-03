@@ -23,9 +23,23 @@ struct Cli {
     filename: std::path::PathBuf,
 }
 
+use std::io::Write;
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), error::Error> {
     env_logger::init();
+    /*env_logger::Builder::new()
+    .format(|buf, record| {
+        writeln!(
+            buf,
+            "{} [{}] - {}",
+            chrono::Local::now().format("%M:%S:%3f"),
+            record.level(),
+            record.args()
+        )
+    })
+    .filter(None, log::LevelFilter::Trace)
+    .init();*/
+
     let args = Cli::parse();
 
     let gpxinput;

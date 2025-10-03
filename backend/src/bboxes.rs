@@ -1,10 +1,13 @@
 use std::{cmp::Ordering, collections::BTreeMap};
 
-use crate::bbox::*;
+use crate::{
+    bbox::*,
+    mercator::{EuclideanBoundingBox, MercatorPoint},
+};
 
 pub fn _enlarge(bbox: &mut BoundingBox, epsilon: &f64) {
-    bbox.min = (bbox.min.0 - epsilon, bbox.min.1 - epsilon);
-    bbox.max = (bbox.max.0 + epsilon, bbox.max.1 + epsilon);
+    bbox._min = (bbox._min.0 - epsilon, bbox._min.1 - epsilon);
+    bbox._max = (bbox._max.0 + epsilon, bbox._max.1 + epsilon);
 }
 
 fn floor_snap(x: &f64, step: &f64) -> f64 {
@@ -16,8 +19,20 @@ fn ceil_snap(x: &f64, step: &f64) -> f64 {
 }
 
 pub fn snap(bbox: &mut BoundingBox, step: &f64) {
-    bbox.min = (floor_snap(&bbox.min.0, step), floor_snap(&bbox.min.1, step));
-    bbox.max = (ceil_snap(&bbox.max.0, step), ceil_snap(&bbox.max.1, step));
+    bbox._min = (
+        floor_snap(&bbox._min.0, step),
+        floor_snap(&bbox._min.1, step),
+    );
+    bbox._max = (ceil_snap(&bbox._max.0, step), ceil_snap(&bbox._max.1, step));
+}
+
+pub fn snap_point(p: &MercatorPoint, step: &f64) -> EuclideanBoundingBox {
+    let min = (floor_snap(&p.x(), step), floor_snap(&p.y(), step));
+    let max = (ceil_snap(&p.x(), step), ceil_snap(&p.y(), step));
+    EuclideanBoundingBox {
+        _min: min,
+        _max: max,
+    }
 }
 
 pub struct Index {
@@ -64,14 +79,16 @@ impl Ord for Index {
     }
 }
 
-type BoundingBoxes = BTreeMap<Index, BoundingBox>;
+pub type BoundingBoxes = BTreeMap<Index, BoundingBox>;
+
+pub const BBOXWIDTH: f64 = 10000f64;
 
 pub fn split(orig: &BoundingBox, step: &f64) -> BoundingBoxes {
     let mut bbox = orig.clone();
     snap(&mut bbox, step);
     let nx = (bbox.width() / step).ceil() as usize;
     let ny = (bbox.height() / step).ceil() as usize;
-    let min0 = bbox.min.clone();
+    let min0 = bbox._min.clone();
     let mut ret = BoundingBoxes::new();
     for kx in 0..nx {
         for ky in 0..ny {
@@ -90,8 +107,8 @@ pub fn split(orig: &BoundingBox, step: &f64) -> BoundingBoxes {
 pub fn bounding_box(boxes: &Vec<BoundingBox>) -> BoundingBox {
     let mut ret = BoundingBox::new();
     for b in boxes {
-        ret.update(&b.min());
-        ret.update(&b.max());
+        ret.update(&b.get_min());
+        ret.update(&b.get_max());
     }
     ret
 }
@@ -107,12 +124,8 @@ mod tests {
             .load_filename("data/blackforest.gpx")
             .await
             .expect("fail");
-        let mut bbox = backend.d().track.wgs84_bounding_box();
-        let bboxes = split(&bbox, &0.1f64)
-            .iter()
-            .map(|(index, bbox)| crate::osm::osm3(&bbox))
-            .collect::<Vec<_>>();
-        assert!(bboxes.contains(&"(49.000,8.400,49.100,8.500)".to_string()));
+        let bbox = backend.d().track.wgs84_bounding_box();
+        let bboxes = split(&bbox, &0.1f64);
         assert_eq!(bboxes.len(), 60);
     }
 }

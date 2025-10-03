@@ -170,6 +170,7 @@ impl WaypointInfo {
         start_time: &String,
         speed: &f64,
     ) {
+        waypoints.sort_by_key(|w| w.get_track_index());
         let mut infos = Vec::new();
         for k in 0..waypoints.len() {
             let w = &waypoints[k];

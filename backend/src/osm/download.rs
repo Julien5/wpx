@@ -110,7 +110,7 @@ fn read_download_element(
         wgs84: wgs,
         euclidian: euclidean,
         tags,
-        track_index: std::cell::Cell::new(None),
+        track_index: None,
     };
     Ok(ret)
 }

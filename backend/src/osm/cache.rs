@@ -1,5 +1,5 @@
 use crate::inputpoint::InputPoints;
-use crate::track::WGS84BoundingBox;
+use crate::mercator::EuclideanBoundingBox;
 
 #[cfg(test)]
 fn cache_dir() -> String {
@@ -17,15 +17,15 @@ fn cache_dir() -> String {
     return format!("{}/{}", standart_cache_dir, "WPX");
 }
 
-pub fn cache_filename(bbox: &WGS84BoundingBox) -> String {
-    let mut s = super::osm3(bbox).to_string();
-    // (49.000,8.400,49.100,8.500)
-    // ->49.000/8.400/49.100/8.500
-    s = s.replace("(", "");
-    s = s.replace(")", "");
-    s = s.replace(",", "/");
+pub fn key(bbox: &EuclideanBoundingBox) -> String {
+    format!(
+        "{:0.0}+{:0.0}-{:0.0}+{:0.0}",
+        bbox._min.1, bbox._min.0, bbox._max.1, bbox._max.0
+    )
+}
 
-    format!("{}/{}", s, "data")
+pub fn cache_filename(bbox: &EuclideanBoundingBox) -> String {
+    format!("{}/{}", key(bbox), "data")
 }
 
 fn cache_path(filename: &String) -> String {
@@ -62,12 +62,12 @@ async fn hit_cache_worker(path: &String) -> bool {
     super::indexdb::hit_cache(&path).await
 }
 
-pub async fn hit_cache(bbox: &WGS84BoundingBox) -> bool {
+pub async fn hit_cache(bbox: &EuclideanBoundingBox) -> bool {
     let filename = cache_filename(bbox);
     return hit_cache_worker(&filename).await;
 }
 
-pub async fn read(bbox: &WGS84BoundingBox) -> Option<InputPoints> {
+pub async fn read(bbox: &EuclideanBoundingBox) -> Option<InputPoints> {
     let filename = cache_filename(bbox);
     match read_worker(&filename).await {
         Some(data) => Some(InputPoints::from_string(&data)),
@@ -75,14 +75,14 @@ pub async fn read(bbox: &WGS84BoundingBox) -> Option<InputPoints> {
     }
 }
 
-pub async fn write(bboxes: &Vec<WGS84BoundingBox>, points: &InputPoints) {
+pub async fn write(bboxes: &Vec<EuclideanBoundingBox>, points: &InputPoints) {
     for atom in bboxes {
         let local = points
             .clone()
             .points
             .iter()
             .filter(|p| {
-                let coord = (p.wgs84.longitude(), p.wgs84.latitude());
+                let coord = p.euclidian.xy();
                 atom.contains(&coord)
             })
             .cloned()

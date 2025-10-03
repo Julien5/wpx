@@ -1,11 +1,11 @@
 use core::fmt;
-use std::str::FromStr;
+use std::{collections::BTreeMap, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
-    mercator::MercatorPoint,
+    mercator::{EuclideanBoundingBox, MercatorPoint},
     waypoint::{Waypoint, WaypointOrigin},
     wgs84point::WGS84Point,
 };
@@ -27,7 +27,7 @@ pub struct InputPoint {
     pub wgs84: WGS84Point,
     pub euclidian: MercatorPoint,
     pub tags: Tags,
-    pub track_index: std::cell::Cell<Option<usize>>,
+    pub track_index: Option<usize>,
 }
 
 fn read<T>(data: Option<&String>) -> Option<T>
@@ -70,7 +70,7 @@ impl InputPoint {
         InputPoint {
             wgs84: wgs84.clone(),
             euclidian: euclidean.clone(),
-            track_index: std::cell::Cell::new(None),
+            track_index: None,
             tags: Tags::new(),
         }
     }
@@ -93,7 +93,7 @@ impl InputPoint {
         }
         InputPoint {
             wgs84: wgs84.clone(),
-            track_index: std::cell::Cell::new(None),
+            track_index: None,
             tags,
             euclidian: euclidean.clone(),
         }
@@ -184,7 +184,7 @@ impl InputPoint {
     pub fn waypoint(&self) -> Waypoint {
         Waypoint {
             wgs84: self.wgs84.clone(),
-            track_index: self.track_index.get(),
+            track_index: self.track_index,
             name: self.name().clone(),
             description: None,
             info: None,
@@ -238,6 +238,49 @@ impl InputPoints {
     }
 }
 
+pub struct InputPointMap {
+    map: BTreeMap<EuclideanBoundingBox, Vec<InputPoint>>,
+}
+
+impl InputPointMap {
+    pub fn new() -> InputPointMap {
+        InputPointMap {
+            map: BTreeMap::new(),
+        }
+    }
+    pub fn insert_point(&mut self, b: &EuclideanBoundingBox, p: &InputPoint) {
+        match self.map.get_mut(&b) {
+            Some(v) => v.push(p.clone()),
+            None => {
+                self.map.insert(b.clone(), vec![p.clone()]);
+            }
+        }
+    }
+    pub fn insert_points(&mut self, b: &EuclideanBoundingBox, p: &Vec<InputPoint>) {
+        match self.map.get_mut(&b) {
+            Some(v) => v.extend_from_slice(p),
+            None => {
+                self.map.insert(b.clone(), p.clone());
+            }
+        }
+    }
+    pub fn extend(&mut self, other: &Self) {
+        for (bbox, points) in &other.map {
+            self.insert_points(bbox, points);
+        }
+    }
+    pub fn as_vector(&self) -> Vec<InputPoint> {
+        let mut ret = Vec::new();
+        for (_bbox, points) in &self.map {
+            ret.extend_from_slice(points);
+        }
+        ret
+    }
+    pub fn get(&self, bbox: &EuclideanBoundingBox) -> Option<&Vec<InputPoint>> {
+        self.map.get(bbox)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -247,7 +290,7 @@ mod tests {
             wgs84: WGS84Point::new(&1.0f64, &1.1f64, &0f64),
             euclidian: MercatorPoint::from_xy(&(0f64, 0f64)),
             tags: Tags::new(),
-            track_index: std::cell::Cell::new(None),
+            track_index: None,
         }
     }
 

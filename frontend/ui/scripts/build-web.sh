@@ -22,7 +22,7 @@ function build() {
 	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen generate
 	local RELEASE="--release"
-	# RELEASE=
+	RELEASE=
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web ${RELEASE}
 	flutter build web ${RELEASE} --build-name=${version}
 	mkdir -p build/web/pkg/

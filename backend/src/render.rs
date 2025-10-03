@@ -1,7 +1,6 @@
 #![allow(non_snake_case)]
 
 use crate::backend::BackendData;
-use crate::svgmap;
 use crate::{track, waypoint};
 
 use std::str::FromStr;
@@ -73,7 +72,7 @@ fn get_typst_bytes(utf8: &str) -> String {
     let mut ret = Vec::new();
     let chars = utf8.as_bytes();
     for c in chars {
-        let code = format!("{:?}", *c as u32);
+        let code = format!("{}", *c as u32);
         ret.push(code);
     }
     let rc = ret.join(",");
@@ -110,22 +109,14 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         let mut waypoints_table = backend.get_waypoint_table(&segment);
         waypoints_table.truncate(15);
         let table = points_table(&templates, &backend.track, &waypoints_table);
-        let p = backend.render_segment(segment, (W, H));
+        let p = segment.render_profile((W, H), backend.parameters.debug);
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);
             std::fs::write(&f, &p).unwrap();
         }
         let Wm = 400i32;
         let Hm = 400i32;
-        let m = svgmap::map(
-            &backend.track,
-            &backend.inputpoints,
-            &backend.select_points_for_map(segment),
-            &segment,
-            Wm,
-            Hm,
-            debug,
-        );
+        let m = segment.render_map((Wm, Hm), backend.parameters.debug);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();

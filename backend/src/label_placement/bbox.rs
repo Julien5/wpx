@@ -52,11 +52,11 @@ impl LabelBoundingBox {
     }
 
     pub fn x_min(&self) -> f64 {
-        self.bbox.min().0
+        self.bbox.get_min().0
     }
 
     pub fn y_min(&self) -> f64 {
-        self.bbox.min().1
+        self.bbox.get_min().1
     }
 
     fn bottom_left(&self) -> (f64, f64) {
@@ -75,11 +75,11 @@ impl LabelBoundingBox {
     }
 
     pub fn x_max(&self) -> f64 {
-        self.bbox.max().0
+        self.bbox.get_max().0
     }
 
     pub fn y_max(&self) -> f64 {
-        self.bbox.max().1
+        self.bbox.get_max().1
     }
 
     pub fn width(&self) -> f64 {
@@ -128,8 +128,8 @@ impl LabelBoundingBox {
     }
     fn overlap_self(&self, other: &Self) -> bool {
         for p in [
-            self.bbox.min(),
-            self.bbox.max(),
+            self.bbox.get_min(),
+            self.bbox.get_max(),
             self.bottom_left(),
             self.top_right(),
         ] {
@@ -173,7 +173,7 @@ impl LabelBoundingBox {
 
 impl PartialEq for LabelBoundingBox {
     fn eq(&self, other: &Self) -> bool {
-        self.bbox.min() == other.bbox.min() && self.bbox.max() == other.bbox.max()
+        self.bbox.get_min() == other.bbox.get_min() && self.bbox.get_max() == other.bbox.get_max()
     }
 }
 
@@ -185,8 +185,8 @@ impl fmt::Display for LabelBoundingBox {
         write!(
             f,
             "LabelBoundingBox {{ top_left: ({:.2}, {:.2}), (w,h): ({:.2}, {:.2}) }}",
-            self.bbox.min().0,
-            self.bbox.min().1,
+            self.bbox.get_min().0,
+            self.bbox.get_min().1,
             self.width(),
             self.height()
         )
