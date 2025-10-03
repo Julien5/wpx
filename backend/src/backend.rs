@@ -113,27 +113,11 @@ impl Backend {
 
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
         self.send(&"read gpx".to_string()).await;
-        let mut gpx = gpsdata::read_gpx_content(content)?;
-        self.send(&"read segment".to_string()).await;
-        let segment = match gpsdata::read_segment(&mut gpx) {
-            Ok(s) => s,
-            Err(e) => {
-                return Err(e);
-            }
-        };
-        self.send(&"read track".to_string()).await;
-        let track = match track::Track::from_segment(&segment) {
-            Ok(t) => t,
-            Err(e) => {
-                return Err(e);
-            }
-        };
+        let gpxdata = gpsdata::read_content(content)?;
         let default_params = Parameters::default();
-        self.send(&"read waypoints".to_string()).await;
-
         self.send(&"download osm data".to_string()).await;
-        let mut inputpoints = osm::download_for_track(&track).await;
-        inputpoints.extend(&gpsdata::read_waypoints(&gpx));
+        let mut inputpoints = osm::download_for_track(&gpxdata.track).await;
+        inputpoints.extend(&gpxdata.waypoints);
         // project::project_on_track::<InputPoint>(&track, &mut inputpoints.points);
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
@@ -141,10 +125,10 @@ impl Backend {
         let data = BackendData {
             inputpoints_tree: pointstree,
             track_smooth_elevation: elevation::smooth_elevation(
-                &track,
+                &gpxdata.track,
                 default_params.smooth_width,
             ),
-            track: std::sync::Arc::new(track),
+            track: std::sync::Arc::new(gpxdata.track),
             inputpoints,
             parameters,
         };

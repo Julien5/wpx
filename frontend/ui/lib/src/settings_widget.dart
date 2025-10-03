@@ -55,6 +55,58 @@ class SegmentsSettings extends StatefulWidget {
   State<SegmentsSettings> createState() => _SegmentsSettingsState();
 }
 
+double snapCeil(double km, double stepsize) {
+  return (km / stepsize).ceil() * stepsize;
+}
+
+double snapFloor(double km, double stepsize) {
+  return (km / stepsize).floor() * stepsize;
+}
+
+double stepSize(double km) {
+  if (km > 500) {
+    return 100;
+  }
+  if (km > 100) {
+    return 50;
+  }
+  if (km > 50) {
+    return 10;
+  }
+  if (km > 10) {
+    return 5;
+  }
+  return 1;
+}
+
+class SegmentLengthSelector extends StatelessWidget {
+  final double trackLengthKm;
+  final dynamic Function(double) onChanged;
+  final double value;
+  const SegmentLengthSelector({
+    super.key,
+    required this.trackLengthKm,
+    required this.onChanged,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    double step = stepSize(trackLengthKm);
+    double min = snapFloor(trackLengthKm / 2, step);
+    double max = snapCeil(trackLengthKm, step);
+    
+    developer.log("L=[$trackLengthKm]: step=[$step] => [$min]-[$max] ($value)");
+    return Selector(
+      min: min,
+      max: max,
+      text: "",
+      value: value,
+      onChanged: onChanged,
+    );
+  }
+}
+
 class _SegmentsSettingsState extends State<SegmentsSettings> {
   DateTime startTime = DateTime.now();
   double speed = 15 * 1000.0 / 3600;
@@ -71,10 +123,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   }
 
   void readModel() {
-    RootModel rootModel = Provider.of<RootModel>(
-      context,
-      listen: false,
-    );
+    RootModel rootModel = Provider.of<RootModel>(context, listen: false);
     bridge.Parameters parameters = rootModel.parameters();
     startTime = DateTime.parse(parameters.startTime);
     speed = parameters.speed;
@@ -83,10 +132,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   }
 
   void writeModel(BuildContext context) {
-    RootModel rootModel = Provider.of<RootModel>(
-      context,
-      listen: false,
-    );
+    RootModel rootModel = Provider.of<RootModel>(context, listen: false);
     bridge.Parameters oldParameters = rootModel.parameters();
     String rfc3339time = startTime.toIso8601String();
     if (!rfc3339time.endsWith("Z")) {
@@ -96,7 +142,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       speed: speed,
       startTime: rfc3339time,
       segmentLength: segmentLength,
-      segmentOverlap: segmentLength/10.0,
+      segmentOverlap: segmentLength / 10.0,
       maxStepSize: maxStepSize,
       smoothWidth: oldParameters.smoothWidth,
       debug: oldParameters.debug,
@@ -173,6 +219,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   @override
   Widget build(BuildContext ctx) {
     RootModel model = Provider.of<RootModel>(ctx);
+    double trackLengthKm = model.statistics().distanceEnd / 1000;
     developer.log("[SegmentsConsumer] length=${model.segments().length}");
     Table table1 = Table(
       columnWidths: const {
@@ -262,16 +309,13 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
             Container(
               height: 60,
               alignment: Alignment.centerLeft,
-              child: Selector(
-                min: 50.0,
-                max: 150.0,
-                text: "",
+              child: SegmentLengthSelector(
+                trackLengthKm: trackLengthKm,
                 value: segmentLength / 1000,
-                onChanged: (value) {
-                  setState(() {
-                    segmentLength = value * 1000;
-                  });
-                },
+                onChanged:
+                    (value) => setState(() {
+                      segmentLength = value * 1000;
+                    }),
               ),
             ),
           ],

@@ -67,6 +67,14 @@ class RootModel extends ChangeNotifier {
     _bridge.setParameters(parameters: p);
   }
 
+  Future<List<int>> generateGpx() {
+    return _bridge.generateGpx();
+  }
+
+  Future<List<int>> generatePdf() {
+    return _bridge.generatePdf();
+  }
+
   bridge.SegmentStatistics statistics() {
     return _bridge.statistics();
   }

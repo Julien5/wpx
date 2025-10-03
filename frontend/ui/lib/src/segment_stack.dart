@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/future_rendering_widget.dart';
@@ -56,7 +54,8 @@ class SegmentStack extends StatelessWidget {
 class SegmentView extends StatelessWidget {
   const SegmentView({super.key});
 
-  Widget rowWithMap(Widget table) {
+  Widget wideView() {
+    var table = WayPointsWidget();
     var hspace = const Expanded(child: SizedBox(width: 10));
     /*var _map = Container(
       // Another fixed-width child.
@@ -77,11 +76,11 @@ class SegmentView extends StatelessWidget {
     return row;
   }
 
-  Widget rowWithoutMap(Widget table) {
+  Widget thinView() {
     var row = Expanded(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [table],
+        children: [MapConsumer()],
       ),
     );
     return row;
@@ -91,36 +90,12 @@ class SegmentView extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final ScrollController scrollController = ScrollController();
-
-        scrollController.addListener(() {
-          double headerHeight = 56;
-          double scrollOffset = max(scrollController.offset - headerHeight, 0);
-          developer.log("offset: $scrollController.offset");
-          double rowHeight = 25; // Assuming each row has a height of 25
-          int firstVisibleRow = (scrollOffset / rowHeight).floor();
-          int lastVisibleRow =
-              ((scrollOffset +
-                          scrollController.position.viewportDimension -
-                          headerHeight) /
-                      rowHeight)
-                  .floor();
-
-          developer.log("Visible rows: $firstVisibleRow to $lastVisibleRow");
-        });
-
-        var table = SingleChildScrollView(
-          controller: scrollController, // Attach the ScrollController here
-          scrollDirection: Axis.vertical,
-          child: WayPointsConsumer(),
-        );
-
         var stack = SegmentStack();
         Widget? row;
         if (constraints.maxWidth > 1000) {
-          row = rowWithMap(table);
+          row = wideView();
         } else {
-          row = rowWithoutMap(table);
+          row = thinView();
         }
         var hline = const Divider(
           height: 1, // Thickness of the divider

@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -90,5 +91,37 @@ class WayPointsConsumer extends StatelessWidget {
         return Center(child: WayPointsTable(segment: segment));
       },
     );
+  }
+}
+
+class WayPointsWidget extends StatelessWidget {
+  const WayPointsWidget({super.key});
+
+  @override
+  Widget build(BuildContext ctx) {
+    final ScrollController scrollController = ScrollController();
+
+    scrollController.addListener(() {
+      double headerHeight = 56;
+      double scrollOffset = max(scrollController.offset - headerHeight, 0);
+      developer.log("offset: $scrollController.offset");
+      double rowHeight = 25; // Assuming each row has a height of 25
+      int firstVisibleRow = (scrollOffset / rowHeight).floor();
+      int lastVisibleRow =
+          ((scrollOffset +
+                      scrollController.position.viewportDimension -
+                      headerHeight) /
+                  rowHeight)
+              .floor();
+
+      developer.log("Visible rows: $firstVisibleRow to $lastVisibleRow");
+    });
+
+    var table = SingleChildScrollView(
+      controller: scrollController, // Attach the ScrollController here
+      scrollDirection: Axis.vertical,
+      child: WayPointsConsumer(),
+    );
+    return table;
   }
 }

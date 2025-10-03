@@ -33,7 +33,7 @@ FileType fileType(Type type) {
 void fileSave(List<int> data, Type type) async {
   if (kIsWeb) {
     await FileSaver.instance.saveFile(
-      name: "waypoints",
+      name: "waypoints", // on the web, the extension is set automatically...
       bytes: Uint8List.fromList(data),
       fileExtension: fileExtension(type),
       mimeType: mimeType(type),
@@ -41,7 +41,7 @@ void fileSave(List<int> data, Type type) async {
     );
   } else if (Platform.isLinux) {
     var filepath = await FilePicker.platform.saveFile(
-      fileName: "waypoints",
+      fileName: "waypoints.${fileExtension(type)}", // .. but not on linux
       type: fileType(type),
       allowedExtensions: [fileExtension(type)],
       bytes: Uint8List.fromList(data),
@@ -54,9 +54,13 @@ void fileSave(List<int> data, Type type) async {
 }
 
 Future<List<int>> generate(RootModel root, Type type) async {
-  // TODO
-  List<int> L = List.empty();
-  return L;
+  if (type == Type.pdf) {
+    var data = await root.generatePdf();
+    return data;
+  }
+  assert(type == Type.gpx);
+  var data = await root.generateGpx();
+  return data;
 }
 
 class ExportButton extends StatefulWidget {
@@ -88,6 +92,7 @@ class _ExportButtonState extends State<ExportButton> {
   @override
   Widget build(BuildContext context) {
     RootModel model = Provider.of<RootModel>(context);
+    String kB=(length/1024.0).ceil().toString();
     return Row(
       children: [
         ElevatedButton(
@@ -95,7 +100,7 @@ class _ExportButtonState extends State<ExportButton> {
           child: Text(fileExtension(widget.type)),
         ),
         SizedBox(width: 20),
-        Text("length: $length"),
+        Text("length: $kB kB"),
       ],
     );
   }

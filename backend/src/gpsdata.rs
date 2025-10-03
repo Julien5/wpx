@@ -11,7 +11,7 @@ pub fn distance_wgs84(p1: &WGS84Point, p2: &WGS84Point) -> f64 {
     geo::Haversine::distance(p1, p2)
 }
 
-pub fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, Error> {
+fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, Error> {
     let reader_mem = std::io::Cursor::new(bytes);
     match gpx::read(reader_mem) {
         Ok(d) => Ok(d),
@@ -19,7 +19,40 @@ pub fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, Error> {
     }
 }
 
-pub fn read_segment(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
+fn read_routes(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
+    let routes = &mut gpx.routes;
+    routes.sort_by_key(|route| {
+        let zero = "A".to_string();
+        let infinity = "ziel".to_string();
+        if route.name.is_none() {
+            return zero;
+        }
+        let name = route.name.as_ref().unwrap().to_lowercase();
+        if name.contains("end") {
+            return infinity;
+        }
+        if name.contains("ziel") {
+            return infinity;
+        }
+        if name.contains("start") {
+            return zero;
+        }
+        return name;
+    });
+    let mut ret = gpx::TrackSegment::new();
+    for route in routes {
+        let points = &route.points;
+        for k in 0..points.len() {
+            ret.points.push(points[k].clone());
+        }
+    }
+    if ret.points.is_empty() {
+        return Err(Error::GPXHasNoSegment);
+    }
+    Ok(ret)
+}
+
+fn read_tracks(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
     let tracks = &mut gpx.tracks;
     tracks.sort_by_key(|track| {
         let zero = "A".to_string();
@@ -50,6 +83,40 @@ pub fn read_segment(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
         return Err(Error::GPXHasNoSegment);
     }
     Ok(ret)
+}
+
+pub struct GpxData {
+    pub track: track::Track,
+    pub waypoints: InputPointMap,
+}
+
+pub fn read_content(content: &Vec<u8>) -> Result<GpxData, Error> {
+    let mut gpx = read_gpx_content(content)?;
+    let segment = if gpx.tracks.is_empty() {
+        match read_routes(&mut gpx) {
+            Ok(s) => s,
+            Err(e) => {
+                return Err(e);
+            }
+        }
+    } else {
+        match read_tracks(&mut gpx) {
+            Ok(s) => s,
+            Err(e) => {
+                return Err(e);
+            }
+        }
+    };
+
+    match track::Track::from_segment(&segment) {
+        Ok(t) => Ok(GpxData {
+            track: t,
+            waypoints: read_waypoints(&gpx),
+        }),
+        Err(e) => {
+            return Err(e);
+        }
+    }
 }
 
 pub type ProfileBoundingBox = BoundingBox;
