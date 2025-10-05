@@ -110,7 +110,8 @@ fn read_download_element(
         wgs84: wgs,
         euclidian: euclidean,
         tags,
-        track_index: None,
+        track_projection: None,
+        label_placement_order: i32::MAX,
     };
     Ok(ret)
 }

@@ -6,7 +6,6 @@ use ::svg::Node;
 
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
-use crate::gpsdata::distance_wgs84;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::inputpoint::InputType;
@@ -262,26 +261,12 @@ impl ProfileView {
         let mut points = Vec::new();
         for k in 0..inputpoints.len() {
             let w = &inputpoints[k];
-            if w.track_index.is_none() {
-                continue;
-            }
-            let index = w.track_index.unwrap();
+            let index = w.round_track_index().unwrap();
             let trackpoint = &track.wgs84[index];
-            let delta = distance_wgs84(trackpoint, &w.wgs84);
-            if delta > 1000f64 {
-                continue;
-            }
+            // Note: It would be better to use the middle point with the float
+            // track_index from track_projection.
             let x = track.distance(index);
             let y = trackpoint.z();
-            if !bbox.contains(&(x, y)) {
-                continue;
-            }
-            if w.name().is_none() {
-                continue;
-            }
-            /*if !range.contains(&index) {
-                continue;
-            }*/
             let (xg, yg) = self.toSD(&(x, y));
             let n = points.len();
             let mut circle = label_placement::Circle::new();
@@ -313,14 +298,21 @@ impl ProfileView {
                 }
             }
 
-            label.set_text(inputpoints[k].short_name().unwrap().as_str());
-            label.id = format!("wp-{}/text", k);
-            points.push(PointFeature::new(
-                id,
-                circle,
-                label,
-                priority_from_delta(delta, w.kind()),
-            ));
+            match inputpoints[k].short_name() {
+                Some(name) => {
+                    label.set_text(name.clone().trim());
+                    label.id = format!("wp-{}/text", k);
+                    points.push(PointFeature::new(
+                        id,
+                        circle,
+                        label,
+                        inputpoints[k].label_placement_order,
+                    ));
+                }
+                None => {
+                    log::error!("missing name for {:?}", inputpoints[k]);
+                }
+            }
         }
 
         let result = label_placement::place_labels_gen(

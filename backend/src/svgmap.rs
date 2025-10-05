@@ -1,7 +1,6 @@
 #![allow(non_snake_case)]
 
 use crate::bbox::BoundingBox;
-use crate::gpsdata::distance_wgs84;
 use crate::inputpoint::{InputPoint, InputType};
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::*;
@@ -103,13 +102,12 @@ impl MapData {
     ) -> MapData {
         let mut bbox = segment.map_bbox.clone();
         bbox.fix_aspect_ratio(W, H);
-
         let mut path = Vec::new();
         for k in segment.range.start..segment.range.end {
             path.push(track.euclidian[k].clone());
         }
 
-        let margin = 10i32;
+        let margin = 20i32;
 
         let mut polyline = Polyline::new();
         // todo: path in the bbox, which more than the path in the range.
@@ -131,24 +129,6 @@ impl MapData {
         for k in 0..inputpoints.len() {
             let w = &inputpoints[k];
             let euclidean = w.euclidian.clone();
-            if !bbox.contains(&euclidean.xy()) {
-                continue;
-            }
-            if w.name().is_none() {
-                continue;
-            }
-            let index = w.track_index;
-            if index.is_some() && !segment.range.contains(&index.unwrap()) {
-                continue;
-            }
-            let delta = match index {
-                Some(index) => {
-                    let trackpoint = &track.wgs84[index];
-                    distance_wgs84(trackpoint, &w.wgs84)
-                }
-                None => f64::MAX,
-            };
-
             let mut circle = Circle::new();
             let (x, y) = to_graphics_coordinates(&bbox, &euclidean, W, H, margin);
             let n = points.len();
@@ -179,13 +159,20 @@ impl MapData {
                 }
             }
             let mut label = Label::new();
-            label.set_text(w.short_name().clone().unwrap().trim());
+            match w.short_name() {
+                Some(text) => {
+                    label.set_text(text.clone().trim());
+                }
+                None => {
+                    log::error!("should not render a point without name");
+                }
+            }
             label.id = format!("wp-{}/text", k);
             points.push(PointFeature::new(
                 id,
                 circle,
                 label,
-                priority_from_delta(delta, w.kind()),
+                w.label_placement_order,
             ));
         }
         let result = crate::label_placement::place_labels_gen(

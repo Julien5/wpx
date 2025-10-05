@@ -98,8 +98,6 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
     let debug = backend.get_parameters().debug;
     let templates = Templates::new();
     let mut document = templates.header.clone();
-    let mut start = 0f64;
-    let mut k = 0usize;
     let segments = backend.segments();
     for segment in &segments {
         let range = &segment.range;
@@ -108,6 +106,7 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         }
         let mut waypoints_table = backend.get_waypoint_table(&segment);
         waypoints_table.truncate(15);
+        log::trace!("segment: {}", segment.id);
         let table = points_table(&templates, &backend.track, &waypoints_table);
         let p = segment.render_profile((W, H), backend.parameters.debug);
         if backend.get_parameters().debug {
@@ -125,8 +124,6 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         if range.end == backend.track.len() {
             break;
         }
-        start = start + backend.get_parameters().segment_length;
-        k = k + 1;
     }
     document
 }

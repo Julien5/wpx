@@ -102,7 +102,7 @@ pub struct PointFeature {
     id: String,
     circle: Circle,
     label: Label,
-    priority: i32,
+    placement_order: i32,
 }
 
 pub type CandidatesGenerator = fn(&PointFeature) -> Vec<LabelBoundingBox>;
@@ -117,30 +117,6 @@ impl Eq for PointFeature {}
 use std::str::FromStr;
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::InputType;
-
-pub fn priority_from_delta(d: f64, kind: InputType) -> i32 {
-    let mut ret = 1;
-    if kind == InputType::City && d < 1000f64 {
-        return ret;
-    }
-    if (kind == InputType::MountainPass || kind == InputType::Peak) && d < 500f64 {
-        return ret;
-    }
-    ret += 1;
-    if kind == InputType::Village && d < 1000f64 {
-        return ret;
-    }
-    ret += 1;
-    if kind == InputType::City && d < 10000f64 {
-        return ret;
-    }
-    ret += 1;
-    if kind == InputType::Village && d < 200f64 {
-        return ret;
-    }
-    10
-}
 
 impl PointFeature {
     pub fn new(id: String, circle: Circle, label: Label, priority: i32) -> PointFeature {
@@ -148,7 +124,7 @@ impl PointFeature {
             id,
             circle,
             label,
-            priority,
+            placement_order: priority,
         }
     }
     pub fn width(&self) -> f64 {
@@ -379,7 +355,6 @@ fn filter_sort_candidates(
     drawbox: &BoundingBox,
     obstacles: &Obstacles,
 ) {
-    let first = candidates.first().unwrap().clone();
     candidates.retain(|c| {
         if !drawbox.contains_other(&c.bbox.bbox) {
             return false;
@@ -396,9 +371,6 @@ fn filter_sort_candidates(
         }
         true
     });
-    if candidates.is_empty() {
-        candidates.push(first);
-    }
     // dtarget and dothers are considered in the ordering of candidates
     candidates.sort_by(|ci, cj| ci.partial_cmp(cj).unwrap_or(Ordering::Equal));
 }
@@ -416,20 +388,21 @@ fn build_graph_gen(
         if points[k].text().is_empty() {
             continue;
         }
-        if points[k].priority != *priority {
+        if points[k].placement_order != *priority {
             continue;
         }
         let mut candidates = generate_all_candidates(gen, points, k);
+        let first = candidates.first().unwrap().clone();
         filter_sort_candidates(&mut candidates, drawingbox, obstacles);
-        assert!(!candidates.is_empty());
-
+        if candidates.is_empty() && points[k].placement_order <= 5 {
+            candidates.push(first);
+        }
         let selected_indices = candidate::select_candidates(&candidates);
         let selected_candidates: Vec<_> = selected_indices
             .into_iter()
             .map(|i| candidates[i].clone())
             .collect();
         assert!(!ret.candidates.contains_key(&k));
-        assert!(!selected_candidates.is_empty());
         /*log::trace!(
             "[{}] => {} candidates",
             points[k].text(),
@@ -485,7 +458,7 @@ fn place_labels_gen_worker(
         if target_text.is_empty() {
             continue;
         }
-        if points[k].priority != *priority {
+        if points[k].placement_order != *priority {
             continue;
         }
         let best_candidate = best_candidates.get(&k);
@@ -497,7 +470,7 @@ fn place_labels_gen_worker(
             }
             _ => {
                 log::info!("failed to find any candidate for [{}]", target_text);
-                assert!(false);
+                assert!(points[k].placement_order > 5);
             }
         }
     }
@@ -519,7 +492,7 @@ pub fn place_labels_gen(
     loop {
         let results = place_labels_gen_worker(points, &priority, gen, bbox, &obstacles);
         for k in 0..points.len() {
-            if points[k].priority == priority && results.placed_indices.contains(&k) {
+            if points[k].placement_order == priority && results.placed_indices.contains(&k) {
                 obstacles.bboxes.push(points[k].label.bbox.bbox.clone());
             }
         }

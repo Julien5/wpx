@@ -23,11 +23,30 @@ pub enum InputType {
 }
 
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
+pub struct TrackProjection {
+    pub track_index: f64,
+    pub euclidean: MercatorPoint,
+    pub elevation: f64,
+    pub track_distance: f64,
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputPoint {
     pub wgs84: WGS84Point,
     pub euclidian: MercatorPoint,
     pub tags: Tags,
-    pub track_index: Option<usize>,
+    pub track_projection: Option<TrackProjection>,
+    // <= 5 => the label is forcefully placed, with overlap
+    // >5 => the label is not placed if no non-overlaping candidate is found.
+    pub label_placement_order: i32,
+}
+
+impl PartialEq for InputPoint {
+    fn eq(&self, other: &Self) -> bool {
+        // do not take track_projection and label_placement_order into account.
+        // they are transient.
+        self.wgs84 == other.wgs84 && self.euclidian == other.euclidian && self.tags == other.tags
+    }
 }
 
 fn read<T>(data: Option<&String>) -> Option<T>
@@ -70,8 +89,9 @@ impl InputPoint {
         InputPoint {
             wgs84: wgs84.clone(),
             euclidian: euclidean.clone(),
-            track_index: None,
+            track_projection: None,
             tags: Tags::new(),
+            label_placement_order: i32::MAX,
         }
     }
     pub fn from_gpx(
@@ -93,10 +113,20 @@ impl InputPoint {
         }
         InputPoint {
             wgs84: wgs84.clone(),
-            track_index: None,
+            track_projection: None,
             tags,
             euclidian: euclidean.clone(),
+            label_placement_order: i32::MAX,
         }
+    }
+    pub fn round_track_index(&self) -> Option<usize> {
+        match &self.track_projection {
+            None => None,
+            Some(p) => Some(p.track_index.round() as usize),
+        }
+    }
+    pub fn distance_to_track(&self) -> f64 {
+        return self.track_projection.as_ref().unwrap().track_distance;
     }
     pub fn ele(&self) -> Option<f64> {
         read::<f64>(self.tags.get("ele"))
@@ -184,7 +214,7 @@ impl InputPoint {
     pub fn waypoint(&self) -> Waypoint {
         Waypoint {
             wgs84: self.wgs84.clone(),
-            track_index: self.track_index,
+            track_index: self.round_track_index(),
             name: self.name().clone(),
             description: None,
             info: None,
@@ -290,7 +320,8 @@ mod tests {
             wgs84: WGS84Point::new(&1.0f64, &1.1f64, &0f64),
             euclidian: MercatorPoint::from_xy(&(0f64, 0f64)),
             tags: Tags::new(),
-            track_index: None,
+            track_projection: None,
+            label_placement_order: i32::MAX,
         }
     }
 

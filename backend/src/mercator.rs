@@ -19,6 +19,11 @@ impl MercatorPoint {
     pub fn from_xy((x, y): &(f64, f64)) -> MercatorPoint {
         MercatorPoint(*x, *y)
     }
+    pub fn d2(&self, other: &MercatorPoint) -> f64 {
+        let dx = self.0 - other.0;
+        let dy = self.1 - other.1;
+        dx * dx + dy * dy
+    }
 }
 
 pub struct WebMercatorProjection {
