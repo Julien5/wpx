@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/backendmodel.dart';
-import 'package:ui/src/futurerenderer.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class WayPointsTable extends StatefulWidget {

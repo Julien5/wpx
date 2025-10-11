@@ -9,7 +9,7 @@ function init() {
 }
 
 function backend() {
-	cd ~/work/projects/desktop/track/profile
+	cd ~/projects/sandbox/desktop/track/profile
 	dev.rust
 	export RUST_BACKTRACE=1
 	cargo test -- --nocapture
@@ -24,14 +24,14 @@ function backend() {
 }
 
 function frontend() {
-	cd ~/work/projects/desktop/track/profile/frontend/ui/
+	cd ~/projects/sandbox/desktop/track/profile/frontend/ui/
 	dev.flutter-rust
-	cp ~/work/projects/desktop/track/profile/backend/data/blackforest.gpx /tmp/track.gpx
+	cp ~/projects/sandbox/desktop/track/profile/backend/data/blackforest.gpx /tmp/track.gpx
 	flutter run --device-id Linux
 }
 
 function run-web() {
-	cd ~/work/projects/desktop/track/profile/frontend/ui
+	cd ~/projects/sandbox/desktop/track/profile/frontend/ui
 	dev.flutter-rust
 	rm -Rf /tmp/build.d
 	mv build /tmp/build.d

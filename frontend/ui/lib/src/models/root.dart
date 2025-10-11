@@ -2,8 +2,8 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ui/src/futurerenderer.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'futurerenderer.dart';
 
 class SegmentData {
   Renderers renderers;

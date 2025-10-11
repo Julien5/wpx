@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ui/src/futurerenderer.dart';
-import 'package:ui/src/minisvg.dart';
+import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/widgets/minisvg.dart';
 
 class FutureRenderingWidget extends StatefulWidget {
   final FutureRenderer future;
@@ -14,11 +14,11 @@ class FutureRenderingWidget extends StatefulWidget {
 class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   MiniSvgWidget? svg;
 
-  Widget buildWorker(Size parentSize) {
-    Size wantedSize = parentSize;
+  Widget buildWorker(Size wantedSize) {
     widget.future.setSize(wantedSize);
     if (widget.future.done()) {
-      svg = MiniSvgWidget(svg: widget.future.result(), size: wantedSize);
+      SvgRootElement root = MiniSvgWidget.parse(widget.future.result());
+      svg = MiniSvgWidget(svg: root);
     }
     if (!widget.future.done() && svg == null) {
       return Text("starting ${widget.future.trackData} ${widget.future.id()}");
@@ -39,18 +39,10 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        /*double screenwidth = MediaQuery.sizeOf(context).width;
-        double screenheight = MediaQuery.sizeOf(context).height;
-        double w = max(1000,min(screenwidth, constraints.maxWidth-100));
-        double h = max(285,min(50+screenheight / 3, constraints.maxHeight));
-        */
-        double w = 1000;
-        double h = 285;
+        Size size = Size(1000, 285);    
         if (widget.future is MapRenderer) {
-          w = 300;
-          h = 300;
+          size = Size(400,400);
         }
-        Size size = Size(w, h);
         return buildWorker(size);
       },
     );

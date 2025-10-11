@@ -126,7 +126,7 @@ async fn aread(filename: &String) -> Option<String> {
 
     let store = transaction.object_store(STORE).unwrap();
     let data = store.get(identifier(&filename)).await.unwrap();
-    Some(data.unwrap())
+    data
 }
 
 async fn ahit_cache(filename: &String) -> bool {

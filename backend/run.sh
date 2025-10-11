@@ -37,8 +37,10 @@ function pdf() {
 	cargo build 
 	export CARGO_PROFILE_RELEASE_DEBUG=true
 	set -x
+	rm -Rf /tmp/wpx
+	mkdir /tmp/wpx
 	time cargo run -- \
-		  --output-directory /tmp/ \
+		  --output-directory /tmp/wpx/ \
 		  --debug true \
 		  --segment-length $(segment-length ${file}) \
 		  --segment-overlap $(segment-overlap ${file}) \
@@ -78,7 +80,6 @@ function run-test() {
 
 function main() {
 	export RUST_BACKTRACE=1
-	rm -f /tmp/*.{svg,pdf,gpx,typ} /tmp/document.*
 	pdf "$@"
 	# run-test
 }

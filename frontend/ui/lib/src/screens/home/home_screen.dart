@@ -3,7 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/backendmodel.dart';
+import 'package:ui/src/models/root.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
@@ -198,8 +198,8 @@ void initState() {
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext ctx) {

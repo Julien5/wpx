@@ -100,7 +100,13 @@ impl Track {
             return end;
         }
         let mut it = self._distance.iter();
-        it.rposition(|&d| d < distance).unwrap()
+        match it.rposition(|&d| d < distance) {
+            Some(index) => index,
+            None => {
+                log::error!("no index_before distance {}", distance);
+                0
+            }
+        }
     }
 
     pub fn segment(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {

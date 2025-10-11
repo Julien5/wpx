@@ -1,4 +1,6 @@
+import 'dart:developer' as developer;
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
@@ -115,7 +117,7 @@ abstract class Element {
       // Add support for <rect>
       return RectElement(e, parent);
     } else if (e.name.local == "svg") {
-      return GroupElement(e, parent);
+      return SvgRootElement(e, parent);
     } else if (e.name.local == "g") {
       return GroupElement(e, parent);
     } else {
@@ -131,6 +133,22 @@ class GroupElement extends Element {
         children.add(Element.fromXml(child, this));
       }
     }
+  }
+
+  @override
+  void paintElement(Canvas canvas, Size size) {
+    for (var child in children) {
+      child.paint(canvas, size);
+    }
+  }
+}
+
+class SvgRootElement extends GroupElement {
+  late Size size;
+  SvgRootElement(super.xmlElement, super.parent) {
+    double width = double.parse(_xmlElement.getAttribute("width")!);
+    double height = double.parse(_xmlElement.getAttribute("height")!);
+    size = Size(width, height);
   }
 
   @override
@@ -294,7 +312,8 @@ class TextElement extends Element {
       textAlign = readTextAlign(attribute("text-anchor")!);
     }
     if (attribute("font-size") != null) {
-      fontSize = (double.parse(attribute("font-size").toString())*0.8).floorToDouble();
+      fontSize =
+          (double.parse(attribute("font-size").toString())).floorToDouble();
     }
     if (attribute("x") != null) {
       x = double.parse(attribute("x").toString());
@@ -310,6 +329,7 @@ class TextElement extends Element {
       text: TextSpan(
         text: text,
         style: TextStyle(
+          fontFamily: "LibertinusSans",
           color: Colors.black,
           fontSize: fontSize,
         ),
@@ -323,9 +343,9 @@ class TextElement extends Element {
     double dx = x;
 
     if (textAlign == TextAlign.center) {
-      dx = x-textPainter.width / 2;
+      dx = x - textPainter.width / 2;
     } else if (textAlign == TextAlign.right) {
-      dx = x-textPainter.width;
+      dx = x - textPainter.width;
     }
     double dy = y - 0.5 * textPainter.height - 4;
     textPainter.paint(canvas, Offset(dx, dy));
@@ -374,74 +394,63 @@ class RectElement extends Element {
   }
 }
 
-Element rootElement() {
+SvgRootElement rootElement() {
   /// read xml from file
   String xml = File('track-0.svg').readAsStringSync();
   XmlDocument doc = XmlDocument.parse(xml);
-  return Element.fromXml(doc.rootElement, null);
+  Element root = Element.fromXml(doc.rootElement, null);
+  assert(root is SvgRootElement);
+  return root as SvgRootElement;
 }
 
 class MiniSvgWidget extends StatelessWidget {
-  final String svg;
+  final SvgRootElement svg;
   final Size? size;
 
-  static Element parse(String s) {
+  static SvgRootElement parse(String s) {
     XmlDocument doc = XmlDocument.parse(s);
-    return Element.fromXml(doc.rootElement, null);
+    Element root = Element.fromXml(doc.rootElement, null);
+    assert(root is SvgRootElement);
+    return root as SvgRootElement;
   }
 
-  const MiniSvgWidget({super.key, required this.svg, required this.size});
-
-  Widget buildtest(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Container(
-          // Another fixed-width child.
-          color: const Color(0xffeeee00), // Green
-          width: 420.0, // Changed to width
-          height: 500,
-          alignment: Alignment.center,
-          child: const Text('Fixed Width Content 1'),
-        ),
-        Container(
-          // Another fixed-width child.
-          color: const Color(0xff008000), // Green
-          width: 420.0, // Changed to width
-          height: 500,
-          alignment: Alignment.center,
-          child: const Text('Fixed Width Content 2'),
-        ),
-        Container(
-          // Another fixed-width child.
-          color: const Color(0xffeeee00), // Green
-          width: 420.0, // Changed to width
-          height: 500,
-          alignment: Alignment.center,
-          child: const Text('Fixed Width Content 3'),
-        ),
-      ],
-    );
-  }
+  const MiniSvgWidget({super.key, required this.svg, this.size});
 
   @override
   Widget build(BuildContext context) {
-    //return buildtest(context);
-    // FIXME: do not parse in the build method.
-    return CustomPaint(
-      size: size!,
-      painter: SvgPainter(root: MiniSvgWidget.parse(svg)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        Size outputSize=Size(constraints.maxWidth,constraints.maxHeight);
+        double scale=gscale(svg.size,outputSize);
+        Size scaledIntputSize=Size(svg.size.width*scale,svg.size.height*scale);
+        developer.log("svg-size=${svg.size}, constraints-size=$outputSize");
+        return CustomPaint(size: scaledIntputSize, painter: SvgPainter(root: svg));
+      },
     );
   }
 }
 
+double gscale(Size object, Size drawArea) {
+  double sw = drawArea.width / object.width;
+  double sh = drawArea.height / object.height;
+  return [sw, sh, 1.0].reduce(min);
+}
+
 class SvgPainter extends CustomPainter {
-  final Element root;
+  final SvgRootElement root;
 
   SvgPainter({required this.root});
 
   @override
-  void paint(Canvas canvas, Size size) {
-    root.paintElement(canvas, size);
+  void paint(Canvas canvas, Size drawArea) {
+    double s = gscale(root.size, drawArea);
+    developer.log("input-size=${root.size}, output-size=$drawArea => scale=$s");
+    canvas.scale(s);
+    if ((s < 1)) {
+      double tx = 0.5 * (drawArea.width - s * root.size.width);
+      canvas.translate(tx, 0);
+    }
+    root.paintElement(canvas, drawArea);
   }
 
   @override

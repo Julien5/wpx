@@ -3,10 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/backendmodel.dart';
+import 'package:ui/src/models/root.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/statistics_widget.dart';
+import 'slidervalues.dart';
+import 'statistics_widget.dart';
 
 class Selector extends StatelessWidget {
   final String text;
@@ -55,69 +56,70 @@ class SegmentsSettings extends StatefulWidget {
   State<SegmentsSettings> createState() => _SegmentsSettingsState();
 }
 
-double snapCeil(double km, double stepsize) {
-  return (km / stepsize).ceil() * stepsize;
+List<double> fromKm(List<double> list) {
+  List<double> ret = list;
+  for (int k = 0; k < list.length; ++k) {
+    ret[k] = list[k] * 1000;
+  }
+  return ret;
 }
 
-double snapFloor(double km, double stepsize) {
-  return (km / stepsize).floor() * stepsize;
+List<double> segmentLengthSliderValues(double trackLength) {
+  double trackLengthKm = trackLength / 1000;
+  List<double> values = [2, 5, 10];
+  if (trackLengthKm > 10) {
+    values = [5, 10, 25, 50];
+  }
+  if (trackLengthKm > 50) {
+    values = [10, 25, 50, 100];
+  }
+  if (trackLengthKm > 100) {
+    values = [25, 50, 100, 150, 200];
+  }
+  if (trackLengthKm > 200) {
+    values = [50, 100, 150, 200, 400];
+  }
+  if (trackLengthKm > 400) {
+    values = [100, 150, 200, 300, 600];
+  }
+  if (trackLengthKm > 600) {
+    values = [100, 150, 200, 300, 600, 1000];
+  }
+  return fromKm(values);
 }
 
-double stepSize(double km) {
-  if (km > 500) {
-    return 100;
+List<double> fromKmh(List<double> list) {
+  List<double> ret = list;
+  for (int k = 0; k < list.length; ++k) {
+    ret[k] = list[k] * 1000/3600;
   }
-  if (km > 100) {
-    return 50;
-  }
-  if (km > 50) {
-    return 10;
-  }
-  if (km > 10) {
-    return 5;
-  }
-  return 1;
+  return ret;
 }
 
-class SegmentLengthSelector extends StatelessWidget {
-  final double trackLengthKm;
-  final dynamic Function(double) onChanged;
-  final double value;
-  const SegmentLengthSelector({
-    super.key,
-    required this.trackLengthKm,
-    required this.onChanged,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    double step = stepSize(trackLengthKm);
-    double min = snapFloor(trackLengthKm / 2, step);
-    double max = snapCeil(trackLengthKm, step);
-    
-    developer.log("L=[$trackLengthKm]: step=[$step] => [$min]-[$max] ($value)");
-    return Selector(
-      min: min,
-      max: max,
-      text: "",
-      value: value,
-      onChanged: onChanged,
-    );
-  }
+List<double> speedSliderValues() {
+  return fromKmh([5, 10, 12.5, 13.5,15, 18.0, 20, 25, 28]);
 }
 
 class _SegmentsSettingsState extends State<SegmentsSettings> {
   DateTime startTime = DateTime.now();
-  double speed = 15 * 1000.0 / 3600;
-  double segmentLength = 100000;
-  double maxStepSize = 5000;
+  final SliderValues _segmentLengthSliderValues = SliderValues();
+  final SliderValues _speedSliderValues = SliderValues();
 
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       readModel();
+      RootModel rootModel = Provider.of<RootModel>(context, listen: false);
+      developer.log("E=${rootModel.statistics().distanceEnd}");
+
+      double trackLength = rootModel.statistics().distanceEnd;
+      var values = segmentLengthSliderValues(trackLength);
+      _segmentLengthSliderValues.init(values, trackLength / 2);
+
+      values = speedSliderValues();
+      _speedSliderValues.init(values, 15/3.6);
       setState(() {});
     });
   }
@@ -126,9 +128,8 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
     RootModel rootModel = Provider.of<RootModel>(context, listen: false);
     bridge.Parameters parameters = rootModel.parameters();
     startTime = DateTime.parse(parameters.startTime);
-    speed = parameters.speed;
-    segmentLength = parameters.segmentLength;
-    maxStepSize = parameters.maxStepSize;
+    _speedSliderValues.setValue(parameters.speed);
+    _segmentLengthSliderValues.setValue(parameters.segmentLength/1.1);
   }
 
   void writeModel(BuildContext context) {
@@ -138,12 +139,14 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
     if (!rfc3339time.endsWith("Z")) {
       rfc3339time = "${rfc3339time}Z";
     }
+    var realLength = _segmentLengthSliderValues.current()*1.1;
+    var overlap = _segmentLengthSliderValues.current()*0.1;
     bridge.Parameters newParameters = bridge.Parameters(
-      speed: speed,
+      speed: _speedSliderValues.current(),
       startTime: rfc3339time,
-      segmentLength: segmentLength,
-      segmentOverlap: segmentLength / 10.0,
-      maxStepSize: maxStepSize,
+      segmentLength: realLength,
+      segmentOverlap: overlap,
+      maxStepSize: oldParameters.maxStepSize,
       smoothWidth: oldParameters.smoothWidth,
       debug: oldParameters.debug,
     );
@@ -202,24 +205,18 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   }
 
   String speedAsString() {
-    double kmh = speed * 3.6;
+    double kmh = _speedSliderValues.current() * 3.6;
     return "Speed: ${kmh.toStringAsFixed(1)} kmh";
   }
 
   String segmentLengthAsString() {
-    double km = segmentLength / 1000;
-    return "Page length: ${km.toStringAsFixed(1)} km";
-  }
-
-  String maxStepSizeAsString() {
-    double km = maxStepSize / 1000;
-    return "Max step size: ${km.toStringAsFixed(1)} km";
+    double km = _segmentLengthSliderValues.current() / 1000;
+    return "Segment length: ${km.toStringAsFixed(1)} km";
   }
 
   @override
   Widget build(BuildContext ctx) {
     RootModel model = Provider.of<RootModel>(ctx);
-    double trackLengthKm = model.statistics().distanceEnd / 1000;
     developer.log("[SegmentsConsumer] length=${model.segments().length}");
     Table table1 = Table(
       columnWidths: const {
@@ -230,12 +227,10 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
         TableRow(
           children: [
             Container(
-              height: 50,
               alignment: Alignment.center,
               child: const Text("Start Date:"),
             ),
             Container(
-              height: 50,
               alignment: Alignment.center,
               child: ElevatedButton(
                 onPressed: () => _selectDate(context),
@@ -277,69 +272,34 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       children: [
         Row(
           children: [
-            Container(
-              height: 60,
-              alignment: Alignment.centerLeft,
+            Expanded(
               child: Text(speedAsString()),
             ),
-            Container(
-              height: 60,
-              alignment: Alignment.centerLeft,
-              child: Selector(
-                min: 8.0,
-                max: 30.0,
-                text: "",
-                value: speed * 3.6,
-                onChanged: (value) {
-                  setState(() {
-                    speed = value * 1000 / 3600;
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Container(
-              height: 60,
-              alignment: Alignment.centerLeft,
-              child: Text(segmentLengthAsString()),
-            ),
-            Container(
-              height: 60,
-              alignment: Alignment.centerLeft,
-              child: SegmentLengthSelector(
-                trackLengthKm: trackLengthKm,
-                value: segmentLength / 1000,
+            Expanded(
+              child: SliderValuesWidget(
+                values: _speedSliderValues,
                 onChanged:
                     (value) => setState(() {
-                      segmentLength = value * 1000;
+                      _speedSliderValues.setValue(value);
                     }),
+                formatLabel: (value) => "${(value*3600/1000).toStringAsFixed(1)} km/h",
               ),
             ),
           ],
         ),
         Row(
           children: [
-            Container(
-              height: 60,
-              alignment: Alignment.centerLeft,
-              child: Text(maxStepSizeAsString()),
+            Expanded(
+              child: Text(segmentLengthAsString()),
             ),
-            Container(
-              height: 60,
-              alignment: Alignment.centerLeft,
-              child: Selector(
-                min: 5.0,
-                max: 30.0,
-                text: "",
-                value: maxStepSize / 1000,
-                onChanged: (value) {
-                  setState(() {
-                    maxStepSize = value * 1000;
-                  });
-                },
+            Expanded(
+              child: SliderValuesWidget(
+                values: _segmentLengthSliderValues,
+                onChanged:
+                    (value) => setState(() {
+                      _segmentLengthSliderValues.setValue(value);
+                    }),
+                formatLabel: (value) => "${(value / 1000).floor()} km",
               ),
             ),
           ],
@@ -370,8 +330,8 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
   }
 }
 
-class SettingsWidget extends StatelessWidget {
-  const SettingsWidget({super.key});
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   Widget wait() {
     return Scaffold(

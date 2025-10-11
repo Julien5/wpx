@@ -5,7 +5,7 @@ import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/backendmodel.dart';
+import 'package:ui/src/models/root.dart';
 
 enum Type { pdf, gpx }
 
@@ -132,8 +132,8 @@ class ExportWidget extends StatelessWidget {
   }
 }
 
-class ExportScaffold extends StatelessWidget {
-  const ExportScaffold({super.key});
+class ExportScreen extends StatelessWidget {
+  const ExportScreen({super.key});
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(

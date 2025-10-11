@@ -51,6 +51,12 @@ async fn dl_worker(req: &str) -> Option<String> {
     }
 }
 
+/*
+
+Grabener Höhe is tourism = viewpoint.
+To get it: node["tourism"="viewpoint"]({{bbox}});
+*/
+
 pub async fn all(bbox: &str) -> Option<String> {
     let timeout = 250;
     let header = format!("[out:json][timeout:{}]", timeout);

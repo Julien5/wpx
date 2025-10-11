@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/choose_data.dart';
-import 'package:ui/src/export_widget.dart';
-import 'package:ui/src/segments_widget.dart';
-import 'package:ui/src/settings_widget.dart';
+import 'package:ui/src/screens/home/home_screen.dart';
+import 'package:ui/src/screens/export/export_screen.dart';
+import 'package:ui/src/screens/segments/segments_screen.dart';
+import 'package:ui/src/screens/settings/settings_screen.dart';
 
 class RouteManager {
   static const String home = '/';
@@ -13,16 +13,16 @@ class RouteManager {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case home:
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
 
       case segmentsView:
-        return MaterialPageRoute(builder: (_) => SegmentsScaffold());
+        return MaterialPageRoute(builder: (_) => SegmentsScreen());
 
       case settingsView:
-        return MaterialPageRoute(builder: (_) => SettingsWidget());
+        return MaterialPageRoute(builder: (_) => SettingsScreen());
 
       case exportView:
-        return MaterialPageRoute(builder: (_) => ExportScaffold());
+        return MaterialPageRoute(builder: (_) => ExportScreen());
 
       default:
         return MaterialPageRoute(
