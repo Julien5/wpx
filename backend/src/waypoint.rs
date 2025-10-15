@@ -166,7 +166,6 @@ impl WaypointInfo {
     pub fn make_waypoint_infos(
         waypoints: &mut Waypoints,
         track: &track::Track,
-        smooth: &Vec<f64>,
         start_time: &String,
         speed: &f64,
     ) {
@@ -178,7 +177,14 @@ impl WaypointInfo {
                 0 => None,
                 _ => Some(&waypoints[k - 1]),
             };
-            let step = Self::create_waypoint_info(track, smooth, start_time, speed, w, wprev);
+            let step = Self::create_waypoint_info(
+                track,
+                &track.smooth_elevation,
+                start_time,
+                speed,
+                w,
+                wprev,
+            );
             infos.push(step.clone());
         }
         for k in 0..waypoints.len() {

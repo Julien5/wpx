@@ -2,8 +2,8 @@ use core::fmt;
 
 #[derive(Clone, PartialEq)]
 pub struct BoundingBox {
-    pub _min: (f64, f64),
-    pub _max: (f64, f64),
+    _min: (f64, f64),
+    _max: (f64, f64),
 }
 
 impl BoundingBox {
@@ -16,8 +16,32 @@ impl BoundingBox {
     pub fn get_min(&self) -> (f64, f64) {
         self._min
     }
+    pub fn get_xmin(&self) -> f64 {
+        self._min.0
+    }
+    pub fn get_ymin(&self) -> f64 {
+        self._min.1
+    }
     pub fn get_max(&self) -> (f64, f64) {
         self._max
+    }
+    pub fn get_xmax(&self) -> f64 {
+        self._max.0
+    }
+    pub fn get_ymax(&self) -> f64 {
+        self._max.1
+    }
+    pub fn set_min(&mut self, m: (f64, f64)) {
+        self._min = m;
+    }
+    pub fn set_max(&mut self, m: (f64, f64)) {
+        self._max = m;
+    }
+    pub fn set_ymin(&mut self, m: f64) {
+        self._min.1 = m;
+    }
+    pub fn set_ymax(&mut self, m: f64) {
+        self._max.1 = m;
     }
     pub fn middle(&self) -> (f64, f64) {
         (

@@ -48,7 +48,15 @@ impl Segment {
     pub fn render_profile(&self, (width, height): (i32, i32), debug: bool) -> String {
         log::info!("render profile:{}", self.id);
         let points = self.profile_points();
-        let ret = profile::profile(&self.track, &points, &self, width, height, debug);
+        let ret = profile::profile(
+            &self.track,
+            &points,
+            &self,
+            profile::ProfileIndications::GainTicks,
+            width,
+            height,
+            debug,
+        );
         if debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id);
             std::fs::write(filename, &ret).expect("Unable to write file");

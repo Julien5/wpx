@@ -20,7 +20,10 @@ fn cache_dir() -> String {
 pub fn key(bbox: &EuclideanBoundingBox) -> String {
     format!(
         "{:0.0}+{:0.0}-{:0.0}+{:0.0}",
-        bbox._min.1, bbox._min.0, bbox._max.1, bbox._max.0
+        bbox.get_min().1,
+        bbox.get_min().0,
+        bbox.get_max().1,
+        bbox.get_max().0
     )
 }
 

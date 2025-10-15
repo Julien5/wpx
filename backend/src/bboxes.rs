@@ -5,10 +5,12 @@ use crate::{
     mercator::{EuclideanBoundingBox, MercatorPoint},
 };
 
+/*
 pub fn _enlarge(bbox: &mut BoundingBox, epsilon: &f64) {
     bbox._min = (bbox._min.0 - epsilon, bbox._min.1 - epsilon);
     bbox._max = (bbox._max.0 + epsilon, bbox._max.1 + epsilon);
 }
+*/
 
 fn floor_snap(x: &f64, step: &f64) -> f64 {
     (x / step).floor() * step
@@ -19,20 +21,20 @@ fn ceil_snap(x: &f64, step: &f64) -> f64 {
 }
 
 pub fn snap(bbox: &mut BoundingBox, step: &f64) {
-    bbox._min = (
-        floor_snap(&bbox._min.0, step),
-        floor_snap(&bbox._min.1, step),
-    );
-    bbox._max = (ceil_snap(&bbox._max.0, step), ceil_snap(&bbox._max.1, step));
+    bbox.set_min((
+        floor_snap(&bbox.get_min().0, step),
+        floor_snap(&bbox.get_min().1, step),
+    ));
+    bbox.set_max((
+        ceil_snap(&bbox.get_max().0, step),
+        ceil_snap(&bbox.get_max().1, step),
+    ));
 }
 
 pub fn snap_point(p: &MercatorPoint, step: &f64) -> EuclideanBoundingBox {
     let min = (floor_snap(&p.x(), step), floor_snap(&p.y(), step));
     let max = (ceil_snap(&p.x(), step), ceil_snap(&p.y(), step));
-    EuclideanBoundingBox {
-        _min: min,
-        _max: max,
-    }
+    EuclideanBoundingBox::init(min, max)
 }
 
 pub struct Index {
@@ -88,7 +90,7 @@ pub fn split(orig: &BoundingBox, step: &f64) -> BoundingBoxes {
     snap(&mut bbox, step);
     let nx = (bbox.width() / step).ceil() as usize;
     let ny = (bbox.height() / step).ceil() as usize;
-    let min0 = bbox._min.clone();
+    let min0 = bbox.get_min();
     let mut ret = BoundingBoxes::new();
     for kx in 0..nx {
         for ky in 0..ny {

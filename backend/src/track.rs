@@ -14,6 +14,7 @@ use super::waypoint::WaypointOrigin;
 
 pub struct Track {
     pub wgs84: Vec<WGS84Point>,
+    pub smooth_elevation: Vec<f64>,
     pub euclidian: Vec<MercatorPoint>,
     _distance: Vec<f64>,
 }
@@ -22,7 +23,7 @@ pub struct Track {
 pub type WGS84BoundingBox = super::bbox::BoundingBox;
 
 impl Track {
-    pub fn create_on_track(&self, index: usize, origin: WaypointOrigin) -> Waypoint {
+    pub fn create_waypoint_on_track(&self, index: usize, origin: WaypointOrigin) -> Waypoint {
         Waypoint {
             wgs84: self.wgs84[index].clone(),
             track_index: Some(index),
@@ -60,17 +61,29 @@ impl Track {
     pub fn elevation(&self, index: usize) -> f64 {
         self.wgs84[index].z()
     }
-    pub fn elevation_gain(&self, range: &std::ops::Range<usize>) -> f64 {
-        // TODO: compute it.
-        let smooth_elevation = elevation::smooth(&self, 200f64, |index: usize| -> f64 {
-            self.elevation(index)
-        });
+    pub fn elevation_gain_on_range(&self, range: &std::ops::Range<usize>) -> f64 {
         let mut ret = 0f64;
         for k in range.start + 1..range.end {
-            let d = smooth_elevation[k] - smooth_elevation[k - 1];
+            let d = self.smooth_elevation[k] - self.smooth_elevation[k - 1];
             //let d = self.elevation(k) - self.elevation(k - 1);
             if d > 0.0 {
                 ret = ret + d;
+            }
+        }
+        ret
+    }
+    pub fn elevation_gain(&self) -> Vec<f64> {
+        let mut ret = vec![0f64; self.wgs84.len()];
+        let range = std::ops::Range {
+            start: 0,
+            end: self.wgs84.len(),
+        };
+        for k in range.start + 1..range.end {
+            let d = self.smooth_elevation[k] - self.smooth_elevation[k - 1];
+            if d > 0.0 {
+                ret[k] = ret[k - 1] + d;
+            } else {
+                ret[k] = ret[k - 1];
             }
         }
         ret
@@ -152,22 +165,35 @@ impl Track {
             _distance.push(dacc);
         }
         assert_eq!(_distance.len(), wgs.len());
+
+        let track_smooth_elevation = elevation::smooth(
+            200f64,
+            wgs.len(),
+            |index: usize| -> f64 { _distance[index] },
+            |index: usize| -> f64 { wgs[index].z() },
+        );
+
         let ret = Track {
             wgs84: wgs,
             euclidian: euclidean,
+            smooth_elevation: track_smooth_elevation,
             _distance,
         };
         Ok(ret)
     }
 
-    pub fn interesting_indexes(&self, epsilon: f64) -> Vec<usize> {
+    pub fn douglas_peucker(&self, epsilon: f64, range: &std::ops::Range<usize>) -> Vec<usize> {
         let mut coords = Vec::new();
-        for k in 0..self.len() {
+        for k in range.start..range.end {
             let x = self.distance(k);
-            let y = self.elevation(k);
+            //let y = self.elevation(k);
+            let y = self.smooth_elevation[k];
             coords.push(geo::coord!(x:x, y:y));
         }
         let line = geo::LineString::new(coords);
         line.simplify_idx(&epsilon)
+            .iter()
+            .map(|k| k + range.start)
+            .collect::<Vec<_>>()
     }
 }

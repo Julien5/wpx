@@ -1,8 +1,9 @@
 #![allow(non_snake_case)]
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::{InputPoint, InputType};
+use crate::inputpoint::InputPoint;
 use crate::label_placement::bbox::LabelBoundingBox;
+use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::*;
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::segment;
@@ -17,10 +18,8 @@ pub fn to_graphics_coordinates(
     H: i32,
     margin: i32,
 ) -> (f64, f64) {
-    let xmin = bbox._min.0;
-    let xmax = bbox._max.0;
-    let ymin = bbox._min.1;
-    let ymax = bbox._max.1;
+    let (xmin, ymin) = bbox.get_min();
+    let (xmax, ymax) = bbox.get_max();
 
     let f = |x: f64| -> f64 {
         let a = (W - 2 * margin) as f64 / (xmax - xmin);
@@ -129,35 +128,11 @@ impl MapData {
         for k in 0..inputpoints.len() {
             let w = &inputpoints[k];
             let euclidean = w.euclidian.clone();
-            let mut circle = Circle::new();
+
             let (x, y) = to_graphics_coordinates(&bbox, &euclidean, W, H, margin);
             let n = points.len();
-            circle.id = format!("wp-{}/circle", n);
-            circle.cx = x;
-            circle.cy = y;
-            let id = format!("wp-{}", n);
-            match w.kind() {
-                InputType::City => {
-                    circle.r = 5f64;
-                    circle.fill = Some("Gray".to_string());
-                }
-                InputType::Village | InputType::Hamlet => {
-                    circle.r = 2f64;
-                    circle.fill = Some("Gray".to_string());
-                }
-                InputType::MountainPass => {
-                    circle.r = 3f64;
-                    circle.fill = Some("Blue".to_string());
-                }
-                InputType::Peak => {
-                    circle.r = 3f64;
-                    circle.fill = Some("Red".to_string());
-                }
-                InputType::GPX => {
-                    circle.r = 4f64;
-                    circle.fill = Some("Black".to_string());
-                }
-            }
+            let id = format!("wp-{}/circle", n);
+            let circle = draw_for_map(&(x, y), id.as_str(), &w.kind());
             let mut label = Label::new();
             match w.short_name() {
                 Some(text) => {
@@ -311,7 +286,7 @@ mod tests {
     use std::str::FromStr;
 
     use crate::{
-        label_placement::{Circle, Label, LabelBoundingBox, PointFeature},
+        label_placement::{Label, LabelBoundingBox, PointFeature, PointFeatureDrawing},
         svgmap::generate_candidates_bboxes,
     };
 
@@ -320,12 +295,10 @@ mod tests {
         let id = String::new();
         let target = PointFeature::new(
             id.clone(),
-            Circle {
-                id: id.clone(),
+            PointFeatureDrawing {
+                group: svg::node::element::Group::new(),
                 cx: 0f64,
                 cy: 0f64,
-                r: 1f64,
-                fill: None,
             },
             Label {
                 id: id.clone(),

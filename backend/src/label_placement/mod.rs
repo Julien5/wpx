@@ -1,5 +1,6 @@
 pub mod bbox;
 pub mod candidate;
+pub mod drawings;
 mod graph;
 pub use bbox::LabelBoundingBox;
 use candidate::Candidate;
@@ -36,6 +37,10 @@ fn char_width(s: &char) -> f64 {
     } else if check(&mut size, "0123456789", s, &95f64) {
     } else if check(&mut size, "BSPEAKVXY&UwNRCHD", s, &112f64) {
     } else if check(&mut size, "QGOMm%W@", s, &135f64) {
+    } else if s.is_uppercase() {
+        size += 135f64;
+    } else {
+        size += 95f64;
     }
     let ret = size * 6f64 / 1000.0;
     (ret / 0.57f64) * (FONTSIZE / 16f64) * 9f64
@@ -47,27 +52,6 @@ fn text_width(s: &str) -> f64 {
         ret += char_width(&c);
     }
     return ret;
-}
-
-#[derive(Clone)]
-pub struct Circle {
-    pub id: String,
-    pub cx: f64,
-    pub cy: f64,
-    pub r: f64,
-    pub fill: Option<String>,
-}
-
-impl Circle {
-    pub fn new() -> Circle {
-        Circle {
-            id: String::new(),
-            cx: 0f64,
-            cy: 0f64,
-            r: 4f64,
-            fill: None,
-        }
-    }
 }
 
 #[derive(Clone)]
@@ -98,9 +82,16 @@ impl Label {
 }
 
 #[derive(Clone)]
+pub struct PointFeatureDrawing {
+    pub group: svg::node::element::Group,
+    pub cx: f64,
+    pub cy: f64,
+}
+
+#[derive(Clone)]
 pub struct PointFeature {
     id: String,
-    circle: Circle,
+    circle: PointFeatureDrawing,
     label: Label,
     placement_order: i32,
 }
@@ -119,7 +110,12 @@ use std::str::FromStr;
 use crate::bbox::BoundingBox;
 
 impl PointFeature {
-    pub fn new(id: String, circle: Circle, label: Label, priority: i32) -> PointFeature {
+    pub fn new(
+        id: String,
+        circle: PointFeatureDrawing,
+        label: Label,
+        priority: i32,
+    ) -> PointFeature {
         PointFeature {
             id,
             circle,
@@ -140,16 +136,21 @@ impl PointFeature {
         (self.circle.cx, self.circle.cy)
     }
     pub fn render_in_group(&self, sd_group: &mut svg::node::element::Group) {
-        let mut circle = svg::node::element::Circle::new();
-        for (k, v) in self.circle.to_attributes() {
-            circle = circle.set(k, v);
-        }
-        sd_group.append(circle);
+        sd_group.append(self.circle.group.clone());
         let text = format!("{}", self.text());
         let mut label = svg::node::element::Text::new(text);
         for (k, v) in self.label.to_attributes(self.circle.cx) {
             label = label.set(k, v);
         }
+        let mut whitebg = svg::node::element::Rectangle::new();
+        let margin = 2f64;
+        whitebg = whitebg.set("x", self.label.bbox.bbox.get_xmin() + margin);
+        whitebg = whitebg.set("y", self.label.bbox.bbox.get_ymin() + margin);
+        whitebg = whitebg.set("width", self.label.bbox.bbox.width() - 2.0 * margin);
+        whitebg = whitebg.set("height", self.label.bbox.bbox.height() - 2.0 * margin);
+        whitebg = whitebg.set("fill", "white");
+        whitebg = whitebg.set("id", "label-bg");
+        sd_group.append(whitebg);
         sd_group.append(label);
     }
 }
@@ -166,38 +167,6 @@ impl Polyline {
             id: "track".to_string(),
             points: Vec::<(f64, f64)>::new(),
         }
-    }
-}
-
-impl Circle {
-    pub fn _from_attributes(a: &Attributes) -> Circle {
-        let fill = match a.get("fill") {
-            Some(value) => Some(value.to_string()),
-            _ => None,
-        };
-
-        Circle {
-            id: a.get("id").unwrap().to_string(),
-            cx: a.get("cx").unwrap().to_string().parse::<f64>().unwrap(),
-            cy: a.get("cy").unwrap().to_string().parse::<f64>().unwrap(),
-            r: a.get("r").unwrap().to_string().parse::<f64>().unwrap(),
-            fill,
-        }
-    }
-
-    pub fn to_attributes(&self) -> Attributes {
-        let mut ret = Attributes::new();
-        set_attr(&mut ret, "id", self.id.as_str());
-        set_attr(&mut ret, "cx", format!("{:.3}", self.cx).as_str());
-        set_attr(&mut ret, "cy", format!("{:.3}", self.cy).as_str());
-        set_attr(&mut ret, "r", format!("{:.3}", self.r).as_str());
-        match &self.fill {
-            Some(value) => {
-                set_attr(&mut ret, "fill", format!("{}", value.clone()).as_str());
-            }
-            _ => {}
-        }
-        ret
     }
 }
 
@@ -279,6 +248,8 @@ impl Polyline {
         set_attr(&mut ret, "fill", "transparent");
         set_attr(&mut ret, "stroke-width", "2");
         set_attr(&mut ret, "stroke", "black");
+        set_attr(&mut ret, "stroke-linejoin", "miter");
+        set_attr(&mut ret, "stroke-miterlimit", "1");
         set_attr(&mut ret, "d", d.as_str());
         ret
     }

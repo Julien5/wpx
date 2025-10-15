@@ -1,38 +1,36 @@
 #![allow(non_snake_case)]
 
-use crate::track;
-
 /*
  * converted to rust from gpxstudio:
  * https://github.com/gpxstudio/gpx.studio/blob/main/gpx/src/gpx.ts#L1945
  */
-pub fn smooth(track: &track::Track, W: f64, signal: impl Fn(usize) -> f64) -> Vec<f64> {
-    let L = track.wgs84.len();
+pub fn smooth(
+    W: f64,
+    L: usize,
+    distance: impl Fn(usize) -> f64,
+    elevation: impl Fn(usize) -> f64,
+) -> Vec<f64> {
     let mut ret = vec![0f64; L];
     let mut start = 0usize;
     let mut end = 0usize;
     let mut acc = 0f64;
-    for i in 0..track.wgs84.len() {
-        while start + 1 < i && (track.distance(i) - track.distance(start)) > W {
-            acc -= signal(start);
+    for i in 0..L {
+        while start + 1 < i && (distance(i) - distance(start)) > W {
+            acc -= elevation(start);
             start += 1;
         }
-        while end < L && (track.distance(end) - track.distance(i)) <= W {
-            acc += signal(end);
+        while end < L && (distance(end) - distance(i)) <= W {
+            acc += elevation(end);
             end += 1;
         }
         if start != end {
             ret[i] = acc / (end - start) as f64;
         } else {
             assert!(false);
-            ret[i] = track.elevation(i);
+            ret[i] = elevation(i);
         }
     }
     ret
-}
-
-pub fn smooth_elevation(track: &track::Track, W: f64) -> Vec<f64> {
-    smooth(track, W, |index: usize| -> f64 { track.elevation(index) })
 }
 
 pub fn elevation_gain(smooth: &Vec<f64>, from: usize, to: usize) -> f64 {

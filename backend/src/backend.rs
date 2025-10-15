@@ -1,6 +1,5 @@
 #![allow(non_snake_case)]
 
-use crate::elevation;
 use crate::error::Error;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
@@ -27,7 +26,6 @@ pub struct BackendData {
     pub parameters: Parameters,
     pub track: std::sync::Arc<track::Track>,
     pub inputpoints: InputPointMap,
-    pub track_smooth_elevation: Vec<f64>,
 }
 
 pub trait Sender {
@@ -114,7 +112,6 @@ impl Backend {
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
         self.send(&"read gpx".to_string()).await;
         let gpxdata = gpsdata::read_content(content)?;
-        let default_params = Parameters::default();
         self.send(&"download osm data".to_string()).await;
         let mut inputpoints = osm::download_for_track(&gpxdata.track).await;
         inputpoints.extend(&gpxdata.waypoints);
@@ -124,10 +121,6 @@ impl Backend {
         let pointstree = locate::Locate::from_points(&inputpoints.as_vector());
         let data = BackendData {
             inputpoints_tree: pointstree,
-            track_smooth_elevation: elevation::smooth_elevation(
-                &gpxdata.track,
-                default_params.smooth_width,
-            ),
             track: std::sync::Arc::new(gpxdata.track),
             inputpoints,
             parameters,
@@ -165,7 +158,6 @@ impl BackendData {
         WaypointInfo::make_waypoint_infos(
             &mut ret,
             &self.track,
-            &self.track_smooth_elevation,
             &self.parameters.start_time,
             &self.parameters.speed,
         );
@@ -181,8 +173,6 @@ impl BackendData {
         if self.parameters.segment_overlap > self.parameters.segment_length {
             assert!(false);
         }
-        self.track_smooth_elevation =
-            elevation::smooth_elevation(&self.track, self.parameters.smooth_width);
     }
 
     pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {
@@ -247,7 +237,12 @@ impl BackendData {
 
     fn render_yaxis_labels_overlay(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         log::info!("render_segment_track:{}", segment.id);
-        let mut profile = profile::ProfileView::init(&segment.profile_bbox, W, H);
+        let mut profile = profile::ProfileView::init(
+            &segment.profile_bbox,
+            profile::ProfileIndications::None,
+            W,
+            H,
+        );
         profile.add_yaxis_labels_overlay();
         let ret = profile.render();
         if self.get_parameters().debug {
@@ -269,7 +264,7 @@ impl BackendData {
         assert!(range.end > 0);
         SegmentStatistics {
             length: self.track.distance(range.end - 1) - self.track.distance(range.start),
-            elevation_gain: self.track.elevation_gain(&range),
+            elevation_gain: self.track.elevation_gain_on_range(&range),
             distance_start: self.track.distance(range.start),
             distance_end: self.track.distance(range.end - 1),
         }
@@ -279,7 +274,7 @@ impl BackendData {
         assert!(range.end > 0);
         SegmentStatistics {
             length: self.track.distance(range.end - 1) - self.track.distance(range.start),
-            elevation_gain: self.track.elevation_gain(&range),
+            elevation_gain: self.track.elevation_gain_on_range(&range),
             distance_start: self.track.distance(range.start),
             distance_end: self.track.distance(range.end - 1),
         }
@@ -387,7 +382,12 @@ mod tests {
             .expect("fail");
         let bbox = backend.d().track.wgs84_bounding_box();
         println!("bbox={:?}", bbox);
-        for x in [bbox._min.0, bbox._min.1, bbox._max.0, bbox._max.1] {
+        for x in [
+            bbox.get_xmin(),
+            bbox.get_ymin(),
+            bbox.get_xmax(),
+            bbox.get_ymax(),
+        ] {
             assert!(x > 0f64);
         }
     }
