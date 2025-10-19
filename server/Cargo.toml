@@ -1,0 +1,20 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = { version = "0.7", features = ["multipart"] }
+tokio = { version = "1.0", features = ["full"] }
+tower-http = { version = "0.5", features = ["fs", "cors"] }
+tower = { version = "0.4", features = ["util"] }
+rustls = "0.21"
+rustls-pemfile = "1.0"
+tokio-rustls = "0.24"
+hyper = { version = "1.0", features = ["full"] }
+hyper-util = { version = "0.1", features = ["tokio"] }
+clap = { version = "4.4", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+tempfile = "3.8"
+uuid = { version = "1.4", features = ["v4"] }

@@ -76,9 +76,38 @@ function runminiserve() {
 		&> /tmp/server.log 
 }
 
+function runserver() {
+	local CARGO_TARGET_DIR=$HOME/delme/rust-targets
+	for a in /tmp/server \
+			 ${CARGO_TARGET_DIR}/release/server; do
+		if [ -f ${a} ]; then
+			SERVER=${a}
+			break;
+		fi
+	done
+	
+	if [ -z "${SERVER}" ]; then
+		echo could not find server
+		return 1
+	fi
+	
+	DOMAIN=localhost
+	if [ "$(hostname)" = vps-e637d6c5 ]; then
+		DOMAIN=vps-e637d6c5.vps.ovh.net
+	fi
+	
+	nohup ${SERVER} \
+		  --cert /tmp/${DOMAIN}.cert  \
+		  --key /tmp/${DOMAIN}.key \
+		  --port 8123 \
+		  "$@" \
+		&> /tmp/server.log 
+}
+
 function main() {
 	echo stop old server.. 
 	killall miniserve || true
+	killall server || true
 	sleep 1
 
 	if ! make-dist /tmp/dist; then
@@ -87,7 +116,8 @@ function main() {
 	fi
 	cd /tmp/dist
 	
-	runminiserve &
+	# runminiserve &
+	runserver &
 	sleep 5
 	echo ok
 }
