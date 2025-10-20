@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
@@ -19,7 +17,6 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     bridge.SegmentStatistics statistics = rootModel.statistics();
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
-    developer.log("[SegmentsConsumer] length=${rootModel.segments().length}");
     return Container(
       constraints: const BoxConstraints(maxWidth: 500), // Set max width
       child: DataTable(

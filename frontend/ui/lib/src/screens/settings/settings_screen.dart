@@ -148,6 +148,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       segmentOverlap: overlap,
       maxStepSize: oldParameters.maxStepSize,
       smoothWidth: oldParameters.smoothWidth,
+      profileOptions: oldParameters.profileOptions,
       debug: oldParameters.debug,
     );
     rootModel.setParameters(newParameters);
@@ -216,8 +217,6 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
 
   @override
   Widget build(BuildContext ctx) {
-    RootModel model = Provider.of<RootModel>(ctx);
-    developer.log("[SegmentsConsumer] length=${model.segments().length}");
     Table table1 = Table(
       columnWidths: const {
         0: FlexColumnWidth(), // Fixed width for the first column

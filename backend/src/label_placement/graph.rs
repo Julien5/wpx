@@ -245,7 +245,6 @@ mod tests {
     fn test_graph_operations() {
         // Create a new graph
         let mut graph = Graph::new();
-        let A = 0;
         let mut CA = Candidates::new();
         let mut CB = Candidates::new();
         let mut CC = Candidates::new();

@@ -2,6 +2,7 @@ use geo::LineLocatePoint;
 
 use crate::inputpoint::{InputPoint, InputPointMap, InputType, TrackProjection};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
+use crate::parameters::Parameters;
 use crate::track::{self, Track};
 use crate::{bboxes, gpsdata, locate, profile, svgmap};
 
@@ -45,19 +46,19 @@ impl Segment {
         }
     }
 
-    pub fn render_profile(&self, (width, height): (i32, i32), debug: bool) -> String {
+    pub fn render_profile(&self, (width, height): (i32, i32), parameters: &Parameters) -> String {
         log::info!("render profile:{}", self.id);
         let points = self.profile_points();
         let ret = profile::profile(
             &self.track,
             &points,
             &self,
-            profile::ProfileIndications::GainTicks,
+            &parameters.profile_options,
             width,
             height,
-            debug,
+            parameters.debug,
         );
-        if debug {
+        if parameters.debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
         }

@@ -23,7 +23,6 @@ struct Cli {
     filename: std::path::PathBuf,
 }
 
-use std::io::Write;
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), error::Error> {
     env_logger::init();

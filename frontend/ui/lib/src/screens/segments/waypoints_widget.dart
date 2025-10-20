@@ -4,13 +4,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/src/models/waypointstable.dart';
 
 class WayPointsTable extends StatefulWidget {
-  final bridge.Segment? segment;
-  const WayPointsTable({super.key, this.segment});
+  final int segmentid;
+  const WayPointsTable({super.key, required this.segmentid});
 
   @override
   State<WayPointsTable> createState() => WayPointsTableState();
@@ -24,10 +23,8 @@ class WayPointsTableState extends State<WayPointsTable> {
 
   @override
   Widget build(BuildContext context) {
-    RootModel rootModel = Provider.of<RootModel>(context);
-    var segments = rootModel.segments();
-    var segment = segments[widget.segment];
-    var local = segment!.tableWaypoints;
+    WaypointsTableData model = Provider.of<WaypointsTableData>(context);  
+    var local = model.tableWaypoints();
 
     developer.log("[WayPointsViewState] [build] #_waypoints=${local.length}");
 
@@ -88,7 +85,7 @@ class WayPointsConsumer extends StatelessWidget {
     return Consumer<ProfileRenderer>(
       builder: (context, wp, child) {
         var segment = wp.segment;
-        return Center(child: WayPointsTable(segment: segment));
+        return Center(child: WayPointsTable(segmentid: segment.id().toInt()));
       },
     );
   }

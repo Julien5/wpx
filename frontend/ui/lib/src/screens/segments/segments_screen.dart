@@ -3,19 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/waypointstable.dart';
 import 'package:ui/src/routes.dart';
 import 'segment_stack.dart';
 
 class RenderingsProvider extends MultiProvider {
   final Renderers renderers;
 
-  RenderingsProvider(Renderers r, Widget child, {super.key})
+  RenderingsProvider(Renderers r, WaypointsTableData d, Widget child, {super.key})
     : renderers = r,
       super(
         providers: [
           ChangeNotifierProvider.value(value: r.profileRendering),
           ChangeNotifierProvider.value(value: r.mapRendering),
           ChangeNotifierProvider.value(value: r.yaxisRendering),
+          ChangeNotifierProvider.value(value: d),
         ],
         child: child,
       );
@@ -36,19 +38,15 @@ class SegmentsView extends StatelessWidget {
 
   List<RenderingsProvider> renderingProviders(
     RootModel rootModel,
-    ScreenOrientation viewType,
+    ScreenOrientation screenOrientation,
   ) {
     List<RenderingsProvider> ret = [];
     developer.log("[_initRenderingProviders]");
-    rootModel.updateSegments();
-    var S = rootModel.segments();
-    developer.log("[S]=${S.length}");
-    assert(ret.isEmpty);
-    for (var segment in S.keys) {
-      var data = S[segment]!;
+    for (var segment in rootModel.segments()) {
       var w = RenderingsProvider(
-        data.renderers,
-        SegmentView(viewType: viewType),
+        Renderers.make(rootModel.getBridge(),segment),
+        WaypointsTableData(brd: rootModel.getBridge(),segment: segment),
+        SegmentView(screenOrientation: screenOrientation),
       );
       ret.add(w);
     }
@@ -113,7 +111,7 @@ class SegmentsScreen extends StatelessWidget {
   const SegmentsScreen({super.key});
 
   AppBar? appBar(BuildContext ctx) {
-    ScreenOrientation type=screenOrientation(MediaQuery.of(ctx).size);
+    ScreenOrientation type = screenOrientation(MediaQuery.of(ctx).size);
     if (type == ScreenOrientation.landscape) {
       return null;
     }

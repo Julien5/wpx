@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
@@ -5,10 +7,10 @@ import 'package:ui/src/rust/api/bridge.dart' as bridge;
 enum TrackData { profile, yaxis, map }
 
 class FutureRenderer with ChangeNotifier {
-  final bridge.Segment segment;
+  bridge.Segment segment;
   final TrackData trackData;
   final bridge.Bridge _bridge;
-  Size size = Size(10, 10);
+  Size? size;
 
   Future<String>? _future;
   String? _result;
@@ -19,28 +21,34 @@ class FutureRenderer with ChangeNotifier {
     required this.trackData,
   }) : _bridge = bridge;
 
+  void updateSegment(bridge.Segment newSegment) {
+    segment=newSegment;
+    reset();
+  }
+
   void start() {
+    developer.log("[update:$trackData]");
     _result = null;
     if (trackData == TrackData.profile) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "profile",
-        w: size.width.floor(),
-        h: size.height.floor(),
+        w: size!.width.floor(),
+        h: size!.height.floor(),
       );
     } else if (trackData == TrackData.map) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "map",
-        w: size.width.floor(),
-        h: size.height.floor(),
+        w: size!.width.floor(),
+        h: size!.height.floor(),
       );
     } else if (trackData == TrackData.yaxis) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "ylabels",
-        w: size.width.floor(),
-        h: size.height.floor(),
+        w: size!.width.floor(),
+        h: size!.height.floor(),
       );
     }
     notifyListeners();
@@ -63,6 +71,12 @@ class FutureRenderer with ChangeNotifier {
     _result = value;
     _future = null;
     notifyListeners();
+  }
+
+  void reset() {
+    _future = null;
+    _result = null;
+    start();
   }
 
   bool setSize(Size newSize) {
@@ -91,34 +105,16 @@ class FutureRenderer with ChangeNotifier {
 class ProfileRenderer extends FutureRenderer {
   ProfileRenderer(bridge.Bridge bridge, bridge.Segment segment)
     : super(bridge: bridge, segment: segment, trackData: TrackData.profile);
-
-  void reset() {
-    _future = null;
-    _result = null;
-    start();
-  }
 }
 
 class YAxisRenderer extends FutureRenderer {
   YAxisRenderer(bridge.Bridge bridge, bridge.Segment segment)
     : super(bridge: bridge, segment: segment, trackData: TrackData.yaxis);
-
-  void reset() {
-    _future = null;
-    _result = null;
-    start();
-  }
 }
 
 class MapRenderer extends FutureRenderer {
   MapRenderer(bridge.Bridge bridge, bridge.Segment segment)
     : super(bridge: bridge, segment: segment, trackData: TrackData.map);
-
-  void reset() {
-    _future = null;
-    _result = null;
-    start();
-  }
 }
 
 class Renderers {
@@ -129,4 +125,23 @@ class Renderers {
     : profileRendering = profile,
       yaxisRendering = yaxis,
       mapRendering = map;
+
+  static Renderers make(bridge.Bridge bridge, bridge.Segment segment) {
+    var t = ProfileRenderer(bridge, segment);
+    var m = MapRenderer(bridge, segment);
+    var y = YAxisRenderer(bridge, segment);
+    return Renderers(t, y, m);
+  }
+
+  void updateSegment(bridge.Segment segment) {
+    profileRendering.updateSegment(segment);
+    mapRendering.updateSegment(segment);
+    yaxisRendering.updateSegment(segment);
+  }
+
+  void reset() {
+    profileRendering.reset();
+    mapRendering.reset();
+    yaxisRendering.reset();
+  }
 }

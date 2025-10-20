@@ -1,11 +1,8 @@
-use crate::bbox::BoundingBox;
-
 pub type Group = svg::node::element::Group;
 pub type Path = svg::node::element::Path;
 
 type Data = svg::node::element::path::Data;
 type Text = svg::node::element::Text;
-type Rect = svg::node::element::Rectangle;
 
 fn line(p1: (f64, f64), p2: (f64, f64)) -> Data {
     Data::new().move_to(p1).line_to(p2)
@@ -69,12 +66,4 @@ pub fn texty_overlay(label: &str, pos: (f64, f64)) -> Text {
         .set("transform", format!("translate({} {})", pos.0, pos.1))
         .set("font-size", "10");
     ret
-}
-
-pub fn rectangle(bbox: &BoundingBox) -> Rect {
-    Rect::new()
-        .set("x", bbox.get_xmin())
-        .set("y", bbox.get_ymin())
-        .set("width", bbox.width())
-        .set("height", bbox.height())
 }

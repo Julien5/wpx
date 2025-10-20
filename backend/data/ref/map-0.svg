@@ -6,7 +6,7 @@
 <circle cx="299.48768806430326" cy="379.9307882642388" fill="white" id="wp-0/circle-little-white" r="3.5"/>
 <circle cx="299.48768806430326" cy="379.9307882642388" fill="black" id="wp-0/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="82.30526315789473" x="305.1824249064085" y="380.9307882642388"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="82.30526315789473" x="305.1824249064085" y="380.9307882642388"/>
 <text font-size="16.0" id="wp-0/text" text-anchor="start" x="305.182" y="392.931">
 Bräunlingen
 </text>
@@ -15,14 +15,14 @@ Bräunlingen
 <circle cx="165.6673935808194" cy="279.3892407461135" fill="white" id="wp-1/circle-little-white" r="3.5"/>
 <circle cx="165.6673935808194" cy="279.3892407461135" fill="black" id="wp-1/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="80.03157894736842" x="173.635814633451" y="275.3892407461135"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="80.03157894736842" x="173.635814633451" y="275.3892407461135"/>
 <text font-size="16.0" id="wp-1/text" text-anchor="start" x="173.636" y="287.389">
 Furtwangen
 </text>
 <g>
 <circle cx="164.7745599827931" cy="279.70478956742954" fill="Blue" id="wp-2/circle" r="5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="15.610526315789485" x="137.16403366700365" y="265.70478956742954"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="15.610526315789485" x="137.16403366700365" y="265.70478956742954"/>
 <text font-size="16.0" id="wp-2/text" text-anchor="end" x="152.775" y="277.705">
 K1
 </text>
@@ -30,7 +30,7 @@ K1
 <circle cx="160.17804424047517" cy="203.30462621747938" fill="Black" id="wp-3/circle" r="4"/>
 <circle cx="160.17804424047517" cy="203.30462621747938" fill="white" id="wp-3/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="184.14736842105265" x="164.03067581942253" y="189.30462621747938"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="184.14736842105265" x="164.03067581942253" y="189.30462621747938"/>
 <text font-size="16.0" id="wp-3/text" text-anchor="start" x="164.031" y="201.305">
 Schonach im Schwarzwald
 </text>
@@ -38,7 +38,7 @@ Schonach im Schwarzwald
 <circle cx="111.9091584242733" cy="110.54800181507017" fill="Black" id="wp-4/circle" r="4"/>
 <circle cx="111.9091584242733" cy="110.54800181507017" fill="white" id="wp-4/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="83.34736842105264" x="31.561790003220665" y="116.54800181507017"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="83.34736842105264" x="31.561790003220665" y="116.54800181507017"/>
 <text font-size="16.0" id="wp-4/text" text-anchor="start" x="31.562" y="128.548">
 Mühlenbach
 </text>
@@ -47,7 +47,7 @@ Mühlenbach
 <circle cx="98.90297881987135" cy="91.47344700666508" fill="white" id="wp-5/circle-little-white" r="3.5"/>
 <circle cx="98.90297881987135" cy="91.47344700666508" fill="black" id="wp-5/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="137.44210526315788" x="114.46087355671347" y="92.47344700666508"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="137.44210526315788" x="114.46087355671347" y="92.47344700666508"/>
 <text font-size="16.0" id="wp-5/text" text-anchor="start" x="114.461" y="104.473">
 Haslach im Kinzigtal
 </text>
@@ -55,14 +55,14 @@ Haslach im Kinzigtal
 <circle cx="112.38084514659477" cy="82.3707155322627" fill="Black" id="wp-6/circle" r="4"/>
 <circle cx="112.38084514659477" cy="82.3707155322627" fill="white" id="wp-6/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="83.34736842105264" x="27.03347672554213" y="63.37071553226269"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="83.34736842105264" x="27.03347672554213" y="63.37071553226269"/>
 <text font-size="16.0" id="wp-6/text" text-anchor="start" x="27.033" y="75.371">
 Fischerbach
 </text>
 <g>
 <circle cx="100.8138848666058" cy="89.38306780514904" fill="Blue" id="wp-7/circle" r="5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="15.610526315789471" x="78.20335855081633" y="80.38306780514904"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="15.610526315789471" x="78.20335855081633" y="80.38306780514904"/>
 <text font-size="16.0" id="wp-7/text" text-anchor="end" x="93.814" y="92.383">
 K2
 </text>
@@ -71,7 +71,7 @@ K2
 <circle cx="179.49276300675228" cy="214.05108364238913" fill="white" id="wp-8/circle-little-white" r="3.5"/>
 <circle cx="179.49276300675228" cy="214.05108364238913" fill="black" id="wp-8/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="46.87368421052631" x="155.61907879622598" y="220.05108364238913"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="46.87368421052631" x="155.61907879622598" y="220.05108364238913"/>
 <text font-size="16.0" id="wp-8/text" text-anchor="start" x="155.619" y="232.051">
 Triberg
 </text>
@@ -80,7 +80,7 @@ Triberg
 <circle cx="235.44964810598867" cy="217.4104822799709" fill="white" id="wp-9/circle-little-white" r="3.5"/>
 <circle cx="235.44964810598867" cy="217.4104822799709" fill="black" id="wp-9/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="83.06315789473683" x="240.38649021125184" y="208.4104822799709"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="83.06315789473683" x="240.38649021125184" y="208.4104822799709"/>
 <text font-size="16.0" id="wp-9/text" text-anchor="start" x="240.386" y="220.410">
 St. Georgen
 </text>
@@ -89,7 +89,7 @@ St. Georgen
 <circle cx="179.13987269312292" cy="144.89775803405428" fill="white" id="wp-10/circle-little-white" r="3.5"/>
 <circle cx="179.13987269312292" cy="144.89775803405428" fill="black" id="wp-10/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="62.978947368421046" x="144.16092532470188" y="150.89775803405428"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="62.978947368421046" x="144.16092532470188" y="150.89775803405428"/>
 <text font-size="16.0" id="wp-10/text" text-anchor="start" x="144.161" y="162.898">
 Hornberg
 </text>
@@ -98,7 +98,7 @@ Hornberg
 <circle cx="264.436249519018" cy="134.36422042554477" fill="white" id="wp-11/circle-little-white" r="3.5"/>
 <circle cx="264.436249519018" cy="134.36422042554477" fill="black" id="wp-11/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="83.82105263157894" x="258.6151968874391" y="140.36422042554477"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="83.82105263157894" x="258.6151968874391" y="140.36422042554477"/>
 <text font-size="16.0" id="wp-11/text" text-anchor="start" x="258.615" y="152.364">
 Schramberg
 </text>
@@ -107,7 +107,7 @@ Schramberg
 <circle cx="174.1260977556094" cy="73.37490439519752" fill="white" id="wp-12/circle-little-white" r="3.5"/>
 <circle cx="174.1260977556094" cy="73.37490439519752" fill="black" id="wp-12/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="52.084210526315786" x="165.04188722929362" y="54.37490439519752"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="52.084210526315786" x="165.04188722929362" y="54.37490439519752"/>
 <text font-size="16.0" id="wp-12/text" text-anchor="start" x="165.042" y="66.375">
 Wolfach
 </text>
@@ -116,7 +116,7 @@ Wolfach
 <circle cx="147.66987650926967" cy="85.8574226293349" fill="white" id="wp-13/circle-little-white" r="3.5"/>
 <circle cx="147.66987650926967" cy="85.8574226293349" fill="black" id="wp-13/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="58.7157894736842" x="151.95408703558547" y="71.8574226293349"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="58.7157894736842" x="151.95408703558547" y="71.8574226293349"/>
 <text font-size="16.0" id="wp-13/text" text-anchor="start" x="151.954" y="83.857">
 Hausach
 </text>
@@ -125,7 +125,7 @@ Hausach
 <circle cx="241.34220545340577" cy="80.39299361052326" fill="white" id="wp-14/circle-little-white" r="3.5"/>
 <circle cx="241.34220545340577" cy="80.39299361052326" fill="black" id="wp-14/circle-little-white" r="2.5"/>
 </g>
-<rect fill="white" height="12" id="label-bg" width="61.46315789473684" x="242.87904755866893" y="61.39299361052326"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="61.46315789473684" x="242.87904755866893" y="61.39299361052326"/>
 <text font-size="16.0" id="wp-14/text" text-anchor="start" x="242.879" y="73.393">
 Schiltach
 </text>

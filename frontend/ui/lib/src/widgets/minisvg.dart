@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -364,7 +363,7 @@ class RectElement extends Element {
     width = double.parse(attribute("width") ?? "0");
     height = double.parse(attribute("height") ?? "0");
     stroke = Colors.black;
-    fill = Colors.transparent;
+    fill = Colors.white;
     strokeWidth = 1.0;
 
     if (attribute("stroke") != null) {
@@ -372,6 +371,10 @@ class RectElement extends Element {
     }
     if (attribute("fill") != null) {
       fill = parseColor(attribute("fill")!);
+    }
+    if (attribute("fill-opacity") != null) {
+      double alpha=255*double.parse(attribute("fill-opacity")!);
+      fill = fill.withAlpha(alpha.round());
     }
     if (attribute("stroke-width") != null) {
       strokeWidth = double.parse(attribute("stroke-width")!);
@@ -423,7 +426,7 @@ class MiniSvgWidget extends StatelessWidget {
         Size outputSize=Size(constraints.maxWidth,constraints.maxHeight);
         double scale=gscale(svg.size,outputSize);
         Size scaledIntputSize=Size(svg.size.width*scale,svg.size.height*scale);
-        developer.log("svg-size=${svg.size}, constraints-size=$outputSize");
+        //developer.log("svg-size=${svg.size}, constraints-size=$outputSize");
         return CustomPaint(size: scaledIntputSize, painter: SvgPainter(root: svg));
       },
     );
@@ -444,7 +447,7 @@ class SvgPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size drawArea) {
     double s = gscale(root.size, drawArea);
-    developer.log("input-size=${root.size}, output-size=$drawArea => scale=$s");
+    //developer.log("input-size=${root.size}, output-size=$drawArea => scale=$s");
     canvas.scale(s);
     if ((s < 1)) {
       double tx = 0.5 * (drawArea.width - s * root.size.width);

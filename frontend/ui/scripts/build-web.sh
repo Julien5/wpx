@@ -33,16 +33,7 @@ function build() {
  
 function main() {
     build
-	MINISERVE=${CARGO_TARGET_DIR}/release/miniserve
 	if [ "$1" = "deploy" ]; then
-		# build miniserve if needed
-		if [ ! -f ${MINISERVE} ]; then
-			pushd ~/projects/sandbox/desktop/track/profile/miniserve
-			cargo build --release
-			scp -i ~/.ssh/ovh/id ${MINISERVE} debian@${DOMAIN}:/tmp/
-			popd
-		fi
-		# upload
 		DOMAIN=vps-e637d6c5.vps.ovh.net
 		scp -i ~/.ssh/ovh/id scripts/start-ovh.sh /tmp/web.tgz debian@${DOMAIN}:/tmp/
 		ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "chmod +x /tmp/start-ovh.sh; /tmp/start-ovh.sh"

@@ -16,6 +16,7 @@ class ProfileConsumer extends StatelessWidget {
         // It would be more accurate to check visibility with a scroll controller
         // at the list view level. Because "Callbacks are not fired immediately
         // on visibility changes."
+        developer.log("update profile renderer:${pRenderer.segment.id()}");
         return FutureRenderingWidget(future: pRenderer);
       },
     );

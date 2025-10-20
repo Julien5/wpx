@@ -12,6 +12,7 @@ use crate::label_placement;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::*;
+use crate::parameters::{ProfileIndication, ProfileOptions};
 use crate::segment;
 use crate::track::Track;
 use elements::*;
@@ -21,21 +22,12 @@ struct ProfileModel {
     points: Vec<PointFeature>,
 }
 
-#[derive(Clone)]
-pub enum ProfileIndications {
-    None,
-    GainTicks,
-    SlopeRectangles,
-    NumericSlope,
-    LocalTops,
-}
-
 pub struct ProfileView {
     W: f64,
     H: f64,
     Mleft: f64,
     Mbottom: f64,
-    profile_indication: ProfileIndications,
+    options: ProfileOptions,
     BG: Group,
     SL: Group,
     SB: Group,
@@ -75,70 +67,43 @@ fn elevation_gain_ticks(
     ret
 }
 
-fn elevation_slope_ranges(
-    track: &Track,
-    min_slope: f64,
-    range: &std::ops::Range<usize>,
-) -> Vec<std::ops::Range<usize>> {
-    let mut ret = Vec::new();
-    let mut start = None;
-    for k in range.start + 1..range.end {
-        let x0 = track.distance(k - 1);
-        let x1 = track.distance(k);
-        //let y0 = track.smooth_elevation[k - 1];
-        //let y1 = track.smooth_elevation[k];
-        let y0 = track.wgs84[k - 1].z();
-        let y1 = track.wgs84[k].z();
-        let slope = (y1 - y0) / (x1 - x0);
-        if slope > min_slope && start.is_none() {
-            start = Some(k);
-        }
-        if slope < 0.0 && start.is_some() {
-            ret.push(std::ops::Range {
-                start: start.unwrap(),
-                end: k,
-            });
-            start = None;
-        }
-    }
-    ret
-}
-
-fn elevation_local_tops(track: &Track, range: &std::ops::Range<usize>) -> Vec<usize> {
-    let mut ret = Vec::new();
-    let indices = track.douglas_peucker(20f64, &range);
-    for k_indice in 1..indices.len() - 1 {
-        let kprev = indices[k_indice - 1];
-        let k = indices[k_indice];
-        let knext = indices[k_indice + 1];
-        let x0 = track.distance(kprev);
-        let x1 = track.distance(k);
-        let x2 = track.distance(knext);
-        let y0 = track.smooth_elevation[kprev];
-        let y1 = track.smooth_elevation[k];
-        let y2 = track.smooth_elevation[knext];
-        let slope1 = (y1 - y0) / (x1 - x0);
-        let slope2 = (y2 - y1) / (x2 - x1);
-        if slope1 > 0.01 && slope2 < -0.00 {
-            ret.push(k);
-        }
-    }
-    ret
-}
-
 impl ProfileView {
-    fn eticks_height(&self) -> f64 {
-        match self.profile_indication {
-            ProfileIndications::None => 0.0,
-            ProfileIndications::GainTicks => 7.0,
-            ProfileIndications::LocalTops => 7.0,
-            ProfileIndications::SlopeRectangles => 7.0,
-            ProfileIndications::NumericSlope => 15.0,
+    fn profile_indication(&self) -> ProfileIndication {
+        let indicators = &self.options.elevation_indicators;
+        for indicator in indicators {
+            return indicator.clone();
         }
+        ProfileIndication::None
+    }
+
+    fn xticks_end(&self) -> f64 {
+        match self.profile_indication() {
+            ProfileIndication::NumericSlope => {
+                return self.HD();
+            }
+            _ => {}
+        };
+        self.HD() - self.eticks_height()
+    }
+    fn eticks_height(&self) -> f64 {
+        let indicators = &self.options.elevation_indicators;
+        if indicators.is_empty() {
+            return 0.0;
+        }
+        let mut ret = 0.0;
+        for indicator in indicators {
+            let space = match indicator {
+                ProfileIndication::None => 0.0,
+                ProfileIndication::GainTicks => 7.0,
+                ProfileIndication::NumericSlope => 15.0,
+            };
+            ret += space;
+        }
+        ret
     }
     pub fn init(
         bbox: &gpsdata::ProfileBoundingBox,
-        indications: ProfileIndications,
+        options: &ProfileOptions,
         _W: i32,
         _H: i32,
     ) -> ProfileView {
@@ -152,7 +117,7 @@ impl ProfileView {
             H,
             Mleft,
             Mbottom,
-            profile_indication: indications,
+            options: options.clone(),
             bboxview: fix_ymargins(bbox, H),
             bboxdata: bbox.clone(),
             BG: Group::new().set("id", "BG"),
@@ -205,38 +170,6 @@ impl ProfileView {
             12f64
         } else {
             18f64
-        }
-    }
-
-    fn add_local_tops(&mut self, track: &Track, range: &std::ops::Range<usize>) {
-        let local_tops = elevation_local_tops(&track, range);
-        for k in local_tops {
-            let x = self.toSD(&(track.distance(k), 0.0)).0;
-            if x > self.WD() {
-                break;
-            }
-            self.SD.append(stroke(
-                "3",
-                (x, self.HD() - self.eticks_height()),
-                (x, self.HD()),
-            ));
-        }
-    }
-
-    fn add_slope_indication_gains(&mut self, track: &Track, range: &std::ops::Range<usize>) {
-        let eticks_ranges = elevation_slope_ranges(&track, 0.03, range);
-        for r in eticks_ranges {
-            let xstart = self.toSD(&(track.distance(r.start), 0.0)).0;
-            let xend = self.toSD(&(track.distance(r.end), 0.0)).0;
-            if xstart > self.WD() {
-                break;
-            }
-            let bbox = BoundingBox::init(
-                (xstart, self.HD() - self.eticks_height()),
-                (xend, self.HD()),
-            );
-            let r = elements::rectangle(&bbox);
-            self.SD.append(r);
         }
     }
 
@@ -307,14 +240,13 @@ impl ProfileView {
         &mut self,
         track: &Track,
         range: &std::ops::Range<usize>,
-        kind: &ProfileIndications,
+        kind: &ProfileIndication,
     ) {
+        println!("add profile indication: {:?}", kind);
         match kind {
-            ProfileIndications::None => {}
-            ProfileIndications::GainTicks => self.add_gain_ticks(track, range),
-            ProfileIndications::NumericSlope => self.add_numeric_slope(track, range),
-            ProfileIndications::LocalTops => self.add_local_tops(track, range),
-            ProfileIndications::SlopeRectangles => self.add_slope_indication_gains(track, range),
+            ProfileIndication::None => {}
+            ProfileIndication::GainTicks => self.add_gain_ticks(track, range),
+            ProfileIndication::NumericSlope => self.add_numeric_slope(track, range),
         }
     }
 
@@ -382,11 +314,6 @@ impl ProfileView {
         let _yticks = ticks::yticks(&self.bboxdata, self.H);
         let _yticks_dashed = ticks::yticks_dashed(&self.bboxdata, self.H);
 
-        let xticks_end = match self.profile_indication {
-            ProfileIndications::NumericSlope => self.HD(),
-            _ => self.HD() - self.eticks_height(),
-        };
-
         for xtick in _xticks {
             let xg = self.toSD(&(xtick, 0f64)).0;
             if xg > WD {
@@ -395,7 +322,8 @@ impl ProfileView {
             if xtick < 0f64 {
                 continue;
             }
-            self.SD.append(stroke("1", (xg, 0f64), (xg, xticks_end)));
+            self.SD
+                .append(stroke("1", (xg, 0f64), (xg, self.xticks_end())));
             self.SB.append(text_middle(
                 format!("{}", (xtick / 1000f64).floor() as f64).as_str(),
                 (xg, 2f64 + 15f64),
@@ -408,7 +336,7 @@ impl ProfileView {
                 break;
             }
             self.SD
-                .append(dashed((xd, self.eticks_height()), (xd, xticks_end)));
+                .append(dashed((xd, self.eticks_height()), (xd, self.xticks_end())));
         }
 
         for ytick in &_yticks {
@@ -476,7 +404,7 @@ impl ProfileView {
             polyline_dp.points.push((xg, yg));
         }
 
-        let kind = self.profile_indication.clone();
+        let kind = self.profile_indication();
         self.add_profile_indication(&track, &range, &kind);
 
         let mut document = Attributes::new();
@@ -574,12 +502,12 @@ pub fn profile(
     track: &Track,
     inputpoints: &Vec<InputPoint>,
     segment: &segment::Segment,
-    indications: ProfileIndications,
+    options: &ProfileOptions,
     W: i32,
     H: i32,
     debug: bool,
 ) -> String {
-    let mut view = ProfileView::init(&segment.profile_bbox, indications, W, H);
+    let mut view = ProfileView::init(&segment.profile_bbox, options, W, H);
     view.add_canvas();
     view.add_track(&track, inputpoints, debug);
     view.render_model();

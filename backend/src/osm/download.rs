@@ -155,7 +155,7 @@ mod tests {
     #[test]
     fn download() {
         //let bbox = "(47.86,9.66,48.17,10.80)";
-        let bbox = WGS84BoundingBox::init((47.86, 9.66), (48.17, 10.80));
+        let _bbox = WGS84BoundingBox::init((47.86, 9.66), (48.17, 10.80));
         let place = "village";
         let json = ""; //dl(&bbox, place).unwrap();
         let json = ""; //dl_passes(&bbox).unwrap();

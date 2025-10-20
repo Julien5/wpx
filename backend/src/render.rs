@@ -108,7 +108,7 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         waypoints_table.truncate(15);
         log::trace!("segment: {}", segment.id);
         let table = points_table(&templates, &backend.track, &waypoints_table);
-        let p = segment.render_profile((W, H), backend.parameters.debug);
+        let p = segment.render_profile((W, H), &backend.parameters);
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);
             std::fs::write(&f, &p).unwrap();

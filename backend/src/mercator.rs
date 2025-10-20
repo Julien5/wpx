@@ -88,7 +88,7 @@ mod tests {
     fn project_unproject() {
         // Mercator=EPSG:3857
         // WGS84=EPSG:4326
-        let euc = MercatorPoint::from_xy(&(909111.0f64, 6217006.0f64));
+        //let euc = MercatorPoint::from_xy(&(909111.0f64, 6217006.0f64));
         let wgs = WGS84Point::from_xy(&(8.1876716, 48.676003));
         let proj = WebMercatorProjection::make();
         let eucp = proj.project(&wgs);

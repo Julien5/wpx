@@ -149,6 +149,7 @@ impl PointFeature {
         whitebg = whitebg.set("width", self.label.bbox.bbox.width() - 2.0 * margin);
         whitebg = whitebg.set("height", self.label.bbox.bbox.height() - 2.0 * margin);
         whitebg = whitebg.set("fill", "white");
+        whitebg = whitebg.set("fill-opacity", "0.75");
         whitebg = whitebg.set("id", "label-bg");
         sd_group.append(whitebg);
         sd_group.append(label);

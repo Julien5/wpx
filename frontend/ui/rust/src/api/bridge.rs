@@ -7,6 +7,8 @@ pub use std::ops::Range;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
 pub use tracks::parameters::Parameters;
+pub use tracks::parameters::ProfileIndication;
+pub use tracks::parameters::ProfileOptions;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
 pub use tracks::waypoint::WaypointOrigin;
@@ -58,6 +60,20 @@ pub enum _WaypointOrigin {
     OpenStreetMap,
 }
 
+#[frb(mirror(ProfileIndication))]
+pub enum _ProfileIndication {
+    None,
+    GainTicks,
+    SlopeRectangles,
+    NumericSlope,
+    LocalTops,
+}
+
+#[frb(mirror(ProfileOptions))]
+pub struct _ProfileOptions {
+    pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
+}
+
 #[frb(mirror(Parameters))]
 pub struct _Parameters {
     pub debug: bool,
@@ -67,6 +83,7 @@ pub struct _Parameters {
     pub segment_length: f64,
     pub segment_overlap: f64,
     pub smooth_width: f64,
+    pub profile_options: ProfileOptions,
 }
 
 #[frb(mirror(WaypointInfo))]
@@ -165,7 +182,7 @@ impl Bridge {
     ) -> String {
         //let delay = std::time::Duration::from_millis(50);
         //std::thread::sleep(delay);
-        println!("{}x{}", W, H);
+        println!("{}: {}x{}", what, W, H);
         self.backend
             .render_segment_what(&segment._impl, what, (W, H))
     }

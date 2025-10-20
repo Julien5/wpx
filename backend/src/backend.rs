@@ -9,6 +9,7 @@ use crate::inputpoint::InputPointMap;
 use crate::locate;
 use crate::osm;
 use crate::parameters::Parameters;
+use crate::parameters::ProfileOptions;
 use crate::pdf;
 use crate::profile;
 use crate::render;
@@ -225,7 +226,7 @@ impl BackendData {
     ) -> String {
         log::info!("render_segment_what:{} {}", segment.id, what);
         match what.as_str() {
-            "profile" => segment.render_profile((W, H), self.parameters.debug),
+            "profile" => segment.render_profile((W, H), &self.parameters),
             "ylabels" => self.render_yaxis_labels_overlay(segment, (W, H)),
             "map" => segment.render_map((W, H), self.parameters.debug),
             _ => {
@@ -237,12 +238,8 @@ impl BackendData {
 
     fn render_yaxis_labels_overlay(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
         log::info!("render_segment_track:{}", segment.id);
-        let mut profile = profile::ProfileView::init(
-            &segment.profile_bbox,
-            profile::ProfileIndications::None,
-            W,
-            H,
-        );
+        let mut profile =
+            profile::ProfileView::init(&segment.profile_bbox, &ProfileOptions::default(), W, H);
         profile.add_yaxis_labels_overlay();
         let ret = profile.render();
         if self.get_parameters().debug {
@@ -305,7 +302,7 @@ mod tests {
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = segment.render_profile((1420, 400), backend.get_parameters().debug);
+            let svg = segment.render_profile((1420, 400), &backend.get_parameters());
             let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
             println!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {
