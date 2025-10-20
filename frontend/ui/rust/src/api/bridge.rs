@@ -64,9 +64,7 @@ pub enum _WaypointOrigin {
 pub enum _ProfileIndication {
     None,
     GainTicks,
-    SlopeRectangles,
     NumericSlope,
-    LocalTops,
 }
 
 #[frb(mirror(ProfileOptions))]

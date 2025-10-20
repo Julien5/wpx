@@ -53,15 +53,8 @@ class _ElevationIndicatorGroupState extends State<ElevationIndicatorGroup> {
     } else if (selectedValue == ticks) {
       p.profileOptions.elevationIndicators.add(ProfileIndication.gainTicks);
     }
-    developer.log("set parameters");
+    developer.log("set parameters on root model to update all segments");
     rootModel.setParameters(p);
-
-    developer.log("update profile");
-    ProfileRenderer profileRenderer = Provider.of<ProfileRenderer>(
-      context,
-      listen: false,
-    );
-    profileRenderer.reset();
   }
 
   void onChanged(String? newValue) {

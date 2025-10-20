@@ -55,6 +55,7 @@ class RootModel extends ChangeNotifier {
 
   void setParameters(bridge.Parameters p) {
     _bridge.setParameters(parameters: p);
+    notifyListeners();
   }
 
   Future<List<int>> generateGpx() {
