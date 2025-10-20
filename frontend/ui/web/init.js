@@ -20,10 +20,10 @@ function percent(n, total) {
 function pretty(url) {
     var filename = url.split('/').pop()
     if (filename.includes("canvaskit")) {
-        return "framework";
+        return "flutter";
     }
     if (filename.includes("rust")) {
-        return "algorithms";
+        return "rust code";
     }
     return "user interface";
 }
@@ -122,7 +122,9 @@ async function download(url) {
     try {
         await download("https://www.gstatic.com/flutter-canvaskit/a8bfdfc394deaed5c57bd45a64ac4294dc976a72/canvaskit.wasm");
         await download("pkg/rust_lib_ui_bg.wasm");
-        await download("main.dart.js");
+		// main.dart.js is loaded by flutter again
+		// it does not bring any advantage to pre-load it
+        //await download("main.dart.js");
         const htmltext = document.querySelector(".loading-text");
         htmltext.textContent = `starting app...`;
         console.log("start app");

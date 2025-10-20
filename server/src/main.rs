@@ -165,6 +165,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "Access-Control-Allow-Headers",
                     HeaderValue::from_static("*"),
                 );
+                // does not seems to help for the case of main.dart.js
+                headers.insert("Cache-Control", HeaderValue::from_static("max-age=604800"));
                 res
             }),
         );

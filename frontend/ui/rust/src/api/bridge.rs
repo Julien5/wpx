@@ -150,7 +150,7 @@ impl Bridge {
         self.backend.load_demo().await
     }
     pub async fn generatePdf(&mut self) -> Vec<u8> {
-        self.backend.generatePdf()
+        self.backend.generatePdf().await
     }
     pub async fn generateGpx(&mut self) -> Vec<u8> {
         self.backend.generateGpx()

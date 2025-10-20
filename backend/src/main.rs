@@ -102,7 +102,7 @@ async fn main() -> Result<(), error::Error> {
     log::info!("length = {:.1} km", stats.length / 1000f64);
     log::info!("elevation gain = {:.1} km", stats.elevation_gain);
 
-    let pdfbytes = backend.generatePdf();
+    let pdfbytes = backend.generatePdf().await;
     let pdfname = format!(
         "{}/{}.pdf",
         outdir,

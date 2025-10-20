@@ -86,8 +86,8 @@ impl Backend {
     pub fn statistics(&self) -> SegmentStatistics {
         self.d().statistics()
     }
-    pub fn generatePdf(&mut self) -> Vec<u8> {
-        self.dmut().generatePdf()
+    pub async fn generatePdf(&mut self) -> Vec<u8> {
+        self.dmut().generatePdf().await
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
         self.dmut().generateGpx()
@@ -276,10 +276,10 @@ impl BackendData {
             distance_end: self.track.distance(range.end - 1),
         }
     }
-    pub fn generatePdf(&mut self) -> Vec<u8> {
+    pub async fn generatePdf(&mut self) -> Vec<u8> {
         let typbytes = render::make_typst_document(self, (1000, 285));
         //let typbytes = render::compile_pdf(self, debug, (1400, 400));
-        let ret = pdf::compile(&typbytes, self.get_parameters().debug);
+        let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;
         log::info!("generated {} bytes", ret.len());
         ret
     }
