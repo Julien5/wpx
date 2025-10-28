@@ -6,7 +6,6 @@ use crate::{elevation, track, wgs84point::WGS84Point};
 pub enum WaypointOrigin {
     GPX,
     DouglasPeucker,
-    MaxStepSize,
     OpenStreetMap,
 }
 
@@ -22,8 +21,8 @@ pub struct WaypointInfo {
     pub name: String,
     pub description: String,
     pub time: String,
-    pub track_index: usize,
-    pub value: Option<usize>,
+    pub track_index: Option<usize>,
+    pub value: Option<i32>,
 }
 
 impl WaypointInfo {
@@ -159,7 +158,7 @@ impl WaypointInfo {
             name,
             description,
             time: time.to_rfc3339(),
-            track_index: w.get_track_index(),
+            track_index: w.track_index,
             value: None,
         }
     }

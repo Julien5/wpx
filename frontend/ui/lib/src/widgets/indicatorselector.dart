@@ -1,8 +1,6 @@
 import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
@@ -94,18 +92,9 @@ class _ElevationIndicatorGroupState extends State<ElevationIndicatorGroup> {
   }
 }
 
-class ElevationIndicatorChooser extends StatefulWidget {
+class ElevationIndicatorChooser extends StatelessWidget {
   const ElevationIndicatorChooser({super.key});
-
-  @override
-  State<ElevationIndicatorChooser> createState() =>
-      _ElevationIndicatorChooserState();
-}
-
-class _ElevationIndicatorChooserState extends State<ElevationIndicatorChooser> {
-  // Track the selected value
-  String? selectedValue = "A"; // Initially, "A" is selected
-
+  
   @override
   Widget build(BuildContext context) {
     return Center(

@@ -4,15 +4,15 @@ use crate::inputpoint::{InputPoint, InputPointMap, InputType, TrackProjection};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::parameters::Parameters;
 use crate::track::{self, Track};
-use crate::{bboxes, gpsdata, locate, profile, svgmap};
+use crate::{bboxes, gpsdata, locate, make_points, profile, svgmap};
 
 #[derive(Clone)]
 pub struct Segment {
-    pub id: usize,
+    pub id: i32,
     pub range: std::ops::Range<usize>,
     pub profile_bbox: gpsdata::ProfileBoundingBox,
     pub map_bbox: EuclideanBoundingBox,
-    pub track_tree: locate::Locate,
+    pub track_tree: locate::IndexedPointsTree,
     pub track: std::sync::Arc<Track>,
     pub points: Vec<InputPoint>,
 }
@@ -26,11 +26,11 @@ pub struct SegmentStatistics {
 
 impl Segment {
     pub fn new(
-        id: usize,
+        id: i32,
         range: std::ops::Range<usize>,
         bbox: &gpsdata::ProfileBoundingBox,
         mbbox: &EuclideanBoundingBox,
-        track_tree: locate::Locate,
+        track_tree: locate::IndexedPointsTree,
         track: std::sync::Arc<Track>,
         inputpoints: &InputPointMap,
     ) -> Segment {
@@ -48,7 +48,8 @@ impl Segment {
 
     pub fn render_profile(&self, (width, height): (i32, i32), parameters: &Parameters) -> String {
         log::info!("render profile:{}", self.id);
-        let points = self.profile_points();
+        let points = self.profile_points(parameters);
+        log::trace!("points:{:?}", points.len());
         let ret = profile::profile(
             &self.track,
             &points,
@@ -56,7 +57,6 @@ impl Segment {
             &parameters.profile_options,
             width,
             height,
-            parameters.debug,
         );
         if parameters.debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id);
@@ -87,22 +87,26 @@ impl Segment {
         }
     }
 
-    fn compute_relation(track: &track::Track, tracktree: &locate::Locate, point: &mut InputPoint) {
+    fn compute_track_projection(
+        track: &track::Track,
+        tracktree: &locate::IndexedPointsTree,
+        point: &mut InputPoint,
+    ) {
         let index = tracktree.nearest_neighbor(&point.euclidian).unwrap();
         let (index1, index2) = Self::two_closest_index(track, &index, point);
         let p1 = &track.euclidian[index1];
         let p2 = &track.euclidian[index2];
         let linestring: geo::LineString = vec![p1.xy(), p2.xy()].into();
-        let findex = linestring
+        let index_floating_part = linestring
             .line_locate_point(&geo::point!(point.euclidian.xy()))
             .unwrap();
-        assert!(findex <= 1f64);
-        let rindex = index1 as f64 + findex;
+        assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
+        let floating_index = index1 as f64 + index_floating_part;
         let t1 = &track.euclidian[index1];
         let t2 = &track.euclidian[index2];
         let a1 = (t1.0, t1.1, track.elevation(index1));
         let a2 = (t2.0, t2.1, track.elevation(index2));
-        let m = Self::middle_point(&a1, &a2, findex);
+        let m = Self::middle_point(&a1, &a2, index_floating_part);
         let euclidean = MercatorPoint::from_xy(&(m.0, m.1));
         let elevation = m.2;
         let track_distance = euclidean.d2(&point.euclidian).sqrt();
@@ -113,7 +117,8 @@ impl Segment {
         debug_assert!(df <= di);
 
         point.track_projection = Some(TrackProjection {
-            track_index: rindex,
+            track_floating_index: floating_index,
+            track_index: index1,
             euclidean,
             elevation,
             track_distance,
@@ -124,7 +129,7 @@ impl Segment {
         inputpoints: &InputPointMap,
         _bbox: &EuclideanBoundingBox,
         track: &track::Track,
-        tracktree: &locate::Locate,
+        tracktree: &locate::IndexedPointsTree,
     ) -> Vec<InputPoint> {
         let mut ret = Vec::new();
         let mut bbox = _bbox.clone();
@@ -139,14 +144,14 @@ impl Segment {
             let points = _points.unwrap();
             for p in points {
                 let mut c = p.clone();
-                Self::compute_relation(track, tracktree, &mut c);
+                Self::compute_track_projection(track, tracktree, &mut c);
                 ret.push(c);
             }
         }
         ret
     }
 
-    fn distance_to_track(&self, p: &InputPoint) -> f64 {
+    fn _distance_to_track(p: &InputPoint) -> f64 {
         match &p.track_projection {
             Some(proj) => proj.track_distance,
             None => {
@@ -156,135 +161,71 @@ impl Segment {
         }
     }
 
-    fn important(p: &InputPoint) -> bool {
-        let pop = match p.population() {
-            Some(n) => n,
-            None => {
-                if p.kind() == InputType::City {
-                    1000
-                } else {
-                    0
-                }
-            }
-        };
-        let dist = p.distance_to_track();
-        if pop > 100000 && dist < 5000f64 {
-            return true;
-        }
-        if pop > 10000 && dist < 1000f64 {
-            return true;
-        }
-        if pop >= 500 && dist < 500f64 {
-            return true;
-        }
-        /*if dist < 2000f64 {
-            log::trace!(
-                "too far for the profile:{:?} {:?} {:?} d={:.1}",
-                p.kind(),
-                p.population(),
-                p.name(),
-                dist
-            );
-        }*/
-        false
+    pub fn profile_points(&self, parameters: &Parameters) -> Vec<InputPoint> {
+        make_points::profile_points(&self, parameters)
     }
 
-    pub fn profile_points(&self) -> Vec<InputPoint> {
-        let mut ret = self.points.clone();
-        ret.retain(|p| {
-            let distance = self.distance_to_track(&p);
-            match p.kind() {
-                InputType::MountainPass | InputType::Peak => {
-                    return distance < 250f64;
-                }
-                InputType::Hamlet => {
-                    return false;
-                }
-                InputType::GPX => {
-                    return distance < 250f64;
-                }
-                InputType::City | InputType::Village => {
-                    return Self::important(p);
-                }
-            }
-        });
-        for w in &mut ret {
-            w.label_placement_order = Self::placement_order_profile(&w);
-        }
-        ret
-    }
-
-    pub fn render_map(&self, (width, height): (i32, i32), debug: bool) -> String {
+    pub fn render_map(&self, (width, height): (i32, i32), parameters: &Parameters) -> String {
         log::info!("render map:{}", self.id);
-        let points = self.map_points();
-        let ret = svgmap::map(&self.track, &points, &self, width, height, debug);
-        if debug {
+        let points = self.map_points(parameters);
+        let ret = svgmap::map(&self.track, &points, &self, width, height, parameters.debug);
+        if parameters.debug {
             let filename = std::format!("/tmp/map-{}.svg", self.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
         }
         ret
     }
 
-    fn placement_order_profile(point: &InputPoint) -> i32 {
-        let delta = point.distance_to_track();
-        let kind = point.kind();
-        let mut ret = 1;
-        if kind == InputType::City && delta < 1000f64 {
-            return ret;
-        }
-        if (kind == InputType::MountainPass || kind == InputType::Peak) && delta < 500f64 {
-            return ret;
-        }
-        ret += 1;
-        if kind == InputType::Village && delta < 1000f64 {
-            return ret;
-        }
-        ret += 1;
-        if kind == InputType::City && delta < 10000f64 {
-            return ret;
-        }
-        ret += 1;
-        if kind == InputType::Village && delta < 200f64 {
-            return ret;
-        }
-        ret += 1;
-        ret
-    }
-
-    fn placement_order_map(point: &InputPoint) -> i32 {
+    fn placement_order_map(point: &InputPoint) -> usize {
+        let infinity = usize::MAX / 2;
         if point.name().is_none() {
-            return i32::MAX - 10;
+            return infinity;
         }
-        match point.kind() {
-            InputType::Hamlet => {
-                return 5;
-            }
-            InputType::Village => {
-                return 4;
-            }
-            InputType::MountainPass | InputType::Peak => {
-                return 3;
-            }
-            InputType::GPX => {
+        if point.kind() == InputType::GPX {
+            return 1;
+        }
+        let d = point.track_projection.as_ref().unwrap().track_distance;
+        let k = point.kind();
+        if k == InputType::MountainPass || k == InputType::Peak {
+            if d < 300.0 {
                 return 2;
             }
-            InputType::City => {
-                return 1;
-            }
+            return infinity;
         }
+
+        if k == InputType::Hamlet {
+            if d < 300.0 {
+                return 4;
+            }
+            return infinity;
+        }
+
+        let dk = match point.kind() {
+            InputType::Village => infinity,
+            InputType::City => 1,
+            _ => infinity,
+        };
+
+        let dd = if d < 300.0 {
+            0
+        } else if d < 2000.0 {
+            1
+        } else if d < 5000.0 {
+            2
+        } else if d < 10000.0 {
+            2
+        } else {
+            5
+        };
+        dk + dd
     }
 
-    fn map_points(&self) -> Vec<InputPoint> {
-        let profile = self.profile_points();
-        // at most 15 points on the map.
-        let nextra = if profile.len() >= 15 {
-            0
-        } else {
-            (15 - profile.len()).max(0)
+    fn map_points(&self, parameters: &Parameters) -> Vec<InputPoint> {
+        let profile = self.profile_points(parameters);
+        let nextra = match parameters.map_options.nmax {
+            Some(n) => n,
+            _ => 10,
         };
-        if nextra == 0 {
-            return profile.clone();
-        }
         let mut extra = self.points.clone();
         extra.retain(|p| {
             if profile.contains(&p) {
@@ -295,17 +236,32 @@ impl Segment {
             }
             true
         });
+        /*
+        let _: Vec<_> = extra
+            .iter()
+            .map(|p| {
+                log::trace!(
+                    "{:?} [k={:?}] [d={:.1}]=>{}",
+                    p.name(),
+                    p.kind(),
+                    p.track_projection.as_ref().unwrap().track_distance / 1000f64,
+                    Self::placement_order_map(&p)
+                )
+            })
+            .collect();*/
         extra.sort_by_key(|p| Self::placement_order_map(&p));
         extra.truncate(nextra);
         let mut ret = profile.clone();
         ret.extend_from_slice(&extra);
         for w in &mut ret {
             if profile.contains(&w) {
-                w.label_placement_order = Self::placement_order_profile(&w);
+                assert!(w.label_placement_order < usize::MAX);
             } else {
-                w.label_placement_order = Self::placement_order_map(&w) + 5;
+                w.label_placement_order = Self::placement_order_map(&w) + profile.len();
             }
+            log::trace!("map-point:{:?}", w.name());
         }
+        assert!(!ret.is_empty());
         ret
     }
 }

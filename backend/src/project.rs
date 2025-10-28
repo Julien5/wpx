@@ -15,7 +15,7 @@ impl SphereKnnGetters for IndexedWGS84Point {
 
 fn convert(track: &Track) -> Vec<IndexedWGS84Point> {
     let mut ret = Vec::new();
-    for k in 0..track.wgs84.len() {
+    for k in 0..track.len() {
         ret.push(IndexedWGS84Point {
             wgs84: track.wgs84[k].clone(),
             index: k,

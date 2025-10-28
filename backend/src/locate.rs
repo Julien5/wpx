@@ -92,7 +92,7 @@ fn indexed_track(points: &Track, range: &std::ops::Range<usize>) -> Vec<IndexedP
 }
 
 #[derive(Clone)]
-pub struct Locate {
+pub struct IndexedPointsTree {
     tree: RTree<IndexedPoint>,
 }
 
@@ -100,16 +100,16 @@ fn coord(point: &MercatorPoint) -> [f64; 2] {
     [point.x(), point.y()]
 }
 
-impl Locate {
-    pub fn from_points(points: &Vec<InputPoint>) -> Locate {
+impl IndexedPointsTree {
+    pub fn from_points(points: &Vec<InputPoint>) -> IndexedPointsTree {
         let ipoints = indexed_points(points);
         let tree = RTree::bulk_load(ipoints);
-        Locate { tree }
+        IndexedPointsTree { tree }
     }
-    pub fn from_track(track: &Track, range: &std::ops::Range<usize>) -> Locate {
+    pub fn from_track(track: &Track, range: &std::ops::Range<usize>) -> IndexedPointsTree {
         let ipoints = indexed_track(track, range);
         let tree = RTree::bulk_load(ipoints);
-        Locate { tree }
+        IndexedPointsTree { tree }
     }
     pub fn nearest_neighbor(&self, point: &MercatorPoint) -> Option<usize> {
         let nearest = self.tree.nearest_neighbor(&coord(point));

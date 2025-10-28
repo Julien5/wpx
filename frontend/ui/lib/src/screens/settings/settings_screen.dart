@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/utils.dart';
 import 'slidervalues.dart';
 import 'statistics_widget.dart';
 
@@ -56,14 +57,6 @@ class SegmentsSettings extends StatefulWidget {
   State<SegmentsSettings> createState() => _SegmentsSettingsState();
 }
 
-List<double> fromKm(List<double> list) {
-  List<double> ret = list;
-  for (int k = 0; k < list.length; ++k) {
-    ret[k] = list[k] * 1000;
-  }
-  return ret;
-}
-
 List<double> segmentLengthSliderValues(double trackLength) {
   double trackLengthKm = trackLength / 1000;
   List<double> values = [2, 5, 10];
@@ -110,7 +103,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      readModel();
+      //? readModel();
       RootModel rootModel = Provider.of<RootModel>(context, listen: false);
       developer.log("E=${rootModel.statistics().distanceEnd}");
 
@@ -146,9 +139,9 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       startTime: rfc3339time,
       segmentLength: realLength,
       segmentOverlap: overlap,
-      maxStepSize: oldParameters.maxStepSize,
       smoothWidth: oldParameters.smoothWidth,
       profileOptions: oldParameters.profileOptions,
+      mapOptions: oldParameters.mapOptions,
       debug: oldParameters.debug,
     );
     rootModel.setParameters(newParameters);

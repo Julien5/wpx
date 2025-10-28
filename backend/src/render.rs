@@ -115,7 +115,7 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         }
         let Wm = 400i32;
         let Hm = 400i32;
-        let m = segment.render_map((Wm, Hm), backend.parameters.debug);
+        let m = segment.render_map((Wm, Hm), &backend.parameters);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();

@@ -53,10 +53,9 @@ fn elevation_gain_ticks(
     range: &std::ops::Range<usize>,
 ) -> Vec<(f64, f64)> {
     let mut ret = Vec::new();
-    let gain = track.elevation_gain();
     for k in range.start + 1..range.end {
-        let m0 = gain[k - 1];
-        let m1 = gain[k];
+        let m0 = track.elevation_gain(k - 1);
+        let m1 = track.elevation_gain(k);
         let f0 = m0 / step_size;
         let f1 = m1 / step_size;
         let d = track.distance(k);
@@ -375,7 +374,7 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_track(&mut self, track: &Track, inputpoints: &Vec<InputPoint>, _debug: bool) {
+    pub fn add_track(&mut self, track: &Track, inputpoints: &Vec<InputPoint>) {
         let bbox = &self.bboxview;
 
         /*if render_device != RenderDevice::PDF {
@@ -505,11 +504,10 @@ pub fn profile(
     options: &ProfileOptions,
     W: i32,
     H: i32,
-    debug: bool,
 ) -> String {
     let mut view = ProfileView::init(&segment.profile_bbox, options, W, H);
     view.add_canvas();
-    view.add_track(&track, inputpoints, debug);
+    view.add_track(&track, inputpoints);
     view.render_model();
     view.render()
 }

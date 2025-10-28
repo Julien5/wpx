@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'indicatorselector.dart';
+import 'package:ui/src/widgets/parameterslider.dart';
+import '../../../widgets/indicatorselector.dart';
 import 'segmentflipbox.dart';
 
 class SegmentViewVertical extends StatelessWidget {
@@ -16,6 +17,7 @@ class SegmentViewVertical extends StatelessWidget {
           SegmentFlipBox(),
           SizedBox(height: 50),
           ElevationIndicatorChooser(),
+          ParameterSliderProvider(),
         ],
       ),
     );

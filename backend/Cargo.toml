@@ -37,9 +37,9 @@ num-traits = "0.2.19"
 wasm-bindgen = "0.2.104"
 
 
-[features]
+#[features]
 # default = ["typstpdf"]
-typstpdf = ["dep:typst-as-lib","dep:typst-pdf"]
+#typstpdf = ["dep:typst-as-lib","dep:typst-pdf"]
 		  
 
 

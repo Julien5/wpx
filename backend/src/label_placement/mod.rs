@@ -93,7 +93,7 @@ pub struct PointFeature {
     id: String,
     circle: PointFeatureDrawing,
     label: Label,
-    placement_order: i32,
+    placement_order: usize,
 }
 
 pub type CandidatesGenerator = fn(&PointFeature) -> Vec<LabelBoundingBox>;
@@ -114,7 +114,7 @@ impl PointFeature {
         id: String,
         circle: PointFeatureDrawing,
         label: Label,
-        priority: i32,
+        priority: usize,
     ) -> PointFeature {
         PointFeature {
             id,
@@ -327,17 +327,17 @@ fn filter_sort_candidates(
     drawbox: &BoundingBox,
     obstacles: &Obstacles,
 ) {
-    candidates.retain(|c| {
-        if !drawbox.contains_other(&c.bbox.bbox) {
+    candidates.retain(|candidate| {
+        if !drawbox.contains_other(&candidate.bbox.bbox) {
             return false;
         }
         for obstacle_box in &obstacles.bboxes {
-            if c.bbox.bbox.hits_other(obstacle_box) {
+            if candidate.bbox.bbox.hits_other(obstacle_box) {
                 return false;
             }
         }
         for polyline in &obstacles.polylines {
-            if polyline_hits_bbox(polyline, &c.bbox) {
+            if polyline_hits_bbox(polyline, &candidate.bbox) {
                 return false;
             }
         }
@@ -349,7 +349,7 @@ fn filter_sort_candidates(
 
 fn build_graph_gen(
     points: &Vec<PointFeature>,
-    priority: &i32,
+    priority: &usize,
     gen: CandidatesGenerator,
     drawingbox: &BoundingBox,
     obstacles: &Obstacles,
@@ -364,8 +364,18 @@ fn build_graph_gen(
             continue;
         }
         let mut candidates = generate_all_candidates(gen, points, k);
+        /*log::trace!(
+            "[0] [{}] => {} candidates",
+            points[k].text(),
+            candidates.len()
+        );*/
         let first = candidates.first().unwrap().clone();
         filter_sort_candidates(&mut candidates, drawingbox, obstacles);
+        /*log::trace!(
+            "[1] [{}] => {} candidates",
+            points[k].text(),
+            candidates.len()
+        );*/
         if candidates.is_empty() && points[k].placement_order <= 5 {
             candidates.push(first);
         }
@@ -375,8 +385,8 @@ fn build_graph_gen(
             .map(|i| candidates[i].clone())
             .collect();
         assert!(!ret.candidates.contains_key(&k));
-        /*log::trace!(
-            "[{}] => {} candidates",
+        /*log::debug!(
+            "[2] [{}] => {} candidates",
             points[k].text(),
             selected_candidates.len()
         );*/
@@ -406,7 +416,7 @@ pub struct PlacementResult {
 
 fn place_labels_gen_worker(
     points: &mut Vec<PointFeature>,
-    priority: &i32,
+    priority: &usize,
     gen: CandidatesGenerator,
     bbox: &BoundingBox,
     obstacles: &Obstacles,
@@ -461,6 +471,12 @@ pub fn place_labels_gen(
     };
     let mut obstacles = Obstacles::from_polyline(polyline);
     let mut priority = 0;
+    let mut prios: Vec<_> = points.iter().map(|p| p.placement_order).collect();
+    prios.sort();
+    let maxprio = match prios.last() {
+        Some(p) => *p,
+        None => 0,
+    };
     loop {
         let results = place_labels_gen_worker(points, &priority, gen, bbox, &obstacles);
         for k in 0..points.len() {
@@ -472,7 +488,7 @@ pub fn place_labels_gen(
         ret.debug = ret.debug.add(results.debug);
         ret.placed_indices.extend(results.placed_indices);
         priority += 1;
-        if priority > 10 {
+        if priority > maxprio {
             break;
         }
     }

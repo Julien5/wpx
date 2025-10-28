@@ -6,6 +6,7 @@ use flutter_rust_bridge::frb;
 pub use std::ops::Range;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
+pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
 pub use tracks::parameters::ProfileOptions;
@@ -47,7 +48,7 @@ impl Segment {
     }
 
     #[frb(sync)]
-    pub fn id(&self) -> usize {
+    pub fn id(&self) -> i32 {
         self._impl.id
     }
 }
@@ -56,7 +57,6 @@ impl Segment {
 pub enum _WaypointOrigin {
     GPX,
     DouglasPeucker,
-    MaxStepSize,
     OpenStreetMap,
 }
 
@@ -70,18 +70,25 @@ pub enum _ProfileIndication {
 #[frb(mirror(ProfileOptions))]
 pub struct _ProfileOptions {
     pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
+    pub step_distance: Option<f64>,
+    pub step_elevation_gain: Option<f64>,
+}
+
+#[frb(mirror(MapOptions))]
+pub struct _MapOptions {
+    pub nmax: Option<usize>,
 }
 
 #[frb(mirror(Parameters))]
 pub struct _Parameters {
     pub debug: bool,
-    pub max_step_size: f64,
     pub start_time: String,
     pub speed: f64,
     pub segment_length: f64,
     pub segment_overlap: f64,
     pub smooth_width: f64,
     pub profile_options: ProfileOptions,
+    pub map_options: MapOptions,
 }
 
 #[frb(mirror(WaypointInfo))]
@@ -96,8 +103,8 @@ pub struct _WaypointInfo {
     pub name: String,
     pub description: String,
     pub time: String,
-    pub track_index: usize,
-    pub value: Option<usize>,
+    pub track_index: Option<usize>,
+    pub value: Option<i32>,
 }
 
 #[frb(mirror(Waypoint))]
@@ -218,4 +225,5 @@ impl Bridge {
 pub fn init_app() {
     // Default utilities - feel free to customize
     flutter_rust_bridge::setup_default_user_utils();
+    crate::setup::setup();
 }

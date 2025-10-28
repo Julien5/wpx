@@ -1,7 +1,6 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ui/src/log.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 enum TrackData { profile, yaxis, map }
@@ -27,7 +26,7 @@ class FutureRenderer with ChangeNotifier {
   }
 
   void start() {
-    developer.log("[update:$trackData]");
+    log("[render-request-start:$trackData]");
     _result = null;
     if (trackData == TrackData.profile) {
       _future = _bridge.renderSegmentWhat(
@@ -55,7 +54,7 @@ class FutureRenderer with ChangeNotifier {
     _future!.then((value) => onCompleted(value));
   }
 
-  BigInt id() {
+  int id() {
     return segment.id();
   }
 
@@ -70,6 +69,7 @@ class FutureRenderer with ChangeNotifier {
   void onCompleted(String value) {
     _result = value;
     _future = null;
+    log("[render-request-comleted:$trackData]");
     notifyListeners();
   }
 

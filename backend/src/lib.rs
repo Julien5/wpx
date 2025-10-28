@@ -8,6 +8,7 @@ mod gpxexport;
 mod inputpoint;
 mod label_placement;
 mod locate;
+mod make_points;
 pub mod mercator;
 mod osm;
 pub mod parameters;

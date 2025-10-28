@@ -23,7 +23,7 @@ pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
 
 pub struct BackendData {
-    pub inputpoints_tree: locate::Locate,
+    pub inputpoints_tree: locate::IndexedPointsTree,
     pub parameters: Parameters,
     pub track: std::sync::Arc<track::Track>,
     pub inputpoints: InputPointMap,
@@ -119,7 +119,7 @@ impl Backend {
         // project::project_on_track::<InputPoint>(&track, &mut inputpoints.points);
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
-        let pointstree = locate::Locate::from_points(&inputpoints.as_vector());
+        let pointstree = locate::IndexedPointsTree::from_points(&inputpoints.as_vector());
         let data = BackendData {
             inputpoints_tree: pointstree,
             track: std::sync::Arc::new(gpxdata.track),
@@ -165,7 +165,7 @@ impl BackendData {
         ret
     }
     pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
-        let points = segment.profile_points();
+        let points = segment.profile_points(&self.get_parameters());
         self.export_points(&points)
     }
 
@@ -202,10 +202,10 @@ impl BackendData {
             }
             let profile_bbox = ProfileBoundingBox::from_track(&self.track, &range);
             let map_bbox = svgmap::bounding_box(&self.track, &range);
-            let tracktree = locate::Locate::from_track(&self.track, &range);
+            let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
             log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
             ret.push(Segment::new(
-                k,
+                k as i32,
                 range,
                 &profile_bbox,
                 &map_bbox,
@@ -224,16 +224,18 @@ impl BackendData {
         what: String,
         (W, H): (i32, i32),
     ) -> String {
-        log::info!("render_segment_what:{} {}", segment.id, what);
-        match what.as_str() {
+        log::trace!("start - render_segment_what:{} {}", segment.id, what);
+        let ret = match what.as_str() {
             "profile" => segment.render_profile((W, H), &self.parameters),
             "ylabels" => self.render_yaxis_labels_overlay(segment, (W, H)),
-            "map" => segment.render_map((W, H), self.parameters.debug),
+            "map" => segment.render_map((W, H), &self.parameters),
             _ => {
                 // assert!(false);
                 String::new()
             }
-        }
+        };
+        log::trace!("done - render_segment_what:{} {}", segment.id, what);
+        ret
     }
 
     fn render_yaxis_labels_overlay(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
@@ -249,7 +251,7 @@ impl BackendData {
         ret
     }
     pub fn render_segment_map(&self, segment: &Segment, (W, H): (i32, i32)) -> String {
-        let ret = segment.render_map((W, H), self.parameters.debug);
+        let ret = segment.render_map((W, H), &self.parameters);
         if self.get_parameters().debug {
             let filename = std::format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
@@ -267,7 +269,7 @@ impl BackendData {
         }
     }
     pub fn statistics(&self) -> SegmentStatistics {
-        let range = 0..self.track.wgs84.len();
+        let range = 0..self.track.len();
         assert!(range.end > 0);
         SegmentStatistics {
             length: self.track.distance(range.end - 1) - self.track.distance(range.start),
@@ -290,7 +292,7 @@ impl BackendData {
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::Backend;
+    use crate::{backend::Backend, parameters::Parameters};
 
     #[tokio::test]
     async fn svg_profile() {
@@ -299,10 +301,14 @@ mod tests {
             .load_filename("data/blackforest.gpx")
             .await
             .expect("fail");
+
+        let mut parameters = backend.get_parameters();
+        parameters.profile_options.step_distance = Some((10_000) as f64);
+
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = segment.render_profile((1420, 400), &backend.get_parameters());
+            let svg = segment.render_profile((1420, 400), &parameters);
             let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
             println!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {
@@ -329,10 +335,12 @@ mod tests {
             .load_filename("data/blackforest.gpx")
             .await
             .expect("fail");
+        let mut parameters = backend.get_parameters();
+        parameters.profile_options.step_distance = Some((10_000) as f64);
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = segment.render_map((400, 400), true);
+            let svg = segment.render_map((400, 400), &parameters);
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
             println!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {

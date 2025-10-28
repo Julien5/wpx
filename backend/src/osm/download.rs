@@ -117,7 +117,7 @@ fn read_download_element(
         euclidian: euclidean,
         tags,
         track_projection: None,
-        label_placement_order: i32::MAX,
+        label_placement_order: usize::MAX,
     };
     Ok(ret)
 }

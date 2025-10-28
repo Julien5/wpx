@@ -17,8 +17,12 @@ struct Cli {
     segment_overlap: Option<i32>,
     #[arg(long, value_name = "start_time")]
     start_time: Option<String>,
-    #[arg(long, value_name = "max_step_length")]
-    max_step_length: Option<i32>,
+    #[arg(long, value_name = "step_distance")]
+    step_distance: Option<usize>,
+    #[arg(long, value_name = "step_elevation_gain")]
+    step_elevation_gain: Option<usize>,
+    #[arg(long, value_name = "map_points_count")]
+    map_points_count: Option<usize>,
     #[arg(value_name = "gpx")]
     filename: std::path::PathBuf,
 }
@@ -83,9 +87,23 @@ async fn main() -> Result<(), error::Error> {
         _ => {}
     }
 
-    match args.max_step_length {
-        Some(length) => {
-            parameters.max_step_size = 1000f64 * (length as f64);
+    match args.step_distance {
+        Some(km) => {
+            parameters.profile_options.step_distance = Some((1000 * km) as f64);
+        }
+        _ => {}
+    }
+
+    match args.step_elevation_gain {
+        Some(m) => {
+            parameters.profile_options.step_elevation_gain = Some(m as f64);
+        }
+        _ => {}
+    }
+
+    match args.map_points_count {
+        Some(m) => {
+            parameters.map_options.nmax = Some(m);
         }
         _ => {}
     }

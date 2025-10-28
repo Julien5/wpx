@@ -17,14 +17,3 @@ class MapConsumer extends StatelessWidget {
   }
 }
 
-class MapScrollWidget extends StatelessWidget {
-  const MapScrollWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: MapConsumer(),
-    );
-  }
-}

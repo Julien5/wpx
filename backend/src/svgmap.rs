@@ -160,6 +160,8 @@ impl MapData {
         for k in 0..points.len() {
             if result.placed_indices.contains(&k) {
                 placed_points.push(points[k].clone());
+            } else {
+                log::trace!("could not place:{}", points[k].text());
             }
         }
         MapData {
@@ -305,7 +307,7 @@ mod tests {
                 bbox: LabelBoundingBox::new_tlbr((0f64, 0f64), (10f64, 16f64)),
                 text: String::from_str("hi").unwrap(),
             },
-            0i32,
+            0usize,
         );
         let candidates = generate_candidates_bboxes(&target);
         let mut found = false;
