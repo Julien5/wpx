@@ -1,6 +1,6 @@
 use crate::{
     backend::Segment,
-    inputpoint::{InputPoint, InputType},
+    inputpoint::{InputPoint, InputType, OSM},
     parameters::Parameters,
 };
 
@@ -16,20 +16,24 @@ fn _placement_order_profile(point: &InputPoint) -> usize {
         return ret;
     }
     ret += 1;
-    if kind == InputType::City && delta < 1000f64 {
-        return ret;
-    }
-    ret += 1;
-    if kind == InputType::Village && delta < 1000f64 && population > 1000 {
-        return ret;
-    }
-    ret += 1;
-    if (kind == InputType::MountainPass || kind == InputType::Peak) && delta < 500f64 {
-        return ret;
-    }
-    ret += 1;
-    if kind == InputType::Village && delta < 200f64 {
-        return ret;
+    match kind {
+        InputType::OSM { kind } => {
+            if kind == OSM::City && delta < 1000f64 {
+                return ret;
+            }
+            if kind == OSM::Village && delta < 1000f64 && population > 1000 {
+                return ret;
+            }
+            ret += 1;
+            if (kind == OSM::MountainPass || kind == OSM::Peak) && delta < 500f64 {
+                return ret;
+            }
+            ret += 1;
+            if kind == OSM::Village && delta < 200f64 {
+                return ret;
+            }
+        }
+        _ => {}
     }
     ret += 10;
     ret
@@ -108,6 +112,47 @@ fn largest_interval(segment: &Segment, points: &Points) -> Interval {
 }
  */
 
+fn append_gpx_waypoints(ret: &mut Vec<InputPoint>, segment: &Segment) {
+    segment
+        .points
+        .iter()
+        .filter(|w| {
+            w.kind() == InputType::GPX
+                && w.track_projection.as_ref().unwrap().track_distance < 300.0
+        })
+        .for_each(|w| {
+            ret.push(w.clone());
+        });
+}
+
+fn use_osm_profile(w: &InputPoint, _segment: &Segment) -> bool {
+    match w.kind() {
+        InputType::OSM { kind } => {
+            let d = w.track_projection.as_ref().unwrap().track_distance;
+            let pop = w.population().unwrap_or(0);
+            if kind == OSM::City || pop > 1000 {
+                return d < 2000.0;
+            }
+            if kind == OSM::MountainPass || kind == OSM::Peak {
+                return d < 300.0;
+            }
+        }
+        _ => {}
+    }
+
+    false
+}
+
+fn append_osm_waypoints(ret: &mut Vec<InputPoint>, segment: &Segment) {
+    segment
+        .points
+        .iter()
+        .filter(|w| use_osm_profile(&w, segment))
+        .for_each(|w| {
+            ret.push(w.clone());
+        });
+}
+
 fn profile_points_elevation_gain(segment: &Segment, d: &f64) -> Vec<InputPoint> {
     let mut ret = Vec::new();
     let mut prev = 0;
@@ -123,10 +168,12 @@ fn profile_points_elevation_gain(segment: &Segment, d: &f64) -> Vec<InputPoint> 
             end: index,
         });
         if g >= *d {
-            let mut w = segment
-                .track
-                .create_point_on_track(index, &format!("P{}", count));
-            w.label_placement_order = 2;
+            let w = InputPoint::create_point_on_track(
+                &segment.track,
+                index,
+                &format!("P{}", count),
+                InputType::UserStep,
+            );
             if segment.range.contains(&index) {
                 ret.push(w);
             }
@@ -136,7 +183,6 @@ fn profile_points_elevation_gain(segment: &Segment, d: &f64) -> Vec<InputPoint> 
         index += 1;
     }
     ret.retain(|w| segment.map_bbox.contains(&w.euclidian.xy()));
-
     ret
 }
 
@@ -150,10 +196,12 @@ fn profile_points_distance(segment: &Segment, d: &f64) -> Vec<InputPoint> {
             break;
         }
         if segment.track.distance(index) - segment.track.distance(prev) >= *d {
-            let mut w = segment
-                .track
-                .create_point_on_track(index, &format!("P{}", count));
-            w.label_placement_order = 2;
+            let w = InputPoint::create_point_on_track(
+                &segment.track,
+                index,
+                &format!("P{}", count),
+                InputType::UserStep,
+            );
             if segment.range.contains(&index) {
                 ret.push(w);
             }
@@ -167,18 +215,22 @@ fn profile_points_distance(segment: &Segment, d: &f64) -> Vec<InputPoint> {
 }
 
 pub fn profile_points(segment: &Segment, parameters: &Parameters) -> Vec<InputPoint> {
+    let mut ret = Vec::new();
+    append_gpx_waypoints(&mut ret, segment);
+    append_osm_waypoints(&mut ret, segment);
     match parameters.profile_options.step_distance {
         None => {}
         Some(d) => {
-            return profile_points_distance(segment, &d);
+            ret.extend_from_slice(&profile_points_distance(segment, &d));
         }
-    }
+    };
 
     match parameters.profile_options.step_elevation_gain {
         None => {}
         Some(d) => {
-            return profile_points_elevation_gain(segment, &d);
+            ret.extend_from_slice(&profile_points_elevation_gain(segment, &d));
         }
     }
-    Vec::new()
+    // decimate(&mut ret);
+    ret
 }

@@ -42,6 +42,7 @@ function pdf() {
 	time cargo run -- \
 		  --output-directory /tmp/wpx/ \
 		  --debug true \
+		  --step-elevation-gain 100 \
 		  --segment-length $(segment-length ${file}) \
 		  --segment-overlap $(segment-overlap ${file}) \
 		  "$@" \

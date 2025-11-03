@@ -107,12 +107,15 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
         let mut waypoints_table = backend.get_waypoint_table(&segment);
         waypoints_table.truncate(15);
         log::trace!("segment: {}", segment.id);
+        log::trace!("points table");
         let table = points_table(&templates, &backend.track, &waypoints_table);
+        log::trace!("render profile");
         let p = segment.render_profile((W, H), &backend.parameters);
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id);
             std::fs::write(&f, &p).unwrap();
         }
+        log::trace!("render map");
         let Wm = 400i32;
         let Hm = 400i32;
         let m = segment.render_map((Wm, Hm), &backend.parameters);
@@ -120,6 +123,7 @@ pub fn make_typst_document(backend: &mut BackendData, (W, H): (i32, i32)) -> Str
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();
         }
+        log::trace!("link");
         link(&templates, &p, &m, &table, &mut document);
         if range.end == backend.track.len() {
             break;

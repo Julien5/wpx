@@ -2,6 +2,7 @@ pub mod bbox;
 pub mod candidate;
 pub mod drawings;
 mod graph;
+pub mod prioritize;
 pub use bbox::LabelBoundingBox;
 use candidate::Candidate;
 use candidate::Candidates;
@@ -9,6 +10,8 @@ use graph::Graph;
 use svg::Node;
 
 use std::cmp::Ordering;
+use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 use std::collections::HashMap;
 pub type Attributes = HashMap<String, svg::node::Value>;
 
@@ -90,13 +93,16 @@ pub struct PointFeatureDrawing {
 
 #[derive(Clone)]
 pub struct PointFeature {
-    id: String,
-    circle: PointFeatureDrawing,
-    label: Label,
-    placement_order: usize,
+    pub id: String,
+    pub circle: PointFeatureDrawing,
+    pub label: Label,
+    pub input_point: Option<InputPoint>,
 }
 
-pub type CandidatesGenerator = fn(&PointFeature) -> Vec<LabelBoundingBox>;
+pub trait CandidatesGenerator {
+    fn generate(&self, point: &PointFeature) -> Vec<LabelBoundingBox>;
+    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<BTreeSet<usize>>;
+}
 
 impl PartialEq for PointFeature {
     fn eq(&self, other: &Self) -> bool {
@@ -108,20 +114,11 @@ impl Eq for PointFeature {}
 use std::str::FromStr;
 
 use crate::bbox::BoundingBox;
+use crate::inputpoint::InputPoint;
 
 impl PointFeature {
-    pub fn new(
-        id: String,
-        circle: PointFeatureDrawing,
-        label: Label,
-        priority: usize,
-    ) -> PointFeature {
-        PointFeature {
-            id,
-            circle,
-            label,
-            placement_order: priority,
-        }
+    pub fn place_label(&mut self, bbox: &LabelBoundingBox) {
+        self.label.bbox = bbox.clone();
     }
     pub fn width(&self) -> f64 {
         self.label.bbox.width()
@@ -134,6 +131,9 @@ impl PointFeature {
     }
     pub fn center(&self) -> (f64, f64) {
         (self.circle.cx, self.circle.cy)
+    }
+    pub fn input_point(&self) -> Option<InputPoint> {
+        self.input_point.clone()
     }
     pub fn render_in_group(&self, sd_group: &mut svg::node::element::Group) {
         sd_group.append(self.circle.group.clone());
@@ -287,7 +287,7 @@ fn distance_to_others(
 }
 
 fn generate_all_candidates(
-    gen: CandidatesGenerator,
+    gen: &dyn CandidatesGenerator,
     points: &Vec<PointFeature>,
     k: usize,
 ) -> Candidates {
@@ -295,7 +295,7 @@ fn generate_all_candidates(
         return Candidates::new();
     }
     let target = &points[k];
-    let all = gen(target);
+    let all = gen.generate(target);
     let mut ret = Candidates::new();
     let targetpoint = (target.circle.cx, target.circle.cy);
     for index in 0..all.len() {
@@ -349,42 +349,50 @@ fn filter_sort_candidates(
 
 fn build_graph_gen(
     points: &Vec<PointFeature>,
-    priority: &usize,
-    gen: CandidatesGenerator,
+    subset: &BTreeSet<usize>,
+    gen: &dyn CandidatesGenerator,
     drawingbox: &BoundingBox,
     obstacles: &Obstacles,
 ) -> Graph {
     let mut ret = Graph::new();
     ret.features = points.clone();
-    for k in 0..points.len() {
-        if points[k].text().is_empty() {
-            continue;
-        }
-        if points[k].placement_order != *priority {
+    for _k in subset {
+        let k = *_k;
+        let text = points[k].text();
+        if text.is_empty() {
             continue;
         }
         let mut candidates = generate_all_candidates(gen, points, k);
+        assert!(!candidates.is_empty());
         /*log::trace!(
             "[0] [{}] => {} candidates",
             points[k].text(),
             candidates.len()
         );*/
-        let first = candidates.first().unwrap().clone();
+        let _first = candidates.first().unwrap().clone();
         filter_sort_candidates(&mut candidates, drawingbox, obstacles);
+        if candidates.is_empty() {
+            log::warn!(
+                "{} has {} candidate after filtering with {} obstacles",
+                points[k].text(),
+                candidates.len(),
+                obstacles.bboxes.len()
+            );
+        }
         /*log::trace!(
             "[1] [{}] => {} candidates",
             points[k].text(),
             candidates.len()
         );*/
-        if candidates.is_empty() && points[k].placement_order <= 5 {
-            candidates.push(first);
-        }
         let selected_indices = candidate::select_candidates(&candidates);
         let selected_candidates: Vec<_> = selected_indices
             .into_iter()
             .map(|i| candidates[i].clone())
             .collect();
         assert!(!ret.candidates.contains_key(&k));
+        if selected_candidates.is_empty() {
+            log::warn!("{} has no candidate after selection.", points[k].text());
+        }
         /*log::debug!(
             "[2] [{}] => {} candidates",
             points[k].text(),
@@ -411,21 +419,42 @@ fn _candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rect
 
 pub struct PlacementResult {
     pub debug: svg::node::element::Group,
-    pub placed_indices: Vec<usize>,
+    pub placed_indices: BTreeMap<usize, LabelBoundingBox>,
+    pub forced_indices: BTreeMap<usize, LabelBoundingBox>,
+}
+
+impl PlacementResult {
+    pub fn apply(&self, points: &mut Vec<PointFeature>, force: bool) -> Vec<usize> {
+        let mut ret = Vec::new();
+        for (k, bbox) in &self.placed_indices {
+            points[*k].place_label(bbox);
+            ret.push(*k);
+        }
+        if force {
+            for (k, bbox) in &self.forced_indices {
+                log::trace!("force place {}", points[*k].text());
+                points[*k].place_label(bbox);
+                ret.push(*k);
+            }
+        }
+        ret
+    }
 }
 
 fn place_labels_gen_worker(
-    points: &mut Vec<PointFeature>,
-    priority: &usize,
-    gen: CandidatesGenerator,
+    points: &Vec<PointFeature>,
+    subset: &BTreeSet<usize>,
+    gen: &dyn CandidatesGenerator,
     bbox: &BoundingBox,
     obstacles: &Obstacles,
 ) -> PlacementResult {
     //log::trace!("build label graph");
-    let mut graph = build_graph_gen(points, priority, gen, bbox, &obstacles);
+    let mut graph = build_graph_gen(points, subset, gen, bbox, &obstacles);
+    let candidates = graph.candidates.clone();
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),
-        placed_indices: Vec::new(),
+        placed_indices: BTreeMap::new(),
+        forced_indices: BTreeMap::new(),
     };
     for k in 0..points.len() {
         let target_text = &points[k].text();
@@ -435,24 +464,33 @@ fn place_labels_gen_worker(
     }
     //log::trace!("solve label graph [{}]", graph.map.len(),);
     let best_candidates = graph.solve();
-    for k in 0..points.len() {
-        let target_text = &points[k].text();
+    for k in subset {
+        let point = &points[*k];
+        let target_text = point.text();
         if target_text.is_empty() {
-            continue;
-        }
-        if points[k].placement_order != *priority {
             continue;
         }
         let best_candidate = best_candidates.get(&k);
         match best_candidate {
             Some(candidate) => {
                 let bbox = &candidate.bbox;
-                points[k].label.bbox = bbox.clone();
-                ret.placed_indices.push(k);
+                ret.placed_indices.insert(*k, bbox.clone());
             }
             _ => {
                 log::info!("failed to find any candidate for [{}]", target_text);
-                assert!(points[k].placement_order > 5);
+                // here we could force with
+                let candidate = candidates.get(k).unwrap().first();
+                match candidate {
+                    Some(c) => {
+                        let bbox = &c.bbox;
+                        ret.forced_indices.insert(*k, bbox.clone());
+                    }
+                    None => {
+                        log::info!("no candidate available for [{}] => make one", target_text);
+                        let bbox = gen.generate(point).first().unwrap().clone();
+                        ret.forced_indices.insert(*k, bbox);
+                    }
+                }
             }
         }
     }
@@ -460,37 +498,36 @@ fn place_labels_gen_worker(
 }
 
 pub fn place_labels_gen(
-    points: &mut Vec<PointFeature>,
-    gen: CandidatesGenerator,
+    points: &Vec<PointFeature>,
+    gen: &dyn CandidatesGenerator,
     bbox: &BoundingBox,
     polyline: &Polyline,
+    force: bool,
 ) -> PlacementResult {
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),
-        placed_indices: Vec::new(),
+        placed_indices: BTreeMap::new(),
+        forced_indices: BTreeMap::new(),
     };
     let mut obstacles = Obstacles::from_polyline(polyline);
-    let mut priority = 0;
-    let mut prios: Vec<_> = points.iter().map(|p| p.placement_order).collect();
-    prios.sort();
-    let maxprio = match prios.last() {
-        Some(p) => *p,
-        None => 0,
-    };
-    loop {
-        let results = place_labels_gen_worker(points, &priority, gen, bbox, &obstacles);
-        for k in 0..points.len() {
-            if points[k].placement_order == priority && results.placed_indices.contains(&k) {
-                obstacles.bboxes.push(points[k].label.bbox.bbox.clone());
+    let packets = gen.prioritize(points);
+    for packet_points in packets {
+        if packet_points.is_empty() {
+            continue;
+        }
+        let results = place_labels_gen_worker(&points, &packet_points, gen, bbox, &obstacles);
+        for (k, bbox) in &results.placed_indices {
+            obstacles.bboxes.push(bbox.bbox.clone());
+        }
+        if force {
+            for (k, bbox) in &results.forced_indices {
+                obstacles.bboxes.push(bbox.bbox.clone());
             }
         }
 
         ret.debug = ret.debug.add(results.debug);
         ret.placed_indices.extend(results.placed_indices);
-        priority += 1;
-        if priority > maxprio {
-            break;
-        }
+        ret.forced_indices.extend(results.forced_indices);
     }
     ret
 }

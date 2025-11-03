@@ -6,6 +6,7 @@ use serde_json::json;
 
 use crate::{
     mercator::{EuclideanBoundingBox, MercatorPoint},
+    track::Track,
     waypoint::{Waypoint, WaypointOrigin},
     wgs84point::WGS84Point,
 };
@@ -13,13 +14,19 @@ use crate::{
 pub type Tags = std::collections::BTreeMap<String, String>;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-pub enum InputType {
+pub enum OSM {
     City,
     MountainPass,
     Peak,
     Village,
     Hamlet,
+}
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+pub enum InputType {
     GPX,
+    OSM { kind: OSM },
+    UserStep,
 }
 
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
@@ -37,9 +44,6 @@ pub struct InputPoint {
     pub euclidian: MercatorPoint,
     pub tags: Tags,
     pub track_projection: Option<TrackProjection>,
-    // <= 5 => the label is forcefully placed, with overlap
-    // >5 => the label is not placed if no non-overlaping candidate is found.
-    pub label_placement_order: usize,
 }
 
 impl PartialEq for InputPoint {
@@ -86,13 +90,38 @@ fn shorten_name(name: &String) -> String {
 */
 
 impl InputPoint {
-    pub fn from_wgs84(wgs84: &WGS84Point, euclidean: &MercatorPoint) -> InputPoint {
+    pub fn create_point_on_track(
+        track: &Track,
+        index: usize,
+        name: &String,
+        kind: InputType,
+    ) -> InputPoint {
+        let wgs = track.wgs84[index].clone();
+        let euc = track.euclidian[index].clone();
+        assert!(kind == InputType::UserStep);
+        let mut p = InputPoint::from_wgs84(&wgs, &euc, kind);
+        p.tags.insert("name".to_string(), name.clone());
+        p.track_projection = Some(TrackProjection {
+            track_floating_index: index as f64,
+            track_index: index,
+            track_distance: 0f64,
+            elevation: wgs.z(),
+            euclidean: euc.clone(),
+        });
+
+        p
+    }
+
+    pub fn from_wgs84(
+        wgs84: &WGS84Point,
+        euclidean: &MercatorPoint,
+        kind: InputType,
+    ) -> InputPoint {
         InputPoint {
             wgs84: wgs84.clone(),
             euclidian: euclidean.clone(),
             track_projection: None,
-            tags: Tags::new(),
-            label_placement_order: usize::MAX,
+            tags: Self::tags_for_type(kind),
         }
     }
     pub fn from_gpx(
@@ -101,8 +130,7 @@ impl InputPoint {
         name: &Option<String>,
         description: &Option<String>,
     ) -> InputPoint {
-        let mut tags = Tags::new();
-        tags.insert("fromgpx".to_string(), "yes".to_string());
+        let mut tags = Self::tags_for_type(InputType::GPX);
         if name.is_some() {
             tags.insert("name".to_string(), name.as_ref().unwrap().clone());
         }
@@ -117,7 +145,6 @@ impl InputPoint {
             track_projection: None,
             tags,
             euclidian: euclidean.clone(),
-            label_placement_order: usize::MAX,
         }
     }
     pub fn round_track_index(&self) -> Option<usize> {
@@ -172,24 +199,44 @@ impl InputPoint {
         }
         None
     }
+    pub fn tags_for_type(kind: InputType) -> Tags {
+        let mut tags = Tags::new();
+        let value = match kind {
+            InputType::GPX => "GPX",
+            InputType::OSM { kind: _ } => "OSM",
+            InputType::UserStep => "UserStep",
+        };
+        tags.insert("wpxtype".to_string(), value.to_string());
+        tags
+    }
     pub fn kind(&self) -> InputType {
-        match self.tags.get("fromgpx") {
-            Some(_) => return InputType::GPX,
+        match self.tags.get("wpxtype") {
+            Some(t) => {
+                match t.as_str() {
+                    "GPX" => {
+                        return InputType::GPX;
+                    }
+                    "UserStep" => {
+                        return InputType::UserStep;
+                    }
+                    _ => {}
+                };
+            }
             _ => {}
         };
         match self.tags.get("place") {
             Some(place) => {
                 if place == "city" {
-                    return InputType::City;
+                    return InputType::OSM { kind: OSM::City };
                 }
                 if place == "town" {
-                    return InputType::City;
+                    return InputType::OSM { kind: OSM::City };
                 }
                 if place == "village" {
-                    return InputType::Village;
+                    return InputType::OSM { kind: OSM::Village };
                 }
                 if place == "hamlet" {
-                    return InputType::Hamlet;
+                    return InputType::OSM { kind: OSM::Hamlet };
                 }
             }
             _ => {}
@@ -197,7 +244,9 @@ impl InputPoint {
         match self.tags.get("mountain_pass") {
             Some(pass) => {
                 if pass == "yes" {
-                    return InputType::MountainPass;
+                    return InputType::OSM {
+                        kind: OSM::MountainPass,
+                    };
                 }
             }
             _ => {}
@@ -205,12 +254,12 @@ impl InputPoint {
         match self.tags.get("natural") {
             Some(natural) => {
                 if natural == "peak" {
-                    return InputType::Peak;
+                    return InputType::OSM { kind: OSM::Peak };
                 }
             }
             _ => {}
         }
-        InputType::Village
+        InputType::OSM { kind: OSM::Village }
     }
     pub fn waypoint(&self) -> Waypoint {
         Waypoint {
@@ -322,7 +371,6 @@ mod tests {
             euclidian: MercatorPoint::from_xy(&(0f64, 0f64)),
             tags: Tags::new(),
             track_projection: None,
-            label_placement_order: usize::MAX,
         }
     }
 

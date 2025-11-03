@@ -4,13 +4,11 @@ use gpx::TrackSegment;
 use super::wgs84point::WGS84Point;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
-use crate::inputpoint::TrackProjection;
 use crate::mercator;
 use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
 
 use super::elevation;
-use super::inputpoint::InputPoint;
 
 pub struct Track {
     pub wgs84: Vec<WGS84Point>,
@@ -24,21 +22,6 @@ pub struct Track {
 pub type WGS84BoundingBox = super::bbox::BoundingBox;
 
 impl Track {
-    pub fn create_point_on_track(&self, index: usize, name: &String) -> InputPoint {
-        let wgs = self.wgs84[index].clone();
-        let euc = self.euclidian[index].clone();
-        let mut p = InputPoint::from_wgs84(&wgs, &euc);
-        p.track_projection = Some(TrackProjection {
-            track_floating_index: index as f64,
-            track_index: index,
-            track_distance: 0f64,
-            elevation: wgs.z(),
-            euclidean: euc.clone(),
-        });
-        p.tags.insert("name".to_string(), name.clone());
-        p
-    }
-
     pub fn len(&self) -> usize {
         self.wgs84.len()
     }

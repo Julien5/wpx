@@ -1,6 +1,6 @@
 use geo::LineLocatePoint;
 
-use crate::inputpoint::{InputPoint, InputPointMap, InputType, TrackProjection};
+use crate::inputpoint::{InputPoint, InputPointMap, InputType, TrackProjection, OSM};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::parameters::Parameters;
 use crate::track::{self, Track};
@@ -166,8 +166,9 @@ impl Segment {
     }
 
     pub fn render_map(&self, (width, height): (i32, i32), parameters: &Parameters) -> String {
-        log::info!("render map:{}", self.id);
+        log::trace!("render map:{}", self.id);
         let points = self.map_points(parameters);
+        log::trace!("svgmap::map()");
         let ret = svgmap::map(&self.track, &points, &self, width, height, parameters.debug);
         if parameters.debug {
             let filename = std::format!("/tmp/map-{}.svg", self.id);
@@ -184,47 +185,45 @@ impl Segment {
         if point.kind() == InputType::GPX {
             return 1;
         }
+        let _population = match point.population() {
+            Some(p) => p,
+            None => 0,
+        };
         let d = point.track_projection.as_ref().unwrap().track_distance;
-        let k = point.kind();
-        if k == InputType::MountainPass || k == InputType::Peak {
-            if d < 300.0 {
-                return 2;
+        match point.kind() {
+            InputType::OSM { kind } => {
+                if kind == OSM::MountainPass || kind == OSM::Peak {
+                    if d < 300.0 {
+                        return 4;
+                    }
+                    return infinity;
+                }
+                if kind == OSM::Hamlet {
+                    if d < 300.0 {
+                        return 5;
+                    }
+                    return infinity;
+                }
+                if kind == OSM::Village {
+                    return infinity;
+                }
+
+                if kind == OSM::City {
+                    let dd = if d < 2000.0 { 2 } else { 3 };
+                    return dd;
+                }
             }
-            return infinity;
+            _ => {}
         }
 
-        if k == InputType::Hamlet {
-            if d < 300.0 {
-                return 4;
-            }
-            return infinity;
-        }
-
-        let dk = match point.kind() {
-            InputType::Village => infinity,
-            InputType::City => 1,
-            _ => infinity,
-        };
-
-        let dd = if d < 300.0 {
-            0
-        } else if d < 2000.0 {
-            1
-        } else if d < 5000.0 {
-            2
-        } else if d < 10000.0 {
-            2
-        } else {
-            5
-        };
-        dk + dd
+        infinity
     }
 
     fn map_points(&self, parameters: &Parameters) -> Vec<InputPoint> {
         let profile = self.profile_points(parameters);
         let nextra = match parameters.map_options.nmax {
             Some(n) => n,
-            _ => 10,
+            _ => 15,
         };
         let mut extra = self.points.clone();
         extra.retain(|p| {
@@ -236,32 +235,13 @@ impl Segment {
             }
             true
         });
-        /*
-        let _: Vec<_> = extra
-            .iter()
-            .map(|p| {
-                log::trace!(
-                    "{:?} [k={:?}] [d={:.1}]=>{}",
-                    p.name(),
-                    p.kind(),
-                    p.track_projection.as_ref().unwrap().track_distance / 1000f64,
-                    Self::placement_order_map(&p)
-                )
-            })
-            .collect();*/
         extra.sort_by_key(|p| Self::placement_order_map(&p));
+        extra.retain(|p| Self::placement_order_map(p) <= 4);
+        log::info!("plotting {} maps labels", extra.len());
         extra.truncate(nextra);
         let mut ret = profile.clone();
         ret.extend_from_slice(&extra);
-        for w in &mut ret {
-            if profile.contains(&w) {
-                assert!(w.label_placement_order < usize::MAX);
-            } else {
-                w.label_placement_order = Self::placement_order_map(&w) + profile.len();
-            }
-            log::trace!("map-point:{:?}", w.name());
-        }
-        assert!(!ret.is_empty());
+        //assert!(!ret.is_empty());
         ret
     }
 }

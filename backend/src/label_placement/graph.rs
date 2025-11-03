@@ -155,7 +155,6 @@ impl Graph {
                     self.select(&m, &best_candidate);
                 }
                 None => {
-                    assert!(self.features[m].placement_order > 5);
                     self.remove_node(&m);
                 }
             }
@@ -185,7 +184,6 @@ impl Graph {
         match self.candidates.get(node) {
             Some(candidates) => {
                 if candidates.is_empty() {
-                    assert!(self.features[*node].placement_order > 5);
                     return None;
                 }
                 let mut sorted: Vec<_> = (0..candidates.len()).collect();
@@ -200,27 +198,23 @@ impl Graph {
                 for index in 0..sorted.len() {
                     match self.candidate_blocks_any(node, index) {
                         Some(_other_node) => {
-                            /*log::info!(
+                            /*log::trace!(
                                 "[node:{node:2}] [candidate:{index:2}] blocks [{_other_node:2}]"
                             );*/
                             continue;
                         }
                         None => {}
                     }
-                    /*log::info!(
+                    /*log::trace!(
                         "[node:{node:2}] [candidate:{index:2}] it bests from #={}",
                         candidates.len()
                     );*/
                     return Some(index);
                 }
-                if self.features[*node].placement_order <= 5 {
-                    //log::info!("all candidates of {node} block some other => take the first one");
-                    return Some(0);
-                }
                 return None;
             }
             _ => {
-                //log::info!("{node} has no candidate.");
+                //log::trace!("{node} has no candidate.");
                 None
             }
         }

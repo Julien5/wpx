@@ -180,6 +180,8 @@ Color parseColor(String colorName) {
       return Colors.grey;
     case 'lightgray':
       return const Color.fromARGB(255, 231, 226, 226);
+    case 'darkgray':
+      return const Color.fromARGB(255, 169,169,169);
     case 'transparent':
       return Colors.transparent;
     case 'none':

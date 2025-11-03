@@ -6,6 +6,7 @@ use crate::gpsdata::ProfileBoundingBox;
 use crate::gpxexport;
 use crate::inputpoint::InputPoint;
 use crate::inputpoint::InputPointMap;
+use crate::inputpoint::InputType;
 use crate::locate;
 use crate::osm;
 use crate::parameters::Parameters;
@@ -165,7 +166,10 @@ impl BackendData {
         ret
     }
     pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
-        let points = segment.profile_points(&self.get_parameters());
+        let mut points = segment.profile_points(&self.get_parameters());
+		if points.iter().any(|w| w.kind() == InputType::GPX) {
+			points.retain(|w| w.kind() == InputType::GPX);
+		}
         self.export_points(&points)
     }
 
@@ -292,7 +296,7 @@ impl BackendData {
 
 #[cfg(test)]
 mod tests {
-    use crate::{backend::Backend, parameters::Parameters};
+    use crate::{backend::Backend};
 
     #[tokio::test]
     async fn svg_profile() {

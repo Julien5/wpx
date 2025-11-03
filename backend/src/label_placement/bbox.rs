@@ -36,14 +36,14 @@ impl LabelBoundingBox {
         }
     }
 
-    pub fn _new_brwh(bottom_right: (f64, f64), width: f64, height: f64) -> Self {
+    pub fn new_brwh(bottom_right: (f64, f64), width: f64, height: f64) -> Self {
         let top_left = (bottom_right.0 - width, bottom_right.1 - height);
         LabelBoundingBox {
             bbox: BoundingBox::init(top_left, bottom_right),
         }
     }
 
-    pub fn _new_trwh(top_right: (f64, f64), width: f64, height: f64) -> Self {
+    pub fn new_trwh(top_right: (f64, f64), width: f64, height: f64) -> Self {
         let top_left = (top_right.0 - width, top_right.1);
         let bottom_right = (top_right.0, top_right.1 + height);
         LabelBoundingBox {

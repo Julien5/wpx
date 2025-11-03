@@ -2,12 +2,14 @@
 mod elements;
 mod ticks;
 
-use ::svg::Node;
+use std::collections::BTreeSet;
+
+use svg::Node;
 
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
-use crate::inputpoint::InputPoint;
+use crate::inputpoint::{InputPoint, InputType};
 use crate::label_placement;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::drawings::draw_for_profile;
@@ -433,12 +435,12 @@ impl ProfileView {
                 Some(name) => {
                     label.set_text(name.clone().trim());
                     label.id = format!("wp-{}/text", k);
-                    points.push(PointFeature::new(
+                    points.push(PointFeature {
                         id,
                         circle,
                         label,
-                        inputpoints[k].label_placement_order,
-                    ));
+                        input_point: Some(w.clone()),
+                    });
                 }
                 None => {
                     log::error!("missing name for {:?}", inputpoints[k]);
@@ -446,18 +448,17 @@ impl ProfileView {
             }
         }
 
+        let generator = Box::new(ProfileGenerator);
+        let force = false;
         let result = label_placement::place_labels_gen(
-            &mut points,
-            generate_candidates_bboxes,
+            &points,
+            &*generator,
             &BoundingBox::init((0f64, 0f64), (self.WD(), self.HD() - self.eticks_height())),
             &polyline,
+            force,
         );
-        let mut placed_points = Vec::new();
-        for k in 0..points.len() {
-            if result.placed_indices.contains(&k) {
-                placed_points.push(points[k].clone());
-            }
-        }
+        let placed_indices = result.apply(&mut points, force);
+        let placed_points = placed_indices.iter().map(|k| points[*k].clone()).collect();
         self.model = Some(ProfileModel {
             polylines: vec![polyline], // , polyline_dp
             points: placed_points,
@@ -465,36 +466,149 @@ impl ProfileView {
     }
 }
 
-fn generate_candidates_bboxes(point: &PointFeature) -> Vec<LabelBoundingBox> {
+struct ProfileGenerator;
+
+fn cardinal_boxes(center: &(f64, f64), width: &f64, height: &f64) -> Vec<LabelBoundingBox> {
     let mut ret = Vec::new();
-    let width = point.width();
-    let height = point.height();
-    let dtarget_min = 1f64;
-    let dtarget_max = 20f64;
-    let d0 = 2f64 * dtarget_max;
-    let (cx, cy) = point.center();
-    let xmin = cx - width;
-    let ymin = cy - d0 - height;
-    let ymax = cy + d0;
-    let dp = 5f64;
-    let countx = (width / dp).ceil() as i32;
-    let county = ((ymax - ymin) / dp).ceil() as i32;
-    let dx = width / (countx as f64);
-    let dy = dp;
-    for nx in 0..countx {
-        for ny in 0..county {
-            let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
-            let bb = LabelBoundingBox::new_blwh(tl, width, height);
-            if bb.contains((cx, cy)) {
-                continue;
+    let epsilon = 3f64;
+    let B1 = LabelBoundingBox::new_blwh((center.0 + epsilon, center.1 - epsilon), *width, *height);
+    ret.push(B1);
+    let B2 = LabelBoundingBox::new_brwh((center.0 - epsilon, center.1 - epsilon), *width, *height);
+    ret.push(B2);
+    let B3 = LabelBoundingBox::new_trwh((center.0 - epsilon, center.1 + epsilon), *width, *height);
+    ret.push(B3);
+    let B4 = LabelBoundingBox::new_tlwh((center.0 + epsilon, center.1 + epsilon), *width, *height);
+    ret.push(B4);
+
+    let B5 = LabelBoundingBox::new_blwh(
+        (center.0 + epsilon, center.1 + height / 2.0),
+        *width,
+        *height,
+    );
+    ret.push(B5);
+    let B6 = LabelBoundingBox::new_blwh(
+        (center.0 - width / 2.0, center.1 - epsilon),
+        *width,
+        *height,
+    );
+    ret.push(B6);
+    let B7 = LabelBoundingBox::new_brwh(
+        (center.0 - epsilon, center.1 + height / 2.0),
+        *width,
+        *height,
+    );
+    ret.push(B7);
+
+    let B8 = LabelBoundingBox::new_tlwh(
+        (center.0 - width / 2.0, center.1 + epsilon),
+        *width,
+        *height,
+    );
+    ret.push(B8);
+
+    ret
+}
+
+impl ProfileGenerator {
+    fn generate_osm(&self, point: &PointFeature) -> Vec<LabelBoundingBox> {
+        let mut ret = Vec::new();
+        let width = point.width();
+        let height = point.height();
+
+        let center = point.center();
+        ret.extend_from_slice(&cardinal_boxes(&center, &width, &height));
+
+        let Btop = LabelBoundingBox::new_blwh(
+            (center.0 - width / 2.0, (center.1 - 20.0).max(height)),
+            width,
+            height,
+        );
+        ret.push(Btop);
+        for n in [1, 2, 3] {
+            let Btop2 = LabelBoundingBox::new_blwh(
+                (center.0 - width / 2.0, (n as f64) * height),
+                width,
+                height,
+            );
+            ret.push(Btop2);
+        }
+
+        let Bbot = LabelBoundingBox::new_blwh(
+            (center.0 - width / 2.0, (center.1 + 20.0).max(height)),
+            width,
+            height,
+        );
+        ret.push(Bbot);
+        ret
+    }
+    fn generate_user_step(&self, point: &PointFeature) -> Vec<LabelBoundingBox> {
+        let mut ret = Vec::new();
+        let width = point.width();
+        let height = point.height();
+        let dtarget_min = 1f64;
+        let dtarget_max = 20f64;
+        let d0 = 2f64 * dtarget_max;
+        let (cx, cy) = point.center();
+
+        let xmin = cx - width;
+        let (ymin, ymax) = (cy - d0 - height, cy + d0);
+        let dp = 5f64;
+        let countx = (width / dp).ceil() as i32;
+        let county = ((ymax - ymin) / dp).ceil() as i32;
+        let dx = width / (countx as f64);
+        let dy = dp;
+        for nx in 0..countx {
+            for ny in 0..county {
+                let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
+                let bb = LabelBoundingBox::new_blwh(tl, width, height);
+                if bb.contains((cx, cy)) {
+                    continue;
+                }
+                if bb.distance((cx, cy)) < dtarget_min {
+                    continue;
+                }
+                ret.push(bb);
             }
-            if bb.distance((cx, cy)) < dtarget_min {
-                continue;
-            }
-            ret.push(bb);
+        }
+        ret
+    }
+}
+
+impl CandidatesGenerator for ProfileGenerator {
+    fn generate(&self, point: &PointFeature) -> Vec<LabelBoundingBox> {
+        assert!(point.input_point().is_some());
+        match point.input_point().unwrap().kind() {
+            InputType::GPX => self.generate_user_step(point),
+            InputType::OSM { kind: _ } => self.generate_osm(point),
+            InputType::UserStep => self.generate_user_step(point),
         }
     }
-    ret
+    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<BTreeSet<usize>> {
+        let mut user1 = BTreeSet::new();
+        let mut user2 = BTreeSet::new();
+        let mut osm = BTreeSet::new();
+        let mut gpx = BTreeSet::new();
+        for k in 0..points.len() {
+            let w = &points[k];
+            let wi = w.input_point().unwrap();
+            match wi.kind() {
+                InputType::GPX => {
+                    gpx.insert(k);
+                }
+                InputType::OSM { kind: _ } => {
+                    osm.insert(k);
+                }
+                InputType::UserStep => {
+                    if wi.name().unwrap_or("".to_string()).ends_with("0") {
+                        user1.insert(k);
+                    } else {
+                        user2.insert(k);
+                    }
+                }
+            }
+        }
+        vec![gpx, user1, user2, osm]
+    }
 }
 
 pub fn profile(

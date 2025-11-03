@@ -1,10 +1,12 @@
 #![allow(non_snake_case)]
 
+use std::collections::BTreeSet;
+
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::drawings::draw_for_map;
-use crate::label_placement::*;
+use crate::label_placement::{self, *};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::segment;
 use crate::track::Track;
@@ -42,37 +44,44 @@ use crate::label_placement::set_attr;
 use crate::label_placement::Attributes;
 use crate::label_placement::PointFeature;
 
-fn generate_candidates_bboxes(point: &PointFeature) -> Vec<LabelBoundingBox> {
-    let mut ret = Vec::new();
-    let width = point.width();
-    let height = point.height();
-    let dtarget_min = 1f64;
-    let dtarget_max = 20f64;
-    let d0 = dtarget_max;
-    let (cx, cy) = point.center();
-    let xmin = cx - d0 - width;
-    let ymin = cy - d0 - height;
-    let xmax = cx + d0;
-    let ymax = cy + d0;
-    let dp = 5f64;
-    let countx = ((xmax - xmin) / dp).ceil() as i32;
-    let county = ((ymax - ymin) / dp).ceil() as i32;
-    let dx = dp;
-    let dy = dp;
-    for nx in 0..countx {
-        for ny in 0..county {
-            let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
-            let bb = LabelBoundingBox::new_tlwh(tl, width, height);
-            if bb.contains((cx, cy)) {
-                continue;
+struct MapGenerator;
+
+impl CandidatesGenerator for MapGenerator {
+    fn generate(&self, point: &PointFeature) -> Vec<LabelBoundingBox> {
+        let mut ret = Vec::new();
+        let width = point.width();
+        let height = point.height();
+        let dtarget_min = 1f64;
+        let dtarget_max = 20f64;
+        let d0 = dtarget_max;
+        let (cx, cy) = point.center();
+        let xmin = cx - d0 - width;
+        let ymin = cy - d0 - height;
+        let xmax = cx + d0;
+        let ymax = cy + d0;
+        let dp = 5f64;
+        let countx = ((xmax - xmin) / dp).ceil() as i32;
+        let county = ((ymax - ymin) / dp).ceil() as i32;
+        let dx = dp;
+        let dy = dp;
+        for nx in 0..countx {
+            for ny in 0..county {
+                let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
+                let bb = LabelBoundingBox::new_tlwh(tl, width, height);
+                if bb.contains((cx, cy)) {
+                    continue;
+                }
+                if bb.distance((cx, cy)) < dtarget_min {
+                    continue;
+                }
+                ret.push(bb);
             }
-            if bb.distance((cx, cy)) < dtarget_min {
-                continue;
-            }
-            ret.push(bb);
         }
+        ret
     }
-    ret
+    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<BTreeSet<usize>> {
+        label_placement::prioritize::default(points)
+    }
 }
 
 struct MapData {
@@ -143,27 +152,25 @@ impl MapData {
                 }
             }
             label.id = format!("wp-{}/text", k);
-            points.push(PointFeature::new(
+            points.push(PointFeature {
                 id,
                 circle,
                 label,
-                w.label_placement_order,
-            ));
+                input_point: Some(w.clone()),
+            });
         }
+
+        let generator = Box::new(MapGenerator);
+        let force = false;
         let result = crate::label_placement::place_labels_gen(
-            &mut points,
-            generate_candidates_bboxes,
+            &points,
+            &*generator,
             &BoundingBox::init((0f64, 0f64), (W as f64, H as f64)),
             &polyline,
+            force,
         );
-        let mut placed_points = Vec::new();
-        for k in 0..points.len() {
-            if result.placed_indices.contains(&k) {
-                placed_points.push(points[k].clone());
-            } else {
-                log::trace!("could not place:{}", points[k].text());
-            }
-        }
+        let placed_indices = result.apply(&mut points, force);
+        let placed_points = placed_indices.iter().map(|k| points[*k].clone()).collect();
         MapData {
             polyline,
             points: placed_points,
@@ -287,29 +294,29 @@ pub fn map(
 mod tests {
     use std::str::FromStr;
 
-    use crate::{
-        label_placement::{Label, LabelBoundingBox, PointFeature, PointFeatureDrawing},
-        svgmap::generate_candidates_bboxes,
+    use super::MapGenerator;
+    use crate::label_placement::{
+        CandidatesGenerator, Label, LabelBoundingBox, PointFeature, PointFeatureDrawing,
     };
 
     #[test]
     fn test_bbox() {
         let id = String::new();
-        let target = PointFeature::new(
-            id.clone(),
-            PointFeatureDrawing {
+        let target = PointFeature {
+            id: id.clone(),
+            circle: PointFeatureDrawing {
                 group: svg::node::element::Group::new(),
                 cx: 0f64,
                 cy: 0f64,
             },
-            Label {
+            label: Label {
                 id: id.clone(),
                 bbox: LabelBoundingBox::new_tlbr((0f64, 0f64), (10f64, 16f64)),
                 text: String::from_str("hi").unwrap(),
             },
-            0usize,
-        );
-        let candidates = generate_candidates_bboxes(&target);
+            input_point: None,
+        };
+        let candidates = MapGenerator.generate(&target);
         let mut found = false;
         assert!(!candidates.is_empty());
         for c in candidates {
