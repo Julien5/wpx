@@ -10,12 +10,12 @@ import 'package:ui/utils.dart';
 
 enum SelectedParameter { distance, elevation }
 
-class ParameterModel extends ChangeNotifier {
+class UserStepsModel extends ChangeNotifier {
   final RootModel rootModel;
   SelectedParameter? selectedParameter;
   final Map<SelectedParameter, List<double>> _sliderValues = {};
   final Map<SelectedParameter, double> _selectedValues = {};
-  ParameterModel({required this.rootModel}) {
+  UserStepsModel({required this.rootModel}) {
     Parameters params = rootModel.parameters();
     SegmentStatistics stats = rootModel.statistics();
     _sliderValues[SelectedParameter.distance] = sensitiveDistanceSteps(params);
@@ -84,10 +84,10 @@ class ParameterModel extends ChangeNotifier {
     assert(selectedParameter != null);
     _selectedValues[selectedParameter!] = value;
     notifyListeners();
-    _update();
+    _updateBackend();
   }
 
-  void _update() {
+  void _updateBackend() {
     Parameters? p = newParameters();
     rootModel.setParameters(p);
   }
@@ -95,7 +95,7 @@ class ParameterModel extends ChangeNotifier {
   void updateParameter(SelectedParameter? key) {
     selectedParameter = key;
     notifyListeners();
-    _update();
+    _updateBackend();
   }
 
   ProfileOptions _makeProfileOptions(ProfileOptions old) {
@@ -103,23 +103,29 @@ class ParameterModel extends ChangeNotifier {
     if (current == null) {
       return ProfileOptions(
         elevationIndicators: old.elevationIndicators,
+        maxAreaRatio: old.maxAreaRatio,
         stepDistance: null,
         stepElevationGain: null,
+        size: old.size,
       );
     }
     assert(selectedParameter != null);
     if (selectedParameter == SelectedParameter.distance) {
       return ProfileOptions(
         elevationIndicators: old.elevationIndicators,
+        maxAreaRatio: old.maxAreaRatio,
         stepDistance: current.toDouble(),
         stepElevationGain: null,
+        size: old.size
       );
     }
     assert(selectedParameter == SelectedParameter.elevation);
     return ProfileOptions(
       elevationIndicators: old.elevationIndicators,
+      maxAreaRatio: old.maxAreaRatio,
       stepDistance: null,
       stepElevationGain: current.toDouble(),
+      size: old.size
     );
   }
 
@@ -213,14 +219,14 @@ List<double> sensitiveElevationSteps(
   return values;
 }
 
-class ParameterSlider extends StatelessWidget {
-  const ParameterSlider({super.key});
+class UserStepsSlider extends StatelessWidget {
+  const UserStepsSlider({super.key});
 
-  void onChanged(ParameterModel model, double value) {
+  void onChanged(UserStepsModel model, double value) {
     model.updateValue(value);
   }
 
-  String formatLabel(ParameterModel model, double value) {
+  String formatLabel(UserStepsModel model, double value) {
     if (model.selectedParameter == SelectedParameter.elevation) {
       return "${(value).toInt()} m";
     }
@@ -232,7 +238,7 @@ class ParameterSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var model = Provider.of<ParameterModel>(context);
+    var model = Provider.of<UserStepsModel>(context);
     var values = model.sliderValues();
     if (values == null) {
       return const Text('not set yet');
@@ -249,24 +255,24 @@ class ParameterSlider extends StatelessWidget {
   }
 }
 
-class ParameterSliderConsumer extends StatefulWidget {
-  const ParameterSliderConsumer({super.key});
+class UserStepsSliderConsumer extends StatefulWidget {
+  const UserStepsSliderConsumer({super.key});
 
   @override
-  State<ParameterSliderConsumer> createState() =>
-      _ParameterSliderConsumerState();
+  State<UserStepsSliderConsumer> createState() =>
+      _UserStepsSliderConsumerState();
 }
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
-class _ParameterSliderConsumerState extends State<ParameterSliderConsumer> {
+class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
   static const List<String> list = <String>["none", 'km', 'hm'];
   static final List<MenuEntry> menuEntries = UnmodifiableListView<MenuEntry>(
     list.map<MenuEntry>((String name) => MenuEntry(value: name, label: name)),
   );
 
   void onSelected(String? value) {
-    ParameterModel model = Provider.of<ParameterModel>(context, listen: false);
+    UserStepsModel model = Provider.of<UserStepsModel>(context, listen: false);
     developer.log("selected $value");
     SelectedParameter? newMode = fromString(value);
     model.updateParameter(newMode);
@@ -294,9 +300,9 @@ class _ParameterSliderConsumerState extends State<ParameterSliderConsumer> {
 
   @override
   Widget build(BuildContext context) {
-    ParameterModel model = Provider.of<ParameterModel>(context);
+    UserStepsModel model = Provider.of<UserStepsModel>(context);
     developer.log("rebuild with selected ${model.selectedParameter}");
-    Widget slider = ParameterSlider();
+    Widget slider = UserStepsSlider();
     DropdownMenu<String> dropbox = DropdownMenu<String>(
       initialSelection: string(model.selectedParameter),
       onSelected: onSelected,
@@ -316,16 +322,16 @@ class _ParameterSliderConsumerState extends State<ParameterSliderConsumer> {
   }
 }
 
-class ParameterSliderProvider extends StatelessWidget {
-  const ParameterSliderProvider({super.key});
+class UserStepsSliderProvider extends StatelessWidget {
+  const UserStepsSliderProvider({super.key});
 
   @override
   Widget build(BuildContext context) {
     RootModel root = Provider.of<RootModel>(context);
     return ChangeNotifierProvider(
-      create: (ctx) => ParameterModel(rootModel: root),
+      create: (ctx) => UserStepsModel(rootModel: root),
       builder: (context, child) {
-        return ParameterSliderConsumer();
+        return UserStepsSliderConsumer();
       },
     );
   }

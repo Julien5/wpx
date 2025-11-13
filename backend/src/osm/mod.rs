@@ -13,10 +13,10 @@ use crate::track::*;
 fn osm3(bbox: &WGS84BoundingBox) -> String {
     format!(
         "({:0.3},{:0.3},{:0.3},{:0.3})",
-        bbox.get_min().1,
-        bbox.get_min().0,
-        bbox.get_max().1,
-        bbox.get_max().0
+        bbox.get_min().y,
+        bbox.get_min().x,
+        bbox.get_max().y,
+        bbox.get_max().x
     )
 }
 

@@ -2,7 +2,6 @@
 
 use crate::error::Error;
 use crate::gpsdata;
-use crate::gpsdata::ProfileBoundingBox;
 use crate::gpxexport;
 use crate::inputpoint::InputPoint;
 use crate::inputpoint::InputPointMap;
@@ -10,11 +9,9 @@ use crate::inputpoint::InputType;
 use crate::locate;
 use crate::osm;
 use crate::parameters::Parameters;
-use crate::parameters::ProfileOptions;
 use crate::pdf;
 use crate::profile;
 use crate::render;
-use crate::svgmap;
 use crate::track;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
@@ -96,13 +93,8 @@ impl Backend {
     pub fn segments(&self) -> Vec<Segment> {
         self.d().segments()
     }
-    pub fn render_segment_what(
-        &mut self,
-        segment: &Segment,
-        what: String,
-        (W, H): (i32, i32),
-    ) -> String {
-        self.dmut().render_segment_what(segment, what, (W, H))
+    pub fn render_segment_what(&mut self, segment: &Segment, what: String) -> String {
+        self.dmut().render_segment_what(segment, what)
     }
     pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
         return self.d().get_waypoints(segment);
@@ -166,10 +158,10 @@ impl BackendData {
         ret
     }
     pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
-        let mut points = segment.profile_points(&self.get_parameters());
-		if points.iter().any(|w| w.kind() == InputType::GPX) {
-			points.retain(|w| w.kind() == InputType::GPX);
-		}
+        let mut points = segment.profile_points();
+        if points.iter().any(|w| w.kind() == InputType::GPX) {
+            points.retain(|w| w.kind() == InputType::GPX);
+        }
         self.export_points(&points)
     }
 
@@ -204,35 +196,27 @@ impl BackendData {
             if range.is_empty() {
                 break;
             }
-            let profile_bbox = ProfileBoundingBox::from_track(&self.track, &range);
-            let map_bbox = svgmap::bounding_box(&self.track, &range);
             let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
             log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
             ret.push(Segment::new(
                 k as i32,
                 range,
-                &profile_bbox,
-                &map_bbox,
                 tracktree,
                 self.track.clone(),
                 &self.inputpoints,
+                &self.parameters,
             ));
             start = start + self.parameters.segment_length - self.parameters.segment_overlap;
             k = k + 1;
         }
         ret
     }
-    pub fn render_segment_what(
-        &mut self,
-        segment: &Segment,
-        what: String,
-        (W, H): (i32, i32),
-    ) -> String {
+    pub fn render_segment_what(&mut self, segment: &Segment, what: String) -> String {
         log::trace!("start - render_segment_what:{} {}", segment.id, what);
         let ret = match what.as_str() {
-            "profile" => segment.render_profile((W, H), &self.parameters),
-            "ylabels" => self.render_yaxis_labels_overlay(segment, (W, H)),
-            "map" => segment.render_map((W, H), &self.parameters),
+            "profile" => segment.render_profile().svg,
+            "ylabels" => self.render_yaxis_labels_overlay(segment),
+            "map" => segment.render_map(),
             _ => {
                 // assert!(false);
                 String::new()
@@ -242,10 +226,11 @@ impl BackendData {
         ret
     }
 
-    fn render_yaxis_labels_overlay(&mut self, segment: &Segment, (W, H): (i32, i32)) -> String {
+    fn render_yaxis_labels_overlay(&mut self, segment: &Segment) -> String {
         log::info!("render_segment_track:{}", segment.id);
+        let profile_bbox = gpsdata::ProfileBoundingBox::from_track(&segment.track, &segment.range);
         let mut profile =
-            profile::ProfileView::init(&segment.profile_bbox, &ProfileOptions::default(), W, H);
+            profile::ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
         profile.add_yaxis_labels_overlay();
         let ret = profile.render();
         if self.get_parameters().debug {
@@ -254,8 +239,8 @@ impl BackendData {
         }
         ret
     }
-    pub fn render_segment_map(&self, segment: &Segment, (W, H): (i32, i32)) -> String {
-        let ret = segment.render_map((W, H), &self.parameters);
+    pub fn render_segment_map(&self, segment: &Segment) -> String {
+        let ret = segment.render_map();
         if self.get_parameters().debug {
             let filename = std::format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
@@ -283,8 +268,7 @@ impl BackendData {
         }
     }
     pub async fn generatePdf(&mut self) -> Vec<u8> {
-        let typbytes = render::make_typst_document(self, (1000, 285));
-        //let typbytes = render::compile_pdf(self, debug, (1400, 400));
+        let typbytes = render::make_typst_document(self);
         let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;
         log::info!("generated {} bytes", ret.len());
         ret
@@ -296,7 +280,7 @@ impl BackendData {
 
 #[cfg(test)]
 mod tests {
-    use crate::{backend::Backend};
+    use crate::backend::Backend;
 
     #[tokio::test]
     async fn svg_profile() {
@@ -308,24 +292,27 @@ mod tests {
 
         let mut parameters = backend.get_parameters();
         parameters.profile_options.step_distance = Some((10_000) as f64);
+        parameters.profile_options.size = (1420, 400);
+        parameters.profile_options.max_area_ratio = 0.025;
+        backend.set_parameters(&parameters);
 
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = segment.render_profile((1420, 400), &parameters);
+            let rendered_profile = segment.render_profile();
             let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
             println!("test {}", reffilename);
-            let data = if std::fs::exists(&reffilename).unwrap() {
+            let reference_svg = if std::fs::exists(&reffilename).unwrap() {
                 std::fs::read_to_string(&reffilename).unwrap()
             } else {
                 String::new()
             };
-            if data == svg {
+            if reference_svg == rendered_profile.svg {
                 ok_count += 1;
             }
             let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id);
-            std::fs::write(&tmpfilename, svg.clone()).unwrap();
-            if data != svg {
+            std::fs::write(&tmpfilename, rendered_profile.svg.clone()).unwrap();
+            if reference_svg != rendered_profile.svg {
                 println!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
@@ -341,10 +328,14 @@ mod tests {
             .expect("fail");
         let mut parameters = backend.get_parameters();
         parameters.profile_options.step_distance = Some((10_000) as f64);
+        parameters.map_options.max_area_ratio = 0.15;
+        backend.set_parameters(&parameters);
+
         let segments = backend.segments();
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = segment.render_map((400, 400), &parameters);
+            let _ = segment.render_profile();
+            let svg = segment.render_map();
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
             println!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {

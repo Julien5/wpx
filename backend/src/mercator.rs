@@ -1,4 +1,4 @@
-use crate::{track::WGS84BoundingBox, wgs84point::WGS84Point};
+use crate::{math::Point2D, track::WGS84BoundingBox, wgs84point::WGS84Point};
 use serde::{Deserialize, Serialize};
 
 pub type DateTime = chrono::DateTime<chrono::Utc>;
@@ -18,6 +18,12 @@ impl MercatorPoint {
     }
     pub fn from_xy((x, y): &(f64, f64)) -> MercatorPoint {
         MercatorPoint(*x, *y)
+    }
+    pub fn point2d(&self) -> Point2D {
+        Point2D::new(self.x(), self.y())
+    }
+    pub fn from_point2d(p: &Point2D) -> MercatorPoint {
+        MercatorPoint(p.x, p.y)
     }
     pub fn d2(&self, other: &MercatorPoint) -> f64 {
         let dx = self.0 - other.0;
@@ -71,16 +77,16 @@ pub type EuclideanBoundingBox = super::bbox::BoundingBox;
 impl EuclideanBoundingBox {
     pub fn unproject(&self) -> WGS84BoundingBox {
         let proj = WebMercatorProjection::make();
-        let min = proj.unproject(&MercatorPoint::from_xy(&self.get_min()));
-        let max = proj.unproject(&MercatorPoint::from_xy(&self.get_max()));
-        WGS84BoundingBox::init(min.xy(), max.xy())
+        let min = proj.unproject(&MercatorPoint::from_point2d(&self.get_min()));
+        let max = proj.unproject(&MercatorPoint::from_point2d(&self.get_max()));
+        WGS84BoundingBox::init(min.point2d(), max.point2d())
     }
 }
 
 #[cfg(test)]
 mod tests {
-    fn approx(f: (f64, f64)) -> String {
-        format!("{:.4},{:.4}", f.0, f.1)
+    fn approx(f: Point2D) -> String {
+        format!("{:.4},{:.4}", f.x, f.y)
     }
 
     use super::*;
@@ -93,6 +99,6 @@ mod tests {
         let proj = WebMercatorProjection::make();
         let eucp = proj.project(&wgs);
         let wgsp = proj.unproject(&eucp);
-        debug_assert_eq!(approx(wgs.xy()), approx(wgsp.xy()));
+        debug_assert_eq!(approx(wgs.point2d()), approx(wgsp.point2d()));
     }
 }

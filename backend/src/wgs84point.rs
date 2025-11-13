@@ -1,5 +1,11 @@
 use serde::{Deserialize, Serialize};
 
+use crate::math::Point2D;
+
+// TODO:
+// pub struct WGS84Space;
+// pub type WGS84Point = euclid::Point3D<f64, WGS84Space>;
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Copy)]
 pub struct WGS84Point(f64, f64, f64);
 
@@ -24,6 +30,9 @@ impl WGS84Point {
     }
     pub fn xy(&self) -> (f64, f64) {
         (self.0, self.1)
+    }
+    pub fn point2d(&self) -> Point2D {
+        Point2D::new(self.x(), self.y())
     }
     pub fn latitude(&self) -> f64 {
         return self.y();

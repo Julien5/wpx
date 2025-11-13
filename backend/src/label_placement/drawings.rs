@@ -1,10 +1,11 @@
 use crate::{
     inputpoint::{InputType, OSM},
     label_placement::PointFeatureDrawing,
+    math::Point2D,
 };
 
 fn make_circle(
-    (cx, cy): &(f64, f64),
+    center: &Point2D,
     id: &String,
     fill: &str,
     stroke_width: &f64,
@@ -12,8 +13,8 @@ fn make_circle(
 ) -> svg::node::element::Circle {
     let mut ret = svg::node::element::Circle::new();
     ret = ret.set("id", format!("{}", id));
-    ret = ret.set("cx", format!("{}", cx));
-    ret = ret.set("cy", format!("{}", cy));
+    ret = ret.set("cx", format!("{}", center.x));
+    ret = ret.set("cy", format!("{}", center.y));
     ret = ret.set("fill", format!("{}", fill));
     if *stroke_width > 0.0 {
         ret = ret.set("stroke", format!("{}", stroke_color));
@@ -22,7 +23,7 @@ fn make_circle(
     ret
 }
 
-pub fn draw_for_profile(center: &(f64, f64), id: &str, kind: &InputType) -> PointFeatureDrawing {
+pub fn draw_for_profile(center: &Point2D, id: &str, kind: &InputType) -> PointFeatureDrawing {
     let (r, fill) = match kind {
         InputType::OSM { kind: osm } => match osm {
             OSM::City => (5f64, "Black"),
@@ -32,7 +33,7 @@ pub fn draw_for_profile(center: &(f64, f64), id: &str, kind: &InputType) -> Poin
             OSM::Peak => (3f64, "Green"),
         },
         InputType::GPX => (5f64, "Blue"),
-        InputType::UserStep => (4f64, "Darkgray"),
+        InputType::UserStep => (3f64, "Black"),
     };
 
     let mut circle = make_circle(center, &format!("{}", id), fill, &0.0, "");
@@ -62,11 +63,10 @@ pub fn draw_for_profile(center: &(f64, f64), id: &str, kind: &InputType) -> Poin
 
     PointFeatureDrawing {
         group,
-        cx: center.0,
-        cy: center.1,
+        center: center.clone(),
     }
 }
 
-pub fn draw_for_map((cx, cy): &(f64, f64), id: &str, kind: &InputType) -> PointFeatureDrawing {
-    draw_for_profile(&(*cx, *cy), id, kind)
+pub fn draw_for_map(point: &Point2D, id: &str, kind: &InputType) -> PointFeatureDrawing {
+    draw_for_profile(point, id, kind)
 }

@@ -14,6 +14,9 @@ pub struct Graph {
     pub map: Map,
     pub candidates: CandidateMap,
     pub features: Vec<PointFeature>,
+    pub ordered_nodes: Vec<Node>,
+    pub max_area: f64,
+    pub used_area: f64,
 }
 
 impl Graph {
@@ -22,12 +25,15 @@ impl Graph {
             map: Map::new(),
             candidates: CandidateMap::new(),
             features: Vec::new(),
+            ordered_nodes: Vec::new(),
+            max_area: 0f64,
+            used_area: 0f64,
         }
     }
     fn intersect(&self, a: &Node, b: &Node) -> bool {
         for ca in self.candidates.get(a).unwrap() {
             for cb in self.candidates.get(b).unwrap() {
-                if ca.bbox.overlap(&cb.bbox) {
+                if ca.hit_other(&cb) {
                     return true;
                 }
             }
@@ -57,10 +63,12 @@ impl Graph {
     pub fn add_node(&mut self, a: Node, candidates: Candidates) {
         debug_assert!(!self.map.contains_key(&a));
         self.candidates.insert(a, candidates);
+        self.ordered_nodes.push(a);
     }
 
     fn remove_node(&mut self, a: &Node) {
         self.candidates.remove(a);
+        self.ordered_nodes.retain(|node| node != a);
         self.build_map();
     }
 
@@ -73,6 +81,12 @@ impl Graph {
             .iter()
             .position(|c| c == selected)
             .is_some());
+        let feature = &self.features[*a];
+        log::trace!(
+            "selected {} with area {:.1}",
+            feature.text(),
+            feature.area()
+        );
         let neighbors = self.map.get(a).unwrap().clone();
         for b in neighbors {
             // remove candidates of b that overlap with the
@@ -80,22 +94,33 @@ impl Graph {
             let neighbors_candidates = self.candidates.get_mut(&b).unwrap();
             /*
                 for cb in neighbors_candidates.clone() {
-                    if selected.bbox.overlap(&cb.bbox) {
+                    if selected.overlap(&cb.bbox) {
                         log::info!("remove candidate of {b} because of overlap: {}", cb.bbox);
                     }
             }
                 */
             assert!(!neighbors_candidates.is_empty());
             let first = neighbors_candidates.first().unwrap().clone();
-            neighbors_candidates.retain(|cb| !selected.bbox.overlap(&cb.bbox));
+            neighbors_candidates.retain(|cb| !selected.hit_other(&cb));
             if neighbors_candidates.is_empty() {
                 neighbors_candidates.push(first);
             }
         }
+        let aa = selected.bbox().bbox.area();
+        let ba = feature.area();
+        if (ba - aa).abs() > 1e-11 {
+            log::trace!("aa={aa}");
+            log::trace!("ba={ba}");
+            log::trace!("ba-aa={}", ba - aa);
+        }
+        // assert!((ba - aa).abs() < 1e-11);
+        self.used_area += feature.area();
         // remove a
         self.remove_node(a);
     }
     pub fn max_node(&self) -> Node {
+        *self.ordered_nodes.first().unwrap()
+        /*
         assert!(!self.map.is_empty());
         let node = *self
             .map
@@ -105,6 +130,7 @@ impl Graph {
             .unwrap()
             .0;
         node
+        */
     }
 
     fn candidate_blocks_other(&self, node: &Node, candidate_index: usize, other: &Node) -> bool {
@@ -116,7 +142,7 @@ impl Graph {
         }
         for k in 0..other_candidates.len() {
             let other_candidate = &other_candidates[k];
-            if !other_candidate.bbox.overlap(&this_candidate.bbox) {
+            if !other_candidate.hit_other(&this_candidate) {
                 return false;
             }
         }
@@ -141,11 +167,17 @@ impl Graph {
         while !self.map.is_empty() {
             //log::trace!("selecting..");
             let m = self.max_node();
+            let target = &self.features[m];
+            if self.used_area + target.area() > self.max_area {
+                log::trace!("remove {} because it is too large", target.text());
+                self.remove_node(&m);
+                continue;
+            }
             /*log::trace!(
                 "placing:{} ({} conflict edges) (priority {})",
-                &self.features[m].label.text,
+                target.text(),
                 self.map.get(&m).unwrap().len(),
-                &self.features[m].priority
+                target.priority
             );*/
             match self.best_candidate_for_node(&m) {
                 Some(best_index) => {
@@ -223,15 +255,19 @@ impl Graph {
 
 #[cfg(test)]
 mod tests {
-    use crate::label_placement::LabelBoundingBox;
+    use crate::{
+        bbox::BoundingBox,
+        label_placement::{Label, LabelBoundingBox, PointFeatureDrawing},
+        math::Point2D,
+    };
 
     use super::*;
 
     fn make_candidate(x: i32, y: i32, w: i32, h: i32) -> Candidate {
         Candidate::new(
-            LabelBoundingBox::new_tlwh((x as f64, y as f64), w as f64, h as f64),
-            0.,
-            0.,
+            &LabelBoundingBox::new_tlwh(Point2D::new(x as f64, y as f64), w as f64, h as f64),
+            &0.,
+            &0.,
         )
     }
 
@@ -239,32 +275,50 @@ mod tests {
     fn test_graph_operations() {
         // Create a new graph
         let mut graph = Graph::new();
-        let mut CA = Candidates::new();
-        let mut CB = Candidates::new();
-        let mut CC = Candidates::new();
-        let mut CD = Candidates::new();
+        let mut ca = Candidates::new();
+        let mut cb = Candidates::new();
+        let mut cc = Candidates::new();
+        let mut cd = Candidates::new();
         let ca1 = make_candidate(0, 0, 2, 2);
         let ca2 = make_candidate(2, 2, 3, 2);
         let cb1 = make_candidate(1, 0, 3, 2);
         let cb2 = make_candidate(4, 2, 3, 2);
-        assert!(ca2.bbox.overlap(&cb2.bbox));
-        CA.push(ca1);
-        CA.push(ca2);
-        CB.push(cb1.clone());
-        CB.push(cb2.clone());
+        assert!(ca2.hit_other(&cb2));
+        ca.push(ca1);
+        ca.push(ca2);
+        cb.push(cb1.clone());
+        cb.push(cb2.clone());
         let cc1 = make_candidate(3, 3, 2, 3);
-        CC.push(cc1.clone());
+        cc.push(cc1.clone());
         let cc2 = make_candidate(4, 3, 2, 3);
-        CC.push(cc2.clone());
-        CC.push(make_candidate(3, 8, 2, 3));
-        CD.push(make_candidate(3, 9, 2, 3));
-        graph.add_node(0, CA);
-        graph.add_node(1, CB);
-        graph.add_node(2, CC);
-        graph.add_node(3, CD);
+        cc.push(cc2.clone());
+        cc.push(make_candidate(3, 8, 2, 3));
+        cd.push(make_candidate(3, 9, 2, 3));
+        graph.add_node(0, ca);
+        graph.add_node(1, cb);
+        graph.add_node(2, cc);
+        graph.add_node(3, cd);
         graph.build_map();
+        let zero = Point2D::new(0f64, 0f64);
+        let f = PointFeature {
+            id: "".to_string(),
+            circle: PointFeatureDrawing {
+                group: svg::node::element::Group::new(),
+                center: zero.clone(),
+            },
+            label: Label {
+                id: "id0".to_string(),
+                bbox: LabelBoundingBox {
+                    bbox: BoundingBox::init(zero.clone(), zero.clone()),
+                },
+                text: String::new(),
+            },
+            input_point: None,
+            link: None,
+        };
+        graph.features = vec![f.clone(), f.clone(), f.clone(), f.clone()];
 
-        assert!(graph.max_node() == 2);
+        assert_eq!(graph.max_node(), 0);
         log::info!("select {} {}", 1, "cc1");
         graph.select(&2, &cc1);
         assert!(!graph.map.contains_key(&2));

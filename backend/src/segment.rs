@@ -1,20 +1,22 @@
 use geo::LineLocatePoint;
 
-use crate::inputpoint::{InputPoint, InputPointMap, InputType, TrackProjection, OSM};
-use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
+use crate::bbox::BoundingBox;
+use crate::inputpoint::{InputPoint, InputPointMap, TrackProjection};
+use crate::math::Point2D;
+use crate::mercator::MercatorPoint;
 use crate::parameters::Parameters;
+use crate::profile::ProfileRenderResult;
 use crate::track::{self, Track};
-use crate::{bboxes, gpsdata, locate, make_points, profile, svgmap};
+use crate::{bboxes, locate, make_points, profile, svgmap};
 
 #[derive(Clone)]
 pub struct Segment {
     pub id: i32,
     pub range: std::ops::Range<usize>,
-    pub profile_bbox: gpsdata::ProfileBoundingBox,
-    pub map_bbox: EuclideanBoundingBox,
     pub track_tree: locate::IndexedPointsTree,
     pub track: std::sync::Arc<Track>,
     pub points: Vec<InputPoint>,
+    pub parameters: Parameters,
 }
 
 pub struct SegmentStatistics {
@@ -28,39 +30,33 @@ impl Segment {
     pub fn new(
         id: i32,
         range: std::ops::Range<usize>,
-        bbox: &gpsdata::ProfileBoundingBox,
-        mbbox: &EuclideanBoundingBox,
         track_tree: locate::IndexedPointsTree,
         track: std::sync::Arc<Track>,
         inputpoints: &InputPointMap,
+        parameters: &Parameters,
     ) -> Segment {
-        let points = Self::copy_segment_points(inputpoints, mbbox, &track, &track_tree);
+        let map_box = svgmap::euclidean_bounding_box(&track, &range, &parameters.map_options.size);
+        let points = Self::copy_segment_points(inputpoints, &map_box, &track, &track_tree);
         Segment {
             id,
             range: range.clone(),
-            profile_bbox: bbox.clone(),
-            map_bbox: mbbox.clone(),
             track_tree: track_tree,
             track,
             points,
+            parameters: parameters.clone(),
         }
     }
 
-    pub fn render_profile(&self, (width, height): (i32, i32), parameters: &Parameters) -> String {
+    pub fn map_box(&self) -> BoundingBox {
+        svgmap::euclidean_bounding_box(&self.track, &self.range, &self.parameters.map_options.size)
+    }
+
+    pub fn render_profile(&self) -> ProfileRenderResult {
         log::info!("render profile:{}", self.id);
-        let points = self.profile_points(parameters);
-        log::trace!("points:{:?}", points.len());
-        let ret = profile::profile(
-            &self.track,
-            &points,
-            &self,
-            &parameters.profile_options,
-            width,
-            height,
-        );
-        if parameters.debug {
+        let ret = profile::profile(&self);
+        if self.parameters.debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id);
-            std::fs::write(filename, &ret).expect("Unable to write file");
+            std::fs::write(filename, &ret.svg).expect("Unable to write file");
         }
         ret
     }
@@ -107,7 +103,7 @@ impl Segment {
         let a1 = (t1.0, t1.1, track.elevation(index1));
         let a2 = (t2.0, t2.1, track.elevation(index2));
         let m = Self::middle_point(&a1, &a2, index_floating_part);
-        let euclidean = MercatorPoint::from_xy(&(m.0, m.1));
+        let euclidean = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
         let elevation = m.2;
         let track_distance = euclidean.d2(&point.euclidian).sqrt();
 
@@ -127,13 +123,12 @@ impl Segment {
 
     fn copy_segment_points(
         inputpoints: &InputPointMap,
-        _bbox: &EuclideanBoundingBox,
+        map_box: &BoundingBox,
         track: &track::Track,
         tracktree: &locate::IndexedPointsTree,
     ) -> Vec<InputPoint> {
         let mut ret = Vec::new();
-        let mut bbox = _bbox.clone();
-        // a bit too much enlarging, probably.
+        let mut bbox = map_box.clone();
         bbox.enlarge(&5000f64);
         let bboxs = bboxes::split(&bbox, &bboxes::BBOXWIDTH);
         for (_index, bbox) in bboxs {
@@ -148,6 +143,13 @@ impl Segment {
                 ret.push(c);
             }
         }
+        for p in &ret {
+            log::trace!(
+                "copy-segment-points points {} {:?}",
+                p.name().unwrap_or("".to_string()),
+                p.kind()
+            );
+        }
         ret
     }
 
@@ -161,87 +163,21 @@ impl Segment {
         }
     }
 
-    pub fn profile_points(&self, parameters: &Parameters) -> Vec<InputPoint> {
-        make_points::profile_points(&self, parameters)
+    pub fn profile_points(&self) -> Vec<InputPoint> {
+        make_points::profile_points(&self)
     }
 
-    pub fn render_map(&self, (width, height): (i32, i32), parameters: &Parameters) -> String {
+    pub fn map_points(&self) -> Vec<InputPoint> {
+        make_points::map_points(&self)
+    }
+
+    pub fn render_map(&self) -> String {
         log::trace!("render map:{}", self.id);
-        let points = self.map_points(parameters);
-        log::trace!("svgmap::map()");
-        let ret = svgmap::map(&self.track, &points, &self, width, height, parameters.debug);
-        if parameters.debug {
+        let ret = svgmap::map(&self);
+        if self.parameters.debug {
             let filename = std::format!("/tmp/map-{}.svg", self.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
         }
-        ret
-    }
-
-    fn placement_order_map(point: &InputPoint) -> usize {
-        let infinity = usize::MAX / 2;
-        if point.name().is_none() {
-            return infinity;
-        }
-        if point.kind() == InputType::GPX {
-            return 1;
-        }
-        let _population = match point.population() {
-            Some(p) => p,
-            None => 0,
-        };
-        let d = point.track_projection.as_ref().unwrap().track_distance;
-        match point.kind() {
-            InputType::OSM { kind } => {
-                if kind == OSM::MountainPass || kind == OSM::Peak {
-                    if d < 300.0 {
-                        return 4;
-                    }
-                    return infinity;
-                }
-                if kind == OSM::Hamlet {
-                    if d < 300.0 {
-                        return 5;
-                    }
-                    return infinity;
-                }
-                if kind == OSM::Village {
-                    return infinity;
-                }
-
-                if kind == OSM::City {
-                    let dd = if d < 2000.0 { 2 } else { 3 };
-                    return dd;
-                }
-            }
-            _ => {}
-        }
-
-        infinity
-    }
-
-    fn map_points(&self, parameters: &Parameters) -> Vec<InputPoint> {
-        let profile = self.profile_points(parameters);
-        let nextra = match parameters.map_options.nmax {
-            Some(n) => n,
-            _ => 15,
-        };
-        let mut extra = self.points.clone();
-        extra.retain(|p| {
-            if profile.contains(&p) {
-                return false;
-            }
-            if !self.map_bbox.contains(&p.euclidian.xy()) {
-                return false;
-            }
-            true
-        });
-        extra.sort_by_key(|p| Self::placement_order_map(&p));
-        extra.retain(|p| Self::placement_order_map(p) <= 4);
-        log::info!("plotting {} maps labels", extra.len());
-        extra.truncate(nextra);
-        let mut ret = profile.clone();
-        ret.extend_from_slice(&extra);
-        //assert!(!ret.is_empty());
         ret
     }
 }

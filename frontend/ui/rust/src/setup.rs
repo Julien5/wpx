@@ -2,7 +2,7 @@
 fn setup_log() {
     println!("init logger");
     use std::io::Write;
-    env_logger::Builder::new()
+    let _ = env_logger::Builder::new()
         .format(|buf, record| {
             writeln!(
                 buf,
@@ -13,7 +13,7 @@ fn setup_log() {
             )
         })
         .filter_level(log::LevelFilter::Trace)
-        .init();
+        .try_init();
 }
 
 #[cfg(target_arch = "wasm32")]

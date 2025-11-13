@@ -1,12 +1,13 @@
 #![allow(non_snake_case)]
 
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::InputPoint;
 use crate::label_placement::bbox::LabelBoundingBox;
+use crate::label_placement::candidate::Candidates;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::{self, *};
+use crate::math::Point2D;
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::segment;
 use crate::track::Track;
@@ -19,21 +20,21 @@ pub fn to_graphics_coordinates(
     W: i32,
     H: i32,
     margin: i32,
-) -> (f64, f64) {
-    let (xmin, ymin) = bbox.get_min();
-    let (xmax, ymax) = bbox.get_max();
+) -> Point2D {
+    let min = bbox.get_min();
+    let max = bbox.get_max();
 
     let f = |x: f64| -> f64 {
-        let a = (W - 2 * margin) as f64 / (xmax - xmin);
-        let b = -a * xmin;
+        let a = (W - 2 * margin) as f64 / (max.x - min.x);
+        let b = -a * min.x;
         margin as f64 + a * x + b
     };
     let g = |y: f64| -> f64 {
-        let a = (H - 2 * margin) as f64 / (ymin - ymax);
-        let b = -a * ymax;
+        let a = (H - 2 * margin) as f64 / (min.y - max.y);
+        let b = -a * max.y;
         margin as f64 + a * y + b
     };
-    (f(p.x()), g(p.y()))
+    Point2D::new(f(p.x()), g(p.y()))
 }
 
 fn _readid(id: &str) -> (&str, &str) {
@@ -44,43 +45,35 @@ use crate::label_placement::set_attr;
 use crate::label_placement::Attributes;
 use crate::label_placement::PointFeature;
 
-struct MapGenerator;
+struct MapGenerator {
+    pub profile_indices: Vec<usize>,
+}
 
-impl CandidatesGenerator for MapGenerator {
-    fn generate(&self, point: &PointFeature) -> Vec<LabelBoundingBox> {
-        let mut ret = Vec::new();
+impl MapGenerator {
+    fn generate_one(point: &PointFeature) -> Vec<LabelBoundingBox> {
+        let mut ret =
+            label_placement::cardinal_boxes(&point.center(), &point.width(), &point.height());
         let width = point.width();
         let height = point.height();
-        let dtarget_min = 1f64;
-        let dtarget_max = 20f64;
-        let d0 = dtarget_max;
-        let (cx, cy) = point.center();
-        let xmin = cx - d0 - width;
-        let ymin = cy - d0 - height;
-        let xmax = cx + d0;
-        let ymax = cy + d0;
-        let dp = 5f64;
-        let countx = ((xmax - xmin) / dp).ceil() as i32;
-        let county = ((ymax - ymin) / dp).ceil() as i32;
-        let dx = dp;
-        let dy = dp;
-        for nx in 0..countx {
-            for ny in 0..county {
-                let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
-                let bb = LabelBoundingBox::new_tlwh(tl, width, height);
-                if bb.contains((cx, cy)) {
-                    continue;
-                }
-                if bb.distance((cx, cy)) < dtarget_min {
-                    continue;
-                }
-                ret.push(bb);
-            }
-        }
+        let center = point.center();
+        ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 0));
+        ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 2));
+        ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 4));
         ret
     }
-    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<BTreeSet<usize>> {
-        label_placement::prioritize::default(points)
+}
+
+impl CandidatesGenerator for MapGenerator {
+    fn generate(
+        &self,
+        points: &Vec<PointFeature>,
+        subset: &Vec<usize>,
+        obstacles: &Obstacles,
+    ) -> BTreeMap<usize, Candidates> {
+        label_placement::candidate::utils::generate(Self::generate_one, points, subset, obstacles)
+    }
+    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<Vec<usize>> {
+        label_placement::prioritize::map(points, self.profile_indices.clone())
     }
 }
 
@@ -91,57 +84,58 @@ struct MapData {
     debug: svg::node::element::Group,
 }
 
-pub fn bounding_box(track: &Track, range: &std::ops::Range<usize>) -> EuclideanBoundingBox {
+pub fn euclidean_bounding_box(
+    track: &Track,
+    range: &std::ops::Range<usize>,
+    size: &(i32, i32),
+) -> EuclideanBoundingBox {
+    assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
     for k in range.start..range.end {
-        bbox.update(&track.euclidian[k].xy());
+        bbox.update(&track.euclidian[k].point2d());
     }
+    bbox.fix_aspect_ratio(size.0, size.1);
     bbox
 }
 
 impl MapData {
-    pub fn make(
-        track: &Track,
-        inputpoints: &Vec<InputPoint>,
-        segment: &segment::Segment,
-        W: i32,
-        H: i32,
-        _debug: bool,
-    ) -> MapData {
-        let mut bbox = segment.map_bbox.clone();
-        bbox.fix_aspect_ratio(W, H);
+    pub fn make(segment: &segment::Segment) -> MapData {
+        let bbox = segment.map_box().clone();
         let mut path = Vec::new();
         for k in segment.range.start..segment.range.end {
-            path.push(track.euclidian[k].clone());
+            path.push(segment.track.euclidian[k].clone());
         }
 
         let margin = 20i32;
 
         let mut polyline = Polyline::new();
         // todo: path in the bbox, which more than the path in the range.
+        let width = segment.parameters.map_options.size.0;
+        let height = segment.parameters.map_options.size.1;
         for p in &path {
-            let (xg, yg) = to_graphics_coordinates(&bbox, p, W, H, margin);
-            polyline.points.push((xg, yg));
+            let p = to_graphics_coordinates(&bbox, p, width, height, margin);
+            polyline.points.push(p);
         }
 
         let mut document = Attributes::new();
         set_attr(
             &mut document,
             "viewBox",
-            format!("(0, 0, {}, {})", W, H).as_str(),
+            format!("(0, 0, {}, {})", width, height).as_str(),
         );
-        set_attr(&mut document, "width", format!("{}", W).as_str());
-        set_attr(&mut document, "height", format!("{}", H).as_str());
+        set_attr(&mut document, "width", format!("{}", width).as_str());
+        set_attr(&mut document, "height", format!("{}", height).as_str());
 
         let mut points = Vec::new();
+        let inputpoints = segment.map_points();
         for k in 0..inputpoints.len() {
             let w = &inputpoints[k];
             let euclidean = w.euclidian.clone();
 
-            let (x, y) = to_graphics_coordinates(&bbox, &euclidean, W, H, margin);
+            let p = to_graphics_coordinates(&bbox, &euclidean, width, height, margin);
             let n = points.len();
             let id = format!("wp-{}/circle", n);
-            let circle = draw_for_map(&(x, y), id.as_str(), &w.kind());
+            let circle = draw_for_map(&p, id.as_str(), &w.kind());
             let mut label = Label::new();
             match w.short_name() {
                 Some(text) => {
@@ -157,19 +151,27 @@ impl MapData {
                 circle,
                 label,
                 input_point: Some(w.clone()),
+                link: None,
             });
         }
 
-        let generator = Box::new(MapGenerator);
-        let force = false;
-        let result = crate::label_placement::place_labels_gen(
+        let generator = Box::new(MapGenerator {
+            profile_indices: segment.render_profile().points_indices.clone(),
+        });
+
+        log::trace!("map: place labels");
+        let result = crate::label_placement::place_labels(
             &points,
             &*generator,
-            &BoundingBox::init((0f64, 0f64), (W as f64, H as f64)),
+            &BoundingBox::init(
+                Point2D::new(0f64, 0f64),
+                Point2D::new(width as f64, height as f64),
+            ),
             &polyline,
-            force,
+            &segment.parameters.map_options.max_area_ratio,
         );
-        let placed_indices = result.apply(&mut points, force);
+        log::trace!("map: apply placement");
+        let placed_indices = result.apply(&mut points);
         let placed_points = placed_indices.iter().map(|k| points[*k].clone()).collect();
         MapData {
             polyline,
@@ -178,72 +180,6 @@ impl MapData {
             debug: result.debug,
         }
     }
-    /*
-        fn _import(filename: std::path::PathBuf) -> MapData {
-            use svg::node::element::tag;
-            use svg::parser::Event;
-            let mut polyline = crate::svgmap::Polyline::new();
-            let mut document = Attributes::new();
-            let mut content = String::new();
-            let mut points = Vec::new();
-            let mut current_circle = PointFeature::new();
-            let mut current_text_attributes = Attributes::new();
-            for event in svg::open(filename, &mut content).unwrap() {
-                match event {
-                    Event::Tag(tag::Circle, _, attributes) => {
-                        if attributes.contains_key("id") {
-                            let id = attributes.get("id").unwrap().clone().to_string();
-                            let (p_id, _p_attr) = _readid(id.as_str());
-                            current_circle.id = String::from_str(p_id).unwrap();
-                            current_circle.circle = Circle::_from_attributes(&attributes);
-                        }
-                    }
-                    Event::Tag(tag::Text, _, attributes) => {
-                        if attributes.contains_key("id") {
-                            // let id = attributes.get("id").unwrap();
-                            current_text_attributes = attributes.clone();
-                        }
-                    }
-                    Event::Text(data) => {
-                        current_circle.label = Label::_from_attributes(&current_text_attributes, data);
-                        current_text_attributes.clear();
-                        debug_assert!(!current_circle.id.is_empty());
-                        points.push(current_circle);
-                        current_circle = PointFeature::new();
-                    }
-                    Event::Tag(tag::Path, _, attributes) => {
-                        if attributes.contains_key("id") {
-                            let id = attributes.get("id").unwrap();
-                        }
-                        polyline = crate::svgmap::Polyline::_from_attributes(&attributes);
-                        let data = attributes.get("d").unwrap();
-                        let data = Data::parse(data).unwrap();
-                        use svg::node::element::path::Command;
-                        for command in data.iter() {
-                            match command {
-                                &Command::Move(..) => { /* … */ }
-                                &Command::Line(..) => { /* … */ }
-                                _ => {}
-                            }
-                        }
-                    }
-                    Event::Tag(tag::SVG, _, attributes) => {
-                        if !attributes.is_empty() {
-                            document = attributes.clone();
-                        }
-                    }
-                    _ => {}
-                }
-            }
-
-            MapData {
-                polyline,
-                points,
-                document,
-                debug: svg::node::element::Group::new(),
-            }
-    }
-        */
 
     pub fn render(self) -> String {
         let mut document = Document::new();
@@ -278,15 +214,8 @@ impl MapData {
     }
 }
 
-pub fn map(
-    track: &Track,
-    inputpoints: &Vec<InputPoint>,
-    segment: &segment::Segment,
-    W: i32,
-    H: i32,
-    debug: bool,
-) -> String {
-    let svgMap = MapData::make(track, inputpoints, segment, W, H, debug);
+pub fn map(segment: &segment::Segment) -> String {
+    let svgMap = MapData::make(&segment);
     svgMap.render()
 }
 
@@ -295,8 +224,9 @@ mod tests {
     use std::str::FromStr;
 
     use super::MapGenerator;
-    use crate::label_placement::{
-        CandidatesGenerator, Label, LabelBoundingBox, PointFeature, PointFeatureDrawing,
+    use crate::{
+        label_placement::{Label, LabelBoundingBox, PointFeature, PointFeatureDrawing},
+        math::Point2D,
     };
 
     #[test]
@@ -306,22 +236,25 @@ mod tests {
             id: id.clone(),
             circle: PointFeatureDrawing {
                 group: svg::node::element::Group::new(),
-                cx: 0f64,
-                cy: 0f64,
+                center: Point2D::new(0f64, 0f64),
             },
             label: Label {
                 id: id.clone(),
-                bbox: LabelBoundingBox::new_tlbr((0f64, 0f64), (10f64, 16f64)),
+                bbox: LabelBoundingBox::_new_tlbr(
+                    Point2D::new(0f64, 0f64),
+                    Point2D::new(10f64, 16f64),
+                ),
                 text: String::from_str("hi").unwrap(),
             },
             input_point: None,
+            link: None,
         };
-        let candidates = MapGenerator.generate(&target);
+        let candidates = MapGenerator::generate_one(&target);
         let mut found = false;
         assert!(!candidates.is_empty());
         for c in candidates {
-            let center = target.center();
-            let good = c.x_min() > target.center().0 && c.y_min() > target.center().1;
+            let _center = target.center();
+            let good = c.x_min() > target.center().x && c.y_min() > target.center().y;
             if good {
                 found = true;
             }

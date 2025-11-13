@@ -8,8 +8,6 @@ Future<bool> testSegment(Bridge bridge, Segment segment) async {
   String svg = await bridge.renderSegmentWhat(
     segment: segment,
     what: "track",
-    w: 800,
-    h: 200,
   );
   developer.log(sprintf("            ID: %d", [segment.id().toInt()]));
   developer.log(sprintf("    svg length: %d bytes", [svg.length]));

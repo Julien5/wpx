@@ -363,12 +363,14 @@ impl InputPointMap {
 
 #[cfg(test)]
 mod tests {
+    use crate::math::Point2D;
+
     use super::*;
 
     fn testpoint() -> InputPoint {
         InputPoint {
             wgs84: WGS84Point::new(&1.0f64, &1.1f64, &0f64),
-            euclidian: MercatorPoint::from_xy(&(0f64, 0f64)),
+            euclidian: MercatorPoint::from_point2d(&Point2D::new(0f64, 0f64)),
             tags: Tags::new(),
             track_projection: None,
         }

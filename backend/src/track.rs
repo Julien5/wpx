@@ -27,24 +27,26 @@ impl Track {
     }
 
     pub fn wgs84_bounding_box(&self) -> WGS84BoundingBox {
+        assert!(!self.wgs84.is_empty());
         let mut ret = WGS84BoundingBox::new();
         let _: Vec<_> = self
             .wgs84
             .iter()
             .map(|p| {
-                ret.update(&(p.x(), p.y()));
+                ret.update(&p.point2d());
             })
             .collect();
         ret
     }
 
     pub fn euclidean_bounding_box(&self) -> EuclideanBoundingBox {
+        assert!(!self.euclidian.is_empty());
         let mut ret = EuclideanBoundingBox::new();
         let _: Vec<_> = self
             .euclidian
             .iter()
             .map(|p| {
-                ret.update(&(p.x(), p.y()));
+                ret.update(&p.point2d());
             })
             .collect();
         ret

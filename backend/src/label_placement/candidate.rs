@@ -1,28 +1,48 @@
+use crate::{bbox::BoundingBox, math::Point2D};
+
 use super::bbox::LabelBoundingBox;
 
 #[derive(Clone)]
 pub struct Candidate {
-    pub bbox: LabelBoundingBox,
-    pub dtarget: f64,
-    pub dothers: f64,
+    _bbox: LabelBoundingBox,
+    _dtarget: f64,
+    _dothers: f64,
 }
 
 impl Candidate {
-    pub fn new(bbox: LabelBoundingBox, dtarget: f64, dothers: f64) -> Candidate {
+    pub fn new(bbox: &LabelBoundingBox, dtarget: &f64, dothers: &f64) -> Candidate {
         Candidate {
-            bbox,
-            dtarget,
-            dothers,
+            _bbox: bbox.clone(),
+            _dtarget: *dtarget,
+            _dothers: *dothers,
         }
     }
-    fn _intersect(&self, other: &Self) -> bool {
-        self.bbox.overlap(&other.bbox)
+
+    pub fn hit_other(&self, other: &Self) -> bool {
+        self._bbox.bbox.overlap(&other._bbox.bbox)
+    }
+
+    pub fn hit_bbox(&self, bbox: &BoundingBox) -> bool {
+        self._bbox.bbox.overlap(&bbox)
+    }
+
+    pub fn hit_polyline(&self, polyline: &Vec<Point2D>) -> bool {
+        for p in polyline {
+            if self._bbox.bbox.contains(&p) {
+                return true;
+            }
+        }
+        false
+    }
+
+    pub fn bbox(&self) -> &LabelBoundingBox {
+        &self._bbox
     }
 }
 
 impl PartialEq for Candidate {
     fn eq(&self, other: &Self) -> bool {
-        self.bbox == other.bbox
+        self._bbox == other._bbox
     }
 }
 
@@ -36,13 +56,13 @@ fn cat(x: f64) -> f64 {
 use std::cmp::Ordering;
 impl PartialOrd for Candidate {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        let dtarget1 = cat(self.dtarget);
-        let dtarget2 = cat(other.dtarget);
+        let dtarget1 = cat(self._dtarget);
+        let dtarget2 = cat(other._dtarget);
         if dtarget1 != dtarget2 {
             return dtarget1.partial_cmp(&dtarget2);
         }
-        let t1 = -self.dothers;
-        let t2 = -other.dothers;
+        let t1 = -self._dothers;
+        let t2 = -other._dothers;
         assert!(t1.partial_cmp(&t2).is_some());
         t1.partial_cmp(&t2)
     }
@@ -56,40 +76,120 @@ impl Ord for Candidate {
 
 pub type Candidates = Vec<Candidate>;
 
-pub fn select_candidates(candidates: &Candidates) -> Vec<usize> {
-    if candidates.is_empty() {
-        return Vec::<usize>::new();
-    }
-    // sort indices by candidate order.
-    let mut sorted: Vec<_> = (0..candidates.len()).collect();
-    sorted.sort_by(|i, j| {
-        let ci = &candidates[*i];
-        let cj = &candidates[*j];
-        ci.partial_cmp(cj).unwrap_or(Ordering::Equal)
-    });
-    if sorted.len() <= 4 {
-        return sorted;
-    }
-    // note: the candidates must be sorted
-    for i in 1..candidates.len() {
-        debug_assert!(candidates[i - 1] <= candidates[i]);
-    }
-    // we always take the first one, which is has the minimal cost.
-    let mut ret = vec![0];
-    let mut previous = &candidates[0];
-    let overlap = 0.75f64;
-    let nmax = 16;
-    // we want to ensure enought diversity as with the
-    // traditional four non-overlaping candidates.
-    assert!(nmax as f64 * (1f64 - overlap) >= 4f64);
-    for k in sorted {
-        if candidates[k].bbox.overlap_ratio(&previous.bbox) < overlap {
-            ret.push(k);
-            previous = &candidates[k];
+pub mod utils {
+    use std::cmp::Ordering;
+
+    use crate::label_placement::*;
+
+    fn distance2_to_others(
+        bbox: &LabelBoundingBox,
+        points: &Vec<PointFeature>,
+        k: usize,
+        obstacles: &Obstacles,
+    ) -> f64 {
+        let mut ret = f64::MAX;
+        for l in 0..points.len() {
+            let other = &points[l];
+            if l == k {
+                continue;
+            }
+            let other_center = &other.circle.center;
+            let d = bbox.bbox.distance2_to_point(other_center);
+            if d < ret {
+                ret = d;
+            }
         }
-        if ret.len() > nmax {
-            break;
+        for l in 0..obstacles.bboxes.len() {
+            let otherbbox = &obstacles.bboxes[l];
+            let d = bbox.bbox.distance2_to_other(&otherbbox);
+            if d < ret {
+                ret = d;
+            }
         }
+        ret
     }
-    ret
+
+    pub fn make_candidate(
+        bbox: &LabelBoundingBox,
+        target: &Point2D,
+        points: &Vec<PointFeature>,
+        k: usize,
+        obstacles: &Obstacles,
+    ) -> Candidate {
+        let _dtarget = bbox.bbox.distance2_to_point(target);
+        let _dothers = distance2_to_others(bbox, &points, k, obstacles);
+        Candidate::new(bbox, &_dtarget, &_dothers)
+    }
+
+    fn hit(candidate: &Candidate, obstacles: &Obstacles) -> bool {
+        if !obstacles.drawingbox.bbox.empty()
+            && !obstacles
+                .drawingbox
+                .bbox
+                .contains_other(&candidate.bbox().bbox)
+        {
+            return true;
+        }
+        for obstacle_box in &obstacles.bboxes {
+            if candidate.hit_bbox(obstacle_box) {
+                return true;
+            }
+        }
+        for polyline in &obstacles.polylines {
+            if candidate.hit_polyline(&polyline.points) {
+                return true;
+            }
+        }
+        false
+    }
+
+    fn generate_all_candidates(
+        gen: fn(&PointFeature) -> Vec<LabelBoundingBox>,
+        points: &Vec<PointFeature>,
+        k: usize,
+        obstacles: &Obstacles,
+    ) -> Candidates {
+        if points[k].text().is_empty() {
+            return Candidates::new();
+        }
+        let target = &points[k];
+        let mut ret = Candidates::new();
+        let targetpoint = &target.circle.center;
+        let available_area = obstacles.available_area();
+        if target.area() > available_area {
+            log::debug!("no place left for {}", target.text());
+            return ret;
+        }
+        for bbox in gen(target) {
+            let candidate = make_candidate(&bbox, &targetpoint, points, k, obstacles);
+            if hit(&candidate, obstacles) {
+                continue;
+            }
+            ret.push(candidate);
+        }
+        return ret;
+    }
+
+    pub fn generate(
+        gen_one: fn(&PointFeature) -> Vec<LabelBoundingBox>,
+        points: &Vec<PointFeature>,
+        subset: &Vec<usize>,
+        obstacles: &Obstacles,
+    ) -> BTreeMap<usize, Candidates> {
+        let mut ret = BTreeMap::new();
+        for k in subset {
+            let mut candidates = generate_all_candidates(gen_one, points, *k, obstacles);
+            if candidates.is_empty() {
+                log::trace!(
+                    "[0] [{}] => {} candidates",
+                    points[*k].text(),
+                    candidates.len()
+                );
+                // force one ?
+            }
+            candidates.sort_by(|ci, cj| ci.partial_cmp(cj).unwrap_or(Ordering::Equal));
+            ret.insert(*k, candidates);
+        }
+        ret
+    }
 }

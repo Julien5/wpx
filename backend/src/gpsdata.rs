@@ -1,6 +1,7 @@
 use crate::bbox::BoundingBox;
 use crate::error::Error;
 use crate::inputpoint::{InputPoint, InputPointMap};
+use crate::math::Point2D;
 use crate::wgs84point::WGS84Point;
 use crate::{bboxes, mercator, track};
 use geo::Distance;
@@ -132,7 +133,7 @@ impl ProfileBoundingBox {
         }
         let xmin = track.distance(range.start);
         let xmax = track.distance(range.end - 1);
-        BoundingBox::init((xmin, ymin), (xmax, ymax))
+        BoundingBox::init(Point2D::new(xmin, ymin), Point2D::new(xmax, ymax))
     }
 }
 

@@ -20,10 +20,10 @@ fn cache_dir() -> String {
 pub fn key(bbox: &EuclideanBoundingBox) -> String {
     format!(
         "{:0.0}+{:0.0}-{:0.0}+{:0.0}",
-        bbox.get_min().1,
-        bbox.get_min().0,
-        bbox.get_max().1,
-        bbox.get_max().0
+        bbox.get_min().y,
+        bbox.get_min().x,
+        bbox.get_max().y,
+        bbox.get_max().x
     )
 }
 
@@ -85,7 +85,7 @@ pub async fn write(bboxes: &Vec<EuclideanBoundingBox>, points: &InputPoints) {
             .points
             .iter()
             .filter(|p| {
-                let coord = p.euclidian.xy();
+                let coord = p.euclidian.point2d();
                 atom.contains(&coord)
             })
             .cloned()

@@ -1,7 +1,8 @@
 use crate::bbox::BoundingBox;
+use crate::math::Point2D;
 use crate::mercator::MercatorPoint;
 use crate::track::Track;
-use crate::{inputpoint::*, mercator};
+use crate::{inputpoint::*, math, mercator};
 use rstar::{RTree, AABB};
 
 #[derive(Clone, PartialEq)]
@@ -58,10 +59,8 @@ impl rstar::RTreeObject for IndexedPoint {
 impl rstar::PointDistance for IndexedPoint {
     fn distance_2(&self, point: &[f64; 2]) -> f64 {
         let p1 = &self.coord;
-        let p2 = (&point[0], &point[1]);
-        let dx = p1.0 - p2.0;
-        let dy = p1.1 - p2.1;
-        dx * dx + dy * dy
+        let p2 = Point2D::new(point[0], point[1]);
+        math::distance2(&p1.point2d(), &p2)
     }
 
     fn contains_point(&self, _point: &[f64; 2]) -> bool {
@@ -120,8 +119,8 @@ impl IndexedPointsTree {
     }
     pub fn find_points_in_bbox(&self, bbox: &BoundingBox) -> Vec<usize> {
         let mut ret = Vec::new();
-        let min = coord(&MercatorPoint::from_xy(&bbox.get_min()));
-        let max = coord(&MercatorPoint::from_xy(&bbox.get_max()));
+        let min = coord(&MercatorPoint::from_point2d(&bbox.get_min()));
+        let max = coord(&MercatorPoint::from_point2d(&bbox.get_max()));
         let aabb = AABB::from_corners(min, max);
         for p in self.tree.locate_in_envelope(&aabb) {
             ret.push(p.index);

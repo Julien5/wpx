@@ -72,11 +72,14 @@ pub struct _ProfileOptions {
     pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
     pub step_distance: Option<f64>,
     pub step_elevation_gain: Option<f64>,
+    pub max_area_ratio: f64,
+    pub size: (i32, i32),
 }
 
 #[frb(mirror(MapOptions))]
 pub struct _MapOptions {
-    pub nmax: Option<usize>,
+    pub max_area_ratio: f64,
+    pub size: (i32, i32),
 }
 
 #[frb(mirror(Parameters))]
@@ -178,32 +181,12 @@ impl Bridge {
     pub fn waypoints_table(&self, segment: &Segment) -> Vec<Waypoint> {
         self.backend.get_waypoint_table(&segment._impl)
     }
-    pub async fn renderSegmentWhat(
-        &mut self,
-        segment: &Segment,
-        what: String,
-        W: i32,
-        H: i32,
-    ) -> String {
-        //let delay = std::time::Duration::from_millis(50);
-        //std::thread::sleep(delay);
-        println!("{}: {}x{}", what, W, H);
-        self.backend
-            .render_segment_what(&segment._impl, what, (W, H))
+    pub async fn renderSegmentWhat(&mut self, segment: &Segment, what: String) -> String {
+        self.backend.render_segment_what(&segment._impl, what)
     }
     #[frb(sync)]
-    pub fn renderSegmentWhatSync(
-        &mut self,
-        segment: &Segment,
-        what: String,
-        W: i32,
-        H: i32,
-    ) -> String {
-        //let delay = std::time::Duration::from_millis(50);
-        //std::thread::sleep(delay);
-        println!("{}x{}", W, H);
-        self.backend
-            .render_segment_what(&segment._impl, what, (W, H))
+    pub fn renderSegmentWhatSync(&mut self, segment: &Segment, what: String) -> String {
+        self.backend.render_segment_what(&segment._impl, what)
     }
     #[frb(sync)]
     pub fn statistics(&self) -> SegmentStatistics {

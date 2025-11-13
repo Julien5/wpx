@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:test_async/src/rust/api/simple.dart';
 import 'package:test_async/src/rust/frb_generated.dart';
 import 'package:test_async/streamwidget.dart';
-import 'package:test_async/testwidget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

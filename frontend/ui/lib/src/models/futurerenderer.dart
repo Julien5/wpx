@@ -32,22 +32,16 @@ class FutureRenderer with ChangeNotifier {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "profile",
-        w: size!.width.floor(),
-        h: size!.height.floor(),
       );
     } else if (trackData == TrackData.map) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "map",
-        w: size!.width.floor(),
-        h: size!.height.floor(),
       );
     } else if (trackData == TrackData.yaxis) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "ylabels",
-        w: size!.width.floor(),
-        h: size!.height.floor(),
       );
     }
     notifyListeners();

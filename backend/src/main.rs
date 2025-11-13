@@ -21,8 +21,10 @@ struct Cli {
     step_distance: Option<usize>,
     #[arg(long, value_name = "step_elevation_gain")]
     step_elevation_gain: Option<usize>,
-    #[arg(long, value_name = "map_points_count")]
-    map_points_count: Option<usize>,
+    #[arg(long, value_name = "profile_max_area_ratio")]
+    profile_max_area_ratio: Option<f64>,
+    #[arg(long, value_name = "map_max_area_ratio")]
+    map_max_area_ratio: Option<f64>,
     #[arg(value_name = "gpx")]
     filename: std::path::PathBuf,
 }
@@ -101,9 +103,16 @@ async fn main() -> Result<(), error::Error> {
         _ => {}
     }
 
-    match args.map_points_count {
+    match args.map_max_area_ratio {
         Some(m) => {
-            parameters.map_options.nmax = Some(m);
+            parameters.map_options.max_area_ratio = m;
+        }
+        _ => {}
+    }
+
+    match args.profile_max_area_ratio {
+        Some(m) => {
+            parameters.profile_options.max_area_ratio = m;
         }
         _ => {}
     }

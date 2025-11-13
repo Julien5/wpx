@@ -3,15 +3,14 @@ pub mod candidate;
 pub mod drawings;
 mod graph;
 pub mod prioritize;
+mod stroke;
 pub use bbox::LabelBoundingBox;
 use candidate::Candidate;
 use candidate::Candidates;
 use graph::Graph;
 use svg::Node;
 
-use std::cmp::Ordering;
 use std::collections::BTreeMap;
-use std::collections::BTreeSet;
 use std::collections::HashMap;
 pub type Attributes = HashMap<String, svg::node::Value>;
 
@@ -76,7 +75,7 @@ impl Label {
     pub fn set_text(&mut self, s: &str) {
         self.text = String::from_str(s).unwrap();
         let width = text_width(s);
-        self.bbox = LabelBoundingBox::new_blwh((0f64, 0f64), width, FONTSIZE);
+        self.bbox = LabelBoundingBox::new_blwh(Point2D::new(0f64, 0f64), width, FONTSIZE);
     }
 
     pub fn bounding_box(&self) -> LabelBoundingBox {
@@ -87,8 +86,7 @@ impl Label {
 #[derive(Clone)]
 pub struct PointFeatureDrawing {
     pub group: svg::node::element::Group,
-    pub cx: f64,
-    pub cy: f64,
+    pub center: Point2D,
 }
 
 #[derive(Clone)]
@@ -97,11 +95,17 @@ pub struct PointFeature {
     pub circle: PointFeatureDrawing,
     pub label: Label,
     pub input_point: Option<InputPoint>,
+    pub link: Option<svg::node::element::Path>,
 }
 
 pub trait CandidatesGenerator {
-    fn generate(&self, point: &PointFeature) -> Vec<LabelBoundingBox>;
-    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<BTreeSet<usize>>;
+    fn generate(
+        &self,
+        points: &Vec<PointFeature>,
+        subset: &Vec<usize>,
+        obstacles: &Obstacles,
+    ) -> BTreeMap<usize, Candidates>;
+    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<Vec<usize>>;
 }
 
 impl PartialEq for PointFeature {
@@ -115,6 +119,7 @@ use std::str::FromStr;
 
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
+use crate::math::Point2D;
 
 impl PointFeature {
     pub fn place_label(&mut self, bbox: &LabelBoundingBox) {
@@ -126,20 +131,61 @@ impl PointFeature {
     pub fn height(&self) -> f64 {
         self.label.bbox.height()
     }
+    pub fn area(&self) -> f64 {
+        return self.width() * self.height();
+    }
     pub fn text(&self) -> String {
         self.label.text.clone()
     }
-    pub fn center(&self) -> (f64, f64) {
-        (self.circle.cx, self.circle.cy)
+    pub fn center(&self) -> Point2D {
+        self.circle.center.clone()
     }
     pub fn input_point(&self) -> Option<InputPoint> {
         self.input_point.clone()
+    }
+    pub fn make_link(&mut self, obstacles: &Obstacles) {
+        let circle = &self.circle.center;
+        let label = self.label.bbox.bbox.project_on_border(circle);
+        let to_label = *circle - label;
+        let distance = to_label.length();
+        if distance < 10f64 {
+            return;
+        }
+        assert!(distance > std::f64::EPSILON);
+        let unit = to_label * (1.0 / distance);
+        debug_assert!(!unit.x.is_nan());
+        debug_assert!(!unit.y.is_nan());
+        let epsilon = unit * 2.0f64;
+        let from = label + epsilon;
+        let to = *circle - epsilon;
+
+        let path = stroke::_compute(&from, &to, obstacles);
+        let d = path
+            .iter()
+            .enumerate()
+            .map(|(i, p)| {
+                if i == 0 {
+                    format!("M{:.2},{:.2}", p.x, p.y)
+                } else {
+                    format!("L{:.2},{:.2}", p.x, p.y)
+                }
+            })
+            .collect::<Vec<_>>();
+        let mut stroke = svg::node::element::Path::new();
+        stroke = stroke.set("id", "link");
+        stroke = stroke.set("stroke", "black");
+        stroke = stroke.set("fill", "transparent");
+        stroke = stroke.set("stroke-linejoin", "miter");
+        stroke = stroke.set("stroke-miterlimit", "1");
+        stroke = stroke.set("d", d);
+        self.link = Some(stroke);
     }
     pub fn render_in_group(&self, sd_group: &mut svg::node::element::Group) {
         sd_group.append(self.circle.group.clone());
         let text = format!("{}", self.text());
         let mut label = svg::node::element::Text::new(text);
-        for (k, v) in self.label.to_attributes(self.circle.cx) {
+        let center = &self.circle.center;
+        for (k, v) in self.label.to_attributes(center) {
             label = label.set(k, v);
         }
         let mut whitebg = svg::node::element::Rectangle::new();
@@ -153,20 +199,23 @@ impl PointFeature {
         whitebg = whitebg.set("id", "label-bg");
         sd_group.append(whitebg);
         sd_group.append(label);
+        if self.link.is_some() {
+            sd_group.append(self.link.as_ref().unwrap().clone());
+        }
     }
 }
 
 #[derive(Clone)]
 pub struct Polyline {
     id: String,
-    pub points: Vec<(f64, f64)>,
+    pub points: Vec<Point2D>,
 }
 
 impl Polyline {
     pub fn new() -> Polyline {
         Polyline {
             id: "track".to_string(),
-            points: Vec::<(f64, f64)>::new(),
+            points: Vec::<Point2D>::new(),
         }
     }
 }
@@ -182,11 +231,11 @@ impl Label {
         let height = FONTSIZE;
         let width = text_width(text);
         let (top_left, bottom_right) = if anchor == "start" {
-            ((x, y - height), (x + width, y))
+            (Point2D::new(x, y - height), Point2D::new(x + width, y))
         } else {
-            ((x - width, y - height), (x, y))
+            (Point2D::new(x - width, y - height), Point2D::new(x, y))
         };
-        let bbox = LabelBoundingBox::new_tlbr(top_left, bottom_right);
+        let bbox = LabelBoundingBox::_new_tlbr(top_left, bottom_right);
         Label {
             id: a.get("id").unwrap().to_string(),
             bbox,
@@ -194,10 +243,10 @@ impl Label {
         }
     }
 
-    pub fn to_attributes(&self, cx: f64) -> Attributes {
+    pub fn to_attributes(&self, point: &Point2D) -> Attributes {
         let mut ret = Attributes::new();
         let mut x = self.bbox.x_min() + 2f64;
-        let anchor = if self.bounding_box().x_max() < cx {
+        let anchor = if self.bounding_box().x_max() < point.x {
             "end"
         } else {
             "start"
@@ -226,7 +275,7 @@ impl Polyline {
                 .parse::<f64>()
                 .unwrap();
             let y = format!("{}", t[1]).parse::<f64>().unwrap();
-            points.push((x, y));
+            points.push(Point2D::new(x, y));
         }
         Polyline {
             id: format!("{}", a.get("id").unwrap()),
@@ -237,11 +286,11 @@ impl Polyline {
     pub fn to_attributes(&self) -> Attributes {
         let mut ret = Attributes::new();
         let mut dv = Vec::new();
-        for (x, y) in &self.points {
+        for p in &self.points {
             if dv.is_empty() {
-                dv.push(format!("M{x:.1},{y:.1}"));
+                dv.push(format!("M{:.1},{:.1}", p.x, p.y));
             } else {
-                dv.push(format!("L{x:.1},{y:.1}"));
+                dv.push(format!("L{:.1},{:.1}", p.x, p.y));
             }
         }
         let d = dv.join(" ");
@@ -256,157 +305,67 @@ impl Polyline {
     }
 }
 
-fn polyline_hits_bbox(polyline: &Polyline, bbox: &LabelBoundingBox) -> bool {
-    for &(x, y) in &polyline.points {
-        if bbox.contains((x, y)) {
-            return true;
-        }
-    }
-
-    false
+#[derive(Clone)]
+pub struct DrawingArea {
+    pub bbox: BoundingBox,
+    pub max_area_ratio: f64,
 }
 
-fn distance_to_others(
-    bbox: &LabelBoundingBox,
-    points: &Vec<PointFeature>,
-    k: usize,
-) -> (f64, usize) {
-    let mut ret = (f64::MAX, 0);
-    for l in 0..points.len() {
-        let other = &points[l];
-        if l == k {
-            continue;
-        }
-        let other_center = (other.circle.cx, other.circle.cy);
-        let d = bbox.distance(other_center);
-        if d < ret.0 {
-            ret = (d, l);
-        }
-    }
-    ret
-}
-
-fn generate_all_candidates(
-    gen: &dyn CandidatesGenerator,
-    points: &Vec<PointFeature>,
-    k: usize,
-) -> Candidates {
-    if points[k].text().is_empty() {
-        return Candidates::new();
-    }
-    let target = &points[k];
-    let all = gen.generate(target);
-    let mut ret = Candidates::new();
-    let targetpoint = (target.circle.cx, target.circle.cy);
-    for index in 0..all.len() {
-        let c = &all[index];
-        // let dtarget = distance(c.center(), targetpoint);
-        let dtarget = c.distance(targetpoint);
-        let (dothers, _) = distance_to_others(c, &points, k);
-        ret.push(Candidate::new(c.clone(), dtarget, dothers));
-    }
-    return ret;
-}
-
-struct Obstacles {
-    bboxes: Vec<BoundingBox>,
-    polylines: Vec<Polyline>,
+#[derive(Clone)]
+pub struct Obstacles {
+    pub bboxes: Vec<BoundingBox>,
+    pub polylines: Vec<Polyline>,
+    pub drawingbox: DrawingArea,
 }
 
 impl Obstacles {
-    fn from_polyline(p: &Polyline) -> Obstacles {
+    fn new() -> Obstacles {
         Obstacles {
             bboxes: Vec::new(),
-            polylines: vec![p.clone()],
+            polylines: Vec::new(),
+            drawingbox: DrawingArea {
+                bbox: BoundingBox::new(),
+                max_area_ratio: 0f64,
+            },
         }
     }
-}
 
-fn filter_sort_candidates(
-    candidates: &mut Candidates,
-    drawbox: &BoundingBox,
-    obstacles: &Obstacles,
-) {
-    candidates.retain(|candidate| {
-        if !drawbox.contains_other(&candidate.bbox.bbox) {
-            return false;
-        }
-        for obstacle_box in &obstacles.bboxes {
-            if candidate.bbox.bbox.hits_other(obstacle_box) {
-                return false;
-            }
-        }
-        for polyline in &obstacles.polylines {
-            if polyline_hits_bbox(polyline, &candidate.bbox) {
+    pub fn _is_clear(&self, p1: &Point2D, p2: &Point2D) -> bool {
+        for bbox in &self.bboxes {
+            if bbox.segment_intersects(p1, p2) {
                 return false;
             }
         }
         true
-    });
-    // dtarget and dothers are considered in the ordering of candidates
-    candidates.sort_by(|ci, cj| ci.partial_cmp(cj).unwrap_or(Ordering::Equal));
+    }
+
+    pub fn available_area(&self) -> f64 {
+        self.drawingbox.bbox.area() * self.drawingbox.max_area_ratio
+            - self.bboxes.iter().map(|bbox| bbox.area()).sum::<f64>()
+    }
 }
 
-fn build_graph_gen(
+fn build_graph(
     points: &Vec<PointFeature>,
-    subset: &BTreeSet<usize>,
+    subset: &Vec<usize>,
     gen: &dyn CandidatesGenerator,
-    drawingbox: &BoundingBox,
     obstacles: &Obstacles,
 ) -> Graph {
     let mut ret = Graph::new();
     ret.features = points.clone();
-    for _k in subset {
-        let k = *_k;
-        let text = points[k].text();
-        if text.is_empty() {
-            continue;
-        }
-        let mut candidates = generate_all_candidates(gen, points, k);
-        assert!(!candidates.is_empty());
-        /*log::trace!(
-            "[0] [{}] => {} candidates",
-            points[k].text(),
-            candidates.len()
-        );*/
-        let _first = candidates.first().unwrap().clone();
-        filter_sort_candidates(&mut candidates, drawingbox, obstacles);
-        if candidates.is_empty() {
-            log::warn!(
-                "{} has {} candidate after filtering with {} obstacles",
-                points[k].text(),
-                candidates.len(),
-                obstacles.bboxes.len()
-            );
-        }
-        /*log::trace!(
-            "[1] [{}] => {} candidates",
-            points[k].text(),
-            candidates.len()
-        );*/
-        let selected_indices = candidate::select_candidates(&candidates);
-        let selected_candidates: Vec<_> = selected_indices
-            .into_iter()
-            .map(|i| candidates[i].clone())
-            .collect();
-        assert!(!ret.candidates.contains_key(&k));
-        if selected_candidates.is_empty() {
-            log::warn!("{} has no candidate after selection.", points[k].text());
-        }
-        /*log::debug!(
-            "[2] [{}] => {} candidates",
-            points[k].text(),
-            selected_candidates.len()
-        );*/
-        ret.add_node(k, selected_candidates);
+    let candidates_map = gen.generate(&points, subset, obstacles);
+    for k in subset {
+        let candidates = candidates_map[&k].clone();
+        ret.add_node(*k, candidates);
     }
     ret.build_map();
+    ret.max_area = obstacles.available_area();
     ret
 }
 
 fn _candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rectangle {
     let mut debug_bb = svg::node::element::Rectangle::new();
-    let bb = &candidate.bbox;
+    let bb = &candidate.bbox();
     debug_bb = debug_bb.set("x", bb.x_min());
     debug_bb = debug_bb.set("y", bb.y_min());
     debug_bb = debug_bb.set("width", bb.width());
@@ -420,48 +379,49 @@ fn _candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rect
 pub struct PlacementResult {
     pub debug: svg::node::element::Group,
     pub placed_indices: BTreeMap<usize, LabelBoundingBox>,
-    pub forced_indices: BTreeMap<usize, LabelBoundingBox>,
+    pub obstacles: Obstacles,
+    pub ordered: Vec<usize>,
 }
 
 impl PlacementResult {
-    pub fn apply(&self, points: &mut Vec<PointFeature>, force: bool) -> Vec<usize> {
+    pub fn apply(&self, points: &mut Vec<PointFeature>) -> Vec<usize> {
         let mut ret = Vec::new();
-        for (k, bbox) in &self.placed_indices {
-            points[*k].place_label(bbox);
-            ret.push(*k);
-        }
-        if force {
-            for (k, bbox) in &self.forced_indices {
-                log::trace!("force place {}", points[*k].text());
+        for k in &self.ordered {
+            if self.placed_indices.contains_key(&k) {
+                let bbox = self.placed_indices.get(&k).unwrap();
                 points[*k].place_label(bbox);
+                points[*k].make_link(&self.obstacles);
                 ret.push(*k);
+            } else {
+                log::trace!("could not place {}, index:{}", points[*k].text(), k,);
             }
         }
         ret
     }
+    pub fn push(&mut self, other: Self) {
+        for (_k, bbox) in &other.placed_indices {
+            self.obstacles.bboxes.push(bbox.bbox.clone());
+        }
+        self.debug = self.debug.clone().add(other.debug);
+        self.placed_indices.extend(other.placed_indices);
+        self.ordered.extend(other.ordered);
+    }
 }
 
-fn place_labels_gen_worker(
+fn place_subset(
     points: &Vec<PointFeature>,
-    subset: &BTreeSet<usize>,
+    subset: &Vec<usize>,
     gen: &dyn CandidatesGenerator,
-    bbox: &BoundingBox,
     obstacles: &Obstacles,
 ) -> PlacementResult {
     //log::trace!("build label graph");
-    let mut graph = build_graph_gen(points, subset, gen, bbox, &obstacles);
-    let candidates = graph.candidates.clone();
+    let mut graph = build_graph(points, subset, gen, &obstacles);
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),
         placed_indices: BTreeMap::new(),
-        forced_indices: BTreeMap::new(),
+        obstacles: Obstacles::new(),
+        ordered: Vec::new(),
     };
-    for k in 0..points.len() {
-        let target_text = &points[k].text();
-        if target_text.is_empty() {
-            continue;
-        }
-    }
     //log::trace!("solve label graph [{}]", graph.map.len(),);
     let best_candidates = graph.solve();
     for k in subset {
@@ -471,63 +431,170 @@ fn place_labels_gen_worker(
             continue;
         }
         let best_candidate = best_candidates.get(&k);
+        ret.ordered.push(*k);
         match best_candidate {
             Some(candidate) => {
-                let bbox = &candidate.bbox;
-                ret.placed_indices.insert(*k, bbox.clone());
+                ret.placed_indices.insert(*k, candidate.bbox().clone());
             }
             _ => {
                 log::info!("failed to find any candidate for [{}]", target_text);
-                // here we could force with
-                let candidate = candidates.get(k).unwrap().first();
-                match candidate {
-                    Some(c) => {
-                        let bbox = &c.bbox;
-                        ret.forced_indices.insert(*k, bbox.clone());
-                    }
-                    None => {
-                        log::info!("no candidate available for [{}] => make one", target_text);
-                        let bbox = gen.generate(point).first().unwrap().clone();
-                        ret.forced_indices.insert(*k, bbox);
-                    }
-                }
             }
         }
     }
     ret
 }
 
-pub fn place_labels_gen(
+pub fn place_labels(
     points: &Vec<PointFeature>,
     gen: &dyn CandidatesGenerator,
     bbox: &BoundingBox,
     polyline: &Polyline,
-    force: bool,
+    max_area_ratio: &f64,
 ) -> PlacementResult {
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),
         placed_indices: BTreeMap::new(),
-        forced_indices: BTreeMap::new(),
+        obstacles: Obstacles {
+            drawingbox: DrawingArea {
+                bbox: bbox.clone(),
+                max_area_ratio: *max_area_ratio,
+            },
+            polylines: vec![polyline.clone()],
+            bboxes: Vec::new(),
+        },
+        ordered: Vec::new(),
     };
-    let mut obstacles = Obstacles::from_polyline(polyline);
     let packets = gen.prioritize(points);
     for packet_points in packets {
         if packet_points.is_empty() {
             continue;
         }
-        let results = place_labels_gen_worker(&points, &packet_points, gen, bbox, &obstacles);
-        for (k, bbox) in &results.placed_indices {
-            obstacles.bboxes.push(bbox.bbox.clone());
-        }
-        if force {
-            for (k, bbox) in &results.forced_indices {
-                obstacles.bboxes.push(bbox.bbox.clone());
-            }
-        }
+        let results = place_subset(&points, &packet_points, gen, &ret.obstacles);
+        ret.push(results);
+    }
+    ret
+}
 
-        ret.debug = ret.debug.add(results.debug);
-        ret.placed_indices.extend(results.placed_indices);
-        ret.forced_indices.extend(results.forced_indices);
+pub fn cardinal_boxes(center: &Point2D, width: &f64, height: &f64) -> Vec<LabelBoundingBox> {
+    let mut ret = Vec::new();
+    let epsilon = 2f64;
+    let b1 = LabelBoundingBox::new_blwh(
+        Point2D::new(center.x + epsilon, center.y - epsilon),
+        *width,
+        *height,
+    );
+    ret.push(b1);
+    let b2 = LabelBoundingBox::new_brwh(
+        Point2D::new(center.x - epsilon, center.y - epsilon),
+        *width,
+        *height,
+    );
+    ret.push(b2);
+    let b3 = LabelBoundingBox::new_trwh(
+        Point2D::new(center.x - epsilon, center.y + epsilon),
+        *width,
+        *height,
+    );
+    ret.push(b3);
+    let b4 = LabelBoundingBox::new_tlwh(
+        Point2D::new(center.x + epsilon, center.y + epsilon),
+        *width,
+        *height,
+    );
+    ret.push(b4);
+
+    let b5 = LabelBoundingBox::new_blwh(
+        Point2D::new(center.x + epsilon, center.y + height / 2.0),
+        *width,
+        *height,
+    );
+    ret.push(b5);
+    let b6 = LabelBoundingBox::new_blwh(
+        Point2D::new(center.x - width / 2.0, center.y - epsilon),
+        *width,
+        *height,
+    );
+    ret.push(b6);
+    let b7 = LabelBoundingBox::new_brwh(
+        Point2D::new(center.x - epsilon, center.y + height / 2.0),
+        *width,
+        *height,
+    );
+    ret.push(b7);
+    let b8 = LabelBoundingBox::new_tlwh(
+        Point2D::new(center.x - width / 2.0, center.y + epsilon),
+        *width,
+        *height,
+    );
+    ret.push(b8);
+
+    ret
+}
+
+pub fn far_boxes(
+    center: &Point2D,
+    width: &f64,
+    height: &f64,
+    level: usize,
+) -> Vec<LabelBoundingBox> {
+    let mut ret = Vec::new();
+    let d = ((level + 2) as f64) * height;
+    let xmin = center.x - d;
+    let xmax = center.x + d;
+    let ymin = center.y - d;
+    let ymax = center.y + d;
+    let stepsize = *height;
+    let mut n = 0;
+    loop {
+        let b = LabelBoundingBox::new_tlwh(
+            Point2D::new(xmin + (n as f64) * stepsize, ymin),
+            *width,
+            *height,
+        );
+        if b.x_max() > xmax {
+            break;
+        }
+        ret.push(b);
+        n += 1;
+    }
+    n = 0;
+    loop {
+        let b = LabelBoundingBox::new_blwh(
+            Point2D::new(xmin + (n as f64) * stepsize, ymax),
+            *width,
+            *height,
+        );
+        if b.x_max() > xmax {
+            break;
+        }
+        ret.push(b);
+        n += 1;
+    }
+    n = 0;
+    loop {
+        let b = LabelBoundingBox::new_trwh(
+            Point2D::new(xmax, ymin + (n as f64) * stepsize),
+            *width,
+            *height,
+        );
+        if b.y_max() > ymax {
+            break;
+        }
+        ret.push(b);
+        n += 1;
+    }
+    n = 0;
+    loop {
+        let b = LabelBoundingBox::new_tlwh(
+            Point2D::new(xmin, ymin + (n as f64) * stepsize),
+            *width,
+            *height,
+        );
+        if b.y_max() > ymax {
+            break;
+        }
+        ret.push(b);
+        n += 1;
     }
     ret
 }

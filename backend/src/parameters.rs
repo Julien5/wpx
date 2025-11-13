@@ -12,6 +12,8 @@ pub struct ProfileOptions {
     pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
     pub step_distance: Option<f64>,
     pub step_elevation_gain: Option<f64>,
+    pub max_area_ratio: f64,
+    pub size: (i32, i32),
 }
 
 impl Default for ProfileOptions {
@@ -20,18 +22,24 @@ impl Default for ProfileOptions {
             elevation_indicators: std::collections::HashSet::default(),
             step_distance: None,
             step_elevation_gain: None,
+            max_area_ratio: 0.1f64,
+            size: (1000, 285),
         }
     }
 }
 
 #[derive(Clone)]
 pub struct MapOptions {
-    pub nmax: Option<usize>,
+    pub max_area_ratio: f64,
+    pub size: (i32, i32),
 }
 
 impl Default for MapOptions {
     fn default() -> MapOptions {
-        MapOptions { nmax: None }
+        MapOptions {
+            max_area_ratio: 0.1f64,
+            size: (400, 400),
+        }
     }
 }
 

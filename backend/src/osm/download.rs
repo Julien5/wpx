@@ -148,15 +148,15 @@ pub fn parse_osm_content(content: &[u8]) -> serde_json::Result<InputPoints> {
 
 #[cfg(test)]
 mod tests {
-    use crate::track::WGS84BoundingBox;
+    use crate::{math::Point2D, track::WGS84BoundingBox};
 
     use super::*;
     #[test]
     fn download() {
         //let bbox = "(47.86,9.66,48.17,10.80)";
-        let _bbox = WGS84BoundingBox::init((47.86, 9.66), (48.17, 10.80));
-        let place = "village";
-        let json = ""; //dl(&bbox, place).unwrap();
+        let _bbox = WGS84BoundingBox::init(Point2D::new(47.86, 9.66), Point2D::new(48.17, 10.80));
+        let _place = "village";
+        let _json = ""; //dl(&bbox, place).unwrap();
         let json = ""; //dl_passes(&bbox).unwrap();
         log::info!("ret={}", json);
     }

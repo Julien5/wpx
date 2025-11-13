@@ -2,18 +2,20 @@
 mod elements;
 mod ticks;
 
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 
 use svg::Node;
 
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
-use crate::inputpoint::{InputPoint, InputType};
+use crate::inputpoint::InputPoint;
 use crate::label_placement;
 use crate::label_placement::bbox::LabelBoundingBox;
+use crate::label_placement::candidate::*;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::*;
+use crate::math::Point2D;
 use crate::parameters::{ProfileIndication, ProfileOptions};
 use crate::segment;
 use crate::track::Track;
@@ -22,6 +24,7 @@ use elements::*;
 struct ProfileModel {
     polylines: Vec<Polyline>,
     points: Vec<PointFeature>,
+    placed_indices: Vec<usize>,
 }
 
 pub struct ProfileView {
@@ -53,7 +56,7 @@ fn elevation_gain_ticks(
     track: &Track,
     step_size: f64,
     range: &std::ops::Range<usize>,
-) -> Vec<(f64, f64)> {
+) -> Vec<Point2D> {
     let mut ret = Vec::new();
     for k in range.start + 1..range.end {
         let m0 = track.elevation_gain(k - 1);
@@ -62,7 +65,7 @@ fn elevation_gain_ticks(
         let f1 = m1 / step_size;
         let d = track.distance(k);
         if f0.ceil() != f1.ceil() {
-            ret.push((d, f1.floor() * step_size));
+            ret.push(Point2D::new(d, f1.floor() * step_size));
         }
     }
     ret
@@ -102,14 +105,9 @@ impl ProfileView {
         }
         ret
     }
-    pub fn init(
-        bbox: &gpsdata::ProfileBoundingBox,
-        options: &ProfileOptions,
-        _W: i32,
-        _H: i32,
-    ) -> ProfileView {
-        let W = _W as f64;
-        let H = _H as f64;
+    pub fn init(bbox: &gpsdata::ProfileBoundingBox, options: &ProfileOptions) -> ProfileView {
+        let W = options.size.0 as f64;
+        let H = options.size.1 as f64;
         let Mleft = (W * 0.05f64).floor() as f64;
         let Mbottom = (H / 10f64).floor() as f64;
 
@@ -136,7 +134,7 @@ impl ProfileView {
         }
     }
 
-    fn toSD(&self, (x, y): &(f64, f64)) -> (f64, f64) {
+    fn toSD(&self, p: &Point2D) -> Point2D {
         let f = |x: &f64| -> f64 {
             let a = self.WD() as f64 / (self.bboxview.width());
             let b = -self.bboxview.get_xmin() * a;
@@ -147,7 +145,7 @@ impl ProfileView {
             let b = -self.bboxview.get_ymax() * a;
             a * y + b
         };
-        (f(x), g(y))
+        Point2D::new(f(&p.x), g(&p.y))
     }
 
     fn toSL(&self, y: &f64) -> f64 {
@@ -178,12 +176,12 @@ impl ProfileView {
         let step_size = 50f64;
         let eticks = elevation_gain_ticks(track, step_size, range);
         for etick in eticks {
-            let x = etick.0;
-            let xd = self.toSD(&(x, 0f64)).0;
+            let x = etick.x;
+            let xd = self.toSD(&Point2D::new(x, 0f64)).x;
             if xd > self.WD() {
                 break;
             }
-            let meter = etick.1.round() as i32;
+            let meter = etick.y.round() as i32;
             let width = if meter == 0 {
                 0
             } else if meter % 1000 == 0 {
@@ -199,12 +197,12 @@ impl ProfileView {
             if width > 0 {
                 let mut s = stroke(
                     format!("{}", width).as_str(),
-                    (xd, self.HD()),
-                    (xd, self.HD() - self.eticks_height()),
+                    Point2D::new(xd, self.HD()),
+                    Point2D::new(xd, self.HD() - self.eticks_height()),
                 );
                 s = s.set(
                     "id",
-                    format!("elevation-gain-{:.1}-{:.1}", etick.0, etick.1),
+                    format!("elevation-gain-{:.1}-{:.1}", etick.x, etick.y),
                 );
                 self.SD.append(s);
             }
@@ -216,7 +214,7 @@ impl ProfileView {
         for k in 1..eticks.len() {
             let x0 = eticks[k - 1];
             let x1 = eticks[k];
-            let xg = self.toSD(&(x1, 0f64)).0;
+            let xg = self.toSD(&Point2D::new(x1, 0f64)).x;
             if xg > self.WD() {
                 break;
             }
@@ -229,7 +227,7 @@ impl ProfileView {
             //log::trace!("{} {} {}",elevation_gain,dx,slop);
             let mut text = elements::text(
                 format!("{:.1}%", slope_percent).as_str(),
-                (xg - 10.0, self.HD() - 4.0),
+                Point2D::new(xg - 10.0, self.HD() - 4.0),
                 "end",
             );
             text = text.set("font-size", (self.font_size() * 0.8).floor());
@@ -280,14 +278,14 @@ impl ProfileView {
 
     pub fn add_yaxis_labels_overlay(&mut self) {
         for ytick in ticks::yticks(&self.bboxdata, self.H) {
-            let pos = self.toSD(&(self.bboxview.get_xmin(), ytick));
-            let yd = pos.1;
+            let pos = self.toSD(&Point2D::new(self.bboxview.get_xmin(), ytick));
+            let yd = pos.y;
             if yd > self.HD() {
                 break;
             }
             self.SL.append(texty_overlay(
                 format!("{}", ytick.floor()).as_str(),
-                (30f64, yd + 1f64),
+                Point2D::new(30f64, yd + 1f64),
             ));
         }
     }
@@ -297,17 +295,31 @@ impl ProfileView {
         let HD = self.HD();
         let stroke_widths = format!("{}", self.frame_stroke_width);
         let stroke_width = stroke_widths.as_str();
-        self.SD
-            .append(stroke(stroke_width, (0f64, 0f64), (WD, 0f64)));
-        self.SD
-            .append(stroke(stroke_width, (0f64, 0f64), (0f64, HD)));
-        self.SD.append(stroke(stroke_width, (0f64, HD), (WD, HD)));
-        self.SD.append(stroke(stroke_width, (WD, 0f64), (WD, HD)));
+        self.SD.append(stroke(
+            stroke_width,
+            Point2D::new(0f64, 0f64),
+            Point2D::new(WD, 0f64),
+        ));
+        self.SD.append(stroke(
+            stroke_width,
+            Point2D::new(0f64, 0f64),
+            Point2D::new(0f64, HD),
+        ));
+        self.SD.append(stroke(
+            stroke_width,
+            Point2D::new(0f64, HD),
+            Point2D::new(WD, HD),
+        ));
+        self.SD.append(stroke(
+            stroke_width,
+            Point2D::new(WD, 0f64),
+            Point2D::new(WD, HD),
+        ));
 
         self.SD.append(stroke(
             "1",
-            (0f64, HD - self.eticks_height()),
-            (WD, HD - self.eticks_height()),
+            Point2D::new(0f64, HD - self.eticks_height()),
+            Point2D::new(WD, HD - self.eticks_height()),
         ));
 
         let _xticks = ticks::xticks(&self.bboxdata, self.W);
@@ -316,46 +328,53 @@ impl ProfileView {
         let _yticks_dashed = ticks::yticks_dashed(&self.bboxdata, self.H);
 
         for xtick in _xticks {
-            let xg = self.toSD(&(xtick, 0f64)).0;
+            let xg = self.toSD(&Point2D::new(xtick, 0f64)).x;
             if xg > WD {
                 break;
             }
             if xtick < 0f64 {
                 continue;
             }
-            self.SD
-                .append(stroke("1", (xg, 0f64), (xg, self.xticks_end())));
+            self.SD.append(stroke(
+                "1",
+                Point2D::new(xg, 0f64),
+                Point2D::new(xg, self.xticks_end()),
+            ));
             self.SB.append(text_middle(
                 format!("{}", (xtick / 1000f64).floor() as f64).as_str(),
-                (xg, 2f64 + 15f64),
+                Point2D::new(xg, 2f64 + 15f64),
             ));
         }
 
         for xtick in _xticks_dashed {
-            let xd = self.toSD(&(xtick, 0f64)).0;
+            let xd = self.toSD(&Point2D::new(xtick, 0f64)).x;
             if xd > WD {
                 break;
             }
-            self.SD
-                .append(dashed((xd, self.eticks_height()), (xd, self.xticks_end())));
+            self.SD.append(dashed(
+                Point2D::new(xd, self.eticks_height()),
+                Point2D::new(xd, self.xticks_end()),
+            ));
         }
 
         for ytick in &_yticks {
             let yd = self.toSL(ytick);
             self.SL.append(text_end(
                 format!("{}", ytick.floor() as f64).as_str(),
-                (self.Mleft - 5f64, yd + 5f64),
+                Point2D::new(self.Mleft - 5f64, yd + 5f64),
             ));
         }
 
         for ytick in &_yticks {
-            let yd = self.toSD(&(self.bboxview.get_xmin(), *ytick)).1;
-            self.SD.append(stroke("1", (0f64, yd), (WD, yd)));
+            let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
+            self.SD
+                .append(stroke("1", Point2D::new(0f64, yd), Point2D::new(WD, yd)));
         }
 
         for ytick in &_yticks_dashed {
-            let yd = self.toSD(&(self.bboxview.get_xmin(), *ytick)).1;
-            self.SD.append(dashed((0f64, yd), (WD, yd)));
+            let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
+            self.SD
+                .append(dashed(Point2D::new(0f64, yd), Point2D::new(WD, yd)));
         }
     }
 
@@ -370,7 +389,12 @@ impl ProfileView {
             self.SD.append(svgpath);
         }
         let mut points_group = elements::Group::new();
-        for point in &model.points {
+        let placed_points: Vec<PointFeature> = model
+            .placed_indices
+            .iter()
+            .map(|k| model.points[*k].clone())
+            .collect();
+        for point in &placed_points {
             point.render_in_group(&mut points_group);
         }
         self.SD.append(points_group);
@@ -391,18 +415,16 @@ impl ProfileView {
         for k in range.start..range.end {
             //let e = track.wgs84[k].z();
             let e = track.smooth_elevation[k];
-            let (x, y) = (track.distance(k), e);
-            let (xg, yg) = self.toSD(&(x, y));
-            polyline.points.push((xg, yg));
+            let p = self.toSD(&Point2D::new(track.distance(k), e));
+            polyline.points.push(p);
         }
 
         let mut polyline_dp = Polyline::new();
         for k in track.douglas_peucker(10.0, &range) {
             let e = track.wgs84[k].z();
             //let e = track.smooth_elevation[k];
-            let (x, y) = (track.distance(k), e);
-            let (xg, yg) = self.toSD(&(x, y));
-            polyline_dp.points.push((xg, yg));
+            let p = self.toSD(&Point2D::new(track.distance(k), e));
+            polyline_dp.points.push(p);
         }
 
         let kind = self.profile_indication();
@@ -424,109 +446,72 @@ impl ProfileView {
             let trackpoint = &track.wgs84[index];
             // Note: It would be better to use the middle point with the float
             // track_index from track_projection.
-            let x = track.distance(index);
-            let y = trackpoint.z();
-            let (xg, yg) = self.toSD(&(x, y));
+            let p = Point2D::new(track.distance(index), trackpoint.z());
+            let g = self.toSD(&p);
             let n = points.len();
             let id = format!("wp-{}", n);
-            let circle = draw_for_profile(&(xg, yg), id.as_str(), &w.kind());
+            let circle = draw_for_profile(&g, id.as_str(), &w.kind());
             let mut label = label_placement::Label::new();
             match inputpoints[k].short_name() {
                 Some(name) => {
                     label.set_text(name.clone().trim());
                     label.id = format!("wp-{}/text", k);
-                    points.push(PointFeature {
-                        id,
-                        circle,
-                        label,
-                        input_point: Some(w.clone()),
-                    });
                 }
                 None => {
-                    log::error!("missing name for {:?}", inputpoints[k]);
+                    log::info!("missing name for {:?}", inputpoints[k]);
                 }
             }
+            points.push(PointFeature {
+                id,
+                circle,
+                label,
+                input_point: Some(w.clone()),
+                link: None,
+            });
         }
+        assert_eq!(points.len(), inputpoints.len());
 
         let generator = Box::new(ProfileGenerator);
-        let force = false;
-        let result = label_placement::place_labels_gen(
+        log::trace!("profile: place labels");
+        let result = label_placement::place_labels(
             &points,
             &*generator,
-            &BoundingBox::init((0f64, 0f64), (self.WD(), self.HD() - self.eticks_height())),
+            &BoundingBox::init(
+                Point2D::new(0f64, 0f64),
+                Point2D::new(self.WD(), self.HD() - self.eticks_height()),
+            ),
             &polyline,
-            force,
+            &self.options.max_area_ratio,
         );
-        let placed_indices = result.apply(&mut points, force);
-        let placed_points = placed_indices.iter().map(|k| points[*k].clone()).collect();
+        log::trace!("profile: apply placement");
+        let placed_indices = result.apply(&mut points);
         self.model = Some(ProfileModel {
             polylines: vec![polyline], // , polyline_dp
-            points: placed_points,
+            points: points.clone(),
+            placed_indices,
         });
     }
 }
 
 struct ProfileGenerator;
 
-fn cardinal_boxes(center: &(f64, f64), width: &f64, height: &f64) -> Vec<LabelBoundingBox> {
-    let mut ret = Vec::new();
-    let epsilon = 3f64;
-    let B1 = LabelBoundingBox::new_blwh((center.0 + epsilon, center.1 - epsilon), *width, *height);
-    ret.push(B1);
-    let B2 = LabelBoundingBox::new_brwh((center.0 - epsilon, center.1 - epsilon), *width, *height);
-    ret.push(B2);
-    let B3 = LabelBoundingBox::new_trwh((center.0 - epsilon, center.1 + epsilon), *width, *height);
-    ret.push(B3);
-    let B4 = LabelBoundingBox::new_tlwh((center.0 + epsilon, center.1 + epsilon), *width, *height);
-    ret.push(B4);
-
-    let B5 = LabelBoundingBox::new_blwh(
-        (center.0 + epsilon, center.1 + height / 2.0),
-        *width,
-        *height,
-    );
-    ret.push(B5);
-    let B6 = LabelBoundingBox::new_blwh(
-        (center.0 - width / 2.0, center.1 - epsilon),
-        *width,
-        *height,
-    );
-    ret.push(B6);
-    let B7 = LabelBoundingBox::new_brwh(
-        (center.0 - epsilon, center.1 + height / 2.0),
-        *width,
-        *height,
-    );
-    ret.push(B7);
-
-    let B8 = LabelBoundingBox::new_tlwh(
-        (center.0 - width / 2.0, center.1 + epsilon),
-        *width,
-        *height,
-    );
-    ret.push(B8);
-
-    ret
-}
-
 impl ProfileGenerator {
-    fn generate_osm(&self, point: &PointFeature) -> Vec<LabelBoundingBox> {
-        let mut ret = Vec::new();
+    fn generate_one(point: &PointFeature) -> Vec<LabelBoundingBox> {
+        assert!(point.input_point().is_some());
+        let mut ret =
+            label_placement::cardinal_boxes(&point.center(), &point.width(), &point.height());
         let width = point.width();
         let height = point.height();
-
         let center = point.center();
-        ret.extend_from_slice(&cardinal_boxes(&center, &width, &height));
-
         let Btop = LabelBoundingBox::new_blwh(
-            (center.0 - width / 2.0, (center.1 - 20.0).max(height)),
+            Point2D::new(center.x - width / 2.0, (center.y - 20.0).max(height)),
             width,
             height,
         );
         ret.push(Btop);
-        for n in [1, 2, 3] {
+        for n in [1, 3, 5, 7, 9] {
             let Btop2 = LabelBoundingBox::new_blwh(
-                (center.0 - width / 2.0, (n as f64) * height),
+                Point2D::new(center.x - width / 2.0, (n as f64) * height),
                 width,
                 height,
             );
@@ -534,94 +519,44 @@ impl ProfileGenerator {
         }
 
         let Bbot = LabelBoundingBox::new_blwh(
-            (center.0 - width / 2.0, (center.1 + 20.0).max(height)),
+            Point2D::new(center.x - width / 2.0, (center.y + 20.0).max(height)),
             width,
             height,
         );
         ret.push(Bbot);
         ret
     }
-    fn generate_user_step(&self, point: &PointFeature) -> Vec<LabelBoundingBox> {
-        let mut ret = Vec::new();
-        let width = point.width();
-        let height = point.height();
-        let dtarget_min = 1f64;
-        let dtarget_max = 20f64;
-        let d0 = 2f64 * dtarget_max;
-        let (cx, cy) = point.center();
-
-        let xmin = cx - width;
-        let (ymin, ymax) = (cy - d0 - height, cy + d0);
-        let dp = 5f64;
-        let countx = (width / dp).ceil() as i32;
-        let county = ((ymax - ymin) / dp).ceil() as i32;
-        let dx = width / (countx as f64);
-        let dy = dp;
-        for nx in 0..countx {
-            for ny in 0..county {
-                let tl = (xmin + nx as f64 * dx, ymin + ny as f64 * dy);
-                let bb = LabelBoundingBox::new_blwh(tl, width, height);
-                if bb.contains((cx, cy)) {
-                    continue;
-                }
-                if bb.distance((cx, cy)) < dtarget_min {
-                    continue;
-                }
-                ret.push(bb);
-            }
-        }
-        ret
-    }
 }
 
 impl CandidatesGenerator for ProfileGenerator {
-    fn generate(&self, point: &PointFeature) -> Vec<LabelBoundingBox> {
-        assert!(point.input_point().is_some());
-        match point.input_point().unwrap().kind() {
-            InputType::GPX => self.generate_user_step(point),
-            InputType::OSM { kind: _ } => self.generate_osm(point),
-            InputType::UserStep => self.generate_user_step(point),
-        }
+    fn generate(
+        &self,
+        points: &Vec<PointFeature>,
+        subset: &Vec<usize>,
+        obstacles: &Obstacles,
+    ) -> BTreeMap<usize, Candidates> {
+        label_placement::candidate::utils::generate(Self::generate_one, points, subset, obstacles)
     }
-    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<BTreeSet<usize>> {
-        let mut user1 = BTreeSet::new();
-        let mut user2 = BTreeSet::new();
-        let mut osm = BTreeSet::new();
-        let mut gpx = BTreeSet::new();
-        for k in 0..points.len() {
-            let w = &points[k];
-            let wi = w.input_point().unwrap();
-            match wi.kind() {
-                InputType::GPX => {
-                    gpx.insert(k);
-                }
-                InputType::OSM { kind: _ } => {
-                    osm.insert(k);
-                }
-                InputType::UserStep => {
-                    if wi.name().unwrap_or("".to_string()).ends_with("0") {
-                        user1.insert(k);
-                    } else {
-                        user2.insert(k);
-                    }
-                }
-            }
-        }
-        vec![gpx, user1, user2, osm]
+
+    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<Vec<usize>> {
+        label_placement::prioritize::profile(points)
     }
 }
 
-pub fn profile(
-    track: &Track,
-    inputpoints: &Vec<InputPoint>,
-    segment: &segment::Segment,
-    options: &ProfileOptions,
-    W: i32,
-    H: i32,
-) -> String {
-    let mut view = ProfileView::init(&segment.profile_bbox, options, W, H);
+pub struct ProfileRenderResult {
+    pub svg: String,
+    pub points_indices: Vec<usize>,
+}
+
+pub fn profile(segment: &segment::Segment) -> ProfileRenderResult {
+    let profile_bbox = ProfileBoundingBox::from_track(&segment.track, &segment.range);
+    let mut view = ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
     view.add_canvas();
-    view.add_track(&track, inputpoints);
+    view.add_track(&segment.track, &segment.profile_points());
     view.render_model();
-    view.render()
+    let svg = view.render();
+    ProfileRenderResult {
+        svg,
+        points_indices: view.model.as_ref().unwrap().placed_indices.clone(),
+    }
 }

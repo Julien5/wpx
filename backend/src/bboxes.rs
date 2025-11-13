@@ -2,13 +2,14 @@ use std::{cmp::Ordering, collections::BTreeMap};
 
 use crate::{
     bbox::*,
+    math::Point2D,
     mercator::{EuclideanBoundingBox, MercatorPoint},
 };
 
 /*
 pub fn _enlarge(bbox: &mut BoundingBox, epsilon: &f64) {
-    bbox._min = (bbox._min.0 - epsilon, bbox._min.1 - epsilon);
-    bbox._max = (bbox._max.0 + epsilon, bbox._max.1 + epsilon);
+    bbox._min = (bbox._min.0 - epsilon, bbox._min.y - epsilon);
+    bbox._max = (bbox._max.0 + epsilon, bbox._max.y + epsilon);
 }
 */
 
@@ -21,19 +22,19 @@ fn ceil_snap(x: &f64, step: &f64) -> f64 {
 }
 
 pub fn snap(bbox: &mut BoundingBox, step: &f64) {
-    bbox.set_min((
-        floor_snap(&bbox.get_min().0, step),
-        floor_snap(&bbox.get_min().1, step),
+    bbox.set_min(Point2D::new(
+        floor_snap(&bbox.get_min().x, step),
+        floor_snap(&bbox.get_min().y, step),
     ));
-    bbox.set_max((
-        ceil_snap(&bbox.get_max().0, step),
-        ceil_snap(&bbox.get_max().1, step),
+    bbox.set_max(Point2D::new(
+        ceil_snap(&bbox.get_max().x, step),
+        ceil_snap(&bbox.get_max().y, step),
     ));
 }
 
 pub fn snap_point(p: &MercatorPoint, step: &f64) -> EuclideanBoundingBox {
-    let min = (floor_snap(&p.x(), step), floor_snap(&p.y(), step));
-    let max = (ceil_snap(&p.x(), step), ceil_snap(&p.y(), step));
+    let min = Point2D::new(floor_snap(&p.x(), step), floor_snap(&p.y(), step));
+    let max = Point2D::new(ceil_snap(&p.x(), step), ceil_snap(&p.y(), step));
     EuclideanBoundingBox::init(min, max)
 }
 
@@ -94,8 +95,8 @@ pub fn split(orig: &BoundingBox, step: &f64) -> BoundingBoxes {
     let mut ret = BoundingBoxes::new();
     for kx in 0..nx {
         for ky in 0..ny {
-            let min = (min0.0 + (kx as f64) * step, min0.1 + (ky as f64) * step);
-            let max = (min.0 + step, min.1 + step);
+            let min = Point2D::new(min0.x + (kx as f64) * step, min0.y + (ky as f64) * step);
+            let max = Point2D::new(min.x + step, min.y + step);
             let index = Index {
                 index: (kx, ky),
                 size: (nx, ny),
@@ -107,6 +108,7 @@ pub fn split(orig: &BoundingBox, step: &f64) -> BoundingBoxes {
 }
 
 pub fn bounding_box(boxes: &Vec<BoundingBox>) -> BoundingBox {
+    assert!(!boxes.is_empty());
     let mut ret = BoundingBox::new();
     for b in boxes {
         ret.update(&b.get_min());

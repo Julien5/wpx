@@ -23,9 +23,9 @@ pub fn xticks_all(bbox: &ProfileBoundingBox, W: f64) -> Vec<f64> {
     let mut ret = Vec::new();
     let _D = bbox.width();
     let delta = xtick_delta(bbox, W);
-    let mut start = snap_floor(bbox.get_min().0, delta);
+    let mut start = snap_floor(bbox.get_min().x, delta);
     start = start.max(0f64);
-    let stop = snap_ceil(bbox.get_max().0, delta);
+    let stop = snap_ceil(bbox.get_max().x, delta);
     let mut p = start;
     while p <= stop {
         ret.push(p);
@@ -70,9 +70,9 @@ fn ytick_delta(height: &f64, H: f64) -> f64 {
 fn yticks_all(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
     let mut ret = Vec::new();
     let delta = ytick_delta(&bbox.height().max(750f64), H);
-    let mut start = snap_floor(bbox.get_min().1, delta) - delta;
+    let mut start = snap_floor(bbox.get_min().y, delta) - delta;
     start = start.max(0f64);
-    let mut stop = snap_ceil(bbox.get_max().1, delta) + 2f64 * delta;
+    let mut stop = snap_ceil(bbox.get_max().y, delta) + 2f64 * delta;
     while stop - start < 750f64 {
         start -= delta;
         start = start.max(0f64);
