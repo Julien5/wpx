@@ -7,9 +7,9 @@ use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::candidate::Candidates;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::{self, *};
-use crate::math::Point2D;
+use crate::math::{distance2, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
-use crate::segment;
+use crate::segment::{self, Segment};
 use crate::track::Track;
 
 use svg::Document;
@@ -45,9 +45,7 @@ use crate::label_placement::set_attr;
 use crate::label_placement::Attributes;
 use crate::label_placement::PointFeature;
 
-struct MapGenerator {
-    pub profile_indices: Vec<usize>,
-}
+struct MapGenerator {}
 
 impl MapGenerator {
     fn generate_one(point: &PointFeature) -> Vec<LabelBoundingBox> {
@@ -59,6 +57,10 @@ impl MapGenerator {
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 0));
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 2));
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 4));
+        ret.sort_by_key(|candidate| {
+            let p = candidate.bbox.project_on_border(&point.center());
+            (distance2(&point.center(), &p) * 100f64).floor() as i64
+        });
         ret
     }
 }
@@ -67,13 +69,12 @@ impl CandidatesGenerator for MapGenerator {
     fn generate(
         &self,
         points: &Vec<PointFeature>,
-        subset: &Vec<usize>,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates> {
-        label_placement::candidate::utils::generate(Self::generate_one, points, subset, obstacles)
+        label_placement::candidate::utils::generate(Self::generate_one, points, obstacles)
     }
-    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<Vec<usize>> {
-        label_placement::prioritize::map(points, self.profile_indices.clone())
+    fn prioritize(&self, segment: &Segment) -> Vec<Vec<usize>> {
+        label_placement::prioritize::map(segment)
     }
 }
 
@@ -126,42 +127,43 @@ impl MapData {
         set_attr(&mut document, "width", format!("{}", width).as_str());
         set_attr(&mut document, "height", format!("{}", height).as_str());
 
-        let mut points = Vec::new();
-        let inputpoints = segment.map_points();
-        for k in 0..inputpoints.len() {
-            let w = &inputpoints[k];
-            let euclidean = w.euclidian.clone();
+        let generator = Box::new(MapGenerator {});
+        let packets = generator.prioritize(&segment);
+        let mut feature_packets = Vec::new();
+        for packet in packets {
+            let mut feature_packet = Vec::new();
+            for k in packet {
+                let w = &segment.points[k];
+                let euclidean = w.euclidian.clone();
 
-            let p = to_graphics_coordinates(&bbox, &euclidean, width, height, margin);
-            let n = points.len();
-            let id = format!("wp-{}/circle", n);
-            let circle = draw_for_map(&p, id.as_str(), &w.kind());
-            let mut label = Label::new();
-            match w.short_name() {
-                Some(text) => {
-                    label.set_text(text.clone().trim());
+                let p = to_graphics_coordinates(&bbox, &euclidean, width, height, margin);
+                let id = format!("wp-{}/circle", k);
+                let circle = draw_for_map(&p, id.as_str(), &w.kind());
+                let mut label = Label::new();
+                match w.short_name() {
+                    Some(text) => {
+                        label.set_text(text.clone().trim());
+                    }
+                    None => {
+                        log::error!("should not render a point without name");
+                    }
                 }
-                None => {
-                    log::error!("should not render a point without name");
-                }
+                label.id = format!("wp-{}/text", k);
+                feature_packet.push(PointFeature {
+                    id,
+                    circle,
+                    label,
+                    input_point: Some(w.clone()),
+                    link: None,
+                    point_index: k,
+                });
             }
-            label.id = format!("wp-{}/text", k);
-            points.push(PointFeature {
-                id,
-                circle,
-                label,
-                input_point: Some(w.clone()),
-                link: None,
-            });
+            feature_packets.push(feature_packet);
         }
-
-        let generator = Box::new(MapGenerator {
-            profile_indices: segment.render_profile().points_indices.clone(),
-        });
 
         log::trace!("map: place labels");
         let result = crate::label_placement::place_labels(
-            &points,
+            &feature_packets,
             &*generator,
             &BoundingBox::init(
                 Point2D::new(0f64, 0f64),
@@ -171,11 +173,10 @@ impl MapData {
             &segment.parameters.map_options.max_area_ratio,
         );
         log::trace!("map: apply placement");
-        let placed_indices = result.apply(&mut points);
-        let placed_points = placed_indices.iter().map(|k| points[*k].clone()).collect();
+        let features = result.apply(&mut feature_packets);
         MapData {
             polyline,
-            points: placed_points,
+            points: features,
             document,
             debug: result.debug,
         }
@@ -248,6 +249,7 @@ mod tests {
             },
             input_point: None,
             link: None,
+            point_index: 0,
         };
         let candidates = MapGenerator::generate_one(&target);
         let mut found = false;

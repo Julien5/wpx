@@ -74,18 +74,20 @@ impl Graph {
 
     pub fn select(&mut self, a: &Node, selected: &Candidate) {
         // for all b connected to a
-        assert!(self
+        let index = self
             .candidates
             .get(a)
             .unwrap()
             .iter()
             .position(|c| c == selected)
-            .is_some());
+            .unwrap();
         let feature = &self.features[*a];
         log::trace!(
-            "selected {} with area {:.1}",
+            "selected {} with area {:.1} [candidate {}] [{}]",
             feature.text(),
-            feature.area()
+            feature.area(),
+            index,
+            selected.bbox().bbox
         );
         let neighbors = self.map.get(a).unwrap().clone();
         for b in neighbors {
@@ -218,16 +220,9 @@ impl Graph {
                 if candidates.is_empty() {
                     return None;
                 }
-                let mut sorted: Vec<_> = (0..candidates.len()).collect();
-                //log::trace!("sort candidates..");
-                sorted.sort_by(|i, j| {
-                    let ci = &candidates[*i];
-                    let cj = &candidates[*j];
-                    assert!(ci.partial_cmp(cj).is_some());
-                    ci.partial_cmp(cj).unwrap()
-                });
+                // note: the candidates are sorted
                 //log::trace!("select one candidate");
-                for index in 0..sorted.len() {
+                for index in 0..candidates.len() {
                     match self.candidate_blocks_any(node, index) {
                         Some(_other_node) => {
                             /*log::trace!(
@@ -315,6 +310,7 @@ mod tests {
             },
             input_point: None,
             link: None,
+            point_index: 0,
         };
         graph.features = vec![f.clone(), f.clone(), f.clone(), f.clone()];
 

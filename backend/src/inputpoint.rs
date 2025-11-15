@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
+    bboxes,
     mercator::{EuclideanBoundingBox, MercatorPoint},
     track::Track,
     waypoint::{Waypoint, WaypointOrigin},
@@ -344,6 +345,13 @@ impl InputPointMap {
             }
         }
     }
+    pub fn sort_and_insert(&mut self, p: &Vec<InputPoint>) {
+        for w in p {
+            let euc = &w.euclidian;
+            let bbox = bboxes::snap_point(euc, &bboxes::BBOXWIDTH);
+            self.insert_point(&bbox, &w);
+        }
+    }
     pub fn extend(&mut self, other: &Self) {
         for (bbox, points) in &other.map {
             self.insert_points(bbox, points);
@@ -358,6 +366,11 @@ impl InputPointMap {
     }
     pub fn get(&self, bbox: &EuclideanBoundingBox) -> Option<&Vec<InputPoint>> {
         self.map.get(bbox)
+    }
+    pub fn retain_points(&mut self, predicate: impl Fn(&InputPoint) -> bool) {
+        for (_bbox, points) in &mut self.map {
+            points.retain(|w| predicate(w));
+        }
     }
 }
 

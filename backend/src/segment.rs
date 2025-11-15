@@ -7,7 +7,7 @@ use crate::mercator::MercatorPoint;
 use crate::parameters::Parameters;
 use crate::profile::ProfileRenderResult;
 use crate::track::{self, Track};
-use crate::{bboxes, locate, make_points, profile, svgmap};
+use crate::{bboxes, locate, profile, svgmap};
 
 #[derive(Clone)]
 pub struct Segment {
@@ -143,32 +143,7 @@ impl Segment {
                 ret.push(c);
             }
         }
-        for p in &ret {
-            log::trace!(
-                "copy-segment-points points {} {:?}",
-                p.name().unwrap_or("".to_string()),
-                p.kind()
-            );
-        }
         ret
-    }
-
-    fn _distance_to_track(p: &InputPoint) -> f64 {
-        match &p.track_projection {
-            Some(proj) => proj.track_distance,
-            None => {
-                assert!(false);
-                f64::MAX
-            }
-        }
-    }
-
-    pub fn profile_points(&self) -> Vec<InputPoint> {
-        make_points::profile_points(&self)
-    }
-
-    pub fn map_points(&self) -> Vec<InputPoint> {
-        make_points::map_points(&self)
     }
 
     pub fn render_map(&self) -> String {

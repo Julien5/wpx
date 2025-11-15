@@ -34,7 +34,6 @@ impl Candidate {
         }
         false
     }
-
     pub fn bbox(&self) -> &LabelBoundingBox {
         &self._bbox
     }
@@ -55,6 +54,7 @@ fn cat(x: f64) -> f64 {
 
 use std::cmp::Ordering;
 impl PartialOrd for Candidate {
+    // ordering taking the distance to target and the distance to other features.
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         let dtarget1 = cat(self._dtarget);
         let dtarget2 = cat(other._dtarget);
@@ -77,20 +77,18 @@ impl Ord for Candidate {
 pub type Candidates = Vec<Candidate>;
 
 pub mod utils {
-    use std::cmp::Ordering;
-
     use crate::label_placement::*;
 
     fn distance2_to_others(
         bbox: &LabelBoundingBox,
+        target: &PointFeature,
         points: &Vec<PointFeature>,
-        k: usize,
         obstacles: &Obstacles,
     ) -> f64 {
         let mut ret = f64::MAX;
         for l in 0..points.len() {
             let other = &points[l];
-            if l == k {
+            if other.point_index == target.point_index {
                 continue;
             }
             let other_center = &other.circle.center;
@@ -111,13 +109,12 @@ pub mod utils {
 
     pub fn make_candidate(
         bbox: &LabelBoundingBox,
-        target: &Point2D,
+        target: &PointFeature,
         points: &Vec<PointFeature>,
-        k: usize,
         obstacles: &Obstacles,
     ) -> Candidate {
-        let _dtarget = bbox.bbox.distance2_to_point(target);
-        let _dothers = distance2_to_others(bbox, &points, k, obstacles);
+        let _dtarget = bbox.bbox.distance2_to_point(&target.center());
+        let _dothers = distance2_to_others(bbox, &target, &points, obstacles);
         Candidate::new(bbox, &_dtarget, &_dothers)
     }
 
@@ -145,23 +142,22 @@ pub mod utils {
 
     fn generate_all_candidates(
         gen: fn(&PointFeature) -> Vec<LabelBoundingBox>,
-        points: &Vec<PointFeature>,
-        k: usize,
+        feature: &PointFeature,
+        all: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> Candidates {
-        if points[k].text().is_empty() {
+        if feature.text().is_empty() {
             return Candidates::new();
         }
-        let target = &points[k];
+        let target = &feature;
         let mut ret = Candidates::new();
-        let targetpoint = &target.circle.center;
         let available_area = obstacles.available_area();
         if target.area() > available_area {
             log::debug!("no place left for {}", target.text());
             return ret;
         }
         for bbox in gen(target) {
-            let candidate = make_candidate(&bbox, &targetpoint, points, k, obstacles);
+            let candidate = make_candidate(&bbox, &feature, &all, obstacles);
             if hit(&candidate, obstacles) {
                 continue;
             }
@@ -172,23 +168,22 @@ pub mod utils {
 
     pub fn generate(
         gen_one: fn(&PointFeature) -> Vec<LabelBoundingBox>,
-        points: &Vec<PointFeature>,
-        subset: &Vec<usize>,
+        features: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates> {
         let mut ret = BTreeMap::new();
-        for k in subset {
-            let mut candidates = generate_all_candidates(gen_one, points, *k, obstacles);
+        for k in 0..features.len() {
+            let feature = &features[k];
+            let candidates = generate_all_candidates(gen_one, feature, features, obstacles);
             if candidates.is_empty() {
                 log::trace!(
                     "[0] [{}] => {} candidates",
-                    points[*k].text(),
+                    feature.text(),
                     candidates.len()
                 );
                 // force one ?
             }
-            candidates.sort_by(|ci, cj| ci.partial_cmp(cj).unwrap_or(Ordering::Equal));
-            ret.insert(*k, candidates);
+            ret.insert(k, candidates);
         }
         ret
     }

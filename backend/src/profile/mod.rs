@@ -6,16 +6,16 @@ use std::collections::BTreeMap;
 
 use svg::Node;
 
+use crate::backend::Segment;
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
-use crate::inputpoint::InputPoint;
 use crate::label_placement;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::candidate::*;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::*;
-use crate::math::Point2D;
+use crate::math::{distance2, Point2D};
 use crate::parameters::{ProfileIndication, ProfileOptions};
 use crate::segment;
 use crate::track::Track;
@@ -24,7 +24,6 @@ use elements::*;
 struct ProfileModel {
     polylines: Vec<Polyline>,
     points: Vec<PointFeature>,
-    placed_indices: Vec<usize>,
 }
 
 pub struct ProfileView {
@@ -389,23 +388,19 @@ impl ProfileView {
             self.SD.append(svgpath);
         }
         let mut points_group = elements::Group::new();
-        let placed_points: Vec<PointFeature> = model
-            .placed_indices
-            .iter()
-            .map(|k| model.points[*k].clone())
-            .collect();
-        for point in &placed_points {
+        for point in &model.points {
             point.render_in_group(&mut points_group);
         }
         self.SD.append(points_group);
     }
 
-    pub fn add_track(&mut self, track: &Track, inputpoints: &Vec<InputPoint>) {
+    pub fn add_track(&mut self, segment: &Segment) {
         let bbox = &self.bboxview;
 
         /*if render_device != RenderDevice::PDF {
-            bbox.min.0 = bbox.min.0.max(0f64);
+                bbox.min.0 = bbox.min.0.max(0f64);
         }*/
+        let track = &segment.track;
 
         let mut polyline = Polyline::new();
         let range = std::ops::Range {
@@ -438,43 +433,47 @@ impl ProfileView {
         );
         set_attr(&mut document, "width", format!("{}", self.WD()).as_str());
         set_attr(&mut document, "height", format!("{}", self.HD()).as_str());
-
-        let mut points = Vec::new();
-        for k in 0..inputpoints.len() {
-            let w = &inputpoints[k];
-            let index = w.round_track_index().unwrap();
-            let trackpoint = &track.wgs84[index];
-            // Note: It would be better to use the middle point with the float
-            // track_index from track_projection.
-            let p = Point2D::new(track.distance(index), trackpoint.z());
-            let g = self.toSD(&p);
-            let n = points.len();
-            let id = format!("wp-{}", n);
-            let circle = draw_for_profile(&g, id.as_str(), &w.kind());
-            let mut label = label_placement::Label::new();
-            match inputpoints[k].short_name() {
-                Some(name) => {
-                    label.set_text(name.clone().trim());
-                    label.id = format!("wp-{}/text", k);
-                }
-                None => {
-                    log::info!("missing name for {:?}", inputpoints[k]);
-                }
-            }
-            points.push(PointFeature {
-                id,
-                circle,
-                label,
-                input_point: Some(w.clone()),
-                link: None,
-            });
-        }
-        assert_eq!(points.len(), inputpoints.len());
-
         let generator = Box::new(ProfileGenerator);
+        // make features packets
+        let packets = generator.prioritize(&segment);
+        let mut feature_packets = Vec::new();
+        for packet in packets {
+            let mut feature_packet = Vec::new();
+            for k in packet {
+                let w = &segment.points[k];
+                let index = w.round_track_index().unwrap();
+                let trackpoint = &track.wgs84[index];
+                // Note: It would be better to use the middle point with the float
+                // track_index from track_projection.
+                let p = Point2D::new(track.distance(index), trackpoint.z());
+                let g = self.toSD(&p);
+                let id = format!("wp-{}", k);
+                let circle = draw_for_profile(&g, id.as_str(), &w.kind());
+                let mut label = label_placement::Label::new();
+                match w.short_name() {
+                    Some(name) => {
+                        label.set_text(name.clone().trim());
+                        label.id = format!("wp-{}/text", k);
+                    }
+                    None => {
+                        log::debug!("missing name for point index {k}");
+                    }
+                }
+                feature_packet.push(PointFeature {
+                    id,
+                    circle,
+                    label,
+                    input_point: Some(w.clone()),
+                    link: None,
+                    point_index: k,
+                });
+            }
+            feature_packets.push(feature_packet);
+        }
+
         log::trace!("profile: place labels");
         let result = label_placement::place_labels(
-            &points,
+            &feature_packets,
             &*generator,
             &BoundingBox::init(
                 Point2D::new(0f64, 0f64),
@@ -484,11 +483,10 @@ impl ProfileView {
             &self.options.max_area_ratio,
         );
         log::trace!("profile: apply placement");
-        let placed_indices = result.apply(&mut points);
+        let features = result.apply(&mut feature_packets);
         self.model = Some(ProfileModel {
             polylines: vec![polyline], // , polyline_dp
-            points: points.clone(),
-            placed_indices,
+            points: features,
         });
     }
 }
@@ -524,6 +522,10 @@ impl ProfileGenerator {
             height,
         );
         ret.push(Bbot);
+        ret.sort_by_key(|candidate| {
+            let p = candidate.bbox.project_on_border(&point.center());
+            (distance2(&point.center(), &p) * 100f64).floor() as i64
+        });
         ret
     }
 }
@@ -532,31 +534,26 @@ impl CandidatesGenerator for ProfileGenerator {
     fn generate(
         &self,
         points: &Vec<PointFeature>,
-        subset: &Vec<usize>,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates> {
-        label_placement::candidate::utils::generate(Self::generate_one, points, subset, obstacles)
+        label_placement::candidate::utils::generate(Self::generate_one, points, obstacles)
     }
 
-    fn prioritize(&self, points: &Vec<PointFeature>) -> Vec<Vec<usize>> {
-        label_placement::prioritize::profile(points)
+    fn prioritize(&self, segment: &Segment) -> Vec<Vec<usize>> {
+        label_placement::prioritize::profile(&segment)
     }
 }
 
 pub struct ProfileRenderResult {
     pub svg: String,
-    pub points_indices: Vec<usize>,
 }
 
 pub fn profile(segment: &segment::Segment) -> ProfileRenderResult {
     let profile_bbox = ProfileBoundingBox::from_track(&segment.track, &segment.range);
     let mut view = ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
     view.add_canvas();
-    view.add_track(&segment.track, &segment.profile_points());
+    view.add_track(&segment);
     view.render_model();
     let svg = view.render();
-    ProfileRenderResult {
-        svg,
-        points_indices: view.model.as_ref().unwrap().placed_indices.clone(),
-    }
+    ProfileRenderResult { svg }
 }

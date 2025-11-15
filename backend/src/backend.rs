@@ -7,6 +7,7 @@ use crate::inputpoint::InputPoint;
 use crate::inputpoint::InputPointMap;
 use crate::inputpoint::InputType;
 use crate::locate;
+use crate::make_points;
 use crate::osm;
 use crate::parameters::Parameters;
 use crate::pdf;
@@ -21,7 +22,6 @@ pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
 
 pub struct BackendData {
-    pub inputpoints_tree: locate::IndexedPointsTree,
     pub parameters: Parameters,
     pub track: std::sync::Arc<track::Track>,
     pub inputpoints: InputPointMap,
@@ -112,9 +112,7 @@ impl Backend {
         // project::project_on_track::<InputPoint>(&track, &mut inputpoints.points);
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
-        let pointstree = locate::IndexedPointsTree::from_points(&inputpoints.as_vector());
         let data = BackendData {
-            inputpoints_tree: pointstree,
             track: std::sync::Arc::new(gpxdata.track),
             inputpoints,
             parameters,
@@ -158,11 +156,15 @@ impl BackendData {
         ret
     }
     pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
-        let mut points = segment.profile_points();
-        if points.iter().any(|w| w.kind() == InputType::GPX) {
-            points.retain(|w| w.kind() == InputType::GPX);
+        let mut points: Vec<_> = (0..segment.points.len()).collect();
+        if points
+            .iter()
+            .any(|k| segment.points[*k].kind() == InputType::GPX)
+        {
+            points.retain(|k| segment.points[*k].kind() == InputType::GPX);
         }
-        self.export_points(&points)
+        let p = points.iter().map(|k| segment.points[*k].clone()).collect();
+        self.export_points(&p)
     }
 
     pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {
@@ -170,6 +172,12 @@ impl BackendData {
         if self.parameters.segment_overlap > self.parameters.segment_length {
             assert!(false);
         }
+        // remove old user points
+        self.inputpoints
+            .retain_points(|w| w.kind() != InputType::UserStep);
+        // put the new ones.
+        self.inputpoints
+            .sort_and_insert(&make_points::user_points(&self.track, &self.parameters));
     }
 
     pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {
@@ -284,6 +292,10 @@ mod tests {
 
     #[tokio::test]
     async fn svg_profile() {
+        let _ = env_logger::try_init();
+        log::info!("info");
+        log::warn!("warn");
+        log::trace!("trace");
         let mut backend = Backend::make();
         backend
             .load_filename("data/blackforest.gpx")
@@ -298,7 +310,8 @@ mod tests {
 
         let segments = backend.segments();
         let mut ok_count = 0;
-        for segment in &segments {
+        for k in 0..segments.len() {
+            let segment = &segments[k];
             let rendered_profile = segment.render_profile();
             let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
             println!("test {}", reffilename);

@@ -28,7 +28,12 @@ function segment-overlap() {
 function pdf() {
 	echo "args:"$@
 	file=data/blackforest.gpx
-	if [ -f "$1" ]; then
+	cmd=run
+	if [ ! -z "$1" ] && [ "$1" = "flamegraph" ]; then
+		cmd=flamegraph
+		shift
+	fi
+	if [ ! -z "$1" ] && [ -f "$1" ]; then
 	   file="$1"
 	   shift
 	fi
@@ -39,7 +44,7 @@ function pdf() {
 	set -x
 	rm -Rf /tmp/wpx
 	mkdir /tmp/wpx
-	time cargo run -- \
+	time cargo ${cmd} -- \
 		  --output-directory /tmp/wpx/ \
 		  --debug true \
 		  --step-elevation-gain 100 \
@@ -61,29 +66,21 @@ function filter-log {
 	mv /tmp/tmp ${filename}
 }
 
-function run-test() {
-	rm -f /tmp/out.*.log
-	cargo build
-	for n in $(seq 1 5); do
-		echo n=${n}
-		rm -f /tmp/map-*.svg
-		cargo run -- \
-			  --output-directory /tmp/ \
-			  --debug true \
-			  --interval-length 180 \
-			  data/ref/roland.gpx &> /tmp/out.${n}.log
-		filter-log /tmp/out.${n}.log
-		mv /tmp/document.typst /tmp/document.${n}.typst
-		mv /tmp/map-0.svg /tmp/map.${n}.svg
-		${TYPST} compile /tmp/document.${n}.typst 
-	done
-	md5sum /tmp/out.*.log
-	md5sum /tmp/map.*.svg 
+function runtest() {
+	export RUST_LOG=trace
+	# export RUST_BACKTRACE=1
+	cargo test $@ -- --nocapture
 }
 
 function main() {
-	export RUST_BACKTRACE=1
-	pdf "$@"
+	if [ ! -z "$1" ] && [ $1 = "test" ]; then
+		shift 
+		runtest "$@"
+		return;
+	else
+		export RUST_BACKTRACE=1
+		pdf "$@"
+	fi
 	# run-test
 }
 

@@ -1,10 +1,10 @@
 use crate::{
-    backend::Segment,
     inputpoint::{InputPoint, InputType, OSM},
+    parameters::Parameters,
     track::Track,
 };
 
-fn is_close_to_track(w: &InputPoint) -> bool {
+pub fn is_close_to_track(w: &InputPoint) -> bool {
     let d = w.track_projection.as_ref().unwrap().track_distance;
     match w.kind() {
         InputType::OSM { kind } => {
@@ -48,16 +48,6 @@ fn profile_points_elevation_gain_track(track: &Track, d: &f64) -> Vec<InputPoint
     ret
 }
 
-fn profile_points_elevation_gain(segment: &Segment, d: &f64) -> Vec<InputPoint> {
-    let mut ret = profile_points_elevation_gain_track(&segment.track, &d);
-    ret.retain(|w| {
-        segment
-            .range
-            .contains(&w.track_projection.as_ref().unwrap().track_index)
-    });
-    ret
-}
-
 fn profile_points_distance_track(track: &Track, d: &f64) -> Vec<InputPoint> {
     let mut ret = Vec::new();
     let mut prev = 0;
@@ -84,42 +74,20 @@ fn profile_points_distance_track(track: &Track, d: &f64) -> Vec<InputPoint> {
     ret
 }
 
-fn profile_points_distance(segment: &Segment, d: &f64) -> Vec<InputPoint> {
-    let mut ret = profile_points_distance_track(&segment.track, d);
-    ret.retain(|w| {
-        segment
-            .range
-            .contains(&w.track_projection.as_ref().unwrap().track_index)
-    });
-    ret
-}
-
-fn user_points(segment: &Segment) -> Vec<InputPoint> {
+pub fn user_points(track: &Track, parameters: &Parameters) -> Vec<InputPoint> {
     let mut ret = Vec::new();
-    match segment.parameters.profile_options.step_distance {
+    match parameters.profile_options.step_distance {
         None => {}
         Some(d) => {
-            ret.extend_from_slice(&profile_points_distance(segment, &d));
+            ret.extend_from_slice(&profile_points_distance_track(track, &d));
         }
     };
 
-    match segment.parameters.profile_options.step_elevation_gain {
+    match parameters.profile_options.step_elevation_gain {
         None => {}
         Some(d) => {
-            ret.extend_from_slice(&profile_points_elevation_gain(segment, &d));
+            ret.extend_from_slice(&profile_points_elevation_gain_track(track, &d));
         }
     }
-    ret
-}
-
-pub fn profile_points(segment: &Segment) -> Vec<InputPoint> {
-    let mut ret = segment.points.clone();
-    ret.retain(|w| is_close_to_track(&w));
-    ret.extend_from_slice(&user_points(segment));
-    ret
-}
-
-pub fn map_points(segment: &Segment) -> Vec<InputPoint> {
-    let ret = segment.profile_points();
     ret
 }

@@ -1,6 +1,7 @@
 use crate::{
-    inputpoint::{InputType, OSM},
-    label_placement::PointFeature,
+    inputpoint::{InputPoint, InputType, OSM},
+    make_points::is_close_to_track,
+    segment::Segment,
 };
 
 fn merge_flip_flop(_a: &Vec<usize>, _b: &Vec<usize>) -> Vec<usize> {
@@ -35,13 +36,11 @@ fn merge_flip_flop(_a: &Vec<usize>, _b: &Vec<usize>) -> Vec<usize> {
     ret
 }
 
-fn sort_by_elevation(mountains: &mut Vec<usize>, points: &Vec<PointFeature>) {
+fn sort_by_elevation(mountains: &mut Vec<usize>, points: &Vec<InputPoint>) {
     mountains.sort_by_key(|k| {
         std::cmp::Reverse(
             points
                 .get(*k)
-                .unwrap()
-                .input_point
                 .as_ref()
                 .unwrap()
                 .ele()
@@ -51,12 +50,10 @@ fn sort_by_elevation(mountains: &mut Vec<usize>, points: &Vec<PointFeature>) {
     });
 }
 
-fn sort_by_distance_to_track(mountains: &mut Vec<usize>, points: &Vec<PointFeature>) {
+fn sort_by_distance_to_track(mountains: &mut Vec<usize>, points: &Vec<InputPoint>) {
     mountains.sort_by_key(|k| {
         points
             .get(*k)
-            .unwrap()
-            .input_point
             .as_ref()
             .unwrap()
             .track_projection
@@ -67,22 +64,13 @@ fn sort_by_distance_to_track(mountains: &mut Vec<usize>, points: &Vec<PointFeatu
     });
 }
 
-fn sort_by_population(cities: &mut Vec<usize>, points: &Vec<PointFeature>) {
+fn sort_by_population(cities: &mut Vec<usize>, points: &Vec<InputPoint>) {
     cities.sort_by_key(|k| {
-        std::cmp::Reverse(
-            points
-                .get(*k)
-                .unwrap()
-                .input_point
-                .as_ref()
-                .unwrap()
-                .population()
-                .unwrap_or(0),
-        )
+        std::cmp::Reverse(points.get(*k).as_ref().unwrap().population().unwrap_or(0))
     });
 }
 
-pub fn profile(points: &Vec<PointFeature>) -> Vec<Vec<usize>> {
+pub fn profile(segment: &Segment) -> Vec<Vec<usize>> {
     let mut user1 = Vec::new();
     let mut user2 = Vec::new();
     let mut cities = Vec::new();
@@ -90,9 +78,11 @@ pub fn profile(points: &Vec<PointFeature>) -> Vec<Vec<usize>> {
     let mut villages = Vec::new();
     let mut osmrest = Vec::new();
     let mut gpx = Vec::new();
-    for k in 0..points.len() {
-        let w = &points[k];
-        let wi = w.input_point().unwrap();
+    for k in 0..segment.points.len() {
+        let wi = &segment.points[k];
+        if !is_close_to_track(&wi) {
+            continue;
+        }
         match wi.kind() {
             InputType::GPX => {
                 gpx.push(k);
@@ -121,34 +111,48 @@ pub fn profile(points: &Vec<PointFeature>) -> Vec<Vec<usize>> {
         }
     }
     // sort (peaks and passes) by elevation
-    sort_by_elevation(&mut mountains, points);
-    sort_by_population(&mut cities, points);
-    let osm1 = merge_flip_flop(&cities, &mountains);
-    sort_by_population(&mut villages, points);
-    vec![gpx, user1, osm1, villages, osmrest]
+    sort_by_elevation(&mut mountains, &segment.points);
+    sort_by_population(&mut cities, &segment.points);
+    let cities_and_mountains = merge_flip_flop(&cities, &mountains);
+    sort_by_population(&mut villages, &segment.points);
+    vec![gpx, user1, cities_and_mountains, villages, osmrest]
 }
 
-pub fn map(points: &Vec<PointFeature>, profile_indices: Vec<usize>) -> Vec<Vec<usize>> {
-    let mut cities_far = Vec::new();
-    for k in 0..points.len() {
-        let w = &points[k];
-        let iw = w.input_point.as_ref().unwrap();
-        let distance = iw.track_projection.as_ref().unwrap().track_distance;
+pub fn map(segment: &Segment) -> Vec<Vec<usize>> {
+    let profile_indices = profile(segment);
+    let gpx = &profile_indices.get(0).unwrap();
+    let user1 = &profile_indices.get(1).unwrap();
+    let mountains_and_cities = &profile_indices.get(2).unwrap();
+    let villages = &profile_indices.get(3).unwrap();
+    let osmrest = &profile_indices.get(3).unwrap();
+    let mut offtrack_cities = Vec::new();
+    for k in 0..segment.points.len() {
+        if mountains_and_cities.contains(&k) {
+            continue;
+        }
+        let iw = &segment.points[k];
         match iw.kind() {
             InputType::OSM { kind: osm } => match osm {
                 OSM::City => {
-                    if distance < 2000f64 {
-                    } else {
-                        cities_far.push(k);
-                    }
+                    log::trace!("offtrack city:{}", iw.name().unwrap());
+                    offtrack_cities.push(k);
                 }
                 _ => {}
             },
             _ => {}
         }
     }
-    sort_by_distance_to_track(&mut cities_far, points);
-    // assert!(!profile_indices.is_empty());
-    log::trace!("map-prioritize:{}", profile_indices.len());
-    vec![profile_indices, cities_far]
+    sort_by_distance_to_track(&mut offtrack_cities, &segment.points);
+    //sort_by_population(&mut offtrack_cities, &segment.points);
+    let villages_and_far_cities = merge_flip_flop(&offtrack_cities, &villages);
+    for k in &villages_and_far_cities {
+        log::trace!("ret-offtrack city:{}", segment.points[*k].name().unwrap());
+    }
+    vec![
+        (*gpx).clone(),
+        (*user1).clone(),
+        (*mountains_and_cities).clone(),
+        villages_and_far_cities,
+        (*osmrest).clone(),
+    ]
 }
