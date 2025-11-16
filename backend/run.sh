@@ -39,12 +39,12 @@ function pdf() {
 	fi
 	echo make pdf
 	export RUST_LOG=trace
-	cargo build 
+	cargo build --release
 	export CARGO_PROFILE_RELEASE_DEBUG=true
 	set -x
 	rm -Rf /tmp/wpx
 	mkdir /tmp/wpx
-	time cargo ${cmd} -- \
+	time cargo ${cmd} --release -- \
 		  --output-directory /tmp/wpx/ \
 		  --debug true \
 		  --step-elevation-gain 100 \
