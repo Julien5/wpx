@@ -101,7 +101,7 @@ pub struct PointFeature {
 pub trait CandidatesGenerator {
     fn generate(
         &self,
-        points: &Vec<PointFeature>,
+        features: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates>;
 }
@@ -357,17 +357,17 @@ impl Obstacles {
 }
 
 fn build_graph(
-    points: &Vec<PointFeature>,
+    features: &Vec<PointFeature>,
     gen: &dyn CandidatesGenerator,
     obstacles: &Obstacles,
 ) -> Graph {
     let mut ret = Graph::new();
-    for point in points {
-        ret.features.insert(point.clone());
+    for feature in features {
+        ret.features.insert(feature.clone());
     }
-    let candidates_map = gen.generate(&points, obstacles);
-    for point in points {
-        let k = point.point_index;
+    let candidates_map = gen.generate(&features, obstacles);
+    for feature in features {
+        let k = feature.point_index;
         let candidates = candidates_map[&k].clone();
         ret.add_node(k, candidates);
     }
@@ -423,7 +423,7 @@ impl PlacementResult {
 }
 
 fn place_subset(
-    points: &Vec<PointFeature>,
+    features: &Vec<PointFeature>,
     gen: &dyn CandidatesGenerator,
     obstacles: &Obstacles,
 ) -> PlacementResult {
@@ -431,7 +431,7 @@ fn place_subset(
     //let mut lsubset = _subset.clone();
     //lsubset.truncate(10);
     //let subset = &lsubset;
-    let mut graph = build_graph(points, gen, &obstacles);
+    let mut graph = build_graph(features, gen, &obstacles);
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),
         placed_indices: BTreeMap::new(),
@@ -439,16 +439,16 @@ fn place_subset(
     };
     //log::trace!("solve label graph [{}]", graph.map.len(),);
     let best_candidates = graph.solve();
-    for point in points {
-        let target_text = point.text();
+    for feature in features {
+        let target_text = feature.text();
         if target_text.is_empty() {
             continue;
         }
-        let best_candidate = best_candidates.get(&point.point_index);
+        let best_candidate = best_candidates.get(&feature.point_index);
         match best_candidate {
             Some(candidate) => {
                 ret.placed_indices
-                    .insert(point.point_index, candidate.bbox().clone());
+                    .insert(feature.point_index, candidate.bbox().clone());
             }
             _ => {
                 log::info!("failed to find any candidate for [{}]", target_text);

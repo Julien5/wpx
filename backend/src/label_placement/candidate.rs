@@ -82,12 +82,12 @@ pub mod utils {
     fn distance2_to_others(
         bbox: &LabelBoundingBox,
         target: &PointFeature,
-        points: &Vec<PointFeature>,
+        features: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> f64 {
         let mut ret = f64::MAX;
-        for l in 0..points.len() {
-            let other = &points[l];
+        for l in 0..features.len() {
+            let other = &features[l];
             if other.point_index == target.point_index {
                 continue;
             }
@@ -110,11 +110,11 @@ pub mod utils {
     pub fn make_candidate(
         bbox: &LabelBoundingBox,
         target: &PointFeature,
-        points: &Vec<PointFeature>,
+        features: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> Candidate {
         let _dtarget = bbox.bbox.distance2_to_point(&target.center());
-        let _dothers = distance2_to_others(bbox, &target, &points, obstacles);
+        let _dothers = distance2_to_others(bbox, &target, &features, obstacles);
         Candidate::new(bbox, &_dtarget, &_dothers)
     }
 
@@ -142,14 +142,14 @@ pub mod utils {
 
     fn generate_all_candidates(
         gen: fn(&PointFeature) -> Vec<LabelBoundingBox>,
-        feature: &PointFeature,
+        target: &PointFeature,
         all: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> Candidates {
-        if feature.text().is_empty() {
+        if target.text().is_empty() {
             return Candidates::new();
         }
-        let target = &feature;
+        let target = &target;
         let mut ret = Candidates::new();
         let available_area = obstacles.available_area();
         if target.area() > available_area {
@@ -157,7 +157,7 @@ pub mod utils {
             return ret;
         }
         for bbox in gen(target) {
-            let candidate = make_candidate(&bbox, &feature, &all, obstacles);
+            let candidate = make_candidate(&bbox, &target, &all, obstacles);
             if hit(&candidate, obstacles) {
                 continue;
             }

@@ -68,10 +68,10 @@ impl MapGenerator {
 impl CandidatesGenerator for MapGenerator {
     fn generate(
         &self,
-        points: &Vec<PointFeature>,
+        features: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates> {
-        label_placement::candidate::utils::generate(Self::generate_one, points, obstacles)
+        label_placement::candidate::utils::generate(Self::generate_one, features, obstacles)
     }
 }
 
