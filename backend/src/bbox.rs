@@ -185,14 +185,16 @@ impl BoundingBox {
         let pleft = Point2D::new(left, q.y.clamp(top, bottom));
         let pright = Point2D::new(right, q.y.clamp(top, bottom));
 
-        let mut all = vec![
+        let all = [
             (pbottom.clone(), distance2(&pbottom, &q)),
             (ptop.clone(), distance2(&ptop, &q)),
             (pleft.clone(), distance2(&pleft, &q)),
             (pright.clone(), distance2(&pright, &q)),
         ];
-        all.sort_by(|(_p1, d1), (_p2, d2)| d1.partial_cmp(d2).unwrap());
-        let min = all.first().unwrap();
+        let min = all
+            .iter()
+            .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap())
+            .unwrap();
         min.0
     }
     pub fn distance2_to_other(&self, other: &BoundingBox) -> f64 {
