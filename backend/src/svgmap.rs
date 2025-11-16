@@ -150,7 +150,6 @@ impl MapData {
                 }
                 label.id = format!("wp-{}/text", k);
                 feature_packet.push(PointFeature {
-                    id,
                     circle,
                     label,
                     input_point: Some(w.clone()),
@@ -234,7 +233,6 @@ mod tests {
     fn test_bbox() {
         let id = String::new();
         let target = PointFeature {
-            id: id.clone(),
             circle: PointFeatureDrawing {
                 group: svg::node::element::Group::new(),
                 center: Point2D::new(0f64, 0f64),

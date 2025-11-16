@@ -91,7 +91,6 @@ pub struct PointFeatureDrawing {
 
 #[derive(Clone)]
 pub struct PointFeature {
-    pub id: String,
     pub circle: PointFeatureDrawing,
     pub label: Label,
     pub input_point: Option<InputPoint>,
@@ -110,7 +109,7 @@ pub trait CandidatesGenerator {
 
 impl PartialEq for PointFeature {
     fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
+        self.point_index == other.point_index
     }
 }
 
@@ -353,9 +352,12 @@ fn build_graph(
     obstacles: &Obstacles,
 ) -> Graph {
     let mut ret = Graph::new();
-    ret.features = points.clone();
+    for point in points {
+        ret.features.insert(point.point_index, point.clone());
+    }
     let candidates_map = gen.generate(&points, obstacles);
-    for k in 0..points.len() {
+    for point in points {
+        let k = point.point_index;
         let candidates = candidates_map[&k].clone();
         ret.add_node(k, candidates);
     }
@@ -427,13 +429,12 @@ fn place_subset(
     };
     //log::trace!("solve label graph [{}]", graph.map.len(),);
     let best_candidates = graph.solve();
-    for k in 0..points.len() {
-        let point = &points[k];
+    for point in points {
         let target_text = point.text();
         if target_text.is_empty() {
             continue;
         }
-        let best_candidate = best_candidates.get(&k);
+        let best_candidate = best_candidates.get(&point.point_index);
         match best_candidate {
             Some(candidate) => {
                 ret.placed_indices

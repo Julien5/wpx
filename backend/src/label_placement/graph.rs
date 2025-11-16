@@ -13,7 +13,7 @@ type Map = BTreeMap<Node, Edges>;
 pub struct Graph {
     pub map: Map,
     pub candidates: CandidateMap,
-    pub features: Vec<PointFeature>,
+    pub features: BTreeMap<usize, PointFeature>,
     pub ordered_nodes: Vec<Node>,
     pub max_area: f64,
     pub used_area: f64,
@@ -24,7 +24,7 @@ impl Graph {
         Self {
             map: Map::new(),
             candidates: CandidateMap::new(),
-            features: Vec::new(),
+            features: BTreeMap::new(),
             ordered_nodes: Vec::new(),
             max_area: 0f64,
             used_area: 0f64,
@@ -81,7 +81,8 @@ impl Graph {
             .iter()
             .position(|c| c == selected)
             .unwrap();
-        let feature = &self.features[*a];
+        log::debug!("a={}", a);
+        let feature = &self.features.get(a).unwrap();
         log::trace!(
             "selected {} with area {:.1} [candidate {}] [{}]",
             feature.text(),
@@ -169,7 +170,7 @@ impl Graph {
         while !self.map.is_empty() {
             //log::trace!("selecting..");
             let m = self.max_node();
-            let target = &self.features[m];
+            let target = &self.features.get(&m).unwrap();
             if self.used_area + target.area() > self.max_area {
                 log::trace!("remove {} because it is too large", target.text());
                 self.remove_node(&m);
@@ -207,7 +208,7 @@ impl Graph {
             };
             log::debug!(
                 "[{}] => {} candidates (edges:{})",
-                self.features[node].text(),
+                self.features.get(&node).unwrap().text(),
                 candidates.len(),
                 edged_candidates
             );
@@ -241,7 +242,7 @@ impl Graph {
                 return None;
             }
             _ => {
-                //log::trace!("{node} has no candidate.");
+                log::trace!("{node} has no candidate.");
                 None
             }
         }
@@ -268,6 +269,7 @@ mod tests {
 
     #[test]
     fn test_graph_operations() {
+        let _ = env_logger::try_init();
         // Create a new graph
         let mut graph = Graph::new();
         let mut ca = Candidates::new();
@@ -293,10 +295,8 @@ mod tests {
         graph.add_node(1, cb);
         graph.add_node(2, cc);
         graph.add_node(3, cd);
-        graph.build_map();
         let zero = Point2D::new(0f64, 0f64);
         let f = PointFeature {
-            id: "".to_string(),
             circle: PointFeatureDrawing {
                 group: svg::node::element::Group::new(),
                 center: zero.clone(),
@@ -312,7 +312,12 @@ mod tests {
             link: None,
             point_index: 0,
         };
-        graph.features = vec![f.clone(), f.clone(), f.clone(), f.clone()];
+        for i in [0, 1, 2, 3] {
+            let mut g = f.clone();
+            g.point_index = i;
+            graph.features.insert(i, g);
+        }
+        graph.build_map();
 
         assert_eq!(graph.max_node(), 0);
         log::info!("select {} {}", 1, "cc1");

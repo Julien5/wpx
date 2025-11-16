@@ -460,7 +460,6 @@ impl ProfileView {
                     }
                 }
                 feature_packet.push(PointFeature {
-                    id,
                     circle,
                     label,
                     input_point: Some(w.clone()),
@@ -501,12 +500,15 @@ impl ProfileGenerator {
         let width = point.width();
         let height = point.height();
         let center = point.center();
+        // 20 px above the target
         let Btop = LabelBoundingBox::new_blwh(
             Point2D::new(center.x - width / 2.0, (center.y - 20.0).max(height)),
             width,
             height,
         );
         ret.push(Btop);
+
+        // 5 boxes below the top border of the graph
         for n in [1, 3, 5, 7, 9] {
             let Btop2 = LabelBoundingBox::new_blwh(
                 Point2D::new(center.x - width / 2.0, (n as f64) * height),
@@ -516,12 +518,14 @@ impl ProfileGenerator {
             ret.push(Btop2);
         }
 
+        // 20 px below the target
         let Bbot = LabelBoundingBox::new_blwh(
             Point2D::new(center.x - width / 2.0, (center.y + 20.0).max(height)),
             width,
             height,
         );
         ret.push(Bbot);
+
         ret.sort_by_key(|candidate| {
             let p = candidate.bbox.project_on_border(&point.center());
             (distance2(&point.center(), &p) * 100f64).floor() as i64

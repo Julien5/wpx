@@ -172,8 +172,7 @@ pub mod utils {
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates> {
         let mut ret = BTreeMap::new();
-        for k in 0..features.len() {
-            let feature = &features[k];
+        for feature in features {
             let candidates = generate_all_candidates(gen_one, feature, features, obstacles);
             if candidates.is_empty() {
                 log::trace!(
@@ -183,7 +182,7 @@ pub mod utils {
                 );
                 // force one ?
             }
-            ret.insert(k, candidates);
+            ret.insert(feature.point_index, candidates);
         }
         ret
     }
