@@ -156,13 +156,16 @@ impl BackendData {
         ret
     }
     pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
+        Vec::new()
+        /*
         let points = &segment.points;
         let mut indices: Vec<_> = (0..points.len()).collect();
         if indices.iter().any(|k| points[*k].kind() == InputType::GPX) {
             indices.retain(|k| points[*k].kind() == InputType::GPX);
         }
         let mut p: Vec<_> = indices.iter().map(|k| points[*k].clone()).collect();
-        self.export_points(&p)
+            self.export_points(&p)
+         */
     }
 
     pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {
