@@ -113,6 +113,18 @@ impl PartialEq for PointFeature {
     }
 }
 
+impl PartialOrd for PointFeature {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.point_index.partial_cmp(&other.point_index)
+    }
+}
+
+impl Ord for PointFeature {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.point_index.cmp(&other.point_index)
+    }
+}
+
 impl Eq for PointFeature {}
 use std::str::FromStr;
 
@@ -353,7 +365,7 @@ fn build_graph(
 ) -> Graph {
     let mut ret = Graph::new();
     for point in points {
-        ret.features.insert(point.point_index, point.clone());
+        ret.features.insert(point.clone());
     }
     let candidates_map = gen.generate(&points, obstacles);
     for point in points {

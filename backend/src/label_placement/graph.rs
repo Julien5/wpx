@@ -2,6 +2,7 @@ use super::candidate::Candidate;
 use super::candidate::Candidates;
 use super::PointFeature;
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 use std::collections::HashMap;
 
 type Node = usize;
@@ -13,7 +14,7 @@ type Map = BTreeMap<Node, Edges>;
 pub struct Graph {
     pub map: Map,
     pub candidates: CandidateMap,
-    pub features: BTreeMap<usize, PointFeature>,
+    pub features: BTreeSet<PointFeature>,
     pub ordered_nodes: Vec<Node>,
     pub max_area: f64,
     pub used_area: f64,
@@ -24,7 +25,7 @@ impl Graph {
         Self {
             map: Map::new(),
             candidates: CandidateMap::new(),
-            features: BTreeMap::new(),
+            features: BTreeSet::new(),
             ordered_nodes: Vec::new(),
             max_area: 0f64,
             used_area: 0f64,
@@ -72,6 +73,10 @@ impl Graph {
         self.build_map();
     }
 
+    fn find_feature(&self, point_index: &usize) -> Option<&PointFeature> {
+        self.features.iter().find(|f| f.point_index == *point_index)
+    }
+
     pub fn select(&mut self, a: &Node, selected: &Candidate) {
         // for all b connected to a
         let index = self
@@ -81,15 +86,16 @@ impl Graph {
             .iter()
             .position(|c| c == selected)
             .unwrap();
-        log::debug!("a={}", a);
-        let feature = &self.features.get(a).unwrap();
-        log::trace!(
-            "selected {} with area {:.1} [candidate {}] [{}]",
-            feature.text(),
-            feature.area(),
-            index,
-            selected.bbox().bbox
-        );
+        {
+            let feature = &self.find_feature(a).unwrap();
+            log::trace!(
+                "selected {} with area {:.1} [candidate {}] [{}]",
+                feature.text(),
+                feature.area(),
+                index,
+                selected.bbox().bbox
+            );
+        }
         let neighbors = self.map.get(a).unwrap().clone();
         for b in neighbors {
             // remove candidates of b that overlap with the
@@ -109,15 +115,8 @@ impl Graph {
                 neighbors_candidates.push(first);
             }
         }
-        let aa = selected.bbox().bbox.area();
-        let ba = feature.area();
-        if (ba - aa).abs() > 1e-11 {
-            log::trace!("aa={aa}");
-            log::trace!("ba={ba}");
-            log::trace!("ba-aa={}", ba - aa);
-        }
         // assert!((ba - aa).abs() < 1e-11);
-        self.used_area += feature.area();
+        self.used_area += selected.bbox().bbox.area();
         // remove a
         self.remove_node(a);
     }
@@ -170,7 +169,7 @@ impl Graph {
         while !self.map.is_empty() {
             //log::trace!("selecting..");
             let m = self.max_node();
-            let target = &self.features.get(&m).unwrap();
+            let target = &self.find_feature(&m).unwrap();
             if self.used_area + target.area() > self.max_area {
                 log::trace!("remove {} because it is too large", target.text());
                 self.remove_node(&m);
@@ -208,7 +207,7 @@ impl Graph {
             };
             log::debug!(
                 "[{}] => {} candidates (edges:{})",
-                self.features.get(&node).unwrap().text(),
+                self.find_feature(&node).unwrap().text(),
                 candidates.len(),
                 edged_candidates
             );
@@ -315,7 +314,7 @@ mod tests {
         for i in [0, 1, 2, 3] {
             let mut g = f.clone();
             g.point_index = i;
-            graph.features.insert(i, g);
+            graph.features.insert(g);
         }
         graph.build_map();
 
