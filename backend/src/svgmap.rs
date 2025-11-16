@@ -151,7 +151,7 @@ impl MapData {
                     label,
                     input_point: Some(w.clone()),
                     link: None,
-                    point_index: k,
+                    id: k,
                 });
             }
             feature_packets.push(feature_packet);
@@ -244,7 +244,7 @@ mod tests {
             },
             input_point: None,
             link: None,
-            point_index: 0,
+            id: 0,
         };
         let candidates = MapGenerator::generate_one(&target);
         let mut found = false;

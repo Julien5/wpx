@@ -1,3 +1,5 @@
+use crate::label_placement::PointFeatureId;
+
 use super::candidate::Candidate;
 use super::candidate::Candidates;
 use super::PointFeature;
@@ -5,11 +7,11 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashMap;
 
-type Node = usize;
-type Edge = usize;
-type Edges = Vec<Edge>;
-type CandidateMap = BTreeMap<usize, Candidates>;
-type Map = BTreeMap<Node, Edges>;
+// Each node is a PointFeature, represented by its id.
+// Edges are modeled with a map.
+type Node = PointFeatureId;
+type CandidateMap = BTreeMap<PointFeatureId, Candidates>;
+type Map = BTreeMap<Node, Vec<Node>>;
 
 pub struct Graph {
     pub map: Map,
@@ -42,17 +44,18 @@ impl Graph {
         false
     }
     fn compute_edges(&mut self, a: &Node) {
-        let mut e = Edges::new();
+        let mut edges = Vec::new();
         for b in self.candidates.keys().clone() {
             if b == a {
                 continue;
             }
             if self.intersect(&a, b) {
-                e.push(*b);
+                edges.push(*b);
             }
         }
-        self.map.insert(*a, e);
+        self.map.insert(*a, edges);
     }
+
     pub fn build_map(&mut self) {
         self.map.clear();
         // O(n^2) if there are fixed number of candidates.
@@ -60,21 +63,33 @@ impl Graph {
         for node in nodes {
             self.compute_edges(&node);
         }
+        // check
+        // for node in nodes {}
     }
-    pub fn add_node(&mut self, a: Node, candidates: Candidates) {
-        debug_assert!(!self.map.contains_key(&a));
-        self.candidates.insert(a, candidates);
-        self.ordered_nodes.push(a);
+
+    pub fn add_node(&mut self, a: &PointFeature, candidates: Candidates) {
+        debug_assert!(!self.map.contains_key(&a.id));
+        self.candidates.insert(a.id, candidates);
+        self.ordered_nodes.push(a.id);
+        self.features.insert(a.clone());
     }
 
     fn remove_node(&mut self, a: &Node) {
-        self.candidates.remove(a);
+        // remove the node on the graph
+        let neighbors = self.map.get(&a).unwrap().clone();
+        for b in neighbors {
+            self.map.get_mut(&b).unwrap().retain(|x| *x != *a);
+        }
+        self.map.remove(a);
+
+        // cleanup backend data
+        self.features.retain(|f| f.id != *a);
         self.ordered_nodes.retain(|node| node != a);
-        self.build_map();
+        self.candidates.remove(a);
     }
 
     fn find_feature(&self, node: &Node) -> Option<&PointFeature> {
-        self.features.iter().find(|f| f.point_index == *node)
+        self.features.iter().find(|f| f.id == *node)
     }
 
     pub fn select(&mut self, a: &Node, selected: &Candidate) {
@@ -275,6 +290,7 @@ mod tests {
         let mut cb = Candidates::new();
         let mut cc = Candidates::new();
         let mut cd = Candidates::new();
+        let mut candidates = Vec::new();
         let ca1 = make_candidate(0, 0, 2, 2);
         let ca2 = make_candidate(2, 2, 3, 2);
         let cb1 = make_candidate(1, 0, 3, 2);
@@ -290,10 +306,10 @@ mod tests {
         cc.push(cc2.clone());
         cc.push(make_candidate(3, 8, 2, 3));
         cd.push(make_candidate(3, 9, 2, 3));
-        graph.add_node(0, ca);
-        graph.add_node(1, cb);
-        graph.add_node(2, cc);
-        graph.add_node(3, cd);
+        candidates.push(ca);
+        candidates.push(cb);
+        candidates.push(cc);
+        candidates.push(cd);
         let zero = Point2D::new(0f64, 0f64);
         let f = PointFeature {
             circle: PointFeatureDrawing {
@@ -309,12 +325,12 @@ mod tests {
             },
             input_point: None,
             link: None,
-            point_index: 0,
+            id: 0,
         };
         for i in [0, 1, 2, 3] {
             let mut g = f.clone();
-            g.point_index = i;
-            graph.features.insert(g);
+            g.id = i;
+            graph.add_node(&g, candidates[i].clone());
         }
         graph.build_map();
 

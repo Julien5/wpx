@@ -464,7 +464,7 @@ impl ProfileView {
                     label,
                     input_point: Some(w.clone()),
                     link: None,
-                    point_index: k,
+                    id: k,
                 });
             }
             feature_packets.push(feature_packet);

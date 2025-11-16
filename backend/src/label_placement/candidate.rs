@@ -88,7 +88,7 @@ pub mod utils {
         let mut ret = f64::MAX;
         for l in 0..features.len() {
             let other = &features[l];
-            if other.point_index == target.point_index {
+            if other.id == target.id {
                 continue;
             }
             let other_center = &other.circle.center;
@@ -170,7 +170,7 @@ pub mod utils {
         gen_one: fn(&PointFeature) -> Vec<LabelBoundingBox>,
         features: &Vec<PointFeature>,
         obstacles: &Obstacles,
-    ) -> BTreeMap<usize, Candidates> {
+    ) -> BTreeMap<PointFeatureId, Candidates> {
         let mut ret = BTreeMap::new();
         for feature in features {
             let candidates = generate_all_candidates(gen_one, feature, features, obstacles);
@@ -182,7 +182,7 @@ pub mod utils {
                 );
                 // force one ?
             }
-            ret.insert(feature.point_index, candidates);
+            ret.insert(feature.id, candidates);
         }
         ret
     }

@@ -89,13 +89,15 @@ pub struct PointFeatureDrawing {
     pub center: Point2D,
 }
 
+type PointFeatureId = usize;
+
 #[derive(Clone)]
 pub struct PointFeature {
     pub circle: PointFeatureDrawing,
     pub label: Label,
     pub input_point: Option<InputPoint>,
     pub link: Option<svg::node::element::Path>,
-    pub point_index: usize,
+    pub id: PointFeatureId,
 }
 
 pub trait CandidatesGenerator {
@@ -108,19 +110,19 @@ pub trait CandidatesGenerator {
 
 impl PartialEq for PointFeature {
     fn eq(&self, other: &Self) -> bool {
-        self.point_index == other.point_index
+        self.id == other.id
     }
 }
 
 impl PartialOrd for PointFeature {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.point_index.partial_cmp(&other.point_index)
+        self.id.partial_cmp(&other.id)
     }
 }
 
 impl Ord for PointFeature {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.point_index.cmp(&other.point_index)
+        self.id.cmp(&other.id)
     }
 }
 
@@ -367,9 +369,9 @@ fn build_graph(
     }
     let candidates_map = gen.generate(&features, obstacles);
     for feature in features {
-        let point_index = feature.point_index;
-        let candidates = candidates_map[&point_index].clone();
-        ret.add_node(point_index, candidates);
+        let feature_id = feature.id;
+        let candidates = candidates_map[&feature_id].clone();
+        ret.add_node(feature, candidates);
     }
     ret.build_map();
     ret.max_area = obstacles.available_area();
@@ -391,7 +393,7 @@ fn _candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rect
 
 pub struct PlacementResult {
     pub debug: svg::node::element::Group,
-    pub placed_indices: BTreeMap<usize, LabelBoundingBox>,
+    pub placed_indices: BTreeMap<PointFeatureId, LabelBoundingBox>,
     pub obstacles: Obstacles,
 }
 
@@ -400,14 +402,14 @@ impl PlacementResult {
         let mut ret = Vec::new();
         for packet in packets {
             for feature in packet {
-                let k = feature.point_index;
-                if self.placed_indices.contains_key(&k) {
-                    let bbox = self.placed_indices.get(&k).unwrap();
+                let feature_id = feature.id;
+                if self.placed_indices.contains_key(&feature_id) {
+                    let bbox = self.placed_indices.get(&feature_id).unwrap();
                     feature.place_label(bbox);
                     feature.make_link(&self.obstacles);
                     ret.push(feature.clone());
                 } else {
-                    log::trace!("could not place {}, index:{}", feature.text(), k,);
+                    log::trace!("could not place {}, index:{}", feature.text(), feature_id,);
                 }
             }
         }
@@ -444,11 +446,11 @@ fn place_subset(
         if target_text.is_empty() {
             continue;
         }
-        let best_candidate = best_candidates.get(&feature.point_index);
+        let best_candidate = best_candidates.get(&feature.id);
         match best_candidate {
             Some(candidate) => {
                 ret.placed_indices
-                    .insert(feature.point_index, candidate.bbox().clone());
+                    .insert(feature.id, candidate.bbox().clone());
             }
             _ => {
                 log::info!("failed to find any candidate for [{}]", target_text);
