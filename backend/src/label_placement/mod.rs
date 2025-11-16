@@ -104,7 +104,6 @@ pub trait CandidatesGenerator {
         points: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates>;
-    fn prioritize(&self, segment: &Segment) -> Vec<Vec<usize>>;
 }
 
 impl PartialEq for PointFeature {
@@ -132,7 +131,6 @@ use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::math::distance2;
 use crate::math::Point2D;
-use crate::segment::Segment;
 
 impl PointFeature {
     pub fn place_label(&mut self, bbox: &LabelBoundingBox) {

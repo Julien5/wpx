@@ -2,6 +2,7 @@
 
 use std::collections::BTreeMap;
 
+use crate::backend::Segment;
 use crate::bbox::BoundingBox;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::candidate::Candidates;
@@ -9,7 +10,6 @@ use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::{self, *};
 use crate::math::{distance2, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
-use crate::segment::{self, Segment};
 use crate::track::Track;
 
 use svg::Document;
@@ -73,9 +73,6 @@ impl CandidatesGenerator for MapGenerator {
     ) -> BTreeMap<usize, Candidates> {
         label_placement::candidate::utils::generate(Self::generate_one, points, obstacles)
     }
-    fn prioritize(&self, segment: &Segment) -> Vec<Vec<usize>> {
-        label_placement::prioritize::map(segment)
-    }
 }
 
 struct MapData {
@@ -100,7 +97,7 @@ pub fn euclidean_bounding_box(
 }
 
 impl MapData {
-    pub fn make(segment: &segment::Segment) -> MapData {
+    pub fn make(segment: &Segment) -> MapData {
         let bbox = segment.map_box().clone();
         let mut path = Vec::new();
         for k in segment.range.start..segment.range.end {
@@ -128,7 +125,7 @@ impl MapData {
         set_attr(&mut document, "height", format!("{}", height).as_str());
 
         let generator = Box::new(MapGenerator {});
-        let packets = generator.prioritize(&segment);
+        let packets = label_placement::prioritize::map(segment);
         let mut feature_packets = Vec::new();
         for packet in packets {
             let mut feature_packet = Vec::new();
@@ -214,7 +211,7 @@ impl MapData {
     }
 }
 
-pub fn map(segment: &segment::Segment) -> String {
+pub fn map(segment: &Segment) -> String {
     let svgMap = MapData::make(&segment);
     svgMap.render()
 }

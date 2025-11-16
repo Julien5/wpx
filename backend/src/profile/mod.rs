@@ -435,7 +435,7 @@ impl ProfileView {
         set_attr(&mut document, "height", format!("{}", self.HD()).as_str());
         let generator = Box::new(ProfileGenerator);
         // make features packets
-        let packets = generator.prioritize(&segment);
+        let packets = label_placement::prioritize::profile(&segment);
         let mut feature_packets = Vec::new();
         for packet in packets {
             let mut feature_packet = Vec::new();
@@ -541,10 +541,6 @@ impl CandidatesGenerator for ProfileGenerator {
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates> {
         label_placement::candidate::utils::generate(Self::generate_one, points, obstacles)
-    }
-
-    fn prioritize(&self, segment: &Segment) -> Vec<Vec<usize>> {
-        label_placement::prioritize::profile(&segment)
     }
 }
 
