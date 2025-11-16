@@ -367,9 +367,9 @@ fn build_graph(
     }
     let candidates_map = gen.generate(&features, obstacles);
     for feature in features {
-        let k = feature.point_index;
-        let candidates = candidates_map[&k].clone();
-        ret.add_node(k, candidates);
+        let point_index = feature.point_index;
+        let candidates = candidates_map[&point_index].clone();
+        ret.add_node(point_index, candidates);
     }
     ret.build_map();
     ret.max_area = obstacles.available_area();

@@ -73,8 +73,8 @@ impl Graph {
         self.build_map();
     }
 
-    fn find_feature(&self, point_index: &usize) -> Option<&PointFeature> {
-        self.features.iter().find(|f| f.point_index == *point_index)
+    fn find_feature(&self, node: &Node) -> Option<&PointFeature> {
+        self.features.iter().find(|f| f.point_index == *node)
     }
 
     pub fn select(&mut self, a: &Node, selected: &Candidate) {
