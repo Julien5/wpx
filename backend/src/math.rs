@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 pub struct ScreenSpace;
 pub type Point2D = euclid::Point2D<f64, ScreenSpace>;
+pub type IntegerSize2D = euclid::Size2D<i32, ScreenSpace>;
 pub type Vector2D = euclid::Vector2D<f64, ScreenSpace>;
 
 pub fn partial_compare(p: &Point2D, q: &Point2D) -> Option<Ordering> {

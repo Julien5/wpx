@@ -4,6 +4,7 @@ use flutter_rust_bridge::frb;
 
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
+pub use tracks::backend::Segment as SegmentImplementation;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
 pub use tracks::parameters::MapOptions;
@@ -15,7 +16,7 @@ pub use tracks::waypoint::WaypointInfo;
 pub use tracks::waypoint::WaypointOrigin;
 pub use tracks::wgs84point::WGS84Point;
 
-pub use tracks::backend::Segment as SegmentImplementation;
+use tracks::math::IntegerSize2D;
 
 #[frb(opaque)]
 pub struct Bridge {
@@ -181,12 +182,24 @@ impl Bridge {
     pub fn waypoints_table(&self, segment: &Segment) -> Vec<Waypoint> {
         self.backend.get_waypoint_table(&segment._impl)
     }
-    pub async fn renderSegmentWhat(&mut self, segment: &Segment, what: String) -> String {
-        self.backend.render_segment_what(&segment._impl, what)
+    pub async fn renderSegmentWhat(
+        &mut self,
+        segment: &Segment,
+        what: &String,
+        size: &(i32, i32),
+    ) -> String {
+        self.backend
+            .render_segment_what(&segment._impl, what, &IntegerSize2D::new(size.0, size.1))
     }
     #[frb(sync)]
-    pub fn renderSegmentWhatSync(&mut self, segment: &Segment, what: String) -> String {
-        self.backend.render_segment_what(&segment._impl, what)
+    pub fn renderSegmentWhatSync(
+        &mut self,
+        segment: &Segment,
+        what: &String,
+        size: &(i32, i32),
+    ) -> String {
+        self.backend
+            .render_segment_what(&segment._impl, what, &IntegerSize2D::new(size.0, size.1))
     }
     #[frb(sync)]
     pub fn statistics(&self) -> SegmentStatistics {

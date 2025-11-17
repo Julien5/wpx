@@ -9,7 +9,7 @@ mod inputpoint;
 mod label_placement;
 mod locate;
 mod make_points;
-mod math;
+pub mod math;
 pub mod mercator;
 mod osm;
 pub mod parameters;

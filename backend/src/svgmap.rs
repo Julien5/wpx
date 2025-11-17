@@ -8,7 +8,7 @@ use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::candidate::Candidates;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::{self, *};
-use crate::math::{distance2, Point2D};
+use crate::math::{distance2, IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::track::Track;
 
@@ -97,7 +97,7 @@ pub fn euclidean_bounding_box(
 }
 
 impl MapData {
-    pub fn make(segment: &Segment) -> MapData {
+    pub fn make(segment: &Segment, size: &IntegerSize2D) -> MapData {
         let bbox = segment.map_box().clone();
         let mut path = Vec::new();
         for k in segment.range.start..segment.range.end {
@@ -108,10 +108,8 @@ impl MapData {
 
         let mut polyline = Polyline::new();
         // todo: path in the bbox, which more than the path in the range.
-        let width = segment.parameters.map_options.size.0;
-        let height = segment.parameters.map_options.size.1;
         for p in &path {
-            let p = to_graphics_coordinates(&bbox, p, width, height, margin);
+            let p = to_graphics_coordinates(&bbox, p, size.width, size.height, margin);
             polyline.points.push(p);
         }
 
@@ -119,10 +117,10 @@ impl MapData {
         set_attr(
             &mut document,
             "viewBox",
-            format!("(0, 0, {}, {})", width, height).as_str(),
+            format!("(0, 0, {}, {})", size.width, size.height).as_str(),
         );
-        set_attr(&mut document, "width", format!("{}", width).as_str());
-        set_attr(&mut document, "height", format!("{}", height).as_str());
+        set_attr(&mut document, "width", format!("{}", size.width).as_str());
+        set_attr(&mut document, "height", format!("{}", size.height).as_str());
 
         let generator = Box::new(MapGenerator {});
         let packets = label_placement::prioritize::map(segment);
@@ -133,7 +131,7 @@ impl MapData {
                 let w = &segment.points[k];
                 let euclidean = w.euclidian.clone();
 
-                let p = to_graphics_coordinates(&bbox, &euclidean, width, height, margin);
+                let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
                 let id = format!("wp-{}/circle", k);
                 let circle = draw_for_map(&p, id.as_str(), &w.kind());
                 let mut label = Label::new();
@@ -163,7 +161,7 @@ impl MapData {
             &*generator,
             &BoundingBox::init(
                 Point2D::new(0f64, 0f64),
-                Point2D::new(width as f64, height as f64),
+                Point2D::new(size.width as f64, size.height as f64),
             ),
             &polyline,
             &segment.parameters.map_options.max_area_ratio,
@@ -211,8 +209,8 @@ impl MapData {
     }
 }
 
-pub fn map(segment: &Segment) -> String {
-    let svgMap = MapData::make(&segment);
+pub fn map(segment: &Segment, size: &IntegerSize2D) -> String {
+    let svgMap = MapData::make(segment, size);
     svgMap.render()
 }
 

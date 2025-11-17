@@ -116,7 +116,8 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
             std::fs::write(&f, &rendered_profile.svg).unwrap();
         }
         log::trace!("render map");
-        let m = segment.render_map();
+        let map_options = &backend.get_parameters().map_options;
+        let m = segment.render_map(&map_options.size2d());
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(&f, &m).unwrap();

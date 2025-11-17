@@ -8,6 +8,7 @@ use crate::inputpoint::InputPointMap;
 use crate::inputpoint::InputType;
 use crate::locate;
 use crate::make_points;
+use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::parameters::Parameters;
 use crate::pdf;
@@ -96,8 +97,13 @@ impl Backend {
     pub fn trackSegment(&self) -> Segment {
         self.d().trackSegment()
     }
-    pub fn render_segment_what(&mut self, segment: &Segment, what: String) -> String {
-        self.dmut().render_segment_what(segment, what)
+    pub fn render_segment_what(
+        &mut self,
+        segment: &Segment,
+        what: &String,
+        size: &IntegerSize2D,
+    ) -> String {
+        self.dmut().render_segment_what(segment, what, size)
     }
     pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
         return self.d().get_waypoints(segment);
@@ -145,7 +151,7 @@ impl BackendData {
     pub fn get_parameters(self: &BackendData) -> Parameters {
         self.parameters.clone()
     }
-    fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
+    fn _export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
         let mut ret = Waypoints::new();
         for p in points {
             ret.push(p.waypoint());
@@ -240,12 +246,17 @@ impl BackendData {
         ret
     }
 
-    pub fn render_segment_what(&mut self, segment: &Segment, what: String) -> String {
+    pub fn render_segment_what(
+        &mut self,
+        segment: &Segment,
+        what: &String,
+        size: &IntegerSize2D,
+    ) -> String {
         log::trace!("start - render_segment_what:{} {}", segment.id, what);
         let ret = match what.as_str() {
             "profile" => segment.render_profile().svg,
             "ylabels" => self.render_yaxis_labels_overlay(segment),
-            "map" => segment.render_map(),
+            "map" => segment.render_map(size),
             _ => {
                 // assert!(false);
                 String::new()
@@ -264,14 +275,6 @@ impl BackendData {
         let ret = profile.render();
         if self.get_parameters().debug {
             let filename = std::format!("/tmp/yaxis-{}.svg", segment.id);
-            std::fs::write(filename, &ret).expect("Unable to write file");
-        }
-        ret
-    }
-    pub fn render_segment_map(&self, segment: &Segment) -> String {
-        let ret = segment.render_map();
-        if self.get_parameters().debug {
-            let filename = std::format!("/tmp/map-{}.svg", segment.id);
             std::fs::write(filename, &ret).expect("Unable to write file");
         }
         ret
@@ -369,7 +372,7 @@ mod tests {
         let mut ok_count = 0;
         for segment in &segments {
             let _ = segment.render_profile();
-            let svg = segment.render_map();
+            let svg = segment.render_map(&parameters.map_options.size2d());
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
             println!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {

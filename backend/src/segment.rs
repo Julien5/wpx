@@ -2,7 +2,7 @@ use geo::LineLocatePoint;
 
 use crate::bbox::BoundingBox;
 use crate::inputpoint::{InputPoint, InputPointMap, TrackProjection};
-use crate::math::Point2D;
+use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::MercatorPoint;
 use crate::parameters::Parameters;
 use crate::profile::ProfileRenderResult;
@@ -146,9 +146,9 @@ impl Segment {
         ret
     }
 
-    pub fn render_map(&self) -> String {
+    pub fn render_map(&self, size: &IntegerSize2D) -> String {
         log::trace!("render map:{}", self.id);
-        let ret = svgmap::map(&self);
+        let ret = svgmap::map(&self, size);
         if self.parameters.debug {
             let filename = std::format!("/tmp/map-{}.svg", self.id);
             std::fs::write(filename, &ret).expect("Unable to write file");

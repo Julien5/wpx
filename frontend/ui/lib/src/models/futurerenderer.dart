@@ -18,6 +18,7 @@ class FutureRenderer with ChangeNotifier {
     required bridge.Bridge bridge,
     required this.segment,
     required this.trackData,
+    
   }) : _bridge = bridge;
 
   void updateSegment(bridge.Segment newSegment) {
@@ -25,23 +26,34 @@ class FutureRenderer with ChangeNotifier {
     reset();
   }
 
+  (int,int) getSizeAsTuple() {
+    return (size!.width.floor(),size!.height.floor());
+  }
+
   void start() {
+    if (size == null) {
+      log("[render-request:$trackData] size is not set");
+      return;
+    }
     log("[render-request-start:$trackData]");
     _result = null;
     if (trackData == TrackData.profile) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "profile",
+        size: getSizeAsTuple(),
       );
     } else if (trackData == TrackData.map) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "map",
+        size: getSizeAsTuple(),
       );
     } else if (trackData == TrackData.yaxis) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "ylabels",
+        size: getSizeAsTuple(),
       );
     }
     notifyListeners();
