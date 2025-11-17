@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/utils.dart';
-import 'slidervalues.dart';
 import 'statistics_widget.dart';
 
 class Selector extends StatelessWidget {

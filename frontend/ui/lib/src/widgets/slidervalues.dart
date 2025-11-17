@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 class SliderValues {
@@ -36,10 +34,6 @@ class SliderValues {
 
   int length() {
     return values.length;
-  }
-
-  double project(double value) {
-    return getValue(getIndex(value));
   }
 
   double current() {

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/screens/settings/slidervalues.dart';
+import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/utils.dart';
 
 enum SelectedParameter { distance, elevation }
