@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+/*import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
@@ -6,26 +6,10 @@ import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/waypointstable.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/utils.dart';
-import 'segment_stack.dart';
 
-class RenderingsProvider extends MultiProvider {
-  final Renderers renderers;
 
-  RenderingsProvider(Renderers r, WaypointsTableData d, Widget child, {super.key})
-    : renderers = r,
-      super(
-        providers: [
-          ChangeNotifierProvider.value(value: r.profileRendering),
-          ChangeNotifierProvider.value(value: r.mapRendering),
-          ChangeNotifierProvider.value(value: r.yaxisRendering),
-          ChangeNotifierProvider.value(value: d),
-        ],
-        child: child,
-      );
-}
-
-class SegmentsView extends StatelessWidget {
-  const SegmentsView({super.key});
+class InteractiveMapView extends StatelessWidget {
+  const InteractiveMapView({super.key});
 
   List<RenderingsProvider> renderingProviders(
     RootModel rootModel,
@@ -92,14 +76,14 @@ class SegmentsConsumer extends StatelessWidget {
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1500),
-        child: Column(children: [Expanded(child: SegmentsView())]),
+        child: Column(children: [Expanded(child: InteractiveMapView())]),
       ),
     );
   }
 }
 
-class SegmentsScreen extends StatelessWidget {
-  const SegmentsScreen({super.key});
+class InteractiveScreen extends StatelessWidget {
+  const InteractiveScreen({super.key});
 
   AppBar? appBar(BuildContext ctx) {
     ScreenOrientation type = screenOrientation(MediaQuery.of(ctx).size);
@@ -124,3 +108,5 @@ class SegmentsScreen extends StatelessWidget {
     return Scaffold(appBar: appBar(ctx), body: SegmentsConsumer());
   }
 }
+
+*/

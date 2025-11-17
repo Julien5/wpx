@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/screens/segments/segment_view_desktop.dart';
 import 'package:ui/src/screens/segments/segment_view_horizontal.dart';
 import 'package:ui/src/screens/segments/vertical/segment_view_vertical.dart';
+import 'package:ui/utils.dart' show ScreenOrientation;
 
-enum ScreenOrientation { desktop, landscape, portrait }
 
 class SegmentView extends StatelessWidget {
   final ScreenOrientation screenOrientation;

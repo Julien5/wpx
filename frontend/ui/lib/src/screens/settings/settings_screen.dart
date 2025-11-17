@@ -334,7 +334,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Card card = Card(
+    Card infoCard = Card(
       elevation: 4, // Add shadow to the card
       margin: const EdgeInsets.all(1), // Add margin around the card
       shape: RoundedRectangleBorder(
@@ -354,7 +354,7 @@ class SettingsScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [card, SizedBox(height: 15), SegmentsSettings()],
+            children: [infoCard, SizedBox(height: 15), SegmentsSettings()],
           ),
         ),
       ),
