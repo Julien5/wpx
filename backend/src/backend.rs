@@ -93,6 +93,9 @@ impl Backend {
     pub fn segments(&self) -> Vec<Segment> {
         self.d().segments()
     }
+    pub fn trackSegment(&self) -> Segment {
+        self.d().trackSegment()
+    }
     pub fn render_segment_what(&mut self, segment: &Segment, what: String) -> String {
         self.dmut().render_segment_what(segment, what)
     }
@@ -155,7 +158,7 @@ impl BackendData {
         );
         ret
     }
-    pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
+    pub fn get_waypoints(&self, _segment: &Segment) -> Vec<Waypoint> {
         Vec::new()
         /*
         let points = &segment.points;
@@ -220,6 +223,23 @@ impl BackendData {
         }
         ret
     }
+
+    pub fn trackSegment(&self) -> Segment {
+        let start = 0f64;
+        let end = f64::MAX;
+        let range = self.track.segment(start, end);
+        let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
+        let ret = Segment::new(
+            0,
+            range,
+            tracktree,
+            self.track.clone(),
+            &self.inputpoints,
+            &self.parameters,
+        );
+        ret
+    }
+
     pub fn render_segment_what(&mut self, segment: &Segment, what: String) -> String {
         log::trace!("start - render_segment_what:{} {}", segment.id, what);
         let ret = match what.as_str() {

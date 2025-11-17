@@ -202,6 +202,12 @@ impl Bridge {
         }
         ret
     }
+
+    #[frb(sync)]
+    pub fn trackSegment(&self) -> Segment {
+        let backend_segment = self.backend.trackSegment();
+        Segment::create(backend_segment)
+    }
 }
 
 #[flutter_rust_bridge::frb(init)]

@@ -73,5 +73,9 @@ class RootModel extends ChangeNotifier {
   List<bridge.Segment> segments() {
     return _bridge.segments();
   }
+
+  bridge.Segment trackSegment() {
+    return _bridge.trackSegment();
+  }
  
 }

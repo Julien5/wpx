@@ -1,14 +1,14 @@
 //import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
-//import 'package:provider/provider.dart';
-//import 'package:ui/src/models/root.dart';
+import 'package:provider/provider.dart';
+import 'package:ui/src/models/root.dart';
 
 class InteractiveMapView extends StatelessWidget {
   const InteractiveMapView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    //RootModel rootModel = Provider.of<RootModel>(context);
+    RootModel rootModel = Provider.of<RootModel>(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
