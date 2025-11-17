@@ -42,7 +42,7 @@ pub struct TrackProjection {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputPoint {
     pub wgs84: WGS84Point,
-    pub euclidian: MercatorPoint,
+    pub euclidean: MercatorPoint,
     pub tags: Tags,
     pub track_projection: Option<TrackProjection>,
 }
@@ -51,7 +51,7 @@ impl PartialEq for InputPoint {
     fn eq(&self, other: &Self) -> bool {
         // do not take track_projection and label_placement_order into account.
         // they are transient.
-        self.wgs84 == other.wgs84 && self.euclidian == other.euclidian && self.tags == other.tags
+        self.wgs84 == other.wgs84 && self.euclidean == other.euclidean && self.tags == other.tags
     }
 }
 
@@ -120,7 +120,7 @@ impl InputPoint {
     ) -> InputPoint {
         InputPoint {
             wgs84: wgs84.clone(),
-            euclidian: euclidean.clone(),
+            euclidean: euclidean.clone(),
             track_projection: None,
             tags: Self::tags_for_type(kind),
         }
@@ -145,7 +145,7 @@ impl InputPoint {
             wgs84: wgs84.clone(),
             track_projection: None,
             tags,
-            euclidian: euclidean.clone(),
+            euclidean: euclidean.clone(),
         }
     }
     pub fn round_track_index(&self) -> Option<usize> {
@@ -347,7 +347,7 @@ impl InputPointMap {
     }
     pub fn sort_and_insert(&mut self, p: &Vec<InputPoint>) {
         for w in p {
-            let euc = &w.euclidian;
+            let euc = &w.euclidean;
             let bbox = bboxes::snap_point(euc, &bboxes::BBOXWIDTH);
             self.insert_point(&bbox, &w);
         }
@@ -383,7 +383,7 @@ mod tests {
     fn testpoint() -> InputPoint {
         InputPoint {
             wgs84: WGS84Point::new(&1.0f64, &1.1f64, &0f64),
-            euclidian: MercatorPoint::from_point2d(&Point2D::new(0f64, 0f64)),
+            euclidean: MercatorPoint::from_point2d(&Point2D::new(0f64, 0f64)),
             tags: Tags::new(),
             track_projection: None,
         }

@@ -35,7 +35,8 @@ impl Segment {
         inputpoints: &InputPointMap,
         parameters: &Parameters,
     ) -> Segment {
-        let map_box = svgmap::euclidean_bounding_box(&track, &range, &parameters.map_options.size);
+        let map_box =
+            svgmap::euclidean_bounding_box(&track, &range, &parameters.map_options.size2d());
         let points = Self::copy_segment_points(inputpoints, &map_box, &track, &track_tree);
         Segment {
             id,
@@ -48,7 +49,11 @@ impl Segment {
     }
 
     pub fn map_box(&self) -> BoundingBox {
-        svgmap::euclidean_bounding_box(&self.track, &self.range, &self.parameters.map_options.size)
+        svgmap::euclidean_bounding_box(
+            &self.track,
+            &self.range,
+            &self.parameters.map_options.size2d(),
+        )
     }
 
     pub fn render_profile(&self) -> ProfileRenderResult {
@@ -74,8 +79,8 @@ impl Segment {
         if *index == tracklen - 1 {
             return (index - 1, *index);
         }
-        let dbefore = p.euclidian.d2(&track.euclidian[index - 1]);
-        let dafter = p.euclidian.d2(&track.euclidian[index - 1]);
+        let dbefore = p.euclidean.d2(&track.euclidian[index - 1]);
+        let dafter = p.euclidean.d2(&track.euclidian[index - 1]);
         if dbefore < dafter {
             (index - 1, *index)
         } else {
@@ -88,13 +93,13 @@ impl Segment {
         tracktree: &locate::IndexedPointsTree,
         point: &mut InputPoint,
     ) {
-        let index = tracktree.nearest_neighbor(&point.euclidian).unwrap();
+        let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
         let (index1, index2) = Self::two_closest_index(track, &index, point);
         let p1 = &track.euclidian[index1];
         let p2 = &track.euclidian[index2];
         let linestring: geo::LineString = vec![p1.xy(), p2.xy()].into();
         let index_floating_part = linestring
-            .line_locate_point(&geo::point!(point.euclidian.xy()))
+            .line_locate_point(&geo::point!(point.euclidean.xy()))
             .unwrap();
         assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
         let floating_index = index1 as f64 + index_floating_part;
@@ -105,11 +110,11 @@ impl Segment {
         let m = Self::middle_point(&a1, &a2, index_floating_part);
         let euclidean = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
         let elevation = m.2;
-        let track_distance = euclidean.d2(&point.euclidian).sqrt();
+        let track_distance = euclidean.d2(&point.euclidean).sqrt();
 
         // check
-        let di = point.euclidian.d2(&track.euclidian[index]);
-        let df = point.euclidian.d2(&euclidean);
+        let di = point.euclidean.d2(&track.euclidian[index]);
+        let df = point.euclidean.d2(&euclidean);
         debug_assert!(df <= di);
 
         point.track_projection = Some(TrackProjection {

@@ -1,1 +1,1 @@
-{"points":[{"euclidian":[923504.7590369411,6271006.333234367],"label_placement_order":18446744073709551615,"tags":{"name":"Dammfeldsiedlung","place":"hamlet"},"track_projection":null,"wgs84":[8.2959844,48.9772751,0.0]}]}
+{"points":[{"euclidean":[923504.7590369411,6271006.333234367],"tags":{"name":"Dammfeldsiedlung","place":"hamlet"},"track_projection":null,"wgs84":[8.2959844,48.9772751,0.0]}]}

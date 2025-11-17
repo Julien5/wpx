@@ -114,7 +114,7 @@ fn read_download_element(
     let euclidean = projection.project(&wgs);
     let ret = InputPoint {
         wgs84: wgs,
-        euclidian: euclidean,
+        euclidean,
         tags,
         track_projection: None,
     };

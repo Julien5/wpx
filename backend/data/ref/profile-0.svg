@@ -65,10 +65,10 @@
 K1
 </text>
 <g>
-<circle cx="971.5270477757737" cy="334.58804999999995" fill="Blue" id="wp-590" r="5"/>
+<circle cx="971.5270477757737" cy="334.58804999999995" fill="Blue" id="wp-591" r="5"/>
 </g>
 <rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="15.610526315789457" x="963.7217846178789" y="338.58804999999995"/>
-<text font-size="16.0" id="wp-590/text" text-anchor="start" x="963.722" y="350.588">
+<text font-size="16.0" id="wp-591/text" text-anchor="start" x="963.722" y="350.588">
 K2
 </text>
 <g>
@@ -81,12 +81,12 @@ K2
 Furtwangen
 </text>
 <g>
-<circle cx="967.918044709321" cy="332.72384999999997" fill="Black" id="wp-581" r="5"/>
-<circle cx="967.918044709321" cy="332.72384999999997" fill="white" id="wp-581-little-white" r="3.5"/>
-<circle cx="967.918044709321" cy="332.72384999999997" fill="black" id="wp-581-little-white" r="2.5"/>
+<circle cx="967.918044709321" cy="332.72384999999997" fill="Black" id="wp-582" r="5"/>
+<circle cx="967.918044709321" cy="332.72384999999997" fill="white" id="wp-582-little-white" r="3.5"/>
+<circle cx="967.918044709321" cy="332.72384999999997" fill="black" id="wp-582-little-white" r="2.5"/>
 </g>
 <rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="137.44210526315794" x="899.196992077742" y="130"/>
-<text font-size="16.0" id="wp-581/text" text-anchor="start" x="899.197" y="142.000">
+<text font-size="16.0" id="wp-582/text" text-anchor="start" x="899.197" y="142.000">
 Haslach im Kinzigtal
 </text>
 <g>
@@ -115,11 +115,11 @@ Schonach im Schwarzwald
 Mühlenbach
 </text>
 <g>
-<circle cx="1006.4607300302691" cy="325.84065" fill="Black" id="wp-582" r="4"/>
-<circle cx="1006.4607300302691" cy="325.84065" fill="white" id="wp-582-little-white" r="2.5"/>
+<circle cx="1006.4607300302691" cy="325.84065" fill="Black" id="wp-583" r="4"/>
+<circle cx="1006.4607300302691" cy="325.84065" fill="white" id="wp-583-little-white" r="2.5"/>
 </g>
 <rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="83.34736842105258" x="1010.4607300302691" y="329.84065"/>
-<text font-size="16.0" id="wp-582/text" text-anchor="start" x="1010.461" y="341.841">
+<text font-size="16.0" id="wp-583/text" text-anchor="start" x="1010.461" y="341.841">
 Fischerbach
 </text>
 </g>

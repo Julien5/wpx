@@ -72,7 +72,7 @@ fn indexed_points(points: &Vec<InputPoint>) -> Vec<IndexedPoint> {
     let mut ret = Vec::new();
     for k in 0..points.len() {
         ret.push(IndexedPoint {
-            coord: points[k].euclidian.clone(),
+            coord: points[k].euclidean.clone(),
             index: k,
         });
     }

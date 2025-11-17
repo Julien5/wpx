@@ -85,7 +85,7 @@ pub async fn write(bboxes: &Vec<EuclideanBoundingBox>, points: &InputPoints) {
             .points
             .iter()
             .filter(|p| {
-                let coord = p.euclidian.point2d();
+                let coord = p.euclidean.point2d();
                 atom.contains(&coord)
             })
             .cloned()

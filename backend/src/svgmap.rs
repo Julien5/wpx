@@ -85,20 +85,20 @@ struct MapData {
 pub fn euclidean_bounding_box(
     track: &Track,
     range: &std::ops::Range<usize>,
-    size: &(i32, i32),
+    size: &IntegerSize2D,
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
     for k in range.start..range.end {
         bbox.update(&track.euclidian[k].point2d());
     }
-    bbox.fix_aspect_ratio(size.0, size.1);
     bbox
 }
 
 impl MapData {
     pub fn make(segment: &Segment, size: &IntegerSize2D) -> MapData {
-        let bbox = segment.map_box().clone();
+        let mut bbox = segment.map_box().clone();
+        bbox.fix_aspect_ratio(size);
         let mut path = Vec::new();
         for k in segment.range.start..segment.range.end {
             path.push(segment.track.euclidian[k].clone());
@@ -129,7 +129,7 @@ impl MapData {
             let mut feature_packet = Vec::new();
             for k in packet {
                 let w = &segment.points[k];
-                let euclidean = w.euclidian.clone();
+                let euclidean = w.euclidean.clone();
 
                 let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
                 let id = format!("wp-{}/circle", k);

@@ -130,23 +130,29 @@ impl BoundingBox {
         self._max.y = self._max.y.max(p.y);
     }
     // TODO: take WxH into account
-    pub fn fix_aspect_ratio(&mut self, _w: i32, _h: i32) {
+    pub fn fix_aspect_ratio(&mut self, wanted: &IntegerSize2D) {
         let x = (self._min.x + self._max.x) / 2f64;
         let y = (self._min.y + self._max.y) / 2f64;
-        if self.height() > self.width() {
-            let delta = 0.5f64 * (self.height());
-            self._max.x = x + delta;
-            self._min.x = x - delta;
+        let (wanted_width, wanted_height) = (wanted.width as f64, wanted.height as f64);
+        let alpha = (wanted_width / self.width()) * (self.height() / wanted_height);
+        let alpha_w = if self.height() > self.width() {
+            alpha
         } else {
-            let delta = 0.5f64 * self.width();
-            self._max.y = y + delta;
-            self._min.y = y - delta;
-        }
-        let margin = 0f64; //2000f64;
-        self._max.x = self._max.x + margin;
-        self._max.y = self._max.y + margin;
-        self._min.x = self._min.x - margin;
-        self._min.y = self._min.y - margin;
+            1f64
+        };
+        let alpha_h = if self.height() < self.width() {
+            1f64 / alpha
+        } else {
+            1f64
+        };
+        let new_width = alpha_w * self.width();
+        let new_height = alpha_h * self.height();
+        let deltaw = 0.5f64 * new_width;
+        let deltah = 0.5f64 * new_height;
+        self._max.x = x + deltaw;
+        self._min.x = x - deltaw;
+        self._max.y = y + deltah;
+        self._min.y = y - deltah;
     }
     pub fn contains(&self, p: &Point2D) -> bool {
         if p.x < self._min.x {
@@ -231,7 +237,7 @@ use std::{
     hash::{Hash, Hasher},
 };
 
-use crate::math::{distance2, partial_compare, Point2D};
+use crate::math::{distance2, partial_compare, IntegerSize2D, Point2D};
 
 impl Hash for BoundingBox {
     fn hash<H: Hasher>(&self, state: &mut H) {

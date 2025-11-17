@@ -26,19 +26,31 @@ function segment-overlap() {
 }
 
 function pdf() {
-	echo "args:"$@
-	file=data/blackforest.gpx
-	cmd=run
-	if [ ! -z "$1" ] && [ "$1" = "flamegraph" ]; then
-		cmd=flamegraph
-		shift
-	fi
 	set -x
-	last_arg="${@: -1}"
-	if [ ! -z "$last_arg" ] && [ -f "$last_arg" ]; then
-		file="$last_arg"
-		set -- "${@:1:$(($#-1))}"
-	fi
+	echo "args:"$@
+	cmd=run
+	options=
+	file=data/blackforest.gpx
+	while [ $# -gt 0 ]; do
+		case "$1" in
+			*.gpx)
+				file=$1
+				shift
+				;;
+			flamegraph)
+				cmd=flamegraph
+				shift
+				;;
+			main-test)
+				options="--main-test true"
+				file=data/ref/berlin.gpx
+				shift
+				;;
+			*)
+				echo unknown option "$1"
+				exit 1
+		esac
+	done
 	echo make pdf
 	export RUST_LOG=trace
 	cargo build # --release
@@ -53,7 +65,7 @@ function pdf() {
 		  --segment-overlap $(segment-overlap ${file}) \
 		  --profile-max-area-ratio 0.07 \
 		  --map-max-area-ratio 0.12 \
-		  "$@" \
+		  ${options} \
 		  "${file}"
 	${TYPST} compile /tmp/document.typst
 	echo xdg-open /tmp/document.pdf 
@@ -80,7 +92,7 @@ function main() {
 		return;
 	else
 		export RUST_BACKTRACE=1
-		pdf "$@"
+		2>&1 pdf "$@"
 	fi
 	# run-test
 }
