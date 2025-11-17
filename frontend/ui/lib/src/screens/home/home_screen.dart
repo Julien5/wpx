@@ -83,9 +83,10 @@ class _ChooseDataState extends State<ChooseData> {
         return;
       }
       setState(() {
-        errorMessage = null; // clears the error message on success
+        errorMessage = null;
       });
       developer.log("[push]");
+      //Navigator.of(context).pushNamed(RouteManager.settingsView);
       Navigator.of(context).pushNamed(RouteManager.interactiveView);
     } catch (e) {
       setState(() {

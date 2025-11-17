@@ -8,16 +8,16 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/utils.dart';
 import 'segment_stack.dart';
 
-class RenderingsProvider extends MultiProvider {
+class RenderersProvider extends MultiProvider {
   final Renderers renderers;
 
-  RenderingsProvider(Renderers r, WaypointsTableData d, Widget child, {super.key})
+  RenderersProvider(Renderers r, WaypointsTableData d, Widget child, {super.key})
     : renderers = r,
       super(
         providers: [
-          ChangeNotifierProvider.value(value: r.profileRendering),
-          ChangeNotifierProvider.value(value: r.mapRendering),
-          ChangeNotifierProvider.value(value: r.yaxisRendering),
+          ChangeNotifierProvider.value(value: r.profileRenderer),
+          ChangeNotifierProvider.value(value: r.mapRenderer),
+          ChangeNotifierProvider.value(value: r.yaxisRenderer),
           ChangeNotifierProvider.value(value: d),
         ],
         child: child,
@@ -27,14 +27,14 @@ class RenderingsProvider extends MultiProvider {
 class SegmentsView extends StatelessWidget {
   const SegmentsView({super.key});
 
-  List<RenderingsProvider> renderingProviders(
+  List<RenderersProvider> renderingProviders(
     RootModel rootModel,
     ScreenOrientation screenOrientation,
   ) {
-    List<RenderingsProvider> ret = [];
+    List<RenderersProvider> ret = [];
     developer.log("[_initRenderingProviders]");
     for (var segment in rootModel.segments()) {
-      var w = RenderingsProvider(
+      var w = RenderersProvider(
         Renderers.make(rootModel.getBridge(),segment),
         WaypointsTableData(brd: rootModel.getBridge(),segment: segment),
         SegmentView(screenOrientation: screenOrientation),
@@ -59,7 +59,7 @@ class SegmentsView extends StatelessWidget {
         developer.log("[segments] [build] #segments=${segments.length}");
         List<Tab> tabs = [];
         for (var s in segments) {
-          var id = s.renderers.profileRendering.segment.id();
+          var id = s.renderers.profileRenderer.segment.id();
           tabs.add(Tab(text: "Page ${1 + id.toInt()}"));
         }
         if (viewType == ScreenOrientation.desktop) {

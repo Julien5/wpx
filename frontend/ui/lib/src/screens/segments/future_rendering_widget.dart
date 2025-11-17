@@ -20,9 +20,9 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
     widget.future.setSize(wantedSize);
     if (widget.future.done()) {
       log("[render-parse-start:${widget.future.trackData}]");
-      SvgRootElement root = parseSvg(widget.future.result());
+      SvgRootElement svgRootElement = parseSvg(widget.future.result());
       log("[render-parse-end:${widget.future.trackData}]");
-      svg = MiniSvgWidget(svg: root);
+      svg = MiniSvgWidget(svgRootElement: svgRootElement);
     }
     if (!widget.future.done() && svg == null) {
       return Text("starting ${widget.future.trackData} ${widget.future.id()}");

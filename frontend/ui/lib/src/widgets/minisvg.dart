@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/svgelements.dart';
 
 class MiniSvgWidget extends StatelessWidget {
-  final SvgRootElement svg;
+  final SvgRootElement svgRootElement;
   final Size? size;
   
-  const MiniSvgWidget({super.key, required this.svg, this.size});
+  const MiniSvgWidget({super.key, required this.svgRootElement, this.size});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         Size outputSize=Size(constraints.maxWidth,constraints.maxHeight);
-        double scale=gscale(svg.size,outputSize);
-        Size scaledIntputSize=Size(svg.size.width*scale,svg.size.height*scale);
+        double scale=gscale(svgRootElement.size,outputSize);
+        Size scaledIntputSize=Size(svgRootElement.size.width*scale,svgRootElement.size.height*scale);
         //developer.log("svg-size=${svg.size}, constraints-size=$outputSize");
-        return CustomPaint(size: scaledIntputSize, painter: SvgPainter(root: svg));
+        return CustomPaint(size: scaledIntputSize, painter: SvgPainter(root: svgRootElement));
       },
     );
   }

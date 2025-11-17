@@ -112,13 +112,13 @@ class MapRenderer extends FutureRenderer {
 }
 
 class Renderers {
-  final ProfileRenderer profileRendering;
-  final YAxisRenderer yaxisRendering;
-  final MapRenderer mapRendering;
+  final ProfileRenderer profileRenderer;
+  final YAxisRenderer yaxisRenderer;
+  final MapRenderer mapRenderer;
   Renderers(ProfileRenderer profile, YAxisRenderer yaxis, MapRenderer map)
-    : profileRendering = profile,
-      yaxisRendering = yaxis,
-      mapRendering = map;
+    : profileRenderer = profile,
+      yaxisRenderer = yaxis,
+      mapRenderer = map;
 
   static Renderers make(bridge.Bridge bridge, bridge.Segment segment) {
     var t = ProfileRenderer(bridge, segment);
@@ -128,14 +128,14 @@ class Renderers {
   }
 
   void updateSegment(bridge.Segment segment) {
-    profileRendering.updateSegment(segment);
-    mapRendering.updateSegment(segment);
-    yaxisRendering.updateSegment(segment);
+    profileRenderer.updateSegment(segment);
+    mapRenderer.updateSegment(segment);
+    yaxisRenderer.updateSegment(segment);
   }
 
   void reset() {
-    profileRendering.reset();
-    mapRendering.reset();
-    yaxisRendering.reset();
+    profileRenderer.reset();
+    mapRenderer.reset();
+    yaxisRenderer.reset();
   }
 }
