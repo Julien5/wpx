@@ -100,7 +100,6 @@ Bad Peterstal
 <text font-size="16.0" id="wp-30/text" text-anchor="end" x="159.869" y="386.551">
 Wolfach
 </text>
-<path d="M162.35,390.49 L169.30,418.61" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="171.74110539228604" cy="379.21973961572803" fill="Black" id="wp-138/circle" r="4"/>
 <circle cx="171.74110539228604" cy="379.21973961572803" fill="white" id="wp-138/circle-little-white" r="2.5"/>
@@ -143,7 +142,6 @@ Baiersbronn
 <text font-size="16.0" id="wp-473/text" text-anchor="start" x="220.695" y="192.642">
 Obertal
 </text>
-<path d="M217.61,196.32 L208.88,200.80 L209.49,208.96" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="254.63005960553346" cy="144.61687823021202" fill="Black" id="wp-607/circle" r="4"/>
 <circle cx="254.63005960553346" cy="144.61687823021202" fill="white" id="wp-607/circle-little-white" r="2.5"/>
@@ -161,7 +159,6 @@ Schönmünzach
 <text font-size="16.0" id="wp-57/text" text-anchor="start" x="242.020" y="394.037">
 Schiltach
 </text>
-<path d="M241.48,398.04 L241.48,426.04" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="250.8769344219263" cy="80.47959704220557" fill="Black" id="wp-808/circle" r="4"/>
 <circle cx="250.8769344219263" cy="80.47959704220557" fill="white" id="wp-808/circle-little-white" r="2.5"/>
@@ -202,7 +199,6 @@ Bad Griesbach
 <text font-size="16.0" id="wp-473/text" text-anchor="start" x="220.695" y="192.642">
 Obertal
 </text>
-<path d="M217.61,196.32 L208.88,200.80 L209.49,208.96" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="254.63005960553346" cy="144.61687823021202" fill="Black" id="wp-607/circle" r="4"/>
 <circle cx="254.63005960553346" cy="144.61687823021202" fill="white" id="wp-607/circle-little-white" r="2.5"/>

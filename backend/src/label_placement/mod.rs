@@ -406,7 +406,7 @@ impl PlacementResult {
                 if self.placed_indices.contains_key(&feature_id) {
                     let bbox = self.placed_indices.get(&feature_id).unwrap();
                     feature.place_label(bbox);
-                    feature.make_link(&self.obstacles);
+                    //feature.make_link(&self.obstacles);
                     ret.push(feature.clone());
                 } else {
                     log::trace!("could not place {}, index:{}", feature.text(), feature_id,);

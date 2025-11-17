@@ -63,7 +63,6 @@ Nachtigall
 <text font-size="16.0" id="wp-230/text" text-anchor="start" x="155.805" y="351.406">
 Baden-Baden
 </text>
-<path d="M220.71,335.41 L220.71,323.41" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="225.74721704058175" cy="55.63018839331926" fill="Black" id="wp-460/circle" r="4"/>
 <circle cx="225.74721704058175" cy="55.63018839331926" fill="white" id="wp-460/circle-little-white" r="2.5"/>
@@ -115,7 +114,6 @@ Lauterbourg
 <text font-size="16.0" id="wp-491/text" text-anchor="start" x="145.728" y="54.418">
 Kandel
 </text>
-<path d="M191.73,38.42 L238.35,30.00 L238.35,10.00 L191.73,-5.58" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="194.95644714502032" cy="92.28243428822316" fill="Black" id="wp-457/circle" r="4"/>
 <circle cx="194.95644714502032" cy="92.28243428822316" fill="white" id="wp-457/circle-little-white" r="2.5"/>

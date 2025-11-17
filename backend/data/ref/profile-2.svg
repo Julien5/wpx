@@ -101,7 +101,6 @@ Nachtigall
 <text font-size="16.0" id="wp-460/text" text-anchor="start" x="1221.809" y="308.793">
 Hagenbach
 </text>
-<path d="M1260.64,312.79 L1260.64,328.79" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="652.3311864591346" cy="321.1647857142857" fill="Black" id="wp-298" r="4"/>
 <circle cx="652.3311864591346" cy="321.1647857142857" fill="white" id="wp-298-little-white" r="2.5"/>
@@ -126,7 +125,6 @@ Lauterbourg
 <text font-size="16.0" id="wp-457/text" text-anchor="start" x="1115.905" y="296.297">
 Berg (Pfalz)
 </text>
-<path d="M1156.44,300.30 L1156.44,316.30" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 </g>
 </g>
 <g id="SL" transform="translate(0 0)">

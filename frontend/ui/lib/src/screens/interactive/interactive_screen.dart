@@ -13,7 +13,12 @@ class InteractiveMapView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MapRenderer>(
       builder: (context, mapRenderer, child) {
-        return FutureRenderingWidget(future: mapRenderer);
+        return LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            mapRenderer.setSize(constraints.biggest);
+            return FutureRenderingWidget(future: mapRenderer);
+          },
+        );
       },
     );
   }

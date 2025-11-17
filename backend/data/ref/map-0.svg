@@ -24,7 +24,6 @@ K2
 <text font-size="16.0" id="wp-168/text" text-anchor="end" x="151.699" y="277.389">
 Furtwangen
 </text>
-<path d="M155.70,279.39 L163.67,279.39" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="299.48768806430326" cy="379.9307882642388" fill="Black" id="wp-66/circle" r="5"/>
 <circle cx="299.48768806430326" cy="379.9307882642388" fill="white" id="wp-66/circle-little-white" r="3.5"/>
@@ -60,7 +59,6 @@ Schonach im Schwarzwald
 <text font-size="16.0" id="wp-67/text" text-anchor="start" x="324.344" y="364.514">
 Hüfingen
 </text>
-<path d="M322.33,368.51 L322.22,380.51" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="111.9091584242733" cy="110.54800181507017" fill="Black" id="wp-448/circle" r="4"/>
 <circle cx="111.9091584242733" cy="110.54800181507017" fill="white" id="wp-448/circle-little-white" r="2.5"/>
@@ -86,7 +84,6 @@ Hausach
 <text font-size="16.0" id="wp-582/text" text-anchor="start" x="123.033" y="64.371">
 Fischerbach
 </text>
-<path d="M120.08,68.13 L113.33,80.61" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="293.8537170090267" cy="361.7312692726373" fill="Black" id="wp-63/circle" r="4"/>
 <circle cx="293.8537170090267" cy="361.7312692726373" fill="white" id="wp-63/circle-little-white" r="2.5"/>
@@ -104,7 +101,6 @@ Bruggen
 <text font-size="16.0" id="wp-65/text" text-anchor="start" x="271.701" y="326.568">
 Donaueschingen
 </text>
-<path d="M325.92,330.57 L325.92,358.57" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="129.32069096653777" cy="143.6871532004443" fill="Black" id="wp-451/circle" r="4"/>
 <circle cx="129.32069096653777" cy="143.6871532004443" fill="white" id="wp-451/circle-little-white" r="2.5"/>
@@ -122,7 +118,6 @@ Oberprechtal
 <text font-size="16.0" id="wp-593/text" text-anchor="start" x="216.042" y="71.375">
 Wolfach
 </text>
-<path d="M212.04,73.37 L176.13,73.37" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="175.9598611133879" cy="34.62701620937514" fill="Black" id="wp-701/circle" r="4"/>
 <circle cx="175.9598611133879" cy="34.62701620937514" fill="white" id="wp-701/circle-little-white" r="2.5"/>
@@ -131,7 +126,6 @@ Wolfach
 <text font-size="16.0" id="wp-701/text" text-anchor="start" x="145.960" y="16.627">
 Walke
 </text>
-<path d="M175.96,20.63 L175.96,32.63" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="179.13987269312292" cy="144.89775803405428" fill="Black" id="wp-481/circle" r="5"/>
 <circle cx="179.13987269312292" cy="144.89775803405428" fill="white" id="wp-481/circle-little-white" r="3.5"/>
@@ -201,7 +195,6 @@ Mühlenbach
 <text font-size="16.0" id="wp-582/text" text-anchor="start" x="123.033" y="64.371">
 Fischerbach
 </text>
-<path d="M120.08,68.13 L113.33,80.61" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="293.8537170090267" cy="361.7312692726373" fill="Black" id="wp-63/circle" r="4"/>
 <circle cx="293.8537170090267" cy="361.7312692726373" fill="white" id="wp-63/circle-little-white" r="2.5"/>
@@ -226,7 +219,6 @@ Oberprechtal
 <text font-size="16.0" id="wp-701/text" text-anchor="start" x="145.960" y="16.627">
 Walke
 </text>
-<path d="M175.96,20.63 L175.96,32.63" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 </g>
 <g>
 <g/>

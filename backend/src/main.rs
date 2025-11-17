@@ -3,6 +3,7 @@
 use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
+use tracks::math::IntegerSize2D;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -25,8 +26,20 @@ struct Cli {
     profile_max_area_ratio: Option<f64>,
     #[arg(long, value_name = "map_max_area_ratio")]
     map_max_area_ratio: Option<f64>,
+    #[arg(long, value_name = "main-test")]
+    main_test: Option<bool>,
     #[arg(value_name = "gpx")]
     filename: std::path::PathBuf,
+}
+
+fn main_test(backend: &mut Backend) -> Result<(), error::Error> {
+    let segment = backend.trackSegment();
+    backend.render_segment_what(
+        &segment,
+        &"map".to_string(),
+        &IntegerSize2D::new(1000, 1000),
+    );
+    Ok(())
 }
 
 #[tokio::main(flavor = "current_thread")]
@@ -125,6 +138,16 @@ async fn main() -> Result<(), error::Error> {
     }
 
     backend.set_parameters(&parameters);
+
+    match args.main_test {
+        Some(enabled) => {
+            if enabled {
+                return main_test(&mut backend);
+            }
+        }
+        _ => {}
+    }
+
     let stats = backend.statistics();
     log::info!("length = {:.1} km", stats.length / 1000f64);
     log::info!("elevation gain = {:.1} km", stats.elevation_gain);

@@ -40,10 +40,6 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return buildWorker();
-      },
-    );
+    return buildWorker();
   }
 }

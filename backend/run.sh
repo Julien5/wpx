@@ -12,7 +12,7 @@ function segment-length() {
 		echo 35
 		return
 	fi
-	echo 110
+	echo 1010
 }
 
 function segment-overlap() {
@@ -33,18 +33,19 @@ function pdf() {
 		cmd=flamegraph
 		shift
 	fi
-	if [ ! -z "$1" ] && [ -f "$1" ]; then
-	   file="$1"
-	   shift
+	set -x
+	last_arg="${@: -1}"
+	if [ ! -z "$last_arg" ] && [ -f "$last_arg" ]; then
+		file="$last_arg"
+		set -- "${@:1:$(($#-1))}"
 	fi
 	echo make pdf
 	export RUST_LOG=trace
-	cargo build --release
+	cargo build # --release
 	export CARGO_PROFILE_RELEASE_DEBUG=true
-	set -x
 	rm -Rf /tmp/wpx
 	mkdir /tmp/wpx
-	time cargo ${cmd} --release -- \
+	time cargo ${cmd} -- \
 		  --output-directory /tmp/wpx/ \
 		  --debug true \
 		  --step-elevation-gain 100 \
@@ -66,16 +67,16 @@ function filter-log {
 	mv /tmp/tmp ${filename}
 }
 
-function runtest() {
+function unit-tests() {
 	export RUST_LOG=trace
 	# export RUST_BACKTRACE=1
 	cargo test $@ -- --nocapture
 }
 
 function main() {
-	if [ ! -z "$1" ] && [ $1 = "test" ]; then
+	if [ ! -z "$1" ] && [ $1 = "unit-tests" ]; then
 		shift 
-		runtest "$@"
+		unit-tests "$@"
 		return;
 	else
 		export RUST_BACKTRACE=1
