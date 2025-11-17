@@ -17,6 +17,7 @@ class ProfileConsumer extends StatelessWidget {
         // at the list view level. Because "Callbacks are not fired immediately
         // on visibility changes."
         developer.log("update profile renderer:${pRenderer.segment.id()}");
+        pRenderer.setSize(Size(1000, 285));
         return FutureRenderingWidget(future: pRenderer);
       },
     );
@@ -30,6 +31,7 @@ class YAxisConsumer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<YAxisRenderer>(
       builder: (context, yRenderer, child) {
+        yRenderer.setSize(Size(1000, 285));
         return FutureRenderingWidget(future: yRenderer);
       },
     );

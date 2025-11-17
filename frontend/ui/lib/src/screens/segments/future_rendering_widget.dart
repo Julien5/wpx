@@ -16,8 +16,7 @@ class FutureRenderingWidget extends StatefulWidget {
 class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   MiniSvgWidget? svg;
 
-  Widget buildWorker(Size wantedSize) {
-    widget.future.setSize(wantedSize);
+  Widget buildWorker() {
     if (widget.future.done()) {
       log("[render-parse-start:${widget.future.trackData}]");
       SvgRootElement svgRootElement = parseSvg(widget.future.result());
@@ -43,11 +42,7 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        Size size = Size(1000, 285);    
-        if (widget.future is MapRenderer) {
-          size = Size(400,400);
-        }
-        return buildWorker(size);
+        return buildWorker();
       },
     );
   }
