@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/log.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/svgelements.dart';
 import 'package:ui/src/widgets/minisvg.dart';
 
 class FutureRenderingWidget extends StatefulWidget {
@@ -19,7 +20,7 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
     widget.future.setSize(wantedSize);
     if (widget.future.done()) {
       log("[render-parse-start:${widget.future.trackData}]");
-      SvgRootElement root = MiniSvgWidget.parse(widget.future.result());
+      SvgRootElement root = parseSvg(widget.future.result());
       log("[render-parse-end:${widget.future.trackData}]");
       svg = MiniSvgWidget(svg: root);
     }
