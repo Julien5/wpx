@@ -12,11 +12,11 @@ class MiniSvgWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        Size outputSize=Size(constraints.maxWidth,constraints.maxHeight);
-        double scale=gscale(svgRootElement.size,outputSize);
-        Size scaledIntputSize=Size(svgRootElement.size.width*scale,svgRootElement.size.height*scale);
+        Size displaySize=constraints.biggest;
+        double scale=gscale(svgRootElement.size,displaySize);
+        Size scaledSize=svgRootElement.size*scale;
         //developer.log("svg-size=${svg.size}, constraints-size=$outputSize");
-        return CustomPaint(size: scaledIntputSize, painter: SvgPainter(root: svgRootElement));
+        return CustomPaint(size: scaledSize, painter: SvgPainter(root: svgRootElement));
       },
     );
   }
@@ -35,11 +35,11 @@ class SvgPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size drawArea) {
-    double s = gscale(root.size, drawArea);
+    double scale = gscale(root.size, drawArea);
     //developer.log("input-size=${root.size}, output-size=$drawArea => scale=$s");
-    canvas.scale(s);
-    if ((s < 1)) {
-      double tx = 0.5 * (drawArea.width - s * root.size.width);
+    canvas.scale(scale);
+    if ((scale < 1)) {
+      double tx = 0.5 * (drawArea.width - scale * root.size.width);
       canvas.translate(tx, 0);
     }
     root.paintElement(canvas, drawArea);
