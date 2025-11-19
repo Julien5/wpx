@@ -17,7 +17,7 @@ class StaticSvgWidget extends StatelessWidget {
         double scale=scaleDown(svgRootElement.size,displaySize);
         Size scaledSize=svgRootElement.size*scale;
         developer.log("scaledSize=$scaledSize, constraints-size=$displaySize => scale=$scale");
-        return CustomPaint(size: scaledSize, painter: StaticSvgPainter(root: svgRootElement, scale: scale));
+        return CustomPaint(size: scaledSize, painter: StaticSvgPainter(root: svgRootElement, renderingScale: scale));
       },
     );
   }
@@ -25,14 +25,15 @@ class StaticSvgWidget extends StatelessWidget {
 
 class StaticSvgPainter extends CustomPainter {
   final SvgRootElement root;
-  final double scale;
+  final double renderingScale;
 
-  StaticSvgPainter({required this.root, required this.scale});
+  StaticSvgPainter({required this.root, required this.renderingScale});
 
   @override
   void paint(Canvas canvas, Size drawArea) {
-    canvas.scale(scale);
-    root.paintElement(canvas, drawArea);
+    canvas.scale(renderingScale);
+    Sheet sheet=Sheet(canvas: canvas, size: drawArea, zoom: 1.0);
+    root.paintElement(sheet);
   }
 
   @override

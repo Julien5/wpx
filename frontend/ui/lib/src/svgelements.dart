@@ -46,17 +46,24 @@ class Translate extends Transform {
   }
 }
 
+class Sheet {
+  Canvas canvas;
+  Size size;
+  double zoom;
+  Sheet({required this.canvas, required this.size, required this.zoom});
+}
+
 abstract class SvgElement {
   List<Transform> T = [];
   List<SvgElement> children = [];
   final SvgElement? _parent;
 
-  void paintElement(Canvas canvas, Size size);
+  void paintElement(Sheet sheet);
 
-  void paint(Canvas canvas, Size size) {
-    _installTransforms(canvas);
-    paintElement(canvas, size);
-    _deinstallTransforms(canvas);
+  void paint(Sheet sheet) {
+    _installTransforms(sheet.canvas);
+    paintElement(sheet);
+    _deinstallTransforms(sheet.canvas);
   }
 
   final XmlElement _xmlElement;
@@ -134,15 +141,16 @@ class GroupElement extends SvgElement {
   }
 
   @override
-  void paintElement(Canvas canvas, Size size) {
+  void paintElement(Sheet sheet) {
     for (var child in children) {
-      child.paint(canvas, size);
+      child.paint(sheet);
     }
   }
 }
 
 class SvgRootElement extends GroupElement {
   late Size size;
+
   SvgRootElement(super.xmlElement, super.parent) {
     double width = double.parse(_xmlElement.getAttribute("width")!);
     double height = double.parse(_xmlElement.getAttribute("height")!);
@@ -150,9 +158,9 @@ class SvgRootElement extends GroupElement {
   }
 
   @override
-  void paintElement(Canvas canvas, Size size) {
+  void paintElement(Sheet sheet) {
     for (var child in children) {
-      child.paint(canvas, size);
+      child.paint(sheet);
     }
   }
 }
@@ -220,7 +228,7 @@ class PathElement extends SvgElement {
   }
 
   @override
-  void paintElement(Canvas canvas, Size size) {
+  void paintElement(Sheet sheet) {
     final paint = Paint()..style = PaintingStyle.stroke;
     paint.isAntiAlias = true;
     if (d.length < 50) {
@@ -240,7 +248,7 @@ class PathElement extends SvgElement {
         dashArray: CircularIntervalList<double>(<double>[10.0, 5]),
       );
     }
-    canvas.drawPath(p, paint);
+    sheet.canvas.drawPath(p, paint);
   }
 }
 
@@ -269,7 +277,7 @@ class CircleElement extends SvgElement {
   }
 
   @override
-  void paintElement(Canvas canvas, Size size) {
+  void paintElement(Sheet sheet) {
     final paint = Paint()..style = PaintingStyle.stroke;
     paint.isAntiAlias = true;
     paint.strokeWidth = strokeWidth;
@@ -279,7 +287,7 @@ class CircleElement extends SvgElement {
       paint.style = PaintingStyle.fill;
       paint.color = fill;
     }
-    canvas.drawCircle(Offset(cx, cy), r, paint);
+    sheet.canvas.drawCircle(Offset(cx, cy), r, paint);
   }
 }
 
@@ -324,7 +332,7 @@ class TextElement extends SvgElement {
   }
 
   @override
-  void paintElement(Canvas canvas, Size size) {
+  void paintElement(Sheet sheet) {
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
@@ -348,7 +356,7 @@ class TextElement extends SvgElement {
       dx = x - textPainter.width;
     }
     double dy = y - 0.5 * textPainter.height - 5;
-    textPainter.paint(canvas, Offset(dx, dy));
+    textPainter.paint(sheet.canvas, Offset(dx, dy));
   }
 }
 
@@ -383,7 +391,7 @@ class RectElement extends SvgElement {
   }
 
   @override
-  void paintElement(Canvas canvas, Size size) {
+  void paintElement(Sheet sheet) {
     final paint = Paint()..style = PaintingStyle.stroke;
     paint.isAntiAlias = true;
     paint.strokeWidth = strokeWidth;
@@ -394,7 +402,7 @@ class RectElement extends SvgElement {
       paint.color = fill;
     }
 
-    canvas.drawRect(Rect.fromLTWH(x, y, width, height), paint);
+    sheet.canvas.drawRect(Rect.fromLTWH(x, y, width, height), paint);
   }
 }
 

@@ -12,7 +12,7 @@ class MapConsumer extends StatelessWidget {
     return Consumer<MapRenderer>(
       builder: (context, mapRenderer, child) {
         mapRenderer.setSize(Size(400,400));
-        return FutureRenderingWidget(future: mapRenderer);
+        return FutureRenderingWidget(future: mapRenderer, interactive: false,);
       },
     );
   }

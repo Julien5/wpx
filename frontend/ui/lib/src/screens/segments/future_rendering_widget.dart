@@ -6,8 +6,9 @@ import 'package:ui/src/svgelements.dart';
 import 'package:ui/src/widgets/static_svg_widget.dart';
 
 class FutureRenderingWidget extends StatefulWidget {
-  final FutureRenderer future;
-  const FutureRenderingWidget({super.key, required this.future});
+  final FutureRenderer future; 
+  final bool interactive;
+  const FutureRenderingWidget({super.key, required this.future, required this.interactive});
 
   @override
   State<FutureRenderingWidget> createState() => _FutureRenderingWidgetState();

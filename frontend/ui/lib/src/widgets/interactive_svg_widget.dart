@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/svgelements.dart';
 import 'package:ui/utils.dart';
 
-class InteractiveSvgWidget extends StatelessWidget {
+class SvgWidget extends StatelessWidget {
   final SvgRootElement svgRootElement;
   final Size? size;
   
-  const InteractiveSvgWidget({super.key, required this.svgRootElement, this.size});
+  const SvgWidget({super.key, required this.svgRootElement, this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -17,22 +17,24 @@ class InteractiveSvgWidget extends StatelessWidget {
         double scale=scaleDown(svgRootElement.size,displaySize);
         Size scaledSize=svgRootElement.size*scale;
         developer.log("scaledSize=$scaledSize, constraints-size=$displaySize => scale=$scale");
-        return CustomPaint(size: scaledSize, painter: InteractiveSvgPainter(root: svgRootElement, scale: scale));
+        return CustomPaint(size: scaledSize, painter: SvgPainter(root: svgRootElement, renderingScale: scale));
       },
     );
   }
 }
 
-class InteractiveSvgPainter extends CustomPainter {
+class SvgPainter extends CustomPainter {
   final SvgRootElement root;
-  double scale=1.0;
+  double renderingScale=1.0;
+  double zoomScale=1.0;
 
-  InteractiveSvgPainter({required this.root, required this.scale});
+  SvgPainter({required this.root, required this.renderingScale});
 
   @override
   void paint(Canvas canvas, Size drawArea) {
-    canvas.scale(scale);
-    root.paintElement(canvas, drawArea);
+    canvas.scale(renderingScale);
+    Sheet sheet=Sheet(canvas: canvas, size: drawArea, zoom: zoomScale);
+    root.paintElement(sheet);
   }
 
   @override

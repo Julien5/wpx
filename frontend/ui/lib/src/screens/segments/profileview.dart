@@ -18,7 +18,7 @@ class ProfileConsumer extends StatelessWidget {
         // on visibility changes."
         developer.log("update profile renderer:${pRenderer.segment.id()}");
         pRenderer.setSize(Size(1000, 285));
-        return FutureRenderingWidget(future: pRenderer);
+        return FutureRenderingWidget(future: pRenderer, interactive: false,);
       },
     );
   }
@@ -32,7 +32,7 @@ class YAxisConsumer extends StatelessWidget {
     return Consumer<YAxisRenderer>(
       builder: (context, yRenderer, child) {
         yRenderer.setSize(Size(1000, 285));
-        return FutureRenderingWidget(future: yRenderer);
+        return FutureRenderingWidget(future: yRenderer, interactive: false,);
       },
     );
   }
