@@ -1,4 +1,11 @@
+import 'dart:math';
 import 'dart:ui';
+
+double scaleDown(Size object, Size drawArea) {
+  double sw = drawArea.width / object.width;
+  double sh = drawArea.height / object.height;
+  return [sw, sh, 1.0].reduce(min);
+}
 
 List<double> fromKm(List<double> list) {
   List<double> ret = list;
@@ -7,7 +14,6 @@ List<double> fromKm(List<double> list) {
   }
   return ret;
 }
-
 
 enum ScreenOrientation { desktop, landscape, portrait }
 

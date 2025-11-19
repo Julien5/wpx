@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/svgelements.dart';
 import 'package:ui/utils.dart';
 
-class StaticSvgWidget extends StatelessWidget {
+class InteractiveSvgWidget extends StatelessWidget {
   final SvgRootElement svgRootElement;
   final Size? size;
   
-  const StaticSvgWidget({super.key, required this.svgRootElement, this.size});
+  const InteractiveSvgWidget({super.key, required this.svgRootElement, this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +17,17 @@ class StaticSvgWidget extends StatelessWidget {
         double scale=scaleDown(svgRootElement.size,displaySize);
         Size scaledSize=svgRootElement.size*scale;
         developer.log("scaledSize=$scaledSize, constraints-size=$displaySize => scale=$scale");
-        return CustomPaint(size: scaledSize, painter: StaticSvgPainter(root: svgRootElement, scale: scale));
+        return CustomPaint(size: scaledSize, painter: InteractiveSvgPainter(root: svgRootElement, scale: scale));
       },
     );
   }
 }
 
-class StaticSvgPainter extends CustomPainter {
+class InteractiveSvgPainter extends CustomPainter {
   final SvgRootElement root;
-  final double scale;
+  double scale=1.0;
 
-  StaticSvgPainter({required this.root, required this.scale});
+  InteractiveSvgPainter({required this.root, required this.scale});
 
   @override
   void paint(Canvas canvas, Size drawArea) {
