@@ -5,9 +5,8 @@ import 'package:ui/utils.dart';
 
 class StaticSvgWidget extends StatelessWidget {
   final SvgRootElement svgRootElement;
-  final Size? size;
   
-  const StaticSvgWidget({super.key, required this.svgRootElement, this.size});
+  const StaticSvgWidget({super.key, required this.svgRootElement});
 
   @override
   Widget build(BuildContext context) {
