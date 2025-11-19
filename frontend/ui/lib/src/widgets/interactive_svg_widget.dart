@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/src/svgelements.dart';
 import 'package:ui/utils.dart';
@@ -29,8 +30,10 @@ class _SvgWidgetState extends State<SvgWidget> {
         );
         return InteractiveViewer(
           transformationController: _transformationController,
-          minScale: 0.75,
-          maxScale: 1.75,
+          minScale: 1,
+          maxScale: 1.5,
+          scaleFactor: 1000,
+          boundaryMargin: EdgeInsets.all(double.infinity), // <-- Add this line
           onInteractionUpdate: (details) {
             // Extract the current scale from the transformation matrix
             double newZoom =
