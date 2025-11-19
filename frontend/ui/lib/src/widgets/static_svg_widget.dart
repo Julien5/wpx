@@ -31,7 +31,7 @@ class StaticSvgPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size drawArea) {
     canvas.scale(renderingScale);
-    Sheet sheet=Sheet(canvas: canvas, size: drawArea, zoom: 1.0);
+    Sheet sheet=Sheet(canvas: canvas, size: drawArea, zoom: 1.0, pan: Offset.zero);
     root.paintElement(sheet);
   }
 

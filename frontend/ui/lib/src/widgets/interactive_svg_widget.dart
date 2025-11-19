@@ -13,7 +13,9 @@ class SvgWidget extends StatefulWidget {
 
 class _SvgWidgetState extends State<SvgWidget> {
   double zoomScale = 1.0;
-  final TransformationController _transformationController = TransformationController();
+  Offset panOffset = Offset.zero;
+  final TransformationController _transformationController =
+      TransformationController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +29,19 @@ class _SvgWidgetState extends State<SvgWidget> {
         );
         return InteractiveViewer(
           transformationController: _transformationController,
-          minScale: 0.5,
-          maxScale: 5.0,
+          minScale: 0.75,
+          maxScale: 1.75,
           onInteractionUpdate: (details) {
             // Extract the current scale from the transformation matrix
-            double newZoom = _transformationController.value.getMaxScaleOnAxis();
+            double newZoom =
+                _transformationController.value.getMaxScaleOnAxis();
+            Offset newPan = Offset(
+              _transformationController.value.row0[2],
+              _transformationController.value.row1[2],
+            );
             setState(() {
               zoomScale = newZoom;
+              panOffset = newPan;
             });
           },
           child: CustomPaint(
@@ -42,6 +50,7 @@ class _SvgWidgetState extends State<SvgWidget> {
               root: widget.svgRootElement,
               renderingScale: scale,
               zoomScale: zoomScale,
+              panOffset: panOffset,
             ),
           ),
         );
@@ -54,17 +63,24 @@ class SvgPainter extends CustomPainter {
   final SvgRootElement root;
   double renderingScale = 1.0;
   double zoomScale = 1.0;
+  Offset panOffset = Offset.zero;
 
   SvgPainter({
     required this.root,
     required this.renderingScale,
     required this.zoomScale,
+    required this.panOffset,
   });
 
   @override
   void paint(Canvas canvas, Size drawArea) {
     canvas.scale(renderingScale);
-    Sheet sheet = Sheet(canvas: canvas, size: drawArea, zoom: zoomScale);
+    Sheet sheet = Sheet(
+      canvas: canvas,
+      size: drawArea,
+      zoom: zoomScale,
+      pan: panOffset,
+    );
     root.paintElement(sheet);
   }
 

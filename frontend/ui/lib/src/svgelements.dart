@@ -50,7 +50,13 @@ class Sheet {
   Canvas canvas;
   Size size;
   double zoom;
-  Sheet({required this.canvas, required this.size, required this.zoom});
+  Offset pan;
+  Sheet({
+    required this.canvas,
+    required this.size,
+    required this.zoom,
+    required this.pan,
+  });
 }
 
 abstract class SvgElement {
@@ -251,7 +257,7 @@ class PathElement extends SvgElement {
 
     // Scale the path coordinates by sheet.zoom
     final Matrix4 matrix = Matrix4.identity();
-    matrix.scaleByDouble(sheet.zoom,sheet.zoom,1,1);
+    matrix.scaleByDouble(sheet.zoom, sheet.zoom, 1, 1);
     p = p.transform(matrix.storage);
 
     sheet.canvas.drawPath(p, paint);
@@ -293,7 +299,11 @@ class CircleElement extends SvgElement {
       paint.style = PaintingStyle.fill;
       paint.color = fill;
     }
-    sheet.canvas.drawCircle(Offset(cx*sheet.zoom, cy*sheet.zoom), r, paint);
+    sheet.canvas.drawCircle(
+      Offset(cx * sheet.zoom, cy * sheet.zoom) + sheet.pan,
+      r,
+      paint,
+    );
   }
 }
 
@@ -362,7 +372,10 @@ class TextElement extends SvgElement {
       dx = x - textPainter.width;
     }
     double dy = y - 0.5 * textPainter.height - 5;
-    textPainter.paint(sheet.canvas, Offset(dx*sheet.zoom, dy*sheet.zoom));
+    textPainter.paint(
+      sheet.canvas,
+      Offset(dx * sheet.zoom, dy * sheet.zoom) + sheet.pan,
+    );
   }
 }
 
@@ -407,8 +420,13 @@ class RectElement extends SvgElement {
       paint.style = PaintingStyle.fill;
       paint.color = fill;
     }
-
-    sheet.canvas.drawRect(Rect.fromLTWH(x*sheet.zoom, y*sheet.zoom, width*sheet.zoom, height*sheet.zoom), paint);
+    Rect rect = Rect.fromLTWH(
+      x * sheet.zoom + sheet.pan.dx,
+      y * sheet.zoom + sheet.pan.dy,
+      width * sheet.zoom,
+      height * sheet.zoom,
+    );
+    sheet.canvas.drawRect(rect, paint);
   }
 }
 
