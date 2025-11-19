@@ -248,6 +248,12 @@ class PathElement extends SvgElement {
         dashArray: CircularIntervalList<double>(<double>[10.0, 5]),
       );
     }
+
+    // Scale the path coordinates by sheet.zoom
+    final Matrix4 matrix = Matrix4.identity();
+    matrix.scaleByDouble(sheet.zoom,sheet.zoom,1,1);
+    p = p.transform(matrix.storage);
+
     sheet.canvas.drawPath(p, paint);
   }
 }
@@ -287,7 +293,7 @@ class CircleElement extends SvgElement {
       paint.style = PaintingStyle.fill;
       paint.color = fill;
     }
-    sheet.canvas.drawCircle(Offset(cx, cy), r, paint);
+    sheet.canvas.drawCircle(Offset(cx*sheet.zoom, cy*sheet.zoom), r, paint);
   }
 }
 
@@ -356,7 +362,7 @@ class TextElement extends SvgElement {
       dx = x - textPainter.width;
     }
     double dy = y - 0.5 * textPainter.height - 5;
-    textPainter.paint(sheet.canvas, Offset(dx, dy));
+    textPainter.paint(sheet.canvas, Offset(dx*sheet.zoom, dy*sheet.zoom));
   }
 }
 
@@ -402,7 +408,7 @@ class RectElement extends SvgElement {
       paint.color = fill;
     }
 
-    sheet.canvas.drawRect(Rect.fromLTWH(x, y, width, height), paint);
+    sheet.canvas.drawRect(Rect.fromLTWH(x*sheet.zoom, y*sheet.zoom, width*sheet.zoom, height*sheet.zoom), paint);
   }
 }
 
