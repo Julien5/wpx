@@ -13,6 +13,7 @@ class SvgWidget extends StatefulWidget {
 
 class _SvgWidgetState extends State<SvgWidget> {
   double zoomScale = 1.0;
+  final TransformationController _transformationController = TransformationController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +25,24 @@ class _SvgWidgetState extends State<SvgWidget> {
         developer.log(
           "scaledSize=$scaledSize, constraints-size=$displaySize => scale=$scale",
         );
-        return CustomPaint(
-          size: scaledSize,
-          painter: SvgPainter(
-            root: widget.svgRootElement,
-            renderingScale: scale,
-            zoomScale: zoomScale,
+        return InteractiveViewer(
+          transformationController: _transformationController,
+          minScale: 0.5,
+          maxScale: 5.0,
+          onInteractionUpdate: (details) {
+            // Extract the current scale from the transformation matrix
+            double newZoom = _transformationController.value.getMaxScaleOnAxis();
+            setState(() {
+              zoomScale = newZoom;
+            });
+          },
+          child: CustomPaint(
+            size: scaledSize,
+            painter: SvgPainter(
+              root: widget.svgRootElement,
+              renderingScale: scale,
+              zoomScale: zoomScale,
+            ),
           ),
         );
       },
