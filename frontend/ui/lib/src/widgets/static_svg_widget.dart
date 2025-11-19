@@ -31,7 +31,7 @@ class StaticSvgWidget extends StatelessWidget {
 
 class StaticSvgPainter extends CustomPainter {
   final SvgRootElement root;
-  double scale = 1.0;
+  final double scale;
 
   StaticSvgPainter({required this.root, required this.scale});
 
