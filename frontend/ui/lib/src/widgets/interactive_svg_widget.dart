@@ -15,8 +15,6 @@ class SvgWidget extends StatefulWidget {
 class _SvgWidgetState extends State<SvgWidget> {
   double zoomScale = 1.0;
   Offset panOffset = Offset.zero;
-  final TransformationController _transformationController =
-      TransformationController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,24 +26,16 @@ class _SvgWidgetState extends State<SvgWidget> {
         developer.log(
           "scaledSize=$scaledSize, constraints-size=$displaySize => scale=$scale",
         );
-        return InteractiveViewer(
-          transformationController: _transformationController,
-          minScale: 1,
-          maxScale: 1.5,
-          scaleFactor: 1000,
-          boundaryMargin: EdgeInsets.all(double.infinity), // <-- Add this line
-          onInteractionUpdate: (details) {
-            // Extract the current scale from the transformation matrix
-            double newZoom =
-                _transformationController.value.getMaxScaleOnAxis();
-            Offset newPan = Offset(
-              _transformationController.value.row0[2],
-              _transformationController.value.row1[2],
-            );
-            setState(() {
-              zoomScale = newZoom;
-              panOffset = newPan;
-            });
+        return Listener(
+          onPointerSignal: (pointerSignal) {
+            if (pointerSignal is PointerScrollEvent) {
+              setState(() {
+                // Zoom in/out based on scroll direction
+                final delta = pointerSignal.scrollDelta.dy;
+                final stepSize = 0.05;
+                zoomScale = (zoomScale + (delta > 0 ? -stepSize : stepSize)).clamp(0.1, 4.0);
+              });
+            }
           },
           child: CustomPaint(
             size: scaledSize,
