@@ -36,8 +36,9 @@ class _SvgWidgetState extends State<SvgWidget> {
             setState(() {
               final oldScale = zoomScale;
               // Dampen the scale change for smoother zoom
-              final scaleChange = (details.scale - 1.0) * 0.3 + 1.0;
-              zoomScale = (oldScale * scaleChange).clamp(0.9, 1.5);
+              final scaleChange = (details.scale - 1.0) * 0.1 + 1.0;
+              zoomScale = zoomScale*scaleChange;
+              zoomScale = zoomScale.clamp(0.9, 3.5);
               panOffset += details.focalPointDelta / zoomScale;
               final localPos = (context.findRenderObject() as RenderBox?)
                   ?.globalToLocal(details.focalPoint);
@@ -52,10 +53,10 @@ class _SvgWidgetState extends State<SvgWidget> {
               if (pointerSignal is PointerScrollEvent) {
                 setState(() {
                   final delta = pointerSignal.scrollDelta.dy;
+                  final stepSize = 0.1;
                   final oldScale = zoomScale;
-                  // Use multiplicative scaling for consistency
-                  final scaleChange = delta > 0 ? 0.9 : 1.1;
-                  zoomScale = (oldScale * scaleChange).clamp(0.9, 1.5);
+                  zoomScale = (zoomScale + (delta > 0 ? -stepSize : stepSize))
+                      .clamp(0.9, 2.5);
                   final localPos = (context.findRenderObject() as RenderBox?)
                       ?.globalToLocal(pointerSignal.position);
                   if (localPos != null) {
