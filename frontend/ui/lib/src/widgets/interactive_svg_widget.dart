@@ -28,39 +28,44 @@ class _SvgWidgetState extends State<SvgWidget> {
         developer.log(
           "scaledSize=$scaledSize, constraints-size=$displaySize => scale=$scale",
         );
-        return Listener(
-          onPointerSignal: (pointerSignal) {
-            if (pointerSignal is PointerScrollEvent) {
-              setState(() {
-                final delta = pointerSignal.scrollDelta.dy;
-                final stepSize = 0.1;
-                final oldScale = zoomScale;
-                zoomScale = (zoomScale + (delta > 0 ? -stepSize : stepSize))
-                    .clamp(0.1, 4.0);
-
-                // Adjust offset to zoom toward pointer
-                if (_lastPointerPosition != null) {
+        return GestureDetector(
+          onScaleStart: (details) {
+            _lastPointerPosition = details.focalPoint;
+          },
+          onScaleUpdate: (details) {
+            setState(() {
+              // Handle zooming
+              final oldScale = zoomScale;
+              zoomScale = (oldScale * details.scale).clamp(0.1, 4.0);
+              // Handle panning
+              panOffset += details.focalPointDelta / zoomScale;
+              // Adjust offset to zoom toward focal point
+              final localPos = (context.findRenderObject() as RenderBox?)
+                  ?.globalToLocal(details.focalPoint);
+              if (localPos != null) {
+                final ratio = zoomScale / oldScale;
+                panOffset = localPos - (localPos - panOffset) * ratio;
+              }
+            });
+          },
+          child: Listener(
+            onPointerSignal: (pointerSignal) {
+              if (pointerSignal is PointerScrollEvent) {
+                setState(() {
+                  final delta = pointerSignal.scrollDelta.dy;
+                  final stepSize = 0.1;
+                  final oldScale = zoomScale;
+                  zoomScale = (zoomScale + (delta > 0 ? -stepSize : stepSize))
+                      .clamp(0.1, 4.0);
+                  // Adjust offset to zoom toward pointer
                   final localPos = (context.findRenderObject() as RenderBox?)
                       ?.globalToLocal(pointerSignal.position);
                   if (localPos != null) {
                     final ratio = zoomScale / oldScale;
                     panOffset = localPos - (localPos - panOffset) * ratio;
                   }
-                }
-              });
-            }
-          },
-          child: GestureDetector(
-            onPanUpdate: (details) {
-              setState(() {
-                panOffset += details.delta / zoomScale;
-              });
-            },
-            onTapDown: (details) {
-              _lastPointerPosition = details.localPosition;
-            },
-            onPanDown: (details) {
-              _lastPointerPosition = details.localPosition;
+                });
+              }
             },
             child: CustomPaint(
               size: scaledSize,
