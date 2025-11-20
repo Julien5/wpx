@@ -36,10 +36,17 @@ class _SvgWidgetState extends State<SvgWidget> {
           },
           onScaleUpdate: (details) {
             setState(() {
+              final oldScale = zoomScale;
               final scaleChange = details.scale;
               zoomScale = baseScaleFactor * scaleChange;
               zoomScale = zoomScale.clamp(0.9, 3.5);
-              panOffset += details.focalPointDelta;
+              panOffset += details.focalPointDelta / scaleChange;
+              final localPos = (context.findRenderObject() as RenderBox?)
+                  ?.globalToLocal(details.focalPoint);
+              if (localPos != null) {
+                final ratio = zoomScale / oldScale;
+                panOffset = localPos - (localPos - panOffset) * ratio;
+              }
               developer.log(
                 "[onScaleUpdate] panOffset=$panOffset baseScaleFactor=$baseScaleFactor scaleChange=$scaleChange zoomScale=$zoomScale ",
               );
