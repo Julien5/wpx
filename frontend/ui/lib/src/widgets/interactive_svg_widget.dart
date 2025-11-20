@@ -15,12 +15,14 @@ class SvgWidget extends StatefulWidget {
 class _SvgWidgetState extends State<SvgWidget> {
   double zoomScale = 1.0;
   Offset panOffset = Offset.zero;
+  Offset? _lastPointerPosition;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         Size displaySize = constraints.biggest;
+        _lastPointerPosition ??= displaySize.center(Offset.zero);
         double scale = scaleDown(widget.svgRootElement.size, displaySize);
         Size scaledSize = widget.svgRootElement.size * scale;
         developer.log(
@@ -30,11 +32,21 @@ class _SvgWidgetState extends State<SvgWidget> {
           onPointerSignal: (pointerSignal) {
             if (pointerSignal is PointerScrollEvent) {
               setState(() {
-                // Zoom in/out based on scroll direction
                 final delta = pointerSignal.scrollDelta.dy;
-                final stepSize = 0.05;
+                final stepSize = 0.1;
+                final oldScale = zoomScale;
                 zoomScale = (zoomScale + (delta > 0 ? -stepSize : stepSize))
                     .clamp(0.1, 4.0);
+
+                // Adjust offset to zoom toward pointer
+                if (_lastPointerPosition != null) {
+                  final localPos = (context.findRenderObject() as RenderBox?)
+                      ?.globalToLocal(pointerSignal.position);
+                  if (localPos != null) {
+                    final ratio = zoomScale / oldScale;
+                    panOffset = localPos - (localPos - panOffset) * ratio;
+                  }
+                }
               });
             }
           },
@@ -43,6 +55,12 @@ class _SvgWidgetState extends State<SvgWidget> {
               setState(() {
                 panOffset += details.delta / zoomScale;
               });
+            },
+            onTapDown: (details) {
+              _lastPointerPosition = details.localPosition;
+            },
+            onPanDown: (details) {
+              _lastPointerPosition = details.localPosition;
             },
             child: CustomPaint(
               size: scaledSize,
