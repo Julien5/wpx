@@ -16,8 +16,8 @@ function build() {
 	echo "incrementing build version..."
 	perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)\+(\d+)$/$1.($2)."+".($3+1)/e' pubspec.yaml
 	version=$(grep ^version pubspec.yaml | cut -f2 -d":" | tr -d " ")
-	rm -Rf /tmp/build.d
-	mv build /tmp/build.d
+	#rm -Rf /tmp/build.d
+	#mv build /tmp/build.d
 	# deep clean
 	find . -name "*rust*lib*wasm" -print -delete
 	# prevent build errors on subsequent native builds
