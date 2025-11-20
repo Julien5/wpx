@@ -14,6 +14,7 @@ class SvgWidget extends StatefulWidget {
 
 class _SvgWidgetState extends State<SvgWidget> {
   double zoomScale = 1.0;
+  double baseScaleFactor = 1.0;
   Offset panOffset = Offset.zero;
   Offset? _lastPointerPosition;
 
@@ -31,13 +32,15 @@ class _SvgWidgetState extends State<SvgWidget> {
         return GestureDetector(
           onScaleStart: (details) {
             _lastPointerPosition = details.focalPoint;
+            baseScaleFactor = zoomScale;
           },
           onScaleUpdate: (details) {
             setState(() {
               final oldScale = zoomScale;
               // Dampen the scale change for smoother zoom
-              final scaleChange = (details.scale - 1.0) * 0.1 + 1.0;
-              zoomScale = zoomScale*scaleChange;
+              final scaleChange = details.scale;
+              //(details.scale - 1.0) * 0.1 + 1.0;
+              zoomScale = baseScaleFactor * scaleChange;
               zoomScale = zoomScale.clamp(0.9, 3.5);
               panOffset += details.focalPointDelta / zoomScale;
               final localPos = (context.findRenderObject() as RenderBox?)
