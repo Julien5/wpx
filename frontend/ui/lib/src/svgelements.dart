@@ -257,7 +257,9 @@ class PathElement extends SvgElement {
 
     // Scale the path coordinates by sheet.zoom
     final Matrix4 matrix = Matrix4.identity();
+    matrix.translateByDouble(sheet.pan.dx, sheet.pan.dy, 0, 1);
     matrix.scaleByDouble(sheet.zoom, sheet.zoom, 1, 1);
+
     p = p.transform(matrix.storage);
 
     sheet.canvas.drawPath(p, paint);

@@ -33,17 +33,25 @@ class _SvgWidgetState extends State<SvgWidget> {
                 // Zoom in/out based on scroll direction
                 final delta = pointerSignal.scrollDelta.dy;
                 final stepSize = 0.05;
-                zoomScale = (zoomScale + (delta > 0 ? -stepSize : stepSize)).clamp(0.1, 4.0);
+                zoomScale = (zoomScale + (delta > 0 ? -stepSize : stepSize))
+                    .clamp(0.1, 4.0);
               });
             }
           },
-          child: CustomPaint(
-            size: scaledSize,
-            painter: SvgPainter(
-              root: widget.svgRootElement,
-              renderingScale: scale,
-              zoomScale: zoomScale,
-              panOffset: panOffset,
+          child: GestureDetector(
+            onPanUpdate: (details) {
+              setState(() {
+                panOffset += details.delta / zoomScale;
+              });
+            },
+            child: CustomPaint(
+              size: scaledSize,
+              painter: SvgPainter(
+                root: widget.svgRootElement,
+                renderingScale: scale,
+                zoomScale: zoomScale,
+                panOffset: panOffset,
+              ),
             ),
           ),
         );
