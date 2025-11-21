@@ -196,6 +196,8 @@ impl PointFeature {
     pub fn render_in_group(&self, sd_group: &mut svg::node::element::Group) {
         sd_group.append(self.circle.group.clone());
         let text = format!("{}", self.text());
+
+        let mut subgroup = svg::node::element::Group::new();
         let mut label = svg::node::element::Text::new(text);
         let center = &self.circle.center;
         for (k, v) in self.label.to_attributes(center) {
@@ -210,8 +212,9 @@ impl PointFeature {
         whitebg = whitebg.set("fill", "white");
         whitebg = whitebg.set("fill-opacity", "0.75");
         whitebg = whitebg.set("id", "label-bg");
-        sd_group.append(whitebg);
-        sd_group.append(label);
+        subgroup.append(whitebg);
+        subgroup.append(label);
+        sd_group.append(subgroup);
         if self.link.is_some() {
             sd_group.append(self.link.as_ref().unwrap().clone());
         }
