@@ -67,9 +67,9 @@ abstract class SvgElement {
   void paintElement(Sheet sheet);
 
   void paint(Sheet sheet) {
-    _installTransforms(sheet.canvas);
+    _installTransforms(sheet);
     paintElement(sheet);
-    _deinstallTransforms(sheet.canvas);
+    _deinstallTransforms(sheet);
   }
 
   final XmlElement _xmlElement;
@@ -90,20 +90,23 @@ abstract class SvgElement {
     }
   }
 
-  void _installTransforms(Canvas canvas) {
-    canvas.save();
+  void _installTransforms(Sheet sheet) {
+    sheet.canvas.save();
     for (var t in T) {
       if (t is Translate) {
-        canvas.translate(t.tx, t.ty);
+        sheet.canvas.translate(
+          t.tx * sheet.zoom + sheet.pan.dx,
+          t.ty * sheet.zoom + sheet.pan.dy,
+        );
       }
       if (t is Scale) {
-        canvas.scale(t.sx, t.sy);
+        sheet.canvas.scale(t.sx * sheet.zoom, t.sy * sheet.zoom);
       }
     }
   }
 
-  void _deinstallTransforms(Canvas canvas) {
-    canvas.restore();
+  void _deinstallTransforms(Sheet sheet) {
+    sheet.canvas.restore();
   }
 
   String? attribute(String name) {
@@ -373,10 +376,7 @@ class TextElement extends SvgElement {
       dx = x - textPainter.width;
     }
     double dy = y - 0.5 * textPainter.height - 5;
-    textPainter.paint(
-      sheet.canvas,
-      Offset(dx * sheet.zoom, dy * sheet.zoom) + sheet.pan,
-    );
+    textPainter.paint(sheet.canvas, Offset(dx, dy));
   }
 }
 
@@ -421,12 +421,7 @@ class RectElement extends SvgElement {
       paint.style = PaintingStyle.fill;
       paint.color = fill;
     }
-    Rect rect = Rect.fromLTWH(
-      x * sheet.zoom + sheet.pan.dx,
-      y * sheet.zoom + sheet.pan.dy,
-      width * sheet.zoom,
-      height * sheet.zoom,
-    );
+    Rect rect = Rect.fromLTWH(x, y, width, height);
     sheet.canvas.drawRect(rect, paint);
   }
 }
