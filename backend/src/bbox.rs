@@ -43,6 +43,10 @@ impl BoundingBox {
     pub fn set_ymax(&mut self, m: f64) {
         self._max.y = m;
     }
+    pub fn translate(&mut self, v: &Point2D) {
+        self._min = self._min + v.to_vector();
+        self._max = self._max + v.to_vector();
+    }
     pub fn contains_other(&self, other: &Self) -> bool {
         if other._max.x > self._max.x {
             return false;

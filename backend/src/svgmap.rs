@@ -85,7 +85,7 @@ struct MapData {
 pub fn euclidean_bounding_box(
     track: &Track,
     range: &std::ops::Range<usize>,
-    size: &IntegerSize2D,
+    _size: &IntegerSize2D,
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
@@ -132,7 +132,7 @@ impl MapData {
                 let euclidean = w.euclidean.clone();
 
                 let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
-                let id = format!("wp-{}/circle", k);
+                let id = format!("wp-circle/{}", k);
                 let circle = draw_for_map(&p, id.as_str(), &w.kind());
                 let mut label = Label::new();
                 match w.short_name() {
@@ -143,7 +143,7 @@ impl MapData {
                         log::error!("should not render a point without name");
                     }
                 }
-                label.id = format!("wp-{}/text", k);
+                label.id = format!("wp-text/{}", k);
                 feature_packet.push(PointFeature {
                     circle,
                     label,

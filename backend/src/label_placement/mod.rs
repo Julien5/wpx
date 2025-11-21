@@ -198,9 +198,11 @@ impl PointFeature {
         let text = format!("{}", self.text());
 
         let mut subgroup = svg::node::element::Group::new();
+
         let mut label = svg::node::element::Text::new(text);
         let center = &self.circle.center;
-        for (k, v) in self.label.to_attributes(center) {
+        subgroup = subgroup.set("transform", format!("translate({} {})", center.x, center.y));
+        for (k, v) in self.label.to_attributes() {
             label = label.set(k, v);
         }
         let mut whitebg = svg::node::element::Rectangle::new();
@@ -259,10 +261,10 @@ impl Label {
         }
     }
 
-    pub fn to_attributes(&self, point: &Point2D) -> Attributes {
+    pub fn to_attributes(&self) -> Attributes {
         let mut ret = Attributes::new();
         let mut x = self.bbox.x_min() + 2f64;
-        let anchor = if self.bounding_box().x_max() < point.x {
+        let anchor = if self.bounding_box().x_max() < 0f64 {
             "end"
         } else {
             "start"
@@ -407,8 +409,9 @@ impl PlacementResult {
             for feature in packet {
                 let feature_id = feature.id;
                 if self.placed_indices.contains_key(&feature_id) {
-                    let bbox = self.placed_indices.get(&feature_id).unwrap();
-                    feature.place_label(bbox);
+                    let mut bbox = self.placed_indices.get(&feature_id).unwrap().clone();
+                    bbox.bbox.translate(&(feature.center() * (-1f64)));
+                    feature.place_label(&bbox);
                     //feature.make_link(&self.obstacles);
                     ret.push(feature.clone());
                 } else {
