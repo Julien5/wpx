@@ -57,7 +57,7 @@ class _SvgWidgetState extends State<SvgWidget> {
               if (pointerSignal is PointerScrollEvent) {
                 setState(() {
                   final delta = pointerSignal.scrollDelta.dy;
-                  final stepSize = 0.5;
+                  final stepSize = 0.25;
                   final oldScale = zoomScale;
                   zoomScale = (zoomScale + (delta > 0 ? -stepSize : stepSize))
                       .clamp(0.9, 3.5);
