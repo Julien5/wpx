@@ -51,7 +51,7 @@
 <circle cx="1347.5" cy="331.45885714285714" fill="Blue" id="wp/434" r="5"/>
 </g>
 <g transform="translate(1347.5 331.45885714285714)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="15.610526315789457" x="-19.610526315789457" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="15.610526315789475" x="-19.610526315789475" y="-16"/>
 <text font-size="16.0" id="wp-434/text" text-anchor="end" x="-4.000" y="-4.000">
 K4
 </text>
@@ -60,7 +60,7 @@ K4
 <circle cx="385.557452745099" cy="191.54142857142855" fill="Black" id="wp/237" r="3"/>
 </g>
 <g transform="translate(385.557452745099 191.54142857142855)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="24.610526315789457" x="-28.610526315789457" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="24.610526315789475" x="-28.61052631578947" y="-16"/>
 <text font-size="16.0" id="wp-237/text" text-anchor="end" x="-4.000" y="-4.000">
 P20
 </text>
@@ -71,7 +71,7 @@ P20
 <circle cx="1347.5" cy="331.45885714285714" fill="black" id="wp/433-little-white" r="2.5"/>
 </g>
 <g transform="translate(1347.5 331.45885714285714)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="107.12631578947367" x="-111.12631578947367" y="4"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="107.12631578947368" x="-111.12631578947368" y="4"/>
 <text font-size="16.0" id="wp-433/text" text-anchor="end" x="-4.000" y="16.000">
 Wörth am Rhein
 </text>
@@ -80,8 +80,8 @@ Wörth am Rhein
 <circle cx="53.74433461654098" cy="26.477785714285744" fill="Green" id="wp/160" r="3"/>
 </g>
 <g transform="translate(53.74433461654098 26.477785714285744)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="76.90526315789475" x="-38.452631578947376" y="-16"/>
-<text font-size="16.0" id="wp-160/text" text-anchor="start" x="-38.453" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="76.90526315789475" x="4" y="-16"/>
+<text font-size="16.0" id="wp-160/text" text-anchor="start" x="4.000" y="-4.000">
 Rote Lache
 </text>
 </g>
@@ -91,8 +91,8 @@ Rote Lache
 <circle cx="281.3724092174866" cy="299.2962857142857" fill="black" id="wp/220-little-white" r="2.5"/>
 </g>
 <g transform="translate(281.3724092174866 299.2962857142857)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="75.57894736842104" x="-37.78947368421052" y="4"/>
-<text font-size="16.0" id="wp-220/text" text-anchor="start" x="-37.789" y="16.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="75.57894736842105" x="-79.57894736842105" y="4"/>
+<text font-size="16.0" id="wp-220/text" text-anchor="end" x="-4.000" y="16.000">
 Gernsbach
 </text>
 </g>
@@ -100,8 +100,8 @@ Gernsbach
 <circle cx="196.76221818736713" cy="186.93214285714285" fill="Green" id="wp/223" r="3"/>
 </g>
 <g transform="translate(196.76221818736713 186.93214285714285)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="65.91578947368419" x="-32.95789473684209" y="-16"/>
-<text font-size="16.0" id="wp-223/text" text-anchor="start" x="-32.958" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="65.9157894736842" x="4" y="-16"/>
+<text font-size="16.0" id="wp-223/text" text-anchor="start" x="4.000" y="-4.000">
 Nachtigall
 </text>
 </g>
@@ -110,8 +110,8 @@ Nachtigall
 <circle cx="1260.6404889626892" cy="330.7930714285714" fill="white" id="wp/404-little-white" r="2.5"/>
 </g>
 <g transform="translate(1260.6404889626892 330.7930714285714)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="77.66315789473674" x="-38.83157894736837" y="-34"/>
-<text font-size="16.0" id="wp-404/text" text-anchor="start" x="-38.832" y="-22.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="77.66315789473674" x="-38.83157894736837" y="-312.7930714285714"/>
+<text font-size="16.0" id="wp-404/text" text-anchor="start" x="-38.832" y="-300.793">
 Hagenbach
 </text>
 </g>
@@ -120,8 +120,8 @@ Hagenbach
 <circle cx="652.3311864591346" cy="321.1647857142857" fill="white" id="wp/274-little-white" r="2.5"/>
 </g>
 <g transform="translate(652.3311864591346 321.1647857142857)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="61.55789473684217" x="-30.778947368421086" y="-16"/>
-<text font-size="16.0" id="wp-274/text" text-anchor="start" x="-30.779" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="61.557894736842115" x="4" y="-16"/>
+<text font-size="16.0" id="wp-274/text" text-anchor="start" x="4.000" y="-4.000">
 Iffezheim
 </text>
 </g>
@@ -130,7 +130,7 @@ Iffezheim
 <circle cx="1126.4090623985303" cy="324.95464285714286" fill="white" id="wp/400-little-white" r="2.5"/>
 </g>
 <g transform="translate(1126.4090623985303 324.95464285714286)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="84.1052631578948" x="-88.1052631578948" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="84.10526315789474" x="-88.10526315789474" y="-16"/>
 <text font-size="16.0" id="wp-400/text" text-anchor="end" x="-4.000" y="-4.000">
 Lauterbourg
 </text>
@@ -140,8 +140,8 @@ Lauterbourg
 <circle cx="1156.441767586245" cy="318.2967857142857" fill="white" id="wp/401-little-white" r="2.5"/>
 </g>
 <g transform="translate(1156.441767586245 318.2967857142857)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="81.07368421052638" x="-40.53684210526308" y="-34"/>
-<text font-size="16.0" id="wp-401/text" text-anchor="start" x="-40.537" y="-22.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="81.07368421052632" x="4" y="-16"/>
+<text font-size="16.0" id="wp-401/text" text-anchor="start" x="4.000" y="-4.000">
 Berg (Pfalz)
 </text>
 </g>

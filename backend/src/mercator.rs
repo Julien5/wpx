@@ -79,7 +79,7 @@ impl EuclideanBoundingBox {
         let proj = WebMercatorProjection::make();
         let min = proj.unproject(&MercatorPoint::from_point2d(&self.get_min()));
         let max = proj.unproject(&MercatorPoint::from_point2d(&self.get_max()));
-        WGS84BoundingBox::init(min.point2d(), max.point2d())
+        WGS84BoundingBox::minmax(min.point2d(), max.point2d())
     }
 }
 

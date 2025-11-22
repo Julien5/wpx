@@ -7,10 +7,16 @@ pub struct BoundingBox {
 }
 
 impl BoundingBox {
-    pub fn init(min: Point2D, max: Point2D) -> BoundingBox {
+    pub fn minmax(min: Point2D, max: Point2D) -> BoundingBox {
         BoundingBox {
             _min: min,
             _max: max,
+        }
+    }
+    pub fn minsize(min: Point2D, width: &f64, height: &f64) -> BoundingBox {
+        BoundingBox {
+            _min: min,
+            _max: min + Point2D::new(*width, *height).to_vector(),
         }
     }
     pub fn get_min(&self) -> Point2D {
@@ -46,6 +52,12 @@ impl BoundingBox {
     pub fn translate(&mut self, v: &Point2D) {
         self._min = self._min + v.to_vector();
         self._max = self._max + v.to_vector();
+    }
+    pub fn make_translate(&self, v: &Point2D) -> Self {
+        BoundingBox {
+            _min: self._min + v.to_vector(),
+            _max: self._max + v.to_vector(),
+        }
     }
     pub fn contains_other(&self, other: &Self) -> bool {
         if other._max.x > self._max.x {

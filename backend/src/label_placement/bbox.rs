@@ -1,108 +1,46 @@
 #[derive(Clone)]
 pub struct LabelBoundingBox {
-    pub bbox: BoundingBox,
+    bbox: BoundingBox,
+    target: Point2D,
 }
 
 impl LabelBoundingBox {
     pub fn zero() -> Self {
         LabelBoundingBox {
             bbox: BoundingBox::new(),
+            target: Point2D::zero(),
         }
     }
-    pub fn _new_tlbr(top_left: Point2D, bottom_right: Point2D) -> Self {
+    pub fn new_relative(bbox: &BoundingBox, target: &Point2D) -> Self {
         LabelBoundingBox {
-            bbox: BoundingBox::init(top_left, bottom_right),
+            bbox: bbox.clone(),
+            target: target.clone(),
         }
     }
-
-    pub fn new_tlwh(top_left: Point2D, width: f64, height: f64) -> Self {
-        let bottom_right = Point2D::new(top_left.x + width, top_left.y + height);
+    pub fn new_absolute(absolutebbox: &BoundingBox, target: &Point2D) -> Self {
+        let relative = absolutebbox.make_translate(&(*target * (-1f64)));
         LabelBoundingBox {
-            bbox: BoundingBox::init(top_left, bottom_right),
+            bbox: relative,
+            target: target.clone(),
         }
     }
-
-    pub fn new_blwh(bottom_left: Point2D, width: f64, height: f64) -> Self {
-        let top_left = Point2D::new(bottom_left.x, bottom_left.y - height);
-        let bottom_right = Point2D::new(bottom_left.x + width, bottom_left.y);
-        LabelBoundingBox {
-            bbox: BoundingBox::init(top_left, bottom_right),
-        }
+    pub fn area(&self) -> f64 {
+        self.bbox.area()
     }
-
-    pub fn new_brwh(bottom_right: Point2D, width: f64, height: f64) -> Self {
-        let top_left = Point2D::new(bottom_right.x - width, bottom_right.y - height);
-        LabelBoundingBox {
-            bbox: BoundingBox::init(top_left, bottom_right),
-        }
+    pub fn relative(&self) -> &BoundingBox {
+        &self.bbox
     }
-
-    pub fn new_trwh(top_right: Point2D, width: f64, height: f64) -> Self {
-        let top_left = Point2D::new(top_right.x - width, top_right.y);
-        let bottom_right = Point2D::new(top_right.x, top_right.y + height);
-        LabelBoundingBox {
-            bbox: BoundingBox::init(top_left, bottom_right),
-        }
+    pub fn absolute(&self) -> BoundingBox {
+        let mut ret = self.bbox.clone();
+        ret.translate(&self.target);
+        ret
     }
-
-    pub fn x_min(&self) -> f64 {
-        self.bbox.get_min().x
-    }
-
-    pub fn y_min(&self) -> f64 {
-        self.bbox.get_min().y
-    }
-
-    fn _bottom_left(&self) -> Point2D {
-        Point2D::new(self.x_min(), self.y_max())
-    }
-
-    fn _top_right(&self) -> Point2D {
-        Point2D::new(self.x_max(), self.y_min())
-    }
-
-    pub fn _center(&self) -> Point2D {
-        Point2D::new(
-            0.5 * (self.x_min() + self.x_max()),
-            0.5 * (self.y_min() + self.y_max()),
-        )
-    }
-
-    pub fn x_max(&self) -> f64 {
-        self.bbox.get_max().x
-    }
-
-    pub fn y_max(&self) -> f64 {
-        self.bbox.get_max().y
-    }
-
     pub fn width(&self) -> f64 {
-        self.x_max() - self.x_min()
+        self.bbox.width()
     }
 
     pub fn height(&self) -> f64 {
-        self.y_max() - self.y_min()
-    }
-    fn _area2(&self) -> f64 {
-        let dx = self.x_max() - self.x_min();
-        let dy = self.y_max() - self.y_min();
-        return dx * dy;
-    }
-    fn _intersection(&self, other: &Self) -> Option<LabelBoundingBox> {
-        let x_min = self.x_min().max(other.x_min());
-        let y_min = self.y_min().max(other.y_min());
-        let x_max = self.x_max().min(other.x_max());
-        let y_max = self.y_max().min(other.y_max());
-
-        // Check if the intersection is valid (non-negative width and height)
-        if x_min < x_max && y_min < y_max {
-            Some(LabelBoundingBox::_new_tlbr(
-                Point2D::new(x_min, y_min),
-                Point2D::new(x_max, y_max),
-            ))
-        } else {
-            None // No intersection
-        }
+        self.bbox.height()
     }
 }
 

@@ -126,14 +126,14 @@ mod tests {
         // Touching at endpoint
         let from = Point2D::new(0.0, 5.0);
         let to = Point2D::new(10.0, 5.0);
-        let _bbox0 = BoundingBox::init(Point2D::new(-3.0, 3.0), Point2D::new(0.0, 7.0));
-        let bbox1 = BoundingBox::init(Point2D::new(3.0, 3.0), Point2D::new(7.0, 7.0));
-        let _bbox2 = BoundingBox::init(Point2D::new(10.0, 0.0), Point2D::new(17.0, 10.0));
+        let _bbox0 = BoundingBox::minmax(Point2D::new(-3.0, 3.0), Point2D::new(0.0, 7.0));
+        let bbox1 = BoundingBox::minmax(Point2D::new(3.0, 3.0), Point2D::new(7.0, 7.0));
+        let _bbox2 = BoundingBox::minmax(Point2D::new(10.0, 0.0), Point2D::new(17.0, 10.0));
         let obstables = Obstacles {
             bboxes: vec![bbox1],
             polylines: Vec::new(),
             drawingbox: DrawingArea {
-                bbox: BoundingBox::init(Point2D::new(0.0, 0.0), Point2D::new(10.0, 40.0)),
+                bbox: BoundingBox::minmax(Point2D::new(0.0, 0.0), Point2D::new(10.0, 40.0)),
                 max_area_ratio: 0.0f64,
             },
         };

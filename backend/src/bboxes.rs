@@ -35,7 +35,7 @@ pub fn snap(bbox: &mut BoundingBox, step: &f64) {
 pub fn snap_point(p: &MercatorPoint, step: &f64) -> EuclideanBoundingBox {
     let min = Point2D::new(floor_snap(&p.x(), step), floor_snap(&p.y(), step));
     let max = Point2D::new(ceil_snap(&p.x(), step), ceil_snap(&p.y(), step));
-    EuclideanBoundingBox::init(min, max)
+    EuclideanBoundingBox::minmax(min, max)
 }
 
 pub struct Index {
@@ -101,7 +101,7 @@ pub fn split(orig: &BoundingBox, step: &f64) -> BoundingBoxes {
                 index: (kx, ky),
                 size: (nx, ny),
             };
-            ret.insert(index, BoundingBox::init(min, max));
+            ret.insert(index, BoundingBox::minmax(min, max));
         }
     }
     ret

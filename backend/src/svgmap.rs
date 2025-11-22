@@ -57,10 +57,10 @@ impl MapGenerator {
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 0));
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 2));
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 4));
-        ret.sort_by_key(|candidate| {
-            let p = candidate.bbox.project_on_border(&point.center());
+        /*ret.sort_by_key(|candidate| {
+            let p = candidate.absolute().project_on_border(&point.center());
             (distance2(&point.center(), &p) * 100f64).floor() as i64
-        });
+        });*/
         ret
     }
 }
@@ -159,7 +159,7 @@ impl MapData {
         let result = crate::label_placement::place_labels(
             &feature_packets,
             &*generator,
-            &BoundingBox::init(
+            &BoundingBox::minmax(
                 Point2D::new(0f64, 0f64),
                 Point2D::new(size.width as f64, size.height as f64),
             ),
@@ -220,6 +220,7 @@ mod tests {
 
     use super::MapGenerator;
     use crate::{
+        bbox::BoundingBox,
         label_placement::{Label, LabelBoundingBox, PointFeature, PointFeatureDrawing},
         math::Point2D,
     };
@@ -234,9 +235,9 @@ mod tests {
             },
             label: Label {
                 id: id.clone(),
-                bbox: LabelBoundingBox::_new_tlbr(
-                    Point2D::new(0f64, 0f64),
-                    Point2D::new(10f64, 16f64),
+                bbox: LabelBoundingBox::new_absolute(
+                    &BoundingBox::minmax(Point2D::new(0f64, 0f64), Point2D::new(10f64, 16f64)),
+                    &Point2D::zero(),
                 ),
                 text: String::from_str("hi").unwrap(),
             },
@@ -249,7 +250,8 @@ mod tests {
         assert!(!candidates.is_empty());
         for c in candidates {
             let _center = target.center();
-            let good = c.x_min() > target.center().x && c.y_min() > target.center().y;
+            let good = c.absolute().get_xmin() > target.center().x
+                && c.absolute().get_ymin() > target.center().y;
             if good {
                 found = true;
             }

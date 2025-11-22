@@ -19,16 +19,16 @@ impl Candidate {
     }
 
     pub fn hit_other(&self, other: &Self) -> bool {
-        self._bbox.bbox.overlap(&other._bbox.bbox)
+        self._bbox.absolute().overlap(&other._bbox.absolute())
     }
 
     pub fn hit_bbox(&self, bbox: &BoundingBox) -> bool {
-        self._bbox.bbox.overlap(&bbox)
+        self._bbox.absolute().overlap(&bbox)
     }
 
     pub fn hit_polyline(&self, polyline: &Vec<Point2D>) -> bool {
         for p in polyline {
-            if self._bbox.bbox.contains(&p) {
+            if self._bbox.absolute().contains(&p) {
                 return true;
             }
         }
@@ -92,14 +92,14 @@ pub mod utils {
                 continue;
             }
             let other_center = &other.circle.center;
-            let d = bbox.bbox.distance2_to_point(other_center);
+            let d = bbox.absolute().distance2_to_point(other_center);
             if d < ret {
                 ret = d;
             }
         }
         for l in 0..obstacles.bboxes.len() {
             let otherbbox = &obstacles.bboxes[l];
-            let d = bbox.bbox.distance2_to_other(&otherbbox);
+            let d = bbox.absolute().distance2_to_other(&otherbbox);
             if d < ret {
                 ret = d;
             }
@@ -113,7 +113,7 @@ pub mod utils {
         features: &Vec<PointFeature>,
         obstacles: &Obstacles,
     ) -> Candidate {
-        let _dtarget = bbox.bbox.distance2_to_point(&target.center());
+        let _dtarget = bbox.absolute().distance2_to_point(&target.center());
         let _dothers = distance2_to_others(bbox, &target, &features, obstacles);
         Candidate::new(bbox, &_dtarget, &_dothers)
     }
@@ -123,7 +123,7 @@ pub mod utils {
             && !obstacles
                 .drawingbox
                 .bbox
-                .contains_other(&candidate.bbox().bbox)
+                .contains_other(&candidate.bbox().absolute())
         {
             return true;
         }

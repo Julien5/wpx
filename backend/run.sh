@@ -12,7 +12,7 @@ function segment-length() {
 		echo 35
 		return
 	fi
-	echo 1010
+	echo 110
 }
 
 function segment-overlap() {

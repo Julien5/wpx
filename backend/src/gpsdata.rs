@@ -133,7 +133,7 @@ impl ProfileBoundingBox {
         }
         let xmin = track.distance(range.start);
         let xmax = track.distance(range.end - 1);
-        BoundingBox::init(Point2D::new(xmin, ymin), Point2D::new(xmax, ymax))
+        BoundingBox::minmax(Point2D::new(xmin, ymin), Point2D::new(xmax, ymax))
     }
 }
 

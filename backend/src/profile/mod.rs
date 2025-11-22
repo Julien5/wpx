@@ -15,7 +15,7 @@ use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::candidate::*;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::*;
-use crate::math::{distance2, Point2D};
+use crate::math::Point2D;
 use crate::parameters::{ProfileIndication, ProfileOptions};
 use crate::segment;
 use crate::track::Track;
@@ -474,7 +474,7 @@ impl ProfileView {
         let result = label_placement::place_labels(
             &feature_packets,
             &*generator,
-            &BoundingBox::init(
+            &BoundingBox::minmax(
                 Point2D::new(0f64, 0f64),
                 Point2D::new(self.WD(), self.HD() - self.eticks_height()),
             ),
@@ -494,42 +494,57 @@ struct ProfileGenerator;
 
 impl ProfileGenerator {
     fn generate_one(point: &PointFeature) -> Vec<LabelBoundingBox> {
+        let mut ret = Vec::new();
         assert!(point.input_point().is_some());
-        let mut ret =
-            label_placement::cardinal_boxes(&point.center(), &point.width(), &point.height());
+
+        ret.extend_from_slice(&label_placement::cardinal_boxes(
+            &point.center(),
+            &point.width(),
+            &point.height(),
+        ));
+
         let width = point.width();
         let height = point.height();
         let center = point.center();
         // 20 px above the target
-        let Btop = LabelBoundingBox::new_blwh(
-            Point2D::new(center.x - width / 2.0, (center.y - 20.0).max(height)),
-            width,
-            height,
+        let Btop = LabelBoundingBox::new_absolute(
+            &BoundingBox::minsize(
+                Point2D::new(center.x - width / 2.0, (center.y - 20.0).max(height)),
+                &width,
+                &height,
+            ),
+            &center,
         );
         ret.push(Btop);
 
+        // 20 px below the target
+        let Bbot = LabelBoundingBox::new_absolute(
+            &BoundingBox::minsize(
+                Point2D::new(center.x - width / 2.0, (center.y + 20.0).max(height)),
+                &width,
+                &height,
+            ),
+            &center,
+        );
+        ret.push(Bbot);
+
         // 5 boxes below the top border of the graph
         for n in [1, 3, 5, 7, 9] {
-            let Btop2 = LabelBoundingBox::new_blwh(
-                Point2D::new(center.x - width / 2.0, (n as f64) * height),
-                width,
-                height,
+            let Btop2 = LabelBoundingBox::new_absolute(
+                &BoundingBox::minsize(
+                    Point2D::new(center.x - width / 2.0, (n as f64) * height),
+                    &width,
+                    &height,
+                ),
+                &center,
             );
             ret.push(Btop2);
         }
 
-        // 20 px below the target
-        let Bbot = LabelBoundingBox::new_blwh(
-            Point2D::new(center.x - width / 2.0, (center.y + 20.0).max(height)),
-            width,
-            height,
-        );
-        ret.push(Bbot);
-
-        ret.sort_by_key(|candidate| {
-            let p = candidate.bbox.project_on_border(&point.center());
+        /*ret.sort_by_key(|candidate| {
+            let p = candidate.absolute().project_on_border(&point.center());
             (distance2(&point.center(), &p) * 100f64).floor() as i64
-        });
+        });*/
         ret
     }
 }

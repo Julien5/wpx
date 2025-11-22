@@ -75,7 +75,10 @@ impl Label {
     pub fn set_text(&mut self, s: &str) {
         self.text = String::from_str(s).unwrap();
         let width = text_width(s);
-        self.bbox = LabelBoundingBox::new_blwh(Point2D::new(0f64, 0f64), width, FONTSIZE);
+        self.bbox = LabelBoundingBox::new_relative(
+            &BoundingBox::minsize(Point2D::new(0.0, -FONTSIZE), &width, &FONTSIZE),
+            &Point2D::zero(),
+        );
     }
 
     pub fn bounding_box(&self) -> LabelBoundingBox {
@@ -158,7 +161,7 @@ impl PointFeature {
     }
     pub fn make_link(&mut self, obstacles: &Obstacles) {
         let circle = &self.circle.center;
-        let label = self.label.bbox.bbox.project_on_border(circle);
+        let label = self.label.bbox.absolute().project_on_border(circle);
         let to_label = *circle - label;
         let distance = to_label.length();
         if distance < 10f64 {
@@ -207,10 +210,10 @@ impl PointFeature {
         }
         let mut whitebg = svg::node::element::Rectangle::new();
         let margin = 2f64;
-        whitebg = whitebg.set("x", self.label.bbox.bbox.get_xmin() + margin);
-        whitebg = whitebg.set("y", self.label.bbox.bbox.get_ymin() + margin);
-        whitebg = whitebg.set("width", self.label.bbox.bbox.width() - 2.0 * margin);
-        whitebg = whitebg.set("height", self.label.bbox.bbox.height() - 2.0 * margin);
+        whitebg = whitebg.set("x", self.label.bbox.relative().get_xmin() + margin);
+        whitebg = whitebg.set("y", self.label.bbox.relative().get_ymin() + margin);
+        whitebg = whitebg.set("width", self.label.bbox.relative().width() - 2.0 * margin);
+        whitebg = whitebg.set("height", self.label.bbox.relative().height() - 2.0 * margin);
         whitebg = whitebg.set("fill", "white");
         whitebg = whitebg.set("fill-opacity", "0.75");
         whitebg = whitebg.set("id", "label-bg");
@@ -239,41 +242,19 @@ impl Polyline {
 }
 
 impl Label {
-    pub fn _from_attributes(a: &Attributes, text: &str) -> Label {
-        let anchor = match a.get("text-anchor") {
-            Some(data) => data,
-            _ => "start",
-        };
-        let x = a.get("x").unwrap().to_string().parse::<f64>().unwrap();
-        let y = a.get("y").unwrap().to_string().parse::<f64>().unwrap();
-        let height = FONTSIZE;
-        let width = text_width(text);
-        let (top_left, bottom_right) = if anchor == "start" {
-            (Point2D::new(x, y - height), Point2D::new(x + width, y))
-        } else {
-            (Point2D::new(x - width, y - height), Point2D::new(x, y))
-        };
-        let bbox = LabelBoundingBox::_new_tlbr(top_left, bottom_right);
-        Label {
-            id: a.get("id").unwrap().to_string(),
-            bbox,
-            text: String::from_str(text).unwrap(),
-        }
-    }
-
     pub fn to_attributes(&self) -> Attributes {
         let mut ret = Attributes::new();
-        let mut x = self.bbox.x_min() + 2f64;
-        let anchor = if self.bounding_box().x_max() < 0f64 {
+        let mut x = self.bbox.relative().get_xmin() + 2f64;
+        let anchor = if self.bounding_box().relative().get_xmax() < 0f64 {
             "end"
         } else {
             "start"
         };
         if anchor == "end" {
-            x = self.bbox.x_max() - 2f64;
+            x = self.bbox.relative().get_xmax() - 2f64;
         }
         set_attr(&mut ret, "text-anchor", anchor);
-        let y = self.bbox.y_max() - 2f64;
+        let y = self.bbox.relative().get_ymax() - 2f64;
         set_attr(&mut ret, "id", self.id.as_str());
         set_attr(&mut ret, "font-size", format!("{:.1}", FONTSIZE).as_str());
         set_attr(&mut ret, "x", format!("{:.3}", x).as_str());
@@ -386,8 +367,8 @@ fn build_graph(
 fn _candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rectangle {
     let mut debug_bb = svg::node::element::Rectangle::new();
     let bb = &candidate.bbox();
-    debug_bb = debug_bb.set("x", bb.x_min());
-    debug_bb = debug_bb.set("y", bb.y_min());
+    debug_bb = debug_bb.set("x", bb.relative().get_xmin());
+    debug_bb = debug_bb.set("y", bb.relative().get_ymin());
     debug_bb = debug_bb.set("width", bb.width());
     debug_bb = debug_bb.set("height", bb.height());
     debug_bb = debug_bb.set("fill", "transparent");
@@ -409,8 +390,7 @@ impl PlacementResult {
             for feature in packet {
                 let feature_id = feature.id;
                 if self.placed_indices.contains_key(&feature_id) {
-                    let mut bbox = self.placed_indices.get(&feature_id).unwrap().clone();
-                    bbox.bbox.translate(&(feature.center() * (-1f64)));
+                    let bbox = self.placed_indices.get(&feature_id).unwrap().clone();
                     feature.place_label(&bbox);
                     //feature.make_link(&self.obstacles);
                     ret.push(feature.clone());
@@ -423,7 +403,7 @@ impl PlacementResult {
     }
     pub fn push(&mut self, other: Self) {
         for (_k, bbox) in &other.placed_indices {
-            self.obstacles.bboxes.push(bbox.bbox.clone());
+            self.obstacles.bboxes.push(bbox.absolute().clone());
         }
         self.debug = self.debug.clone().add(other.debug);
         self.placed_indices.extend(other.placed_indices);
@@ -495,130 +475,91 @@ pub fn place_labels(
     ret
 }
 
+fn make(bbox0: &BoundingBox, translation: &Point2D, center: &Point2D) -> LabelBoundingBox {
+    LabelBoundingBox::new_relative(&bbox0.make_translate(&translation), center)
+}
+
 pub fn cardinal_boxes(center: &Point2D, width: &f64, height: &f64) -> Vec<LabelBoundingBox> {
     let mut ret = Vec::new();
     let epsilon = 2f64;
-    let b1 = LabelBoundingBox::new_blwh(
-        Point2D::new(center.x + epsilon, center.y - epsilon),
-        *width,
-        *height,
-    );
-    ret.push(b1);
-    let b2 = LabelBoundingBox::new_brwh(
-        Point2D::new(center.x - epsilon, center.y - epsilon),
-        *width,
-        *height,
-    );
-    ret.push(b2);
-    let b3 = LabelBoundingBox::new_trwh(
-        Point2D::new(center.x - epsilon, center.y + epsilon),
-        *width,
-        *height,
-    );
-    ret.push(b3);
-    let b4 = LabelBoundingBox::new_tlwh(
-        Point2D::new(center.x + epsilon, center.y + epsilon),
-        *width,
-        *height,
-    );
-    ret.push(b4);
+    let dx = 2f64 * epsilon + width;
+    let dy = 2f64 * epsilon + height;
+    let bbox0 = BoundingBox::minsize(Point2D::new(epsilon, -epsilon - height), width, height);
 
-    let b5 = LabelBoundingBox::new_blwh(
-        Point2D::new(center.x + epsilon, center.y + height / 2.0),
-        *width,
-        *height,
-    );
-    ret.push(b5);
-    let b6 = LabelBoundingBox::new_blwh(
-        Point2D::new(center.x - width / 2.0, center.y - epsilon),
-        *width,
-        *height,
-    );
-    ret.push(b6);
-    let b7 = LabelBoundingBox::new_brwh(
-        Point2D::new(center.x - epsilon, center.y + height / 2.0),
-        *width,
-        *height,
-    );
-    ret.push(b7);
-    let b8 = LabelBoundingBox::new_tlwh(
-        Point2D::new(center.x - width / 2.0, center.y + epsilon),
-        *width,
-        *height,
-    );
-    ret.push(b8);
+    ret.push(make(&bbox0, &Point2D::new(0.0, 0.0), center));
+    ret.push(make(&bbox0, &Point2D::new(-dx, 0.0), center));
+    ret.push(make(&bbox0, &Point2D::new(-dx, dy), center));
+    ret.push(make(&bbox0, &Point2D::new(0.0, dy), center));
+
+    let bbox_right = BoundingBox::minsize(Point2D::new(epsilon, -height / 2.0), width, height);
+    let bbox_up = BoundingBox::minsize(Point2D::new(-width / 2.0, epsilon), width, height);
+
+    ret.push(make(&bbox_right, &Point2D::new(0.0, 0.0), center));
+    ret.push(make(&bbox_up, &Point2D::new(0.0, 0.0), center));
+    ret.push(make(&bbox_right, &Point2D::new(-dx, 0.0), center));
+    ret.push(make(&bbox_up, &Point2D::new(0.0, dy), center));
 
     ret
 }
 
 pub fn far_boxes(
-    center: &Point2D,
+    target: &Point2D,
     width: &f64,
     height: &f64,
     level: usize,
 ) -> Vec<LabelBoundingBox> {
     let mut ret = Vec::new();
     let d = ((level + 2) as f64) * height;
-    let xmin = center.x - d;
-    let xmax = center.x + d;
-    let ymin = center.y - d;
-    let ymax = center.y + d;
     let stepsize = *height;
+
+    let bbox0 = BoundingBox::minsize(Point2D::new(-d, -d), width, height);
+
     let mut n = 0;
     loop {
-        let b = LabelBoundingBox::new_tlwh(
-            Point2D::new(xmin + (n as f64) * stepsize, ymin),
-            *width,
-            *height,
-        );
-        if b.x_max() > xmax {
+        let b = make(&bbox0, &Point2D::new((n as f64) * stepsize, 0.0), target);
+        if b.relative().get_xmax() > d {
             break;
         }
         ret.push(b);
         n += 1;
     }
+
+    let bbox0 = BoundingBox::minsize(Point2D::new(-d, d - height), width, height);
     n = 0;
     loop {
-        let b = LabelBoundingBox::new_blwh(
-            Point2D::new(xmin + (n as f64) * stepsize, ymax),
-            *width,
-            *height,
-        );
-        if b.x_max() > xmax {
+        let b = make(&bbox0, &Point2D::new((n as f64) * stepsize, 0.0), target);
+        if b.relative().get_xmax() > d {
             break;
         }
         ret.push(b);
         n += 1;
     }
+
+    let bbox0 = BoundingBox::minsize(Point2D::new(d - width, -d), width, height);
     n = 0;
     loop {
-        let b = LabelBoundingBox::new_trwh(
-            Point2D::new(xmax, ymin + (n as f64) * stepsize),
-            *width,
-            *height,
-        );
-        if b.y_max() > ymax {
+        let b = make(&bbox0, &Point2D::new(0.0, (n as f64) * stepsize), target);
+        if b.relative().get_ymax() > d {
             break;
         }
         ret.push(b);
         n += 1;
     }
+
+    let bbox0 = BoundingBox::minsize(Point2D::new(-d, -d), width, height);
     n = 0;
     loop {
-        let b = LabelBoundingBox::new_tlwh(
-            Point2D::new(xmin, ymin + (n as f64) * stepsize),
-            *width,
-            *height,
-        );
-        if b.y_max() > ymax {
+        let b = make(&bbox0, &Point2D::new(0.0, (n as f64) * stepsize), target);
+        if b.relative().get_ymax() > d {
             break;
         }
         ret.push(b);
         n += 1;
     }
+
     ret.sort_by_key(|candidate| {
-        let p = candidate.bbox.project_on_border(center);
-        (distance2(center, &p) * 100f64).floor() as i64
+        let p = candidate.absolute().project_on_border(target);
+        (distance2(target, &p) * 100f64).floor() as i64
     });
     ret
 }

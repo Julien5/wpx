@@ -108,7 +108,7 @@ impl Graph {
                 feature.text(),
                 feature.area(),
                 index,
-                selected.bbox().bbox
+                selected.bbox().absolute()
             );
         }
         let neighbors = self.map.get(a).unwrap().clone();
@@ -131,7 +131,7 @@ impl Graph {
             }
         }
         // assert!((ba - aa).abs() < 1e-11);
-        self.used_area += selected.bbox().bbox.area();
+        self.used_area += selected.bbox().area();
         // remove a
         self.remove_node(a);
     }
@@ -275,9 +275,12 @@ mod tests {
 
     fn make_candidate(x: i32, y: i32, w: i32, h: i32) -> Candidate {
         Candidate::new(
-            &LabelBoundingBox::new_tlwh(Point2D::new(x as f64, y as f64), w as f64, h as f64),
-            &0.,
-            &0.,
+            &LabelBoundingBox::new_absolute(
+                &BoundingBox::minsize(Point2D::new(x as f64, y as f64), &(w as f64), &(h as f64)),
+                &Point2D::zero(),
+            ),
+            &0.0,
+            &0.0,
         )
     }
 
@@ -318,9 +321,10 @@ mod tests {
             },
             label: Label {
                 id: "id0".to_string(),
-                bbox: LabelBoundingBox {
-                    bbox: BoundingBox::init(zero.clone(), zero.clone()),
-                },
+                bbox: LabelBoundingBox::new_relative(
+                    &BoundingBox::minmax(zero.clone(), zero.clone()),
+                    &Point2D::zero(),
+                ),
                 text: String::new(),
             },
             input_point: None,
