@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
+import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/segments/future_rendering_widget.dart';
 
@@ -16,7 +17,10 @@ class InteractiveMapView extends StatelessWidget {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             mapRenderer.setSize(constraints.biggest);
-            return FutureRenderingWidget(future: mapRenderer, interactive: true,);
+            return FutureRenderingWidget(
+              future: mapRenderer,
+              interactive: true,
+            );
           },
         );
       },
@@ -40,12 +44,26 @@ class InteractiveConsumer extends StatelessWidget {
 class InteractiveScreen extends StatelessWidget {
   const InteractiveScreen({super.key});
 
+  AppBar? appBar(BuildContext ctx) {
+    return AppBar(
+      title: const Text('Map'),
+      actions: <Widget>[
+        ElevatedButton(
+          child: const Text('Settings'),
+          onPressed: () {
+            Navigator.of(ctx).pushNamed(RouteManager.settingsView);
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext ctx) {
     RootModel root = Provider.of<RootModel>(ctx);
     Segment trackSegment = root.trackSegment();
     return Scaffold(
-      appBar: AppBar(title: const Text('Map')),
+      appBar: appBar(ctx),
       body: ChangeNotifierProvider<MapRenderer>(
         create: (_) => MapRenderer(root.getBridge(), trackSegment),
         child: InteractiveConsumer(),
