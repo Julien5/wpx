@@ -31,6 +31,7 @@ function pdf() {
 	cmd=run
 	options=
 	file=data/blackforest.gpx
+	mode=""
 	while [ $# -gt 0 ]; do
 		case "$1" in
 			*.gpx)
@@ -39,6 +40,10 @@ function pdf() {
 				;;
 			flamegraph)
 				cmd=flamegraph
+				shift
+				;;
+			--release)
+				mode="--release"
 				shift
 				;;
 			main-test)
@@ -53,11 +58,11 @@ function pdf() {
 	done
 	echo make pdf
 	export RUST_LOG=trace
-	cargo build # --release
+	cargo build ${mode}
 	export CARGO_PROFILE_RELEASE_DEBUG=true
 	rm -Rf /tmp/wpx
 	mkdir /tmp/wpx
-	time cargo ${cmd} -- \
+	time cargo ${cmd} ${mode} -- \
 		  --output-directory /tmp/wpx/ \
 		  --debug true \
 		  --step-elevation-gain 100 \
