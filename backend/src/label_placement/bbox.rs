@@ -1,52 +1,53 @@
 #[derive(Clone)]
 pub struct LabelBoundingBox {
-    bbox: BoundingBox,
+    relativebbox: BoundingBox,
     target: Point2D,
 }
 
 impl LabelBoundingBox {
     pub fn zero() -> Self {
         LabelBoundingBox {
-            bbox: BoundingBox::new(),
+            relativebbox: BoundingBox::new(),
             target: Point2D::zero(),
         }
     }
     pub fn new_relative(bbox: &BoundingBox, target: &Point2D) -> Self {
         LabelBoundingBox {
-            bbox: bbox.clone(),
+            relativebbox: bbox.clone(),
             target: target.clone(),
         }
     }
     pub fn new_absolute(absolutebbox: &BoundingBox, target: &Point2D) -> Self {
         let relative = absolutebbox.make_translate(&(*target * (-1f64)));
         LabelBoundingBox {
-            bbox: relative,
+            relativebbox: relative,
             target: target.clone(),
         }
     }
     pub fn area(&self) -> f64 {
-        self.bbox.area()
+        self.relativebbox.area()
     }
     pub fn relative(&self) -> &BoundingBox {
-        &self.bbox
+        &self.relativebbox
     }
     pub fn absolute(&self) -> BoundingBox {
-        let mut ret = self.bbox.clone();
+        let mut ret = self.relativebbox.clone();
         ret.translate(&self.target);
         ret
     }
     pub fn width(&self) -> f64 {
-        self.bbox.width()
+        self.relativebbox.width()
     }
 
     pub fn height(&self) -> f64 {
-        self.bbox.height()
+        self.relativebbox.height()
     }
 }
 
 impl PartialEq for LabelBoundingBox {
     fn eq(&self, other: &Self) -> bool {
-        self.bbox.get_min() == other.bbox.get_min() && self.bbox.get_max() == other.bbox.get_max()
+        self.relativebbox.get_min() == other.relativebbox.get_min()
+            && self.relativebbox.get_max() == other.relativebbox.get_max()
     }
 }
 
@@ -58,8 +59,8 @@ impl fmt::Display for LabelBoundingBox {
         write!(
             f,
             "LabelBoundingBox {{ top_left: ({:.2}, {:.2}), (w,h): ({:.2}, {:.2}) }}",
-            self.bbox.get_min().x,
-            self.bbox.get_min().y,
+            self.relativebbox.get_min().x,
+            self.relativebbox.get_min().y,
             self.width(),
             self.height()
         )
