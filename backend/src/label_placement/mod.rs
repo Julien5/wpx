@@ -439,7 +439,7 @@ fn place_subset(
         placed_indices: BTreeMap::new(),
         obstacles: Obstacles::new(),
     };
-    let quick = true;
+    let quick = false;
     let best_candidates = match quick {
         false => {
             let mut graph = build_graph(features, gen, &obstacles);

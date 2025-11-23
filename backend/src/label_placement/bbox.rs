@@ -46,8 +46,9 @@ impl LabelBoundingBox {
 
 impl PartialEq for LabelBoundingBox {
     fn eq(&self, other: &Self) -> bool {
-        self.relativebbox.get_min() == other.relativebbox.get_min()
-            && self.relativebbox.get_max() == other.relativebbox.get_max()
+        let a1 = self.absolute();
+        let a2 = other.absolute();
+        a1.get_min() == a2.get_min() && a1.get_max() == a2.get_max()
     }
 }
 
