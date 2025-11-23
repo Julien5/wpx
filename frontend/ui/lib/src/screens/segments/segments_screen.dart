@@ -5,38 +5,59 @@ import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/waypointstable.dart';
 import 'package:ui/src/routes.dart';
+import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/utils.dart';
 import 'segment_stack.dart';
 
 class RenderersProvider extends MultiProvider {
   final Renderers renderers;
 
-  RenderersProvider(Renderers r, WaypointsTableData d, Widget child, {super.key})
-    : renderers = r,
-      super(
-        providers: [
-          ChangeNotifierProvider.value(value: r.profileRenderer),
-          ChangeNotifierProvider.value(value: r.mapRenderer),
-          ChangeNotifierProvider.value(value: r.yaxisRenderer),
-          ChangeNotifierProvider.value(value: d),
-        ],
-        child: child,
-      );
+  RenderersProvider(
+    Renderers r,
+    WaypointsTableData d,
+    Widget child, {
+    super.key,
+  }) : renderers = r,
+       super(
+         providers: [
+           ChangeNotifierProvider.value(value: r.profileRenderer),
+           ChangeNotifierProvider.value(value: r.mapRenderer),
+           ChangeNotifierProvider.value(value: r.yaxisRenderer),
+           ChangeNotifierProvider.value(value: d),
+         ],
+         child: child,
+       );
 }
 
-class SegmentsView extends StatelessWidget {
+class SegmentsView extends StatefulWidget {
   const SegmentsView({super.key});
+
+  @override
+  State<SegmentsView> createState() => _SegmentsViewState();
+}
+
+class _SegmentsViewState extends State<SegmentsView> {
+  List<Segment>? segments;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (segments == null) {
+      var rootModel = Provider.of<RootModel>(context);
+      segments = rootModel.segments();
+    }
+  }
 
   List<RenderersProvider> renderingProviders(
     RootModel rootModel,
     ScreenOrientation screenOrientation,
   ) {
     List<RenderersProvider> ret = [];
-    developer.log("[_initRenderingProviders]");
-    for (var segment in rootModel.segments()) {
+    developer.log("[_initRenderingProviders] length=${segments!.length}");
+    for (var segment in segments!) {
       var w = RenderersProvider(
-        Renderers.make(rootModel.getBridge(),segment),
-        WaypointsTableData(brd: rootModel.getBridge(),segment: segment),
+        Renderers.make(rootModel.getBridge(), segment),
+        WaypointsTableData(brd: rootModel.getBridge(), segment: segment),
         SegmentView(screenOrientation: screenOrientation),
       );
       ret.add(w);
@@ -55,27 +76,31 @@ class SegmentsView extends StatelessWidget {
           Size(constraints.maxWidth, constraints.maxHeight),
         );
 
-        var segments = renderingProviders(rootModel, viewType);
-        developer.log("[segments] [build] #segments=${segments.length}");
+        if (segments==null) {
+          return const Text("building");
+        }
+
+        var segmentWidgets = renderingProviders(rootModel, viewType);
+        developer.log("[segments] [build] #segments=${segmentWidgets.length}");
         List<Tab> tabs = [];
-        for (var s in segments) {
-          var id = s.renderers.profileRenderer.segment.id();
+        for (var segmentWidget in segmentWidgets) {
+          var id = segmentWidget.renderers.profileRenderer.segment.id();
           tabs.add(Tab(text: "Page ${1 + id.toInt()}"));
         }
         if (viewType == ScreenOrientation.desktop) {
           return DefaultTabController(
-            length: segments.length,
+            length: segmentWidgets.length,
             child: Scaffold(
               appBar: TabBar(tabs: tabs),
-              body: TabBarView(children: segments),
+              body: TabBarView(children: segmentWidgets),
             ),
           );
         }
         return DefaultTabController(
-          length: segments.length,
+          length: segmentWidgets.length,
           child: Column(
             children: [
-              Expanded(child: TabBarView(children: segments)),
+              Expanded(child: TabBarView(children: segmentWidgets)),
               const TabPageSelector(),
             ],
           ),

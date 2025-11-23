@@ -153,7 +153,7 @@ pub mod utils {
         let mut ret = Candidates::new();
         let available_area = obstacles.available_area();
         if target.area() > available_area {
-            log::debug!("no place left for {}", target.text());
+            //log::trace!("no place left for {}", target.text());
             return ret;
         }
         for bbox in gen(target) {
@@ -175,11 +175,11 @@ pub mod utils {
         for feature in features {
             let candidates = generate_all_candidates(gen_one, feature, features, obstacles);
             if candidates.is_empty() {
-                log::trace!(
+                /*log::trace!(
                     "[0] [{}] => {} candidates",
                     feature.text(),
                     candidates.len()
-                );
+                );*/
                 // force one ?
             }
             ret.insert(feature.id, candidates);

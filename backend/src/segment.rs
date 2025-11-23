@@ -4,7 +4,7 @@ use crate::bbox::BoundingBox;
 use crate::inputpoint::{InputPoint, InputPointMap, TrackProjection};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::MercatorPoint;
-use crate::parameters::Parameters;
+use crate::parameters::{Parameters, ProfileIndication};
 use crate::profile::ProfileRenderResult;
 use crate::track::{self, Track};
 use crate::{bboxes, locate, profile, svgmap};
@@ -46,6 +46,14 @@ impl Segment {
             points,
             parameters: parameters.clone(),
         }
+    }
+
+    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
+        self.parameters.profile_options.elevation_indicators.clear();
+        self.parameters
+            .profile_options
+            .elevation_indicators
+            .insert(p.clone());
     }
 
     pub fn map_box(&self) -> BoundingBox {

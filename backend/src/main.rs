@@ -33,12 +33,15 @@ struct Cli {
 }
 
 fn main_test(backend: &mut Backend) -> Result<(), error::Error> {
+    let start = std::time::Instant::now();
     let segment = backend.trackSegment();
     backend.render_segment_what(
         &segment,
         &"map".to_string(),
         &IntegerSize2D::new(1000, 1000),
     );
+    let duration = start.elapsed();
+    log::info!("main_test took: {:.3?}", duration);
     Ok(())
 }
 
@@ -137,7 +140,9 @@ async fn main() -> Result<(), error::Error> {
         _ => {}
     }
 
+    log::trace!("start set parameters");
     backend.set_parameters(&parameters);
+    log::trace!("done set parameters");
 
     match args.main_test {
         Some(enabled) => {

@@ -5,7 +5,6 @@ use super::candidate::Candidates;
 use super::PointFeature;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
-use std::collections::HashMap;
 
 // Each node is a PointFeature, represented by its id.
 // Edges are modeled with a map.
@@ -179,8 +178,8 @@ impl Graph {
         None
     }
 
-    pub fn solve(&mut self) -> HashMap<Node, Candidate> {
-        let mut ret = HashMap::new();
+    pub fn solve(&mut self) -> BTreeMap<Node, Candidate> {
+        let mut ret = BTreeMap::new();
         while !self.map.is_empty() {
             //log::trace!("selecting..");
             let m = self.max_node();
@@ -214,18 +213,20 @@ impl Graph {
     pub fn _debug(&self) {
         let nodes: Vec<_> = self.candidates.keys().cloned().collect();
         for node in nodes {
-            let candidates = self.candidates.get(&node).unwrap();
+            let _candidates = self.candidates.get(&node).unwrap();
             let rcand = self.map.get(&node);
-            let edged_candidates = match rcand {
+            let _edged_candidates = match rcand {
                 None => 0,
                 Some(list) => list.len(),
             };
-            log::debug!(
-                "[{}] => {} candidates (edges:{})",
-                self.find_feature(&node).unwrap().text(),
-                candidates.len(),
-                edged_candidates
+            /*
+                log::trace!(
+                    "[{}] => {} candidates (edges:{})",
+                    self.find_feature(&node).unwrap().text(),
+                    candidates.len(),
+                    edged_candidates
             );
+                */
         }
     }
 

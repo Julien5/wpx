@@ -159,7 +159,7 @@ impl PointFeature {
     pub fn input_point(&self) -> Option<InputPoint> {
         self.input_point.clone()
     }
-    pub fn make_link(&mut self, obstacles: &Obstacles) {
+    pub fn _make_link(&mut self, obstacles: &Obstacles) {
         let circle = &self.circle.center;
         let label = self.label.bbox.absolute().project_on_border(circle);
         let to_label = *circle - label;
@@ -395,7 +395,7 @@ impl PlacementResult {
                     //feature.make_link(&self.obstacles);
                     ret.push(feature.clone());
                 } else {
-                    log::trace!("could not place {}, index:{}", feature.text(), feature_id,);
+                    //log::trace!("could not place {}, index:{}", feature.text(), feature_id,);
                 }
             }
         }
@@ -410,23 +410,45 @@ impl PlacementResult {
     }
 }
 
+fn place_quick_best_candidates(
+    features: &Vec<PointFeature>,
+    obstacles: &Obstacles,
+) -> BTreeMap<PointFeatureId, Candidate> {
+    let mut map_candidate = BTreeMap::new();
+    let mut available = obstacles.available_area();
+    for feature in features {
+        let cboxes = cardinal_boxes(&feature.center(), &feature.width(), &feature.height());
+        let first = cboxes.first().unwrap();
+        let candidate = Candidate::new(first, &1f64, &1f64);
+        if available < candidate.bbox().area() {
+            break;
+        }
+        available -= candidate.bbox().area();
+        map_candidate.insert(feature.id, candidate);
+    }
+    map_candidate
+}
+
 fn place_subset(
     features: &Vec<PointFeature>,
     gen: &dyn CandidatesGenerator,
     obstacles: &Obstacles,
 ) -> PlacementResult {
-    //log::trace!("build label graph");
-    //let mut lsubset = _subset.clone();
-    //lsubset.truncate(10);
-    //let subset = &lsubset;
-    let mut graph = build_graph(features, gen, &obstacles);
     let mut ret = PlacementResult {
         debug: svg::node::element::Group::new(),
         placed_indices: BTreeMap::new(),
         obstacles: Obstacles::new(),
     };
+    let quick = true;
+    let best_candidates = match quick {
+        false => {
+            let mut graph = build_graph(features, gen, &obstacles);
+            graph.solve()
+        }
+        true => place_quick_best_candidates(features, obstacles),
+    };
     //log::trace!("solve label graph [{}]", graph.map.len(),);
-    let best_candidates = graph.solve();
+
     for feature in features {
         let target_text = feature.text();
         if target_text.is_empty() {
@@ -439,7 +461,7 @@ fn place_subset(
                     .insert(feature.id, candidate.bbox().clone());
             }
             _ => {
-                log::info!("failed to find any candidate for [{}]", target_text);
+                //log::trace!("failed to find any candidate for [{}]", target_text);
             }
         }
     }

@@ -52,6 +52,11 @@ impl Segment {
     pub fn id(&self) -> i32 {
         self._impl.id
     }
+
+    #[frb(sync)]
+    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
+        self._impl.set_profile_indication(p);
+    }
 }
 
 #[frb(mirror(WaypointOrigin))]

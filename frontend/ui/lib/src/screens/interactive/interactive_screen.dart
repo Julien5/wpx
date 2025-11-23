@@ -1,6 +1,8 @@
 //import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/src/log.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/routes.dart';
@@ -41,8 +43,26 @@ class InteractiveConsumer extends StatelessWidget {
   }
 }
 
-class InteractiveScreen extends StatelessWidget {
+class InteractiveScreen extends StatefulWidget {
   const InteractiveScreen({super.key});
+
+  @override
+  State<InteractiveScreen> createState() => _InteractiveScreenState();
+}
+
+class _InteractiveScreenState extends State<InteractiveScreen> {
+  Segment? trackSegment;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    RootModel root = Provider.of<RootModel>(context, listen: false);
+    if (trackSegment == null) {
+      log("interactive screen build trackSegment");
+      trackSegment = root.trackSegment();
+      log("interactive screen build done");
+    }
+  }
 
   AppBar? appBar(BuildContext ctx) {
     return AppBar(
@@ -58,14 +78,26 @@ class InteractiveScreen extends StatelessWidget {
     );
   }
 
+  /* 
+  * This widget gets rebuilt even when it is not visible.
+  * This is intended:
+  * https://github.com/flutter/flutter/issues/11655
+  * (1) we should not build trackSegment in the build() method
+  *     => moved to didChangeDependencies (like initState but with context)
+  * (2) didChangeDependencies is called multiple times too, probable because
+  *     of setParamets and notifyListeners (not sure). To work around this,
+  *     we update the trackSegment only if it is not null.
+  */
   @override
   Widget build(BuildContext ctx) {
     RootModel root = Provider.of<RootModel>(ctx);
-    Segment trackSegment = root.trackSegment();
+    if (trackSegment == null) {
+      return Text("building...");
+    }
     return Scaffold(
       appBar: appBar(ctx),
       body: ChangeNotifierProvider<MapRenderer>(
-        create: (_) => MapRenderer(root.getBridge(), trackSegment),
+        create: (_) => MapRenderer(root.getBridge(), trackSegment!),
         child: InteractiveConsumer(),
       ),
     );

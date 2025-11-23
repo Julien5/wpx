@@ -8,7 +8,7 @@ use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::candidate::Candidates;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::{self, *};
-use crate::math::{distance2, IntegerSize2D, Point2D};
+use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::track::Track;
 
@@ -48,12 +48,12 @@ use crate::label_placement::PointFeature;
 struct MapGenerator {}
 
 impl MapGenerator {
-    fn generate_one(point: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn generate_one(feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let mut ret =
-            label_placement::cardinal_boxes(&point.center(), &point.width(), &point.height());
-        let width = point.width();
-        let height = point.height();
-        let center = point.center();
+            label_placement::cardinal_boxes(&feature.center(), &feature.width(), &feature.height());
+        let width = feature.width();
+        let height = feature.height();
+        let center = feature.center();
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 0));
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 2));
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 4));

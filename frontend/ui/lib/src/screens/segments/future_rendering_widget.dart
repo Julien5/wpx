@@ -7,9 +7,13 @@ import 'package:ui/src/widgets/interactive_svg_widget.dart';
 import 'package:ui/src/widgets/static_svg_widget.dart';
 
 class FutureRenderingWidget extends StatefulWidget {
-  final FutureRenderer future; 
+  final FutureRenderer future;
   final bool interactive;
-  const FutureRenderingWidget({super.key, required this.future, required this.interactive});
+  const FutureRenderingWidget({
+    super.key,
+    required this.future,
+    required this.interactive,
+  });
 
   @override
   State<FutureRenderingWidget> createState() => _FutureRenderingWidgetState();
@@ -23,8 +27,9 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
       log("[render-parse-start:${widget.future.trackData}]");
       SvgRootElement svgRootElement = parseSvg(widget.future.result());
       log("[render-parse-end:${widget.future.trackData}]");
+
       if (!widget.interactive) {
-      svg = StaticSvgWidget(svgRootElement: svgRootElement);
+        svg = StaticSvgWidget(svgRootElement: svgRootElement);
       } else {
         svg = SvgWidget(svgRootElement: svgRootElement);
       }

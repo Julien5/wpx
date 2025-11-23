@@ -240,7 +240,7 @@ impl ProfileView {
         range: &std::ops::Range<usize>,
         kind: &ProfileIndication,
     ) {
-        println!("add profile indication: {:?}", kind);
+        log::info!("add profile indication: {:?}", kind);
         match kind {
             ProfileIndication::None => {}
             ProfileIndication::GainTicks => self.add_gain_ticks(track, range),
@@ -493,19 +493,19 @@ impl ProfileView {
 struct ProfileGenerator;
 
 impl ProfileGenerator {
-    fn generate_one(point: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn generate_one(feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let mut ret = Vec::new();
-        assert!(point.input_point().is_some());
+        assert!(feature.input_point().is_some());
 
         ret.extend_from_slice(&label_placement::cardinal_boxes(
-            &point.center(),
-            &point.width(),
-            &point.height(),
+            &feature.center(),
+            &feature.width(),
+            &feature.height(),
         ));
 
-        let width = point.width();
-        let height = point.height();
-        let center = point.center();
+        let width = feature.width();
+        let height = feature.height();
+        let center = feature.center();
         // 20 px above the target
         let Btop = LabelBoundingBox::new_absolute(
             &BoundingBox::minsize(
