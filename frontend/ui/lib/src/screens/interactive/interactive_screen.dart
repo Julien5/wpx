@@ -57,11 +57,8 @@ class _InteractiveScreenState extends State<InteractiveScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     RootModel root = Provider.of<RootModel>(context, listen: false);
-    if (trackSegment == null) {
-      log("interactive screen build trackSegment");
-      trackSegment = root.trackSegment();
-      log("interactive screen build done");
-    }
+    // This sets tracksSegment only if it is null.
+    trackSegment ??= root.trackSegment();
   }
 
   AppBar? appBar(BuildContext ctx) {

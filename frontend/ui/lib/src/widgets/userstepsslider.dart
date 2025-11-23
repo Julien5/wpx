@@ -87,6 +87,11 @@ class UserStepsModel extends ChangeNotifier {
     _updateBackend();
   }
 
+
+  /*
+   * Changing the root model has no effect because the segments are cached
+   * in SegmentsScreen. User steps handling must be fixed.
+   */
   void _updateBackend() {
     Parameters? p = newParameters();
     rootModel.setParameters(p);

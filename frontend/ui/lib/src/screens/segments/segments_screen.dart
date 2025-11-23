@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/src/log.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/waypointstable.dart';
@@ -44,6 +45,7 @@ class _SegmentsViewState extends State<SegmentsView> {
     super.didChangeDependencies();
     if (segments == null) {
       var rootModel = Provider.of<RootModel>(context);
+      log("update segments");
       segments = rootModel.segments();
     }
   }
@@ -53,7 +55,7 @@ class _SegmentsViewState extends State<SegmentsView> {
     ScreenOrientation screenOrientation,
   ) {
     List<RenderersProvider> ret = [];
-    developer.log("[_initRenderingProviders] length=${segments!.length}");
+    log("[_initRenderingProviders] length=${segments!.length}");
     for (var segment in segments!) {
       var w = RenderersProvider(
         Renderers.make(rootModel.getBridge(), segment),
@@ -62,7 +64,7 @@ class _SegmentsViewState extends State<SegmentsView> {
       );
       ret.add(w);
     }
-    developer.log("[renderingProviders] [build] #segments=${ret.length}");
+    log("[renderingProviders] [build] #segments=${ret.length}");
     return ret;
   }
 
@@ -76,7 +78,7 @@ class _SegmentsViewState extends State<SegmentsView> {
           Size(constraints.maxWidth, constraints.maxHeight),
         );
 
-        if (segments==null) {
+        if (segments == null) {
           return const Text("building");
         }
 
