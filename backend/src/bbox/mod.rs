@@ -1,4 +1,5 @@
 use core::fmt;
+mod quadtree;
 
 #[derive(Clone, PartialEq)]
 pub struct BoundingBox {
