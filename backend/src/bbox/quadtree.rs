@@ -3,8 +3,8 @@ use euclid::Point2D;
 
 // ---- Quadtree Implementation ----
 
-const MAX_OBJECTS: usize = 8;
-const MAX_DEPTH: usize = 12;
+const MAX_OBJECTS: usize = 4;
+const MAX_DEPTH: usize = 8;
 
 #[derive(Debug)]
 pub struct QuadTree<T> {
@@ -14,7 +14,7 @@ pub struct QuadTree<T> {
     depth: usize,
 }
 
-impl<T: Clone> QuadTree<T> {
+impl<T: Clone + Ord + Eq> QuadTree<T> {
     pub fn new(boundary: BoundingBox) -> Self {
         Self {
             boundary,
@@ -44,7 +44,7 @@ impl<T: Clone> QuadTree<T> {
             children: None,
             depth: self.depth + 1,
         });
-
+        // log::trace!("create children at depth:{}", self.depth + 1);
         self.children = Some(Box::new(children));
     }
 
@@ -75,10 +75,16 @@ impl<T: Clone> QuadTree<T> {
 
         // Internal node → push downward
         if let Some(children) = self.children.as_mut() {
+            let mut inserted = false;
             for child in children.iter_mut() {
-                if child.insert(aabb, value.clone()) {
-                    return true;
+                // Insert into all children whose boundary overlaps the aabb
+                if child.boundary.overlap(aabb) {
+                    child.insert(aabb, value.clone());
+                    inserted = true;
                 }
+            }
+            if inserted {
+                return true;
             }
         }
 
@@ -89,22 +95,29 @@ impl<T: Clone> QuadTree<T> {
 
     /// Query all objects whose bounding box intersects the given range
     pub fn query<'a>(&'a self, range: &BoundingBox, out: &mut Vec<&'a T>) {
-        // No overlap → skip
+        use std::collections::BTreeSet;
+        let mut set = BTreeSet::new();
+        self.query_internal(range, &mut set);
+        out.extend(set);
+    }
+
+    fn query_internal<'a>(
+        &'a self,
+        range: &BoundingBox,
+        set: &mut std::collections::BTreeSet<&'a T>,
+    ) {
         if !self.boundary.overlap(range) {
             return;
         }
-
-        // Check objects at this node
-        for (b, v) in &self.objects {
-            if b.overlap(range) {
-                out.push(v);
-            }
-        }
-
-        // Recurse into children
         if let Some(children) = &self.children {
             for child in children.iter() {
-                child.query(range, out);
+                child.query_internal(range, set);
+            }
+        } else {
+            for (b, v) in &self.objects {
+                if b.overlap(range) {
+                    set.insert(v);
+                }
             }
         }
     }
@@ -137,5 +150,29 @@ mod tests {
 
         assert!(hits.contains(&&10));
         assert!(hits.contains(&&11));
+    }
+
+    #[test]
+    fn test_quadtree2() {
+        let _ = env_logger::try_init();
+        let world = BoundingBox::minmax(Point2D::new(0.0, 0.0), Point2D::new(4.0, 4.0));
+
+        let mut qt = QuadTree::new(world);
+
+        let a = BoundingBox::minmax(Point2D::new(0.5, 0.5), Point2D::new(1.5, 1.5));
+        qt.insert(&a, 0);
+        let b = BoundingBox::minmax(Point2D::new(1.3, 1.3), Point2D::new(1.7, 1.7));
+        qt.insert(&b, 1);
+        let c = BoundingBox::minmax(Point2D::new(1.3, 2.3), Point2D::new(3.8, 3.8));
+        qt.insert(&c, 2);
+        let d = BoundingBox::minmax(Point2D::new(1.9, 1.9), Point2D::new(3.8, 3.8));
+        qt.insert(&d, 3);
+
+        let query_box = BoundingBox::minmax(Point2D::new(1.1, 1.1), Point2D::new(1.6, 1.6));
+
+        let mut hits = Vec::new();
+        qt.query(&query_box, &mut hits);
+        log::trace!("hits.len:{}", hits.len());
+        assert_eq!(hits.len(), 2);
     }
 }
