@@ -61,7 +61,7 @@ impl Graph {
 
     pub fn build_map(&mut self) {
         let mut overlaping = Vec::new();
-        log::trace!("gather boxes..");
+        log::trace!("gather boxes for {} nodes", self.features.len());
         self.tree.gather_overlaping_objects(&mut overlaping);
         log::trace!("check {} overlaps", overlaping.len());
         for tuple in overlaping {
