@@ -1,8 +1,8 @@
 use super::BoundingBox;
 use euclid::Point2D;
 
-const MAX_OBJECTS: usize = 4;
-const MAX_DEPTH: usize = 8;
+const MAX_OBJECTS: usize = 8;
+const MAX_DEPTH: usize = 4;
 
 #[derive(Debug)]
 pub struct QuadTree<T> {
@@ -96,6 +96,25 @@ impl<T: Clone + Ord + Eq> QuadTree<T> {
         let mut set = BTreeSet::new();
         self.query_internal(range, &mut set);
         out.extend(set);
+    }
+
+    pub fn gather_overlaping_objects(&self, out: &mut Vec<(T, T)>) {
+        if let Some(children) = &self.children {
+            for child in children.iter() {
+                child.gather_overlaping_objects(out);
+            }
+        } else {
+            for (bbox1, value1) in &self.objects {
+                for (bbox2, value2) in &self.objects {
+                    if value1 == value2 {
+                        continue;
+                    }
+                    if bbox1.overlap(bbox2) {
+                        out.push((value1.clone(), value2.clone()));
+                    }
+                }
+            }
+        }
     }
 
     fn query_internal<'a>(

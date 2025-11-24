@@ -349,7 +349,7 @@ fn build_graph(
     gen: &dyn CandidatesGenerator,
     obstacles: &Obstacles,
 ) -> Graph {
-    let mut ret = Graph::new();
+    let mut ret = Graph::new(obstacles.drawingbox.bbox.clone());
     for feature in features {
         ret.features.insert(feature.clone());
     }
