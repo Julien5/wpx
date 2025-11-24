@@ -1,8 +1,6 @@
 use super::BoundingBox;
 use euclid::Point2D;
 
-// ---- Quadtree Implementation ----
-
 const MAX_OBJECTS: usize = 4;
 const MAX_DEPTH: usize = 8;
 
@@ -48,7 +46,7 @@ impl<T: Clone + Ord + Eq> QuadTree<T> {
         self.children = Some(Box::new(children));
     }
 
-    /// Insert a box + payload
+    // Insert a box + payload
     pub fn insert(&mut self, aabb: &BoundingBox, value: T) -> bool {
         // If outside boundary, reject
         if !self.boundary.overlap(aabb) {
@@ -73,13 +71,12 @@ impl<T: Clone + Ord + Eq> QuadTree<T> {
             return true;
         }
 
-        // Internal node → push downward
+        // Internal node => push downward
         if let Some(children) = self.children.as_mut() {
             let mut inserted = false;
             for child in children.iter_mut() {
                 // Insert into all children whose boundary overlaps the aabb
-                if child.boundary.overlap(aabb) {
-                    child.insert(aabb, value.clone());
+                if child.insert(aabb, value.clone()) {
                     inserted = true;
                 }
             }
@@ -93,7 +90,7 @@ impl<T: Clone + Ord + Eq> QuadTree<T> {
         true
     }
 
-    /// Query all objects whose bounding box intersects the given range
+    // Query all objects whose bounding box intersects the given range
     pub fn query<'a>(&'a self, range: &BoundingBox, out: &mut Vec<&'a T>) {
         use std::collections::BTreeSet;
         let mut set = BTreeSet::new();
@@ -122,8 +119,6 @@ impl<T: Clone + Ord + Eq> QuadTree<T> {
         }
     }
 }
-
-// ---- Example Test ----
 
 #[cfg(test)]
 mod tests {
