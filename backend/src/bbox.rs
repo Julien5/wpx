@@ -106,19 +106,20 @@ impl BoundingBox {
         false
     }
 
-    fn overlap_self(&self, other: &Self) -> bool {
-        for p in self.corners() {
-            if other.contains(&p) {
-                return true;
-            }
-        }
-        false
-    }
     pub fn overlap(&self, other: &Self) -> bool {
-        if other.overlap_self(self) || self.overlap_self(other) {
-            return true;
+        if self._max.x < other._min.x {
+            return false;
         }
-        false
+        if self._min.x > other._max.x {
+            return false;
+        }
+        if self._max.y < other._min.y {
+            return false;
+        }
+        if self._min.y > other._max.y {
+            return false;
+        }
+        return true;
     }
 
     pub fn new() -> BoundingBox {
