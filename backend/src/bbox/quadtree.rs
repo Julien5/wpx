@@ -98,25 +98,6 @@ impl<T: Clone + Ord + Eq> QuadTree<T> {
         out.extend(set);
     }
 
-    pub fn gather_overlaping_objects(&self, out: &mut Vec<(T, T)>) {
-        if let Some(children) = &self.children {
-            for child in children.iter() {
-                child.gather_overlaping_objects(out);
-            }
-        } else {
-            for (bbox1, value1) in &self.objects {
-                for (bbox2, value2) in &self.objects {
-                    if value1 == value2 {
-                        continue;
-                    }
-                    if bbox1.overlap(bbox2) {
-                        out.push((value1.clone(), value2.clone()));
-                    }
-                }
-            }
-        }
-    }
-
     fn query_internal<'a>(
         &'a self,
         range: &BoundingBox,
