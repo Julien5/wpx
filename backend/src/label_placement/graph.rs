@@ -3,6 +3,7 @@ use super::candidate::Candidates;
 use super::PointFeature;
 use crate::bbox::quadtree::QuadTree;
 use crate::bbox::BoundingBox;
+use crate::label_placement::candidate::utils;
 use crate::label_placement::PointFeatureId;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
@@ -12,7 +13,6 @@ use std::collections::BTreeSet;
 type Node = PointFeatureId;
 type CandidateMap = BTreeMap<PointFeatureId, Candidates>;
 type Map = BTreeMap<Node, BTreeSet<Node>>;
-type CandidateId = (PointFeatureId, usize);
 
 pub struct Graph {
     pub map: Map,
@@ -21,7 +21,8 @@ pub struct Graph {
     pub ordered_nodes: Vec<Node>,
     pub max_area: f64,
     pub used_area: f64,
-    pub tree: QuadTree<CandidateId>,
+    pub tree: QuadTree<PointFeatureId>,
+    pub candidates_bounding_boxes: Vec<BoundingBox>,
 }
 
 impl Graph {
@@ -34,6 +35,7 @@ impl Graph {
             max_area: 0f64,
             used_area: 0f64,
             tree: QuadTree::new(area),
+            candidates_bounding_boxes: Vec::new(),
         }
     }
     fn intersect(&self, a: &Node, b: &Node) -> bool {
@@ -60,34 +62,40 @@ impl Graph {
     }
 
     pub fn build_map(&mut self) {
-        let mut overlaping = Vec::new();
-        log::trace!("gather boxes for {} nodes", self.features.len());
-        self.tree.gather_overlaping_objects(&mut overlaping);
-        log::trace!("check {} overlaps", overlaping.len());
-        for tuple in overlaping {
-            let (o1, o2) = tuple;
-            let (node_1, _candidate1) = o1;
-            let (node_2, _candidate2) = o2;
-            if node_1 != node_2 {
-                let edges = self.map.get_mut(&node_1);
-                if edges.is_none() {
-                    log::trace!("missing edge list at {}", node_1);
-                    assert!(false);
-                } else {
-                    edges.unwrap().insert(node_2);
+        log::trace!("building edges for {} nodes", self.ordered_nodes.len());
+        let mut count = 0;
+        for k1 in 0..self.ordered_nodes.len() {
+            let node1 = &self.ordered_nodes[k1];
+            let cbb = &self.candidates_bounding_boxes[k1];
+            let mut hits = Vec::new();
+            let mut edges = BTreeSet::new();
+            self.tree.query(cbb, &mut hits);
+            for node2 in hits {
+                if node1 == node2 {
+                    continue;
+                }
+                edges.insert(*node2);
+                if self.intersect(node1, node2) {
+                    edges.insert(*node2);
+                    count += 1;
                 }
             }
+            self.map.insert(*node1, edges);
         }
+        log::trace!(
+            "built {} edges for {} nodes",
+            count,
+            self.ordered_nodes.len()
+        );
     }
 
     pub fn add_node(&mut self, a: &PointFeature, candidates: Candidates) {
         debug_assert!(!self.map.contains_key(&a.id));
         self.ordered_nodes.push(a.id);
         self.features.insert(a.clone());
-        for k in 0..candidates.len() {
-            let c = candidates[k].bbox().absolute();
-            self.tree.insert(&c, (a.id, k));
-        }
+        let cbb = utils::candidates_bounding_box(&candidates);
+        self.candidates_bounding_boxes.push(cbb.clone());
+        self.tree.insert(&cbb, a.id);
         self.candidates.insert(a.id, candidates);
         log::trace!("add edge list at {}", a.id);
         self.map.insert(a.id, BTreeSet::new());

@@ -79,6 +79,18 @@ pub type Candidates = Vec<Candidate>;
 pub mod utils {
     use crate::label_placement::*;
 
+    pub fn candidates_bounding_box(candidates: &Candidates) -> BoundingBox {
+        let mut ret = BoundingBox::new();
+        let _: Vec<_> = candidates
+            .iter()
+            .map(|candidate| {
+                let b = candidate.bbox().absolute();
+                ret.update(&b.get_min());
+                ret.update(&b.get_max());
+            })
+            .collect();
+        ret
+    }
     fn distance2_to_others(
         bbox: &LabelBoundingBox,
         target: &PointFeature,
