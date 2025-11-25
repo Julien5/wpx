@@ -221,7 +221,7 @@ mod tests {
     use super::MapGenerator;
     use crate::{
         bbox::BoundingBox,
-        label_placement::{features::*, LabelBoundingBox},
+        label_placement::{features::*, labelboundingbox::LabelBoundingBox},
         math::Point2D,
     };
 

@@ -1,11 +1,17 @@
 pub mod candidate;
 pub mod drawings;
+pub mod features;
 mod graph;
 pub mod labelboundingbox;
 pub mod prioritize;
 mod stroke;
-pub use labelboundingbox::LabelBoundingBox;
-pub mod features;
+
+use super::label_placement::features::*;
+use crate::bbox::BoundingBox;
+use crate::label_placement::labelboundingbox::LabelBoundingBox;
+use crate::math::distance2;
+use crate::math::Point2D;
+
 use candidate::Candidate;
 use candidate::Candidates;
 use graph::Graph;
@@ -19,31 +25,6 @@ pub trait CandidatesGenerator {
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates>;
 }
-
-impl PartialEq for PointFeature {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
-    }
-}
-
-impl PartialOrd for PointFeature {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.id.partial_cmp(&other.id)
-    }
-}
-
-impl Ord for PointFeature {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.id.cmp(&other.id)
-    }
-}
-
-impl Eq for PointFeature {}
-
-use crate::bbox::BoundingBox;
-use crate::label_placement::features::*;
-use crate::math::distance2;
-use crate::math::Point2D;
 
 fn build_graph(
     features: &Vec<PointFeature>,

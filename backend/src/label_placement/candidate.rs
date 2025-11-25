@@ -79,6 +79,7 @@ pub type Candidates = Vec<Candidate>;
 pub mod utils {
     use crate::label_placement::{
         features::{build_pointfeature_rtree, Obstacles, PointFeature},
+        labelboundingbox::LabelBoundingBox,
         *,
     };
 

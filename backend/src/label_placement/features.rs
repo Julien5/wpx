@@ -5,7 +5,7 @@ use rstar::{PointDistance, RTree, RTreeObject, AABB};
 use crate::{
     bbox::BoundingBox,
     inputpoint::InputPoint,
-    label_placement::{stroke, LabelBoundingBox},
+    label_placement::{labelboundingbox::LabelBoundingBox, stroke},
     math::Point2D,
 };
 
@@ -214,6 +214,26 @@ impl PointFeature {
         }
     }
 }
+
+impl PartialEq for PointFeature {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl PartialOrd for PointFeature {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.id.partial_cmp(&other.id)
+    }
+}
+
+impl Ord for PointFeature {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.id.cmp(&other.id)
+    }
+}
+
+impl Eq for PointFeature {}
 
 impl RTreeObject for PointFeature {
     type Envelope = AABB<[f64; 2]>;
