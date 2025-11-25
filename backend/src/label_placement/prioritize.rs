@@ -143,7 +143,7 @@ pub fn map(segment: &Segment) -> Vec<Vec<usize>> {
         }
     }
     sort_by_distance_to_track(&mut offtrack_cities, &segment.points);
-    offtrack_cities.truncate(10);
+    //offtrack_cities.truncate(300);
     //sort_by_population(&mut offtrack_cities, &segment.points);
     let villages_and_far_cities = merge_flip_flop(&offtrack_cities, &villages);
     for k in &villages_and_far_cities {
