@@ -77,7 +77,10 @@ impl Ord for Candidate {
 pub type Candidates = Vec<Candidate>;
 
 pub mod utils {
-    use crate::label_placement::*;
+    use crate::label_placement::{
+        features::{build_pointfeature_rtree, Obstacles, PointFeature},
+        *,
+    };
 
     pub fn candidates_bounding_box(candidates: &Candidates) -> BoundingBox {
         let mut ret = BoundingBox::new();
@@ -153,14 +156,14 @@ pub mod utils {
     }
 
     fn nearest_neighbor_excluding_self<'a>(
-    rtree: &'a rstar::RTree<PointFeature>,
-    target: &PointFeature,
-) -> Option<&'a PointFeature> {
-    rtree
-        .nearest_neighbor_iter(&[target.center().x, target.center().y])
-        .filter(|&p| p.id != target.id)
-        .next()
-}
+        rtree: &'a rstar::RTree<PointFeature>,
+        target: &PointFeature,
+    ) -> Option<&'a PointFeature> {
+        rtree
+            .nearest_neighbor_iter(&[target.center().x, target.center().y])
+            .filter(|&p| p.id != target.id)
+            .next()
+    }
 
     fn generate_all_candidates(
         gen: fn(&PointFeature) -> Vec<LabelBoundingBox>,
@@ -172,9 +175,9 @@ pub mod utils {
             return Candidates::new();
         }
         let rtree = build_pointfeature_rtree(&all);
-        
+
         let target = &target;
-        let nearest = nearest_neighbor_excluding_self(&rtree,target);
+        let nearest = nearest_neighbor_excluding_self(&rtree, target);
         let mut ret = Candidates::new();
         let available_area = obstacles.available_area();
         if target.area() > available_area {
@@ -195,7 +198,7 @@ pub mod utils {
         gen_one: fn(&PointFeature) -> Vec<LabelBoundingBox>,
         features: &Vec<PointFeature>,
         obstacles: &Obstacles,
-    ) -> BTreeMap<PointFeatureId, Candidates> {
+    ) -> BTreeMap<features::PointFeatureId, Candidates> {
         let mut ret = BTreeMap::new();
         for feature in features {
             let candidates = generate_all_candidates(gen_one, feature, features, obstacles);

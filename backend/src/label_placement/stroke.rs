@@ -3,8 +3,7 @@ use petgraph::{
     graph::{NodeIndex, UnGraph},
 };
 
-use super::Obstacles;
-use crate::math::*;
+use crate::{label_placement::features::Obstacles, math::*};
 
 pub fn _compute(
     start_point: &Point2D,

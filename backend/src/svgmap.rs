@@ -41,9 +41,9 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
-use crate::label_placement::set_attr;
-use crate::label_placement::Attributes;
-use crate::label_placement::PointFeature;
+use crate::label_placement::features::{set_attr, Obstacles};
+use crate::label_placement::features::{Attributes, Polyline};
+use crate::label_placement::features::{Label, PointFeature};
 
 struct MapGenerator {}
 

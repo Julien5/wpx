@@ -1,10 +1,10 @@
+use super::candidate::utils;
 use super::candidate::Candidate;
 use super::candidate::Candidates;
-use super::PointFeature;
+use super::features::PointFeature;
+use super::features::PointFeatureId;
 use crate::bbox::quadtree::QuadTree;
 use crate::bbox::BoundingBox;
-use crate::label_placement::candidate::utils;
-use crate::label_placement::PointFeatureId;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 

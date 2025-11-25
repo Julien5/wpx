@@ -14,6 +14,7 @@ use crate::label_placement;
 use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::candidate::*;
 use crate::label_placement::drawings::draw_for_profile;
+use crate::label_placement::features::*;
 use crate::label_placement::*;
 use crate::math::Point2D;
 use crate::parameters::{ProfileIndication, ProfileOptions};
@@ -449,7 +450,7 @@ impl ProfileView {
                 let g = self.toSD(&p);
                 let id = format!("wp/{}", k);
                 let circle = draw_for_profile(&g, id.as_str(), &w.kind());
-                let mut label = label_placement::Label::new();
+                let mut label = label_placement::features::Label::new();
                 match w.short_name() {
                     Some(name) => {
                         label.set_text(name.clone().trim());

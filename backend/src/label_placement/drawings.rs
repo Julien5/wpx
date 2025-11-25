@@ -1,6 +1,6 @@
 use crate::{
     inputpoint::{InputType, OSM},
-    label_placement::PointFeatureDrawing,
+    label_placement::features::PointFeatureDrawing,
     math::Point2D,
 };
 
