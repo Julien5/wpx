@@ -4,9 +4,9 @@ use std::collections::BTreeMap;
 
 use crate::backend::Segment;
 use crate::bbox::BoundingBox;
-use crate::label_placement::bbox::LabelBoundingBox;
 use crate::label_placement::candidate::Candidates;
 use crate::label_placement::drawings::draw_for_map;
+use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
@@ -221,7 +221,7 @@ mod tests {
     use super::MapGenerator;
     use crate::{
         bbox::BoundingBox,
-        label_placement::{Label, LabelBoundingBox, PointFeature, PointFeatureDrawing},
+        label_placement::{features::*, LabelBoundingBox},
         math::Point2D,
     };
 

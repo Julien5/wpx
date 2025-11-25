@@ -1,10 +1,10 @@
-pub mod bbox;
 pub mod candidate;
 pub mod drawings;
 mod graph;
+pub mod labelboundingbox;
 pub mod prioritize;
 mod stroke;
-pub use bbox::LabelBoundingBox;
+pub use labelboundingbox::LabelBoundingBox;
 pub mod features;
 use candidate::Candidate;
 use candidate::Candidates;

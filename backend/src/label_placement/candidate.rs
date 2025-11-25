@@ -1,6 +1,6 @@
 use crate::{bbox::BoundingBox, math::Point2D};
 
-use super::bbox::LabelBoundingBox;
+use super::labelboundingbox::LabelBoundingBox;
 
 #[derive(Clone)]
 pub struct Candidate {
