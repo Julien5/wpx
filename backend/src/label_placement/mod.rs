@@ -21,22 +21,22 @@ use std::collections::BTreeMap;
 pub trait CandidatesGenerator {
     fn generate(
         &self,
-        features: &Vec<PointFeature>,
+        features: &PointFeatures,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates>;
 }
 
 fn build_graph(
-    features: &Vec<PointFeature>,
+    features: &PointFeatures,
     gen: &dyn CandidatesGenerator,
     obstacles: &Obstacles,
 ) -> Graph {
     let mut ret = Graph::new(obstacles.drawingbox.bbox.clone());
-    for feature in features {
+    for feature in &features.points {
         ret.features.insert(feature.clone());
     }
     let candidates_map = gen.generate(&features, obstacles);
-    for feature in features {
+    for feature in &features.points {
         let feature_id = feature.id;
         let candidates = candidates_map[&feature_id].clone();
         ret.add_node(feature, candidates);
@@ -66,10 +66,10 @@ pub struct PlacementResult {
 }
 
 impl PlacementResult {
-    pub fn apply(&self, packets: &mut Vec<Vec<PointFeature>>) -> Vec<PointFeature> {
+    pub fn apply(&self, packets: &mut Vec<PointFeatures>) -> Vec<PointFeature> {
         let mut ret = Vec::new();
         for packet in packets {
-            for feature in packet {
+            for feature in &mut packet.points {
                 let feature_id = feature.id;
                 if self.placed_indices.contains_key(&feature_id) {
                     let bbox = self.placed_indices.get(&feature_id).unwrap().clone();
@@ -93,12 +93,12 @@ impl PlacementResult {
 }
 
 fn place_quick_best_candidates(
-    features: &Vec<PointFeature>,
+    features: &PointFeatures,
     obstacles: &Obstacles,
 ) -> BTreeMap<PointFeatureId, Candidate> {
     let mut map_candidate = BTreeMap::new();
     let mut available = obstacles.available_area();
-    for feature in features {
+    for feature in &features.points {
         let cboxes = cardinal_boxes(&feature.center(), &feature.width(), &feature.height());
         let first = cboxes.first().unwrap();
         let candidate = Candidate::new(first, &1f64, &1f64);
@@ -112,7 +112,7 @@ fn place_quick_best_candidates(
 }
 
 fn place_subset(
-    features: &Vec<PointFeature>,
+    features: &PointFeatures,
     gen: &dyn CandidatesGenerator,
     obstacles: &Obstacles,
 ) -> PlacementResult {
@@ -121,8 +121,6 @@ fn place_subset(
         placed_indices: BTreeMap::new(),
         obstacles: Obstacles::new(),
     };
-
-    let rtree = build_pointfeature_rtree(&features);
 
     let quick = false;
     let best_candidates = match quick {
@@ -134,7 +132,7 @@ fn place_subset(
     };
     //log::trace!("solve label graph [{}]", graph.map.len(),);
 
-    for feature in features {
+    for feature in &features.points {
         let target_text = feature.text();
         if target_text.is_empty() {
             continue;
@@ -154,7 +152,7 @@ fn place_subset(
 }
 
 pub fn place_labels(
-    packets: &Vec<Vec<PointFeature>>,
+    packets: &Vec<PointFeatures>,
     gen: &dyn CandidatesGenerator,
     bbox: &BoundingBox,
     polyline: &Polyline,
@@ -173,7 +171,7 @@ pub fn place_labels(
         },
     };
     for packet in packets {
-        if packet.is_empty() {
+        if packet.points.is_empty() {
             continue;
         }
         let results = place_subset(&packet, gen, &ret.obstacles);

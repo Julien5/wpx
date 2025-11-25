@@ -468,7 +468,7 @@ impl ProfileView {
                     id: k,
                 });
             }
-            feature_packets.push(feature_packet);
+            feature_packets.push(PointFeatures::make(feature_packet));
         }
 
         log::trace!("profile: place labels");
@@ -553,7 +553,7 @@ impl ProfileGenerator {
 impl CandidatesGenerator for ProfileGenerator {
     fn generate(
         &self,
-        features: &Vec<PointFeature>,
+        features: &PointFeatures,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates> {
         label_placement::candidate::utils::generate(Self::generate_one, features, obstacles)

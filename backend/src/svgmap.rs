@@ -41,7 +41,7 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
-use crate::label_placement::features::{set_attr, Obstacles};
+use crate::label_placement::features::{set_attr, Obstacles, PointFeatures};
 use crate::label_placement::features::{Attributes, Polyline};
 use crate::label_placement::features::{Label, PointFeature};
 
@@ -68,7 +68,7 @@ impl MapGenerator {
 impl CandidatesGenerator for MapGenerator {
     fn generate(
         &self,
-        features: &Vec<PointFeature>,
+        features: &PointFeatures,
         obstacles: &Obstacles,
     ) -> BTreeMap<usize, Candidates> {
         label_placement::candidate::utils::generate(Self::generate_one, features, obstacles)
@@ -152,7 +152,7 @@ impl MapData {
                     id: k,
                 });
             }
-            feature_packets.push(feature_packet);
+            feature_packets.push(PointFeatures::make(feature_packet));
         }
 
         log::trace!("map: place labels");

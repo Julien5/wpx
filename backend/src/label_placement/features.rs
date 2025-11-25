@@ -6,7 +6,7 @@ use crate::{
     bbox::BoundingBox,
     inputpoint::InputPoint,
     label_placement::{labelboundingbox::LabelBoundingBox, stroke},
-    math::Point2D,
+    math::{distance2, Point2D},
 };
 
 pub type Attributes = HashMap<String, svg::node::Value>;
@@ -118,11 +118,6 @@ pub struct PointFeature {
     pub input_point: Option<InputPoint>,
     pub link: Option<svg::node::element::Path>,
     pub id: PointFeatureId,
-}
-
-/// Build an RTree spatial index from a vector of PointFeature
-pub fn build_pointfeature_rtree(features: &[PointFeature]) -> RTree<PointFeature> {
-    RTree::bulk_load(features.to_vec())
 }
 
 impl PointFeature {
@@ -247,9 +242,30 @@ impl RTreeObject for PointFeature {
 impl PointDistance for PointFeature {
     fn distance_2(&self, point: &[f64; 2]) -> f64 {
         let c = self.center();
-        let dx = c.x - point[0];
-        let dy = c.y - point[1];
-        dx * dx + dy * dy
+        let p = Point2D::new(point[0], point[1]);
+        distance2(&c, &p)
+    }
+}
+
+pub struct PointFeatures {
+    pub points: Vec<PointFeature>,
+    tree: RTree<PointFeature>,
+}
+
+impl PointFeatures {
+    pub fn make(points: Vec<PointFeature>) -> PointFeatures {
+        let tree = RTree::bulk_load(points.clone());
+        PointFeatures { points, tree }
+    }
+
+    pub fn nearest_neighbor_excluding_self<'a>(
+        &'a self,
+        target: &PointFeature,
+    ) -> Option<&'a PointFeature> {
+        self.tree
+            .nearest_neighbor_iter(&[target.center().x, target.center().y])
+            .filter(|&p| p.id != target.id)
+            .next()
     }
 }
 

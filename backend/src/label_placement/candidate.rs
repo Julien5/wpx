@@ -78,7 +78,7 @@ pub type Candidates = Vec<Candidate>;
 
 pub mod utils {
     use crate::label_placement::{
-        features::{build_pointfeature_rtree, Obstacles, PointFeature},
+        features::{Obstacles, PointFeature},
         labelboundingbox::LabelBoundingBox,
         *,
     };
@@ -156,29 +156,16 @@ pub mod utils {
         false
     }
 
-    fn nearest_neighbor_excluding_self<'a>(
-        rtree: &'a rstar::RTree<PointFeature>,
-        target: &PointFeature,
-    ) -> Option<&'a PointFeature> {
-        rtree
-            .nearest_neighbor_iter(&[target.center().x, target.center().y])
-            .filter(|&p| p.id != target.id)
-            .next()
-    }
-
     fn generate_all_candidates(
         gen: fn(&PointFeature) -> Vec<LabelBoundingBox>,
         target: &PointFeature,
-        all: &Vec<PointFeature>,
+        all: &PointFeatures,
         obstacles: &Obstacles,
     ) -> Candidates {
         if target.text().is_empty() {
             return Candidates::new();
         }
-        let rtree = build_pointfeature_rtree(&all);
-
         let target = &target;
-        let nearest = nearest_neighbor_excluding_self(&rtree, target);
         let mut ret = Candidates::new();
         let available_area = obstacles.available_area();
         if target.area() > available_area {
@@ -186,7 +173,7 @@ pub mod utils {
             return ret;
         }
         for bbox in gen(target) {
-            let candidate = make_candidate(&bbox, &target, &all, obstacles);
+            let candidate = make_candidate(&bbox, &target, &all.points, obstacles);
             if hit(&candidate, obstacles) {
                 continue;
             }
@@ -197,11 +184,11 @@ pub mod utils {
 
     pub fn generate(
         gen_one: fn(&PointFeature) -> Vec<LabelBoundingBox>,
-        features: &Vec<PointFeature>,
+        features: &PointFeatures,
         obstacles: &Obstacles,
     ) -> BTreeMap<features::PointFeatureId, Candidates> {
         let mut ret = BTreeMap::new();
-        for feature in features {
+        for feature in &features.points {
             let candidates = generate_all_candidates(gen_one, feature, features, obstacles);
             if candidates.is_empty() {
                 /*log::trace!(
