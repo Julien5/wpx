@@ -1,3 +1,8 @@
+use rstar::{RTree, RTreeObject, AABB, PointDistance, Point};
+/// Build an RTree spatial index from a vector of PointFeature
+pub fn build_pointfeature_rtree(features: &[PointFeature]) -> RTree<PointFeature> {
+    RTree::bulk_load(features.to_vec())
+}
 pub mod bbox;
 pub mod candidate;
 pub mod drawings;
@@ -226,6 +231,24 @@ impl PointFeature {
     }
 }
 
+impl RTreeObject for PointFeature {
+    type Envelope = AABB<[f64; 2]>;
+
+    fn envelope(&self) -> Self::Envelope {
+        let c = self.center();
+        AABB::from_point([c.x, c.y])
+    }
+}
+
+impl PointDistance for PointFeature {
+    fn distance_2(&self, point: &[f64; 2]) -> f64 {
+        let c = self.center();
+        let dx = c.x - point[0];
+        let dy = c.y - point[1];
+        dx * dx + dy * dy
+    }
+}
+
 #[derive(Clone)]
 pub struct Polyline {
     id: String,
@@ -439,6 +462,9 @@ fn place_subset(
         placed_indices: BTreeMap::new(),
         obstacles: Obstacles::new(),
     };
+
+    let rtree = build_pointfeature_rtree(&features);
+    
     let quick = false;
     let best_candidates = match quick {
         false => {

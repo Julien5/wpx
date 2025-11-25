@@ -152,6 +152,16 @@ pub mod utils {
         false
     }
 
+    fn nearest_neighbor_excluding_self<'a>(
+    rtree: &'a rstar::RTree<PointFeature>,
+    target: &PointFeature,
+) -> Option<&'a PointFeature> {
+    rtree
+        .nearest_neighbor_iter(&[target.center().x, target.center().y])
+        .filter(|&p| p.id != target.id)
+        .next()
+}
+
     fn generate_all_candidates(
         gen: fn(&PointFeature) -> Vec<LabelBoundingBox>,
         target: &PointFeature,
@@ -161,7 +171,10 @@ pub mod utils {
         if target.text().is_empty() {
             return Candidates::new();
         }
+        let rtree = build_pointfeature_rtree(&all);
+        
         let target = &target;
+        let nearest = nearest_neighbor_excluding_self(&rtree,target);
         let mut ret = Candidates::new();
         let available_area = obstacles.available_area();
         if target.area() > available_area {
