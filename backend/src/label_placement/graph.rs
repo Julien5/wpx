@@ -38,6 +38,7 @@ impl Graph {
             candidates_bounding_boxes: Vec::new(),
         }
     }
+
     fn intersect(&self, a: &Node, b: &Node) -> bool {
         for ca in self.candidates.get(a).unwrap() {
             for cb in self.candidates.get(b).unwrap() {
@@ -47,18 +48,6 @@ impl Graph {
             }
         }
         false
-    }
-    fn compute_edges(&mut self, a: &Node) {
-        let mut edges = BTreeSet::new();
-        for b in self.candidates.keys().clone() {
-            if b == a {
-                continue;
-            }
-            if self.intersect(&a, b) {
-                edges.insert(*b);
-            }
-        }
-        self.map.insert(*a, edges);
     }
 
     pub fn build_map(&mut self) {
@@ -87,6 +76,8 @@ impl Graph {
             count,
             self.ordered_nodes.len()
         );
+
+        // note: self.tree is not needed anymore.
     }
 
     pub fn add_node(&mut self, a: &PointFeature, candidates: Candidates) {
@@ -113,6 +104,10 @@ impl Graph {
         self.features.retain(|f| f.id != *a);
         self.ordered_nodes.retain(|node| node != a);
         self.candidates.remove(a);
+
+        // We could remove candidates from self.tree for completedness,
+        // but this is not necessary since solve() does not read it.
+        // After build_map(), this tree is not read.
     }
 
     fn find_feature(&self, node: &Node) -> Option<&PointFeature> {
