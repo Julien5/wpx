@@ -95,43 +95,25 @@ pub mod utils {
             .collect();
         ret
     }
-    fn distance2_to_others(
-        bbox: &LabelBoundingBox,
-        target: &PointFeature,
-        features: &Vec<PointFeature>,
-        obstacles: &Obstacles,
-    ) -> f64 {
-        let mut ret = f64::MAX;
-        for l in 0..features.len() {
-            let other = &features[l];
-            if other.id == target.id {
-                continue;
-            }
-            let other_center = &other.circle.center;
-            let d = bbox.absolute().distance2_to_point(other_center);
-            if d < ret {
-                ret = d;
-            }
-        }
-        for l in 0..obstacles.bboxes.len() {
-            let otherbbox = &obstacles.bboxes[l];
-            let d = bbox.absolute().distance2_to_other(&otherbbox);
-            if d < ret {
-                ret = d;
-            }
-        }
-        ret
-    }
 
     pub fn make_candidate(
         bbox: &LabelBoundingBox,
         target: &PointFeature,
-        features: &Vec<PointFeature>,
+        features: &PointFeatures,
         obstacles: &Obstacles,
     ) -> Candidate {
-        let _dtarget = bbox.absolute().distance2_to_point(&target.center());
-        let _dothers = distance2_to_others(bbox, &target, &features, obstacles);
-        Candidate::new(bbox, &_dtarget, &_dothers)
+        let dtarget = bbox.absolute().distance2_to_point(&target.center());
+        let neighbors = features.nearest_neighbors(&bbox.absolute().center(), 2);
+        let mut dothers = f64::MAX;
+        for (neighbor, dist2) in neighbors {
+            if neighbor.id == target.id {
+                continue;
+            } else {
+                dothers = dist2;
+                break;
+            }
+        }
+        Candidate::new(bbox, &dtarget, &dothers)
     }
 
     fn hit(candidate: &Candidate, obstacles: &Obstacles) -> bool {
@@ -173,7 +155,7 @@ pub mod utils {
             return ret;
         }
         for bbox in gen(target) {
-            let candidate = make_candidate(&bbox, &target, &all.points, obstacles);
+            let candidate = make_candidate(&bbox, &target, &all, obstacles);
             if hit(&candidate, obstacles) {
                 continue;
             }

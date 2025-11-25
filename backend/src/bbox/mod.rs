@@ -32,6 +32,12 @@ impl BoundingBox {
     pub fn get_max(&self) -> Point2D {
         self._max.clone()
     }
+    pub fn center(&self) -> Point2D {
+        Point2D::new(
+            0.5 * (self._min.x + self._max.x),
+            0.5 * (self._min.y + self._max.y),
+        )
+    }
     pub fn get_xmax(&self) -> f64 {
         self._max.x
     }

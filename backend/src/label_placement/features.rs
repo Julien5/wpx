@@ -258,7 +258,7 @@ impl PointFeatures {
         PointFeatures { points, tree }
     }
 
-    pub fn nearest_neighbor_excluding_self<'a>(
+    /*pub fn nearest_neighbor_excluding_self<'a>(
         &'a self,
         target: &PointFeature,
     ) -> Option<&'a PointFeature> {
@@ -266,6 +266,17 @@ impl PointFeatures {
             .nearest_neighbor_iter(&[target.center().x, target.center().y])
             .filter(|&p| p.id != target.id)
             .next()
+    }*/
+
+    pub fn nearest_neighbors<'a>(
+        &'a self,
+        point: &Point2D,
+        n: usize,
+    ) -> Vec<(&'a PointFeature, f64)> {
+        self.tree
+            .nearest_neighbor_iter_with_distance_2(&[point.x, point.y])
+            .take(n)
+            .collect()
     }
 }
 
