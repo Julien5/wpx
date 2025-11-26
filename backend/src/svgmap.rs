@@ -41,7 +41,9 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
-use crate::label_placement::features::{set_attr, Obstacles, PointFeatures};
+use crate::label_placement::features::{
+    set_attr, Obstacles, PointFeatures, PolylinePoint, PolylinePoints,
+};
 use crate::label_placement::features::{Attributes, Polyline};
 use crate::label_placement::features::{Label, PointFeature};
 
@@ -106,12 +108,13 @@ impl MapData {
 
         let margin = 20i32;
 
-        let mut polyline = Polyline::new();
+        let mut polyline_points = PolylinePoints::new();
         // todo: path in the bbox, which more than the path in the range.
         for p in &path {
             let p = to_graphics_coordinates(&bbox, p, size.width, size.height, margin);
-            polyline.points.push(p);
+            polyline_points.push(PolylinePoint(p));
         }
+        let polyline = Polyline::new(polyline_points);
 
         let mut document = Attributes::new();
         set_attr(

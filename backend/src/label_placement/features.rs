@@ -280,48 +280,64 @@ impl PointFeatures {
     }
 }
 
+#[derive(Clone, Copy)]
+pub struct PolylinePoint(pub Point2D);
+pub type PolylinePoints = Vec<PolylinePoint>;
+
 #[derive(Clone)]
 pub struct Polyline {
     id: String,
-    pub points: Vec<Point2D>,
+    pub points: PolylinePoints,
+    tree: RTree<PolylinePoint>,
+}
+
+impl RTreeObject for PolylinePoint {
+    type Envelope = AABB<[f64; 2]>;
+
+    fn envelope(&self) -> Self::Envelope {
+        AABB::from_point([self.0.x, self.0.y])
+    }
+}
+
+impl PointDistance for PolylinePoint {
+    fn distance_2(&self, point: &[f64; 2]) -> f64 {
+        let c = self.0;
+        let p = Point2D::new(point[0], point[1]);
+        distance2(&c, &p)
+    }
 }
 
 impl Polyline {
-    pub fn new() -> Polyline {
+    pub fn new(points: PolylinePoints) -> Polyline {
+        let tree = RTree::bulk_load(points.clone());
         Polyline {
             id: "track".to_string(),
-            points: Vec::<Point2D>::new(),
+            points: points,
+            tree: tree,
         }
+    }
+
+    pub fn hit(&self, bbox: &BoundingBox) -> bool {
+        let bbox = AABB::from_corners(
+            [bbox.get_xmin(), bbox.get_ymin()],
+            [bbox.get_xmax(), bbox.get_ymax()],
+        );
+        for p in self.tree.locate_in_envelope_intersecting(&bbox) {
+            return true;
+        }
+        false
     }
 }
 
 impl Polyline {
-    pub fn _from_attributes(a: &Attributes) -> Polyline {
-        let data = a.get("d").unwrap();
-        let mut points = Vec::new();
-        for tok in data.split(" ") {
-            let t: Vec<&str> = tok.split(",").collect();
-            debug_assert!(t.len() == 2);
-            let x = format!("{}", t[0].get(1..).unwrap())
-                .parse::<f64>()
-                .unwrap();
-            let y = format!("{}", t[1]).parse::<f64>().unwrap();
-            points.push(Point2D::new(x, y));
-        }
-        Polyline {
-            id: format!("{}", a.get("id").unwrap()),
-            points,
-        }
-    }
-
     pub fn to_attributes(&self) -> Attributes {
         let mut ret = Attributes::new();
         let mut dv = Vec::new();
         for p in &self.points {
             if dv.is_empty() {
-                dv.push(format!("M{:.1},{:.1}", p.x, p.y));
+                dv.push(format!("M{:.1},{:.1}", p.0.x, p.0.y));
             } else {
-                dv.push(format!("L{:.1},{:.1}", p.x, p.y));
+                dv.push(format!("L{:.1},{:.1}", p.0.x, p.0.y));
             }
         }
         let d = dv.join(" ");

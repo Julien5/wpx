@@ -1,4 +1,4 @@
-use crate::{bbox::BoundingBox, math::Point2D};
+use crate::{bbox::BoundingBox, label_placement::features::Polyline, math::Point2D};
 
 use super::labelboundingbox::LabelBoundingBox;
 
@@ -25,14 +25,9 @@ impl Candidate {
     pub fn hit_bbox(&self, bbox: &BoundingBox) -> bool {
         self._bbox.absolute().overlap(&bbox)
     }
-
-    pub fn hit_polyline(&self, polyline: &Vec<Point2D>) -> bool {
-        for p in polyline {
-            if self._bbox.absolute().contains(&p) {
-                return true;
-            }
-        }
-        false
+    pub fn hit_polyline(&self, polyline: &Polyline) -> bool {
+        let bbox = self._bbox.absolute();
+        polyline.hit(&bbox)
     }
     pub fn bbox(&self) -> &LabelBoundingBox {
         &self._bbox
@@ -131,7 +126,7 @@ pub mod utils {
             }
         }
         for polyline in &obstacles.polylines {
-            if candidate.hit_polyline(&polyline.points) {
+            if candidate.hit_polyline(&polyline) {
                 return true;
             }
         }

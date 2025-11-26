@@ -403,7 +403,7 @@ impl ProfileView {
         }*/
         let track = &segment.track;
 
-        let mut polyline = Polyline::new();
+        let mut polyline_points = PolylinePoints::new();
         let range = std::ops::Range {
             start: track.index_after(bbox.get_xmin()),
             end: track.index_before(bbox.get_xmax()),
@@ -412,16 +412,19 @@ impl ProfileView {
             //let e = track.wgs84[k].z();
             let e = track.smooth_elevation[k];
             let p = self.toSD(&Point2D::new(track.distance(k), e));
-            polyline.points.push(p);
+            polyline_points.push(PolylinePoint(p));
         }
+        let polyline = Polyline::new(polyline_points);
 
-        let mut polyline_dp = Polyline::new();
+        /*let mut polyline_dp_points = PolylinePoints::new();
         for k in track.douglas_peucker(10.0, &range) {
             let e = track.wgs84[k].z();
             //let e = track.smooth_elevation[k];
             let p = self.toSD(&Point2D::new(track.distance(k), e));
-            polyline_dp.points.push(p);
+            polyline_dp_points.push(PolylinePoint(p));
         }
+        let polyline_dp = Polyline::new(polyline_dp_points);
+        */
 
         let kind = self.profile_indication();
         self.add_profile_indication(&track, &range, &kind);
