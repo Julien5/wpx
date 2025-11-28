@@ -15,7 +15,7 @@ use crate::{
 pub type Tags = std::collections::BTreeMap<String, String>;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-pub enum OSM {
+pub enum OSMType {
     City,
     MountainPass,
     Peak,
@@ -26,7 +26,7 @@ pub enum OSM {
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum InputType {
     GPX,
-    OSM { kind: OSM },
+    OSM,
     UserStep,
 }
 
@@ -204,12 +204,50 @@ impl InputPoint {
         let mut tags = Tags::new();
         let value = match kind {
             InputType::GPX => "GPX",
-            InputType::OSM { kind: _ } => "OSM",
+            InputType::OSM => "OSM",
             InputType::UserStep => "UserStep",
         };
         tags.insert("wpxtype".to_string(), value.to_string());
         tags
     }
+
+    pub fn osmkind(&self) -> Option<OSMType> {
+        match self.tags.get("place") {
+            Some(place) => {
+                if place == "city" {
+                    return Some(OSMType::City);
+                }
+                if place == "town" {
+                    return Some(OSMType::City);
+                }
+                if place == "village" {
+                    return Some(OSMType::Village);
+                }
+                if place == "hamlet" {
+                    return Some(OSMType::Hamlet);
+                }
+            }
+            _ => {}
+        }
+        match self.tags.get("mountain_pass") {
+            Some(pass) => {
+                if pass == "yes" {
+                    return Some(OSMType::MountainPass);
+                }
+            }
+            _ => {}
+        }
+        match self.tags.get("natural") {
+            Some(natural) => {
+                if natural == "peak" {
+                    return Some(OSMType::Peak);
+                }
+            }
+            _ => {}
+        }
+        None
+    }
+
     pub fn kind(&self) -> InputType {
         match self.tags.get("wpxtype") {
             Some(t) => {
@@ -224,43 +262,8 @@ impl InputPoint {
                 };
             }
             _ => {}
-        };
-        match self.tags.get("place") {
-            Some(place) => {
-                if place == "city" {
-                    return InputType::OSM { kind: OSM::City };
-                }
-                if place == "town" {
-                    return InputType::OSM { kind: OSM::City };
-                }
-                if place == "village" {
-                    return InputType::OSM { kind: OSM::Village };
-                }
-                if place == "hamlet" {
-                    return InputType::OSM { kind: OSM::Hamlet };
-                }
-            }
-            _ => {}
         }
-        match self.tags.get("mountain_pass") {
-            Some(pass) => {
-                if pass == "yes" {
-                    return InputType::OSM {
-                        kind: OSM::MountainPass,
-                    };
-                }
-            }
-            _ => {}
-        }
-        match self.tags.get("natural") {
-            Some(natural) => {
-                if natural == "peak" {
-                    return InputType::OSM { kind: OSM::Peak };
-                }
-            }
-            _ => {}
-        }
-        InputType::OSM { kind: OSM::Village }
+        return InputType::OSM;
     }
     pub fn waypoint(&self) -> Waypoint {
         Waypoint {
@@ -323,6 +326,10 @@ pub struct InputPointMap {
     map: BTreeMap<EuclideanBoundingBox, Vec<InputPoint>>,
 }
 
+pub struct InputPointMaps {
+    pub maps: BTreeMap<InputType, InputPointMap>,
+}
+
 impl InputPointMap {
     pub fn new() -> InputPointMap {
         InputPointMap {
@@ -357,6 +364,11 @@ impl InputPointMap {
             self.insert_points(bbox, points);
         }
     }
+
+    pub fn clear(&mut self) {
+        self.map.clear();
+    }
+
     pub fn as_vector(&self) -> Vec<InputPoint> {
         let mut ret = Vec::new();
         for (_bbox, points) in &self.map {

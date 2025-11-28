@@ -1,4 +1,4 @@
-use crate::{bbox::BoundingBox, label_placement::features::Polyline, math::Point2D};
+use crate::{bbox::BoundingBox, label_placement::features::Polyline};
 
 use super::labelboundingbox::LabelBoundingBox;
 
@@ -95,7 +95,7 @@ pub mod utils {
         bbox: &LabelBoundingBox,
         target: &PointFeature,
         features: &PointFeatures,
-        obstacles: &Obstacles,
+        _obstacles: &Obstacles,
     ) -> Candidate {
         let dtarget = bbox.absolute().distance2_to_point(&target.center());
         let neighbors = features.nearest_neighbors(&bbox.absolute().center(), 2);

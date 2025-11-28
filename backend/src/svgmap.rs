@@ -136,7 +136,7 @@ impl MapData {
 
                 let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
                 let id = format!("wp-circle/{}", k);
-                let circle = draw_for_map(&p, id.as_str(), &w.kind());
+                let circle = draw_for_map(&p, id.as_str(), &w);
                 let mut label = Label::new();
                 match w.short_name() {
                     Some(text) => {

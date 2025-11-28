@@ -1,10 +1,10 @@
 #![allow(non_snake_case)]
 
-use crate::inputpoint::InputPointMap;
+use crate::inputpoint::*;
 use crate::track;
 use crate::waypoint;
 
-fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
+fn _gps_name(w: &waypoint::Waypoint) -> Option<String> {
     match &w.info {
         Some(step) => {
             use chrono::*;
@@ -25,10 +25,10 @@ fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
     w.name.clone()
 }
 
-fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
+fn _to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     let mut ret = gpx::Waypoint::new(geo::Point::new(w.wgs84.x(), w.wgs84.y()));
     ret.elevation = Some(w.wgs84.z());
-    ret.name = gps_name(w);
+    ret.name = _gps_name(w);
     ret.description = match &w.info {
         Some(info) => Some(info.description.clone()),
         _ => w.description.clone(),
@@ -36,7 +36,7 @@ fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     ret
 }
 
-pub fn generate(track: &track::Track, waypoints: &InputPointMap) -> Vec<u8> {
+pub fn generate(track: &track::Track, _waypoints: &InputPointMaps) -> Vec<u8> {
     let mut G = gpx::Gpx::default();
     G.version = gpx::GpxVersion::Gpx11;
 
@@ -45,10 +45,12 @@ pub fn generate(track: &track::Track, waypoints: &InputPointMap) -> Vec<u8> {
     track.segments.push(segment);
     G.tracks.push(track);
 
-    for w in &waypoints.as_vector() {
-        let g = to_gpx(&w.waypoint());
-        G.waypoints.push(g);
+    /*
+        for w in &waypoints.as_vector() {
+            let g = to_gpx(&w.waypoint());
+            G.waypoints.push(g);
     }
+        */
 
     let mut ret: Vec<u8> = Vec::new();
     gpx::write(&G, &mut ret).unwrap();

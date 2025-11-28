@@ -1,11 +1,11 @@
 #![allow(non_snake_case)]
 
+use std::collections::BTreeMap;
+
 use crate::error::Error;
 use crate::gpsdata;
 use crate::gpxexport;
-use crate::inputpoint::InputPoint;
-use crate::inputpoint::InputPointMap;
-use crate::inputpoint::InputType;
+use crate::inputpoint::*;
 use crate::locate;
 use crate::make_points;
 use crate::math::IntegerSize2D;
@@ -25,7 +25,7 @@ pub type SegmentStatistics = crate::segment::SegmentStatistics;
 pub struct BackendData {
     pub parameters: Parameters,
     pub track: std::sync::Arc<track::Track>,
-    pub inputpoints: InputPointMap,
+    pub inputpoints: InputPointMaps,
 }
 
 pub trait Sender {
@@ -116,14 +116,17 @@ impl Backend {
         self.send(&"read gpx".to_string()).await;
         let gpxdata = gpsdata::read_content(content)?;
         self.send(&"download osm data".to_string()).await;
-        let mut inputpoints = osm::download_for_track(&gpxdata.track).await;
-        inputpoints.extend(&gpxdata.waypoints);
+        let mut inputpoints = BTreeMap::new();
+        let osmpoints = osm::download_for_track(&gpxdata.track).await;
+        inputpoints.insert(InputType::OSM, osmpoints);
+        inputpoints.insert(InputType::GPX, gpxdata.waypoints);
+
         // project::project_on_track::<InputPoint>(&track, &mut inputpoints.points);
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
         let data = BackendData {
             track: std::sync::Arc::new(gpxdata.track),
-            inputpoints,
+            inputpoints: InputPointMaps { maps: inputpoints },
             parameters,
         };
         self.send(&"update waypoints".to_string()).await;
@@ -173,8 +176,8 @@ impl BackendData {
             indices.retain(|k| points[*k].kind() == InputType::GPX);
         }
         let mut p: Vec<_> = indices.iter().map(|k| points[*k].clone()).collect();
-            self.export_points(&p)
-         */
+        self.export_points(&p)
+        */
     }
 
     pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {
@@ -182,12 +185,20 @@ impl BackendData {
         if self.parameters.segment_overlap > self.parameters.segment_length {
             assert!(false);
         }
+        self.inputpoints
+            .maps
+            .insert(InputType::UserStep, InputPointMap::new());
         // remove old user points
-        self.inputpoints
-            .retain_points(|w| w.kind() != InputType::UserStep);
-        // put the new ones.
-        self.inputpoints
-            .sort_and_insert(&make_points::user_points(&self.track, &self.parameters));
+        match self.inputpoints.maps.get_mut(&InputType::UserStep) {
+            Some(user_steps_map) => {
+                user_steps_map.clear();
+                user_steps_map
+                    .sort_and_insert(&make_points::user_points(&self.track, &self.parameters));
+            }
+            _ => {
+                assert!(false);
+            }
+        }
     }
 
     pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {

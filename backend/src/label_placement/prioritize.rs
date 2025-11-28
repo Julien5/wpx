@@ -1,5 +1,5 @@
 use crate::{
-    inputpoint::{InputPoint, InputType, OSM},
+    inputpoint::{InputPoint, InputType, OSMType},
     make_points::is_close_to_track,
     segment::Segment,
 };
@@ -87,14 +87,14 @@ pub fn profile(segment: &Segment) -> Vec<Vec<usize>> {
             InputType::GPX => {
                 gpx.push(k);
             }
-            InputType::OSM { kind: osm } => match osm {
-                OSM::City => {
+            InputType::OSM => match wi.osmkind().unwrap() {
+                OSMType::City => {
                     cities.push(k);
                 }
-                OSM::MountainPass | OSM::Peak => {
+                OSMType::MountainPass | OSMType::Peak => {
                     mountains.push(k);
                 }
-                OSM::Village => {
+                OSMType::Village => {
                     villages.push(k);
                 }
                 _ => {
@@ -132,8 +132,8 @@ pub fn map(segment: &Segment) -> Vec<Vec<usize>> {
         }
         let iw = &segment.points[k];
         match iw.kind() {
-            InputType::OSM { kind: osm } => match osm {
-                OSM::City => {
+            InputType::OSM => match iw.osmkind().unwrap() {
+                OSMType::City => {
                     log::trace!("offtrack city:{}", iw.name().unwrap());
                     offtrack_cities.push(k);
                 }

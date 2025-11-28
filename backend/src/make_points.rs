@@ -1,5 +1,5 @@
 use crate::{
-    inputpoint::{InputPoint, InputType, OSM},
+    inputpoint::{InputPoint, InputType, OSMType},
     parameters::Parameters,
     track::Track,
 };
@@ -7,9 +7,10 @@ use crate::{
 pub fn is_close_to_track(w: &InputPoint) -> bool {
     let d = w.track_projection.as_ref().unwrap().track_distance;
     match w.kind() {
-        InputType::OSM { kind } => {
+        InputType::OSM => {
+            let kind = w.osmkind().unwrap();
             let pop = w.population().unwrap_or(0);
-            if kind == OSM::City || pop > 1000 {
+            if kind == OSMType::City || pop > 1000 {
                 return d < 2000.0;
             }
         }

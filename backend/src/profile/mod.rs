@@ -452,7 +452,7 @@ impl ProfileView {
                 let p = Point2D::new(track.distance(index), trackpoint.z());
                 let g = self.toSD(&p);
                 let id = format!("wp/{}", k);
-                let circle = draw_for_profile(&g, id.as_str(), &w.kind());
+                let circle = draw_for_profile(&g, id.as_str(), &w);
                 let mut label = label_placement::features::Label::new();
                 match w.short_name() {
                     Some(name) => {

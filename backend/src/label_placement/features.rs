@@ -322,7 +322,7 @@ impl Polyline {
             [bbox.get_xmin(), bbox.get_ymin()],
             [bbox.get_xmax(), bbox.get_ymax()],
         );
-        for p in self.tree.locate_in_envelope_intersecting(&bbox) {
+        for _p in self.tree.locate_in_envelope_intersecting(&bbox) {
             return true;
         }
         false

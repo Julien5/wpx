@@ -1,7 +1,7 @@
 use geo::LineLocatePoint;
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::{InputPoint, InputPointMap, TrackProjection};
+use crate::inputpoint::{InputPoint, InputPointMaps, TrackProjection};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::MercatorPoint;
 use crate::parameters::{Parameters, ProfileIndication};
@@ -32,7 +32,7 @@ impl Segment {
         range: std::ops::Range<usize>,
         track_tree: locate::IndexedPointsTree,
         track: std::sync::Arc<Track>,
-        inputpoints: &InputPointMap,
+        inputpoints: &InputPointMaps,
         parameters: &Parameters,
     ) -> Segment {
         let map_box =
@@ -135,7 +135,7 @@ impl Segment {
     }
 
     fn copy_segment_points(
-        inputpoints: &InputPointMap,
+        inputpoints: &InputPointMaps,
         map_box: &BoundingBox,
         track: &track::Track,
         tracktree: &locate::IndexedPointsTree,
@@ -144,16 +144,18 @@ impl Segment {
         let mut bbox = map_box.clone();
         bbox.enlarge(&5000f64);
         let bboxs = bboxes::split(&bbox, &bboxes::BBOXWIDTH);
-        for (_index, bbox) in bboxs {
-            let _points = inputpoints.get(&bbox);
-            if _points.is_none() {
-                continue;
-            }
-            let points = _points.unwrap();
-            for p in points {
-                let mut c = p.clone();
-                Self::compute_track_projection(track, tracktree, &mut c);
-                ret.push(c);
+        for (_inputtype, map) in &inputpoints.maps {
+            for (_index, bbox) in &bboxs {
+                let _points = map.get(&bbox);
+                if _points.is_none() {
+                    continue;
+                }
+                let points = _points.unwrap();
+                for p in points {
+                    let mut c = p.clone();
+                    Self::compute_track_projection(track, tracktree, &mut c);
+                    ret.push(c);
+                }
             }
         }
         ret
