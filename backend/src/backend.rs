@@ -121,7 +121,6 @@ impl Backend {
         inputpoints.insert(InputType::OSM, osmpoints);
         inputpoints.insert(InputType::GPX, gpxdata.waypoints);
 
-        // project::project_on_track::<InputPoint>(&track, &mut inputpoints.points);
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
         let data = BackendData {

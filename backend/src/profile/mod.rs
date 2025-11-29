@@ -441,16 +441,18 @@ impl ProfileView {
         // make features packets
         let packets = label_placement::prioritize::profile(&segment);
         let mut feature_packets = Vec::new();
+        let mut counter = 0;
         for packet in packets {
             let mut feature_packet = Vec::new();
-            for k in packet {
-                let w = &segment.points[k];
+            for w in packet {
                 let index = w.round_track_index().unwrap();
                 let trackpoint = &track.wgs84[index];
                 // Note: It would be better to use the middle point with the float
                 // track_index from track_projection.
                 let p = Point2D::new(track.distance(index), trackpoint.z());
                 let g = self.toSD(&p);
+                let k = counter;
+                counter += 1;
                 let id = format!("wp/{}", k);
                 let circle = draw_for_profile(&g, id.as_str(), &w);
                 let mut label = label_placement::features::Label::new();
@@ -460,7 +462,7 @@ impl ProfileView {
                         label.id = format!("wp-{}/text", k);
                     }
                     None => {
-                        log::debug!("missing name for point index {k}");
+                        log::debug!("missing name for point {:?}", w);
                     }
                 }
                 feature_packet.push(PointFeature {

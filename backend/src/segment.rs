@@ -1,7 +1,9 @@
+use std::collections::BTreeMap;
+
 use geo::LineLocatePoint;
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::{InputPoint, InputPointMaps, TrackProjection};
+use crate::inputpoint::{InputPoint, InputPointMaps, InputType, TrackProjection};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::MercatorPoint;
 use crate::parameters::{Parameters, ProfileIndication};
@@ -9,13 +11,15 @@ use crate::profile::ProfileRenderResult;
 use crate::track::{self, Track};
 use crate::{bboxes, locate, profile, svgmap};
 
+type SegmentPoints = BTreeMap<InputType, Vec<InputPoint>>;
+
 #[derive(Clone)]
 pub struct Segment {
     pub id: i32,
     pub range: std::ops::Range<usize>,
     pub track_tree: locate::IndexedPointsTree,
     pub track: std::sync::Arc<Track>,
-    pub points: Vec<InputPoint>,
+    pub points: SegmentPoints,
     pub parameters: Parameters,
 }
 
@@ -27,6 +31,10 @@ pub struct SegmentStatistics {
 }
 
 impl Segment {
+    pub fn osmpoints(&self) -> &Vec<InputPoint> {
+        return self.points.get(&InputType::OSM).unwrap();
+    }
+
     pub fn new(
         id: i32,
         range: std::ops::Range<usize>,
@@ -139,24 +147,24 @@ impl Segment {
         map_box: &BoundingBox,
         track: &track::Track,
         tracktree: &locate::IndexedPointsTree,
-    ) -> Vec<InputPoint> {
-        let mut ret = Vec::new();
+    ) -> SegmentPoints {
+        let mut ret = SegmentPoints::new();
         let mut bbox = map_box.clone();
         bbox.enlarge(&5000f64);
         let bboxs = bboxes::split(&bbox, &bboxes::BBOXWIDTH);
-        for (_inputtype, map) in &inputpoints.maps {
+        for (input_type, map) in &inputpoints.maps {
+            let mut points = Vec::new();
             for (_index, bbox) in &bboxs {
                 let _points = map.get(&bbox);
                 if _points.is_none() {
                     continue;
                 }
-                let points = _points.unwrap();
-                for p in points {
-                    let mut c = p.clone();
-                    Self::compute_track_projection(track, tracktree, &mut c);
-                    ret.push(c);
-                }
+                points.extend_from_slice(_points.unwrap());
             }
+            points.iter_mut().for_each(|mut p| {
+                Self::compute_track_projection(track, tracktree, &mut p);
+            });
+            ret.insert(input_type.clone(), points);
         }
         ret
     }

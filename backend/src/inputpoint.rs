@@ -23,7 +23,7 @@ pub enum OSMType {
     Hamlet,
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Clone)]
 pub enum InputType {
     GPX,
     OSM,

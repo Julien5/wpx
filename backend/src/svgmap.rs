@@ -128,13 +128,14 @@ impl MapData {
         let generator = Box::new(MapGenerator {});
         let packets = label_placement::prioritize::map(segment);
         let mut feature_packets = Vec::new();
+        let mut counter = 0;
         for packet in packets {
             let mut feature_packet = Vec::new();
-            for k in packet {
-                let w = &segment.points[k];
+            for w in packet {
                 let euclidean = w.euclidean.clone();
-
                 let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
+                let k = counter;
+                counter += 1;
                 let id = format!("wp-circle/{}", k);
                 let circle = draw_for_map(&p, id.as_str(), &w);
                 let mut label = Label::new();
