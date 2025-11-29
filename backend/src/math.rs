@@ -66,3 +66,8 @@ pub fn segments_intersect(p1: &Point2D, p2: &Point2D, q1: &Point2D, q2: &Point2D
 
     false
 }
+
+pub fn nearly_equal(a: f64, b: f64) -> bool {
+    let diff = (a - b).abs();
+    diff <= 1e-5
+}

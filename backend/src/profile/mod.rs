@@ -2,8 +2,6 @@
 mod elements;
 mod ticks;
 
-use std::collections::BTreeMap;
-
 use svg::Node;
 
 use crate::backend::Segment;
@@ -470,14 +468,14 @@ impl ProfileView {
                     label,
                     input_point: Some(w.clone()),
                     link: None,
-                    id: k,
+                    xmlid: k,
                 });
             }
             feature_packets.push(PointFeatures::make(feature_packet));
         }
 
         log::trace!("profile: place labels");
-        let result = label_placement::place_labels(
+        let results = label_placement::place_labels(
             &feature_packets,
             &*generator,
             &BoundingBox::minmax(
@@ -488,7 +486,7 @@ impl ProfileView {
             &self.options.max_area_ratio,
         );
         log::trace!("profile: apply placement");
-        let features = result.apply(&mut feature_packets);
+        let features = PlacementResult::apply(&results, &mut feature_packets);
         self.model = Some(ProfileModel {
             polylines: vec![polyline], // , polyline_dp
             points: features,
@@ -556,11 +554,7 @@ impl ProfileGenerator {
 }
 
 impl CandidatesGenerator for ProfileGenerator {
-    fn generate(
-        &self,
-        features: &PointFeatures,
-        obstacles: &Obstacles,
-    ) -> BTreeMap<usize, Candidates> {
+    fn generate(&self, features: &PointFeatures, obstacles: &Obstacles) -> Vec<Candidates> {
         label_placement::candidate::utils::generate(Self::generate_one, features, obstacles)
     }
 }

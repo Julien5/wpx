@@ -1,9 +1,10 @@
 pub mod candidate;
 pub mod drawings;
 pub mod features;
-mod graph;
+pub mod graph;
 pub mod labelboundingbox;
 pub mod prioritize;
+
 mod stroke;
 
 use super::label_placement::features::*;
@@ -19,11 +20,7 @@ use graph::Graph;
 use std::collections::BTreeMap;
 
 pub trait CandidatesGenerator {
-    fn generate(
-        &self,
-        features: &PointFeatures,
-        obstacles: &Obstacles,
-    ) -> BTreeMap<usize, Candidates>;
+    fn generate(&self, features: &PointFeatures, obstacles: &Obstacles) -> Vec<Candidates>;
 }
 
 fn build_graph(
@@ -32,13 +29,10 @@ fn build_graph(
     obstacles: &Obstacles,
 ) -> Graph {
     let mut ret = Graph::new(obstacles.drawingbox.bbox.clone());
-    for feature in &features.points {
-        ret.features.insert(feature.clone());
-    }
-    let candidates_map = gen.generate(&features, obstacles);
-    for feature in &features.points {
-        let feature_id = feature.id;
-        let candidates = candidates_map[&feature_id].clone();
+    let candidates = gen.generate(&features, obstacles);
+    for k in 0..features.points.len() {
+        let feature = &features.points[k];
+        let candidates = candidates[k].clone();
         ret.add_node(feature, candidates);
     }
     ret.build_map();
@@ -60,19 +54,25 @@ fn _candidate_debug_rectangle(candidate: &Candidate) -> svg::node::element::Rect
 }
 
 pub struct PlacementResult {
-    pub debug: svg::node::element::Group,
     pub placed_indices: BTreeMap<features::PointFeatureId, LabelBoundingBox>,
-    pub obstacles: Obstacles,
 }
 
 impl PlacementResult {
-    pub fn apply(&self, packets: &mut Vec<PointFeatures>) -> Vec<PointFeature> {
+    // not clean: either packets should not immutable or we dont need a return value
+    pub fn apply(
+        results: &Vec<PlacementResult>,
+        packets: &mut Vec<PointFeatures>,
+    ) -> Vec<PointFeature> {
         let mut ret = Vec::new();
-        for packet in packets {
-            for feature in &mut packet.points {
-                let feature_id = feature.id;
-                if self.placed_indices.contains_key(&feature_id) {
-                    let bbox = self.placed_indices.get(&feature_id).unwrap().clone();
+        assert_eq!(results.len(), packets.len());
+        for k in 0..results.len() {
+            let result = &results[k];
+            let packet = &mut packets[k];
+            //for feature in &mut packet.points {
+            for k in 0..packet.points.len() {
+                let feature = &mut packet.points[k];
+                if result.placed_indices.contains_key(&k) {
+                    let bbox = result.placed_indices.get(&k).unwrap().clone();
                     feature.place_label(&bbox);
                     //feature.make_link(&self.obstacles);
                     ret.push(feature.clone());
@@ -83,13 +83,6 @@ impl PlacementResult {
         }
         ret
     }
-    pub fn push(&mut self, other: Self) {
-        for (_k, bbox) in &other.placed_indices {
-            self.obstacles.bboxes.push(bbox.absolute().clone());
-        }
-        self.debug = self.debug.clone().add(other.debug);
-        self.placed_indices.extend(other.placed_indices);
-    }
 }
 
 fn place_quick_best_candidates(
@@ -98,7 +91,8 @@ fn place_quick_best_candidates(
 ) -> BTreeMap<PointFeatureId, Candidate> {
     let mut map_candidate = BTreeMap::new();
     let mut available = obstacles.available_area();
-    for feature in &features.points {
+    for k in 0..features.points.len() {
+        let feature = &features.points[k];
         let cboxes = cardinal_boxes(&feature.center(), &feature.width(), &feature.height());
         let first = cboxes.first().unwrap();
         let candidate = Candidate::new(first, &1f64, &1f64);
@@ -106,7 +100,7 @@ fn place_quick_best_candidates(
             break;
         }
         available -= candidate.bbox().area();
-        map_candidate.insert(feature.id, candidate);
+        map_candidate.insert(k, candidate);
     }
     map_candidate
 }
@@ -117,34 +111,39 @@ fn place_subset(
     obstacles: &Obstacles,
 ) -> PlacementResult {
     let mut ret = PlacementResult {
-        debug: svg::node::element::Group::new(),
         placed_indices: BTreeMap::new(),
-        obstacles: Obstacles::new(),
     };
-
+    if features.points.is_empty() {
+        return ret;
+    }
     let quick = false;
     let best_candidates = match quick {
         false => {
             let mut graph = build_graph(features, gen, &obstacles);
+            // graph.print_graph();
             graph.solve()
         }
         true => place_quick_best_candidates(features, obstacles),
     };
     //log::trace!("solve label graph [{}]", graph.map.len(),);
 
-    for feature in &features.points {
+    log::trace!("results:");
+    for k in 0..features.points.len() {
+        let feature = &features.points[k];
         let target_text = feature.text();
         if target_text.is_empty() {
             continue;
         }
-        let best_candidate = best_candidates.get(&feature.id);
+        let best_candidate = best_candidates.get(&k);
         match best_candidate {
             Some(candidate) => {
-                ret.placed_indices
-                    .insert(feature.id, candidate.bbox().clone());
+                log::trace!("index:{}", k);
+                log::trace!("text: {}", target_text);
+                log::trace!("candidate: {}", candidate.bbox().relative());
+                ret.placed_indices.insert(k, candidate.bbox().clone());
             }
             _ => {
-                //log::trace!("failed to find any candidate for [{}]", target_text);
+                log::trace!("failed to find any candidate for [{}]", target_text);
             }
         }
     }
@@ -157,26 +156,29 @@ pub fn place_labels(
     bbox: &BoundingBox,
     polyline: &Polyline,
     max_area_ratio: &f64,
-) -> PlacementResult {
-    let mut ret = PlacementResult {
-        debug: svg::node::element::Group::new(),
-        placed_indices: BTreeMap::new(),
-        obstacles: Obstacles {
-            drawingbox: DrawingArea {
-                bbox: bbox.clone(),
-                max_area_ratio: *max_area_ratio,
-            },
-            polylines: vec![polyline.clone()],
-            bboxes: Vec::new(),
+) -> Vec<PlacementResult> {
+    let mut ret = Vec::new();
+    let mut obstacles = Obstacles {
+        drawingbox: DrawingArea {
+            bbox: bbox.clone(),
+            max_area_ratio: *max_area_ratio,
         },
+        polylines: vec![polyline.clone()],
+        bboxes: Vec::new(),
     };
     for packet in packets {
-        if packet.points.is_empty() {
-            continue;
+        log::trace!(
+            "[a] features:{} obstacles:{}",
+            packet.points.len(),
+            obstacles.bboxes.len()
+        );
+        let results = place_subset(&packet, gen, &obstacles);
+        for (_k, bbox) in &results.placed_indices {
+            obstacles.bboxes.push(bbox.absolute().clone());
         }
-        let results = place_subset(&packet, gen, &ret.obstacles);
         ret.push(results);
     }
+    assert_eq!(ret.len(), packets.len());
     ret
 }
 

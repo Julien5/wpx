@@ -1,7 +1,5 @@
 #![allow(non_snake_case)]
 
-use std::collections::BTreeMap;
-
 use crate::backend::Segment;
 use crate::bbox::BoundingBox;
 use crate::label_placement::candidate::Candidates;
@@ -68,11 +66,7 @@ impl MapGenerator {
 }
 
 impl CandidatesGenerator for MapGenerator {
-    fn generate(
-        &self,
-        features: &PointFeatures,
-        obstacles: &Obstacles,
-    ) -> BTreeMap<usize, Candidates> {
+    fn generate(&self, features: &PointFeatures, obstacles: &Obstacles) -> Vec<Candidates> {
         label_placement::candidate::utils::generate(Self::generate_one, features, obstacles)
     }
 }
@@ -81,7 +75,6 @@ struct MapData {
     polyline: Polyline,
     points: Vec<PointFeature>,
     document: Attributes,
-    debug: svg::node::element::Group,
 }
 
 pub fn euclidean_bounding_box(
@@ -153,14 +146,14 @@ impl MapData {
                     label,
                     input_point: Some(w.clone()),
                     link: None,
-                    id: k,
+                    xmlid: k,
                 });
             }
             feature_packets.push(PointFeatures::make(feature_packet));
         }
 
         log::trace!("map: place labels");
-        let result = crate::label_placement::place_labels(
+        let results = crate::label_placement::place_labels(
             &feature_packets,
             &*generator,
             &BoundingBox::minmax(
@@ -171,12 +164,11 @@ impl MapData {
             &segment.parameters.map_options.max_area_ratio,
         );
         log::trace!("map: apply placement");
-        let features = result.apply(&mut feature_packets);
+        let features = PlacementResult::apply(&results, &mut feature_packets);
         MapData {
             polyline,
             points: features,
             document,
-            debug: result.debug,
         }
     }
 
@@ -208,7 +200,6 @@ impl MapData {
             */
         }
         document = document.add(points_group);
-        document = document.add(self.debug);
         document.to_string()
     }
 }
@@ -247,7 +238,7 @@ mod tests {
             },
             input_point: None,
             link: None,
-            id: 0,
+            xmlid: 0,
         };
         let candidates = MapGenerator::generate_one(&target);
         let mut found = false;

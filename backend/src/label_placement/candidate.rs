@@ -101,7 +101,7 @@ pub mod utils {
         let neighbors = features.nearest_neighbors(&bbox.absolute().center(), 2);
         let mut dothers = f64::MAX;
         for (neighbor, dist2) in neighbors {
-            if neighbor.id == target.id {
+            if neighbor.xmlid == target.xmlid {
                 continue;
             } else {
                 dothers = dist2;
@@ -163,9 +163,10 @@ pub mod utils {
         gen_one: fn(&PointFeature) -> Vec<LabelBoundingBox>,
         features: &PointFeatures,
         obstacles: &Obstacles,
-    ) -> BTreeMap<features::PointFeatureId, Candidates> {
-        let mut ret = BTreeMap::new();
-        for feature in &features.points {
+    ) -> Vec<Candidates> {
+        let mut ret = Vec::new();
+        for k in 0..features.points.len() {
+            let feature = &features.points[k];
             let candidates = generate_all_candidates(gen_one, feature, features, obstacles);
             if candidates.is_empty() {
                 /*log::trace!(
@@ -175,7 +176,7 @@ pub mod utils {
                 );*/
                 // force one ?
             }
-            ret.insert(feature.id, candidates);
+            ret.push(candidates);
         }
         ret
     }

@@ -248,10 +248,10 @@ impl BoundingBox {
 impl fmt::Debug for BoundingBox {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("BoundingBox")
-            .field("min.x", &self._min.x)
-            .field("min.y", &self._min.y)
-            .field("max.x", &self._max.x)
-            .field("max.y", &self._max.y)
+            .field("min.x", &format!("{:.1}", self._min.x))
+            .field("min.y", &format!("{:.1}", self._min.y))
+            .field("width", &format!("{:.1}", self._max.x - self._min.x))
+            .field("height", &format!("{:.1}", self._max.y - self._min.y))
             .finish()
     }
 }

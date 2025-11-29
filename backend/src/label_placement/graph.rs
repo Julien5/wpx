@@ -11,37 +11,38 @@ use std::collections::BTreeSet;
 // Each node is a PointFeature, represented by its id.
 // Edges are modeled with a map.
 type Node = PointFeatureId;
-type CandidateMap = BTreeMap<PointFeatureId, Candidates>;
 type Map = BTreeMap<Node, BTreeSet<Node>>;
+
+pub struct NodeData {
+    pub feature: PointFeature,
+    pub bbox: BoundingBox,
+    pub candidates: Candidates,
+}
 
 pub struct Graph {
     pub map: Map,
-    pub candidates: CandidateMap,
-    pub features: BTreeSet<PointFeature>,
     pub ordered_nodes: Vec<Node>,
     pub max_area: f64,
     pub used_area: f64,
     pub tree: QuadTree<PointFeatureId>,
-    pub candidates_bounding_boxes: Vec<BoundingBox>,
+    pub nodes: Vec<NodeData>,
 }
 
 impl Graph {
     pub fn new(area: BoundingBox) -> Self {
         Self {
             map: Map::new(),
-            candidates: CandidateMap::new(),
-            features: BTreeSet::new(),
             ordered_nodes: Vec::new(),
             max_area: 0f64,
             used_area: 0f64,
             tree: QuadTree::new(area),
-            candidates_bounding_boxes: Vec::new(),
+            nodes: Vec::new(),
         }
     }
 
     fn intersect(&self, a: &Node, b: &Node) -> bool {
-        for ca in self.candidates.get(a).unwrap() {
-            for cb in self.candidates.get(b).unwrap() {
+        for ca in &self.nodes[*a].candidates {
+            for cb in &self.nodes[*b].candidates {
                 if ca.hit_other(&cb) {
                     return true;
                 }
@@ -53,23 +54,21 @@ impl Graph {
     pub fn build_map(&mut self) {
         log::trace!("building edges for {} nodes", self.ordered_nodes.len());
         let mut count = 0;
-        for k1 in 0..self.ordered_nodes.len() {
-            let node1 = &self.ordered_nodes[k1];
-            let cbb = &self.candidates_bounding_boxes[k1];
+        for node1 in 0..self.nodes.len() {
+            let cbb = &self.nodes[node1].bbox;
             let mut hits = Vec::new();
             let mut edges = BTreeSet::new();
             self.tree.query(cbb, &mut hits);
             for node2 in hits {
-                if node1 == node2 {
+                if node1 == *node2 {
                     continue;
                 }
-                edges.insert(*node2);
-                if self.intersect(node1, node2) {
+                if self.intersect(&node1, node2) {
                     edges.insert(*node2);
                     count += 1;
                 }
             }
-            self.map.insert(*node1, edges);
+            self.map.insert(node1, edges);
         }
         log::trace!(
             "built {} edges for {} nodes",
@@ -80,16 +79,45 @@ impl Graph {
         // note: self.tree is not needed anymore.
     }
 
-    pub fn add_node(&mut self, a: &PointFeature, candidates: Candidates) {
-        debug_assert!(!self.map.contains_key(&a.id));
-        self.ordered_nodes.push(a.id);
-        self.features.insert(a.clone());
+    pub fn print_node(&self, node: &Node) {
+        let feature = &self.nodes[*node].feature;
+        log::trace!("node: {}", node);
+        log::trace!("  - text: {}", feature.text());
+        log::trace!("  - size: {:.1}x{:.1}", feature.width(), feature.height());
+
+        let candidates = &self.nodes[*node].candidates;
+        log::trace!("  - candidates: {}", candidates.len());
+        for candidate in candidates {
+            let bbox = candidate.bbox().relative();
+            log::trace!("      {:?}", bbox);
+        }
+    }
+
+    pub fn print_graph(&self) {
+        for n in &self.ordered_nodes {
+            self.print_node(n);
+        }
+    }
+
+    pub fn add_node(&mut self, _a: &PointFeature, candidates: Candidates) {
+        assert_eq!(self.ordered_nodes.len(), self.nodes.len());
+
+        let data = NodeData {
+            feature: _a.clone(),
+            bbox: utils::candidates_bounding_box(&candidates),
+            candidates: candidates.clone(),
+        };
+        self.nodes.push(data);
+
+        let k = self.nodes.len() - 1;
+        debug_assert!(!self.map.contains_key(&k));
+        self.ordered_nodes.push(k);
         let cbb = utils::candidates_bounding_box(&candidates);
-        self.candidates_bounding_boxes.push(cbb.clone());
-        self.tree.insert(&cbb, a.id);
-        self.candidates.insert(a.id, candidates);
-        log::trace!("add edge list at {}", a.id);
-        self.map.insert(a.id, BTreeSet::new());
+        self.tree.insert(&cbb, k);
+        log::trace!("add edge list at {}", k);
+        self.map.insert(k, BTreeSet::new());
+        assert_eq!(self.ordered_nodes.len(), self.nodes.len());
+        assert_eq!(self.nodes.len(), self.map.len());
     }
 
     fn remove_node(&mut self, a: &Node) {
@@ -101,30 +129,22 @@ impl Graph {
         self.map.remove(a);
 
         // cleanup backend data
-        self.features.retain(|f| f.id != *a);
         self.ordered_nodes.retain(|node| node != a);
-        self.candidates.remove(a);
 
         // We could remove candidates from self.tree for completedness,
         // but this is not necessary since solve() does not read it.
         // After build_map(), this tree is not read.
     }
 
-    fn find_feature(&self, node: &Node) -> Option<&PointFeature> {
-        self.features.iter().find(|f| f.id == *node)
-    }
-
     pub fn select(&mut self, a: &Node, selected: &Candidate) {
         // for all b connected to a
-        let index = self
+        let index = self.nodes[*a]
             .candidates
-            .get(a)
-            .unwrap()
             .iter()
             .position(|c| c == selected)
             .unwrap();
         {
-            let feature = &self.find_feature(a).unwrap();
+            let feature = &self.nodes[*a].feature;
             log::trace!(
                 "selected {} with area {:.1} [candidate {}] [{}]",
                 feature.text(),
@@ -137,7 +157,7 @@ impl Graph {
         for b in neighbors {
             // remove candidates of b that overlap with the
             // selected a candidate
-            let neighbors_candidates = self.candidates.get_mut(&b).unwrap();
+            let neighbors_candidates = &mut self.nodes[b].candidates;
             /*
                 for cb in neighbors_candidates.clone() {
                     if selected.overlap(&cb.bbox) {
@@ -159,8 +179,7 @@ impl Graph {
     }
     pub fn max_node(&self) -> Node {
         *self.ordered_nodes.first().unwrap()
-        /*
-        assert!(!self.map.is_empty());
+        /*assert!(!self.map.is_empty());
         let node = *self
             .map
             .iter()
@@ -168,13 +187,12 @@ impl Graph {
             .max_by_key(|(_node, len)| *len)
             .unwrap()
             .0;
-        node
-        */
+        node*/
     }
 
     fn candidate_blocks_other(&self, node: &Node, candidate_index: usize, other: &Node) -> bool {
-        let this_candidate = &self.candidates.get(node).unwrap()[candidate_index];
-        let other_candidates = &self.candidates.get(other).unwrap();
+        let this_candidate = &self.nodes[*node].candidates[candidate_index];
+        let other_candidates = &self.nodes[*other].candidates;
         let other_has_label = !other_candidates.is_empty();
         if !other_has_label {
             return false;
@@ -204,9 +222,9 @@ impl Graph {
     pub fn solve(&mut self) -> BTreeMap<Node, Candidate> {
         let mut ret = BTreeMap::new();
         while !self.map.is_empty() {
-            //log::trace!("selecting..");
             let m = self.max_node();
-            let target = &self.find_feature(&m).unwrap();
+            log::trace!("selecting..{}", m);
+            let target = &self.nodes[m].feature;
             if self.used_area + target.area() > self.max_area {
                 log::trace!("remove {} because it is too large", target.text());
                 self.remove_node(&m);
@@ -220,7 +238,7 @@ impl Graph {
             );*/
             match self.best_candidate_for_node(&m) {
                 Some(best_index) => {
-                    let candidates = self.candidates.get(&m).unwrap();
+                    let candidates = &self.nodes[m].candidates;
                     let best_candidate = candidates[best_index].clone();
                     ret.insert(m, best_candidate.clone());
                     self.select(&m, &best_candidate);
@@ -234,9 +252,9 @@ impl Graph {
     }
 
     pub fn _debug(&self) {
-        let nodes: Vec<_> = self.candidates.keys().cloned().collect();
+        let nodes: Vec<_> = (0..self.nodes.len()).collect();
         for node in nodes {
-            let _candidates = self.candidates.get(&node).unwrap();
+            let _candidates = &self.nodes[node].candidates;
             let rcand = self.map.get(&node);
             let _edged_candidates = match rcand {
                 None => 0,
@@ -254,36 +272,29 @@ impl Graph {
     }
 
     fn best_candidate_for_node(&self, node: &Node) -> Option<usize> {
-        match self.candidates.get(node) {
-            Some(candidates) => {
-                if candidates.is_empty() {
-                    return None;
-                }
-                // note: the candidates are sorted
-                //log::trace!("select one candidate");
-                for index in 0..candidates.len() {
-                    match self.candidate_blocks_any(node, index) {
-                        Some(_other_node) => {
-                            /*log::trace!(
-                                "[node:{node:2}] [candidate:{index:2}] blocks [{_other_node:2}]"
-                            );*/
-                            continue;
-                        }
-                        None => {}
-                    }
-                    /*log::trace!(
-                        "[node:{node:2}] [candidate:{index:2}] it bests from #={}",
-                        candidates.len()
-                    );*/
-                    return Some(index);
-                }
-                return None;
-            }
-            _ => {
-                log::trace!("{node} has no candidate.");
-                None
-            }
+        let candidates = &self.nodes[*node].candidates;
+        if candidates.is_empty() {
+            return None;
         }
+        // note: the candidates are sorted
+        //log::trace!("select one candidate");
+        for index in 0..candidates.len() {
+            match self.candidate_blocks_any(node, index) {
+                Some(_other_node) => {
+                    /*log::trace!(
+                        "[node:{node:2}] [candidate:{index:2}] blocks [{_other_node:2}]"
+                    );*/
+                    continue;
+                }
+                None => {}
+            }
+            /*log::trace!(
+                "[node:{node:2}] [candidate:{index:2}] it bests from #={}",
+                candidates.len()
+            );*/
+            return Some(index);
+        }
+        return None;
     }
 }
 
@@ -356,22 +367,27 @@ mod tests {
             },
             input_point: None,
             link: None,
-            id: 0,
+            xmlid: 0,
         };
+        let mut features = Vec::new();
         for i in [0, 1, 2, 3] {
             let mut g = f.clone();
-            g.id = i;
-            graph.add_node(&g, candidates[i].clone());
+            g.xmlid = i;
+            features.push(g);
+        }
+        for i in [0, 1, 2, 3] {
+            graph.add_node(&features[i], candidates[i].clone());
         }
         graph.build_map();
 
         assert_eq!(graph.max_node(), 0);
         log::info!("select {} {}", 1, "cc1");
+        log::info!("features:{}", graph.nodes.len());
         graph.select(&2, &cc1);
         assert!(!graph.map.contains_key(&2));
-        assert!(graph.candidates.get(&0).unwrap().len() == 1);
-        assert!(graph.candidates.get(&1).unwrap().len() == 1);
-        assert!(graph.candidates.get(&3).unwrap().len() == 1);
+        assert!(graph.nodes[0].candidates.len() == 1);
+        assert!(graph.nodes[0].candidates.len() == 1);
+        assert!(graph.nodes[0].candidates.len() == 1);
         assert!(graph.map.get(&0).unwrap().len() == 1);
         assert!(graph.map.get(&1).unwrap().len() == 1);
         log::info!("max node {}", graph.max_node());

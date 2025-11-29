@@ -6,7 +6,7 @@ use crate::{
     bbox::BoundingBox,
     inputpoint::InputPoint,
     label_placement::{labelboundingbox::LabelBoundingBox, stroke},
-    math::{distance2, Point2D},
+    math::{self, distance2, Point2D},
 };
 
 pub type Attributes = HashMap<String, svg::node::Value>;
@@ -117,11 +117,13 @@ pub struct PointFeature {
     pub label: Label,
     pub input_point: Option<InputPoint>,
     pub link: Option<svg::node::element::Path>,
-    pub id: PointFeatureId,
+    pub xmlid: PointFeatureId,
 }
 
 impl PointFeature {
     pub fn place_label(&mut self, bbox: &LabelBoundingBox) {
+        debug_assert!(math::nearly_equal(self.label.bbox.height(), bbox.height()));
+        debug_assert!(math::nearly_equal(self.label.bbox.width(), bbox.width()));
         self.label.bbox = bbox.clone();
     }
     pub fn width(&self) -> f64 {
@@ -212,19 +214,19 @@ impl PointFeature {
 
 impl PartialEq for PointFeature {
     fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
+        self.xmlid == other.xmlid
     }
 }
 
 impl PartialOrd for PointFeature {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.id.partial_cmp(&other.id)
+        self.xmlid.partial_cmp(&other.xmlid)
     }
 }
 
 impl Ord for PointFeature {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.id.cmp(&other.id)
+        self.xmlid.cmp(&other.xmlid)
     }
 }
 
@@ -366,17 +368,6 @@ pub struct Obstacles {
 }
 
 impl Obstacles {
-    pub fn new() -> Obstacles {
-        Obstacles {
-            bboxes: Vec::new(),
-            polylines: Vec::new(),
-            drawingbox: DrawingArea {
-                bbox: BoundingBox::new(),
-                max_area_ratio: 0f64,
-            },
-        }
-    }
-
     pub fn _is_clear(&self, p1: &Point2D, p2: &Point2D) -> bool {
         for bbox in &self.bboxes {
             if bbox.segment_intersects(p1, p2) {
