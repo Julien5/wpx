@@ -375,7 +375,7 @@ mod tests {
             .await
             .expect("fail");
         let mut parameters = backend.get_parameters();
-        parameters.user_steps_options.step_distance = Some((10_000) as f64);
+        parameters.user_steps_options.step_distance = Some((3_000) as f64);
         backend.set_parameters(&parameters);
         let reffilename = std::format!("data/ref/segment-wheel.svg");
         let data = if std::fs::exists(&reffilename).unwrap() {
