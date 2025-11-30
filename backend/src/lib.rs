@@ -15,6 +15,7 @@ mod osm;
 pub mod parameters;
 mod pdf;
 mod profile;
+pub mod wheel;
 //mod project;
 mod render;
 mod segment;

@@ -4,6 +4,7 @@ use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
+use tracks::wheel;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -26,6 +27,8 @@ struct Cli {
     profile_max_area_ratio: Option<f64>,
     #[arg(long, value_name = "map_max_area_ratio")]
     map_max_area_ratio: Option<f64>,
+    #[arg(long, value_name = "render_wheel")]
+    render_wheel: Option<bool>,
     #[arg(long, value_name = "main-test")]
     main_test: Option<bool>,
     #[arg(value_name = "gpx")]
@@ -148,6 +151,16 @@ async fn main() -> Result<(), error::Error> {
         Some(enabled) => {
             if enabled {
                 return main_test(&mut backend);
+            }
+        }
+        _ => {}
+    }
+
+    match args.render_wheel {
+        Some(enabled) => {
+            if enabled {
+                wheel::render();
+                return Ok(());
             }
         }
         _ => {}
