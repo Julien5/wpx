@@ -17,7 +17,7 @@ class _WheelScreenWidgetState extends State<WheelScreenWidget> {
   @override
   void initState() {
     super.initState();
-    File svgFile = File('/tmp/watch.svg');
+    File svgFile = File('/tmp/wheel.svg');
     svg = svgFile.readAsStringSync();
     developer.log("initState");
   }

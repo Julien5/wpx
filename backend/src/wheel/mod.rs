@@ -1,25 +1,12 @@
+mod model;
+
 use svg::node::element::path::Data;
 use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
 use crate::math::*;
 
-struct ControlPoint {
-    angle: f64,
-    name: String,
-}
-
-struct MidPoint {
-    angle: f64,
-    name: String,
-}
-
-pub struct WheelModel {
-    control_points: Vec<ControlPoint>,
-    mid_points: Vec<MidPoint>,
-}
-
-pub fn render(size: IntegerSize2D, model: &WheelModel) -> String {
+pub fn render(size: IntegerSize2D, model: &model::WheelModel) -> String {
     let min_tick = 10;
     let wheel_width = 20;
     let margin = 10;
