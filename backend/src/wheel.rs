@@ -14,7 +14,7 @@ struct MidPoint {
     name: String,
 }
 
-struct WheelModel {
+pub struct WheelModel {
     control_points: Vec<ControlPoint>,
     mid_points: Vec<MidPoint>,
 }
@@ -73,7 +73,7 @@ pub fn render(size: IntegerSize2D, model: &WheelModel) -> String {
         let tick = Path::new()
             .set("d", hour_tick_data.clone())
             .set("stroke", "#333")
-            .set("stroke-width", 4.0)
+            .set("stroke-width", 5.0)
             .set("stroke-linecap", "round");
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
@@ -85,7 +85,7 @@ pub fn render(size: IntegerSize2D, model: &WheelModel) -> String {
         let tick = Path::new()
             .set("d", minute_tick_data.clone())
             .set("stroke", "#666")
-            .set("stroke-width", 1.5)
+            .set("stroke-width", 1.0)
             .set("stroke-linecap", "round");
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
@@ -117,6 +117,10 @@ mod tests {
         // 1. Define the Control Points
         let control_points = vec![
             ControlPoint {
+                angle: 0.0,
+                name: String::from("Start/End"),
+            },
+            ControlPoint {
                 angle: 60.0,
                 name: String::from("Angers"),
             },
@@ -130,8 +134,6 @@ mod tests {
             },
         ];
 
-        // 2. Define the Mid Points
-        // There are 10 mid points, spaced every 36 degrees (360 / 10 = 36).
         let nmid = 50;
         let mut mid_points = Vec::new();
         let step_angle = 360.0 / (nmid as f64);
@@ -146,7 +148,6 @@ mod tests {
             });
         }
 
-        // 3. Create and return the WheelModel
         WheelModel {
             control_points,
             mid_points,
