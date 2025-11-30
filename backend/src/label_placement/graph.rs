@@ -79,7 +79,7 @@ impl Graph {
         // note: self.tree is not needed anymore.
     }
 
-    pub fn print_node(&self, node: &Node) {
+    pub fn _print_node(&self, node: &Node) {
         let feature = &self.nodes[*node].feature;
         log::trace!("node: {}", node);
         log::trace!("  - text: {}", feature.text());
@@ -93,9 +93,9 @@ impl Graph {
         }
     }
 
-    pub fn print_graph(&self) {
+    pub fn _print_graph(&self) {
         for n in &self.ordered_nodes {
-            self.print_node(n);
+            self._print_node(n);
         }
     }
 

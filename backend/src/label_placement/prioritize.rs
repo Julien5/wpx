@@ -56,12 +56,17 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     let mut villages = Vec::new();
     let mut osmrest = Vec::new();
 
-    for wi in segment.points.get(&InputType::UserStep).unwrap() {
-        if wi.name().unwrap_or("".to_string()).ends_with("0") {
-            user1.push(wi);
-        } else {
-            user2.push(wi);
+    match segment.points.get(&InputType::UserStep) {
+        Some(points) => {
+            for wi in points {
+                if wi.name().unwrap_or("".to_string()).ends_with("0") {
+                    user1.push(wi);
+                } else {
+                    user2.push(wi);
+                }
+            }
         }
+        _ => {}
     }
 
     let gpx: Vec<_> = segment

@@ -30,6 +30,8 @@ fn build_graph(
 ) -> Graph {
     let mut ret = Graph::new(obstacles.drawingbox.bbox.clone());
     let candidates = gen.generate(&features, obstacles);
+    // since the graph is undirected, we could probably speed up
+    // edge computation. TODO: use petgraph.
     for k in 0..features.points.len() {
         let feature = &features.points[k];
         let candidates = candidates[k].clone();
