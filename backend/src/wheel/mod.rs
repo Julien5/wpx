@@ -1,4 +1,4 @@
-mod model;
+pub mod model;
 
 use svg::node::element::path::Data;
 use svg::node::element::{Circle, Group, Path};
@@ -98,7 +98,7 @@ pub fn render(size: IntegerSize2D, model: &model::WheelModel) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::{math::IntegerSize2D, wheel::*};
+    use crate::{math::IntegerSize2D, wheel::model::*, wheel::*};
 
     fn create_wheel_model() -> WheelModel {
         // 1. Define the Control Points
@@ -126,12 +126,9 @@ mod tests {
         let step_angle = 360.0 / (nmid as f64);
 
         for i in 0..nmid {
-            let angle = (i as f64) * step_angle;
-            let name = format!("I{}", i + 1);
-
             mid_points.push(MidPoint {
                 angle: step_angle * (i as f64),
-                name,
+                name: format!("I{}", i + 1),
             });
         }
 

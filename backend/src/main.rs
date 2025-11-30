@@ -4,7 +4,6 @@ use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
-use tracks::wheel;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]

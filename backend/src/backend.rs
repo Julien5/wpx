@@ -322,7 +322,7 @@ impl BackendData {
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::Backend;
+    use crate::{backend::Backend, math::IntegerSize2D, wheel};
 
     #[tokio::test]
     async fn svg_profile() {
@@ -364,6 +364,34 @@ mod tests {
             }
         }
         assert!(ok_count == segments.len());
+    }
+
+    #[tokio::test]
+    async fn svg_segment_wheel() {
+        let _ = env_logger::try_init();
+        let mut backend = Backend::make();
+        backend
+            .load_filename("data/blackforest.gpx")
+            .await
+            .expect("fail");
+        let mut parameters = backend.get_parameters();
+        parameters.user_steps_options.step_distance = Some((10_000) as f64);
+        backend.set_parameters(&parameters);
+        let reffilename = std::format!("data/ref/segment-wheel.svg");
+        let data = if std::fs::exists(&reffilename).unwrap() {
+            std::fs::read_to_string(&reffilename).unwrap()
+        } else {
+            String::new()
+        };
+        let model = wheel::model::WheelModel::make(&backend.trackSegment());
+        let svg = wheel::render(IntegerSize2D::new(400, 400), &model);
+
+        let tmpfilename = std::format!("/tmp/segment-wheel.svg");
+        std::fs::write(&tmpfilename, svg.clone()).unwrap();
+        if data != svg {
+            println!("test failed: {} {}", tmpfilename, reffilename);
+            assert!(false);
+        }
     }
 
     #[tokio::test]

@@ -68,6 +68,13 @@ impl Track {
         self._distance[index]
     }
 
+    pub fn total_distance(&self) -> f64 {
+        match self._distance.last() {
+            Some(d) => *d,
+            None => 0.0,
+        }
+    }
+
     pub fn index_after(&self, distance: f64) -> usize {
         if distance < 0f64 {
             return 0;
