@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:ui/src/log.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
-enum TrackData { profile, yaxis, map }
+enum TrackData { profile, yaxis, map,wheel }
 
 class FutureRenderer with ChangeNotifier {
   bridge.Segment segment;
@@ -18,7 +18,6 @@ class FutureRenderer with ChangeNotifier {
     required bridge.Bridge bridge,
     required this.segment,
     required this.trackData,
-    
   }) : _bridge = bridge;
 
   void updateSegment(bridge.Segment newSegment) {
@@ -53,6 +52,12 @@ class FutureRenderer with ChangeNotifier {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "ylabels",
+        size: getSizeAsTuple(),
+      );
+    }else if (trackData == TrackData.wheel) {
+      _future = _bridge.renderSegmentWhat(
+        segment: segment,
+        what: "wheel",
         size: getSizeAsTuple(),
       );
     }

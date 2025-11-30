@@ -185,6 +185,8 @@ impl BackendData {
         if self.parameters.segment_overlap > self.parameters.segment_length {
             assert!(false);
         }
+
+        // update user steps
         self.inputpoints
             .maps
             .insert(InputType::UserStep, InputPointMap::new());
@@ -192,8 +194,10 @@ impl BackendData {
         match self.inputpoints.maps.get_mut(&InputType::UserStep) {
             Some(user_steps_map) => {
                 user_steps_map.clear();
-                user_steps_map
-                    .sort_and_insert(&make_points::user_points(&self.track, &self.parameters));
+                user_steps_map.sort_and_insert(&make_points::user_points(
+                    &self.track,
+                    &self.parameters.user_steps_options,
+                ));
             }
             _ => {
                 assert!(false);

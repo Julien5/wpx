@@ -1,6 +1,6 @@
 use crate::{
     inputpoint::{InputPoint, InputType, OSMType},
-    parameters::Parameters,
+    parameters::UserStepsOptions,
     track::Track,
 };
 
@@ -75,16 +75,16 @@ fn profile_points_distance_track(track: &Track, d: &f64) -> Vec<InputPoint> {
     ret
 }
 
-pub fn user_points(track: &Track, parameters: &Parameters) -> Vec<InputPoint> {
+pub fn user_points(track: &Track, options: &UserStepsOptions) -> Vec<InputPoint> {
     let mut ret = Vec::new();
-    match parameters.user_steps_options.step_distance {
+    match options.step_distance {
         None => {}
         Some(d) => {
             ret.extend_from_slice(&profile_points_distance_track(track, &d));
         }
     };
 
-    match parameters.user_steps_options.step_elevation_gain {
+    match options.step_elevation_gain {
         None => {}
         Some(d) => {
             ret.extend_from_slice(&profile_points_elevation_gain_track(track, &d));

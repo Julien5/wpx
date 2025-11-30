@@ -6,10 +6,10 @@ use crate::bbox::BoundingBox;
 use crate::inputpoint::{InputPoint, InputPointMaps, InputType, TrackProjection};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::MercatorPoint;
-use crate::parameters::{Parameters, ProfileIndication};
+use crate::parameters::{Parameters, ProfileIndication, UserStepsOptions};
 use crate::profile::ProfileRenderResult;
 use crate::track::{self, Track};
-use crate::{bboxes, locate, profile, svgmap};
+use crate::{bboxes, locate, make_points, profile, svgmap};
 
 type SegmentPoints = BTreeMap<InputType, Vec<InputPoint>>;
 
@@ -70,6 +70,17 @@ impl Segment {
             &self.range,
             &self.parameters.map_options.size2d(),
         )
+    }
+
+    pub fn update_user_step_options(&mut self, options: &UserStepsOptions) {
+        self.parameters.user_steps_options = options.clone();
+        let mut new_points =
+            make_points::user_points(&self.track, &self.parameters.user_steps_options);
+        new_points.retain(|w| {
+            let index = w.round_track_index().unwrap();
+            self.range.contains(&index)
+        });
+        self.points.insert(InputType::UserStep, new_points);
     }
 
     pub fn render_profile(&self) -> ProfileRenderResult {
