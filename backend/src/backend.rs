@@ -18,6 +18,7 @@ use crate::track;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
+use crate::wheel;
 
 pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
@@ -266,6 +267,10 @@ impl BackendData {
         let ret = match what.as_str() {
             "profile" => segment.render_profile().svg,
             "ylabels" => self.render_yaxis_labels_overlay(segment),
+            "wheel" => {
+                let model = wheel::model::WheelModel::make(&segment);
+                wheel::render(size, &model)
+            }
             "map" => segment.render_map(size),
             _ => {
                 // assert!(false);

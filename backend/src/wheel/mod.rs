@@ -6,12 +6,12 @@ use svg::Document;
 
 use crate::math::*;
 
-pub fn render(size: IntegerSize2D, model: &model::WheelModel) -> String {
+pub fn render(size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let min_tick = 10;
     let wheel_width = 20;
     let margin = 10;
 
-    let center = (size / 2).to_vector();
+    let center = (*size / 2).to_vector();
     let mut document = Document::new()
         .set("width", size.width)
         .set("height", size.height)
