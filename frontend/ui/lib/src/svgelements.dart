@@ -7,7 +7,7 @@ import 'package:xml/xml.dart';
 class Transform {
   static List<Transform> readAttribute(String s) {
     List<Transform> transforms = [];
-    final transformRegex = RegExp(r'(translate\([^)]+\)|scale\([^)]+\))');
+    final transformRegex = RegExp(r'(translate\([^)]+\)|scale\([^)]+\)|rotate\([^)]+\))');
 
     for (final match in transformRegex.allMatches(s)) {
       final transform = match.group(0)!;
@@ -15,6 +15,8 @@ class Transform {
         transforms.add(Translate(transform));
       } else if (transform.startsWith('scale')) {
         transforms.add(Scale(transform));
+      } else if (transform.startsWith('rotate')) {
+        transforms.add(Rotate(transform));
       }
     }
 
@@ -43,6 +45,26 @@ class Translate extends Transform {
     assert(translateMatch != null);
     tx = double.parse(translateMatch!.group(1)!);
     ty = double.parse(translateMatch.group(2)!);
+  }
+}
+
+class Rotate extends Transform {
+  double angle = 0.0;
+  double cx = 0.0;
+  double cy = 0.0;
+
+  // Supports: rotate(angle), rotate(angle cx cy)
+  Rotate(String s) {
+    final rotateRegex = RegExp(
+      r'rotate\(\s*([-\d.]+)(?:[\s,]+([-\d.]+)[\s,]+([-\d.]+))?\s*\)',
+    );
+    final rotateMatch = rotateRegex.firstMatch(s);
+    assert(rotateMatch != null, 'Invalid rotate transform: $s');
+    angle = double.parse(rotateMatch!.group(1)!);
+    if (rotateMatch.group(2) != null && rotateMatch.group(3) != null) {
+      cx = double.parse(rotateMatch.group(2)!);
+      cy = double.parse(rotateMatch.group(3)!);
+    }
   }
 }
 
@@ -101,6 +123,15 @@ abstract class SvgElement {
       }
       if (t is Scale) {
         sheet.canvas.scale(t.sx * sheet.zoom, t.sy * sheet.zoom);
+      }
+      if (t is Rotate) {
+        if (t.cx != 0.0 || t.cy != 0.0) {
+          sheet.canvas.translate(t.cx, t.cy);
+          sheet.canvas.rotate(t.angle * 3.141592653589793 / 180.0);
+          sheet.canvas.translate(-t.cx, -t.cy);
+        } else {
+          sheet.canvas.rotate(t.angle * 3.141592653589793 / 180.0);
+        }
       }
     }
   }
