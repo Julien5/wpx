@@ -4,8 +4,22 @@ use svg::Document;
 
 use crate::math::*;
 
-pub fn render(size: IntegerSize2D) {
-    let hour_tick = 15;
+struct ControlPoint {
+    angle: f64,
+    name: String,
+}
+
+struct MidPoint {
+    angle: f64,
+    name: String,
+}
+
+struct WheelModel {
+    control_points: Vec<ControlPoint>,
+    mid_points: Vec<MidPoint>,
+}
+
+pub fn render(size: IntegerSize2D, _model: &WheelModel) -> String {
     let min_tick = 10;
     let wheel_width = 20;
     let margin = 10;
@@ -91,9 +105,66 @@ pub fn render(size: IntegerSize2D) {
         .add(center_dot);
 
     document = document.add(assembled_group);
+    document.to_string()
+}
 
-    // Write the document to stdout (or a file)
-    // To write to a file, uncomment the line below and comment the one after it:
-    // svg::save("watch_dial.svg", &document).unwrap();
-    println!("{}", document);
+#[cfg(test)]
+mod tests {
+    use crate::{math::IntegerSize2D, wheel::*};
+
+    fn create_wheel_model() -> WheelModel {
+        // 1. Define the Control Points
+        let control_points = vec![
+            ControlPoint {
+                angle: 60.0,
+                name: String::from("Angers"),
+            },
+            ControlPoint {
+                angle: 180.0,
+                name: String::from("Winterstettenstadt"),
+            },
+            ControlPoint {
+                angle: 250.0,
+                name: String::from("Noirmoutiers"),
+            },
+        ];
+
+        // 2. Define the Mid Points
+        // There are 10 mid points, spaced every 36 degrees (360 / 10 = 36).
+        let mut mid_points: Vec<MidPoint> = Vec::new();
+        let step_angle = 36.0;
+
+        for i in 1..=10 {
+            let angle = (i as f64) * step_angle;
+            let name = format!("I{}", i);
+
+            mid_points.push(MidPoint { angle, name });
+        }
+
+        // 3. Create and return the WheelModel
+        WheelModel {
+            control_points,
+            mid_points,
+        }
+    }
+
+    #[tokio::test]
+    async fn svg_wheel() {
+        let _ = env_logger::try_init();
+        let reffilename = std::format!("data/ref/wheel.svg");
+        let data = if std::fs::exists(&reffilename).unwrap() {
+            std::fs::read_to_string(&reffilename).unwrap()
+        } else {
+            String::new()
+        };
+        let model = create_wheel_model();
+        let svg = render(IntegerSize2D::new(400, 400), &model);
+
+        let tmpfilename = std::format!("/tmp/wheel.svg");
+        std::fs::write(&tmpfilename, svg.clone()).unwrap();
+        if data != svg {
+            println!("test failed: {} {}", tmpfilename, reffilename);
+            assert!(false);
+        }
+    }
 }
