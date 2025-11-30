@@ -234,9 +234,15 @@ impl Bridge {
         self.backend
             .render_segment_what(&segment._impl, what, &IntegerSize2D::new(size.0, size.1))
     }
+
     #[frb(sync)]
     pub fn statistics(&self) -> SegmentStatistics {
         self.backend.statistics()
+    }
+
+    #[frb(sync)]
+    pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
+        self.backend.segment_statistics(&segment._impl)
     }
 
     #[frb(sync)]

@@ -83,12 +83,19 @@ impl Backend {
     pub fn get_parameters(&self) -> Parameters {
         self.d().get_parameters()
     }
+
     pub fn set_parameters(&mut self, p: &Parameters) {
         self.dmut().set_parameters(p)
     }
+
+    pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
+        self.d().segment_statistics(segment)
+    }
+
     pub fn statistics(&self) -> SegmentStatistics {
         self.d().statistics()
     }
+
     pub async fn generatePdf(&mut self) -> Vec<u8> {
         self.dmut().generatePdf().await
     }
@@ -301,6 +308,7 @@ impl BackendData {
         }
         ret
     }
+
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
         let range = &segment.range;
         assert!(range.end > 0);
@@ -311,6 +319,7 @@ impl BackendData {
             distance_end: self.track.distance(range.end - 1),
         }
     }
+
     pub fn statistics(&self) -> SegmentStatistics {
         let range = 0..self.track.len();
         assert!(range.end > 0);
@@ -396,7 +405,7 @@ mod tests {
             String::new()
         };
         let model = wheel::model::WheelModel::make(&backend.trackSegment());
-        let svg = wheel::render(IntegerSize2D::new(400, 400), &model);
+        let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
 
         let tmpfilename = std::format!("/tmp/segment-wheel.svg");
         std::fs::write(&tmpfilename, svg.clone()).unwrap();

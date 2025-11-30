@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/src/screens/segments/areaslider.dart';
 import 'package:ui/src/widgets/indicatorselector.dart';
-import 'package:ui/src/widgets/userstepsslider.dart';
 import 'mapview.dart';
 import 'profileview.dart';
 
@@ -12,7 +11,7 @@ class SegmentViewDesktop extends StatelessWidget {
     var hspace = const Expanded(child: SizedBox(width: 10));
     var vspace = const Expanded(child: SizedBox(height: 10));
     var settings = Column(
-      children: [vspace,ElevationIndicatorChooser(), UserStepsSliderProvider(),AreaSlider(),vspace],
+      children: [vspace,ElevationIndicatorChooser(),AreaSlider(),vspace],
     );
     
     var map = MapConsumer();

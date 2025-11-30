@@ -2,27 +2,31 @@ import 'dart:collection';
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/utils.dart';
 
 enum SelectedParameter { distance, elevation }
 
 class UserStepsModel extends ChangeNotifier {
-  final RootModel rootModel;
+  final SegmentModel segmentModel;
   SelectedParameter? selectedParameter;
   final Map<SelectedParameter, List<double>> _sliderValues = {};
   final Map<SelectedParameter, double> _selectedValues = {};
-  UserStepsModel({required this.rootModel}) {
-    Parameters params = rootModel.parameters();
-    SegmentStatistics stats = rootModel.statistics();
-    _sliderValues[SelectedParameter.distance] = sensitiveDistanceSteps(params);
-    _sliderValues[SelectedParameter.elevation] = sensitiveElevationSteps(
-      stats,
-      params,
-    );
+  UserStepsModel({required this.segmentModel}) {
+    _sliderValues[SelectedParameter.distance] = fromKm([5, 10, 15, 20, 25]);
+    _sliderValues[SelectedParameter.elevation] = [
+      10,
+      25,
+      50,
+      100,
+      200,
+      250,
+      300,
+      400,
+      500,
+    ];
     _selectedValues[SelectedParameter.elevation] =
         _sliderValues[SelectedParameter.elevation]![1];
     _selectedValues[SelectedParameter.distance] =
@@ -30,13 +34,13 @@ class UserStepsModel extends ChangeNotifier {
     selectedParameter = _readRootSelected();
     if (selectedParameter != null) {
       double? value = _readRootValue();
-      assert(value!=null);
+      assert(value != null);
       _selectedValues[selectedParameter!] = value!;
     }
   }
 
   SelectedParameter? _readRootSelected() {
-    UserStepsOptions p = parameters().userStepsOptions;
+    UserStepsOptions p = segmentModel.userStepsOptions();
     if (p.stepDistance == null && p.stepElevationGain == null) {
       return null;
     }
@@ -47,7 +51,7 @@ class UserStepsModel extends ChangeNotifier {
   }
 
   double? _readRootValue() {
-    UserStepsOptions p = parameters().userStepsOptions;
+    UserStepsOptions p = segmentModel.userStepsOptions();
     if (p.stepDistance == null && p.stepElevationGain == null) {
       return null;
     }
@@ -55,10 +59,6 @@ class UserStepsModel extends ChangeNotifier {
       return p.stepDistance;
     }
     return p.stepElevationGain;
-  }
-
-  Parameters parameters() {
-    return rootModel.parameters();
   }
 
   SliderValues? sliderValues() {
@@ -87,14 +87,12 @@ class UserStepsModel extends ChangeNotifier {
     _updateBackend();
   }
 
-
   /*
    * Changing the root model has no effect because the segments are cached
    * in SegmentsScreen. User steps handling must be fixed.
    */
   void _updateBackend() {
-    Parameters? p = newParameters();
-    rootModel.setParameters(p);
+    segmentModel.setUserStepsOptions(makeUserStepsOptions());
   }
 
   void updateParameter(SelectedParameter? key) {
@@ -103,20 +101,16 @@ class UserStepsModel extends ChangeNotifier {
     _updateBackend();
   }
 
-  UserStepsOptions _makeUserStepsOptions(ProfileOptions old) {
+  UserStepsOptions makeUserStepsOptions() {
     double? current = currentValue();
     if (current == null) {
-      return UserStepsOptions(
-        stepDistance: null,
-        stepElevationGain: null,
-      );
+      return UserStepsOptions(stepDistance: null, stepElevationGain: null);
     }
     assert(selectedParameter != null);
     if (selectedParameter == SelectedParameter.distance) {
       return UserStepsOptions(
         stepDistance: current.toDouble(),
         stepElevationGain: null,
-        
       );
     }
     assert(selectedParameter == SelectedParameter.elevation);
@@ -126,25 +120,8 @@ class UserStepsModel extends ChangeNotifier {
     );
   }
 
-  Parameters newParameters() {
-    Parameters oldParameters = rootModel.parameters();
-    ProfileOptions old = oldParameters.profileOptions;
-    UserStepsOptions newp = _makeUserStepsOptions(old);
-    return bridge.Parameters(
-      speed: oldParameters.speed,
-      startTime: oldParameters.startTime,
-      segmentLength: oldParameters.segmentLength,
-      segmentOverlap: oldParameters.segmentOverlap,
-      smoothWidth: oldParameters.smoothWidth,
-      profileOptions: oldParameters.profileOptions,
-      mapOptions: oldParameters.mapOptions,
-      userStepsOptions: newp,
-      debug: oldParameters.debug,
-    );
-  }
-
   SegmentStatistics statistics() {
-    return rootModel.statistics();
+    return segmentModel.statistics();
   }
 }
 
@@ -154,67 +131,6 @@ List<double> toKm(List<double> list) {
     ret[k] = list[k] * 1000;
   }
   return ret;
-}
-
-List<double> sensitiveDistanceSteps(Parameters parameters) {
-  double distance = parameters.segmentLength - parameters.segmentOverlap;
-  double distanceKm = distance / 1000;
-  List<double> values = [2, 5, 10];
-  if (distanceKm > 10) {
-    values = [5, 10, 15, 20, 25];
-  }
-  if (distanceKm > 50) {
-    values = [10, 15, 20, 25, 30, 50];
-  }
-  if (distanceKm > 100) {
-    values = [10, 20, 25, 50, 100];
-  }
-  if (distanceKm > 200) {
-    values = [20, 25, 50, 60, 75, 100];
-  }
-  if (distanceKm > 400) {
-    values = [40, 50, 75, 100, 150, 200, 300];
-  }
-  if (distanceKm > 600) {
-    values = [50, 60, 75, 100, 150, 200, 300, 400, 500];
-  }
-  return fromKm(values);
-}
-
-List<double> sensitiveElevationSteps(
-  SegmentStatistics trackStatistics,
-  Parameters parameters,
-) {
-  int nsegments =
-      (trackStatistics.distanceEnd /
-              (parameters.segmentLength - parameters.segmentOverlap))
-          .ceil();
-  double elevation = trackStatistics.elevationGain / nsegments;
-  developer.log("total elevation: ${trackStatistics.elevationGain}} m");
-  developer.log("elevation per segment: $elevation m");
-  List<double> values = [10, 25, 50];
-  if (elevation > 100) {
-    values = [25, 50, 75, 100];
-  }
-  if (elevation > 250) {
-    values = [50, 75, 100, 150, 200, 250];
-  }
-  if (elevation > 500) {
-    values = [100, 150, 200, 250, 300, 400, 500];
-  }
-  if (elevation > 1000) {
-    values = [200, 250, 300, 400, 500, 1000];
-  }
-  if (elevation > 2000) {
-    values = [500, 750, 1000, 1500, 2000, 2500];
-  }
-  if (elevation > 5000) {
-    values = [1000, 1500, 2000, 2500, 3000, 4000, 5000];
-  }
-  if (elevation > 10000) {
-    values = [2000, 2500, 3000, 4000, 5000, 10000];
-  }
-  return values;
 }
 
 class UserStepsSlider extends StatelessWidget {
@@ -325,9 +241,9 @@ class UserStepsSliderProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
+    SegmentModel model = Provider.of<SegmentModel>(context);
     return ChangeNotifierProvider(
-      create: (ctx) => UserStepsModel(rootModel: root),
+      create: (ctx) => UserStepsModel(segmentModel: model),
       builder: (context, child) {
         return UserStepsSliderConsumer();
       },

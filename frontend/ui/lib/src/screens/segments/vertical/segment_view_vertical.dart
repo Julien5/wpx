@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/widgets/userstepsslider.dart';
 import '../../../widgets/indicatorselector.dart';
 import 'segmentflipbox.dart';
 
@@ -17,7 +16,6 @@ class SegmentViewVertical extends StatelessWidget {
           SegmentFlipBox(),
           SizedBox(height: 50),
           ElevationIndicatorChooser(),
-          UserStepsSliderProvider(),
         ],
       ),
     );

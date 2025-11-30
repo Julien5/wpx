@@ -31,4 +31,8 @@ class SegmentModel extends ChangeNotifier {
   WheelRenderer createWheelRenderer() {
     return WheelRenderer(_bridge,_segment);
   } 
+
+   bridge.SegmentStatistics statistics() {
+    return _bridge.segmentStatistics(segment: _segment);
+  }
 }

@@ -32,7 +32,7 @@ class RouteManager {
         return MaterialPageRoute(builder: (_) => InteractiveScreen());
 
       case wheelView:
-        return MaterialPageRoute(builder: (_) => WheelScreen());
+        return MaterialPageRoute(builder: (_) => WheelProvider());
 
       default:
         return MaterialPageRoute(

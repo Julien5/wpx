@@ -1,3 +1,5 @@
+use std::any::Any;
+
 use crate::{
     backend::Segment,
     inputpoint::{InputPoint, InputType},
@@ -25,7 +27,7 @@ fn angle(point: &InputPoint, track: &Track) -> f64 {
     let index = proj.track_index;
     let part = track.distance(index);
     let total = track.total_distance();
-    log::debug!("part:{:.1} total:{:.1}", part, total);
+    //log::debug!("part:{:.1} total:{:.1}", part, total);
     360.0 * part / total
 }
 
@@ -49,6 +51,9 @@ fn get_control_points(segment: &Segment, maxlen: usize) -> Vec<InputPoint> {
     let packets = prioritize::profile(segment);
     for packet in packets {
         for point in packet {
+            if point.kind() == InputType::UserStep {
+                continue;
+            }
             ret.push(point.clone());
             if ret.len() >= maxlen {
                 return ret;

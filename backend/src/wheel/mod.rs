@@ -100,7 +100,7 @@ pub fn render(size: &IntegerSize2D, model: &model::WheelModel) -> String {
 mod tests {
     use crate::{math::IntegerSize2D, wheel::model::*, wheel::*};
 
-    fn create_wheel_model() -> WheelModel {
+    fn create_wheel_model(nmid: usize) -> WheelModel {
         // 1. Define the Control Points
         let control_points = vec![
             ControlPoint {
@@ -121,7 +121,6 @@ mod tests {
             },
         ];
 
-        let nmid = 50;
         let mut mid_points = Vec::new();
         let step_angle = 360.0 / (nmid as f64);
 
@@ -141,20 +140,22 @@ mod tests {
     #[tokio::test]
     async fn svg_wheel() {
         let _ = env_logger::try_init();
-        let reffilename = std::format!("data/ref/wheel.svg");
-        let data = if std::fs::exists(&reffilename).unwrap() {
-            std::fs::read_to_string(&reffilename).unwrap()
-        } else {
-            String::new()
-        };
-        let model = create_wheel_model();
-        let svg = render(IntegerSize2D::new(400, 400), &model);
+        for n in [50] {
+            let reffilename = std::format!("data/ref/wheel-{}.svg", n);
+            let data = if std::fs::exists(&reffilename).unwrap() {
+                std::fs::read_to_string(&reffilename).unwrap()
+            } else {
+                String::new()
+            };
+            let model = create_wheel_model(n);
+            let svg = render(&IntegerSize2D::new(400, 400), &model);
 
-        let tmpfilename = std::format!("/tmp/wheel.svg");
-        std::fs::write(&tmpfilename, svg.clone()).unwrap();
-        if data != svg {
-            println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
+            let tmpfilename = std::format!("/tmp/wheel-{}.svg", n);
+            std::fs::write(&tmpfilename, svg.clone()).unwrap();
+            if data != svg {
+                println!("test failed: {} {}", tmpfilename, reffilename);
+                assert!(false);
+            }
         }
     }
 }

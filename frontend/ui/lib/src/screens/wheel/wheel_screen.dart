@@ -8,13 +8,13 @@ import 'package:ui/src/rust/api/bridge.dart' show Bridge;
 import 'package:ui/src/screens/segments/future_rendering_widget.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
-class WheelScreenWidget extends StatefulWidget {
-  const WheelScreenWidget({super.key});
+class WheelWidget extends StatefulWidget {
+  const WheelWidget({super.key});
   @override
-  State<WheelScreenWidget> createState() => _WheelScreenWidgetState();
+  State<WheelWidget> createState() => _WheelWidgetState();
 }
 
-class _WheelScreenWidgetState extends State<WheelScreenWidget> {
+class _WheelWidgetState extends State<WheelWidget> {
   @override
   void initState() {
     super.initState();
@@ -41,22 +41,6 @@ class _WheelScreenWidgetState extends State<WheelScreenWidget> {
   }
 }
 
-class WheelProvider extends StatelessWidget {
-  const WheelProvider({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    Bridge bridge = root.getBridge();
-    assert(bridge.isLoaded());
-    return ChangeNotifierProvider(
-      create: (ctx) => SegmentModel(bridge,root.trackSegment()),
-      builder: (context, child) {
-        return WheelScreenWidget();
-      },
-    );
-  }
-}
 
 class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
@@ -91,7 +75,7 @@ class WheelScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              WheelProvider(),
+              WheelWidget(),
               SizedBox(height: 150),
               UserStepsSliderProvider(),
               infoCard,
@@ -99,6 +83,24 @@ class WheelScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+
+class WheelProvider extends StatelessWidget {
+  const WheelProvider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    RootModel root = Provider.of<RootModel>(context);
+    Bridge bridge = root.getBridge();
+    assert(bridge.isLoaded());
+    return ChangeNotifierProvider(
+      create: (ctx) => SegmentModel(bridge,root.trackSegment()),
+      builder: (context, child) {
+        return WheelScreen();
+      },
     );
   }
 }
