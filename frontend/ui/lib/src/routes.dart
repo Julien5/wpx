@@ -3,6 +3,7 @@ import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/screens/export/export_screen.dart';
 import 'package:ui/src/screens/interactive/interactive_screen.dart';
 import 'package:ui/src/screens/segments/segments_screen.dart';
+import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
 class RouteManager {

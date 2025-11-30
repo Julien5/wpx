@@ -134,6 +134,9 @@ abstract class SvgElement {
       return SvgRootElement(e, parent);
     } else if (e.name.local == "g") {
       return GroupElement(e, parent);
+    } else if (e.name.local == "title") {
+      // ignore
+      return GroupElement(e, parent);
     } else {
       throw Exception("Unknown element type: ${e.name}");
     }
@@ -174,7 +177,22 @@ class SvgRootElement extends GroupElement {
   }
 }
 
+Color parseHexColor(String hexColor) {
+  String hex = hexColor.replaceFirst('#', '');
+  if (hex.length == 3) {
+    // Convert #rgb to #rrggbb
+    hex = hex.split('').map((c) => '$c$c').join();
+  }
+  if (hex.length == 6) {
+    hex = 'ff$hex'; // Add alpha if not present
+  }
+  return Color(int.parse(hex, radix: 16));
+}
+
 Color parseColor(String colorName) {
+  if (colorName.startsWith("#")) {
+    return parseHexColor(colorName);
+  }
   switch (colorName.toLowerCase()) {
     case 'black':
       return Colors.black;

@@ -20,7 +20,7 @@ class FutureRenderingWidget extends StatefulWidget {
 }
 
 class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
-  Widget? svg;
+  Widget? svgWidget;
 
   Widget buildWorker() {
     if (widget.future.done()) {
@@ -29,12 +29,12 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
       log("[render-parse-end:${widget.future.trackData}]");
 
       if (!widget.interactive) {
-        svg = StaticSvgWidget(svgRootElement: svgRootElement);
+        svgWidget = StaticSvgWidget(svgRootElement: svgRootElement);
       } else {
-        svg = SvgWidget(svgRootElement: svgRootElement);
+        svgWidget = SvgWidget(svgRootElement: svgRootElement);
       }
     }
-    if (!widget.future.done() && svg == null) {
+    if (!widget.future.done() && svgWidget == null) {
       return Text("starting ${widget.future.trackData} ${widget.future.id()}");
     }
 
@@ -42,11 +42,11 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
       return Stack(
         children: <Widget>[
           Text("updating ${widget.future.trackData} ${widget.future.id()}"),
-          svg!,
+          svgWidget!,
         ],
       );
     }
-    return svg!;
+    return svgWidget!;
   }
 
   @override
