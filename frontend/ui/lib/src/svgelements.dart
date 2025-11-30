@@ -7,7 +7,9 @@ import 'package:xml/xml.dart';
 class Transform {
   static List<Transform> readAttribute(String s) {
     List<Transform> transforms = [];
-    final transformRegex = RegExp(r'(translate\([^)]+\)|scale\([^)]+\)|rotate\([^)]+\))');
+    final transformRegex = RegExp(
+      r'(translate\([^)]+\)|scale\([^)]+\)|rotate\([^)]+\))',
+    );
 
     for (final match in transformRegex.allMatches(s)) {
       final transform = match.group(0)!;
@@ -325,7 +327,7 @@ class CircleElement extends SvgElement {
 
   CircleElement(super.xmlElement, super.parent) {
     stroke = Colors.black;
-    fill = Colors.black;
+    fill = Colors.white;
     strokeWidth = 1.0;
     if (attribute("stroke") != null) {
       stroke = parseColor(attribute("stroke")!);
@@ -343,20 +345,28 @@ class CircleElement extends SvgElement {
 
   @override
   void paintElement(Sheet sheet) {
-    final paint = Paint()..style = PaintingStyle.stroke;
-    paint.isAntiAlias = true;
-    paint.strokeWidth = strokeWidth;
-    paint.color = stroke;
+    final center = Offset(cx * sheet.zoom, cy * sheet.zoom) + sheet.pan;
 
+    // Draw fill first, if any
     if (fill != Colors.transparent) {
-      paint.style = PaintingStyle.fill;
-      paint.color = fill;
+      final fillPaint =
+          Paint()
+            ..style = PaintingStyle.fill
+            ..isAntiAlias = true
+            ..color = fill;
+      sheet.canvas.drawCircle(center, r * sheet.zoom, fillPaint);
     }
-    sheet.canvas.drawCircle(
-      Offset(cx * sheet.zoom, cy * sheet.zoom) + sheet.pan,
-      r,
-      paint,
-    );
+
+    // Draw stroke on top, if any
+    if (stroke != Colors.transparent && strokeWidth > 0) {
+      final strokePaint =
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..isAntiAlias = true
+            ..color = stroke
+            ..strokeWidth = strokeWidth;
+      sheet.canvas.drawCircle(center, r * sheet.zoom, strokePaint);
+    }
   }
 }
 

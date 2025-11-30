@@ -63,7 +63,7 @@ class WheelScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [infoCard, SizedBox(height: 15), WheelScreenWidget()],
+            children: [WheelScreenWidget(), SizedBox(height: 150), infoCard],
           ),
         ),
       ),
