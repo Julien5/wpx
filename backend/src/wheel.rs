@@ -19,7 +19,7 @@ struct WheelModel {
     mid_points: Vec<MidPoint>,
 }
 
-pub fn render(size: IntegerSize2D, _model: &WheelModel) -> String {
+pub fn render(size: IntegerSize2D, model: &WheelModel) -> String {
     let min_tick = 10;
     let wheel_width = 20;
     let margin = 10;
@@ -66,26 +66,27 @@ pub fn render(size: IntegerSize2D, _model: &WheelModel) -> String {
     let minute_tick_data =
         Data::parse(format!("M 0 -{} L 0 -{}", min_tick_start, min_tick_stop).as_str()).unwrap();
 
-    // 5. Generate Ticks (60 total)
-    for i in 0..60 {
-        let angle = i as f64 * 6.0; // 360 degrees / 60 minutes = 6 degrees per tick
+    for i in 0..model.control_points.len() {
+        let point = &model.control_points[i];
+        let angle = point.angle;
 
-        let tick = if i % 5 == 0 {
-            // Hour Tick (every 5th minute mark)
-            Path::new()
-                .set("d", hour_tick_data.clone())
-                .set("stroke", "#333")
-                .set("stroke-width", 4.0)
-                .set("stroke-linecap", "round")
-        } else {
-            // Minute Tick
-            Path::new()
-                .set("d", minute_tick_data.clone())
-                .set("stroke", "#666")
-                .set("stroke-width", 1.5)
-                .set("stroke-linecap", "round")
-        };
+        let tick = Path::new()
+            .set("d", hour_tick_data.clone())
+            .set("stroke", "#333")
+            .set("stroke-width", 4.0)
+            .set("stroke-linecap", "round");
+        let tick_rotated = tick.set("transform", format!("rotate({})", angle));
+        ticks_group = ticks_group.add(tick_rotated);
+    }
 
+    for i in 0..model.mid_points.len() {
+        let point = &model.mid_points[i];
+        let angle = point.angle;
+        let tick = Path::new()
+            .set("d", minute_tick_data.clone())
+            .set("stroke", "#666")
+            .set("stroke-width", 1.5)
+            .set("stroke-linecap", "round");
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
     }
@@ -131,14 +132,18 @@ mod tests {
 
         // 2. Define the Mid Points
         // There are 10 mid points, spaced every 36 degrees (360 / 10 = 36).
-        let mut mid_points: Vec<MidPoint> = Vec::new();
-        let step_angle = 36.0;
+        let nmid = 50;
+        let mut mid_points = Vec::new();
+        let step_angle = 360.0 / (nmid as f64);
 
-        for i in 1..=10 {
+        for i in 0..nmid {
             let angle = (i as f64) * step_angle;
-            let name = format!("I{}", i);
+            let name = format!("I{}", i + 1);
 
-            mid_points.push(MidPoint { angle, name });
+            mid_points.push(MidPoint {
+                angle: step_angle * (i as f64),
+                name,
+            });
         }
 
         // 3. Create and return the WheelModel
