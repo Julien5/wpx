@@ -159,7 +159,7 @@ async fn main() -> Result<(), error::Error> {
     match args.render_wheel {
         Some(enabled) => {
             if enabled {
-                wheel::render();
+                wheel::render(IntegerSize2D::new(250, 250));
                 return Ok(());
             }
         }
