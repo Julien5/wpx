@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ui/src/svgelements.dart';
 import 'package:ui/src/widgets/static_svg_widget.dart';
+import 'package:ui/src/widgets/userstepsslider.dart';
 
 class WheelScreenWidget extends StatefulWidget {
   const WheelScreenWidget({super.key});
@@ -63,7 +64,7 @@ class WheelScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [WheelScreenWidget(), SizedBox(height: 150), infoCard],
+            children: [WheelScreenWidget(), SizedBox(height: 150), UserStepsSliderProvider(),infoCard],
           ),
         ),
       ),
