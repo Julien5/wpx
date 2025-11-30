@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ui/src/log.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ui/src/models/futurerenderer.dart';
@@ -6,27 +7,25 @@ import 'package:ui/src/svgelements.dart';
 import 'package:ui/src/widgets/interactive_svg_widget.dart';
 import 'package:ui/src/widgets/static_svg_widget.dart';
 
-class FutureRenderingWidget extends StatefulWidget {
-  final FutureRenderer future;
+class FutureRenderingInnerWidget extends StatefulWidget {
   final bool interactive;
-  const FutureRenderingWidget({
+  const FutureRenderingInnerWidget({
     super.key,
-    required this.future,
     required this.interactive,
   });
 
   @override
-  State<FutureRenderingWidget> createState() => _FutureRenderingWidgetState();
+  State<FutureRenderingInnerWidget> createState() => _FutureRenderingInnerWidgetState();
 }
 
-class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
+class _FutureRenderingInnerWidgetState extends State<FutureRenderingInnerWidget> {
   Widget? svgWidget;
 
-  Widget buildWorker() {
-    if (widget.future.done()) {
-      log("[render-parse-start:${widget.future.trackData}]");
-      SvgRootElement svgRootElement = parseSvg(widget.future.result());
-      log("[render-parse-end:${widget.future.trackData}]");
+  Widget buildWorker(FutureRenderer future) {
+    if (future.done()) {
+      log("[render-parse-start:${future.trackData}]");
+      SvgRootElement svgRootElement = parseSvg(future.result());
+      log("[render-parse-end:${future.trackData}]");
 
       if (!widget.interactive) {
         svgWidget = StaticSvgWidget(svgRootElement: svgRootElement);
@@ -34,14 +33,14 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
         svgWidget = SvgWidget(svgRootElement: svgRootElement);
       }
     }
-    if (!widget.future.done() && svgWidget == null) {
-      return Text("starting ${widget.future.trackData} ${widget.future.id()}");
+    if (!future.done() && svgWidget == null) {
+      return Text("starting ${future.trackData} ${future.id()}");
     }
 
-    if (!widget.future.done()) {
+    if (!future.done()) {
       return Stack(
         children: <Widget>[
-          Text("updating ${widget.future.trackData} ${widget.future.id()}"),
+          Text("updating ${future.trackData} ${future.id()}"),
           svgWidget!,
         ],
       );
@@ -51,6 +50,27 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return buildWorker();
+    FutureRenderer future = Provider.of<FutureRenderer>(context);
+    return buildWorker(future);
+  }
+}
+
+class FutureRenderingWidget extends StatelessWidget {
+  final FutureRenderer future;
+  final bool interactive;
+  const FutureRenderingWidget({
+    super.key,
+    required this.future,
+    required this.interactive,
+  });
+  
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: future,
+      builder: (context, child) {
+        return FutureRenderingInnerWidget(interactive: interactive,);
+      },
+    );
   }
 }

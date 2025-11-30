@@ -63,6 +63,9 @@ impl Backend {
     pub fn d(&self) -> &BackendData {
         self.backend_data.as_ref().unwrap()
     }
+    pub fn loaded(&self) -> bool {
+        self.backend_data.is_some()
+    }
     fn dmut(&mut self) -> &mut BackendData {
         self.backend_data.as_mut().unwrap()
     }

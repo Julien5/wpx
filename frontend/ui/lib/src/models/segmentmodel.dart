@@ -1,45 +1,34 @@
+import 'package:flutter/material.dart';
+import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class SegmentModel extends ChangeNotifier {
   late bridge.Bridge _bridge;
-  late Segment _segment;
+  late bridge.Segment _segment;
 
-  SegmentModel(bridge.Bridge bridget, bridge.Segment segment) {
-    _bridge = bridge.Bridge.make();
+  SegmentModel(bridge.Bridge bridge, bridge.Segment segment) {
+    _bridge = bridge;
     _segment=segment;
+  }
+
+  bridge.Segment segment() {
+    return _segment;
   }
 
   bridge.Bridge getBridge() {
     return _bridge;
   }
-  
-  bridge.Parameters parameters() {
-    return _bridge.getParameters();
+
+  bridge.UserStepsOptions userStepsOptions() {
+    return _bridge.getUserStepOptions(segment: _segment);
   }
 
-  void setParameters(bridge.Parameters p) {
-    _bridge.setParameters(parameters: p);
+  void setUserStepsOptions(bridge.UserStepsOptions p) {
+    _bridge.setUserStepOptions(segment: _segment,userStepsOptions: p);
     notifyListeners();
   }
 
-  Future<List<int>> generateGpx() {
-    return _bridge.generateGpx();
-  }
-
-  Future<List<int>> generatePdf() {
-    return _bridge.generatePdf();
-  }
-
-  bridge.SegmentStatistics statistics() {
-    return _bridge.statistics();
-  }
-
-  List<bridge.Segment> segments() {
-    return _bridge.segments();
-  }
-
-  bridge.Segment trackSegment() {
-    return _bridge.trackSegment();
-  }
- 
+  WheelRenderer createWheelRenderer() {
+    return WheelRenderer(_bridge,_segment);
+  } 
 }

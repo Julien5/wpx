@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:ui/src/log.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
-enum TrackData { profile, yaxis, map,wheel }
+enum TrackData { profile, yaxis, map, wheel }
 
 class FutureRenderer with ChangeNotifier {
   bridge.Segment segment;
@@ -18,15 +18,17 @@ class FutureRenderer with ChangeNotifier {
     required bridge.Bridge bridge,
     required this.segment,
     required this.trackData,
-  }) : _bridge = bridge;
+  }) : _bridge = bridge {
+    assert(_bridge.isLoaded());
+  }
 
   void updateSegment(bridge.Segment newSegment) {
-    segment=newSegment;
+    segment = newSegment;
     reset();
   }
 
-  (int,int) getSizeAsTuple() {
-    return (size!.width.floor(),size!.height.floor());
+  (int, int) getSizeAsTuple() {
+    return (size!.width.floor(), size!.height.floor());
   }
 
   void start() {
@@ -54,14 +56,19 @@ class FutureRenderer with ChangeNotifier {
         what: "ylabels",
         size: getSizeAsTuple(),
       );
-    }else if (trackData == TrackData.wheel) {
+    } else if (trackData == TrackData.wheel) {
+      log("[render-request-started:A]");
+      assert(_bridge.isLoaded());
+      log("[render-request-started:B]");
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "wheel",
         size: getSizeAsTuple(),
       );
+      log("[render-request-started:C]");
     }
     notifyListeners();
+    log("[render-request-started:$trackData]");
     _future!.then((value) => onCompleted(value));
   }
 
@@ -126,6 +133,11 @@ class YAxisRenderer extends FutureRenderer {
 class MapRenderer extends FutureRenderer {
   MapRenderer(bridge.Bridge bridge, bridge.Segment segment)
     : super(bridge: bridge, segment: segment, trackData: TrackData.map);
+}
+
+class WheelRenderer extends FutureRenderer {
+  WheelRenderer(bridge.Bridge bridge, bridge.Segment segment)
+    : super(bridge: bridge, segment: segment, trackData: TrackData.wheel);
 }
 
 class Renderers {

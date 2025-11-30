@@ -189,16 +189,38 @@ impl Bridge {
     pub fn set_parameters(&mut self, parameters: &Parameters) {
         self.backend.set_parameters(parameters);
     }
+
+    #[frb(sync)]
+    pub fn set_user_step_options(
+        &mut self,
+        segment: &mut Segment,
+        user_steps_options: &UserStepsOptions,
+    ) {
+        segment._impl.set_user_step_options(user_steps_options);
+    }
+
+    #[frb(sync)]
+    pub fn get_user_step_options(&mut self, segment: &mut Segment) -> UserStepsOptions {
+        segment._impl.get_user_step_options()
+    }
+
     #[frb(sync)]
     pub fn waypoints_table(&self, segment: &Segment) -> Vec<Waypoint> {
         self.backend.get_waypoint_table(&segment._impl)
     }
+
+    #[frb(sync)]
+    pub fn is_loaded(&self) -> bool {
+        self.backend.loaded()
+    }
+
     pub async fn renderSegmentWhat(
         &mut self,
         segment: &Segment,
         what: &String,
         size: &(i32, i32),
     ) -> String {
+        assert!(self.backend.loaded());
         self.backend
             .render_segment_what(&segment._impl, what, &IntegerSize2D::new(size.0, size.1))
     }

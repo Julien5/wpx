@@ -1,9 +1,11 @@
 import 'dart:developer' as developer;
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:ui/src/svgelements.dart';
-import 'package:ui/src/widgets/static_svg_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
+import 'package:ui/src/rust/api/bridge.dart' show Bridge;
+import 'package:ui/src/screens/segments/future_rendering_widget.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
 class WheelScreenWidget extends StatefulWidget {
@@ -13,22 +15,46 @@ class WheelScreenWidget extends StatefulWidget {
 }
 
 class _WheelScreenWidgetState extends State<WheelScreenWidget> {
-  String svg = "";
   @override
   void initState() {
     super.initState();
-    File svgFile = File('/tmp/segment-wheel.svg');
-    svg = svgFile.readAsStringSync();
+    //File svgFile = File('/tmp/segment-wheel.svg');
+    //svg = svgFile.readAsStringSync();
     developer.log("initState");
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext ctx) {
-    if (svg.isEmpty) {
-      return Text("building");
-    }
-    SvgRootElement svgRootElement = parseSvg(svg);
-    return StaticSvgWidget(svgRootElement: svgRootElement);
+    SegmentModel model = Provider.of<SegmentModel>(context);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        WheelRenderer wheelRenderer = model.createWheelRenderer();
+        wheelRenderer.setSize(Size(400,400));
+        return FutureRenderingWidget(future: wheelRenderer, interactive: false);
+      },
+    );
+  }
+}
+
+class WheelProvider extends StatelessWidget {
+  const WheelProvider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    RootModel root = Provider.of<RootModel>(context);
+    Bridge bridge = root.getBridge();
+    assert(bridge.isLoaded());
+    return ChangeNotifierProvider(
+      create: (ctx) => SegmentModel(bridge,root.trackSegment()),
+      builder: (context, child) {
+        return WheelScreenWidget();
+      },
+    );
   }
 }
 
@@ -64,7 +90,12 @@ class WheelScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [WheelScreenWidget(), SizedBox(height: 150), UserStepsSliderProvider(),infoCard],
+            children: [
+              WheelProvider(),
+              SizedBox(height: 150),
+              UserStepsSliderProvider(),
+              infoCard,
+            ],
           ),
         ),
       ),

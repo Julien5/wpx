@@ -72,7 +72,7 @@ impl Segment {
         )
     }
 
-    pub fn update_user_step_options(&mut self, options: &UserStepsOptions) {
+    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
         self.parameters.user_steps_options = options.clone();
         let mut new_points =
             make_points::user_points(&self.track, &self.parameters.user_steps_options);
@@ -81,6 +81,10 @@ impl Segment {
             self.range.contains(&index)
         });
         self.points.insert(InputType::UserStep, new_points);
+    }
+
+    pub fn get_user_step_options(&mut self) -> UserStepsOptions {
+        self.parameters.user_steps_options.clone()
     }
 
     pub fn render_profile(&self) -> ProfileRenderResult {

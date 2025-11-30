@@ -36,6 +36,7 @@ class RootModel extends ChangeNotifier {
   }
 
   Future<void> loadDemo() async {
+    developer.log("load demo");
     await _bridge.loadDemo();
   }
 
