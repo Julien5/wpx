@@ -36,7 +36,7 @@ class UserStepsModel extends ChangeNotifier {
   }
 
   SelectedParameter? _readRootSelected() {
-    ProfileOptions p = parameters().profileOptions;
+    UserStepsOptions p = parameters().userStepsOptions;
     if (p.stepDistance == null && p.stepElevationGain == null) {
       return null;
     }
@@ -47,7 +47,7 @@ class UserStepsModel extends ChangeNotifier {
   }
 
   double? _readRootValue() {
-    ProfileOptions p = parameters().profileOptions;
+    UserStepsOptions p = parameters().userStepsOptions;
     if (p.stepDistance == null && p.stepElevationGain == null) {
       return null;
     }
@@ -103,49 +103,42 @@ class UserStepsModel extends ChangeNotifier {
     _updateBackend();
   }
 
-  ProfileOptions _makeProfileOptions(ProfileOptions old) {
+  UserStepsOptions _makeUserStepsOptions(ProfileOptions old) {
     double? current = currentValue();
     if (current == null) {
-      return ProfileOptions(
-        elevationIndicators: old.elevationIndicators,
-        maxAreaRatio: old.maxAreaRatio,
+      return UserStepsOptions(
         stepDistance: null,
         stepElevationGain: null,
-        size: old.size,
       );
     }
     assert(selectedParameter != null);
     if (selectedParameter == SelectedParameter.distance) {
-      return ProfileOptions(
-        elevationIndicators: old.elevationIndicators,
-        maxAreaRatio: old.maxAreaRatio,
+      return UserStepsOptions(
         stepDistance: current.toDouble(),
         stepElevationGain: null,
-        size: old.size
+        
       );
     }
     assert(selectedParameter == SelectedParameter.elevation);
-    return ProfileOptions(
-      elevationIndicators: old.elevationIndicators,
-      maxAreaRatio: old.maxAreaRatio,
+    return UserStepsOptions(
       stepDistance: null,
       stepElevationGain: current.toDouble(),
-      size: old.size
     );
   }
 
   Parameters newParameters() {
     Parameters oldParameters = rootModel.parameters();
     ProfileOptions old = oldParameters.profileOptions;
-    ProfileOptions newp = _makeProfileOptions(old);
+    UserStepsOptions newp = _makeUserStepsOptions(old);
     return bridge.Parameters(
       speed: oldParameters.speed,
       startTime: oldParameters.startTime,
       segmentLength: oldParameters.segmentLength,
       segmentOverlap: oldParameters.segmentOverlap,
       smoothWidth: oldParameters.smoothWidth,
-      profileOptions: newp,
+      profileOptions: oldParameters.profileOptions,
       mapOptions: oldParameters.mapOptions,
+      userStepsOptions: newp,
       debug: oldParameters.debug,
     );
   }

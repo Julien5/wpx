@@ -55,11 +55,10 @@ class AreaSliderModel extends ChangeNotifier {
       profileOptions: ProfileOptions(
         elevationIndicators: oldParameters.profileOptions.elevationIndicators,
         maxAreaRatio: areaParameters.profileRatio,
-        stepDistance: oldParameters.profileOptions.stepDistance,
-        stepElevationGain: oldParameters.profileOptions.stepElevationGain,
         size: oldParameters.profileOptions.size,
       ),
       mapOptions: MapOptions(maxAreaRatio: areaParameters.mapRatio,size: oldParameters.mapOptions.size),
+      userStepsOptions: oldParameters.userStepsOptions,
       debug: oldParameters.debug,
     );
   }

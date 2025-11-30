@@ -8,10 +8,23 @@ pub enum ProfileIndication {
 }
 
 #[derive(Clone)]
-pub struct ProfileOptions {
-    pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
+pub struct UserStepsOptions {
     pub step_distance: Option<f64>,
     pub step_elevation_gain: Option<f64>,
+}
+
+impl Default for UserStepsOptions {
+    fn default() -> UserStepsOptions {
+        UserStepsOptions {
+            step_distance: None,
+            step_elevation_gain: None,
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct ProfileOptions {
+    pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
     pub max_area_ratio: f64,
     pub size: (i32, i32),
 }
@@ -20,8 +33,6 @@ impl Default for ProfileOptions {
     fn default() -> ProfileOptions {
         ProfileOptions {
             elevation_indicators: std::collections::HashSet::default(),
-            step_distance: None,
-            step_elevation_gain: None,
             max_area_ratio: 0.1f64,
             size: (1000, 285),
         }
@@ -59,6 +70,7 @@ pub struct Parameters {
     pub smooth_width: f64,
     pub profile_options: ProfileOptions,
     pub map_options: MapOptions,
+    pub user_steps_options: UserStepsOptions,
 }
 
 impl Default for Parameters {
@@ -72,6 +84,7 @@ impl Default for Parameters {
             debug: false,
             profile_options: ProfileOptions::default(),
             map_options: MapOptions::default(),
+            user_steps_options: UserStepsOptions::default(),
         }
     }
 }

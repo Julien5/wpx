@@ -11,6 +11,7 @@ pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
 pub use tracks::parameters::ProfileOptions;
+pub use tracks::parameters::UserStepsOptions;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
 pub use tracks::waypoint::WaypointOrigin;
@@ -73,11 +74,15 @@ pub enum _ProfileIndication {
     NumericSlope,
 }
 
+#[frb(mirror(UserStepsOptions))]
+pub struct _UserStepsOptions {
+    pub step_distance: Option<f64>,
+    pub step_elevation_gain: Option<f64>,
+}
+
 #[frb(mirror(ProfileOptions))]
 pub struct _ProfileOptions {
     pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
-    pub step_distance: Option<f64>,
-    pub step_elevation_gain: Option<f64>,
     pub max_area_ratio: f64,
     pub size: (i32, i32),
 }
@@ -98,6 +103,7 @@ pub struct _Parameters {
     pub smooth_width: f64,
     pub profile_options: ProfileOptions,
     pub map_options: MapOptions,
+    pub user_steps_options: UserStepsOptions,
 }
 
 #[frb(mirror(WaypointInfo))]

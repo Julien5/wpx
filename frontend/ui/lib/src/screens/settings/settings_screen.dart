@@ -142,6 +142,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       smoothWidth: oldParameters.smoothWidth,
       profileOptions: oldParameters.profileOptions,
       mapOptions: oldParameters.mapOptions,
+      userStepsOptions: oldParameters.userStepsOptions,
       debug: oldParameters.debug,
     );
     rootModel.setParameters(newParameters);

@@ -107,14 +107,14 @@ async fn main() -> Result<(), error::Error> {
 
     match args.step_distance {
         Some(km) => {
-            parameters.profile_options.step_distance = Some((1000 * km) as f64);
+            parameters.user_steps_options.step_distance = Some((1000 * km) as f64);
         }
         _ => {}
     }
 
     match args.step_elevation_gain {
         Some(m) => {
-            parameters.profile_options.step_elevation_gain = Some(m as f64);
+            parameters.user_steps_options.step_elevation_gain = Some(m as f64);
         }
         _ => {}
     }
