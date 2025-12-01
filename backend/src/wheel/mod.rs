@@ -22,7 +22,10 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         .set("height", size.height)
         .set("viewBox", (0, 0, size.width, size.height));
 
-    let main_group = Group::new();
+    let main_group = Group::new()
+        .set("id", "world")
+        .set("shape-rendering", "geometricPrecision")
+        .set("font-size", format!("{}", 12f64));
 
     let outer_circle = Circle::new()
         .set("cx", center.x)
@@ -66,9 +69,12 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
         //let Kname = format!("K{}", i + 1);
-        let mut Kname = point.name.clone();
-        Kname.truncate(1);
-        let label = Text::new(Kname)
+        let mut name = point.name.clone();
+        log::trace!("name={}", name);
+        if name.len() > 3 {
+            name = name.chars().take(3).collect();
+        }
+        let label = Text::new(name)
             .set("text-anchor", "middle")
             .set("x", 0)
             .set("y", -hour_tick_stop - 10)
@@ -113,19 +119,19 @@ mod tests {
     fn create_wheel_model(nmid: usize) -> WheelModel {
         // 1. Define the Control Points
         let control_points = vec![
-            ControlPoint {
+            CirclePoint {
                 angle: 0.0,
                 name: String::from("Start/End"),
             },
-            ControlPoint {
+            CirclePoint {
                 angle: 60.0,
                 name: String::from("Angers"),
             },
-            ControlPoint {
+            CirclePoint {
                 angle: 180.0,
                 name: String::from("Winterstettenstadt"),
             },
-            ControlPoint {
+            CirclePoint {
                 angle: 250.0,
                 name: String::from("Noirmoutiers"),
             },

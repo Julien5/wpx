@@ -16,19 +16,6 @@ class WheelWidget extends StatefulWidget {
 
 class _WheelWidgetState extends State<WheelWidget> {
   @override
-  void initState() {
-    super.initState();
-    //File svgFile = File('/tmp/segment-wheel.svg');
-    //svg = svgFile.readAsStringSync();
-    developer.log("initState");
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(context);
     return LayoutBuilder(

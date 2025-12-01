@@ -5,19 +5,15 @@ use crate::{
     track::Track,
 };
 
-pub struct ControlPoint {
-    pub angle: f64,
-    pub name: String,
-}
-
-pub struct MidPoint {
+#[derive(Debug, Clone)]
+pub struct CirclePoint {
     pub angle: f64,
     pub name: String,
 }
 
 pub struct WheelModel {
-    pub control_points: Vec<ControlPoint>,
-    pub mid_points: Vec<MidPoint>,
+    pub control_points: Vec<CirclePoint>,
+    pub mid_points: Vec<CirclePoint>,
 }
 
 fn angle(point: &InputPoint, track: &Track) -> f64 {
@@ -37,7 +33,60 @@ fn name(point: &InputPoint) -> String {
     }
 }
 
-fn get_control_points(segment: &Segment, maxlen: usize) -> Vec<InputPoint> {
+use std::collections::HashMap;
+
+fn decimate_points(points: &mut Vec<CirclePoint>, n: usize) {
+    if n == 0 {
+        // Cannot divide the circle into 0 quadrants
+        points.clear();
+        return;
+    }
+
+    let sector_size = 360.0 / n as f64;
+
+    // Map to store the *most important* (first encountered) point for each sector index.
+    // Key: Sector Index (0 to n-1)
+    // Value: The full CirclePoint struct that was chosen
+    let mut chosen_points: HashMap<usize, CirclePoint> = HashMap::new();
+
+    // Iterate through the points in the provided order (order of importance)
+    for point in points.iter() {
+        // 1. Normalize the angle to be in the [0, 360) range.
+        let mut angle_normalized = point.angle % 360.0;
+        assert!(angle_normalized >= 0.0);
+        // Handle the 360-degree case: if angle is exactly 360, treat it as 0
+        if angle_normalized == 360.0 {
+            angle_normalized = 0.0;
+        }
+
+        // 2. Calculate the sector index (k)
+        // k = floor(angle_normalized / sector_size)
+        let sector_index = (angle_normalized / sector_size).floor() as usize;
+
+        // Ensure the index is within [0, n-1] bounds
+        let final_sector_index = sector_index.min(n - 1);
+
+        // 3. Keep only the *first* point for this sector.
+        // The entry().or_insert_with() pattern is perfect:
+        // it only inserts if the key (sector_index) is not already present.
+        // Since we are iterating in order of importance, the first one seen is the one to keep.
+        chosen_points
+            .entry(final_sector_index)
+            .or_insert_with(|| point.clone());
+    }
+
+    // 4. Clear the original vector and populate it with the chosen points.
+    // Since the order of the output vector is not specified, we can collect the chosen points
+    // from the HashMap's values. If a specific output order is required (e.g., by angle),
+    // an additional step would be needed here.
+    let mut result_vec: Vec<CirclePoint> = chosen_points.into_values().collect();
+
+    // Replace the content of the original vector with the result
+    points.clear();
+    points.append(&mut result_vec);
+}
+
+fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
     match segment.points.get(&InputType::GPX) {
         Some(points) => {
             if !points.is_empty() {
@@ -57,9 +106,6 @@ fn get_control_points(segment: &Segment, maxlen: usize) -> Vec<InputPoint> {
                 continue;
             }
             ret.push(point.clone());
-            if ret.len() >= maxlen {
-                return ret;
-            }
         }
     }
     ret
@@ -80,20 +126,21 @@ fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
 impl WheelModel {
     pub fn make(segment: &Segment) -> WheelModel {
         let mut control_points = Vec::new();
-        for c in get_control_points(segment, 10) {
-            let cp = ControlPoint {
+        for c in get_control_points(segment) {
+            let cp = CirclePoint {
                 angle: angle(&c, &segment.track),
                 name: name(&c),
             };
             control_points.push(cp);
         }
+        decimate_points(&mut control_points, 10);
         control_points.sort_by_key(|p| p.angle.floor() as i32);
         for p in &control_points {
             log::debug!("control:{} at {:.1}", p.name, p.angle);
         }
         let mut mid_points = Vec::new();
         for c in get_mid_points(segment) {
-            let cp = MidPoint {
+            let cp = CirclePoint {
                 angle: angle(&c, &segment.track),
                 name: name(&c),
             };
