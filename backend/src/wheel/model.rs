@@ -1,5 +1,3 @@
-use std::any::Any;
-
 use crate::{
     backend::Segment,
     inputpoint::{InputPoint, InputType},
@@ -27,7 +25,8 @@ fn angle(point: &InputPoint, track: &Track) -> f64 {
     let index = proj.track_index;
     let part = track.distance(index);
     let total = track.total_distance();
-    //log::debug!("part:{:.1} total:{:.1}", part, total);
+    log::debug!("part:{:.1} total:{:.1}", part, total);
+    assert!(part <= total);
     360.0 * part / total
 }
 
@@ -52,6 +51,9 @@ fn get_control_points(segment: &Segment, maxlen: usize) -> Vec<InputPoint> {
     for packet in packets {
         for point in packet {
             if point.kind() == InputType::UserStep {
+                continue;
+            }
+            if point.name().is_none() {
                 continue;
             }
             ret.push(point.clone());
@@ -83,8 +85,11 @@ impl WheelModel {
                 angle: angle(&c, &segment.track),
                 name: name(&c),
             };
-            log::debug!("control:{} at {}", cp.name, cp.angle);
             control_points.push(cp);
+        }
+        control_points.sort_by_key(|p| p.angle.floor() as i32);
+        for p in &control_points {
+            log::debug!("control:{} at {:.1}", p.name, p.angle);
         }
         let mut mid_points = Vec::new();
         for c in get_mid_points(segment) {
@@ -92,8 +97,11 @@ impl WheelModel {
                 angle: angle(&c, &segment.track),
                 name: name(&c),
             };
-            log::debug!("mid:{} at {}", cp.name, cp.angle);
             mid_points.push(cp);
+        }
+        mid_points.sort_by_key(|p| p.angle.floor() as i32);
+        for p in &mid_points {
+            log::debug!("mid:{} at {:.1}", p.name, p.angle);
         }
         log::debug!("controls:{}", control_points.len());
         log::debug!("mids:{}", mid_points.len());

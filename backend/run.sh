@@ -63,15 +63,15 @@ function pdf() {
 	rm -Rf /tmp/wpx
 	mkdir /tmp/wpx
 	time cargo ${cmd} ${mode} -- \
-		  --output-directory /tmp/wpx/ \
-		  --debug true \
-		  --step-elevation-gain 100 \
-		  --segment-length $(segment-length ${file}) \
-		  --segment-overlap $(segment-overlap ${file}) \
-		  --profile-max-area-ratio 0.07 \
-		  --map-max-area-ratio 0.12 \
-		  ${options} \
-		  "${file}"
+		 --output-directory /tmp/wpx/ \
+		 --debug true \
+		 --step-elevation-gain 100 \
+		 --segment-length $(segment-length ${file}) \
+		 --segment-overlap $(segment-overlap ${file}) \
+		 --profile-max-area-ratio 0.07 \
+		 --map-max-area-ratio 0.12 \
+		 ${options} \
+		 "${file}"
 	${TYPST} compile /tmp/document.typst
 	echo xdg-open /tmp/document.pdf 
 }
@@ -86,15 +86,27 @@ function filter-log {
 
 function unit-tests() {
 	export RUST_LOG=trace
-	# export RUST_BACKTRACE=1
+	export RUST_BACKTRACE=1
 	cargo test $@ -- --nocapture
 }
 
+function render-wheel() {
+	export RUST_LOG=trace
+	export RUST_BACKTRACE=1
+	cargo run -- --render-wheel true "$@"
+}
+
 function main() {
-	if [ ! -z "$1" ] && [ $1 = "unit-tests" ]; then
-		shift 
-		unit-tests "$@"
-		return;
+	if [ ! -z "$1" ]; then
+		if [ $1 = "unit-tests" ]; then
+			shift 
+			unit-tests "$@"
+			return;
+		elif [ $1 = "render-wheel" ]; then
+			shift 
+			render-wheel "$@"
+			return;
+		fi
 	else
 		export RUST_BACKTRACE=1
 		2>&1 pdf "$@"

@@ -292,7 +292,7 @@ class PathElement extends SvgElement {
     final paint = Paint()..style = PaintingStyle.stroke;
     paint.isAntiAlias = true;
     if (d.length < 50) {
-      paint.isAntiAlias = false;
+      //paint.isAntiAlias = false;
     }
     paint.strokeWidth = strokeWidth;
     paint.color = stroke;

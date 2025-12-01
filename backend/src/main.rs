@@ -158,7 +158,11 @@ async fn main() -> Result<(), error::Error> {
     match args.render_wheel {
         Some(enabled) => {
             if enabled {
-                //wheel::render(IntegerSize2D::new(250, 250));
+                let track_segment = backend.trackSegment();
+                let size = IntegerSize2D::new(350, 350);
+                let svg = backend.render_segment_what(&track_segment, &"wheel".to_string(), &size);
+                let filename = std::format!("/tmp/wheel.svg");
+                std::fs::write(&filename, svg.clone()).unwrap();
                 return Ok(());
             }
         }

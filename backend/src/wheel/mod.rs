@@ -1,26 +1,29 @@
 pub mod model;
 
 use svg::node::element::path::Data;
+use svg::node::element::Text;
 use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
 use crate::math::*;
 
-pub fn render(size: &IntegerSize2D, model: &model::WheelModel) -> String {
+pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
+    let margin = 20;
+    let size = IntegerSize2D::new(
+        total_size.width - 2 * margin,
+        total_size.height - 2 * margin,
+    );
     let min_tick = 10;
     let wheel_width = 20;
-    let margin = 10;
 
-    let center = (*size / 2).to_vector();
+    let center = (size / 2).to_vector();
     let mut document = Document::new()
         .set("width", size.width)
         .set("height", size.height)
         .set("viewBox", (0, 0, size.width, size.height));
 
-    // 2. Create the main group element, replicating the top-level <g>
     let main_group = Group::new();
 
-    // 3. Add the outer circle (Dial)
     let outer_circle = Circle::new()
         .set("cx", center.x)
         .set("cy", center.y)
@@ -37,13 +40,11 @@ pub fn render(size: &IntegerSize2D, model: &model::WheelModel) -> String {
         .set("stroke", "#333")
         .set("stroke-width", 2);
 
-    // 4. Create the nested group for the Ticks, translated to the center (200, 200)
     let mut ticks_group = Group::new().set(
         "transform",
         format!("translate({}, {})", center.x, center.y),
     );
 
-    // Define the Path data strings
     let hour_tick_start = center.x - wheel_width;
     let hour_tick_stop = center.x - margin - 1;
     let hour_tick_data =
@@ -64,6 +65,15 @@ pub fn render(size: &IntegerSize2D, model: &model::WheelModel) -> String {
             .set("stroke-linecap", "round");
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
+        //let Kname = format!("K{}", i + 1);
+        let mut Kname = point.name.clone();
+        Kname.truncate(1);
+        let label = Text::new(Kname)
+            .set("text-anchor", "middle")
+            .set("x", 0)
+            .set("y", -hour_tick_stop - 10)
+            .set("transform", format!("rotate({})", angle));
+        ticks_group = ticks_group.add(label);
     }
 
     for i in 0..model.mid_points.len() {

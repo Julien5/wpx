@@ -34,7 +34,7 @@ class _WheelWidgetState extends State<WheelWidget> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         WheelRenderer wheelRenderer = model.createWheelRenderer();
-        wheelRenderer.setSize(Size(400,400));
+        wheelRenderer.setSize(Size(250,250));
         return FutureRenderingWidget(future: wheelRenderer, interactive: false);
       },
     );

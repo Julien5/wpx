@@ -38,12 +38,11 @@ class _FutureRenderingInnerWidgetState extends State<FutureRenderingInnerWidget>
     }
 
     if (!future.done()) {
-      return Stack(
-        children: <Widget>[
-          Text("updating ${future.trackData} ${future.id()}"),
-          svgWidget!,
+      /*return Stack(
+        children: <Widget>[,
+          ,
         ],
-      );
+      );*/
     }
     return svgWidget!;
   }
