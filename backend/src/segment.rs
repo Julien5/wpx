@@ -11,7 +11,7 @@ use crate::profile::ProfileRenderResult;
 use crate::track::{self, Track};
 use crate::{bboxes, locate, make_points, profile, svgmap};
 
-type SegmentPoints = BTreeMap<InputType, Vec<InputPoint>>;
+pub type SegmentPoints = BTreeMap<InputType, Vec<InputPoint>>;
 
 #[derive(Clone)]
 pub struct Segment {
