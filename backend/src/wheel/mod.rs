@@ -48,8 +48,13 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         format!("translate({}, {})", center.x, center.y),
     );
 
-    let hour_tick_start = center.x - wheel_width;
-    let hour_tick_stop = center.x - margin - 1;
+    let mut label_group = Group::new().set(
+        "transform",
+        format!("translate({}, {})", center.x, center.y),
+    );
+
+    let hour_tick_start = center.y - wheel_width;
+    let hour_tick_stop = center.y - margin - 1;
     let hour_tick_data =
         Data::parse(format!("M 0 -{} L 0 -{}", hour_tick_start, hour_tick_stop).as_str()).unwrap();
     let min_tick_start = hour_tick_stop - min_tick;
@@ -72,14 +77,20 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         let mut name = point.name.clone();
         log::trace!("name={}", name);
         if name.len() > 3 {
-            name = name.split_whitespace().nth(0).unwrap_or("noname").to_string();
+            name = name
+                .split_whitespace()
+                .nth(0)
+                .unwrap_or("noname")
+                .to_string();
         }
-        let label = Text::new(name)
-            .set("text-anchor", "middle")
-            .set("x", 0)
-            .set("y", -hour_tick_stop - 10)
-            .set("transform", format!("rotate({})", angle));
-        ticks_group = ticks_group.add(label);
+        let label_position_radius = center.y as f64 - 13f64;
+        let label_position = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos())
+            * label_position_radius;
+        let label = Text::new(format!("{}", name))
+            .set("text-anchor", if angle < 180.0 { "start" } else { "end" })
+            .set("x", label_position.x)
+            .set("y", label_position.y);
+        label_group = label_group.add(label);
     }
 
     for i in 0..model.mid_points.len() {
@@ -106,6 +117,7 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         .add(outer_circle)
         .add(inner_circle)
         .add(ticks_group)
+        .add(label_group)
         .add(center_dot);
 
     document = document.add(assembled_group);
