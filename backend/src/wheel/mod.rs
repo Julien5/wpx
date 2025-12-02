@@ -72,7 +72,7 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         let mut name = point.name.clone();
         log::trace!("name={}", name);
         if name.len() > 3 {
-            name = name.chars().take(3).collect();
+            name = name.split_whitespace().nth(0).unwrap_or("noname").to_string();
         }
         let label = Text::new(name)
             .set("text-anchor", "middle")
@@ -141,7 +141,7 @@ mod tests {
         let step_angle = 360.0 / (nmid as f64);
 
         for i in 0..nmid {
-            mid_points.push(MidPoint {
+            mid_points.push(CirclePoint {
                 angle: step_angle * (i as f64),
                 name: format!("I{}", i + 1),
             });
