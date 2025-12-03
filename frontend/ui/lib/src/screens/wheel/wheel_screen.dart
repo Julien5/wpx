@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
+import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' show Bridge;
 import 'package:ui/src/screens/segments/future_rendering_widget.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
@@ -37,18 +38,15 @@ class WheelScreen extends StatelessWidget {
     );
   }
 
+  void gotoSettings(BuildContext ctx) {
+    Navigator.of(ctx).pushNamed(RouteManager.settingsView);
+  }
+
   @override
   Widget build(BuildContext ctx) {
-    Card infoCard = Card(
-      elevation: 4, // Add shadow to the card
-      margin: const EdgeInsets.all(1), // Add margin around the card
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8), // Rounded corners
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16), // Add padding inside the card
-        child: Text("infocard"),
-      ),
+    Widget settingsButton = ElevatedButton(
+      onPressed: () => gotoSettings(ctx),
+      child: const Text("Feuille de route"),
     );
 
     return Scaffold(
@@ -61,9 +59,10 @@ class WheelScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               WheelWidget(),
-              SizedBox(height: 150),
+              SizedBox(height: 50),
               UserStepsSliderProvider(),
-              infoCard,
+              SizedBox(height: 50),
+              settingsButton,
             ],
           ),
         ),

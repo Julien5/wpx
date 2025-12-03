@@ -7,12 +7,12 @@ class SliderValues {
   SliderValues();
 
   void init(List<double> v, double value) {
-     values = v;
+    values = v;
     _index = getIndex(value);
   }
 
   void setValue(double value) {
-     _index = getIndex(value);
+    _index = getIndex(value);
   }
 
   int getIndex(double value) {
@@ -51,12 +51,14 @@ class SliderValues {
 class SliderValuesWidget extends StatelessWidget {
   final dynamic Function(double) onChanged;
   final String Function(double) formatLabel;
+  final bool enabled;
   final SliderValues values;
   const SliderValuesWidget({
     super.key,
     required this.onChanged,
     required this.values,
     required this.formatLabel,
+    required this.enabled,
   });
 
   void onSliderChanged(double sliderIndex) {
@@ -70,7 +72,7 @@ class SliderValuesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (values.length()==0) {
+    if (values.length() == 0) {
       return const Text("loading...");
     }
     String label = formatLabel(values.current());
@@ -80,7 +82,7 @@ class SliderValuesWidget extends StatelessWidget {
       divisions: values.length() - 1, // not good yet.
       value: currentWidgetIndex().toDouble(),
       label: label,
-      onChanged: onSliderChanged,
+      onChanged: enabled ? onSliderChanged : null,
     );
   }
 }

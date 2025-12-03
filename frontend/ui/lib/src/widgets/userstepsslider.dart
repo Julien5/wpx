@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,11 +6,11 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/utils.dart';
 
-enum SelectedParameter { distance, elevation }
+enum SelectedParameter { distance, elevation, none }
 
 class UserStepsModel extends ChangeNotifier {
   final SegmentModel segmentModel;
-  SelectedParameter? selectedParameter;
+  SelectedParameter selectedParameter = SelectedParameter.none;
   final Map<SelectedParameter, List<double>> _sliderValues = {};
   final Map<SelectedParameter, double> _selectedValue = {};
   UserStepsModel({required this.segmentModel}) {
@@ -32,17 +31,18 @@ class UserStepsModel extends ChangeNotifier {
     _selectedValue[SelectedParameter.distance] =
         _sliderValues[SelectedParameter.distance]![1];
     selectedParameter = readBackendParameter();
-    if (selectedParameter != null) {
-      double? value = readBackendValue();
-      assert(value != null);
-      _selectedValue[selectedParameter!] = value!;
+    double? value = readBackendValue();
+    if (value != null) {
+      _selectedValue[selectedParameter] = value;
+    } else {
+      assert(selectedParameter == SelectedParameter.none);
     }
   }
 
-  SelectedParameter? readBackendParameter() {
+  SelectedParameter readBackendParameter() {
     UserStepsOptions p = segmentModel.userStepsOptions();
     if (p.stepDistance == null && p.stepElevationGain == null) {
-      return null;
+      return SelectedParameter.none;
     }
     if (p.stepDistance != null) {
       return SelectedParameter.distance;
@@ -64,9 +64,6 @@ class UserStepsModel extends ChangeNotifier {
   SliderValues? sliderValues(SelectedParameter p) {
     SliderValues ret = SliderValues();
     assert(_sliderValues.containsKey(p));
-    if (!_selectedValue.containsKey(p)) {
-      return null;
-    }
     assert(_selectedValue.containsKey(p));
     ret.init(_sliderValues[p]!, _selectedValue[p]!);
     return ret;
@@ -74,7 +71,7 @@ class UserStepsModel extends ChangeNotifier {
 
   double currentValue(SelectedParameter p) {
     assert(_selectedValue.containsKey(p));
-    return _selectedValue[selectedParameter]!;
+    return _selectedValue[p]!;
   }
 
   void updateValue(SelectedParameter p, double value) {
@@ -87,18 +84,18 @@ class UserStepsModel extends ChangeNotifier {
    * Changing the root model has no effect because the segments are cached
    * in SegmentsScreen. User steps handling must be fixed.
    */
-  void sendToBackend(SelectedParameter? parameter) {
+  void sendToBackend(SelectedParameter parameter) {
     segmentModel.setUserStepsOptions(makeUserStepsOptions(parameter));
   }
 
-  void sendParameterToBackend(SelectedParameter? parameter) {
+  void sendParameterToBackend(SelectedParameter parameter) {
     selectedParameter = parameter;
     notifyListeners();
     sendToBackend(parameter);
   }
 
-  UserStepsOptions makeUserStepsOptions(SelectedParameter? parameter) {
-    if (parameter == null) {
+  UserStepsOptions makeUserStepsOptions(SelectedParameter parameter) {
+    if (parameter == SelectedParameter.none) {
       return UserStepsOptions(stepDistance: null, stepElevationGain: null);
     }
     double current = currentValue(parameter);
@@ -126,7 +123,12 @@ List<double> toKm(List<double> list) {
 
 class UserStepsSlider extends StatelessWidget {
   final SelectedParameter widgetParameter;
-  const UserStepsSlider({super.key, required this.widgetParameter});
+  final bool enabled;
+  const UserStepsSlider({
+    super.key,
+    required this.widgetParameter,
+    required this.enabled,
+  });
 
   void onChanged(UserStepsModel model, double value) {
     model.updateValue(widgetParameter, value);
@@ -157,6 +159,7 @@ class UserStepsSlider extends StatelessWidget {
       formatLabel: (value) {
         return formatLabel(model, value);
       },
+      enabled: enabled,
     );
   }
 }
@@ -172,10 +175,15 @@ class UserStepsSliderConsumer extends StatefulWidget {
 typedef MenuEntry = DropdownMenuEntry<String>;
 
 class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
-  SelectedParameter? selectedParameter;
+  SelectedParameter selectedParameter = SelectedParameter.none;
 
-  void onSelected(String? value) {
+  void onSelected(SelectedParameter? value) {
     UserStepsModel model = Provider.of<UserStepsModel>(context, listen: false);
+    if (value != null) {
+      selectedParameter = value;
+    } else {
+      selectedParameter = SelectedParameter.none;
+    }
     developer.log("selected $value");
     model.sendParameterToBackend(selectedParameter);
   }
@@ -186,20 +194,72 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
     developer.log("rebuild with selected ${model.selectedParameter}");
     Widget distanceSlider = UserStepsSlider(
       widgetParameter: SelectedParameter.distance,
+      enabled: model.selectedParameter == SelectedParameter.distance,
     );
     Widget elevationSlider = UserStepsSlider(
       widgetParameter: SelectedParameter.elevation,
+      enabled: model.selectedParameter == SelectedParameter.elevation,
+    );
+    final ListTileControlAffinity side = ListTileControlAffinity.leading;
+
+    double km = model.currentValue(SelectedParameter.distance) / 1000;
+    Text kmtext = Text(
+      "${km.toStringAsFixed(0)} km",
+      style: TextStyle(
+        color:
+            selectedParameter == SelectedParameter.distance
+                ? Colors.black
+                : Colors.grey,
+      ),
     );
 
+    double hm = model.currentValue(SelectedParameter.elevation);
+    Text hmtext = Text(
+      "${hm.toStringAsFixed(0)} m",
+      style: TextStyle(
+        color:
+            selectedParameter == SelectedParameter.elevation
+                ? Colors.black
+                : Colors.grey,
+      ),
+    );
+
+    return RadioGroup<SelectedParameter>(
+      groupValue: selectedParameter,
+      onChanged: onSelected,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RadioListTile<SelectedParameter>(
+            title: Text("None", textAlign: TextAlign.start),
+            value: SelectedParameter.none,
+            controlAffinity: side,
+          ),
+          RadioListTile<SelectedParameter>(
+            title: Row(children: [distanceSlider, kmtext]),
+            value: SelectedParameter.distance,
+            controlAffinity: side,
+          ),
+          RadioListTile<SelectedParameter>(
+            title: Row(children: [elevationSlider, hmtext]),
+            value: SelectedParameter.elevation,
+            controlAffinity: side,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class UserStepsSliderWidget extends StatelessWidget {
+  const UserStepsSliderWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20.0,
-        ), // Add margin inside the parent
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 150),
-          child: Column(children: [distanceSlider, elevationSlider]),
-        ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: UserStepsSliderConsumer(),
       ),
     );
   }
@@ -214,7 +274,7 @@ class UserStepsSliderProvider extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (ctx) => UserStepsModel(segmentModel: model),
       builder: (context, child) {
-        return UserStepsSliderConsumer();
+        return UserStepsSliderWidget();
       },
     );
   }
