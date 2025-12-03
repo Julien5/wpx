@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
@@ -21,13 +20,12 @@ class _WheelWidgetState extends State<WheelWidget> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         WheelRenderer wheelRenderer = model.createWheelRenderer();
-        wheelRenderer.setSize(Size(250,250));
+        wheelRenderer.setSize(Size(250, 250));
         return FutureRenderingWidget(future: wheelRenderer, interactive: false);
       },
     );
   }
 }
-
 
 class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
@@ -74,7 +72,6 @@ class WheelScreen extends StatelessWidget {
   }
 }
 
-
 class WheelProvider extends StatelessWidget {
   const WheelProvider({super.key});
 
@@ -84,7 +81,7 @@ class WheelProvider extends StatelessWidget {
     Bridge bridge = root.getBridge();
     assert(bridge.isLoaded());
     return ChangeNotifierProvider(
-      create: (ctx) => SegmentModel(bridge,root.trackSegment()),
+      create: (ctx) => SegmentModel(bridge, root.trackSegment()),
       builder: (context, child) {
         return WheelScreen();
       },

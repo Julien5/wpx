@@ -13,7 +13,7 @@ class UserStepsModel extends ChangeNotifier {
   final SegmentModel segmentModel;
   SelectedParameter? selectedParameter;
   final Map<SelectedParameter, List<double>> _sliderValues = {};
-  final Map<SelectedParameter, double> _selectedValues = {};
+  final Map<SelectedParameter, double> _selectedValue = {};
   UserStepsModel({required this.segmentModel}) {
     _sliderValues[SelectedParameter.distance] = fromKm([5, 10, 15, 20, 25]);
     _sliderValues[SelectedParameter.elevation] = [
@@ -27,19 +27,19 @@ class UserStepsModel extends ChangeNotifier {
       400,
       500,
     ];
-    _selectedValues[SelectedParameter.elevation] =
+    _selectedValue[SelectedParameter.elevation] =
         _sliderValues[SelectedParameter.elevation]![1];
-    _selectedValues[SelectedParameter.distance] =
+    _selectedValue[SelectedParameter.distance] =
         _sliderValues[SelectedParameter.distance]![1];
-    selectedParameter = _readRootSelected();
+    selectedParameter = readBackendParameter();
     if (selectedParameter != null) {
-      double? value = _readRootValue();
+      double? value = readBackendValue();
       assert(value != null);
-      _selectedValues[selectedParameter!] = value!;
+      _selectedValue[selectedParameter!] = value!;
     }
   }
 
-  SelectedParameter? _readRootSelected() {
+  SelectedParameter? readBackendParameter() {
     UserStepsOptions p = segmentModel.userStepsOptions();
     if (p.stepDistance == null && p.stepElevationGain == null) {
       return null;
@@ -50,7 +50,7 @@ class UserStepsModel extends ChangeNotifier {
     return SelectedParameter.elevation;
   }
 
-  double? _readRootValue() {
+  double? readBackendValue() {
     UserStepsOptions p = segmentModel.userStepsOptions();
     if (p.stepDistance == null && p.stepElevationGain == null) {
       return null;
@@ -61,67 +61,58 @@ class UserStepsModel extends ChangeNotifier {
     return p.stepElevationGain;
   }
 
-  SliderValues? sliderValues() {
-    if (selectedParameter == null) {
+  SliderValues? sliderValues(SelectedParameter p) {
+    SliderValues ret = SliderValues();
+    assert(_sliderValues.containsKey(p));
+    if (!_selectedValue.containsKey(p)) {
       return null;
     }
-    SliderValues ret = SliderValues();
-    ret.init(
-      _sliderValues[selectedParameter]!,
-      _selectedValues[selectedParameter]!,
-    );
+    assert(_selectedValue.containsKey(p));
+    ret.init(_sliderValues[p]!, _selectedValue[p]!);
     return ret;
   }
 
-  double? currentValue() {
-    if (!_selectedValues.containsKey(selectedParameter)) {
-      return null;
-    }
-    return _selectedValues[selectedParameter];
+  double currentValue(SelectedParameter p) {
+    assert(_selectedValue.containsKey(p));
+    return _selectedValue[selectedParameter]!;
   }
 
-  void updateValue(double value) {
-    assert(selectedParameter != null);
-    _selectedValues[selectedParameter!] = value;
+  void updateValue(SelectedParameter p, double value) {
+    _selectedValue[p] = value;
     notifyListeners();
-    _updateBackend();
+    sendToBackend(p);
   }
 
   /*
    * Changing the root model has no effect because the segments are cached
    * in SegmentsScreen. User steps handling must be fixed.
    */
-  void _updateBackend() {
-    segmentModel.setUserStepsOptions(makeUserStepsOptions());
+  void sendToBackend(SelectedParameter? parameter) {
+    segmentModel.setUserStepsOptions(makeUserStepsOptions(parameter));
   }
 
-  void updateParameter(SelectedParameter? key) {
-    selectedParameter = key;
+  void sendParameterToBackend(SelectedParameter? parameter) {
+    selectedParameter = parameter;
     notifyListeners();
-    _updateBackend();
+    sendToBackend(parameter);
   }
 
-  UserStepsOptions makeUserStepsOptions() {
-    double? current = currentValue();
-    if (current == null) {
+  UserStepsOptions makeUserStepsOptions(SelectedParameter? parameter) {
+    if (parameter == null) {
       return UserStepsOptions(stepDistance: null, stepElevationGain: null);
     }
-    assert(selectedParameter != null);
-    if (selectedParameter == SelectedParameter.distance) {
+    double current = currentValue(parameter);
+    if (parameter == SelectedParameter.distance) {
       return UserStepsOptions(
         stepDistance: current.toDouble(),
         stepElevationGain: null,
       );
     }
-    assert(selectedParameter == SelectedParameter.elevation);
+    assert(parameter == SelectedParameter.elevation);
     return UserStepsOptions(
       stepDistance: null,
       stepElevationGain: current.toDouble(),
     );
-  }
-
-  SegmentStatistics statistics() {
-    return segmentModel.statistics();
   }
 }
 
@@ -134,17 +125,18 @@ List<double> toKm(List<double> list) {
 }
 
 class UserStepsSlider extends StatelessWidget {
-  const UserStepsSlider({super.key});
+  final SelectedParameter widgetParameter;
+  const UserStepsSlider({super.key, required this.widgetParameter});
 
   void onChanged(UserStepsModel model, double value) {
-    model.updateValue(value);
+    model.updateValue(widgetParameter, value);
   }
 
   String formatLabel(UserStepsModel model, double value) {
-    if (model.selectedParameter == SelectedParameter.elevation) {
+    if (widgetParameter == SelectedParameter.elevation) {
       return "${(value).toInt()} m";
     }
-    if (model.selectedParameter == SelectedParameter.distance) {
+    if (widgetParameter == SelectedParameter.distance) {
       return "${(value).toInt() / 1000} km";
     }
     return "$value ??";
@@ -153,7 +145,7 @@ class UserStepsSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var model = Provider.of<UserStepsModel>(context);
-    var values = model.sliderValues();
+    var values = model.sliderValues(widgetParameter);
     if (values == null) {
       return const Text('not set yet');
     }
@@ -180,56 +172,33 @@ class UserStepsSliderConsumer extends StatefulWidget {
 typedef MenuEntry = DropdownMenuEntry<String>;
 
 class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
-  static const List<String> list = <String>["none", 'km', 'hm'];
-  static final List<MenuEntry> menuEntries = UnmodifiableListView<MenuEntry>(
-    list.map<MenuEntry>((String name) => MenuEntry(value: name, label: name)),
-  );
+  SelectedParameter? selectedParameter;
 
   void onSelected(String? value) {
     UserStepsModel model = Provider.of<UserStepsModel>(context, listen: false);
     developer.log("selected $value");
-    SelectedParameter? newMode = fromString(value);
-    model.updateParameter(newMode);
-  }
-
-  String string(SelectedParameter? param) {
-    if (param == null) {
-      return "none";
-    }
-    if (param == SelectedParameter.distance) {
-      return "km";
-    }
-    return "hm";
-  }
-
-  SelectedParameter? fromString(String? value) {
-    SelectedParameter? newMode;
-    if (value == "km") {
-      newMode = SelectedParameter.distance;
-    } else if (value == "hm") {
-      newMode = SelectedParameter.elevation;
-    }
-    return newMode;
+    model.sendParameterToBackend(selectedParameter);
   }
 
   @override
   Widget build(BuildContext context) {
     UserStepsModel model = Provider.of<UserStepsModel>(context);
     developer.log("rebuild with selected ${model.selectedParameter}");
-    Widget slider = UserStepsSlider();
-    DropdownMenu<String> dropbox = DropdownMenu<String>(
-      initialSelection: string(model.selectedParameter),
-      onSelected: onSelected,
-      dropdownMenuEntries: menuEntries,
+    Widget distanceSlider = UserStepsSlider(
+      widgetParameter: SelectedParameter.distance,
     );
+    Widget elevationSlider = UserStepsSlider(
+      widgetParameter: SelectedParameter.elevation,
+    );
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 20.0,
         ), // Add margin inside the parent
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Row(children: [slider, dropbox]),
+          constraints: const BoxConstraints(maxWidth: 150),
+          child: Column(children: [distanceSlider, elevationSlider]),
         ),
       ),
     );
