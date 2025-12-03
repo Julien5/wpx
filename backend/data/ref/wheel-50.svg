@@ -1,74 +1,78 @@
 <svg height="360" viewBox="0 0 360 360" width="360" xmlns="http://www.w3.org/2000/svg">
 <g font-size="12" id="world" shape-rendering="geometricPrecision">
 <circle cx="180" cy="180" fill="#f0f0f0" r="160" stroke="#333" stroke-width="3"/>
-<circle cx="180" cy="180" fill="#f0f0f0" r="140" stroke="#333" stroke-width="2"/>
+<circle cx="180" cy="180" fill="#f0f0f0" r="150" stroke="#555" stroke-width="2"/>
+<g>
 <g transform="translate(180, 180)">
-<path d="M0,-160 L0,-159" stroke="#333" stroke-linecap="round" stroke-width="5" transform="rotate(0)"/>
-<text text-anchor="middle" transform="rotate(0)" x="0" y="-169">
+<path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(0)"/>
+<path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(60)"/>
+<path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(180)"/>
+<path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(250)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(0)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(7.2)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(14.4)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(21.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(28.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(36)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(43.2)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(50.4)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(57.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(64.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(72)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(79.2)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(86.4)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(93.60000000000001)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(100.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(108)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(115.2)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(122.4)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(129.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(136.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(144)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(151.20000000000002)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(158.4)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(165.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(172.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(180)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(187.20000000000002)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(194.4)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(201.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(208.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(216)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(223.20000000000002)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(230.4)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(237.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(244.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(252)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(259.2)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(266.40000000000003)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(273.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(280.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(288)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(295.2)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(302.40000000000003)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(309.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(316.8)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(324)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(331.2)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(338.40000000000003)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(345.6)"/>
+<path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(352.8)"/>
+</g>
+<g transform="translate(180, 180)">
+<text text-anchor="start" x="0" y="-167">
 Start/End
 </text>
-<path d="M0,-160 L0,-159" stroke="#333" stroke-linecap="round" stroke-width="5" transform="rotate(60)"/>
-<text text-anchor="middle" transform="rotate(60)" x="0" y="-169">
+<text text-anchor="start" x="144.62624243200125" y="-83.50000000000001">
 Angers
 </text>
-<path d="M0,-160 L0,-159" stroke="#333" stroke-linecap="round" stroke-width="5" transform="rotate(180)"/>
-<text text-anchor="middle" transform="rotate(180)" x="0" y="-169">
+<text text-anchor="end" x="0.000000000000020451601545760798" y="172">
 Winterstettenstadt
 </text>
-<path d="M0,-160 L0,-159" stroke="#333" stroke-linecap="round" stroke-width="5" transform="rotate(250)"/>
-<text text-anchor="middle" transform="rotate(250)" x="0" y="-169">
+<text text-anchor="end" x="-156.9286676712467" y="57.11736393538665">
 Noirmoutiers
 </text>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(0)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(7.2)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(14.4)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(21.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(28.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(36)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(43.2)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(50.4)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(57.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(64.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(72)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(79.2)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(86.4)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(93.60000000000001)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(100.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(108)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(115.2)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(122.4)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(129.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(136.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(144)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(151.20000000000002)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(158.4)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(165.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(172.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(180)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(187.20000000000002)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(194.4)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(201.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(208.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(216)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(223.20000000000002)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(230.4)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(237.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(244.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(252)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(259.2)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(266.40000000000003)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(273.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(280.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(288)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(295.2)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(302.40000000000003)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(309.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(316.8)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(324)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(331.2)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(338.40000000000003)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(345.6)"/>
-<path d="M0,-149 L0,-159" stroke="#666" stroke-linecap="round" stroke-width="1" transform="rotate(352.8)"/>
+</g>
 </g>
 <circle cx="180" cy="180" fill="#333" r="5"/>
 </g>
