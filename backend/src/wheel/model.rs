@@ -148,7 +148,7 @@ impl WheelModel {
     pub fn make(segment: &Segment) -> WheelModel {
         let mut control_points = Vec::new();
         let track_distance_km = segment.track.total_distance() / 1000f64;
-        let n_controls = (track_distance_km / 70f64).ceil() as usize;
+        let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
         for c in get_control_points(segment, n_controls) {
             let cp = CirclePoint {
                 angle: angle(&c, &segment.track),
