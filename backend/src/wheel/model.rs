@@ -127,7 +127,9 @@ fn get_control_points(segment: &Segment, n: usize) -> Vec<InputPoint> {
         None => {}
     }
     let mut classifier = SectorClassifier::make(&segment, &n);
-    classifier.result()
+    let ret = classifier.result();
+    assert!(ret.len() <= n);
+    ret
 }
 
 fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
@@ -145,7 +147,9 @@ fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
 impl WheelModel {
     pub fn make(segment: &Segment) -> WheelModel {
         let mut control_points = Vec::new();
-        for c in get_control_points(segment, 10) {
+        let track_distance_km = segment.track.total_distance() / 1000f64;
+        let n_controls = (track_distance_km / 70f64).ceil() as usize;
+        for c in get_control_points(segment, n_controls) {
             let cp = CirclePoint {
                 angle: angle(&c, &segment.track),
                 name: name(&c),

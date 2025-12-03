@@ -10,7 +10,6 @@ use crate::math::*;
 struct Page {
     pub total_size: IntegerSize2D,
     pub wheel_width: i32,
-    pub min_tick: i32,
     pub margin: i32,
 }
 
@@ -20,6 +19,13 @@ impl Page {
             self.total_size.width - 2 * self.margin,
             self.total_size.height - 2 * self.margin,
         )
+    }
+    fn wheel_outer_radius(&self) -> i32 {
+        let size = self.size();
+        size.width.min(size.height) / 2 - self.margin
+    }
+    fn wheel_inner_radius(&self) -> i32 {
+        self.wheel_outer_radius() - self.wheel_width
     }
     fn center(&self) -> euclid::Vector2D<i32, ScreenSpace> {
         (self.size() / 2).to_vector()
@@ -36,14 +42,16 @@ impl Page {
 fn features(page: &Page, model: &model::WheelModel) -> Group {
     let mut ticks_group = page.make_centered_group();
     let mut label_group = page.make_centered_group();
+    let hour_thick = page.wheel_width / 3;
+    let min_thick = (hour_thick / 4).max(1);
+    let little_space = (hour_thick / 4).max(1);
     let mut ret = Group::new();
-    let center = page.center();
-    let hour_tick_start = center.y - page.wheel_width;
-    let hour_tick_stop = center.y - page.margin - 1;
+    let hour_tick_start = page.wheel_inner_radius() + little_space;
+    let hour_tick_stop = page.wheel_outer_radius() - little_space;
     let hour_tick_data =
         Data::parse(format!("M 0 -{} L 0 -{}", hour_tick_start, hour_tick_stop).as_str()).unwrap();
-    let min_tick_start = hour_tick_stop - page.min_tick;
-    let min_tick_stop = hour_tick_stop;
+    let min_tick_start = hour_tick_start + little_space;
+    let min_tick_stop = hour_tick_stop - little_space;
     let minute_tick_data =
         Data::parse(format!("M 0 -{} L 0 -{}", min_tick_start, min_tick_stop).as_str()).unwrap();
 
@@ -54,8 +62,7 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
         let tick = Path::new()
             .set("d", hour_tick_data.clone())
             .set("stroke", "#333")
-            .set("stroke-width", 5.0)
-            .set("stroke-linecap", "round");
+            .set("stroke-width", hour_thick);
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
         //let Kname = format!("K{}", i + 1);
@@ -68,11 +75,21 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
                 .unwrap_or("noname")
                 .to_string();
         }
-        let label_position_radius = center.y as f64 - 13f64;
-        let label_position = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos())
-            * label_position_radius;
+        let label_position_radius = page.wheel_outer_radius() + 7;
+        let mut label_position = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos())
+            * label_position_radius as f64;
+
+        let anchor = if angle < 180.0 { "start" } else { "end" };
+        let text_height = 5 as f64;
+        if angle < 30.0 || angle > 330.0 {
+            // label_position.y -= text_height;
+        }
+        if angle > 150.0 && angle < 210.0 {
+            label_position.y += text_height;
+        }
+
         let label = Text::new(format!("{}", name))
-            .set("text-anchor", if angle < 180.0 { "start" } else { "end" })
+            .set("text-anchor", anchor)
             .set("x", label_position.x)
             .set("y", label_position.y);
         label_group = label_group.add(label);
@@ -84,8 +101,7 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
         let tick = Path::new()
             .set("d", minute_tick_data.clone())
             .set("stroke", "#666")
-            .set("stroke-width", 1.0)
-            .set("stroke-linecap", "round");
+            .set("stroke-width", min_thick);
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
     }
@@ -96,12 +112,10 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
 
 pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let margin = 20;
-    let min_tick = 10;
-    let wheel_width = 20;
+    let wheel_width = 10;
     let page = Page {
         total_size: total_size.clone(),
         wheel_width,
-        min_tick,
         margin,
     };
 
@@ -122,7 +136,7 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let outer_circle = Circle::new()
         .set("cx", center.x)
         .set("cy", center.y)
-        .set("r", size.width / 2 - margin)
+        .set("r", page.wheel_outer_radius())
         .set("fill", "#f0f0f0")
         .set("stroke", "#333")
         .set("stroke-width", 3);
@@ -130,9 +144,9 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let inner_circle = Circle::new()
         .set("cx", center.x)
         .set("cy", center.y)
-        .set("r", size.width / 2 - margin - wheel_width)
+        .set("r", page.wheel_inner_radius())
         .set("fill", "#f0f0f0")
-        .set("stroke", "#333")
+        .set("stroke", "#555")
         .set("stroke-width", 2);
 
     let features = features(&page, &model);

@@ -159,7 +159,7 @@ async fn main() -> Result<(), error::Error> {
         Some(enabled) => {
             if enabled {
                 let track_segment = backend.trackSegment();
-                let size = IntegerSize2D::new(350, 350);
+                let size = IntegerSize2D::new(250, 250);
                 let svg = backend.render_segment_what(&track_segment, &"wheel".to_string(), &size);
                 let filename = std::format!("/tmp/wheel.svg");
                 std::fs::write(&filename, svg.clone()).unwrap();

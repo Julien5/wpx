@@ -277,7 +277,13 @@ impl BackendData {
         what: &String,
         size: &IntegerSize2D,
     ) -> String {
-        log::trace!("start - render_segment_what:{} {}", segment.id, what);
+        log::trace!(
+            "start - render_segment_what:{} {} size:{}x{}",
+            segment.id,
+            what,
+            size.width,
+            size.height
+        );
         let ret = match what.as_str() {
             "profile" => segment.render_profile().svg,
             "ylabels" => self.render_yaxis_labels_overlay(segment),
