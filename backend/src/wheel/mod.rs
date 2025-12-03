@@ -7,57 +7,42 @@ use svg::Document;
 
 use crate::math::*;
 
-pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
-    let margin = 20;
-    let size = IntegerSize2D::new(
-        total_size.width - 2 * margin,
-        total_size.height - 2 * margin,
-    );
-    let min_tick = 10;
-    let wheel_width = 20;
+struct Page {
+    pub total_size: IntegerSize2D,
+    pub wheel_width: i32,
+    pub min_tick: i32,
+    pub margin: i32,
+}
 
-    let center = (size / 2).to_vector();
-    let mut document = Document::new()
-        .set("width", size.width)
-        .set("height", size.height)
-        .set("viewBox", (0, 0, size.width, size.height));
+impl Page {
+    fn size(&self) -> IntegerSize2D {
+        IntegerSize2D::new(
+            self.total_size.width - 2 * self.margin,
+            self.total_size.height - 2 * self.margin,
+        )
+    }
+    fn center(&self) -> euclid::Vector2D<i32, ScreenSpace> {
+        (self.size() / 2).to_vector()
+    }
+    fn make_centered_group(&self) -> Group {
+        let center = self.center();
+        Group::new().set(
+            "transform",
+            format!("translate({}, {})", center.x, center.y),
+        )
+    }
+}
 
-    let main_group = Group::new()
-        .set("id", "world")
-        .set("shape-rendering", "geometricPrecision")
-        .set("font-size", format!("{}", 12f64));
-
-    let outer_circle = Circle::new()
-        .set("cx", center.x)
-        .set("cy", center.y)
-        .set("r", size.width / 2 - margin)
-        .set("fill", "#f0f0f0")
-        .set("stroke", "#333")
-        .set("stroke-width", 3);
-
-    let inner_circle = Circle::new()
-        .set("cx", center.x)
-        .set("cy", center.y)
-        .set("r", size.width / 2 - margin - wheel_width)
-        .set("fill", "#f0f0f0")
-        .set("stroke", "#333")
-        .set("stroke-width", 2);
-
-    let mut ticks_group = Group::new().set(
-        "transform",
-        format!("translate({}, {})", center.x, center.y),
-    );
-
-    let mut label_group = Group::new().set(
-        "transform",
-        format!("translate({}, {})", center.x, center.y),
-    );
-
-    let hour_tick_start = center.y - wheel_width;
-    let hour_tick_stop = center.y - margin - 1;
+fn features(page: &Page, model: &model::WheelModel) -> Group {
+    let mut ticks_group = page.make_centered_group();
+    let mut label_group = page.make_centered_group();
+    let mut ret = Group::new();
+    let center = page.center();
+    let hour_tick_start = center.y - page.wheel_width;
+    let hour_tick_stop = center.y - page.margin - 1;
     let hour_tick_data =
         Data::parse(format!("M 0 -{} L 0 -{}", hour_tick_start, hour_tick_stop).as_str()).unwrap();
-    let min_tick_start = hour_tick_stop - min_tick;
+    let min_tick_start = hour_tick_stop - page.min_tick;
     let min_tick_stop = hour_tick_stop;
     let minute_tick_data =
         Data::parse(format!("M 0 -{} L 0 -{}", min_tick_start, min_tick_stop).as_str()).unwrap();
@@ -104,6 +89,53 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
     }
+    ret = ret.add(ticks_group);
+    ret = ret.add(label_group);
+    ret
+}
+
+pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
+    let margin = 20;
+    let min_tick = 10;
+    let wheel_width = 20;
+    let page = Page {
+        total_size: total_size.clone(),
+        wheel_width,
+        min_tick,
+        margin,
+    };
+
+    let size = page.size();
+
+    let mut document = Document::new()
+        .set("width", size.width)
+        .set("height", size.height)
+        .set("viewBox", (0, 0, size.width, size.height));
+
+    let main_group = Group::new()
+        .set("id", "world")
+        .set("shape-rendering", "geometricPrecision")
+        .set("font-size", format!("{}", 12f64));
+
+    let center = page.center();
+
+    let outer_circle = Circle::new()
+        .set("cx", center.x)
+        .set("cy", center.y)
+        .set("r", size.width / 2 - margin)
+        .set("fill", "#f0f0f0")
+        .set("stroke", "#333")
+        .set("stroke-width", 3);
+
+    let inner_circle = Circle::new()
+        .set("cx", center.x)
+        .set("cy", center.y)
+        .set("r", size.width / 2 - margin - wheel_width)
+        .set("fill", "#f0f0f0")
+        .set("stroke", "#333")
+        .set("stroke-width", 2);
+
+    let features = features(&page, &model);
 
     // 6. Add the central hub circle
     let center_dot = Circle::new()
@@ -116,8 +148,7 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let assembled_group = main_group
         .add(outer_circle)
         .add(inner_circle)
-        .add(ticks_group)
-        .add(label_group)
+        .add(features)
         .add(center_dot);
 
     document = document.add(assembled_group);
