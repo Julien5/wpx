@@ -340,7 +340,17 @@ impl BackendData {
         ret
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
-        gpxexport::generate(&self.track, &self.inputpoints)
+        let mut gpxpoints = Vec::new();
+        for kind in [InputType::UserStep, InputType::GPX] {
+            match self.inputpoints.maps.get(&kind) {
+                Some(p) => {
+                    gpxpoints.extend_from_slice(&p.as_vector());
+                }
+                _ => {}
+            }
+        }
+        let waypoints = self.export_points(&gpxpoints);
+        gpxexport::generate(&self.track, &waypoints)
     }
 }
 

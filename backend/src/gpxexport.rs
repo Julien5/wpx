@@ -3,15 +3,16 @@
 use crate::inputpoint::*;
 use crate::track;
 use crate::waypoint;
+use crate::waypoint::Waypoints;
 
-fn _gps_name(w: &waypoint::Waypoint) -> Option<String> {
+fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
     match &w.info {
         Some(step) => {
             use chrono::*;
             let t: DateTime<Utc> = step.time.parse().unwrap();
             let time = format!("{}", t.format("%H:%M"));
             let percent = 100f64 * step.inter_slope;
-            let info = if percent > 1f64 {
+            let info = if true {
                 format!("{:.1}%", percent)
             } else if w.name.is_some() {
                 format!("{}", w.name.as_ref().unwrap())
@@ -25,10 +26,10 @@ fn _gps_name(w: &waypoint::Waypoint) -> Option<String> {
     w.name.clone()
 }
 
-fn _to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
+fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     let mut ret = gpx::Waypoint::new(geo::Point::new(w.wgs84.x(), w.wgs84.y()));
     ret.elevation = Some(w.wgs84.z());
-    ret.name = _gps_name(w);
+    ret.name = gps_name(w);
     ret.description = match &w.info {
         Some(info) => Some(info.description.clone()),
         _ => w.description.clone(),
@@ -36,7 +37,7 @@ fn _to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     ret
 }
 
-pub fn generate(track: &track::Track, _waypoints: &InputPointMaps) -> Vec<u8> {
+pub fn generate(track: &track::Track, waypoints: &Waypoints) -> Vec<u8> {
     let mut G = gpx::Gpx::default();
     G.version = gpx::GpxVersion::Gpx11;
 
@@ -44,13 +45,7 @@ pub fn generate(track: &track::Track, _waypoints: &InputPointMaps) -> Vec<u8> {
     let mut track = gpx::Track::new();
     track.segments.push(segment);
     G.tracks.push(track);
-
-    /*
-        for w in &waypoints.as_vector() {
-            let g = to_gpx(&w.waypoint());
-            G.waypoints.push(g);
-    }
-        */
+    G.waypoints = waypoints.iter().map(|w| to_gpx(w)).collect();
 
     let mut ret: Vec<u8> = Vec::new();
     gpx::write(&G, &mut ret).unwrap();
