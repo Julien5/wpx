@@ -51,7 +51,7 @@ pub struct ProfileView {
     model: Option<ProfileModel>,
 }
 
-fn fix_ymargins(bbox: &ProfileBoundingBox, H: f64) -> ProfileBoundingBox {
+fn fix_margins(bbox: &ProfileBoundingBox, H: f64) -> ProfileBoundingBox {
     let ticks = ticks::yticks(bbox, H);
     let mut ret = bbox.clone();
     ret.set_ymin(ticks.first().unwrap().clone());
@@ -125,7 +125,7 @@ impl ProfileView {
             Mleft,
             Mbottom,
             options: options.clone(),
-            bboxview: fix_ymargins(bbox, H),
+            bboxview: fix_margins(bbox, H),
             bboxdata: bbox.clone(),
             BG: Group::new().set("id", "BG"),
             SL: Group::new()
