@@ -236,13 +236,15 @@ impl BackendData {
             }
             let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
             log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
+            let mut parameters = self.parameters.clone();
+            parameters.profile_options.min_xrange_meters = Some(self.parameters.segment_length);
             ret.push(Segment::new(
                 k as i32,
                 range,
                 tracktree,
                 self.track.clone(),
                 &self.inputpoints,
-                &self.parameters,
+                &parameters,
             ));
             start = start + self.parameters.segment_length - self.parameters.segment_overlap;
             k = k + 1;

@@ -111,11 +111,24 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     let user1 = &profile_points.get(1).unwrap();
     let mountains_and_cities = &profile_points.get(2).unwrap();
     let villages = &profile_points.get(3).unwrap();
-    let osmrest = &profile_points.get(3).unwrap();
+    let osmrest = &profile_points.get(4).unwrap();
     let mut offtrack_cities = Vec::new();
     let osmpoints = segment.osmpoints();
     for w in osmpoints {
         if mountains_and_cities.contains(&w) {
+            continue;
+        }
+        let mut in_profile = false;
+        for packet in &profile_points {
+            if in_profile {
+                break;
+            }
+            if packet.contains(&w) {
+                in_profile = true;
+                break;
+            }
+        }
+        if in_profile {
             continue;
         }
         match w.osmkind().unwrap() {

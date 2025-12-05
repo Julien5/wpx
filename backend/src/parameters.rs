@@ -25,6 +25,7 @@ impl Default for UserStepsOptions {
 #[derive(Clone)]
 pub struct ProfileOptions {
     pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
+    pub min_xrange_meters: Option<f64>,
     pub max_area_ratio: f64,
     pub size: (i32, i32),
 }
@@ -33,6 +34,7 @@ impl Default for ProfileOptions {
     fn default() -> ProfileOptions {
         ProfileOptions {
             elevation_indicators: std::collections::HashSet::default(),
+            min_xrange_meters: None,
             max_area_ratio: 0.1f64,
             size: (1000, 285),
         }

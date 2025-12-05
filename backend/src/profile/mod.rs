@@ -51,11 +51,20 @@ pub struct ProfileView {
     model: Option<ProfileModel>,
 }
 
-fn fix_margins(bbox: &ProfileBoundingBox, H: f64) -> ProfileBoundingBox {
-    let ticks = ticks::yticks(bbox, H);
+fn fix_margins(bbox: &ProfileBoundingBox, options: &ProfileOptions) -> ProfileBoundingBox {
+    let H = options.size.1;
+    let ticks = ticks::yticks(bbox, H as f64);
     let mut ret = bbox.clone();
     ret.set_ymin(ticks.first().unwrap().clone());
     ret.set_ymax(ticks.last().unwrap().clone());
+    if options.min_xrange_meters.is_some() {
+        let min_width = options.min_xrange_meters.unwrap();
+        if ret.width() < options.min_xrange_meters.unwrap() {
+            let mut max = ret.get_max();
+            max.x = ret.get_xmin() + min_width;
+            ret.set_max(max);
+        }
+    }
     ret
 }
 
@@ -88,7 +97,7 @@ impl ProfileView {
         ProfileIndication::None
     }
 
-    fn xticks_end(&self) -> f64 {
+    fn yticks_end(&self) -> f64 {
         match self.profile_indication() {
             ProfileIndication::NumericSlope => {
                 return self.HD();
@@ -125,7 +134,7 @@ impl ProfileView {
             Mleft,
             Mbottom,
             options: options.clone(),
-            bboxview: fix_margins(bbox, H),
+            bboxview: fix_margins(bbox, options),
             bboxdata: bbox.clone(),
             BG: Group::new().set("id", "BG"),
             SL: Group::new()
@@ -332,10 +341,10 @@ impl ProfileView {
             Point2D::new(WD, HD - self.eticks_height()),
         ));
 
-        let _xticks = ticks::xticks(&self.bboxdata, self.W);
-        let _xticks_dashed = ticks::xticks_dashed(&self.bboxdata, self.W);
-        let _yticks = ticks::yticks(&self.bboxdata, self.H);
-        let _yticks_dashed = ticks::yticks_dashed(&self.bboxdata, self.H);
+        let _xticks = ticks::xticks(&self.bboxview, self.W);
+        let _xticks_dashed = ticks::xticks_dashed(&self.bboxview, self.W);
+        let _yticks = ticks::yticks(&self.bboxview, self.H);
+        let _yticks_dashed = ticks::yticks_dashed(&self.bboxview, self.H);
 
         for xtick in _xticks {
             let xg = self.toSD(&Point2D::new(xtick, 0f64)).x;
@@ -348,7 +357,7 @@ impl ProfileView {
             self.SD.append(stroke(
                 "1",
                 Point2D::new(xg, 0f64),
-                Point2D::new(xg, self.xticks_end()),
+                Point2D::new(xg, self.yticks_end()),
             ));
             self.SB.append(text_middle(
                 format!("{}", (xtick / 1000f64).floor() as f64).as_str(),
@@ -363,7 +372,7 @@ impl ProfileView {
             }
             self.SD.append(dashed(
                 Point2D::new(xd, self.eticks_height()),
-                Point2D::new(xd, self.xticks_end()),
+                Point2D::new(xd, self.yticks_end()),
             ));
         }
 
