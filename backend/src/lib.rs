@@ -19,7 +19,7 @@ pub mod wheel;
 //mod project;
 mod render;
 mod segment;
-mod speed;
+pub mod speed;
 mod svgmap;
 mod track;
 pub mod waypoint;

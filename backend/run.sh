@@ -106,6 +106,10 @@ function main() {
 			shift 
 			render-wheel "$@"
 			return;
+		elif [ $1 = "pdf" ]; then
+			shift 
+			2>&1 pdf "$@"
+			return;
 		fi
 	else
 		export RUST_BACKTRACE=1

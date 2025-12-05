@@ -8,6 +8,7 @@ use crate::backend::Segment;
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
+use crate::inputpoint::InputPoint;
 use crate::label_placement;
 use crate::label_placement::candidate::*;
 use crate::label_placement::drawings::draw_for_profile;
@@ -20,9 +21,18 @@ use crate::segment;
 use crate::track::Track;
 use elements::*;
 
-struct ProfileModel {
-    polylines: Vec<Polyline>,
-    points: Vec<PointFeature>,
+pub struct ProfileModel {
+    pub polylines: Vec<Polyline>,
+    pub points: Vec<PointFeature>,
+}
+
+impl ProfileModel {
+    pub fn input_points(&self) -> Vec<InputPoint> {
+        self.points
+            .iter()
+            .map(|w| w.input_point.as_ref().unwrap().clone())
+            .collect()
+    }
 }
 
 pub struct ProfileView {
@@ -247,7 +257,7 @@ impl ProfileView {
         }
     }
 
-    pub fn render(&self) -> String {
+    pub fn render(&self) -> ProfileRenderResult {
         let font_size = self.font_size();
         let mut world = Group::new()
             .set("id", "world")
@@ -270,8 +280,10 @@ impl ProfileView {
             .set("width", Woutput)
             .set("height", self.H)
             .add(world);
-
-        document.to_string()
+        ProfileRenderResult {
+            svg: document.to_string(),
+            rendered: self.model.as_ref().unwrap().input_points(),
+        }
     }
 
     pub fn add_yaxis_labels_overlay(&mut self) {
@@ -561,6 +573,7 @@ impl CandidatesGenerator for ProfileGenerator {
 
 pub struct ProfileRenderResult {
     pub svg: String,
+    pub rendered: Vec<InputPoint>,
 }
 
 pub fn profile(segment: &segment::Segment) -> ProfileRenderResult {
@@ -569,6 +582,5 @@ pub fn profile(segment: &segment::Segment) -> ProfileRenderResult {
     view.add_canvas();
     view.add_track(&segment);
     view.render_model();
-    let svg = view.render();
-    ProfileRenderResult { svg }
+    view.render()
 }

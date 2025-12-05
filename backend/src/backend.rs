@@ -164,7 +164,7 @@ impl BackendData {
     pub fn get_parameters(self: &BackendData) -> Parameters {
         self.parameters.clone()
     }
-    fn _export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
+    fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
         let mut ret = Waypoints::new();
         for p in points {
             ret.push(p.waypoint());
@@ -177,17 +177,12 @@ impl BackendData {
         );
         ret
     }
-    pub fn get_waypoints(&self, _segment: &Segment) -> Vec<Waypoint> {
-        Vec::new()
-        /*
-        let points = &segment.points;
-        let mut indices: Vec<_> = (0..points.len()).collect();
-        if indices.iter().any(|k| points[*k].kind() == InputType::GPX) {
-            indices.retain(|k| points[*k].kind() == InputType::GPX);
+    pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
+        let mut points = segment.render_profile().rendered;
+        if points.iter().any(|w| w.kind() == InputType::GPX) {
+            points.retain(|w| w.kind() == InputType::GPX);
         }
-        let mut p: Vec<_> = indices.iter().map(|k| points[*k].clone()).collect();
-        self.export_points(&p)
-        */
+        self.export_points(&points)
     }
 
     pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {
@@ -307,7 +302,7 @@ impl BackendData {
         let mut profile =
             profile::ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
         profile.add_yaxis_labels_overlay();
-        let ret = profile.render();
+        let ret = profile.render().svg;
         if self.get_parameters().debug {
             let filename = std::format!("/tmp/yaxis-{}.svg", segment.id);
             std::fs::write(filename, &ret).expect("Unable to write file");

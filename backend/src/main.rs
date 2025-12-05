@@ -4,6 +4,7 @@ use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
+use tracks::speed;
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -18,6 +19,8 @@ struct Cli {
     segment_overlap: Option<i32>,
     #[arg(long, value_name = "start_time")]
     start_time: Option<String>,
+    #[arg(long, value_name = "speed")]
+    speed: Option<f64>,
     #[arg(long, value_name = "step_distance")]
     step_distance: Option<usize>,
     #[arg(long, value_name = "step_elevation_gain")]
@@ -103,6 +106,13 @@ async fn main() -> Result<(), error::Error> {
     match args.start_time {
         Some(time) => {
             parameters.start_time = time.clone();
+        }
+        _ => {}
+    }
+
+    match args.speed {
+        Some(speed) => {
+            parameters.speed = speed::mps(speed);
         }
         _ => {}
     }
