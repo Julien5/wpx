@@ -343,8 +343,8 @@ impl ProfileView {
 
         let _xticks = ticks::xticks(&self.bboxview, self.W);
         let _xticks_dashed = ticks::xticks_dashed(&self.bboxview, self.W);
-        let _yticks = ticks::yticks(&self.bboxview, self.H);
-        let _yticks_dashed = ticks::yticks_dashed(&self.bboxview, self.H);
+        let _yticks = ticks::yticks(&self.bboxdata, self.H);
+        let _yticks_dashed = ticks::yticks_dashed(&self.bboxdata, self.H);
 
         for xtick in _xticks {
             let xg = self.toSD(&Point2D::new(xtick, 0f64)).x;
