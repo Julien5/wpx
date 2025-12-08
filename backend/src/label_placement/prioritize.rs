@@ -118,19 +118,6 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
         if mountains_and_cities.contains(&w) {
             continue;
         }
-        let mut in_profile = false;
-        for packet in &profile_points {
-            if in_profile {
-                break;
-            }
-            if packet.contains(&w) {
-                in_profile = true;
-                break;
-            }
-        }
-        if in_profile {
-            continue;
-        }
         match w.osmkind().unwrap() {
             OSMType::City => {
                 log::trace!("offtrack city:{}", w.name().unwrap());
