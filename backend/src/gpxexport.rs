@@ -41,10 +41,11 @@ pub fn generate(track: &track::Track, waypoints: &Waypoints) -> Vec<u8> {
     let mut G = gpx::Gpx::default();
     G.version = gpx::GpxVersion::Gpx11;
 
-    let segment = track.to_segment();
-    let mut track = gpx::Track::new();
-    track.segments.push(segment);
-    G.tracks.push(track);
+    let segment = track.export_to_gpx();
+    let mut gpxtrack = gpx::Track::new();
+    gpxtrack.name = Some(format!("{:.0} km", track.total_distance() / 1000f64));
+    gpxtrack.segments.push(segment);
+    G.tracks.push(gpxtrack);
     G.waypoints = waypoints.iter().map(|w| to_gpx(w)).collect();
 
     let mut ret: Vec<u8> = Vec::new();

@@ -113,9 +113,10 @@ impl Track {
         startidx..endidx
     }
 
-    pub fn to_segment(&self) -> TrackSegment {
+    pub fn export_to_gpx(&self) -> TrackSegment {
         let mut ret = TrackSegment::new();
         for wgs in &self.wgs84 {
+            // remove z coordinate to avoid automatic "low" and "hight points" on etrex 10
             let w = gpx::Waypoint::new(geo::Point::new(wgs.x(), wgs.y()));
             ret.points.push(w);
         }
