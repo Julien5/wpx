@@ -1,6 +1,5 @@
 #![allow(non_snake_case)]
 
-use crate::inputpoint::*;
 use crate::track;
 use crate::waypoint;
 use crate::waypoint::Waypoints;

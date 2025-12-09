@@ -17,7 +17,6 @@ pub type SegmentPoints = BTreeMap<InputType, Vec<InputPoint>>;
 pub struct Segment {
     pub id: i32,
     pub range: std::ops::Range<usize>,
-    pub track_tree: locate::IndexedPointsTree,
     pub track: std::sync::Arc<Track>,
     pub points: SegmentPoints,
     pub parameters: Parameters,
@@ -49,7 +48,6 @@ impl Segment {
         Segment {
             id,
             range: range.clone(),
-            track_tree: track_tree,
             track,
             points,
             parameters: parameters.clone(),
