@@ -42,6 +42,10 @@ class WheelScreen extends StatelessWidget {
     Navigator.of(ctx).pushNamed(RouteManager.settingsView);
   }
 
+  void gotoUserSteps(BuildContext ctx) {
+    Navigator.of(ctx).pushNamed(RouteManager.userStepsView);
+  }
+
   @override
   Widget build(BuildContext ctx) {
     Widget settingsButton = ElevatedButton(
@@ -49,6 +53,12 @@ class WheelScreen extends StatelessWidget {
       child: const Text("Feuille de route"),
     );
 
+    Widget userStepsButton = ElevatedButton(
+      onPressed: () => gotoUserSteps(ctx),
+      child: const Text("Pacing Points"),
+    );
+
+    Widget vspace = SizedBox(height: 50);
     return Scaffold(
       appBar: AppBar(title: const Text('Wheel')),
       body: Center(
@@ -59,9 +69,9 @@ class WheelScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               WheelWidget(),
-              SizedBox(height: 50),
-              UserStepsSliderProvider(),
-              SizedBox(height: 50),
+              vspace,
+              userStepsButton,
+              vspace,
               settingsButton,
             ],
           ),
