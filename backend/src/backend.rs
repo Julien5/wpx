@@ -236,15 +236,14 @@ impl BackendData {
             }
             let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
             log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
-            let mut parameters = self.parameters.clone();
-            parameters.profile_options.min_xrange_meters = Some(self.parameters.segment_length);
             ret.push(Segment::new(
                 k as i32,
-                range,
+                start,
+                end,
                 tracktree,
                 self.track.clone(),
                 &self.inputpoints,
-                &parameters,
+                &self.parameters,
             ));
             start = start + self.parameters.segment_length - self.parameters.segment_overlap;
             k = k + 1;
@@ -259,7 +258,8 @@ impl BackendData {
         let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
         let ret = Segment::new(
             0,
-            range,
+            start,
+            end,
             tracktree,
             self.track.clone(),
             &self.inputpoints,
@@ -300,7 +300,8 @@ impl BackendData {
 
     fn render_yaxis_labels_overlay(&mut self, segment: &Segment) -> String {
         log::info!("render_segment_track:{}", segment.id);
-        let profile_bbox = gpsdata::ProfileBoundingBox::from_track(&segment.track, &segment.range);
+        let profile_bbox =
+            gpsdata::ProfileBoundingBox::from_track(&segment.track, &segment.start, &segment.end);
         let mut profile =
             profile::ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
         profile.add_yaxis_labels_overlay();
@@ -313,7 +314,7 @@ impl BackendData {
     }
 
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
-        let range = &segment.range;
+        let range = &segment.range();
         assert!(range.end > 0);
         SegmentStatistics {
             length: self.track.distance(range.end - 1) - self.track.distance(range.start),
@@ -340,11 +341,20 @@ impl BackendData {
         ret
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
+        let range = 0..self.track.wgs84.len();
+        let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
         let mut gpxpoints = Vec::new();
+        // TODO: we should project the GPX points segment-wise.
         for kind in [InputType::UserStep, InputType::GPX] {
             match self.inputpoints.maps.get(&kind) {
                 Some(p) => {
-                    gpxpoints.extend_from_slice(&p.as_vector());
+                    let mut v = p.as_vector();
+                    v.iter_mut().for_each(|mut p| {
+                        if p.track_projection.is_none() {
+                            Segment::compute_track_projection(&self.track, &tracktree, &mut p);
+                        }
+                    });
+                    gpxpoints.extend_from_slice(&v);
                 }
                 _ => {}
             }

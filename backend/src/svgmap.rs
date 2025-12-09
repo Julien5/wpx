@@ -95,7 +95,8 @@ impl MapData {
         let mut bbox = segment.map_box().clone();
         bbox.fix_aspect_ratio(size);
         let mut path = Vec::new();
-        for k in segment.range.start..segment.range.end {
+        let range = segment.range();
+        for k in range.start..range.end {
             path.push(segment.track.euclidian[k].clone());
         }
 

@@ -123,16 +123,17 @@ pub fn read_content(content: &Vec<u8>) -> Result<GpxData, Error> {
 pub type ProfileBoundingBox = BoundingBox;
 
 impl ProfileBoundingBox {
-    pub fn from_track(track: &track::Track, range: &std::ops::Range<usize>) -> ProfileBoundingBox {
+    pub fn from_track(track: &track::Track, start: &f64, end: &f64) -> ProfileBoundingBox {
         let mut ymin = f64::MAX;
         let mut ymax = f64::MIN;
+        let range = track.segment(*start, *end);
         for k in range.start..range.end {
             let y = track.elevation(k);
             ymin = y.min(ymin);
             ymax = y.max(ymax);
         }
-        let xmin = track.distance(range.start);
-        let xmax = track.distance(range.end - 1);
+        let xmin = *start;
+        let xmax = *end;
         BoundingBox::minmax(Point2D::new(xmin, ymin), Point2D::new(xmax, ymax))
     }
 }

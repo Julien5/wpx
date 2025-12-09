@@ -16,7 +16,8 @@ pub type SegmentPoints = BTreeMap<InputType, Vec<InputPoint>>;
 #[derive(Clone)]
 pub struct Segment {
     pub id: i32,
-    pub range: std::ops::Range<usize>,
+    pub start: f64,
+    pub end: f64,
     pub track: std::sync::Arc<Track>,
     pub points: SegmentPoints,
     pub parameters: Parameters,
@@ -36,22 +37,29 @@ impl Segment {
 
     pub fn new(
         id: i32,
-        range: std::ops::Range<usize>,
+        start: f64,
+        end: f64,
         track_tree: locate::IndexedPointsTree,
         track: std::sync::Arc<Track>,
         inputpoints: &InputPointMaps,
         parameters: &Parameters,
     ) -> Segment {
+        let range = track.segment(start, end);
         let map_box =
             svgmap::euclidean_bounding_box(&track, &range, &parameters.map_options.size2d());
         let points = Self::copy_segment_points(inputpoints, &map_box, &track, &track_tree);
         Segment {
             id,
-            range: range.clone(),
+            start,
+            end,
             track,
             points,
             parameters: parameters.clone(),
         }
+    }
+
+    pub fn range(&self) -> std::ops::Range<usize> {
+        self.track.segment(self.start, self.end)
     }
 
     pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
@@ -65,18 +73,19 @@ impl Segment {
     pub fn map_box(&self) -> BoundingBox {
         svgmap::euclidean_bounding_box(
             &self.track,
-            &self.range,
+            &self.range(),
             &self.parameters.map_options.size2d(),
         )
     }
 
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
         self.parameters.user_steps_options = options.clone();
+        let range = self.range();
         let mut new_points =
             make_points::user_points(&self.track, &self.parameters.user_steps_options);
         new_points.retain(|w| {
             let index = w.round_track_index().unwrap();
-            self.range.contains(&index)
+            range.contains(&index)
         });
         self.points.insert(InputType::UserStep, new_points);
     }
@@ -117,7 +126,7 @@ impl Segment {
         }
     }
 
-    fn compute_track_projection(
+    pub fn compute_track_projection(
         track: &track::Track,
         tracktree: &locate::IndexedPointsTree,
         point: &mut InputPoint,

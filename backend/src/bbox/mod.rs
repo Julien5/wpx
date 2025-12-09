@@ -56,6 +56,9 @@ impl BoundingBox {
     pub fn set_ymax(&mut self, m: f64) {
         self._max.y = m;
     }
+    pub fn set_xmax(&mut self, m: f64) {
+        self._max.x = m;
+    }
     pub fn translate(&mut self, v: &Point2D) {
         self._min = self._min + v.to_vector();
         self._max = self._max + v.to_vector();

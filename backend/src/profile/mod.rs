@@ -57,14 +57,6 @@ fn fix_margins(bbox: &ProfileBoundingBox, options: &ProfileOptions) -> ProfileBo
     let mut ret = bbox.clone();
     ret.set_ymin(ticks.first().unwrap().clone());
     ret.set_ymax(ticks.last().unwrap().clone());
-    if options.min_xrange_meters.is_some() {
-        let min_width = options.min_xrange_meters.unwrap();
-        if ret.width() < options.min_xrange_meters.unwrap() {
-            let mut max = ret.get_max();
-            max.x = ret.get_xmin() + min_width;
-            ret.set_max(max);
-        }
-    }
     ret
 }
 
@@ -586,7 +578,7 @@ pub struct ProfileRenderResult {
 }
 
 pub fn profile(segment: &segment::Segment) -> ProfileRenderResult {
-    let profile_bbox = ProfileBoundingBox::from_track(&segment.track, &segment.range);
+    let profile_bbox = ProfileBoundingBox::from_track(&segment.track, &segment.start, &segment.end);
     let mut view = ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
     view.add_canvas();
     view.add_track(&segment);

@@ -100,7 +100,7 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
     let mut document = templates.header.clone();
     let segments = backend.segments();
     for segment in &segments {
-        let range = &segment.range;
+        let range = segment.range();
         if range.is_empty() {
             break;
         }
