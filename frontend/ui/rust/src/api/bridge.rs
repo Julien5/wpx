@@ -8,12 +8,12 @@ pub use std::ops::Range;
 pub use tracks::backend::Segment as SegmentImplementation;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
+pub use tracks::inputpoint::InputType;
 pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
 pub use tracks::parameters::ProfileOptions;
 pub use tracks::parameters::UserStepsOptions;
-pub use tracks::inputpoint::InputType;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
 pub use tracks::waypoint::WaypointOrigin;
@@ -78,7 +78,7 @@ pub enum _InputType {
 
 #[frb(sync)]
 pub fn allkinds() -> HashSet<InputType> {
-	tracks::inputpoint::allkinds()
+    tracks::inputpoint::allkinds()
 }
 
 #[frb(mirror(ProfileIndication))]
@@ -233,23 +233,31 @@ impl Bridge {
         segment: &Segment,
         what: &String,
         size: &(i32, i32),
-		kinds: HashSet<InputType>,
+        kinds: HashSet<InputType>,
     ) -> String {
         assert!(self.backend.loaded());
-        self.backend
-            .render_segment_what(&segment._impl, what, &IntegerSize2D::new(size.0, size.1), kinds)
+        self.backend.render_segment_what(
+            &segment._impl,
+            what,
+            &IntegerSize2D::new(size.0, size.1),
+            kinds,
+        )
     }
-	
+
     #[frb(sync)]
     pub fn renderSegmentWhatSync(
         &mut self,
         segment: &Segment,
         what: &String,
         size: &(i32, i32),
-		kinds: HashSet<InputType>,
+        kinds: HashSet<InputType>,
     ) -> String {
-        self.backend
-            .render_segment_what(&segment._impl, what, &IntegerSize2D::new(size.0, size.1),kinds)
+        self.backend.render_segment_what(
+            &segment._impl,
+            what,
+            &IntegerSize2D::new(size.0, size.1),
+            kinds,
+        )
     }
 
     #[frb(sync)]
