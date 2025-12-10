@@ -9,7 +9,6 @@ pub use tracks::backend::Segment as SegmentImplementation;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
 pub use tracks::inputpoint::InputType;
-pub use tracks::inputpoint::Kinds;
 pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
@@ -78,7 +77,7 @@ pub enum _InputType {
 }
 
 #[frb(sync)]
-pub fn allkinds() -> Kinds {
+pub fn allkinds() -> HashSet<InputType> {
     tracks::inputpoint::allkinds()
 }
 
@@ -124,7 +123,7 @@ pub struct _Parameters {
 #[frb(mirror(WaypointInfo))]
 pub struct _WaypointInfo {
     pub wgs84: WGS84Point,
-    pub origin: WaypointOrigin,
+    pub origin: InputType,
     pub distance: f64,
     pub elevation: f64,
     pub inter_distance: f64,
@@ -141,7 +140,7 @@ pub struct _WaypointInfo {
 pub struct _Waypoint {
     pub wgs84: WGS84Point,
     pub track_index: Option<usize>,
-    pub origin: WaypointOrigin,
+    pub origin: InputType,
     pub name: Option<String>,
     pub description: Option<String>,
     pub info: Option<WaypointInfo>,
