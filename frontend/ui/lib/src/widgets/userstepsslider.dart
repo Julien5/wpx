@@ -13,6 +13,7 @@ class UserStepsModel extends ChangeNotifier {
   SelectedParameter selectedParameter = SelectedParameter.none;
   final Map<SelectedParameter, List<double>> _sliderValues = {};
   final Map<SelectedParameter, double> _selectedValue = {};
+
   UserStepsModel({required this.segmentModel}) {
     _sliderValues[SelectedParameter.distance] = fromKm([5, 10, 15, 20, 25]);
     _sliderValues[SelectedParameter.elevation] = [
@@ -172,8 +173,6 @@ class UserStepsSliderConsumer extends StatefulWidget {
       _UserStepsSliderConsumerState();
 }
 
-typedef MenuEntry = DropdownMenuEntry<String>;
-
 class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
   SelectedParameter selectedParameter = SelectedParameter.none;
 
@@ -191,6 +190,7 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
   @override
   Widget build(BuildContext context) {
     UserStepsModel model = Provider.of<UserStepsModel>(context);
+    selectedParameter = model.selectedParameter;
     developer.log("rebuild with selected ${model.selectedParameter}");
     Widget distanceSlider = UserStepsSlider(
       widgetParameter: SelectedParameter.distance,
