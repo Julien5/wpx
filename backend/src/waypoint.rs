@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::{elevation, track, wgs84point::WGS84Point};
+use crate::{elevation, inputpoint::InputType, track, wgs84point::WGS84Point};
 
 #[derive(Clone, PartialEq)]
 pub enum WaypointOrigin {
@@ -12,7 +12,7 @@ pub enum WaypointOrigin {
 #[derive(Clone)]
 pub struct WaypointInfo {
     pub wgs84: WGS84Point,
-    pub origin: WaypointOrigin,
+    pub origin: InputType,
     pub distance: f64,
     pub elevation: f64,
     pub inter_distance: f64,
@@ -43,7 +43,7 @@ impl WaypointInfo {
 pub struct Waypoint {
     pub wgs84: WGS84Point,
     pub track_index: Option<usize>,
-    pub origin: WaypointOrigin,
+    pub origin: InputType,
     pub name: Option<String>,
     pub description: Option<String>,
     pub info: Option<WaypointInfo>,
@@ -59,14 +59,14 @@ fn trim_option(s: Option<String>) -> Option<String> {
 }
 
 impl Waypoint {
-    pub fn create(wgs: WGS84Point, indx: usize, origin: WaypointOrigin) -> Waypoint {
+    pub fn create(wgs: WGS84Point, indx: usize, kind: InputType) -> Waypoint {
         Waypoint {
             wgs84: wgs.clone(),
             track_index: Some(indx),
             name: None,
             description: None,
             info: None,
-            origin: origin,
+            origin: kind,
         }
     }
 
@@ -84,7 +84,7 @@ impl Waypoint {
             //wgs84: (lon, lat, gpx.elevation.unwrap()),
             wgs84: WGS84Point::new(&lon, &lat, &z),
             track_index: None,
-            origin: WaypointOrigin::GPX,
+            origin: InputType::GPX,
             name: trim_option(name),
             description: trim_option(description),
             info: None,

@@ -11,7 +11,7 @@ use crate::{
     bboxes,
     mercator::{EuclideanBoundingBox, MercatorPoint},
     track::Track,
-    waypoint::{Waypoint, WaypointOrigin},
+    waypoint::Waypoint,
     wgs84point::WGS84Point,
 };
 
@@ -280,7 +280,7 @@ impl InputPoint {
             name: self.name().clone(),
             description: None,
             info: None,
-            origin: WaypointOrigin::OpenStreetMap,
+            origin: self.kind(),
         }
     }
 }

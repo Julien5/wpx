@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
+typedef Kinds = Set<bridge.InputType>;
+
 class SegmentModel extends ChangeNotifier {
   late bridge.Bridge _bridge;
   late bridge.Segment _segment;
@@ -28,7 +30,7 @@ class SegmentModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  WheelRenderer createWheelRenderer(Set<bridge.InputType> kinds) {
+  WheelRenderer createWheelRenderer(Kinds kinds) {
     return WheelRenderer(_bridge, _segment, kinds);
   }
 
