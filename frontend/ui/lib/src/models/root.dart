@@ -21,6 +21,7 @@ class EventModel extends ChangeNotifier {
 class RootModel extends ChangeNotifier {
   late bridge.Bridge _bridge;
   EventModel? _eventModel;
+  bridge.Segment? _trackSegment;
 
   RootModel() {
     _bridge = bridge.Bridge.make();
@@ -76,7 +77,7 @@ class RootModel extends ChangeNotifier {
   }
 
   bridge.Segment trackSegment() {
-    return _bridge.trackSegment();
+    _trackSegment ??= _bridge.trackSegment();
+    return _trackSegment!;
   }
- 
 }

@@ -78,6 +78,7 @@ impl Segment {
         )
     }
 
+    // used by bridge
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
         self.parameters.user_steps_options = options.clone();
         let range = self.range();

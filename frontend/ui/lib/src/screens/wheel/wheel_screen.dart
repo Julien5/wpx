@@ -28,9 +28,14 @@ class _WheelWidgetState extends State<WheelWidget> {
   }
 }
 
-class WheelScreen extends StatelessWidget {
+class WheelScreen extends StatefulWidget {
   const WheelScreen({super.key});
 
+  @override
+  State<WheelScreen> createState() => _WheelScreenState();
+}
+
+class _WheelScreenState extends State<WheelScreen> {
   Widget wait() {
     return Scaffold(
       appBar: AppBar(title: const Text('Segments')),
@@ -42,8 +47,10 @@ class WheelScreen extends StatelessWidget {
     Navigator.of(ctx).pushNamed(RouteManager.settingsView);
   }
 
-  void gotoUserSteps(BuildContext ctx) {
-    Navigator.of(ctx).pushNamed(RouteManager.userStepsView);
+  Future<void> gotoUserSteps(BuildContext ctx) async {
+    await Navigator.of(ctx).pushNamed(RouteManager.userStepsView);
+    // rebuild
+    setState(() {});
   }
 
   @override
