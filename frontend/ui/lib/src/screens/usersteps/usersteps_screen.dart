@@ -1,10 +1,38 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
+
+class UserStepsTable extends StatefulWidget {
+  const UserStepsTable({super.key});
+
+  @override
+  State<UserStepsTable> createState() => _UserStepsTableState();
+}
+
+class _UserStepsTableState extends State<UserStepsTable> {
+  late List<bridge.Waypoint> waypoints;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SegmentModel>(
+      builder: (context, model, child) {
+        Set<InputType> usersteps = {InputType.userStep};
+        var waypoints = model.someWaypoints(usersteps);
+        if (waypoints.isEmpty) {
+          return const Text("No waypoints");
+        }
+        return Text("${waypoints.length} waypoints");
+      },
+    );
+  }
+}
 
 class UserStepsScreen extends StatelessWidget {
   const UserStepsScreen({super.key});
@@ -22,11 +50,6 @@ class UserStepsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Widget settingsButton = ElevatedButton(
-      onPressed: () => goback(ctx),
-      child: const Text("back"),
-    );
-
     Set<InputType> usersteps = {InputType.userStep};
     return Scaffold(
       appBar: AppBar(title: const Text('Pacing Points')),
@@ -41,7 +64,7 @@ class UserStepsScreen extends StatelessWidget {
               SizedBox(height: 50),
               UserStepsSliderProvider(),
               SizedBox(height: 50),
-              settingsButton,
+              UserStepsTable(),
             ],
           ),
         ),

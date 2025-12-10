@@ -23,8 +23,8 @@ class WayPointsTableState extends State<WayPointsTable> {
 
   @override
   Widget build(BuildContext context) {
-    WaypointsTableData model = Provider.of<WaypointsTableData>(context);  
-    var local = model.tableWaypoints();
+    WaypointsModel model = Provider.of<WaypointsModel>(context);
+    var local = model.all();
 
     developer.log("[WayPointsViewState] [build] #_waypoints=${local.length}");
 

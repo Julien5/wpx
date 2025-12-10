@@ -13,21 +13,17 @@ import 'segment_stack.dart';
 class RenderersProvider extends MultiProvider {
   final Renderers renderers;
 
-  RenderersProvider(
-    Renderers r,
-    WaypointsTableData d,
-    Widget child, {
-    super.key,
-  }) : renderers = r,
-       super(
-         providers: [
-           ChangeNotifierProvider.value(value: r.profileRenderer),
-           ChangeNotifierProvider.value(value: r.mapRenderer),
-           ChangeNotifierProvider.value(value: r.yaxisRenderer),
-           ChangeNotifierProvider.value(value: d),
-         ],
-         child: child,
-       );
+  RenderersProvider(Renderers r, WaypointsModel d, Widget child, {super.key})
+    : renderers = r,
+      super(
+        providers: [
+          ChangeNotifierProvider.value(value: r.profileRenderer),
+          ChangeNotifierProvider.value(value: r.mapRenderer),
+          ChangeNotifierProvider.value(value: r.yaxisRenderer),
+          ChangeNotifierProvider.value(value: d),
+        ],
+        child: child,
+      );
 }
 
 class SegmentsView extends StatefulWidget {
@@ -59,7 +55,7 @@ class _SegmentsViewState extends State<SegmentsView> {
     for (var segment in segments!) {
       var w = RenderersProvider(
         Renderers.make(rootModel.getBridge(), segment),
-        WaypointsTableData(brd: rootModel.getBridge(), segment: segment),
+        WaypointsModel(brd: rootModel.getBridge(), segment: segment),
         SegmentView(screenOrientation: screenOrientation),
       );
       ret.add(w);

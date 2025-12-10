@@ -177,10 +177,17 @@ impl BackendData {
         ret
     }
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
-        let mut points = segment.render_profile().rendered;
-        if points.iter().any(|w| w.kind() == InputType::GPX) {
-            points.retain(|w| kinds.contains(&w.kind()));
+        let mut points = Vec::new();
+        let segpoints = &segment.points;
+        for kind in &kinds {
+            match segpoints.get(kind) {
+                Some(kpoints) => {
+                    points.extend_from_slice(&kpoints);
+                }
+                None => {}
+            }
         }
+        log::trace!("export {} waypoints", points.len());
         self.export_points(&points)
     }
 
@@ -249,7 +256,7 @@ impl BackendData {
 
     pub fn trackSegment(&self) -> Segment {
         let start = 0f64;
-        let end = f64::MAX;
+        let end = self.track.total_distance();
         let range = self.track.segment(start, end);
         let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
         let ret = Segment::new(

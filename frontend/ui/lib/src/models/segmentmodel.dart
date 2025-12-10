@@ -37,4 +37,12 @@ class SegmentModel extends ChangeNotifier {
   bridge.SegmentStatistics statistics() {
     return _bridge.segmentStatistics(segment: _segment);
   }
+
+  List<bridge.Waypoint> allWaypoints() {
+    return _bridge.getWaypoints(segment: _segment, kinds: bridge.allkinds());
+  }
+
+  List<bridge.Waypoint> someWaypoints(Kinds kinds) {
+    return _bridge.getWaypoints(segment: _segment, kinds: kinds);
+  }
 }
