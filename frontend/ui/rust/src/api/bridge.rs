@@ -191,9 +191,9 @@ impl Bridge {
     pub async fn generateGpx(&mut self) -> Vec<u8> {
         self.backend.generateGpx()
     }
-    #[frb(sync)] //TODO: add segment parameter
-    pub fn get_waypoints(&mut self, segment: &Segment) -> Vec<Waypoint> {
-        self.backend.get_waypoints(&segment._impl)
+    #[frb(sync)]
+    pub fn get_waypoints(&mut self, segment: &Segment, kinds: HashSet<InputType>) -> Vec<Waypoint> {
+        self.backend.get_waypoints(&segment._impl, kinds)
     }
     #[frb(sync)]
     pub fn get_parameters(&mut self) -> Parameters {
@@ -216,11 +216,6 @@ impl Bridge {
     #[frb(sync)]
     pub fn get_user_step_options(&mut self, segment: &mut Segment) -> UserStepsOptions {
         segment._impl.get_user_step_options()
-    }
-
-    #[frb(sync)]
-    pub fn waypoints_table(&self, segment: &Segment) -> Vec<Waypoint> {
-        self.backend.get_waypoint_table(&segment._impl)
     }
 
     #[frb(sync)]

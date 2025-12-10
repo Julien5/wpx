@@ -118,11 +118,9 @@ impl Backend {
     ) -> String {
         self.dmut().render_segment_what(segment, what, size, kinds)
     }
-    pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
-        return self.d().get_waypoints(segment);
-    }
-    pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {
-        return self.d().get_waypoint_table(segment);
+
+    pub fn get_waypoints(&self, segment: &Segment, kinds: HashSet<InputType>) -> Vec<Waypoint> {
+        return self.d().get_waypoints(segment, kinds);
     }
 
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
@@ -179,10 +177,10 @@ impl BackendData {
         );
         ret
     }
-    pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
+    pub fn get_waypoints(&self, segment: &Segment, kinds: HashSet<InputType>) -> Vec<Waypoint> {
         let mut points = segment.render_profile().rendered;
         if points.iter().any(|w| w.kind() == InputType::GPX) {
-            points.retain(|w| w.kind() == InputType::GPX);
+            points.retain(|w| kinds.contains(&w.kind()));
         }
         self.export_points(&points)
     }
@@ -212,9 +210,6 @@ impl BackendData {
         }
     }
 
-    pub fn get_waypoint_table(&self, segment: &Segment) -> Vec<Waypoint> {
-        self.get_waypoints(segment)
-    }
     pub fn setStartTime(&mut self, rfc3339: String) {
         self.parameters.start_time = rfc3339;
     }
@@ -369,7 +364,7 @@ impl BackendData {
 
 #[cfg(test)]
 mod tests {
-    use crate::{backend::Backend, math::IntegerSize2D, wheel};
+    use crate::{backend::Backend, inputpoint, math::IntegerSize2D, wheel};
 
     #[tokio::test]
     async fn svg_profile() {
@@ -430,7 +425,7 @@ mod tests {
         } else {
             String::new()
         };
-        let model = wheel::model::WheelModel::make(&backend.trackSegment());
+        let model = wheel::model::WheelModel::make(&backend.trackSegment(), inputpoint::allkinds());
         let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
 
         let tmpfilename = std::format!("/tmp/segment-wheel.svg");

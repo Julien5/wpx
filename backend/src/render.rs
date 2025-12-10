@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::backend::BackendData;
-use crate::{track, waypoint};
+use crate::{inputpoint, track, waypoint};
 
 use std::str::FromStr;
 
@@ -104,7 +104,7 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
         if range.is_empty() {
             break;
         }
-        let mut waypoints_table = backend.get_waypoint_table(&segment);
+        let mut waypoints_table = backend.get_waypoints(&segment, inputpoint::allkinds());
         waypoints_table.truncate(15);
         log::trace!("segment: {}", segment.id);
         log::trace!("points table");

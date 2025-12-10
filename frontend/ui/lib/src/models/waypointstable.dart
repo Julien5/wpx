@@ -6,6 +6,6 @@ class WaypointsTableData with ChangeNotifier {
   bridge.Segment segment;
   WaypointsTableData({required this.brd, required this.segment});
   List<bridge.Waypoint> tableWaypoints() {
-    return brd.waypointsTable(segment: segment);
+    return brd.getWaypoints(segment: segment, kinds: bridge.allkinds());
   }
 }
