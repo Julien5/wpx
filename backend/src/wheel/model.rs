@@ -36,7 +36,7 @@ fn name(point: &InputPoint) -> String {
     }
 }
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 
 struct SectorClassifier {
     map: BTreeMap<usize, Vec<InputPoint>>,
@@ -145,30 +145,34 @@ fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
 }
 
 impl WheelModel {
-    pub fn make(segment: &Segment) -> WheelModel {
+    pub fn make(segment: &Segment, kinds: HashSet<InputType>) -> WheelModel {
         let mut control_points = Vec::new();
-        let track_distance_km = segment.track.total_distance() / 1000f64;
-        let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
-        for c in get_control_points(segment, n_controls) {
-            let cp = CirclePoint {
-                angle: angle(&c, &segment.track),
-                name: name(&c),
-            };
-            control_points.push(cp);
-        }
-        control_points.sort_by_key(|p| p.angle.floor() as i32);
-        for p in &control_points {
-            log::debug!("control:{} at {:.1}", p.name, p.angle);
+        if kinds.contains(&InputType::GPX) {
+            let track_distance_km = segment.track.total_distance() / 1000f64;
+            let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
+            for c in get_control_points(segment, n_controls) {
+                let cp = CirclePoint {
+                    angle: angle(&c, &segment.track),
+                    name: name(&c),
+                };
+                control_points.push(cp);
+            }
+            control_points.sort_by_key(|p| p.angle.floor() as i32);
+            for p in &control_points {
+                log::debug!("control:{} at {:.1}", p.name, p.angle);
+            }
         }
         let mut mid_points = Vec::new();
-        for c in get_mid_points(segment) {
-            let cp = CirclePoint {
-                angle: angle(&c, &segment.track),
-                name: name(&c),
-            };
-            mid_points.push(cp);
+        if kinds.contains(&InputType::UserStep) {
+            for c in get_mid_points(segment) {
+                let cp = CirclePoint {
+                    angle: angle(&c, &segment.track),
+                    name: name(&c),
+                };
+                mid_points.push(cp);
+            }
+            mid_points.sort_by_key(|p| p.angle.floor() as i32);
         }
-        mid_points.sort_by_key(|p| p.angle.floor() as i32);
         log::debug!("controls:{}", control_points.len());
         log::debug!("mids:{}", mid_points.len());
         WheelModel {

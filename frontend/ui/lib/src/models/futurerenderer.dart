@@ -10,6 +10,7 @@ class FutureRenderer with ChangeNotifier {
   final TrackData trackData;
   final bridge.Bridge _bridge;
   Size? size;
+  Set<bridge.InputType>? kinds;
 
   Future<String>? _future;
   String? _result;
@@ -20,6 +21,17 @@ class FutureRenderer with ChangeNotifier {
     required this.trackData,
   }) : _bridge = bridge {
     assert(_bridge.isLoaded());
+  }
+
+  void setKinds(Set<bridge.InputType> k) {
+    kinds = k;
+  }
+
+  Set<bridge.InputType> getKinds() {
+    if (kinds == null) {
+      return bridge.allkinds();
+    }
+    return kinds!;
   }
 
   void updateSegment(bridge.Segment newSegment) {
@@ -43,18 +55,21 @@ class FutureRenderer with ChangeNotifier {
         segment: segment,
         what: "profile",
         size: getSizeAsTuple(),
+        kinds: getKinds(),
       );
     } else if (trackData == TrackData.map) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "map",
         size: getSizeAsTuple(),
+        kinds: getKinds(),
       );
     } else if (trackData == TrackData.yaxis) {
       _future = _bridge.renderSegmentWhat(
         segment: segment,
         what: "ylabels",
         size: getSizeAsTuple(),
+        kinds: getKinds(),
       );
     } else if (trackData == TrackData.wheel) {
       log("[render-request-started:A]");
@@ -64,6 +79,7 @@ class FutureRenderer with ChangeNotifier {
         segment: segment,
         what: "wheel",
         size: getSizeAsTuple(),
+        kinds: getKinds(),
       );
       log("[render-request-started:C]");
     }
@@ -136,8 +152,13 @@ class MapRenderer extends FutureRenderer {
 }
 
 class WheelRenderer extends FutureRenderer {
-  WheelRenderer(bridge.Bridge bridge, bridge.Segment segment)
-    : super(bridge: bridge, segment: segment, trackData: TrackData.wheel);
+  WheelRenderer(
+    bridge.Bridge bridge,
+    bridge.Segment segment,
+    Set<bridge.InputType> kinds,
+  ) : super(bridge: bridge, segment: segment, trackData: TrackData.wheel) {
+    super.setKinds(kinds);
+  }
 }
 
 class Renderers {

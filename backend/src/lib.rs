@@ -5,7 +5,7 @@ mod elevation;
 pub mod error;
 pub mod gpsdata;
 mod gpxexport;
-mod inputpoint;
+pub mod inputpoint;
 mod label_placement;
 mod locate;
 mod make_points;

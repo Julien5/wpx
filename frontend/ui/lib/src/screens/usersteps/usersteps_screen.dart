@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart' show Bridge;
+import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
@@ -27,6 +27,7 @@ class UserStepsScreen extends StatelessWidget {
       child: const Text("back"),
     );
 
+    Set<InputType> usersteps = {InputType.userStep};
     return Scaffold(
       appBar: AppBar(title: const Text('Pacing Points')),
       body: Center(
@@ -36,7 +37,7 @@ class UserStepsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              WheelWidget(),
+              WheelWidget(kinds: usersteps),
               SizedBox(height: 50),
               UserStepsSliderProvider(),
               SizedBox(height: 50),

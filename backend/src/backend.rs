@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 
 use crate::error::Error;
 use crate::gpsdata;
@@ -113,8 +114,9 @@ impl Backend {
         segment: &Segment,
         what: &String,
         size: &IntegerSize2D,
+        kinds: HashSet<InputType>,
     ) -> String {
-        self.dmut().render_segment_what(segment, what, size)
+        self.dmut().render_segment_what(segment, what, size, kinds)
     }
     pub fn get_waypoints(&self, segment: &Segment) -> Vec<Waypoint> {
         return self.d().get_waypoints(segment);
@@ -273,6 +275,7 @@ impl BackendData {
         segment: &Segment,
         what: &String,
         size: &IntegerSize2D,
+        kinds: HashSet<InputType>,
     ) -> String {
         log::trace!(
             "start - render_segment_what:{} {} size:{}x{}",
@@ -285,7 +288,7 @@ impl BackendData {
             "profile" => segment.render_profile().svg,
             "ylabels" => self.render_yaxis_labels_overlay(segment),
             "wheel" => {
-                let model = wheel::model::WheelModel::make(&segment);
+                let model = wheel::model::WheelModel::make(&segment, kinds);
                 wheel::render(size, &model)
             }
             "map" => segment.render_map(size),

@@ -8,7 +8,7 @@ class SegmentModel extends ChangeNotifier {
 
   SegmentModel(bridge.Bridge bridge, bridge.Segment segment) {
     _bridge = bridge;
-    _segment=segment;
+    _segment = segment;
   }
 
   bridge.Segment segment() {
@@ -24,15 +24,15 @@ class SegmentModel extends ChangeNotifier {
   }
 
   void setUserStepsOptions(bridge.UserStepsOptions p) {
-    _bridge.setUserStepOptions(segment: _segment,userStepsOptions: p);
+    _bridge.setUserStepOptions(segment: _segment, userStepsOptions: p);
     notifyListeners();
   }
 
-  WheelRenderer createWheelRenderer() {
-    return WheelRenderer(_bridge,_segment);
-  } 
+  WheelRenderer createWheelRenderer(Set<bridge.InputType> kinds) {
+    return WheelRenderer(_bridge, _segment, kinds);
+  }
 
-   bridge.SegmentStatistics statistics() {
+  bridge.SegmentStatistics statistics() {
     return _bridge.segmentStatistics(segment: _segment);
   }
 }

@@ -4,12 +4,12 @@ import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
-import 'package:ui/src/rust/api/bridge.dart' show Bridge;
+import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/segments/future_rendering_widget.dart';
-import 'package:ui/src/widgets/userstepsslider.dart';
 
 class WheelWidget extends StatefulWidget {
-  const WheelWidget({super.key});
+  final Set<InputType> kinds;
+  const WheelWidget({super.key, required this.kinds});
   @override
   State<WheelWidget> createState() => _WheelWidgetState();
 }
@@ -20,7 +20,7 @@ class _WheelWidgetState extends State<WheelWidget> {
     SegmentModel model = Provider.of<SegmentModel>(context);
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        WheelRenderer wheelRenderer = model.createWheelRenderer();
+        WheelRenderer wheelRenderer = model.createWheelRenderer(widget.kinds);
         wheelRenderer.setSize(Size(250, 250));
         return FutureRenderingWidget(future: wheelRenderer, interactive: false);
       },
@@ -68,7 +68,7 @@ class WheelScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              WheelWidget(),
+              WheelWidget(kinds: allkinds()),
               vspace,
               userStepsButton,
               vspace,

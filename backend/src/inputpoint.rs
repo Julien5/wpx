@@ -1,5 +1,8 @@
 use core::fmt;
-use std::{collections::BTreeMap, str::FromStr};
+use std::{
+    collections::{BTreeMap, HashSet},
+    str::FromStr,
+};
 
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -23,11 +26,15 @@ pub enum OSMType {
     Hamlet,
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Clone, Hash)]
 pub enum InputType {
     GPX,
     OSM,
     UserStep,
+}
+
+pub fn allkinds() -> HashSet<InputType> {
+    HashSet::from([InputType::UserStep, InputType::GPX, InputType::OSM])
 }
 
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]

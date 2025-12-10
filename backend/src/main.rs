@@ -2,9 +2,9 @@
 
 use clap::Parser;
 use tracks::backend::Backend;
-use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::speed;
+use tracks::{error, inputpoint};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -44,6 +44,7 @@ fn main_test(backend: &mut Backend) -> Result<(), error::Error> {
         &segment,
         &"map".to_string(),
         &IntegerSize2D::new(1000, 1000),
+        inputpoint::allkinds(),
     );
     let duration = start.elapsed();
     log::info!("main_test took: {:.3?}", duration);
@@ -170,7 +171,12 @@ async fn main() -> Result<(), error::Error> {
             if enabled {
                 let track_segment = backend.trackSegment();
                 let size = IntegerSize2D::new(250, 250);
-                let svg = backend.render_segment_what(&track_segment, &"wheel".to_string(), &size);
+                let svg = backend.render_segment_what(
+                    &track_segment,
+                    &"wheel".to_string(),
+                    &size,
+                    inputpoint::allkinds(),
+                );
                 let filename = std::format!("/tmp/wheel.svg");
                 std::fs::write(&filename, svg.clone()).unwrap();
                 return Ok(());
