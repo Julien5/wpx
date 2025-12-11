@@ -16,7 +16,6 @@ pub use tracks::parameters::ProfileOptions;
 pub use tracks::parameters::UserStepsOptions;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
-pub use tracks::waypoint::WaypointOrigin;
 pub use tracks::wgs84point::WGS84Point;
 
 use tracks::math::IntegerSize2D;

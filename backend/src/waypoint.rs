@@ -2,13 +2,6 @@ use std::str::FromStr;
 
 use crate::{elevation, inputpoint::InputType, track, wgs84point::WGS84Point};
 
-#[derive(Clone, PartialEq)]
-pub enum WaypointOrigin {
-    GPX,
-    DouglasPeucker,
-    OpenStreetMap,
-}
-
 #[derive(Clone)]
 pub struct WaypointInfo {
     pub wgs84: WGS84Point,
