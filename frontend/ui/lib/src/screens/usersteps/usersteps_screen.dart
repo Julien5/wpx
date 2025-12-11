@@ -18,6 +18,16 @@ class UserStepsTable extends StatelessWidget {
     return NumberFormat('0').format(km); // '0' ensures no decimal precision
   }
 
+  String _formatSlope(double slope) {
+    // Assuming the 'distance' field in WaypointInfo is in meters.
+    // Convert meters to kilometers and round to the nearest integer.
+    final percent = slope * 100;
+    final n = NumberFormat(
+      '#0.0',
+    ).format(percent); // '0' ensures no decimal precision
+    return "$n%";
+  }
+
   // Helper function to format the time
   String _formatTime(String rfc3339Time) {
     try {
@@ -44,12 +54,17 @@ class UserStepsTable extends StatelessWidget {
             label: Text('Time', style: TextStyle(fontWeight: FontWeight.bold)),
             numeric: true,
           ),
+          DataColumn(
+            label: Text('Slope', style: TextStyle(fontWeight: FontWeight.bold)),
+            numeric: true,
+          ),
         ],
         // 2. Map Waypoints to Data Rows
         rows:
             waypoints.map((w) {
               final formattedDistance = _formatDistance(w.info!.distance);
               final formattedTime = _formatTime(w.info!.time);
+              final formattedSlope = _formatSlope(w.info!.interSlope);
 
               return DataRow(
                 cells: <DataCell>[
@@ -57,6 +72,7 @@ class UserStepsTable extends StatelessWidget {
                   DataCell(Text(formattedDistance)),
                   // Time Cell
                   DataCell(Text(formattedTime)),
+                  DataCell(Text(formattedSlope)),
                 ],
               );
             }).toList(),
