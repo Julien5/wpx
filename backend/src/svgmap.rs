@@ -145,7 +145,7 @@ impl MapData {
         }
 
         log::trace!("map: place labels");
-        let results = crate::label_placement::place_labels(
+        let (results, obstacles) = crate::label_placement::place_labels(
             &feature_packets,
             &*generator,
             &BoundingBox::minmax(
@@ -156,7 +156,7 @@ impl MapData {
             &segment.parameters.map_options.max_area_ratio,
         );
         log::trace!("map: apply placement");
-        let features = PlacementResult::apply(&results, &mut feature_packets);
+        let features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
         MapData {
             polyline,
             points: features,

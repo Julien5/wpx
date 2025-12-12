@@ -489,7 +489,7 @@ impl ProfileView {
         }
 
         log::trace!("profile: place labels");
-        let results = label_placement::place_labels(
+        let (results, obstacles) = label_placement::place_labels(
             &feature_packets,
             &*generator,
             &BoundingBox::minmax(
@@ -500,7 +500,7 @@ impl ProfileView {
             &self.options.max_area_ratio,
         );
         log::trace!("profile: apply placement");
-        let features = PlacementResult::apply(&results, &mut feature_packets);
+        let features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
         self.model = Some(ProfileModel {
             polylines: vec![polyline], // , polyline_dp
             points: features,
@@ -517,14 +517,15 @@ impl CandidatesGenerator for ProfileGenerator {
     fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
         match feature.input_point.as_ref().unwrap().kind() {
             InputType::OSM => self.generate_cardinal(feature),
-            InputType::UserStep => self.generate_header(feature, &(self.HD - 20f64)),
-            InputType::GPX => self.generate_header(feature, &5f64),
+            InputType::UserStep => self.generate_column(feature),
+            //InputType::UserStep => self.generate_header(feature, vec![25f64, self.HD - 20f64]),
+            InputType::GPX => self.generate_header(feature, vec![5f64]),
         }
     }
 }
 
 impl ProfileGenerator {
-    fn _generate_column(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn generate_column(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let target = feature.circle.center;
         let width = feature.width();
         let x = target.x - width / 2f64;
@@ -547,12 +548,16 @@ impl ProfileGenerator {
         ret
     }
 
-    fn generate_header(&self, feature: &PointFeature, y: &f64) -> Vec<LabelBoundingBox> {
+    fn generate_header(&self, feature: &PointFeature, ys: Vec<f64>) -> Vec<LabelBoundingBox> {
         let target = feature.circle.center;
         let width = feature.width();
         let x = target.x - width / 2f64;
-        let bbox1 = BoundingBox::minsize(Point2D::new(x, *y), &width, &feature.height());
-        vec![LabelBoundingBox::new_absolute(&bbox1, &target)]
+        let mut ret = Vec::new();
+        for y in ys {
+            let bbox = BoundingBox::minsize(Point2D::new(x, y), &width, &feature.height());
+            ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+        }
+        ret
     }
 
     fn generate_cardinal(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {

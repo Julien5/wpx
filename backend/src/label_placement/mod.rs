@@ -63,6 +63,7 @@ impl PlacementResult {
     // not clean: either packets should not immutable or we dont need a return value
     pub fn apply(
         results: &Vec<PlacementResult>,
+        obstacles: &Obstacles,
         packets: &mut Vec<PointFeatures>,
     ) -> Vec<PointFeature> {
         let mut ret = Vec::new();
@@ -76,7 +77,7 @@ impl PlacementResult {
                 if result.placed_indices.contains_key(&k) {
                     let bbox = result.placed_indices.get(&k).unwrap().clone();
                     feature.place_label(&bbox);
-                    // feature._make_link(&self.obstacles);
+                    feature._make_link(obstacles);
                     ret.push(feature.clone());
                 } else {
                     //log::trace!("could not place {}, index:{}", feature.text(), feature_id,);
@@ -158,7 +159,7 @@ pub fn place_labels(
     bbox: &BoundingBox,
     polyline: &Polyline,
     max_area_ratio: &f64,
-) -> Vec<PlacementResult> {
+) -> (Vec<PlacementResult>, Obstacles) {
     let mut ret = Vec::new();
     let mut obstacles = Obstacles {
         drawingbox: DrawingArea {
@@ -181,7 +182,7 @@ pub fn place_labels(
         ret.push(results);
     }
     assert_eq!(ret.len(), packets.len());
-    ret
+    (ret, obstacles)
 }
 
 fn make(bbox0: &BoundingBox, translation: &Point2D, center: &Point2D) -> LabelBoundingBox {
