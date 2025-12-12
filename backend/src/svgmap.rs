@@ -2,7 +2,6 @@
 
 use crate::backend::Segment;
 use crate::bbox::BoundingBox;
-use crate::label_placement::candidate::Candidates;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
@@ -39,16 +38,14 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
-use crate::label_placement::features::{
-    set_attr, Obstacles, PointFeatures, PolylinePoint, PolylinePoints,
-};
+use crate::label_placement::features::{set_attr, PointFeatures, PolylinePoint, PolylinePoints};
 use crate::label_placement::features::{Attributes, Polyline};
 use crate::label_placement::features::{Label, PointFeature};
 
 struct MapGenerator {}
 
-impl MapGenerator {
-    fn generate_one(feature: &PointFeature) -> Vec<LabelBoundingBox> {
+impl CandidatesGenerator for MapGenerator {
+    fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let mut ret =
             label_placement::cardinal_boxes(&feature.center(), &feature.width(), &feature.height());
         let width = feature.width();
@@ -62,12 +59,6 @@ impl MapGenerator {
             (distance2(&point.center(), &p) * 100f64).floor() as i64
         });*/
         ret
-    }
-}
-
-impl CandidatesGenerator for MapGenerator {
-    fn generate(&self, features: &PointFeatures, obstacles: &Obstacles) -> Vec<Candidates> {
-        label_placement::candidate::utils::generate(Self::generate_one, features, obstacles)
     }
 }
 

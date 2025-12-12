@@ -134,7 +134,7 @@ pub mod utils {
     }
 
     fn generate_all_candidates(
-        gen: fn(&PointFeature) -> Vec<LabelBoundingBox>,
+        gen: &dyn CandidatesGenerator,
         target: &PointFeature,
         all: &PointFeatures,
         obstacles: &Obstacles,
@@ -149,7 +149,7 @@ pub mod utils {
             //log::trace!("no place left for {}", target.text());
             return ret;
         }
-        for bbox in gen(target) {
+        for bbox in gen.gen(target) {
             let candidate = make_candidate(&bbox, &target, &all, obstacles);
             if hit(&candidate, obstacles) {
                 continue;
@@ -160,14 +160,14 @@ pub mod utils {
     }
 
     pub fn generate(
-        gen_one: fn(&PointFeature) -> Vec<LabelBoundingBox>,
+        gen: &dyn CandidatesGenerator,
         features: &PointFeatures,
         obstacles: &Obstacles,
     ) -> Vec<Candidates> {
         let mut ret = Vec::new();
         for k in 0..features.points.len() {
             let feature = &features.points[k];
-            let candidates = generate_all_candidates(gen_one, feature, features, obstacles);
+            let candidates = generate_all_candidates(gen, feature, features, obstacles);
             if candidates.is_empty() {
                 /*log::trace!(
                     "[0] [{}] => {} candidates",

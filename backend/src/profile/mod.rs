@@ -8,14 +8,13 @@ use crate::backend::Segment;
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
-use crate::inputpoint::InputPoint;
+use crate::inputpoint::{InputPoint, InputType};
 use crate::label_placement;
-use crate::label_placement::candidate::*;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::*;
-use crate::math::Point2D;
+use crate::math::{distance2, Point2D};
 use crate::parameters::{ProfileIndication, ProfileOptions};
 use crate::segment;
 use crate::track::Track;
@@ -41,9 +40,9 @@ pub struct ProfileView {
     Mleft: f64,
     Mbottom: f64,
     options: ProfileOptions,
-    BG: Group,
-    SL: Group,
-    SB: Group,
+    BG: Group, // bottom
+    SL: Group, // left, with the y axis, the ticks and the labels
+    SB: Group, // main group, with the diagram
     pub SD: Group,
     pub bboxdata: gpsdata::ProfileBoundingBox,
     pub bboxview: gpsdata::ProfileBoundingBox,
@@ -406,7 +405,7 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_track(&mut self, segment: &Segment) {
+    pub fn add_segment(&mut self, segment: &Segment) {
         let bbox = &self.bboxview;
 
         /*if render_device != RenderDevice::PDF {
@@ -448,8 +447,10 @@ impl ProfileView {
         );
         set_attr(&mut document, "width", format!("{}", self.WD()).as_str());
         set_attr(&mut document, "height", format!("{}", self.HD()).as_str());
-        let generator = Box::new(ProfileGenerator);
-        // make features packets
+        let generator = Box::new(ProfileGenerator {
+            _WD: self.WD(),
+            HD: self.HD(),
+        }); // make features packets
         let packets = label_placement::prioritize::profile(&segment);
         let mut feature_packets = Vec::new();
         let mut counter = 0;
@@ -507,10 +508,54 @@ impl ProfileView {
     }
 }
 
-struct ProfileGenerator;
+struct ProfileGenerator {
+    pub _WD: f64,
+    pub HD: f64,
+}
+
+impl CandidatesGenerator for ProfileGenerator {
+    fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+        match feature.input_point.as_ref().unwrap().kind() {
+            InputType::OSM => self.generate_cardinal(feature),
+            InputType::UserStep => self.generate_header(feature, &(self.HD - 20f64)),
+            InputType::GPX => self.generate_header(feature, &5f64),
+        }
+    }
+}
 
 impl ProfileGenerator {
-    fn generate_one(feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn _generate_column(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+        let target = feature.circle.center;
+        let width = feature.width();
+        let x = target.x - width / 2f64;
+        let little = 5f64;
+
+        let mut ret = Vec::new();
+        let mut y = little;
+        loop {
+            let bbox = BoundingBox::minsize(Point2D::new(x, y), &width, &feature.height());
+            if bbox.get_ymax() > self.HD {
+                break;
+            }
+            y += little;
+            ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+        }
+        ret.sort_by_key(|bbox| {
+            let p = bbox.absolute().project_on_border(&target);
+            (distance2(&target, &p) * 100f64).floor() as i64
+        });
+        ret
+    }
+
+    fn generate_header(&self, feature: &PointFeature, y: &f64) -> Vec<LabelBoundingBox> {
+        let target = feature.circle.center;
+        let width = feature.width();
+        let x = target.x - width / 2f64;
+        let bbox1 = BoundingBox::minsize(Point2D::new(x, *y), &width, &feature.height());
+        vec![LabelBoundingBox::new_absolute(&bbox1, &target)]
+    }
+
+    fn generate_cardinal(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let mut ret = Vec::new();
         assert!(feature.input_point().is_some());
 
@@ -566,12 +611,6 @@ impl ProfileGenerator {
     }
 }
 
-impl CandidatesGenerator for ProfileGenerator {
-    fn generate(&self, features: &PointFeatures, obstacles: &Obstacles) -> Vec<Candidates> {
-        label_placement::candidate::utils::generate(Self::generate_one, features, obstacles)
-    }
-}
-
 pub struct ProfileRenderResult {
     pub svg: String,
     pub rendered: Vec<InputPoint>,
@@ -581,7 +620,7 @@ pub fn profile(segment: &segment::Segment) -> ProfileRenderResult {
     let profile_bbox = ProfileBoundingBox::from_track(&segment.track, &segment.start, &segment.end);
     let mut view = ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
     view.add_canvas();
-    view.add_track(&segment);
+    view.add_segment(&segment);
     view.render_model();
     view.render()
 }

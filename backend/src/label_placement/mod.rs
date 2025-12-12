@@ -20,7 +20,7 @@ use graph::Graph;
 use std::collections::BTreeMap;
 
 pub trait CandidatesGenerator {
-    fn generate(&self, features: &PointFeatures, obstacles: &Obstacles) -> Vec<Candidates>;
+    fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox>;
 }
 
 fn build_graph(
@@ -29,7 +29,7 @@ fn build_graph(
     obstacles: &Obstacles,
 ) -> Graph {
     let mut ret = Graph::new(obstacles.drawingbox.bbox.clone());
-    let candidates = gen.generate(&features, obstacles);
+    let candidates = candidate::utils::generate(gen, features, obstacles);
     // since the graph is undirected, we could probably speed up
     // edge computation. TODO: use petgraph.
     for k in 0..features.points.len() {
@@ -76,7 +76,7 @@ impl PlacementResult {
                 if result.placed_indices.contains_key(&k) {
                     let bbox = result.placed_indices.get(&k).unwrap().clone();
                     feature.place_label(&bbox);
-                    //feature.make_link(&self.obstacles);
+                    // feature._make_link(&self.obstacles);
                     ret.push(feature.clone());
                 } else {
                     //log::trace!("could not place {}, index:{}", feature.text(), feature_id,);

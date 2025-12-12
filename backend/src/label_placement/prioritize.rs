@@ -102,7 +102,7 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     sort_by_population(&mut cities);
     let cities_and_mountains = merge_flip_flop(&cities, &mountains);
     sort_by_population(&mut villages);
-    vec![gpx, user1, cities_and_mountains, villages, osmrest]
+    vec![gpx, user1, cities_and_mountains, user2, villages, osmrest]
 }
 
 pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {

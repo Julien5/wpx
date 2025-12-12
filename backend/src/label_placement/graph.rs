@@ -178,8 +178,8 @@ impl Graph {
         self.remove_node(a);
     }
     pub fn max_node(&self) -> Node {
-        *self.ordered_nodes.first().unwrap()
-        /*assert!(!self.map.is_empty());
+        /*self.ordered_nodes.first().unwrap()*/
+        /*assert!(!self.map.is_empty());*/
         let node = *self
             .map
             .iter()
@@ -187,7 +187,7 @@ impl Graph {
             .max_by_key(|(_node, len)| *len)
             .unwrap()
             .0;
-        node*/
+        node
     }
 
     fn candidate_blocks_other(&self, node: &Node, candidate_index: usize, other: &Node) -> bool {
