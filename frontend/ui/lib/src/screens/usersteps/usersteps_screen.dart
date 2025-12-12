@@ -1,99 +1,59 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
+import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
-class UserStepsTable extends StatelessWidget {
-  const UserStepsTable({super.key});
+class ButtonWidget extends StatelessWidget {
+  const ButtonWidget({super.key});
 
-  String _formatDistance(double distance) {
-    final km = distance / 1000.0;
-    return NumberFormat('0.0').format(km);
-  }
-
-  String _formatSlope(double slope) {
-    final percent = slope * 100;
-    final n = NumberFormat('#0.0').format(percent);
-    return "$n%";
-  }
-
-  String _formatTime(String rfc3339Time) {
-    final dateTime = DateTime.parse(rfc3339Time).toLocal();
-    return DateFormat('HH:mm').format(dateTime);
-  }
-
-  Widget buildData(List<Waypoint> waypoints) {
-    if (waypoints.isEmpty) {
-      return Center(child: const Text("No waypoints"));
-    }
-    return DataTable(
-      // 1. Define the Columns
-      columns: const <DataColumn>[
-        DataColumn(
-          label: Text('km', style: TextStyle(fontWeight: FontWeight.bold)),
-          numeric: true,
-        ),
-        DataColumn(
-          label: Text('Time', style: TextStyle(fontWeight: FontWeight.bold)),
-          numeric: true,
-        ),
-        DataColumn(
-          label: Text('Slope', style: TextStyle(fontWeight: FontWeight.bold)),
-          numeric: true,
-        ),
-      ],
-      // 2. Map Waypoints to Data Rows
-      rows:
-          waypoints.map((w) {
-            final formattedDistance = _formatDistance(w.info!.distance);
-            final formattedTime = _formatTime(w.info!.time);
-            final formattedSlope = _formatSlope(w.info!.interSlope);
-
-            return DataRow(
-              cells: <DataCell>[
-                // Distance Cell
-                DataCell(Text(formattedDistance)),
-                // Time Cell
-                DataCell(Text(formattedTime)),
-                DataCell(Text(formattedSlope)),
-              ],
-            );
-          }).toList(),
-    );
+  void gotoTable(BuildContext context) {
+    SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
+    Navigator.of(
+      context,
+    ).pushNamed(RouteManager.userStepsTable, arguments: model);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SegmentModel>(
-      builder: (context, model, child) {
-        Set<InputType> usersteps = {InputType.userStep};
-        var waypoints = model.someWaypoints(usersteps);
-        return SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: buildData(waypoints),
-        );
-      },
+    Widget tableButton = ElevatedButton(
+      onPressed: () => gotoTable(context),
+      child: const Text("Table"),
     );
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [SizedBox(height: 10), tableButton, SizedBox(height: 10)],
+    );
+  }
+}
+
+class TextWidget extends StatelessWidget {
+  const TextWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    Set<InputType> usersteps = {InputType.userStep};
+    SegmentModel model = Provider.of<SegmentModel>(context);
+    List<Waypoint> waypoints = model.someWaypoints(usersteps);
+    String text =
+        waypoints.isEmpty ? "no waypoints" : "${waypoints.length} waypoints";
+    return Center(child: Text(text));
   }
 }
 
 class UserStepsScreen extends StatelessWidget {
   const UserStepsScreen({super.key});
 
-  Widget wait() {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Segments')),
-      body: Center(child: Column(children: [Text("loading...")])),
-    );
-  }
-
   @override
   Widget build(BuildContext ctx) {
     Set<InputType> usersteps = {InputType.userStep};
+
     return Scaffold(
       appBar: AppBar(title: const Text('Pacing Points')),
       body: Center(
@@ -104,18 +64,12 @@ class UserStepsScreen extends StatelessWidget {
             WheelWidget(kinds: usersteps),
             Divider(),
             SizedBox(height: 10),
+            TextWidget(),
+            SizedBox(height: 10),
             UserStepsSliderProvider(),
             SizedBox(height: 10),
             Divider(),
-            Expanded(
-              child: Card(
-                elevation: 4, // Add shadow to the card
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8), // Rounded corners
-                ),
-                child: UserStepsTable(),
-              ),
-            ),
+            ButtonWidget(),
           ],
         ),
       ),
@@ -132,7 +86,7 @@ class UserStepsProvider extends StatelessWidget {
     Bridge bridge = root.getBridge();
     assert(bridge.isLoaded());
     return ChangeNotifierProvider(
-      create: (ctx) => SegmentModel(bridge, root.trackSegment()),
+      create: (context) => SegmentModel(bridge, root.trackSegment()),
       builder: (context, child) {
         return UserStepsScreen();
       },

@@ -4,6 +4,7 @@ import 'package:ui/src/screens/export/export_screen.dart';
 import 'package:ui/src/screens/interactive/interactive_screen.dart';
 import 'package:ui/src/screens/segments/segments_screen.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
+import 'package:ui/src/screens/usersteps/usersteps_table.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
 import 'screens/usersteps/usersteps_screen.dart';
@@ -15,6 +16,7 @@ class RouteManager {
   static const String segmentsView = '/segments';
   static const String exportView = '/export';
   static const String userStepsView = '/usersteps';
+  static const String userStepsTable = '/usersteps/table';
   static const String interactiveView = '/interactive';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -39,6 +41,12 @@ class RouteManager {
 
       case userStepsView:
         return MaterialPageRoute(builder: (_) => UserStepsProvider());
+
+      case userStepsTable:
+        return MaterialPageRoute(
+          builder: (_) => UserStepsTableScreen(),
+          settings: settings,
+        );
 
       default:
         return MaterialPageRoute(
