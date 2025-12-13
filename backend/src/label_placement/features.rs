@@ -64,6 +64,7 @@ pub struct Label {
     pub id: String,
     pub bbox: LabelBoundingBox,
     pub text: String,
+    _placed: bool, //ugly
 }
 
 impl Label {
@@ -72,7 +73,12 @@ impl Label {
             id: String::new(),
             bbox: LabelBoundingBox::zero(),
             text: String::new(),
+            _placed: false,
         }
+    }
+
+    pub fn placed(&self) -> bool {
+        self._placed
     }
 
     pub fn set_text(&mut self, s: &str) {
@@ -125,6 +131,7 @@ impl PointFeature {
         debug_assert!(math::nearly_equal(self.label.bbox.height(), bbox.height()));
         debug_assert!(math::nearly_equal(self.label.bbox.width(), bbox.width()));
         self.label.bbox = bbox.clone();
+        self.label._placed = true;
     }
     pub fn width(&self) -> f64 {
         self.label.bbox.width()
@@ -186,28 +193,30 @@ impl PointFeature {
         sd_group.append(self.circle.group.clone());
         let text = format!("{}", self.text());
 
-        let mut subgroup = svg::node::element::Group::new();
+        if self.label.placed() {
+            let mut subgroup = svg::node::element::Group::new();
 
-        let mut label = svg::node::element::Text::new(text);
-        let center = &self.circle.center;
-        subgroup = subgroup.set("transform", format!("translate({} {})", center.x, center.y));
-        for (k, v) in self.label.to_attributes() {
-            label = label.set(k, v);
-        }
-        let mut whitebg = svg::node::element::Rectangle::new();
-        let margin = 2f64;
-        whitebg = whitebg.set("x", self.label.bbox.relative().get_xmin() + margin);
-        whitebg = whitebg.set("y", self.label.bbox.relative().get_ymin() + margin);
-        whitebg = whitebg.set("width", self.label.bbox.relative().width() - 2.0 * margin);
-        whitebg = whitebg.set("height", self.label.bbox.relative().height() - 2.0 * margin);
-        whitebg = whitebg.set("fill", "white");
-        whitebg = whitebg.set("fill-opacity", "0.75");
-        whitebg = whitebg.set("id", "label-bg");
-        subgroup.append(whitebg);
-        subgroup.append(label);
-        sd_group.append(subgroup);
-        if self.link.is_some() {
-            sd_group.append(self.link.as_ref().unwrap().clone());
+            let mut label = svg::node::element::Text::new(text);
+            let center = &self.circle.center;
+            subgroup = subgroup.set("transform", format!("translate({} {})", center.x, center.y));
+            for (k, v) in self.label.to_attributes() {
+                label = label.set(k, v);
+            }
+            let mut whitebg = svg::node::element::Rectangle::new();
+            let margin = 2f64;
+            whitebg = whitebg.set("x", self.label.bbox.relative().get_xmin() + margin);
+            whitebg = whitebg.set("y", self.label.bbox.relative().get_ymin() + margin);
+            whitebg = whitebg.set("width", self.label.bbox.relative().width() - 2.0 * margin);
+            whitebg = whitebg.set("height", self.label.bbox.relative().height() - 2.0 * margin);
+            whitebg = whitebg.set("fill", "white");
+            whitebg = whitebg.set("fill-opacity", "0.75");
+            whitebg = whitebg.set("id", "label-bg");
+            subgroup.append(whitebg);
+            subgroup.append(label);
+            sd_group.append(subgroup);
+            if self.link.is_some() {
+                sd_group.append(self.link.as_ref().unwrap().clone());
+            }
         }
     }
 }

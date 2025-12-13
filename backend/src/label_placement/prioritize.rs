@@ -58,8 +58,13 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
 
     match segment.points.get(&InputType::UserStep) {
         Some(points) => {
-            for wi in points {
-                if wi.name().unwrap_or("".to_string()).ends_with("0") {
+            for k in 0..points.len() {
+                let wi = &points[k];
+                let index = wi.track_projection.as_ref().unwrap().track_index;
+                if !segment.range().contains(&index) {
+                    continue;
+                }
+                if k % 5 == 0 {
                     user1.push(wi);
                 } else {
                     user2.push(wi);
@@ -110,8 +115,9 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     let gpx = &profile_points.get(0).unwrap();
     let user1 = &profile_points.get(1).unwrap();
     let mountains_and_cities = &profile_points.get(2).unwrap();
-    let villages = &profile_points.get(3).unwrap();
-    let osmrest = &profile_points.get(4).unwrap();
+    let user2 = &profile_points.get(3).unwrap();
+    let villages = &profile_points.get(4).unwrap();
+    let osmrest = &profile_points.get(5).unwrap();
     let mut offtrack_cities = Vec::new();
     let osmpoints = segment.osmpoints();
     for w in osmpoints {
@@ -128,7 +134,7 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     }
     sort_by_distance_to_track(&mut offtrack_cities);
     //sort_by_population(&mut offtrack_cities);
-    let villages_and_far_cities = merge_flip_flop(&offtrack_cities, &villages);
+    let mut villages_and_far_cities = merge_flip_flop(&offtrack_cities, &villages);
     for w in &villages_and_far_cities {
         log::trace!("ret-offtrack city:{}", w.name().unwrap());
     }
@@ -137,6 +143,7 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
         (*user1).clone(),
         (*mountains_and_cities).clone(),
         villages_and_far_cities,
+        (*user2).clone(),
         (*osmrest).clone(),
     ]
 }

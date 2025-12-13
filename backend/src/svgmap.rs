@@ -121,18 +121,11 @@ impl MapData {
                 let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
                 let k = counter;
                 counter += 1;
-                let id = format!("wp-circle/{}", k);
+                let id = format!("{}/wp/circle", k);
                 let circle = draw_for_map(&p, id.as_str(), &w);
                 let mut label = Label::new();
-                match w.short_name() {
-                    Some(text) => {
-                        label.set_text(text.clone().trim());
-                    }
-                    None => {
-                        log::error!("should not render a point without name");
-                    }
-                }
-                label.id = format!("wp-text/{}", k);
+                label.set_text(&drawings::make_label_text(w, segment));
+                label.id = format!("{}/wp/text", k);
                 feature_packet.push(PointFeature {
                     circle,
                     label,
@@ -208,7 +201,7 @@ mod tests {
     use super::MapGenerator;
     use crate::{
         bbox::BoundingBox,
-        label_placement::{features::*, labelboundingbox::LabelBoundingBox},
+        label_placement::{features::*, labelboundingbox::LabelBoundingBox, CandidatesGenerator},
         math::Point2D,
     };
 
@@ -232,7 +225,7 @@ mod tests {
             link: None,
             xmlid: 0,
         };
-        let candidates = MapGenerator::generate_one(&target);
+        let candidates = MapGenerator {}.gen(&target);
         let mut found = false;
         assert!(!candidates.is_empty());
         for c in candidates {

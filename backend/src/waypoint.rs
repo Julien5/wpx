@@ -1,5 +1,6 @@
 use crate::{
-    elevation, inputpoint::InputType, mercator::MercatorPoint, track, wgs84point::WGS84Point,
+    elevation, inputpoint::InputType, mercator::MercatorPoint, parameters::Parameters, speed,
+    track, wgs84point::WGS84Point,
 };
 
 #[derive(Clone)]
@@ -66,20 +67,11 @@ impl Waypoint {
     }
 }
 
-type DateTime = crate::mercator::DateTime;
-
-fn waypoint_time(start_time: DateTime, distance: &f64, speed: &f64) -> DateTime {
-    let dt = (distance / speed).ceil() as i64;
-    let delta = chrono::TimeDelta::new(dt, 0).unwrap();
-    start_time + delta
-}
-
 impl WaypointInfo {
     fn create_waypoint_info(
         track: &track::Track,
         smooth: &Vec<f64>,
-        start_time: &String,
-        speed: &f64,
+        parameters: &Parameters,
         w: &Waypoint,
         wprev: Option<&Waypoint>,
     ) -> WaypointInfo {
@@ -99,9 +91,7 @@ impl WaypointInfo {
                 (dx, dy, slope)
             }
         };
-        use chrono::*;
-        let start_time: DateTime<Utc> = start_time.parse().unwrap();
-        let time = waypoint_time(start_time, &distance, speed);
+        let time = speed::time_at_distance(&distance, parameters);
         let name = match &w.name {
             None => String::new(),
             Some(n) => n.clone(),
@@ -130,8 +120,7 @@ impl WaypointInfo {
     pub fn make_waypoint_infos(
         waypoints: &mut Waypoints,
         track: &track::Track,
-        start_time: &String,
-        speed: &f64,
+        parameters: &Parameters,
     ) {
         waypoints.sort_by_key(|w| w.get_track_index());
         let mut infos = Vec::new();
@@ -141,14 +130,8 @@ impl WaypointInfo {
                 0 => None,
                 _ => Some(&waypoints[k - 1]),
             };
-            let step = Self::create_waypoint_info(
-                track,
-                &track.smooth_elevation,
-                start_time,
-                speed,
-                w,
-                wprev,
-            );
+            let step =
+                Self::create_waypoint_info(track, &track.smooth_elevation, parameters, w, wprev);
             infos.push(step.clone());
         }
         for k in 0..waypoints.len() {

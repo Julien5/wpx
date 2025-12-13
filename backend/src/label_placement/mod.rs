@@ -9,6 +9,7 @@ mod stroke;
 
 use super::label_placement::features::*;
 use crate::bbox::BoundingBox;
+use crate::inputpoint::InputType;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::math::distance2;
 use crate::math::Point2D;
@@ -68,19 +69,20 @@ impl PlacementResult {
     ) -> Vec<PointFeature> {
         let mut ret = Vec::new();
         assert_eq!(results.len(), packets.len());
-        for k in 0..results.len() {
-            let result = &results[k];
-            let packet = &mut packets[k];
-            //for feature in &mut packet.points {
-            for k in 0..packet.points.len() {
-                let feature = &mut packet.points[k];
-                if result.placed_indices.contains_key(&k) {
-                    let bbox = result.placed_indices.get(&k).unwrap().clone();
+        for kr in 0..results.len() {
+            let result = &results[kr];
+            let packet = &mut packets[kr];
+            for kp in 0..packet.points.len() {
+                let feature = &mut packet.points[kp];
+                if result.placed_indices.contains_key(&kp) {
+                    let bbox = result.placed_indices.get(&kp).unwrap().clone();
                     feature.place_label(&bbox);
                     feature._make_link(obstacles);
                     ret.push(feature.clone());
                 } else {
-                    //log::trace!("could not place {}, index:{}", feature.text(), feature_id,);
+                    if feature.input_point.as_ref().unwrap().kind() != InputType::OSM {
+                        ret.push(feature.clone());
+                    }
                 }
             }
         }

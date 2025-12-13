@@ -449,7 +449,7 @@ impl ProfileView {
         set_attr(&mut document, "height", format!("{}", self.HD()).as_str());
         let generator = Box::new(ProfileGenerator {
             _WD: self.WD(),
-            HD: self.HD(),
+            _HD: self.HD(),
         }); // make features packets
         let packets = label_placement::prioritize::profile(&segment);
         let mut feature_packets = Vec::new();
@@ -465,18 +465,13 @@ impl ProfileView {
                 let g = self.toSD(&p);
                 let k = counter;
                 counter += 1;
-                let id = format!("wp/{}", k);
+                let id = format!("{}/wp", k);
                 let circle = draw_for_profile(&g, id.as_str(), &w);
                 let mut label = label_placement::features::Label::new();
-                match w.short_name() {
-                    Some(name) => {
-                        label.set_text(name.clone().trim());
-                        label.id = format!("wp-{}/text", k);
-                    }
-                    None => {
-                        log::debug!("missing name for point {:?}", w);
-                    }
-                }
+                //assert!(label.unplaced());
+                label.set_text(&drawings::make_label_text(w, segment));
+                label.id = format!("{}/wp/text", k);
+                //assert!(label.unplaced());
                 feature_packet.push(PointFeature {
                     circle,
                     label,
@@ -510,22 +505,23 @@ impl ProfileView {
 
 struct ProfileGenerator {
     pub _WD: f64,
-    pub HD: f64,
+    pub _HD: f64,
 }
 
 impl CandidatesGenerator for ProfileGenerator {
     fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
         match feature.input_point.as_ref().unwrap().kind() {
-            InputType::OSM => self.generate_cardinal(feature),
-            InputType::UserStep => self.generate_column(feature),
+            InputType::OSM => self.cardinal(feature),
+            InputType::UserStep => self.extended_cardinal(feature),
+            //InputType::UserStep => self.generate_column(feature),
             //InputType::UserStep => self.generate_header(feature, vec![25f64, self.HD - 20f64]),
-            InputType::GPX => self.generate_header(feature, vec![5f64]),
+            InputType::GPX => self.header(feature, vec![5f64]),
         }
     }
 }
 
 impl ProfileGenerator {
-    fn generate_column(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn _generate_column(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let target = feature.circle.center;
         let width = feature.width();
         let x = target.x - width / 2f64;
@@ -535,7 +531,7 @@ impl ProfileGenerator {
         let mut y = little;
         loop {
             let bbox = BoundingBox::minsize(Point2D::new(x, y), &width, &feature.height());
-            if bbox.get_ymax() > self.HD {
+            if bbox.get_ymax() > self._HD {
                 break;
             }
             y += little;
@@ -548,7 +544,7 @@ impl ProfileGenerator {
         ret
     }
 
-    fn generate_header(&self, feature: &PointFeature, ys: Vec<f64>) -> Vec<LabelBoundingBox> {
+    fn header(&self, feature: &PointFeature, ys: Vec<f64>) -> Vec<LabelBoundingBox> {
         let target = feature.circle.center;
         let width = feature.width();
         let x = target.x - width / 2f64;
@@ -560,7 +556,19 @@ impl ProfileGenerator {
         ret
     }
 
-    fn generate_cardinal(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn cardinal(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+        let mut ret = Vec::new();
+        assert!(feature.input_point().is_some());
+
+        ret.extend_from_slice(&label_placement::cardinal_boxes(
+            &feature.center(),
+            &feature.width(),
+            &feature.height(),
+        ));
+        ret
+    }
+
+    fn extended_cardinal(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let mut ret = Vec::new();
         assert!(feature.input_point().is_some());
 

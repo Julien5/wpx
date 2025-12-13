@@ -168,12 +168,7 @@ impl BackendData {
         for p in points {
             ret.push(p.waypoint());
         }
-        WaypointInfo::make_waypoint_infos(
-            &mut ret,
-            &self.track,
-            &self.parameters.start_time,
-            &self.parameters.speed,
-        );
+        WaypointInfo::make_waypoint_infos(&mut ret, &self.track, &self.parameters);
         ret
     }
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
@@ -182,7 +177,11 @@ impl BackendData {
         for kind in &kinds {
             match segpoints.get(kind) {
                 Some(kpoints) => {
-                    points.extend_from_slice(&kpoints);
+                    let mut copy = kpoints.clone();
+                    copy.retain(|w| {
+                        w.kind() != InputType::OSM && make_points::is_close_to_track(w)
+                    });
+                    points.extend_from_slice(&copy);
                 }
                 None => {}
             }
@@ -201,7 +200,7 @@ impl BackendData {
         self.inputpoints
             .maps
             .insert(InputType::UserStep, InputPointMap::new());
-        // remove old user points
+        // update user points
         match self.inputpoints.maps.get_mut(&InputType::UserStep) {
             Some(user_steps_map) => {
                 user_steps_map.clear();
@@ -371,6 +370,7 @@ impl BackendData {
 #[cfg(test)]
 mod tests {
     use crate::{backend::Backend, inputpoint, math::IntegerSize2D, wheel};
+    static START_TIME: &'static str = "1985-04-12T08:05:00.00Z";
 
     #[tokio::test]
     async fn svg_profile() {
@@ -385,9 +385,10 @@ mod tests {
             .expect("fail");
 
         let mut parameters = backend.get_parameters();
+        parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
         parameters.profile_options.size = (1420, 400);
-        parameters.profile_options.max_area_ratio = 0.025;
+        parameters.profile_options.max_area_ratio = 1f64;
         backend.set_parameters(&parameters);
 
         let segments = backend.segments();
@@ -423,6 +424,7 @@ mod tests {
             .await
             .expect("fail");
         let mut parameters = backend.get_parameters();
+        parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((3_000) as f64);
         backend.set_parameters(&parameters);
         let reffilename = std::format!("data/ref/segment-wheel.svg");
@@ -450,8 +452,9 @@ mod tests {
             .await
             .expect("fail");
         let mut parameters = backend.get_parameters();
+        parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        parameters.map_options.max_area_ratio = 0.15;
+        parameters.map_options.max_area_ratio = 1f64;
         backend.set_parameters(&parameters);
 
         let segments = backend.segments();

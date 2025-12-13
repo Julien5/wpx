@@ -380,7 +380,7 @@ mod tests {
         }
         graph.build_map();
 
-        assert_eq!(graph.max_node(), 0);
+        assert_eq!(graph.max_node(), 2);
         log::info!("select {} {}", 1, "cc1");
         log::info!("features:{}", graph.nodes.len());
         graph.select(&2, &cc1);

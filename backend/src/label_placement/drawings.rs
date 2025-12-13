@@ -1,8 +1,35 @@
 use crate::{
+    backend::Segment,
     inputpoint::{InputPoint, InputType, OSMType},
     label_placement::features::PointFeatureDrawing,
     math::Point2D,
+    speed,
 };
+
+pub fn make_label_text(w: &InputPoint, segment: &Segment) -> String {
+    let index = w.round_track_index().unwrap();
+    let track = &segment.track;
+    let t = speed::time_at_distance(&track.distance(index), &segment.parameters);
+    let timestr = format!("{}", t.format("%H:%M"));
+    match w.kind() {
+        InputType::UserStep => {
+            return timestr;
+        }
+        InputType::GPX => {
+            let short = w.short_name().unwrap_or("".to_string());
+            return format!("{} ({})", short, timestr);
+        }
+        _ => match w.short_name() {
+            Some(name) => {
+                return name.clone().trim().to_string();
+            }
+            None => {
+                log::debug!("missing name for point {:?}", w);
+            }
+        },
+    }
+    String::new()
+}
 
 fn make_circle(
     center: &Point2D,
