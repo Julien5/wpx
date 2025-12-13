@@ -1,5 +1,6 @@
 use crate::{
     inputpoint::{InputPoint, InputType, OSMType},
+    label_placement::drawings,
     make_points::is_close_to_track,
     segment::Segment,
 };
@@ -55,15 +56,26 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     let mut mountains = Vec::new();
     let mut villages = Vec::new();
     let mut osmrest = Vec::new();
-
+    let trackrange = segment.range();
     match segment.points.get(&InputType::UserStep) {
         Some(points) => {
             for k in 0..points.len() {
                 let wi = &points[k];
                 let index = wi.track_projection.as_ref().unwrap().track_index;
-                if !segment.range().contains(&index) {
+                if !trackrange.contains(&index) {
                     continue;
                 }
+                assert!(is_close_to_track(wi));
+                let d = wi.track_projection.as_ref().unwrap().track_distance;
+                log::debug!(
+                    "segid:{} p: track_distance:{} index:{} text:{}",
+                    segment.id,
+                    d,
+                    wi.round_track_index().unwrap(),
+                    drawings::make_label_text(wi, segment)
+                );
+                assert_eq!(wi.kind(), InputType::UserStep);
+                assert_eq!(d, 0f64);
                 if k % 5 == 0 {
                     user1.push(wi);
                 } else {
@@ -134,7 +146,7 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     }
     sort_by_distance_to_track(&mut offtrack_cities);
     //sort_by_population(&mut offtrack_cities);
-    let mut villages_and_far_cities = merge_flip_flop(&offtrack_cities, &villages);
+    let villages_and_far_cities = merge_flip_flop(&offtrack_cities, &villages);
     for w in &villages_and_far_cities {
         log::trace!("ret-offtrack city:{}", w.name().unwrap());
     }

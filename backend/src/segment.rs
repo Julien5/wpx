@@ -132,6 +132,13 @@ impl Segment {
         tracktree: &locate::IndexedPointsTree,
         point: &mut InputPoint,
     ) {
+        // user steps projection on track is unique...
+        if point.kind() == InputType::UserStep {
+            assert!(point.track_projection.is_some());
+            return;
+        }
+        // as opposed to GPX and OSM points, which may be on several segments
+        assert!(!point.track_projection.is_some());
         let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
         let (index1, index2) = Self::two_closest_index(track, &index, point);
         let p1 = &track.euclidian[index1];
@@ -155,14 +162,14 @@ impl Segment {
         let di = point.euclidean.d2(&track.euclidian[index]);
         let df = point.euclidean.d2(&euclidean);
         debug_assert!(df <= di);
-
-        point.track_projection = Some(TrackProjection {
+        let new_proj = TrackProjection {
             track_floating_index: floating_index,
             track_index: index1,
             euclidean,
             elevation,
             track_distance,
-        });
+        };
+        point.track_projection = Some(new_proj);
     }
 
     fn copy_segment_points(
