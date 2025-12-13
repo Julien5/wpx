@@ -276,6 +276,7 @@ impl InputPoint {
     pub fn waypoint(&self) -> Waypoint {
         Waypoint {
             wgs84: self.wgs84.clone(),
+            euclidean: self.euclidean.clone(),
             track_index: self.round_track_index(),
             name: self.name().clone(),
             description: None,

@@ -1,10 +1,9 @@
-use std::str::FromStr;
-
-use crate::{elevation, inputpoint::InputType, track, wgs84point::WGS84Point};
+use crate::{
+    elevation, inputpoint::InputType, mercator::MercatorPoint, track, wgs84point::WGS84Point,
+};
 
 #[derive(Clone)]
 pub struct WaypointInfo {
-    pub wgs84: WGS84Point,
     pub origin: InputType,
     pub distance: f64,
     pub elevation: f64,
@@ -35,6 +34,7 @@ impl WaypointInfo {
 #[derive(Clone)]
 pub struct Waypoint {
     pub wgs84: WGS84Point,
+    pub euclidean: MercatorPoint,
     pub track_index: Option<usize>,
     pub origin: InputType,
     pub name: Option<String>,
@@ -44,43 +44,16 @@ pub struct Waypoint {
 
 pub type Waypoints = Vec<Waypoint>;
 
-fn trim_option(s: Option<String>) -> Option<String> {
-    match s {
-        Some(data) => Some(String::from_str(data.trim()).unwrap()),
-        _ => None,
-    }
-}
-
 impl Waypoint {
-    pub fn create(wgs: WGS84Point, indx: usize, kind: InputType) -> Waypoint {
+    pub fn create(wgs: WGS84Point, euc: &MercatorPoint, indx: usize, kind: InputType) -> Waypoint {
         Waypoint {
             wgs84: wgs.clone(),
+            euclidean: euc.clone(),
             track_index: Some(indx),
             name: None,
             description: None,
             info: None,
             origin: kind,
-        }
-    }
-
-    pub fn from_gpx(
-        gpx: &gpx::Waypoint,
-        name: Option<String>,
-        description: Option<String>,
-    ) -> Waypoint {
-        let (lon, lat) = gpx.point().x_y();
-        let z = match gpx.elevation {
-            Some(_z) => _z,
-            _ => 0f64,
-        };
-        Waypoint {
-            //wgs84: (lon, lat, gpx.elevation.unwrap()),
-            wgs84: WGS84Point::new(&lon, &lat, &z),
-            track_index: None,
-            origin: InputType::GPX,
-            name: trim_option(name),
-            description: trim_option(description),
-            info: None,
         }
     }
 
@@ -141,7 +114,6 @@ impl WaypointInfo {
             },
         };
         WaypointInfo {
-            wgs84: w.wgs84.clone(),
             origin: w.origin.clone(),
             distance,
             inter_distance,

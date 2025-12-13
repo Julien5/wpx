@@ -9,6 +9,7 @@ pub use tracks::backend::Segment as SegmentImplementation;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
 pub use tracks::inputpoint::InputType;
+pub use tracks::mercator::MercatorPoint;
 pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
@@ -121,7 +122,6 @@ pub struct _Parameters {
 
 #[frb(mirror(WaypointInfo))]
 pub struct _WaypointInfo {
-    pub wgs84: WGS84Point,
     pub origin: InputType,
     pub distance: f64,
     pub elevation: f64,
@@ -138,6 +138,7 @@ pub struct _WaypointInfo {
 #[frb(mirror(Waypoint))]
 pub struct _Waypoint {
     pub wgs84: WGS84Point,
+    pub euclidean: MercatorPoint,
     pub track_index: Option<usize>,
     pub origin: InputType,
     pub name: Option<String>,
