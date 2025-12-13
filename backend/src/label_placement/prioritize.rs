@@ -59,12 +59,11 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     let trackrange = segment.range();
     match segment.points.get(&InputType::UserStep) {
         Some(points) => {
-            for k in 0..points.len() {
+            let mut indices: Vec<_> = (0..points.len()).collect();
+            indices.sort_by_key(|i| points[*i].round_track_index());
+            indices.retain(|i| trackrange.contains(&points[*i].round_track_index().unwrap()));
+            for k in indices {
                 let wi = &points[k];
-                let index = wi.track_projection.as_ref().unwrap().track_index;
-                if !trackrange.contains(&index) {
-                    continue;
-                }
                 assert!(is_close_to_track(wi));
                 let d = wi.track_projection.as_ref().unwrap().track_distance;
                 log::debug!(
@@ -76,7 +75,7 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
                 );
                 assert_eq!(wi.kind(), InputType::UserStep);
                 assert_eq!(d, 0f64);
-                if k % 5 == 0 {
+                if user1.len() < user2.len() {
                     user1.push(wi);
                 } else {
                     user2.push(wi);
@@ -126,14 +125,14 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     let profile_points = profile(segment);
     let gpx = &profile_points.get(0).unwrap();
     let user1 = &profile_points.get(1).unwrap();
-    let mountains_and_cities = &profile_points.get(2).unwrap();
+    let cities_and_mountains = &profile_points.get(2).unwrap();
     let user2 = &profile_points.get(3).unwrap();
     let villages = &profile_points.get(4).unwrap();
     let osmrest = &profile_points.get(5).unwrap();
     let mut offtrack_cities = Vec::new();
     let osmpoints = segment.osmpoints();
     for w in osmpoints {
-        if mountains_and_cities.contains(&w) {
+        if cities_and_mountains.contains(&w) {
             continue;
         }
         match w.osmkind().unwrap() {
@@ -150,12 +149,18 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     for w in &villages_and_far_cities {
         log::trace!("ret-offtrack city:{}", w.name().unwrap());
     }
+    for w in *user1 {
+        log::debug!("segid:{} map-user1:{}", segment.id, w.name().unwrap());
+    }
+    for w in *user2 {
+        log::debug!("segid:{} map-user2:{}", segment.id, w.name().unwrap());
+    }
     vec![
         (*gpx).clone(),
         (*user1).clone(),
-        (*mountains_and_cities).clone(),
-        villages_and_far_cities,
+        (*cities_and_mountains).clone(),
         (*user2).clone(),
+        villages_and_far_cities,
         (*osmrest).clone(),
     ]
 }

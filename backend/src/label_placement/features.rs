@@ -64,7 +64,7 @@ pub struct Label {
     pub id: String,
     pub bbox: LabelBoundingBox,
     pub text: String,
-    _placed: bool, //ugly
+    pub _placed: bool, //ugly
 }
 
 impl Label {

@@ -220,6 +220,7 @@ mod tests {
                     &Point2D::zero(),
                 ),
                 text: String::from_str("hi").unwrap(),
+                _placed: false,
             },
             input_point: None,
             link: None,

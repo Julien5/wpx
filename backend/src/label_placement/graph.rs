@@ -364,6 +364,7 @@ mod tests {
                     &Point2D::zero(),
                 ),
                 text: String::new(),
+                _placed: false,
             },
             input_point: None,
             link: None,
