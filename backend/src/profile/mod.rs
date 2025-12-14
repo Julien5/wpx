@@ -282,7 +282,10 @@ impl ProfileView {
             .add(world);
         ProfileRenderResult {
             svg: document.to_string(),
-            rendered: self.model.as_ref().unwrap().input_points(),
+            rendered: match self.model.as_ref() {
+                Some(model) => model.input_points(),
+                None => Vec::new(),
+            },
         }
     }
 
