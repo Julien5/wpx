@@ -36,19 +36,18 @@ class WheelScreen extends StatefulWidget {
 }
 
 class _WheelScreenState extends State<WheelScreen> {
-  Widget wait() {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Segments')),
-      body: Center(child: Column(children: [Text("loading...")])),
-    );
-  }
-
   void gotoSettings(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(RouteManager.settingsView);
   }
 
   Future<void> gotoUserSteps(BuildContext ctx) async {
     await Navigator.of(ctx).pushNamed(RouteManager.userStepsView);
+    // rebuild
+    setState(() {});
+  }
+
+  Future<void> gotoControls(BuildContext ctx) async {
+    await Navigator.of(ctx).pushNamed(RouteManager.controlsView);
     // rebuild
     setState(() {});
   }
@@ -60,6 +59,11 @@ class _WheelScreenState extends State<WheelScreen> {
       child: const Text("Feuille de route"),
     );
 
+    Widget controlsButtons = ElevatedButton(
+      onPressed: () => gotoControls(ctx),
+      child: const Text("Control Points"),
+    );
+
     Widget userStepsButton = ElevatedButton(
       onPressed: () => gotoUserSteps(ctx),
       child: const Text("Pacing Points"),
@@ -67,7 +71,7 @@ class _WheelScreenState extends State<WheelScreen> {
 
     Widget vspace = SizedBox(height: 50);
     return Scaffold(
-      appBar: AppBar(title: const Text('Wheel')),
+      appBar: AppBar(title: const Text('Overview')),
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 500),
@@ -76,6 +80,8 @@ class _WheelScreenState extends State<WheelScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               WheelWidget(kinds: allkinds()),
+              vspace,
+              controlsButtons,
               vspace,
               userStepsButton,
               vspace,

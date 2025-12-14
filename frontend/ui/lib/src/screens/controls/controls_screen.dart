@@ -36,36 +36,34 @@ class TextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Set<InputType> usersteps = {InputType.userStep};
+    Set<InputType> gpx = {InputType.gpx};
     SegmentModel model = Provider.of<SegmentModel>(context);
-    List<Waypoint> waypoints = model.someWaypoints(usersteps);
+    List<Waypoint> waypoints = model.someWaypoints(gpx);
     String text =
         waypoints.isEmpty ? "no waypoints" : "${waypoints.length} waypoints";
     return Center(child: Text(text));
   }
 }
 
-class UserStepsScreen extends StatelessWidget {
-  const UserStepsScreen({super.key});
+class ControlsScreen extends StatelessWidget {
+  const ControlsScreen({super.key});
 
   @override
   Widget build(BuildContext ctx) {
-    Set<InputType> usersteps = {InputType.userStep};
+    Set<InputType> gpx = {InputType.gpx};
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pacing Points')),
+      appBar: AppBar(title: const Text('Control Points')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Divider(),
-            WheelWidget(kinds: usersteps),
+            WheelWidget(kinds: gpx),
             Divider(),
             SizedBox(height: 10),
             TextWidget(),
-            SizedBox(height: 10),
-            UserStepsSliderProvider(),
             SizedBox(height: 10),
             Divider(),
             ButtonWidget(),
@@ -76,8 +74,8 @@ class UserStepsScreen extends StatelessWidget {
   }
 }
 
-class UserStepsProvider extends StatelessWidget {
-  const UserStepsProvider({super.key});
+class ControlsProvider extends StatelessWidget {
+  const ControlsProvider({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +85,7 @@ class UserStepsProvider extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => SegmentModel(bridge, root.trackSegment()),
       builder: (context, child) {
-        return UserStepsScreen();
+        return ControlsScreen();
       },
     );
   }
