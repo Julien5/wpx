@@ -500,7 +500,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn controls() {
+    async fn controls_infer_brevet() {
         let _ = env_logger::try_init();
         use crate::controls::*;
         use crate::gpsdata;
@@ -529,6 +529,39 @@ mod tests {
         assert!(controls[2].name().unwrap_or(String::new()).contains("K3"));
         assert!(controls[3].name().unwrap_or(String::new()).contains("K4"));
         assert!(controls[4].name().unwrap_or(String::new()).contains("K5"));
+    }
+
+    #[tokio::test]
+    async fn controls_infer_self() {
+        let _ = env_logger::try_init();
+        use crate::controls::*;
+        use crate::gpsdata;
+        let filename = "data/blackforest.gpx";
+        let mut f = std::fs::File::open(filename).unwrap();
+        let mut content = Vec::new();
+        // read the whole file
+        use std::io::prelude::*;
+        f.read_to_end(&mut content).unwrap();
+        let gpxdata = gpsdata::read_content(&content).unwrap();
+        let track = Track::from_tracks(&gpxdata.tracks).unwrap();
+        let mut inputpoints = BTreeMap::new();
+        let osmpoints = osm::download_for_track(&track).await;
+        inputpoints.insert(InputType::OSM, osmpoints);
+        let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
+        assert!(controls.is_empty());
+        let controls = make_controls_with_waypoints(&track, &gpxdata.waypoints.as_vector());
+        assert!(!controls.is_empty());
+        for control in &controls {
+            log::debug!(
+                "found:{}",
+                control.name().unwrap_or("unnamed control".to_string())
+            );
+        }
+        assert_eq!(controls.len(), 4);
+        assert!(controls[0].name().unwrap_or(String::new()).contains("K1"));
+        assert!(controls[1].name().unwrap_or(String::new()).contains("K2"));
+        assert!(controls[2].name().unwrap_or(String::new()).contains("K3"));
+        assert!(controls[3].name().unwrap_or(String::new()).contains("K4"));
     }
 
     #[tokio::test]

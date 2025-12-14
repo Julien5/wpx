@@ -72,7 +72,7 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
             InputType::Control,
         ));
     }
-
+    ret.sort_by_key(|w| w.round_track_index().unwrap_or(0));
     ret
 }
 
@@ -99,5 +99,6 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
             log::debug!("point is too far from track");
         }
     }
+    ret.sort_by_key(|w| w.round_track_index().unwrap_or(0));
     ret
 }
