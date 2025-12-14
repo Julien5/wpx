@@ -1,10 +1,12 @@
 use crate::{mercator::DateTime, parameters::Parameters};
 
+// from mps to kmh
 pub fn _kmh(_mps: f64) -> f64 {
     // m/s => kmh
     _mps * 3.6f64
 }
 
+// from kmh to mps
 pub fn mps(_kmh: f64) -> f64 {
     _kmh / 3.6f64
 }

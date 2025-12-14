@@ -3,6 +3,7 @@ mod bbox;
 mod bboxes;
 mod elevation;
 pub mod error;
+mod format;
 pub mod gpsdata;
 mod gpxexport;
 pub mod inputpoint;

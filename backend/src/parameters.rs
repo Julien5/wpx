@@ -71,6 +71,7 @@ pub struct Parameters {
     pub profile_options: ProfileOptions,
     pub map_options: MapOptions,
     pub user_steps_options: UserStepsOptions,
+    pub waypoint_gpx_name_format: String,
 }
 
 impl Default for Parameters {
@@ -85,6 +86,7 @@ impl Default for Parameters {
             profile_options: ProfileOptions::default(),
             map_options: MapOptions::default(),
             user_steps_options: UserStepsOptions::default(),
+            waypoint_gpx_name_format: "TIME[HH:MM]-SLOPE[4.1]".to_string(),
         }
     }
 }

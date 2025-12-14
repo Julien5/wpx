@@ -5,30 +5,31 @@ use crate::{
 
 #[derive(Clone)]
 pub struct WaypointInfo {
-    pub origin: InputType,
     pub distance: f64,
     pub elevation: f64,
+    pub gpx_name: String,
     pub inter_distance: f64,
     pub inter_elevation_gain: f64,
     pub inter_slope: f64,
     pub name: String,
-    pub description: String,
+    pub origin: InputType,
     pub time: String,
     pub track_index: Option<usize>,
-    pub value: Option<i32>,
+    pub description: String,
 }
 
+use crate::format::WaypointInfoData;
+
 impl WaypointInfo {
+    fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String {
+        use crate::format;
+        format::make_gpx_name(data, parameters)
+    }
     pub fn profile_label(&self) -> String {
         if !self.name.is_empty() {
             return self.name.clone();
         }
         return format!("{:4.0}", self.distance / 1000f64);
-        /*
-        use chrono::*;
-        let time: DateTime<Utc> = self.time.parse().unwrap();
-        return format!("{}", time.format("%H:%M"));
-        */
     }
 }
 
@@ -77,7 +78,7 @@ impl WaypointInfo {
     ) -> WaypointInfo {
         assert!(w.get_track_index() < track.len());
         let distance = track.distance(w.get_track_index());
-        let (inter_distance, inter_elevation_gain, inter_slope_prev) = match wprev {
+        let (inter_distance, inter_elevation_gain, inter_slope) = match wprev {
             None => (0f64, 0f64, 0f64),
             Some(prev) => {
                 let dx =
@@ -103,18 +104,29 @@ impl WaypointInfo {
                 false => format!("{} - {}", name, desc),
             },
         };
-        WaypointInfo {
-            origin: w.origin.clone(),
+        let elevation = track.elevation(w.get_track_index());
+        let origin = w.origin.clone();
+        let data = WaypointInfoData {
             distance,
+            elevation,
             inter_distance,
             inter_elevation_gain,
-            inter_slope: inter_slope_prev,
-            elevation: track.elevation(w.get_track_index()),
-            name,
+            inter_slope,
+            origin: origin.clone(),
+        };
+        let gpx_name = Self::make_gpx_name(&data, parameters);
+        WaypointInfo {
             description,
+            distance,
+            elevation,
+            gpx_name,
+            inter_distance,
+            inter_elevation_gain,
+            inter_slope,
+            name,
             time: time.to_rfc3339(),
             track_index: w.track_index,
-            value: None,
+            origin,
         }
     }
     pub fn make_waypoint_infos(
