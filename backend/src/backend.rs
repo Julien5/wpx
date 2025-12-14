@@ -211,11 +211,12 @@ impl BackendData {
                         "segment.id={} type={:?} count={}",
                         segment.id,
                         kind,
-                        points.len()
+                        copy.len()
                     );
                     copy.retain(|w| {
                         w.kind() != InputType::OSM && make_points::is_close_to_track(w)
                     });
+                    log::trace!("kept count={}", copy.len());
                     points.extend_from_slice(&copy);
                 }
                 None => {
@@ -489,6 +490,20 @@ mod tests {
             println!("test failed: {} {}", tmpfilename, reffilename);
             assert!(false);
         }
+    }
+
+    #[tokio::test]
+    async fn test_get_waypoints() {
+        let _ = env_logger::try_init();
+        let mut backend = Backend::make();
+        let _ = backend.load_demo().await;
+        let seg = backend.trackSegment();
+        let len = seg.points.get(&InputType::Control).unwrap().len();
+        log::trace!("len={}", len);
+        assert!(len > 0);
+        let kinds = std::collections::HashSet::from([InputType::Control]);
+        let w = backend.get_waypoints(&seg, kinds);
+        assert!(!w.is_empty());
     }
 
     #[tokio::test]

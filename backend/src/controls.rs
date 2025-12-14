@@ -162,7 +162,15 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
         let points = segment.points.get_mut(&InputType::OSM).unwrap();
         points.retain(|w| is_close_to_track(w));
         points.sort_by_key(|w| -control_point_goodness(&w));
-        ret.push(points.first().unwrap().clone());
+        let selected = points.first().unwrap().clone();
+        let index = selected.round_track_index().unwrap();
+        let name = selected.name().unwrap_or("unnamed".to_string());
+        ret.push(InputPoint::create_point_on_track(
+            &track,
+            index,
+            &name,
+            InputType::Control,
+        ));
     }
     ret
 }
