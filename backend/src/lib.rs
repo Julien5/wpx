@@ -1,6 +1,7 @@
 pub mod backend;
 mod bbox;
 mod bboxes;
+mod controls;
 mod elevation;
 pub mod error;
 mod format;

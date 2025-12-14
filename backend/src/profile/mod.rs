@@ -518,7 +518,7 @@ impl CandidatesGenerator for ProfileGenerator {
             InputType::UserStep => self.extended_cardinal(feature),
             //InputType::UserStep => self.generate_column(feature),
             //InputType::UserStep => self.generate_header(feature, vec![25f64, self.HD - 20f64]),
-            InputType::GPX => self.header(feature, vec![5f64]),
+            InputType::GPX | InputType::Control => self.header(feature, vec![5f64]),
         }
     }
 }

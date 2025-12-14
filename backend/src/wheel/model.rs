@@ -79,7 +79,7 @@ impl SectorClassifier {
             InputType::UserStep => {
                 return i32::MIN;
             }
-            InputType::GPX => {
+            InputType::GPX | InputType::Control => {
                 return i32::MAX;
             }
             InputType::OSM => {

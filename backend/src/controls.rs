@@ -1,0 +1,103 @@
+use std::collections::BTreeMap;
+
+use crate::{
+    inputpoint::{InputPoint, InputType},
+    locate, math,
+    mercator::MercatorPoint,
+    track::Track,
+};
+use rstar::{RTree, AABB};
+
+impl rstar::RTreeObject for InputPoint {
+    type Envelope = AABB<[f64; 2]>;
+    fn envelope(&self) -> Self::Envelope {
+        AABB::from_point([self.euclidean.0, self.euclidean.1])
+    }
+}
+
+impl rstar::PointDistance for InputPoint {
+    fn distance_2(&self, point: &[f64; 2]) -> f64 {
+        let p1 = self.euclidean.point2d();
+        let p2 = math::Point2D::new(point[0], point[1]);
+        math::distance2(&p1, &p2)
+    }
+
+    fn contains_point(&self, _point: &[f64; 2]) -> bool {
+        false
+    }
+}
+
+pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) -> Vec<InputPoint> {
+    let parts = &track.parts;
+    if parts.len() == 1 {
+        log::info!("cannot infer control from a single track/segment");
+        return Vec::new();
+    }
+    let mut candidates: BTreeMap<usize, MercatorPoint> = BTreeMap::new();
+    for index in 0..parts.len() {
+        let part = &parts[index];
+        if part.end < track.len() {
+            candidates.insert(index, track.euclidian[part.end].clone());
+        }
+    }
+    assert_eq!(candidates.len(), parts.len() - 1);
+    assert!(candidates.len() > 0);
+
+    let tree = RTree::bulk_load(waypoints.to_vec());
+    let mut ret = Vec::new();
+    let maxdist = 200f64;
+    for (index, point) in candidates {
+        let mut name = parts[index].name.clone();
+        let nearest = tree.nearest_neighbor(&[point.0, point.1]);
+        match nearest {
+            Some(neighbor) => {
+                if math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt() < maxdist
+                {
+                    match neighbor.name() {
+                        Some(text) => name = text.clone(),
+                        _ => {}
+                    }
+                    log::debug!("control point also found as waypoint.");
+                }
+            }
+            None => {
+                log::debug!("control point not found as waypoint.");
+            }
+        }
+
+        ret.push(InputPoint::create_point_on_track(
+            track,
+            parts[index].end,
+            &name,
+            InputType::Control,
+        ));
+    }
+
+    ret
+}
+
+pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) -> Vec<InputPoint> {
+    let start = 0f64;
+    let end = track.total_distance();
+    let range = track.segment(start, end);
+    let tracktree = locate::IndexedPointsTree::from_track(&track, &range);
+
+    let mut ret = Vec::new();
+    let maxdist = 100f64;
+    for point in gpxpoints {
+        let projection = locate::compute_track_projection(track, &tracktree, &point);
+        if projection.track_distance < maxdist {
+            log::debug!("use waypoint as control");
+            let control = InputPoint::create_point_on_track(
+                track,
+                projection.track_index,
+                &point.name().unwrap_or("control".to_string()),
+                InputType::Control,
+            );
+            ret.push(control);
+        } else {
+            log::debug!("point is too far from track");
+        }
+    }
+    ret
+}

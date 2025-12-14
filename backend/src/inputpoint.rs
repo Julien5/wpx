@@ -31,6 +31,7 @@ pub enum InputType {
     GPX,
     OSM,
     UserStep,
+    Control,
 }
 
 pub type Kinds = HashSet<InputType>;
@@ -107,7 +108,7 @@ impl InputPoint {
     ) -> InputPoint {
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidian[index].clone();
-        assert!(kind == InputType::UserStep);
+        assert!(kind == InputType::UserStep || kind == InputType::Control);
         let mut p = InputPoint::from_wgs84(&wgs, &euc, kind);
         p.tags.insert("name".to_string(), name.clone());
         p.track_projection = Some(TrackProjection {
@@ -214,6 +215,7 @@ impl InputPoint {
             InputType::GPX => "GPX",
             InputType::OSM => "OSM",
             InputType::UserStep => "UserStep",
+            InputType::Control => "Control",
         };
         tags.insert("wpxtype".to_string(), value.to_string());
         tags
@@ -266,6 +268,9 @@ impl InputPoint {
                     "UserStep" => {
                         return InputType::UserStep;
                     }
+                    "Control" => {
+                        return InputType::Control;
+                    }
                     _ => {}
                 };
             }
@@ -273,6 +278,7 @@ impl InputPoint {
         }
         return InputType::OSM;
     }
+
     pub fn waypoint(&self) -> Waypoint {
         Waypoint {
             wgs84: self.wgs84.clone(),

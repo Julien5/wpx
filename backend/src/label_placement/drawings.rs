@@ -61,6 +61,7 @@ pub fn draw_for_profile(center: &Point2D, id: &str, w: &InputPoint) -> PointFeat
         },
         InputType::GPX => (5f64, "Blue"),
         InputType::UserStep => (3f64, "Black"),
+        InputType::Control => (5f64, "Blue"),
     };
 
     let mut circle = make_circle(center, &format!("{}", id), fill, &0.0, "");
