@@ -2,6 +2,7 @@
 
 use std::collections::BTreeMap;
 
+use crate::controls;
 use crate::error::Error;
 use crate::gpsdata;
 use crate::gpxexport;
@@ -129,18 +130,41 @@ impl Backend {
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
         self.send(&"read gpx".to_string()).await;
         let gpxdata = gpsdata::read_content(content)?;
-        let track = Track::from_tracks(&gpxdata.tracks)?;
+        let track_data = Track::from_tracks(&gpxdata.tracks)?;
+        let track = std::sync::Arc::new(track_data);
         self.send(&"download osm data".to_string()).await;
-        let mut inputpoints = BTreeMap::new();
+        let mut inputpoints_map = BTreeMap::new();
         let osmpoints = osm::download_for_track(&track).await;
-        inputpoints.insert(InputType::OSM, osmpoints);
-        inputpoints.insert(InputType::GPX, gpxdata.waypoints);
+        let gpx_waypoints = gpxdata.waypoints.as_vector();
+        inputpoints_map.insert(InputType::OSM, osmpoints);
+        inputpoints_map.insert(InputType::GPX, gpxdata.waypoints);
+
+        let mut controls = controls::infer_controls_from_gpx_data(&track, &gpx_waypoints);
+        if controls.is_empty() {
+            log::trace!("make_controls_with_waypoints");
+            controls = controls::make_controls_with_waypoints(&track, &gpx_waypoints);
+        } else {
+            log::trace!("infer_controls_from_gpx_data OK");
+        }
+
+        let mut inputpoints = InputPointMaps {
+            maps: inputpoints_map,
+        };
+
+        if controls.is_empty() {
+            log::trace!("controls::make_controls_with_osm");
+            controls = controls::make_controls_with_osm(&track, &inputpoints);
+        }
+
+        inputpoints
+            .maps
+            .insert(InputType::Control, InputPointMap::from_vector(&controls));
 
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
         let data = BackendData {
-            track: std::sync::Arc::new(track),
-            inputpoints: InputPointMaps { maps: inputpoints },
+            track,
+            inputpoints,
             parameters,
         };
         self.send(&"update waypoints".to_string()).await;
@@ -179,19 +203,24 @@ impl BackendData {
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
         let mut points = Vec::new();
         let segpoints = &segment.points;
-        let range = segment.range();
         for kind in &kinds {
             match segpoints.get(kind) {
                 Some(kpoints) => {
                     let mut copy = kpoints.clone();
+                    log::trace!(
+                        "segment.id={} type={:?} count={}",
+                        segment.id,
+                        kind,
+                        points.len()
+                    );
                     copy.retain(|w| {
-                        w.kind() != InputType::OSM
-                            && make_points::is_close_to_track(w)
-                            && range.contains(&w.round_track_index().unwrap())
+                        w.kind() != InputType::OSM && make_points::is_close_to_track(w)
                     });
                     points.extend_from_slice(&copy);
                 }
-                None => {}
+                None => {
+                    log::trace!("segment.id={} type={:?} not found", segment.id, kind,);
+                }
             }
         }
         log::trace!("export {} waypoints", points.len());
@@ -381,6 +410,7 @@ mod tests {
 
     use crate::{
         backend::Backend,
+        gpsdata::GpxData,
         inputpoint::{self, InputPointMaps, InputType},
         math::IntegerSize2D,
         osm,
@@ -499,22 +529,22 @@ mod tests {
         assert!(ok_count == segments.len());
     }
 
-    #[tokio::test]
-    async fn controls_infer_brevet() {
-        let _ = env_logger::try_init();
-        use crate::controls::*;
+    fn read(filename: String) -> GpxData {
         use crate::gpsdata;
-        let filename = "data/ref/karl-400.gpx";
         let mut f = std::fs::File::open(filename).unwrap();
         let mut content = Vec::new();
         // read the whole file
         use std::io::prelude::*;
         f.read_to_end(&mut content).unwrap();
-        let gpxdata = gpsdata::read_content(&content).unwrap();
+        gpsdata::read_content(&content).unwrap()
+    }
+
+    #[tokio::test]
+    async fn controls_infer_brevet() {
+        let _ = env_logger::try_init();
+        use crate::controls::*;
+        let gpxdata = read("data/ref/karl-400.gpx".to_string());
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let mut inputpoints = BTreeMap::new();
-        let osmpoints = osm::download_for_track(&track).await;
-        inputpoints.insert(InputType::OSM, osmpoints);
         let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
         assert!(!controls.is_empty());
         for control in &controls {
@@ -535,18 +565,8 @@ mod tests {
     async fn controls_infer_self() {
         let _ = env_logger::try_init();
         use crate::controls::*;
-        use crate::gpsdata;
-        let filename = "data/blackforest.gpx";
-        let mut f = std::fs::File::open(filename).unwrap();
-        let mut content = Vec::new();
-        // read the whole file
-        use std::io::prelude::*;
-        f.read_to_end(&mut content).unwrap();
-        let gpxdata = gpsdata::read_content(&content).unwrap();
+        let gpxdata = read("data/blackforest.gpx".to_string());
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let mut inputpoints = BTreeMap::new();
-        let osmpoints = osm::download_for_track(&track).await;
-        inputpoints.insert(InputType::OSM, osmpoints);
         let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
         assert!(controls.is_empty());
         let controls = make_controls_with_waypoints(&track, &gpxdata.waypoints.as_vector());
@@ -568,14 +588,7 @@ mod tests {
     async fn controls_infer_sectors() {
         let _ = env_logger::try_init();
         use crate::controls::*;
-        use crate::gpsdata;
-        let filename = "data/blackforest.gpx";
-        let mut f = std::fs::File::open(filename).unwrap();
-        let mut content = Vec::new();
-        // read the whole file
-        use std::io::prelude::*;
-        f.read_to_end(&mut content).unwrap();
-        let gpxdata = gpsdata::read_content(&content).unwrap();
+        let gpxdata = read("data/blackforest.gpx".to_string());
         let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
         let mut inputpoints = BTreeMap::new();
         let osmpoints = osm::download_for_track(&track).await;

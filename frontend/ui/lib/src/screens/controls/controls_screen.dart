@@ -36,11 +36,11 @@ class TextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Set<InputType> gpx = {InputType.gpx};
+    Set<InputType> control = {InputType.control};
     SegmentModel model = Provider.of<SegmentModel>(context);
-    List<Waypoint> waypoints = model.someWaypoints(gpx);
+    List<Waypoint> waypoints = model.someWaypoints(control);
     String text =
-        waypoints.isEmpty ? "no waypoints" : "${waypoints.length} waypoints";
+        waypoints.isEmpty ? "no controls" : "${waypoints.length} controls";
     return Center(child: Text(text));
   }
 }
@@ -50,7 +50,7 @@ class ControlsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Set<InputType> gpx = {InputType.gpx};
+    Set<InputType> control = {InputType.control};
 
     return Scaffold(
       appBar: AppBar(title: const Text('Control Points')),
@@ -60,7 +60,7 @@ class ControlsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Divider(),
-            WheelWidget(kinds: gpx),
+            WheelWidget(kinds: control),
             Divider(),
             SizedBox(height: 10),
             TextWidget(),

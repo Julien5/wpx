@@ -40,6 +40,7 @@ fn name(point: &InputPoint) -> String {
 fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
     match segment.points.get(&InputType::Control) {
         Some(points) => {
+            log::trace!("segment.id={} controls={}", segment.id, points.len());
             if !points.is_empty() {
                 return points.clone();
             }
@@ -64,7 +65,7 @@ fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
 impl WheelModel {
     pub fn make(segment: &Segment, kinds: HashSet<InputType>) -> WheelModel {
         let mut control_points = Vec::new();
-        if kinds.contains(&InputType::GPX) {
+        if kinds.contains(&InputType::Control) {
             for c in get_control_points(segment) {
                 let cp = CirclePoint {
                     angle: angle(&c, &segment.track),

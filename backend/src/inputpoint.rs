@@ -36,7 +36,12 @@ pub enum InputType {
 
 pub type Kinds = HashSet<InputType>;
 pub fn allkinds() -> Kinds {
-    HashSet::from([InputType::UserStep, InputType::GPX, InputType::OSM])
+    HashSet::from([
+        InputType::UserStep,
+        InputType::GPX,
+        InputType::OSM,
+        InputType::Control,
+    ])
 }
 
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]

@@ -127,6 +127,7 @@ impl Segment {
                         Some(locate::compute_track_projection(track, tracktree, p));
                 }
             });
+            log::trace!("insert {} points of type {:?}", points.len(), input_type);
             ret.insert(input_type.clone(), points);
         }
         ret

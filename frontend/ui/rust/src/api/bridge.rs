@@ -74,6 +74,7 @@ pub enum _InputType {
     GPX,
     OSM,
     UserStep,
+    Control,
 }
 
 #[frb(sync)]
