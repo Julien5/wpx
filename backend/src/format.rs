@@ -2,7 +2,7 @@ use crate::speed;
 use crate::{inputpoint::InputType, parameters::Parameters};
 
 // a bit messy, mostly AI generated
-
+#[allow(dead_code)] 
 pub struct WaypointInfoData {
     pub distance: f64,
     pub elevation: f64,

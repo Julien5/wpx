@@ -21,7 +21,7 @@ class ButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget tableButton = ElevatedButton(
       onPressed: () => gotoTable(context),
-      child: const Text("Table"),
+      child: const Text("GPX"),
     );
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

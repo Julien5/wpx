@@ -105,6 +105,9 @@ impl Backend {
     pub fn segments(&self) -> Vec<Segment> {
         self.d().segments()
     }
+    pub fn set_waypoint_gpx_name_format(&mut self, format: &String) {
+        self.dmut().set_waypoint_gpx_name_format(format);
+    }
     pub fn trackSegment(&self) -> Segment {
         self.d().trackSegment()
     }
@@ -191,6 +194,11 @@ impl BackendData {
         }
         log::trace!("export {} waypoints", points.len());
         self.export_points(&points)
+    }
+
+    // used by bridge
+    pub fn set_waypoint_gpx_name_format(&mut self, format: &String) {
+        self.parameters.waypoint_gpx_name_format = format.clone();
     }
 
     pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {

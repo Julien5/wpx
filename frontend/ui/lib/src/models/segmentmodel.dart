@@ -45,4 +45,9 @@ class SegmentModel extends ChangeNotifier {
   List<bridge.Waypoint> someWaypoints(Kinds kinds) {
     return _bridge.getWaypoints(segment: _segment, kinds: kinds);
   }
+
+  void setWaypointGpxNameFormat(String format) {
+    _bridge.setWaypointGpxNameFormat(format: format);
+    notifyListeners();
+  }
 }

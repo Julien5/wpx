@@ -25,7 +25,7 @@ class TableWidget extends StatelessWidget {
         ),
         DataColumn(
           label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold)),
-          numeric: true,
+          numeric: false,
         ),
       ],
       // 2. Map Waypoints to Data Rows
@@ -36,10 +36,18 @@ class TableWidget extends StatelessWidget {
 
             return DataRow(
               cells: <DataCell>[
-                // Distance Cell
                 DataCell(Text(formattedDistance)),
-                // Time Cell
-                DataCell(Text(gpxName)),
+                DataCell(
+                  SizedBox(
+                    width: 150, // Fixed width for the Name column
+                    child: Text(
+                      style: TextStyle(fontFamily: "mono"),
+                      gpxName,
+                      overflow:
+                          TextOverflow.ellipsis, // Handle overflow gracefully
+                    ),
+                  ),
+                ),
               ],
             );
           }).toList(),
@@ -64,29 +72,72 @@ class TableWidget extends StatelessWidget {
 class UserStepsTableWidget extends StatelessWidget {
   const UserStepsTableWidget({super.key});
 
+  void setShortFormat(BuildContext ctx) {
+    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    model.setWaypointGpxNameFormat("TIME[%H:%M]");
+  }
+
+  void setMediumFormat(BuildContext ctx) {
+    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    model.setWaypointGpxNameFormat("TIME[%H:%M]-SLOPE[4.1%]");
+  }
+
   @override
   Widget build(BuildContext ctx) {
+    Widget shortButton = ElevatedButton(
+      onPressed: () => setShortFormat(ctx),
+      child: const Text("short"),
+    );
+
+    Widget mediumButton = ElevatedButton(
+      onPressed: () => setMediumFormat(ctx),
+      child: const Text("medium"),
+    );
+
+    Widget buttons = Card(
+      elevation: 4, // Add shadow to the card
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), // Rounded corners
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(50),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [shortButton, SizedBox(width: 10), mediumButton],
+        ),
+      ),
+    );
+
+    Widget column = Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Divider(),
+        buttons,
+        SizedBox(height: 30),
+        Expanded(
+          child: Card(
+            elevation: 4, // Add shadow to the card
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8), // Rounded corners
+            ),
+            child: TableWidget(),
+          ),
+        ),
+        Divider(),
+        SizedBox(height: 30),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(title: const Text('Pacing Points Table')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Divider(),
-            SizedBox(height: 30),
-            Expanded(
-              child: Card(
-                elevation: 4, // Add shadow to the card
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8), // Rounded corners
-                ),
-                child: TableWidget(),
-              ),
-            ),
-            Divider(),
-            SizedBox(height: 30),
-          ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 400,
+          ), // Set max width to 400px
+          child: column,
         ),
       ),
     );
