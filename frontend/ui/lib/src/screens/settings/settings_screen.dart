@@ -144,6 +144,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
       mapOptions: oldParameters.mapOptions,
       userStepsOptions: oldParameters.userStepsOptions,
       debug: oldParameters.debug,
+      waypointGpxNameFormat: oldParameters.waypointGpxNameFormat,
     );
     rootModel.setParameters(newParameters);
     Navigator.of(context).pushNamed(RouteManager.segmentsView);

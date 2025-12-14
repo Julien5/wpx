@@ -12,17 +12,6 @@ class TableWidget extends StatelessWidget {
     return NumberFormat('0.0').format(km);
   }
 
-  String _formatSlope(double slope) {
-    final percent = slope * 100;
-    final n = NumberFormat('#0.0').format(percent);
-    return "$n%";
-  }
-
-  String _formatTime(String rfc3339Time) {
-    final dateTime = DateTime.parse(rfc3339Time).toLocal();
-    return DateFormat('HH:mm').format(dateTime);
-  }
-
   Widget buildData(List<Waypoint> waypoints) {
     if (waypoints.isEmpty) {
       return Center(child: const Text("No waypoints"));
@@ -35,11 +24,7 @@ class TableWidget extends StatelessWidget {
           numeric: true,
         ),
         DataColumn(
-          label: Text('Time', style: TextStyle(fontWeight: FontWeight.bold)),
-          numeric: true,
-        ),
-        DataColumn(
-          label: Text('Slope', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
         ),
       ],
@@ -47,16 +32,14 @@ class TableWidget extends StatelessWidget {
       rows:
           waypoints.map((w) {
             final formattedDistance = _formatDistance(w.info!.distance);
-            final formattedTime = _formatTime(w.info!.time);
-            final formattedSlope = _formatSlope(w.info!.interSlope);
+            final gpxName = w.info!.gpxName;
 
             return DataRow(
               cells: <DataCell>[
                 // Distance Cell
                 DataCell(Text(formattedDistance)),
                 // Time Cell
-                DataCell(Text(formattedTime)),
-                DataCell(Text(formattedSlope)),
+                DataCell(Text(gpxName)),
               ],
             );
           }).toList(),

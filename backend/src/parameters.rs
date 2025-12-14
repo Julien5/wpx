@@ -63,13 +63,13 @@ impl Default for MapOptions {
 #[derive(Clone)]
 pub struct Parameters {
     pub debug: bool,
-    pub start_time: String,
-    pub speed: f64,
+    pub map_options: MapOptions,
+    pub profile_options: ProfileOptions,
     pub segment_length: f64,
     pub segment_overlap: f64,
     pub smooth_width: f64,
-    pub profile_options: ProfileOptions,
-    pub map_options: MapOptions,
+    pub speed: f64,
+    pub start_time: String,
     pub user_steps_options: UserStepsOptions,
     pub waypoint_gpx_name_format: String,
 }
@@ -86,7 +86,7 @@ impl Default for Parameters {
             profile_options: ProfileOptions::default(),
             map_options: MapOptions::default(),
             user_steps_options: UserStepsOptions::default(),
-            waypoint_gpx_name_format: "TIME[HH:MM]-SLOPE[4.1]".to_string(),
+            waypoint_gpx_name_format: "TIME[%H:%M]-SLOPE[4.1%]".to_string(),
         }
     }
 }

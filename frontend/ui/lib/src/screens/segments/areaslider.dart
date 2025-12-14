@@ -57,9 +57,13 @@ class AreaSliderModel extends ChangeNotifier {
         maxAreaRatio: areaParameters.profileRatio,
         size: oldParameters.profileOptions.size,
       ),
-      mapOptions: MapOptions(maxAreaRatio: areaParameters.mapRatio,size: oldParameters.mapOptions.size),
+      mapOptions: MapOptions(
+        maxAreaRatio: areaParameters.mapRatio,
+        size: oldParameters.mapOptions.size,
+      ),
       userStepsOptions: oldParameters.userStepsOptions,
       debug: oldParameters.debug,
+      waypointGpxNameFormat: oldParameters.waypointGpxNameFormat,
     );
   }
 }
@@ -93,7 +97,7 @@ class _AreaSliderConsumerState extends State<AreaSliderConsumer> {
         const Text("Profile label ratio"),
         SizedBox(width: 16),
         Slider(
-          value: 5*model.areaParameters.profileRatio.clamp(0.0, 1.0),
+          value: 5 * model.areaParameters.profileRatio.clamp(0.0, 1.0),
           min: 0.0,
           max: 1.0,
           onChanged: (value) {
@@ -108,7 +112,7 @@ class _AreaSliderConsumerState extends State<AreaSliderConsumer> {
         const Text("Map label ratio"),
         SizedBox(width: 16),
         Slider(
-          value: 5*model.areaParameters.mapRatio.clamp(0.0, 1.0),
+          value: 5 * model.areaParameters.mapRatio.clamp(0.0, 1.0),
           min: 0.0,
           max: 1.0,
           onChanged: (value) {
@@ -122,7 +126,7 @@ class _AreaSliderConsumerState extends State<AreaSliderConsumer> {
         padding: const EdgeInsets.symmetric(
           horizontal: 20.0,
         ), // Add margin inside the parent
-        child: Column(children:[row1,row2]),
+        child: Column(children: [row1, row2]),
       ),
     );
   }

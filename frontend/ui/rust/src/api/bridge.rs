@@ -110,29 +110,30 @@ pub struct _MapOptions {
 #[frb(mirror(Parameters))]
 pub struct _Parameters {
     pub debug: bool,
-    pub start_time: String,
-    pub speed: f64,
+    pub map_options: MapOptions,
+    pub profile_options: ProfileOptions,
     pub segment_length: f64,
     pub segment_overlap: f64,
     pub smooth_width: f64,
-    pub profile_options: ProfileOptions,
-    pub map_options: MapOptions,
+    pub speed: f64,
+    pub start_time: String,
     pub user_steps_options: UserStepsOptions,
+    pub waypoint_gpx_name_format: String,
 }
 
 #[frb(mirror(WaypointInfo))]
 pub struct _WaypointInfo {
-    pub origin: InputType,
     pub distance: f64,
     pub elevation: f64,
+    pub gpx_name: String,
     pub inter_distance: f64,
     pub inter_elevation_gain: f64,
     pub inter_slope: f64,
     pub name: String,
-    pub description: String,
+    pub origin: InputType,
     pub time: String,
     pub track_index: Option<usize>,
-    pub value: Option<i32>,
+    pub description: String,
 }
 
 #[frb(mirror(Waypoint))]
