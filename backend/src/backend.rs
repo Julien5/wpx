@@ -347,18 +347,13 @@ impl BackendData {
         ret
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
-        let range = 0..self.track.wgs84.len();
-        let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
         let mut gpxpoints = Vec::new();
-        // TODO: we should project the GPX points segment-wise.
-        for kind in [InputType::UserStep, InputType::GPX] {
+        for kind in [InputType::UserStep] {
             match self.inputpoints.maps.get(&kind) {
                 Some(p) => {
-                    let mut v = p.as_vector();
-                    v.iter_mut().for_each(|mut p| {
-                        if p.track_projection.is_none() {
-                            Segment::compute_track_projection(&self.track, &tracktree, &mut p);
-                        }
+                    let v = p.as_vector();
+                    v.iter().for_each(|p| {
+                        assert!(!p.track_projection.is_none());
                     });
                     gpxpoints.extend_from_slice(&v);
                 }
