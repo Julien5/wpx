@@ -1,7 +1,8 @@
+use std::collections::HashSet;
+
 use crate::{
     backend::Segment,
-    inputpoint::{InputPoint, InputType, OSMType},
-    label_placement::prioritize,
+    inputpoint::{InputPoint, InputType},
     track::Track,
 };
 
@@ -36,89 +37,8 @@ fn name(point: &InputPoint) -> String {
     }
 }
 
-use std::collections::{BTreeMap, HashSet};
-
-struct SectorClassifier {
-    map: BTreeMap<usize, Vec<InputPoint>>,
-}
-
-impl SectorClassifier {
-    fn make(segment: &Segment, n: &usize) -> SectorClassifier {
-        let mut map = BTreeMap::new();
-        let sector_size = 360.0 / *n as f64;
-        for sector in 0..*n {
-            map.insert(sector, Vec::new());
-        }
-        let packets = prioritize::profile(segment);
-        for packet in packets {
-            for point in packet {
-                if point.kind() == InputType::UserStep {
-                    continue;
-                }
-                if point.name().is_none() {
-                    continue;
-                }
-                let a = angle(&point, &segment.track);
-                assert!(0.0 <= a && a < 360.0);
-                let index = (a / sector_size).floor() as usize;
-                map.get_mut(&index).unwrap().push(point.clone());
-            }
-        }
-        for (sector, points) in &mut map {
-            if points.is_empty() {
-                log::trace!("no point in sector {}", sector);
-                continue;
-            }
-            points.sort_by_key(|w| -Self::control_point_goodness(w));
-        }
-        SectorClassifier { map }
-    }
-
-    fn control_point_goodness(point: &InputPoint) -> i32 {
-        match point.kind() {
-            InputType::UserStep => {
-                return i32::MIN;
-            }
-            InputType::GPX | InputType::Control => {
-                return i32::MAX;
-            }
-            InputType::OSM => {
-                let min_population = match point.osmkind().unwrap() {
-                    OSMType::City => 10000,
-                    OSMType::Village => 1000,
-                    OSMType::Hamlet => 100,
-                    _ => 0,
-                };
-                let population = point.population().unwrap_or(min_population);
-                if population > 0 {
-                    return population;
-                }
-                return 0;
-            }
-        };
-    }
-
-    fn result(&mut self) -> Vec<InputPoint> {
-        let mut ret = Vec::new();
-        for (sector, points) in &mut self.map {
-            if points.is_empty() {
-                log::trace!("sector:{} => nothing found", sector,);
-                continue;
-            }
-            let selected = points.first().unwrap().clone();
-            log::trace!(
-                "sector:{} => {}",
-                sector,
-                selected.name().unwrap_or("noname".to_string())
-            );
-            ret.push(selected);
-        }
-        ret
-    }
-}
-
-fn get_control_points(segment: &Segment, n: usize) -> Vec<InputPoint> {
-    match segment.points.get(&InputType::GPX) {
+fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
+    match segment.points.get(&InputType::Control) {
         Some(points) => {
             if !points.is_empty() {
                 return points.clone();
@@ -126,10 +46,7 @@ fn get_control_points(segment: &Segment, n: usize) -> Vec<InputPoint> {
         }
         None => {}
     }
-    let mut classifier = SectorClassifier::make(&segment, &n);
-    let ret = classifier.result();
-    assert!(ret.len() <= n);
-    ret
+    Vec::new()
 }
 
 fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
@@ -148,9 +65,7 @@ impl WheelModel {
     pub fn make(segment: &Segment, kinds: HashSet<InputType>) -> WheelModel {
         let mut control_points = Vec::new();
         if kinds.contains(&InputType::GPX) {
-            let track_distance_km = segment.track.total_distance() / 1000f64;
-            let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
-            for c in get_control_points(segment, n_controls) {
+            for c in get_control_points(segment) {
                 let cp = CirclePoint {
                     angle: angle(&c, &segment.track),
                     name: name(&c),

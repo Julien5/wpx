@@ -351,6 +351,17 @@ impl InputPointMap {
             map: BTreeMap::new(),
         }
     }
+
+    pub fn from_vector(points: &Vec<InputPoint>) -> InputPointMap {
+        let mut ret = InputPointMap::new();
+        for w in points {
+            let euc = &w.euclidean;
+            let bbox = bboxes::snap_point(euc, &bboxes::BBOXWIDTH);
+            ret.insert_point(&bbox, &w);
+        }
+        ret
+    }
+
     pub fn insert_point(&mut self, b: &EuclideanBoundingBox, p: &InputPoint) {
         match self.map.get_mut(&b) {
             Some(v) => v.push(p.clone()),

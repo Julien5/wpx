@@ -377,11 +377,11 @@ impl BackendData {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::BTreeMap;
+    use std::{collections::BTreeMap, sync::Arc};
 
     use crate::{
         backend::Backend,
-        inputpoint::{self, InputType},
+        inputpoint::{self, InputPointMaps, InputType},
         math::IntegerSize2D,
         osm,
         track::Track,
@@ -562,6 +562,46 @@ mod tests {
         assert!(controls[1].name().unwrap_or(String::new()).contains("K2"));
         assert!(controls[2].name().unwrap_or(String::new()).contains("K3"));
         assert!(controls[3].name().unwrap_or(String::new()).contains("K4"));
+    }
+
+    #[tokio::test]
+    async fn controls_infer_sectors() {
+        let _ = env_logger::try_init();
+        use crate::controls::*;
+        use crate::gpsdata;
+        let filename = "data/blackforest.gpx";
+        let mut f = std::fs::File::open(filename).unwrap();
+        let mut content = Vec::new();
+        // read the whole file
+        use std::io::prelude::*;
+        f.read_to_end(&mut content).unwrap();
+        let gpxdata = gpsdata::read_content(&content).unwrap();
+        let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
+        let mut inputpoints = BTreeMap::new();
+        let osmpoints = osm::download_for_track(&track).await;
+        inputpoints.insert(InputType::OSM, osmpoints);
+        let maps = InputPointMaps { maps: inputpoints };
+        let controls = make_controls_with_osm(&track, &maps);
+        assert!(!controls.is_empty());
+        for control in &controls {
+            log::debug!(
+                "found:{}",
+                control.name().unwrap_or("unnamed control".to_string())
+            );
+        }
+        assert_eq!(controls.len(), 4);
+        assert!(controls[0]
+            .name()
+            .unwrap_or(String::new())
+            .contains("Furtwangen"));
+        assert!(controls[1]
+            .name()
+            .unwrap_or(String::new())
+            .contains("Haslach"));
+        assert!(controls[2]
+            .name()
+            .unwrap_or(String::new())
+            .contains("Forbach"));
     }
 
     #[tokio::test]

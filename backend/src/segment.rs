@@ -2,8 +2,7 @@ use std::collections::BTreeMap;
 
 use crate::bbox::BoundingBox;
 use crate::inputpoint::{InputPoint, InputPointMaps, InputType};
-use crate::math::{IntegerSize2D, Point2D};
-use crate::mercator::MercatorPoint;
+use crate::math::IntegerSize2D;
 use crate::parameters::{Parameters, ProfileIndication, UserStepsOptions};
 use crate::profile::ProfileRenderResult;
 use crate::track::{self, Track};
@@ -122,7 +121,7 @@ impl Segment {
                 }
                 points.extend_from_slice(_points.unwrap());
             }
-            points.iter_mut().for_each(|mut p| {
+            points.iter_mut().for_each(|p| {
                 if p.track_projection.is_none() {
                     p.track_projection =
                         Some(locate::compute_track_projection(track, tracktree, p));

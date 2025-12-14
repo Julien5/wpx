@@ -1,9 +1,13 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, sync::Arc};
 
 use crate::{
-    inputpoint::{InputPoint, InputType},
-    locate, math,
+    backend::Segment,
+    inputpoint::{InputPoint, InputPointMaps, InputType, OSMType},
+    locate,
+    make_points::is_close_to_track,
+    math,
     mercator::MercatorPoint,
+    parameters::Parameters,
     track::Track,
 };
 use rstar::{RTree, AABB};
@@ -100,5 +104,65 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
         }
     }
     ret.sort_by_key(|w| w.round_track_index().unwrap_or(0));
+    ret
+}
+
+fn control_point_goodness(point: &InputPoint) -> i32 {
+    match point.kind() {
+        InputType::UserStep => {
+            return i32::MIN;
+        }
+        InputType::GPX | InputType::Control => {
+            return i32::MAX;
+        }
+        InputType::OSM => {
+            let min_population = match point.osmkind().unwrap() {
+                OSMType::City => 10000,
+                OSMType::Village => 1000,
+                OSMType::Hamlet => 100,
+                _ => 0,
+            };
+            let population = point.population().unwrap_or(min_population);
+            if population > 0 {
+                return population;
+            }
+            return 0;
+        }
+    };
+}
+
+pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) -> Vec<InputPoint> {
+    let total = track.total_distance();
+    let track_distance_km = total / 1000f64;
+    let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
+    let step_size = (total / n_controls as f64).ceil();
+    let mut start = 0f64;
+    let mut segments = Vec::new();
+    loop {
+        let end = start + step_size;
+        let range = track.segment(start, end);
+        if range.is_empty() {
+            break;
+        }
+        let tracktree = locate::IndexedPointsTree::from_track(&track, &range);
+        log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
+        segments.push(Segment::new(
+            segments.len() as i32,
+            start,
+            end,
+            tracktree,
+            track.clone(),
+            &inputpoints,
+            &Parameters::default(),
+        ));
+        start = end;
+    }
+    let mut ret = Vec::new();
+    for segment in &mut segments {
+        let points = segment.points.get_mut(&InputType::OSM).unwrap();
+        points.retain(|w| is_close_to_track(w));
+        points.sort_by_key(|w| -control_point_goodness(&w));
+        ret.push(points.first().unwrap().clone());
+    }
     ret
 }
