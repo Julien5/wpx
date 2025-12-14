@@ -20,7 +20,26 @@ fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, Error> {
     }
 }
 
-fn read_routes(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
+fn make_track_from_segment(segment: &gpx::TrackSegment, name: String) -> gpx::Track {
+    let mut ret = gpx::Track::new();
+    ret.segments.push(segment.clone());
+    ret.name = Some(name);
+    return ret;
+}
+
+fn make_track_from_route(route: &gpx::Route, name: String) -> gpx::Track {
+    let mut ret = gpx::Track::new();
+    let mut segment = gpx::TrackSegment::new();
+    let points = &route.points;
+    for k in 0..points.len() {
+        segment.points.push(points[k].clone());
+    }
+    ret.segments.push(segment);
+    ret.name = Some(name);
+    return ret;
+}
+
+fn read_routes(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, Error> {
     let routes = &mut gpx.routes;
     routes.sort_by_key(|route| {
         let zero = "A".to_string();
@@ -40,20 +59,17 @@ fn read_routes(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
         }
         return name;
     });
-    let mut ret = gpx::TrackSegment::new();
+    let mut ret: Vec<gpx::Track> = Vec::new();
     for route in routes {
-        let points = &route.points;
-        for k in 0..points.len() {
-            ret.points.push(points[k].clone());
-        }
+        ret.push(make_track_from_route(route, "foo".to_string()));
     }
-    if ret.points.is_empty() {
+    if ret.is_empty() {
         return Err(Error::GPXHasNoSegment);
     }
     Ok(ret)
 }
 
-fn read_tracks(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
+fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, Error> {
     let tracks = &mut gpx.tracks;
     tracks.sort_by_key(|track| {
         let zero = "A".to_string();
@@ -73,27 +89,29 @@ fn read_tracks(gpx: &mut gpx::Gpx) -> Result<gpx::TrackSegment, Error> {
         }
         return name;
     });
-    let mut ret = gpx::TrackSegment::new();
+    let mut ret: Vec<gpx::Track> = Vec::new();
     for track in tracks {
-        let points = &track.segments.first().unwrap().points;
-        for k in 0..points.len() {
-            ret.points.push(points[k].clone());
+        for segment in &track.segments {
+            ret.push(make_track_from_segment(
+                segment,
+                track.name.clone().unwrap_or("foo".to_string()),
+            ));
         }
     }
-    if ret.points.is_empty() {
+    if ret.is_empty() {
         return Err(Error::GPXHasNoSegment);
     }
     Ok(ret)
 }
 
 pub struct GpxData {
-    pub track: track::Track,
     pub waypoints: InputPointMap,
+    pub tracks: Vec<gpx::Track>,
 }
 
 pub fn read_content(content: &Vec<u8>) -> Result<GpxData, Error> {
     let mut gpx = read_gpx_content(content)?;
-    let segment = if gpx.tracks.is_empty() {
+    let tracks = if gpx.tracks.is_empty() {
         match read_routes(&mut gpx) {
             Ok(s) => s,
             Err(e) => {
@@ -108,16 +126,10 @@ pub fn read_content(content: &Vec<u8>) -> Result<GpxData, Error> {
             }
         }
     };
-
-    match track::Track::from_segment(&segment) {
-        Ok(t) => Ok(GpxData {
-            track: t,
-            waypoints: read_waypoints(&gpx),
-        }),
-        Err(e) => {
-            return Err(e);
-        }
-    }
+    Ok(GpxData {
+        tracks,
+        waypoints: read_waypoints(&gpx),
+    })
 }
 
 pub type ProfileBoundingBox = BoundingBox;

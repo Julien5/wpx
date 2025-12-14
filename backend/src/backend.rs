@@ -15,6 +15,7 @@ use crate::pdf;
 use crate::profile;
 use crate::render;
 use crate::track;
+use crate::track::Track;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
@@ -128,16 +129,17 @@ impl Backend {
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
         self.send(&"read gpx".to_string()).await;
         let gpxdata = gpsdata::read_content(content)?;
+        let track = Track::from_tracks(&gpxdata.tracks)?;
         self.send(&"download osm data".to_string()).await;
         let mut inputpoints = BTreeMap::new();
-        let osmpoints = osm::download_for_track(&gpxdata.track).await;
+        let osmpoints = osm::download_for_track(&track).await;
         inputpoints.insert(InputType::OSM, osmpoints);
         inputpoints.insert(InputType::GPX, gpxdata.waypoints);
 
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
         let data = BackendData {
-            track: std::sync::Arc::new(gpxdata.track),
+            track: std::sync::Arc::new(track),
             inputpoints: InputPointMaps { maps: inputpoints },
             parameters,
         };

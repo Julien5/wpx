@@ -10,12 +10,19 @@ use crate::mercator::MercatorPoint;
 
 use super::elevation;
 
+pub struct TrackPart {
+    pub name: String,
+    pub begin: usize,
+    pub end: usize,
+}
+
 pub struct Track {
     pub wgs84: Vec<WGS84Point>,
     pub smooth_elevation: Vec<f64>,
     pub smooth_elevation_gain: Vec<f64>,
     pub euclidian: Vec<MercatorPoint>,
     _distance: Vec<f64>,
+    pub parts: Vec<TrackPart>,
 }
 
 // (long,lat)
@@ -140,30 +147,45 @@ impl Track {
         ret
     }
 
-    pub fn from_segment(segment: &TrackSegment) -> Result<Track, error::Error> {
+    pub fn from_tracks(gpxtracks: &Vec<gpx::Track>) -> Result<Track, error::Error> {
         let mut _distance = Vec::new();
         let mut wgs = Vec::new();
         let mut dacc = 0f64;
         let projection = mercator::WebMercatorProjection::make();
         let mut euclidean = Vec::new();
-        for k in 0..segment.points.len() {
-            let point = &segment.points[k];
-            let (lon, lat) = point.point().x_y();
-            let elevation = match point.elevation {
-                Some(e) => e,
-                None => {
-                    return Err(error::Error::MissingElevation { index: k });
+        let mut parts = Vec::new();
+
+        for track in gpxtracks {
+            assert_eq!(track.segments.len(), 1);
+            let begin = wgs.len();
+            for segment in &track.segments {
+                for k in 0..segment.points.len() {
+                    let point = &segment.points[k];
+                    let (lon, lat) = point.point().x_y();
+                    let elevation = match point.elevation {
+                        Some(e) => e,
+                        None => {
+                            return Err(error::Error::MissingElevation { index: k });
+                        }
+                    };
+
+                    let w = WGS84Point::new(&lon, &lat, &elevation);
+                    euclidean.push(projection.project(&w));
+                    wgs.push(w);
+
+                    if k > 0 {
+                        dacc += distance_wgs84(&wgs[k - 1], &wgs[k]);
+                    }
+                    _distance.push(dacc);
                 }
-            };
-
-            let w = WGS84Point::new(&lon, &lat, &elevation);
-            euclidean.push(projection.project(&w));
-            wgs.push(w);
-
-            if k > 0 {
-                dacc += distance_wgs84(&wgs[k - 1], &wgs[k]);
             }
-            _distance.push(dacc);
+            let name = track.name.as_ref().unwrap_or(&String::new()).clone();
+            let part = TrackPart {
+                name,
+                begin,
+                end: wgs.len(),
+            };
+            parts.push(part);
         }
         assert_eq!(_distance.len(), wgs.len());
 
@@ -182,6 +204,7 @@ impl Track {
             smooth_elevation: track_smooth_elevation,
             smooth_elevation_gain,
             _distance,
+            parts,
         };
         Ok(ret)
     }
