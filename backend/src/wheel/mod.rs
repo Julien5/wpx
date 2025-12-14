@@ -1,4 +1,5 @@
 pub mod model;
+mod shorten;
 
 use svg::node::element::path::Data;
 use svg::node::element::Text;
@@ -6,6 +7,7 @@ use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
 use crate::math::*;
+use crate::wheel::shorten::shorten_name;
 
 struct Page {
     pub total_size: IntegerSize2D,
@@ -65,16 +67,8 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
             .set("stroke-width", hour_thick);
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
-        //let Kname = format!("K{}", i + 1);
-        let mut name = point.name.clone();
+        let name = point.name.clone();
         log::trace!("name={}", name);
-        if name.len() > 3 {
-            name = name
-                .split_whitespace()
-                .nth(0)
-                .unwrap_or("noname")
-                .to_string();
-        }
         let label_position_radius = page.wheel_outer_radius() + 7;
         let mut label_position = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos())
             * label_position_radius as f64;
@@ -88,7 +82,7 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
             label_position.y += text_height;
         }
 
-        let label = Text::new(format!("{}", name))
+        let label = Text::new(format!("{}", shorten_name(&name)))
             .set("text-anchor", anchor)
             .set("x", label_position.x)
             .set("y", label_position.y);
