@@ -13,14 +13,14 @@ class ButtonWidget extends StatelessWidget {
     SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
     Navigator.of(
       context,
-    ).pushNamed(RouteManager.userStepsTable, arguments: model);
+    ).pushNamed(RouteManager.controlsTable, arguments: model);
   }
 
   @override
   Widget build(BuildContext context) {
     Widget tableButton = ElevatedButton(
       onPressed: () => gotoTable(context),
-      child: const Text("GPX"),
+      child: const Text("Table"),
     );
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

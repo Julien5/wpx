@@ -4,52 +4,16 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/waypoints_table_widget.dart';
 
-class UserStepsTableWidget extends StatelessWidget {
-  const UserStepsTableWidget({super.key});
-
-  void setShortFormat(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    model.setWaypointGpxNameFormat("TIME[%H:%M]");
-  }
-
-  void setMediumFormat(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    model.setWaypointGpxNameFormat("TIME[%H:%M]-SLOPE[4.1%]");
-  }
+class ControlsTableWidget extends StatelessWidget {
+  const ControlsTableWidget({super.key});
 
   @override
   Widget build(BuildContext ctx) {
-    Widget shortButton = ElevatedButton(
-      onPressed: () => setShortFormat(ctx),
-      child: const Text("short"),
-    );
-
-    Widget mediumButton = ElevatedButton(
-      onPressed: () => setMediumFormat(ctx),
-      child: const Text("medium"),
-    );
-
-    Widget buttons = Card(
-      elevation: 4, // Add shadow to the card
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8), // Rounded corners
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(50),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [shortButton, SizedBox(width: 10), mediumButton],
-        ),
-      ),
-    );
-
     Widget column = Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Divider(),
-        buttons,
         SizedBox(height: 30),
         Expanded(
           child: Card(
@@ -57,7 +21,7 @@ class UserStepsTableWidget extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // Rounded corners
             ),
-            child: WaypointsTableWidget(kind: InputType.userStep),
+            child: WaypointsTableWidget(kind: InputType.control),
           ),
         ),
         Divider(),
@@ -79,8 +43,8 @@ class UserStepsTableWidget extends StatelessWidget {
   }
 }
 
-class UserStepsTableScreen extends StatelessWidget {
-  const UserStepsTableScreen({super.key});
+class ControlsTableScreen extends StatelessWidget {
+  const ControlsTableScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +55,7 @@ class UserStepsTableScreen extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: model,
       builder: (innercontext, child) {
-        return UserStepsTableWidget();
+        return ControlsTableWidget();
       },
     );
   }

@@ -161,19 +161,20 @@ class StreamWidget extends StatefulWidget {
 
 class _StreamWidgetState extends State<StreamWidget> {
   EventModel? model;
+
   @override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    try {
-      setState(() {
-        model = Provider.of<RootModel>(context, listen: false).eventModel();
-      });
-    } catch (e) {
-      developer.log("Error: RootModel not found in context. Exception: $e");
-    }
-  });
-}
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      try {
+        setState(() {
+          model = Provider.of<RootModel>(context, listen: false).eventModel();
+        });
+      } catch (e) {
+        developer.log("Error: RootModel not found in context. Exception: $e");
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/src/screens/controls/controls_screen.dart';
+import 'package:ui/src/screens/controls/controls_table.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/screens/export/export_screen.dart';
 import 'package:ui/src/screens/interactive/interactive_screen.dart';
@@ -20,6 +21,7 @@ class RouteManager {
   static const String userStepsTable = '/usersteps/table';
   static const String interactiveView = '/interactive';
   static const String controlsView = '/controls';
+  static const String controlsTable = '/controls/table';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -50,6 +52,12 @@ class RouteManager {
       case userStepsTable:
         return MaterialPageRoute(
           builder: (_) => UserStepsTableScreen(),
+          settings: settings,
+        );
+
+      case controlsTable:
+        return MaterialPageRoute(
+          builder: (_) => ControlsTableScreen(),
           settings: settings,
         );
 
