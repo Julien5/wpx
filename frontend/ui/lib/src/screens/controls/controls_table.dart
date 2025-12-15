@@ -30,7 +30,7 @@ class ControlsTableWidget extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pacing Points Table')),
+      appBar: AppBar(title: const Text('Control Points Table')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(
