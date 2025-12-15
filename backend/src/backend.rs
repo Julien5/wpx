@@ -396,6 +396,7 @@ mod tests {
 
     use crate::{
         backend::Backend,
+        event,
         gpsdata::GpxData,
         inputpoint::{self, InputPointMaps, InputType},
         math::IntegerSize2D,
@@ -590,8 +591,11 @@ mod tests {
         use crate::controls::*;
         let gpxdata = read("data/blackforest.gpx".to_string());
         let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
+
+        let b = Box::new(event::ConsoleEventSender {});
+        let logger = std::sync::RwLock::new(Some(b));
         let mut inputpoints = BTreeMap::new();
-        let osmpoints = osm::download_for_track(&track).await;
+        let osmpoints = osm::download_for_track(&track, &logger).await;
         inputpoints.insert(InputType::OSM, osmpoints);
         let maps = InputPointMaps { maps: inputpoints };
         let controls = make_controls_with_osm(&track, &maps);

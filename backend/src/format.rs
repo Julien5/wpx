@@ -2,7 +2,7 @@ use crate::speed;
 use crate::{inputpoint::InputType, parameters::Parameters};
 
 // a bit messy, mostly AI generated
-#[allow(dead_code)] 
+#[allow(dead_code)]
 pub struct WaypointInfoData {
     pub distance: f64,
     pub elevation: f64,
@@ -87,7 +87,7 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::{NaiveDate, NaiveDateTime, TimeZone, Utc};
+    use chrono::{NaiveDate, TimeZone, Utc};
 
     // Helper function to create a test WaypointInfoData
     fn setup_test_data(slope: f64, hour: u32, minute: u32) -> WaypointInfoData {

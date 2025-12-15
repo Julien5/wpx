@@ -16,3 +16,12 @@ pub async fn send_worker(handler: &SenderHandlerLock, data: &String) {
     let tick = std::time::Duration::from_millis(0);
     let _ = wasmtimer::tokio::sleep(tick).await;
 }
+
+#[derive(Clone)]
+pub struct ConsoleEventSender {}
+
+impl Sender for ConsoleEventSender {
+    fn send(&mut self, data: &String) {
+        log::info!("event: {}", data);
+    }
+}
