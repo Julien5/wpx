@@ -48,7 +48,7 @@ fn format_slope(slope_ratio: f64, specifier: &str) -> String {
 pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String {
     use regex::Regex;
     let format_regex: Regex = Regex::new(r"(TIME|SLOPE)\[([^\]]+)\]").unwrap();
-    let format = parameters.waypoint_gpx_name_format.clone();
+    let format = parameters.user_steps_options.gpx_name_format.clone();
     let mut result = format.to_string();
     let original_format = format.to_string(); // Keep original for iterating
     let time = speed::time_at_distance(&data.distance, parameters);
@@ -112,7 +112,7 @@ mod tests {
         let mut ret = Parameters::default();
         ret.start_time = "1985-04-12T08:00:00.00Z".to_string();
         ret.speed = speed::mps(15f64);
-        ret.waypoint_gpx_name_format = format.to_string();
+        ret.user_steps_options.gpx_name_format = format.to_string();
         ret
     }
 

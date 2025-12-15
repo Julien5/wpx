@@ -63,7 +63,7 @@ class AreaSliderModel extends ChangeNotifier {
       ),
       userStepsOptions: oldParameters.userStepsOptions,
       debug: oldParameters.debug,
-      waypointGpxNameFormat: oldParameters.waypointGpxNameFormat,
+      controlGpxNameFormat: oldParameters.controlGpxNameFormat,
     );
   }
 }

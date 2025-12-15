@@ -93,6 +93,7 @@ pub enum _ProfileIndication {
 pub struct _UserStepsOptions {
     pub step_distance: Option<f64>,
     pub step_elevation_gain: Option<f64>,
+    pub gpx_name_format: String,
 }
 
 #[frb(mirror(ProfileOptions))]
@@ -110,6 +111,7 @@ pub struct _MapOptions {
 
 #[frb(mirror(Parameters))]
 pub struct _Parameters {
+    pub control_gpx_name_format: String,
     pub debug: bool,
     pub map_options: MapOptions,
     pub profile_options: ProfileOptions,
@@ -119,7 +121,6 @@ pub struct _Parameters {
     pub speed: f64,
     pub start_time: String,
     pub user_steps_options: UserStepsOptions,
-    pub waypoint_gpx_name_format: String,
 }
 
 #[frb(mirror(WaypointInfo))]
@@ -216,8 +217,8 @@ impl Bridge {
     }
 
     #[frb(sync)]
-    pub fn set_waypoint_gpx_name_format(&mut self, format: &String) {
-        self.backend.set_waypoint_gpx_name_format(format);
+    pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
+        self.backend.set_userstep_gpx_name_format(format);
     }
 
     #[frb(sync)]

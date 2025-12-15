@@ -11,6 +11,7 @@ pub enum ProfileIndication {
 pub struct UserStepsOptions {
     pub step_distance: Option<f64>,
     pub step_elevation_gain: Option<f64>,
+    pub gpx_name_format: String,
 }
 
 impl Default for UserStepsOptions {
@@ -18,6 +19,7 @@ impl Default for UserStepsOptions {
         UserStepsOptions {
             step_distance: None,
             step_elevation_gain: None,
+            gpx_name_format: "TIME[%H:%M]-SLOPE[4.1%]".to_string(),
         }
     }
 }
@@ -62,6 +64,7 @@ impl Default for MapOptions {
 
 #[derive(Clone)]
 pub struct Parameters {
+    pub control_gpx_name_format: String,
     pub debug: bool,
     pub map_options: MapOptions,
     pub profile_options: ProfileOptions,
@@ -71,12 +74,12 @@ pub struct Parameters {
     pub speed: f64,
     pub start_time: String,
     pub user_steps_options: UserStepsOptions,
-    pub waypoint_gpx_name_format: String,
 }
 
 impl Default for Parameters {
     fn default() -> Parameters {
         Parameters {
+            control_gpx_name_format: "TIME[%H:%M]-SLOPE[4.1%]".to_string(),
             start_time: chrono::Local::now().to_rfc3339(),
             speed: speed::mps(15f64),
             segment_length: 100f64 * 1000f64,
@@ -86,7 +89,6 @@ impl Default for Parameters {
             profile_options: ProfileOptions::default(),
             map_options: MapOptions::default(),
             user_steps_options: UserStepsOptions::default(),
-            waypoint_gpx_name_format: "TIME[%H:%M]-SLOPE[4.1%]".to_string(),
         }
     }
 }

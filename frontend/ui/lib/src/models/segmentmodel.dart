@@ -47,7 +47,7 @@ class SegmentModel extends ChangeNotifier {
   }
 
   void setWaypointGpxNameFormat(String format) {
-    _bridge.setWaypointGpxNameFormat(format: format);
+    _bridge.setUserstepGpxNameFormat(format: format);
     notifyListeners();
   }
 }

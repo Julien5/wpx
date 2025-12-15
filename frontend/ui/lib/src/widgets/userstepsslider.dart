@@ -10,9 +10,32 @@ enum SelectedParameter { distance, elevation, none }
 
 class UserStepsModel extends ChangeNotifier {
   final SegmentModel segmentModel;
-  SelectedParameter selectedParameter = SelectedParameter.none;
+  UserStepsOptions? currentOptions;
+
   final Map<SelectedParameter, List<double>> _sliderValues = {};
   final Map<SelectedParameter, double> _selectedValue = {};
+
+  static SelectedParameter parameter(UserStepsOptions options) {
+    if (options.stepDistance != null) {
+      return SelectedParameter.distance;
+    }
+
+    if (options.stepElevationGain != null) {
+      return SelectedParameter.elevation;
+    }
+
+    return SelectedParameter.none;
+  }
+
+  static double? value(UserStepsOptions options) {
+    if (options.stepDistance == null && options.stepElevationGain == null) {
+      return null;
+    }
+    if (options.stepDistance != null) {
+      return options.stepDistance;
+    }
+    return options.stepElevationGain;
+  }
 
   UserStepsModel({required this.segmentModel}) {
     _sliderValues[SelectedParameter.distance] = fromKm([5, 10, 15, 20, 25]);
@@ -27,39 +50,19 @@ class UserStepsModel extends ChangeNotifier {
       400,
       500,
     ];
-    _selectedValue[SelectedParameter.elevation] =
-        _sliderValues[SelectedParameter.elevation]![1];
+
+    // defaults
     _selectedValue[SelectedParameter.distance] =
         _sliderValues[SelectedParameter.distance]![1];
-    selectedParameter = readBackendParameter();
-    double? value = readBackendValue();
-    if (value != null) {
-      _selectedValue[selectedParameter] = value;
-    } else {
-      assert(selectedParameter == SelectedParameter.none);
-    }
-  }
+    _selectedValue[SelectedParameter.elevation] =
+        _sliderValues[SelectedParameter.elevation]![1];
 
-  SelectedParameter readBackendParameter() {
-    UserStepsOptions p = segmentModel.userStepsOptions();
-    if (p.stepDistance == null && p.stepElevationGain == null) {
-      return SelectedParameter.none;
+    currentOptions = segmentModel.userStepsOptions();
+    assert(currentOptions != null);
+    var v = value(currentOptions!);
+    if (v != null) {
+      _selectedValue[parameter(currentOptions!)] = v;
     }
-    if (p.stepDistance != null) {
-      return SelectedParameter.distance;
-    }
-    return SelectedParameter.elevation;
-  }
-
-  double? readBackendValue() {
-    UserStepsOptions p = segmentModel.userStepsOptions();
-    if (p.stepDistance == null && p.stepElevationGain == null) {
-      return null;
-    }
-    if (p.stepDistance != null) {
-      return p.stepDistance;
-    }
-    return p.stepElevationGain;
   }
 
   SliderValues? sliderValues(SelectedParameter p) {
@@ -70,47 +73,61 @@ class UserStepsModel extends ChangeNotifier {
     return ret;
   }
 
-  double currentValue(SelectedParameter p) {
-    assert(_selectedValue.containsKey(p));
+  SelectedParameter getSelectedParameter() {
+    return parameter(currentOptions!);
+  }
+
+  double getCurrentValue(SelectedParameter p) {
     return _selectedValue[p]!;
   }
 
-  void updateValue(SelectedParameter p, double value) {
+  void updateValue(double value) {
+    SelectedParameter p = parameter(currentOptions!);
+    _updateOptions(p, value);
     _selectedValue[p] = value;
-    notifyListeners();
-    sendToBackend(p);
+  }
+
+  void updateParameter(SelectedParameter p) {
+    double? v = _selectedValue[p];
+    _updateOptions(p, v);
+  }
+
+  void updateParameterValue(SelectedParameter parameter, double value) {
+    _selectedValue[parameter] = value;
+    _updateOptions(parameter, value);
   }
 
   /*
    * Changing the root model has no effect because the segments are cached
    * in SegmentsScreen. User steps handling must be fixed.
    */
-  void sendToBackend(SelectedParameter parameter) {
-    segmentModel.setUserStepsOptions(makeUserStepsOptions(parameter));
-  }
-
-  void sendParameterToBackend(SelectedParameter parameter) {
-    selectedParameter = parameter;
+  void _sendParameterToBackend() {
     notifyListeners();
-    sendToBackend(parameter);
+    segmentModel.setUserStepsOptions(currentOptions!);
   }
 
-  UserStepsOptions makeUserStepsOptions(SelectedParameter parameter) {
+  void _updateOptions(SelectedParameter parameter, double? value) {
     if (parameter == SelectedParameter.none) {
-      return UserStepsOptions(stepDistance: null, stepElevationGain: null);
-    }
-    double current = currentValue(parameter);
-    if (parameter == SelectedParameter.distance) {
-      return UserStepsOptions(
-        stepDistance: current.toDouble(),
+      currentOptions = UserStepsOptions(
+        stepDistance: null,
         stepElevationGain: null,
+        gpxNameFormat: currentOptions!.gpxNameFormat,
+      );
+    } else if (parameter == SelectedParameter.distance) {
+      currentOptions = UserStepsOptions(
+        stepDistance: value!,
+        stepElevationGain: null,
+        gpxNameFormat: currentOptions!.gpxNameFormat,
+      );
+    } else {
+      assert(parameter == SelectedParameter.elevation);
+      currentOptions = UserStepsOptions(
+        stepDistance: null,
+        stepElevationGain: value!,
+        gpxNameFormat: currentOptions!.gpxNameFormat,
       );
     }
-    assert(parameter == SelectedParameter.elevation);
-    return UserStepsOptions(
-      stepDistance: null,
-      stepElevationGain: current.toDouble(),
-    );
+    _sendParameterToBackend();
   }
 }
 
@@ -132,7 +149,7 @@ class UserStepsSlider extends StatelessWidget {
   });
 
   void onChanged(UserStepsModel model, double value) {
-    model.updateValue(widgetParameter, value);
+    model.updateParameterValue(widgetParameter, value);
   }
 
   String formatLabel(UserStepsModel model, double value) {
@@ -184,25 +201,25 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
       selectedParameter = SelectedParameter.none;
     }
     developer.log("selected $value");
-    model.sendParameterToBackend(selectedParameter);
+    model.updateParameter(selectedParameter);
   }
 
   @override
   Widget build(BuildContext context) {
     UserStepsModel model = Provider.of<UserStepsModel>(context);
-    selectedParameter = model.selectedParameter;
-    developer.log("rebuild with selected ${model.selectedParameter}");
+    selectedParameter = model.getSelectedParameter();
+    developer.log("rebuild with selected $selectedParameter");
     Widget distanceSlider = UserStepsSlider(
       widgetParameter: SelectedParameter.distance,
-      enabled: model.selectedParameter == SelectedParameter.distance,
+      enabled: selectedParameter == SelectedParameter.distance,
     );
     Widget elevationSlider = UserStepsSlider(
       widgetParameter: SelectedParameter.elevation,
-      enabled: model.selectedParameter == SelectedParameter.elevation,
+      enabled: selectedParameter == SelectedParameter.elevation,
     );
     final ListTileControlAffinity side = ListTileControlAffinity.leading;
 
-    double km = model.currentValue(SelectedParameter.distance) / 1000;
+    double km = model.getCurrentValue(SelectedParameter.distance) / 1000;
     Text kmtext = Text(
       "${km.toStringAsFixed(0)} km",
       style: TextStyle(
@@ -213,7 +230,7 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
       ),
     );
 
-    double hm = model.currentValue(SelectedParameter.elevation);
+    double hm = model.getCurrentValue(SelectedParameter.elevation);
     Text hmtext = Text(
       "${hm.toStringAsFixed(0)} m",
       style: TextStyle(
