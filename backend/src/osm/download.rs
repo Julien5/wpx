@@ -2,6 +2,7 @@ use reqwest::Client;
 use serde_json::Value;
 
 use crate::{
+    event::{self, SenderHandlerLock},
     inputpoint::{InputPoint, InputPoints, Tags},
     mercator,
     wgs84point::WGS84Point,
@@ -57,7 +58,7 @@ Grabener Höhe is tourism = viewpoint.
 To get it: node["tourism"="viewpoint"]({{bbox}});
 */
 
-pub async fn all(bbox: &str) -> Option<String> {
+pub async fn all(bbox: &str, logger: &SenderHandlerLock) -> Option<String> {
     let timeout = 250;
     let header = format!("[out:json][timeout:{}]", timeout);
     let mut reqs = Vec::new();
@@ -70,6 +71,7 @@ pub async fn all(bbox: &str) -> Option<String> {
     let body = reqs.join(";");
     let footer = "out geom".to_string();
     let request = format!("{};({};);{};", header, body, footer);
+    event::send_worker(logger, &format!("{}", "send request")).await;
     dl_worker(&request).await
 }
 

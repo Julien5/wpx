@@ -1,3 +1,4 @@
+use crate::event::{self, SenderHandlerLock};
 use crate::inputpoint::InputPoints;
 use crate::mercator::EuclideanBoundingBox;
 
@@ -78,8 +79,13 @@ pub async fn read(bbox: &EuclideanBoundingBox) -> Option<InputPoints> {
     }
 }
 
-pub async fn write(bboxes: &Vec<EuclideanBoundingBox>, points: &InputPoints) {
-    for atom in bboxes {
+pub async fn write(
+    bboxes: &Vec<EuclideanBoundingBox>,
+    points: &InputPoints,
+    logger: &SenderHandlerLock,
+) {
+    for katom in 0..bboxes.len() {
+        let atom = &bboxes[katom];
         let local = points
             .clone()
             .points
@@ -92,6 +98,11 @@ pub async fn write(bboxes: &Vec<EuclideanBoundingBox>, points: &InputPoints) {
             .collect::<Vec<_>>();
         let path = cache_filename(atom);
         let out = InputPoints { points: local };
+        event::send_worker(
+            logger,
+            &format!("write cache {}/{}", katom + 1, bboxes.len()),
+        )
+        .await;
         write_worker(&path, out.as_string()).await;
     }
 }

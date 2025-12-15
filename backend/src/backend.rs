@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 
 use crate::controls;
 use crate::error::Error;
+use crate::event;
 use crate::gpsdata;
 use crate::gpxexport;
 use crate::inputpoint::*;
@@ -24,6 +25,9 @@ use crate::wheel;
 
 pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
+pub use crate::event::Sender;
+pub type SenderHandler = crate::event::SenderHandler;
+pub type SenderHandlerLock = crate::event::SenderHandlerLock;
 
 pub struct BackendData {
     pub parameters: Parameters,
@@ -31,28 +35,9 @@ pub struct BackendData {
     pub inputpoints: InputPointMaps,
 }
 
-pub trait Sender {
-    fn send(&mut self, data: &String);
-}
-
-pub type SenderHandler = Box<dyn Sender + Send + Sync>;
-pub type SenderHandlerLock = std::sync::RwLock<Option<SenderHandler>>;
-
 pub struct Backend {
     backend_data: Option<BackendData>,
     pub sender: SenderHandlerLock,
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-async fn send_worker(handler: &SenderHandlerLock, data: &String) {
-    let _ = handler.write().unwrap().as_mut().unwrap().send(&data);
-}
-
-#[cfg(target_arch = "wasm32")]
-async fn send_worker(handler: &SenderHandlerLock, data: &String) {
-    let _ = handler.write().unwrap().as_mut().unwrap().send(&data);
-    let tick = std::time::Duration::from_millis(0);
-    let _ = wasmtimer::tokio::sleep(tick).await;
 }
 
 impl Backend {
@@ -79,7 +64,7 @@ impl Backend {
         if self.sender.read().unwrap().is_none() {
             return;
         }
-        send_worker(&self.sender, data).await
+        event::send_worker(&self.sender, data).await
     }
 
     pub fn get_parameters(&self) -> Parameters {
@@ -134,7 +119,7 @@ impl Backend {
         let track = std::sync::Arc::new(track_data);
         self.send(&"download osm data".to_string()).await;
         let mut inputpoints_map = BTreeMap::new();
-        let osmpoints = osm::download_for_track(&track).await;
+        let osmpoints = osm::download_for_track(&track, &self.sender).await;
         let gpx_waypoints = gpxdata.waypoints.as_vector();
         inputpoints_map.insert(InputType::OSM, osmpoints);
         inputpoints_map.insert(InputType::GPX, gpxdata.waypoints);

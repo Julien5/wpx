@@ -5,10 +5,11 @@ mod filesystem;
 mod indexdb;
 pub mod osmpoint;
 
-use crate::bboxes::*;
+use crate::event::SenderHandlerLock;
 use crate::inputpoint::{InputPointMap, InputPoints};
 use crate::mercator::EuclideanBoundingBox;
 use crate::track::*;
+use crate::{bboxes::*, event};
 
 fn osm3(bbox: &WGS84BoundingBox) -> String {
     format!(
@@ -22,10 +23,11 @@ fn osm3(bbox: &WGS84BoundingBox) -> String {
 
 async fn download_chunk_real(
     bbox: &WGS84BoundingBox,
+    logger: &SenderHandlerLock,
 ) -> std::result::Result<InputPoints, std::io::Error> {
     use download::*;
     let bboxparam = osm3(&bbox);
-    let result = parse_osm_content(all(&bboxparam).await.unwrap().as_bytes());
+    let result = parse_osm_content(all(&bboxparam, logger).await.unwrap().as_bytes());
     match result {
         Ok(points) => Ok(points),
         Err(e) => {
@@ -36,7 +38,10 @@ async fn download_chunk_real(
     }
 }
 
-async fn download_chunk(bboxes: &Vec<EuclideanBoundingBox>) -> InputPoints {
+async fn download_chunk(
+    bboxes: &Vec<EuclideanBoundingBox>,
+    logger: &SenderHandlerLock,
+) -> InputPoints {
     if bboxes.is_empty() {
         return InputPoints::new();
     }
@@ -44,10 +49,10 @@ async fn download_chunk(bboxes: &Vec<EuclideanBoundingBox>) -> InputPoints {
     let wgsbbox = eucbbox.unproject();
 
     log::info!("downloading for {} tiles", bboxes.len());
-    let osmpoints = match download_chunk_real(&wgsbbox).await {
+    let osmpoints = match download_chunk_real(&wgsbbox, logger).await {
         Ok(points) => {
             log::info!("downloaded {:3} points", points.points.len());
-            cache::write(bboxes, &points).await;
+            cache::write(bboxes, &points, logger).await;
             points
         }
         Err(e) => {
@@ -80,7 +85,7 @@ async fn remove_cache(tiles: &BoundingBoxes) -> Vec<EuclideanBoundingBox> {
     uncached
 }
 
-async fn process(bbox: &EuclideanBoundingBox) -> InputPointMap {
+async fn process(bbox: &EuclideanBoundingBox, logger: &SenderHandlerLock) -> InputPointMap {
     let tiles = split(&bbox, &BBOXWIDTH);
     let not_cached = remove_cache(&tiles).await;
     if !not_cached.is_empty() {
@@ -90,19 +95,20 @@ async fn process(bbox: &EuclideanBoundingBox) -> InputPointMap {
             not_cached.len()
         );
     }
-    download_chunk(&not_cached).await;
+    download_chunk(&not_cached, logger).await;
     let mut ret = InputPointMap::new();
     log::trace!("about to read {} tiles", tiles.len());
-    for (_index, tile) in tiles {
+    for (index, tile) in tiles {
         let points = read(&tile).await;
         ret.insert_points(&tile, &points.points);
     }
     ret
 }
 
-pub async fn download_for_track(track: &Track) -> InputPointMap {
+pub async fn download_for_track(track: &Track, logger: &SenderHandlerLock) -> InputPointMap {
     let bbox = track.euclidean_bounding_box();
     assert!(!bbox.empty());
-    let ret = process(&bbox).await;
+    event::send_worker(logger, &format!("{}", "download")).await;
+    let ret = process(&bbox, logger).await;
     ret
 }

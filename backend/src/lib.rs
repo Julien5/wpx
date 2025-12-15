@@ -4,6 +4,7 @@ mod bboxes;
 mod controls;
 mod elevation;
 pub mod error;
+mod event;
 mod format;
 pub mod gpsdata;
 mod gpxexport;
