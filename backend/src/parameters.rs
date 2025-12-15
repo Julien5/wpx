@@ -19,7 +19,7 @@ impl Default for UserStepsOptions {
         UserStepsOptions {
             step_distance: None,
             step_elevation_gain: None,
-            gpx_name_format: "TIME[%H:%M]-SLOPE[4.1%]".to_string(),
+            gpx_name_format: "NAME-TIME[%H:%M]-SLOPE[4.1%]".to_string(),
         }
     }
 }
@@ -79,7 +79,7 @@ pub struct Parameters {
 impl Default for Parameters {
     fn default() -> Parameters {
         Parameters {
-            control_gpx_name_format: "TIME[%H:%M]-SLOPE[4.1%]".to_string(),
+            control_gpx_name_format: "NAME-TIME[%H:%M]-SLOPE[4.1%]".to_string(),
             start_time: chrono::Local::now().to_rfc3339(),
             speed: speed::mps(15f64),
             segment_length: 100f64 * 1000f64,

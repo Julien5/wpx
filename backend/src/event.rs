@@ -30,6 +30,7 @@ pub async fn send_worker(handler: &SenderHandlerLock, data: &String) {
 }
 
 #[derive(Clone)]
+#[allow(dead_code)]
 pub struct ConsoleEventSender {}
 
 impl Sender for ConsoleEventSender {

@@ -22,22 +22,27 @@ class WaypointsTableWidget extends StatelessWidget {
       // 1. Define the Columns
       columns: const <DataColumn>[
         DataColumn(
+          label: Text('', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: true,
+        ),
+        DataColumn(
           label: Text('km', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
         ),
         DataColumn(
-          label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: Text('GPX', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: false,
         ),
       ],
-      // 2. Map Waypoints to Data Rows
       rows:
           waypoints.map((w) {
             final formattedDistance = _formatDistance(w.info!.distance);
+            final name = w.info!.name;
             final gpxName = w.info!.gpxName;
 
             return DataRow(
               cells: <DataCell>[
+                DataCell(Text(name)),
                 DataCell(Text(formattedDistance)),
                 DataCell(
                   SizedBox(

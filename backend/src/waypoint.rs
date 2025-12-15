@@ -112,6 +112,7 @@ impl WaypointInfo {
             inter_distance,
             inter_elevation_gain,
             inter_slope,
+            name: w.name.as_ref().unwrap_or(&"".to_string()).clone(),
             origin: origin.clone(),
         };
         let gpx_name = Self::make_gpx_name(&data, parameters);

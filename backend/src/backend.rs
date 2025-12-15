@@ -488,8 +488,11 @@ mod tests {
         log::trace!("len={}", len);
         assert!(len > 0);
         let kinds = std::collections::HashSet::from([InputType::Control]);
-        let w = backend.get_waypoints(&seg, kinds);
-        assert!(!w.is_empty());
+        let waypoints = backend.get_waypoints(&seg, kinds);
+        assert!(!waypoints.is_empty());
+        for waypoint in waypoints {
+            log::debug!("gpx name={}", waypoint.info.unwrap().gpx_name);
+        }
     }
 
     #[tokio::test]

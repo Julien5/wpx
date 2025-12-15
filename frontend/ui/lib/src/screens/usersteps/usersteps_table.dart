@@ -9,12 +9,17 @@ class UserStepsTableWidget extends StatelessWidget {
 
   void setShortFormat(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    model.setWaypointGpxNameFormat("TIME[%H:%M]");
+    model.setUserStepGpxNameFormat("TIME[%H:%M]");
   }
 
   void setMediumFormat(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    model.setWaypointGpxNameFormat("TIME[%H:%M]-SLOPE[4.1%]");
+    model.setUserStepGpxNameFormat("TIME[%H:%M]-SLOPE[4.1%]");
+  }
+
+  void setLongFormat(BuildContext ctx) {
+    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    model.setUserStepGpxNameFormat("NAME-TIME[%H:%M]-SLOPE[4.1%]");
   }
 
   @override
@@ -29,6 +34,11 @@ class UserStepsTableWidget extends StatelessWidget {
       child: const Text("medium"),
     );
 
+    Widget longButton = ElevatedButton(
+      onPressed: () => setLongFormat(ctx),
+      child: const Text("long"),
+    );
+
     Widget buttons = Card(
       elevation: 4, // Add shadow to the card
       shape: RoundedRectangleBorder(
@@ -39,7 +49,13 @@ class UserStepsTableWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [shortButton, SizedBox(width: 10), mediumButton],
+          children: [
+            shortButton,
+            SizedBox(width: 10),
+            mediumButton,
+            SizedBox(width: 10),
+            longButton,
+          ],
         ),
       ),
     );

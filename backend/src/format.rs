@@ -9,6 +9,7 @@ pub struct WaypointInfoData {
     pub inter_distance: f64,
     pub inter_elevation_gain: f64,
     pub inter_slope: f64,
+    pub name: String,
     pub origin: InputType,
 }
 
@@ -47,8 +48,22 @@ fn format_slope(slope_ratio: f64, specifier: &str) -> String {
 
 pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String {
     use regex::Regex;
-    let format_regex: Regex = Regex::new(r"(TIME|SLOPE)\[([^\]]+)\]").unwrap();
-    let format = parameters.user_steps_options.gpx_name_format.clone();
+    // let format_regex: Regex = Regex::new(r"(TIME|SLOPE)\[([^\]]+)\]").unwrap();
+    let format_regex: Regex = Regex::new(r"(TIME|SLOPE|NAME)(?:\[([^\]]+)\])?").unwrap();
+    let format = match data.origin {
+        InputType::UserStep => parameters.user_steps_options.gpx_name_format.clone(),
+        InputType::Control => parameters.control_gpx_name_format.clone(),
+        _ => String::new(),
+    };
+    if format.is_empty() {
+        return data.name.clone();
+    }
+    log::debug!(
+        "name={} origin={:?} format={}",
+        data.name,
+        data.origin,
+        format
+    );
     let mut result = format.to_string();
     let original_format = format.to_string(); // Keep original for iterating
     let time = speed::time_at_distance(&data.distance, parameters);
@@ -56,20 +71,22 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
     // Iterate over all matched placeholders in the format string
     for cap in format_regex.captures_iter(&original_format) {
         let field_type = &cap[1];
-        let specifier = &cap[2];
         let placeholder = &cap[0];
 
         // This variable will hold the formatted string for substitution
         let formatted_value = match field_type {
             "TIME" => {
+                let specifier = &cap[2];
                 // The specifier is a Chrono format string (e.g., "%H:%M")
                 // NOTE: Using "%H:%M" corresponds to the example TIME[HH:MM]
                 time.format(specifier).to_string()
             }
             "SLOPE" => {
+                let specifier = &cap[2];
                 // The specifier is a custom W.P[%] string (e.g., "4.1" or "4.1%")
                 format_slope(data.inter_slope, specifier)
             }
+            "NAME" => data.name.clone(),
             _ => {
                 // Should not happen based on the regex
                 String::new()
@@ -104,6 +121,7 @@ mod tests {
             inter_distance: 50.0,
             inter_slope: slope,
             inter_elevation_gain: 50.0,
+            name: "P2".to_string(),
             origin: InputType::UserStep,
         }
     }
@@ -128,6 +146,16 @@ mod tests {
         // Test different time format
         let format2 = "TIME[%H:%M:%S]";
         assert_eq!(make_gpx_name(&data, &parameters(&format2)), "09:00:00");
+    }
+
+    #[test]
+    fn test_name_formatting() {
+        // Time is 12:32:30 UTC
+        let data = setup_test_data(0.0, 12, 32);
+
+        // Example 1: TIME[HH:MM] -> "12:32" (Using chrono's "%H:%M")
+        let format1 = "NAME-TIME[%H:%M]";
+        assert_eq!(make_gpx_name(&data, &parameters(&format1)), "P2-09:00");
     }
 
     #[test]
