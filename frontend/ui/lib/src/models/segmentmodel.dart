@@ -50,4 +50,9 @@ class SegmentModel extends ChangeNotifier {
     _bridge.setUserstepGpxNameFormat(format: format);
     notifyListeners();
   }
+
+  void setControlGpxNameFormat(String format) {
+    _bridge.setControlGpxNameFormat(format: format);
+    notifyListeners();
+  }
 }

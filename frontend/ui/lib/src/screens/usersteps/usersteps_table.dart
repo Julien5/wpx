@@ -19,7 +19,7 @@ class UserStepsTableWidget extends StatelessWidget {
 
   void setLongFormat(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    model.setUserStepGpxNameFormat("NAME-TIME[%H:%M]-SLOPE[4.1%]");
+    model.setUserStepGpxNameFormat("NAME[*]-TIME[%H:%M]-SLOPE[4.1%]");
   }
 
   @override

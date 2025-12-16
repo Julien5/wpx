@@ -42,7 +42,9 @@ class WaypointsTableWidget extends StatelessWidget {
 
             return DataRow(
               cells: <DataCell>[
-                DataCell(Text(name)),
+                DataCell(
+                  Text(name.replaceAll(RegExp(r'[\r\n]|'), '').trimLeft()),
+                ),
                 DataCell(Text(formattedDistance)),
                 DataCell(
                   SizedBox(

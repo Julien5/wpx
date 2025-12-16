@@ -31,17 +31,38 @@ impl rstar::PointDistance for InputPoint {
     }
 }
 
+fn extract_last_part(name: &String) -> String {
+    name.split(|c: char| !c.is_alphanumeric()) // Split by anything not a letter/digit
+        .filter(|s| !s.is_empty()) // Ignore empty strings (e.g., if it ends in '!')
+        .last() // Take the very last element
+        .unwrap_or("") // If nothing found, return empty string
+        .to_string()
+}
+
 pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) -> Vec<InputPoint> {
     let parts = &track.parts;
     if parts.len() == 1 {
         log::info!("cannot infer control from a single track/segment");
         return Vec::new();
     }
-    let mut candidates: BTreeMap<usize, MercatorPoint> = BTreeMap::new();
+
+    struct Candidate {
+        position: MercatorPoint,
+        segment_name: String,
+    }
+
+    // construct candidates with the *end* of each segment.
+    let mut candidates: BTreeMap<usize, Candidate> = BTreeMap::new();
     for index in 0..parts.len() {
         let part = &parts[index];
         if part.end < track.len() {
-            candidates.insert(index, track.euclidian[part.end].clone());
+            candidates.insert(
+                index,
+                Candidate {
+                    position: track.euclidian[part.end].clone(),
+                    segment_name: part.name.clone(),
+                },
+            );
         }
     }
     assert_eq!(candidates.len(), parts.len() - 1);
@@ -50,8 +71,9 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
     let tree = RTree::bulk_load(waypoints.to_vec());
     let mut ret = Vec::new();
     let maxdist = 200f64;
-    for (index, point) in candidates {
-        let mut name = parts[index].name.clone();
+    for (index, candidate) in candidates {
+        let mut name = extract_last_part(&candidate.segment_name);
+        let point = candidate.position.clone();
         let mut description = String::new();
         let nearest = tree.nearest_neighbor(&[point.0, point.1]);
         match nearest {
@@ -160,7 +182,12 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
         ));
         start = end;
     }
-    let mut ret = Vec::new();
+    struct Control {
+        index: usize,
+        name: String,
+    }
+
+    let mut proto = Vec::new();
     for segment in &mut segments {
         let points = segment.points.get_mut(&InputType::OSM).unwrap();
         points.retain(|w| is_close_to_track(w));
@@ -168,10 +195,15 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
         let selected = points.first().unwrap().clone();
         let index = selected.round_track_index().unwrap();
         let name = selected.name();
-        let desc = String::new();
-        ret.push(InputPoint::create_control_on_track(
-            &track, index, &name, &desc,
-        ));
+        proto.push(Control { index, name });
+    }
+    proto.sort_by_key(|c| c.index);
+    let mut ret = Vec::new();
+    for k in 0..proto.len() {
+        let p = &proto[k];
+        let name = format!("K{}", k + 1);
+        let w = InputPoint::create_control_on_track(&track, p.index, &name, &p.name);
+        ret.push(w);
     }
     ret
 }
@@ -248,8 +280,11 @@ mod tests {
             log::debug!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 4);
-        assert!(controls[0].name().contains("Furtwangen"));
-        assert!(controls[1].name().contains("Haslach"));
-        assert!(controls[2].name().contains("Forbach"));
+        assert!(controls[0].name().contains("K1"));
+        assert!(controls[0].description().contains("Furtwangen"));
+        assert!(controls[1].name().contains("K2"));
+        assert!(controls[1].description().contains("Haslach"));
+        assert!(controls[2].name().contains("K3"));
+        assert!(controls[2].description().contains("Forbach"));
     }
 }

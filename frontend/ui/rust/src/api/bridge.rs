@@ -222,6 +222,11 @@ impl Bridge {
     }
 
     #[frb(sync)]
+    pub fn set_control_gpx_name_format(&mut self, format: &String) {
+        self.backend.set_control_gpx_name_format(format);
+    }
+
+    #[frb(sync)]
     pub fn get_user_step_options(&mut self, segment: &mut Segment) -> UserStepsOptions {
         segment._impl.get_user_step_options()
     }
