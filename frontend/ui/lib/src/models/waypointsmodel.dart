@@ -8,6 +8,8 @@ class WaypointsModel with ChangeNotifier {
   WaypointsModel({required this.brd, required this.segment});
 
   List<bridge.Waypoint> all() {
+    // This is buggy: the first waypoint will have
+    // wrong inter_* values if segment.id>0.
     return brd.getWaypoints(segment: segment, kinds: bridge.allkinds());
   }
 

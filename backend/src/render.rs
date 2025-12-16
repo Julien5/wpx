@@ -4,7 +4,7 @@ use crate::backend::BackendData;
 use crate::inputpoint::InputType;
 use crate::{track, waypoint};
 
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::str::FromStr;
 
 struct Templates {
@@ -26,7 +26,7 @@ impl Templates {
 fn points_table(
     templates: &Templates,
     _track: &track::Track,
-    waypoints: &Vec<waypoint::Waypoint>,
+    waypoints: &Vec<&waypoint::Waypoint>,
 ) -> String {
     let table = templates.table_points.clone();
     let mut template_line_orig = String::new();
@@ -102,12 +102,32 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
     let mut document = templates.header.clone();
     let segments = backend.segments();
     let pacing_and_controls = HashSet::from([InputType::UserStep, InputType::Control]);
+
+    let mut all_points = BTreeMap::new();
     for segment in &segments {
         let range = segment.range();
         if range.is_empty() {
-            break;
+            continue;
         }
-        let mut waypoints_table = backend.get_waypoints(&segment, pacing_and_controls.clone());
+        let segment_waypoints = backend.get_points(&segment, pacing_and_controls.clone());
+        for w in segment_waypoints {
+            let index = w.track_projection.as_ref().unwrap().track_index;
+            all_points.insert(index, w.clone());
+        }
+    }
+
+    let vector: Vec<_> = all_points.iter().map(|(_k, w)| w.clone()).collect();
+    let all_waypoints = backend.export_points(&vector);
+
+    for segment in &segments {
+        let range = segment.range();
+        if range.is_empty() {
+            continue;
+        }
+        let mut waypoints_table: Vec<_> = all_waypoints
+            .iter()
+            .filter(|w| range.contains(&w.track_index.unwrap()))
+            .collect();
         waypoints_table.truncate(15);
         let table = points_table(&templates, &backend.track, &waypoints_table);
         let rendered_profile = segment.render_profile();

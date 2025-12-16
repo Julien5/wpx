@@ -65,7 +65,7 @@ function pdf() {
 	time cargo ${cmd} ${mode} -- \
 		 --output-directory /tmp/wpx/ \
 		 --debug true \
-		 --step-elevation-gain 250 \
+		 --step-elevation-gain 200 \
 		 --segment-length $(segment-length ${file}) \
 		 --segment-overlap $(segment-overlap ${file}) \
 		 --profile-max-area-ratio 0.05 \

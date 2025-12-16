@@ -181,7 +181,7 @@ impl BackendData {
     pub fn get_parameters(self: &BackendData) -> Parameters {
         self.parameters.clone()
     }
-    fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
+    pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
         let mut ret = Waypoints::new();
         for p in points {
             ret.push(p.waypoint());
@@ -189,7 +189,8 @@ impl BackendData {
         WaypointInfo::make_waypoint_infos(&mut ret, &self.track, &self.parameters);
         ret
     }
-    pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
+
+    pub fn get_points(&self, segment: &Segment, kinds: Kinds) -> Vec<InputPoint> {
         let mut points = Vec::new();
         let segpoints = &segment.points;
         let range = &segment.range();
@@ -208,7 +209,11 @@ impl BackendData {
             }
         }
         log::trace!("segment: {} export {} waypoints", segment.id, points.len());
-        self.export_points(&points)
+        points
+    }
+
+    pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
+        self.export_points(&self.get_points(segment, kinds))
     }
 
     // used by bridge
