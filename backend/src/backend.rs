@@ -192,9 +192,7 @@ impl BackendData {
             match segpoints.get(kind) {
                 Some(kpoints) => {
                     let mut copy = kpoints.clone();
-                    copy.retain(|w| {
-                        w.kind() != InputType::OSM && make_points::is_close_to_track(w)
-                    });
+                    copy.retain(|w| make_points::is_close_to_track(w));
                     points.extend_from_slice(&copy);
                 }
                 None => {}

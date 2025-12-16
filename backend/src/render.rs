@@ -1,8 +1,10 @@
 #![allow(non_snake_case)]
 
 use crate::backend::BackendData;
+use crate::inputpoint::InputType;
 use crate::{inputpoint, track, waypoint};
 
+use std::collections::HashSet;
 use std::str::FromStr;
 
 struct Templates {
@@ -99,12 +101,13 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let segments = backend.segments();
+    let export_points = HashSet::from([InputType::UserStep, InputType::Control]);
     for segment in &segments {
         let range = segment.range();
         if range.is_empty() {
             break;
         }
-        let mut waypoints_table = backend.get_waypoints(&segment, inputpoint::allkinds());
+        let mut waypoints_table = backend.get_waypoints(&segment, export_points.clone());
         waypoints_table.truncate(15);
         let table = points_table(&templates, &backend.track, &waypoints_table);
         let rendered_profile = segment.render_profile();
