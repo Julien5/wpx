@@ -144,8 +144,8 @@ pub struct _Waypoint {
     pub euclidean: MercatorPoint,
     pub track_index: Option<usize>,
     pub origin: InputType,
-    pub name: Option<String>,
-    pub description: Option<String>,
+    pub name: String,
+    pub description: String,
     pub info: Option<WaypointInfo>,
 }
 

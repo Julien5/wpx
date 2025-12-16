@@ -1,6 +1,5 @@
 use crate::{
     inputpoint::{InputPoint, InputType, OSMType},
-    label_placement::drawings,
     make_points::is_close_to_track,
     segment::Segment,
 };

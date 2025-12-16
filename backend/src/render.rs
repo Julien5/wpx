@@ -2,7 +2,7 @@
 
 use crate::backend::BackendData;
 use crate::inputpoint::InputType;
-use crate::{inputpoint, track, waypoint};
+use crate::{track, waypoint};
 
 use std::collections::HashSet;
 use std::str::FromStr;

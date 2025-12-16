@@ -53,7 +53,7 @@ impl Graph {
 
     pub fn build_map(&mut self) {
         //log::trace!("building edges for {} nodes", self.ordered_nodes.len());
-        let mut count = 0;
+        let mut _count = 0;
         for node1 in 0..self.nodes.len() {
             let cbb = &self.nodes[node1].bbox;
             let mut hits = Vec::new();
@@ -65,7 +65,7 @@ impl Graph {
                 }
                 if self.intersect(&node1, node2) {
                     edges.insert(*node2);
-                    count += 1;
+                    _count += 1;
                 }
             }
             self.map.insert(node1, edges);
@@ -132,21 +132,23 @@ impl Graph {
 
     pub fn select(&mut self, a: &Node, selected: &Candidate) {
         // for all b connected to a
-        let index = self.nodes[*a]
-            .candidates
-            .iter()
-            .position(|c| c == selected)
-            .unwrap();
-        {
-            let feature = &self.nodes[*a].feature;
-            /*log::trace!(
-                "selected {} with area {:.1} [candidate {}] [{}]",
-                feature.text(),
-                feature.area(),
-                index,
-                selected.bbox().absolute()
-            );*/
+        /*
+            {
+                let index = self.nodes[*a]
+                .candidates
+                .iter()
+                .position(|c| c == selected)
+                .unwrap();
+                let feature = &self.nodes[*a].feature;
+                log::trace!(
+                    "selected {} with area {:.1} [candidate {}] [{}]",
+                    feature.text(),
+                    feature.area(),
+                    index,
+                    selected.bbox().absolute()
+                );
         }
+            */
         let neighbors = self.map.get(a).unwrap().clone();
         for b in neighbors {
             // remove candidates of b that overlap with the
