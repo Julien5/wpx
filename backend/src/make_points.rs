@@ -34,12 +34,7 @@ fn profile_points_elevation_gain_track(track: &Track, d: &f64) -> Vec<InputPoint
             end: index,
         });
         if g >= *d {
-            let w = InputPoint::create_point_on_track(
-                &track,
-                index,
-                &format!("P{}", count),
-                InputType::UserStep,
-            );
+            let w = InputPoint::create_user_step_on_track(&track, index, &format!("P{}", count));
             ret.push(w);
             count += 1;
             prev = index;
@@ -60,12 +55,7 @@ fn profile_points_distance_track(track: &Track, d: &f64) -> Vec<InputPoint> {
             break;
         }
         if track.distance(index) - track.distance(prev) >= *d {
-            let w = InputPoint::create_point_on_track(
-                &track,
-                index,
-                &format!("P{}", count),
-                InputType::UserStep,
-            );
+            let w = InputPoint::create_user_step_on_track(&track, index, &format!("P{}", count));
             ret.push(w);
             count += 1;
             prev = index;

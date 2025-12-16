@@ -105,16 +105,26 @@ fn shorten_name(name: &String) -> String {
 */
 
 impl InputPoint {
-    pub fn create_point_on_track(
-        track: &Track,
-        index: usize,
-        name: &String,
-        kind: InputType,
-    ) -> InputPoint {
+    pub fn create_user_step_on_track(track: &Track, index: usize, name: &String) -> InputPoint {
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidian[index].clone();
-        assert!(kind == InputType::UserStep || kind == InputType::Control);
-        let mut p = InputPoint::from_wgs84(&wgs, &euc, kind);
+        let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::UserStep);
+        p.tags.insert("name".to_string(), name.clone());
+        p.track_projection = Some(TrackProjection {
+            track_floating_index: index as f64,
+            track_index: index,
+            track_distance: 0f64,
+            elevation: wgs.z(),
+            euclidean: euc.clone(),
+        });
+
+        p
+    }
+
+    pub fn create_control_on_track(track: &Track, index: usize, name: &String) -> InputPoint {
+        let wgs = track.wgs84[index].clone();
+        let euc = track.euclidian[index].clone();
+        let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::Control);
         p.tags.insert("name".to_string(), name.clone());
         p.track_projection = Some(TrackProjection {
             track_floating_index: index as f64,

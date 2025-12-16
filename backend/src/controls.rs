@@ -69,11 +69,10 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
             }
         }
 
-        ret.push(InputPoint::create_point_on_track(
+        ret.push(InputPoint::create_control_on_track(
             track,
             parts[index].end,
             &name,
-            InputType::Control,
         ));
     }
     ret.sort_by_key(|w| w.round_track_index().unwrap_or(0));
@@ -92,11 +91,10 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
         let projection = locate::compute_track_projection(track, &tracktree, &point);
         if projection.track_distance < maxdist {
             log::debug!("use waypoint as control");
-            let control = InputPoint::create_point_on_track(
+            let control = InputPoint::create_control_on_track(
                 track,
                 projection.track_index,
                 &point.name().unwrap_or("control".to_string()),
-                InputType::Control,
             );
             ret.push(control);
         } else {
@@ -165,12 +163,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
         let selected = points.first().unwrap().clone();
         let index = selected.round_track_index().unwrap();
         let name = selected.name().unwrap_or("unnamed".to_string());
-        ret.push(InputPoint::create_point_on_track(
-            &track,
-            index,
-            &name,
-            InputType::Control,
-        ));
+        ret.push(InputPoint::create_control_on_track(&track, index, &name));
     }
     ret
 }
