@@ -80,11 +80,6 @@ pub fn user_points(track: &Track, options: &UserStepsOptions) -> Vec<InputPoint>
             let loc = profile_points_elevation_gain_track(track, &d);
             for p in &loc {
                 let d = p.track_projection.as_ref().unwrap().track_distance;
-                log::debug!(
-                    "p: track_distance:{} index:{}",
-                    d,
-                    p.round_track_index().unwrap()
-                );
                 assert_eq!(d, 0f64);
             }
             ret.extend_from_slice(&loc);

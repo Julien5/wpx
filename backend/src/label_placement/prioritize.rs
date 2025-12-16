@@ -66,13 +66,6 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
                 let wi = &points[k];
                 assert!(is_close_to_track(wi));
                 let d = wi.track_projection.as_ref().unwrap().track_distance;
-                log::debug!(
-                    "segid:{} p: track_distance:{} index:{} text:{}",
-                    segment.id,
-                    d,
-                    wi.round_track_index().unwrap(),
-                    drawings::make_label_text(wi, segment)
-                );
                 assert_eq!(wi.kind(), InputType::UserStep);
                 assert_eq!(d, 0f64);
                 if user1.len() < user2.len() {
@@ -137,7 +130,6 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
         }
         match w.osmkind().unwrap() {
             OSMType::City => {
-                log::trace!("offtrack city:{}", w.name());
                 offtrack_cities.push(w);
             }
             _ => {}
@@ -146,15 +138,6 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     sort_by_distance_to_track(&mut offtrack_cities);
     //sort_by_population(&mut offtrack_cities);
     let villages_and_far_cities = merge_flip_flop(&offtrack_cities, &villages);
-    for w in &villages_and_far_cities {
-        log::trace!("ret-offtrack city:{}", w.name());
-    }
-    for w in *user1 {
-        log::debug!("segid:{} map-user1:{}", segment.id, w.name());
-    }
-    for w in *user2 {
-        log::debug!("segid:{} map-user2:{}", segment.id, w.name());
-    }
     vec![
         (*gpx).clone(),
         (*user1).clone(),

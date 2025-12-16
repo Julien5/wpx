@@ -131,8 +131,7 @@ fn place_subset(
         true => place_quick_best_candidates(features, obstacles),
     };
     //log::trace!("solve label graph [{}]", graph.map.len(),);
-
-    log::trace!("results:");
+    //log::trace!("results:");
     for k in 0..features.points.len() {
         let feature = &features.points[k];
         let target_text = feature.text();
@@ -142,13 +141,13 @@ fn place_subset(
         let best_candidate = best_candidates.get(&k);
         match best_candidate {
             Some(candidate) => {
-                log::trace!("index:{}", k);
-                log::trace!("text: {}", target_text);
-                log::trace!("candidate: {}", candidate.bbox().relative());
+                //log::trace!("index:{}", k);
+                //log::trace!("text: {}", target_text);
+                //log::trace!("candidate: {}", candidate.bbox().relative());
                 ret.placed_indices.insert(k, candidate.bbox().clone());
             }
             _ => {
-                log::trace!("failed to find any candidate for [{}]", target_text);
+                //log::trace!("failed to find any candidate for [{}]", target_text);
             }
         }
     }
@@ -172,11 +171,11 @@ pub fn place_labels(
         bboxes: Vec::new(),
     };
     for packet in packets {
-        log::trace!(
+        /*log::trace!(
             "[a] features:{} obstacles:{}",
             packet.points.len(),
             obstacles.bboxes.len()
-        );
+        );*/
         let results = place_subset(&packet, gen, &obstacles);
         for (_k, bbox) in &results.placed_indices {
             obstacles.bboxes.push(bbox.absolute().clone());

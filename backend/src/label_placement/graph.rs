@@ -52,7 +52,7 @@ impl Graph {
     }
 
     pub fn build_map(&mut self) {
-        log::trace!("building edges for {} nodes", self.ordered_nodes.len());
+        //log::trace!("building edges for {} nodes", self.ordered_nodes.len());
         let mut count = 0;
         for node1 in 0..self.nodes.len() {
             let cbb = &self.nodes[node1].bbox;
@@ -70,30 +70,25 @@ impl Graph {
             }
             self.map.insert(node1, edges);
         }
-        log::trace!(
-            "built {} edges for {} nodes",
-            count,
-            self.ordered_nodes.len()
-        );
-
         // note: self.tree is not needed anymore.
     }
 
     pub fn _print_node(&self, node: &Node) {
         let feature = &self.nodes[*node].feature;
-        log::trace!("node: {}", node);
-        log::trace!("  - text: {}", feature.text());
-        log::trace!("  - size: {:.1}x{:.1}", feature.width(), feature.height());
+        log::info!("node: {}", node);
+        log::info!("  - text: {}", feature.text());
+        log::info!("  - size: {:.1}x{:.1}", feature.width(), feature.height());
 
         let candidates = &self.nodes[*node].candidates;
-        log::trace!("  - candidates: {}", candidates.len());
+        log::info!("  - candidates: {}", candidates.len());
         for candidate in candidates {
             let bbox = candidate.bbox().relative();
-            log::trace!("      {:?}", bbox);
+            log::info!("      {:?}", bbox);
         }
     }
 
-    pub fn _print_graph(&self) {
+    #[allow(dead_code)]
+    pub fn print_graph(&self) {
         for n in &self.ordered_nodes {
             self._print_node(n);
         }
@@ -114,7 +109,6 @@ impl Graph {
         self.ordered_nodes.push(k);
         let cbb = utils::candidates_bounding_box(&candidates);
         self.tree.insert(&cbb, k);
-        log::trace!("add edge list at {}", k);
         self.map.insert(k, BTreeSet::new());
         assert_eq!(self.ordered_nodes.len(), self.nodes.len());
         assert_eq!(self.nodes.len(), self.map.len());
@@ -145,13 +139,13 @@ impl Graph {
             .unwrap();
         {
             let feature = &self.nodes[*a].feature;
-            log::trace!(
+            /*log::trace!(
                 "selected {} with area {:.1} [candidate {}] [{}]",
                 feature.text(),
                 feature.area(),
                 index,
                 selected.bbox().absolute()
-            );
+            );*/
         }
         let neighbors = self.map.get(a).unwrap().clone();
         for b in neighbors {
@@ -223,10 +217,9 @@ impl Graph {
         let mut ret = BTreeMap::new();
         while !self.map.is_empty() {
             let m = self.max_node();
-            log::trace!("selecting..{}", m);
             let target = &self.nodes[m].feature;
             if self.used_area + target.area() > self.max_area {
-                log::trace!("remove {} because it is too large", target.text());
+                //log::trace!("remove {} because it is too large", target.text());
                 self.remove_node(&m);
                 continue;
             }
@@ -382,8 +375,6 @@ mod tests {
         graph.build_map();
 
         assert_eq!(graph.max_node(), 2);
-        log::info!("select {} {}", 1, "cc1");
-        log::info!("features:{}", graph.nodes.len());
         graph.select(&2, &cc1);
         assert!(!graph.map.contains_key(&2));
         assert!(graph.nodes[0].candidates.len() == 1);
@@ -391,6 +382,5 @@ mod tests {
         assert!(graph.nodes[0].candidates.len() == 1);
         assert!(graph.map.get(&0).unwrap().len() == 1);
         assert!(graph.map.get(&1).unwrap().len() == 1);
-        log::info!("max node {}", graph.max_node());
     }
 }

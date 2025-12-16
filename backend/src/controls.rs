@@ -94,7 +94,7 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
     for point in gpxpoints {
         let projection = locate::compute_track_projection(track, &tracktree, &point);
         if projection.track_distance < maxdist {
-            log::debug!("use waypoint as control");
+            log::debug!("use waypoint {} as control", point.name().trim());
             let control = InputPoint::create_control_on_track(
                 track,
                 projection.track_index,

@@ -126,7 +126,7 @@ impl Backend {
 
         let mut controls = controls::infer_controls_from_gpx_data(&track, &gpx_waypoints);
         if controls.is_empty() {
-            log::trace!("make_controls_with_waypoints");
+            log::info!("infer_controls_from_gpx_data empty => try waypoints");
             controls = controls::make_controls_with_waypoints(&track, &gpx_waypoints);
         } else {
             log::trace!("infer_controls_from_gpx_data OK");
@@ -137,7 +137,7 @@ impl Backend {
         };
 
         if controls.is_empty() {
-            log::trace!("controls::make_controls_with_osm");
+            log::info!("control from gpx_data or waypoints empty => try osm");
             controls = controls::make_controls_with_osm(&track, &inputpoints);
         }
 
@@ -192,21 +192,12 @@ impl BackendData {
             match segpoints.get(kind) {
                 Some(kpoints) => {
                     let mut copy = kpoints.clone();
-                    log::trace!(
-                        "segment.id={} type={:?} count={}",
-                        segment.id,
-                        kind,
-                        copy.len()
-                    );
                     copy.retain(|w| {
                         w.kind() != InputType::OSM && make_points::is_close_to_track(w)
                     });
-                    log::trace!("kept count={}", copy.len());
                     points.extend_from_slice(&copy);
                 }
-                None => {
-                    log::trace!("segment.id={} type={:?} not found", segment.id, kind,);
-                }
+                None => {}
             }
         }
         log::trace!("export {} waypoints", points.len());
@@ -305,7 +296,7 @@ impl BackendData {
         size: &IntegerSize2D,
         kinds: Kinds,
     ) -> String {
-        log::trace!(
+        log::info!(
             "start - render_segment_what:{} {} size:{}x{}",
             segment.id,
             what,
@@ -368,7 +359,7 @@ impl BackendData {
     pub async fn generatePdf(&mut self) -> Vec<u8> {
         let typbytes = render::make_typst_document(self);
         let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;
-        log::info!("generated {} bytes", ret.len());
+        log::info!("generated {} pdf bytes", ret.len());
         ret
     }
     pub fn generateGpx(&mut self) -> Vec<u8> {
@@ -403,9 +394,6 @@ mod tests {
     #[tokio::test]
     async fn svg_profile() {
         let _ = env_logger::try_init();
-        log::info!("info");
-        log::warn!("warn");
-        log::trace!("trace");
         let mut backend = Backend::make();
         backend
             .load_filename("data/blackforest.gpx")
@@ -479,7 +467,6 @@ mod tests {
         let _ = backend.load_demo().await;
         let seg = backend.trackSegment();
         let len = seg.points.get(&InputType::Control).unwrap().len();
-        log::trace!("len={}", len);
         assert!(len > 0);
         let kinds = std::collections::HashSet::from([InputType::Control]);
         let waypoints = backend.get_waypoints(&seg, kinds);

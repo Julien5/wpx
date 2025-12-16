@@ -58,12 +58,6 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
     if format.is_empty() {
         return data.name.clone();
     }
-    log::debug!(
-        "name={} origin={:?} format={}",
-        data.name,
-        data.origin,
-        format
-    );
     let mut result = format.to_string();
     let original_format = format.to_string(); // Keep original for iterating
     let time = speed::time_at_distance(&data.distance, parameters);
