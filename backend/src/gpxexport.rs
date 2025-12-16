@@ -4,7 +4,7 @@ use crate::track;
 use crate::waypoint;
 use crate::waypoint::Waypoints;
 
-fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
+fn gps_name(w: &waypoint::Waypoint) -> String {
     match &w.info {
         Some(step) => {
             use chrono::*;
@@ -13,12 +13,12 @@ fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
             let percent = 100f64 * step.inter_slope;
             let info = if true {
                 format!("{:.1}%", percent)
-            } else if w.name.is_some() {
-                format!("{}", w.name.as_ref().unwrap())
+            } else if !w.name.is_empty() {
+                format!("{}", w.name)
             } else {
                 format!("{:.1}%", percent)
             };
-            return Some(format!("{}-{}", time, info));
+            return format!("{}-{}", time, info);
         }
         _ => {}
     }
@@ -28,10 +28,10 @@ fn gps_name(w: &waypoint::Waypoint) -> Option<String> {
 fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     let mut ret = gpx::Waypoint::new(geo::Point::new(w.wgs84.x(), w.wgs84.y()));
     ret.elevation = Some(w.wgs84.z());
-    ret.name = gps_name(w);
+    ret.name = Some(gps_name(w));
     ret.description = match &w.info {
         Some(info) => Some(info.description.clone()),
-        _ => w.description.clone(),
+        _ => Some(w.description.clone()),
     };
     ret
 }

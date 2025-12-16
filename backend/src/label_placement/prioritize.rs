@@ -137,7 +137,7 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
         }
         match w.osmkind().unwrap() {
             OSMType::City => {
-                log::trace!("offtrack city:{}", w.name().unwrap());
+                log::trace!("offtrack city:{}", w.name());
                 offtrack_cities.push(w);
             }
             _ => {}
@@ -147,13 +147,13 @@ pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     //sort_by_population(&mut offtrack_cities);
     let villages_and_far_cities = merge_flip_flop(&offtrack_cities, &villages);
     for w in &villages_and_far_cities {
-        log::trace!("ret-offtrack city:{}", w.name().unwrap());
+        log::trace!("ret-offtrack city:{}", w.name());
     }
     for w in *user1 {
-        log::debug!("segid:{} map-user1:{}", segment.id, w.name().unwrap());
+        log::debug!("segid:{} map-user1:{}", segment.id, w.name());
     }
     for w in *user2 {
-        log::debug!("segid:{} map-user2:{}", segment.id, w.name().unwrap());
+        log::debug!("segid:{} map-user2:{}", segment.id, w.name());
     }
     vec![
         (*gpx).clone(),

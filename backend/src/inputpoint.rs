@@ -102,11 +102,18 @@ impl InputPoint {
         p
     }
 
-    pub fn create_control_on_track(track: &Track, index: usize, name: &String) -> InputPoint {
+    pub fn create_control_on_track(
+        track: &Track,
+        index: usize,
+        name: &String,
+        description: &String,
+    ) -> InputPoint {
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidian[index].clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::Control);
         p.tags.insert("name".to_string(), name.clone());
+        p.tags
+            .insert("description".to_string(), description.clone());
         p.track_projection = Some(TrackProjection {
             track_floating_index: index as f64,
             track_index: index,
@@ -165,17 +172,17 @@ impl InputPoint {
     pub fn ele(&self) -> Option<f64> {
         read::<f64>(self.tags.get("ele"))
     }
-    pub fn name(&self) -> Option<String> {
+    pub fn name(&self) -> String {
         let ret = self.tags.get("name");
         if ret.is_some() {
-            return Some(ret.unwrap().clone());
+            return ret.unwrap().clone();
         }
         for (k, v) in &self.tags {
             if k.contains("name") {
-                return Some(v.as_str().to_string());
+                return v.as_str().to_string();
             }
         }
-        return None;
+        return String::new();
     }
     pub fn description(&self) -> String {
         let desc = self.tags.get("description");
@@ -274,8 +281,8 @@ impl InputPoint {
             wgs84: self.wgs84.clone(),
             euclidean: self.euclidean.clone(),
             track_index: self.round_track_index(),
-            name: self.name().clone(),
-            description: None,
+            name: self.name(),
+            description: self.description(),
             info: None,
             origin: self.kind(),
         }
@@ -287,10 +294,10 @@ impl fmt::Display for InputPoint {
         write!(
             f,
             "{}=({:.2},{:.2},{:.1})",
-            if self.name().is_none() {
+            if self.name().is_empty() {
                 String::new()
             } else {
-                self.name().clone().unwrap()
+                self.name()
             },
             self.wgs84.longitude(),
             self.wgs84.latitude(),

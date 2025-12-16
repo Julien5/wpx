@@ -39,8 +39,8 @@ pub struct Waypoint {
     pub euclidean: MercatorPoint,
     pub track_index: Option<usize>,
     pub origin: InputType,
-    pub name: Option<String>,
-    pub description: Option<String>,
+    pub name: String,
+    pub description: String,
     pub info: Option<WaypointInfo>,
 }
 
@@ -52,8 +52,8 @@ impl Waypoint {
             wgs84: wgs.clone(),
             euclidean: euc.clone(),
             track_index: Some(indx),
-            name: None,
-            description: None,
+            name: String::new(),
+            description: String::new(),
             info: None,
             origin: kind,
         }
@@ -93,17 +93,8 @@ impl WaypointInfo {
             }
         };
         let time = speed::time_at_distance(&distance, parameters);
-        let name = match &w.name {
-            None => String::new(),
-            Some(n) => n.clone(),
-        };
-        let description = match &w.description {
-            None => name.clone(),
-            Some(desc) => match name.is_empty() {
-                true => format!("{}", desc),
-                false => format!("{} - {}", name, desc),
-            },
-        };
+        let name = w.name.clone();
+        let description = w.description.clone();
         let elevation = track.elevation(w.get_track_index());
         let origin = w.origin.clone();
         let data = WaypointInfoData {
@@ -112,7 +103,7 @@ impl WaypointInfo {
             inter_distance,
             inter_elevation_gain,
             inter_slope,
-            name: w.name.as_ref().unwrap_or(&"".to_string()).clone(),
+            name: name.clone(),
             origin: origin.clone(),
         };
         let gpx_name = Self::make_gpx_name(&data, parameters);

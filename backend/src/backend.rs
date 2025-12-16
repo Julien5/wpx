@@ -552,17 +552,14 @@ mod tests {
         let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
         assert!(!controls.is_empty());
         for control in &controls {
-            log::debug!(
-                "found:{}",
-                control.name().unwrap_or("unnamed control".to_string())
-            );
+            log::debug!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 5);
-        assert!(controls[0].name().unwrap_or(String::new()).contains("K1"));
-        assert!(controls[1].name().unwrap_or(String::new()).contains("K2"));
-        assert!(controls[2].name().unwrap_or(String::new()).contains("K3"));
-        assert!(controls[3].name().unwrap_or(String::new()).contains("K4"));
-        assert!(controls[4].name().unwrap_or(String::new()).contains("K5"));
+        assert!(controls[0].name().contains("K1"));
+        assert!(controls[1].name().contains("K2"));
+        assert!(controls[2].name().contains("K3"));
+        assert!(controls[3].name().contains("K4"));
+        assert!(controls[4].name().contains("K5"));
     }
 
     #[tokio::test]
@@ -576,16 +573,13 @@ mod tests {
         let controls = make_controls_with_waypoints(&track, &gpxdata.waypoints.as_vector());
         assert!(!controls.is_empty());
         for control in &controls {
-            log::debug!(
-                "found:{}",
-                control.name().unwrap_or("unnamed control".to_string())
-            );
+            log::debug!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 4);
-        assert!(controls[0].name().unwrap_or(String::new()).contains("K1"));
-        assert!(controls[1].name().unwrap_or(String::new()).contains("K2"));
-        assert!(controls[2].name().unwrap_or(String::new()).contains("K3"));
-        assert!(controls[3].name().unwrap_or(String::new()).contains("K4"));
+        assert!(controls[0].name().contains("K1"));
+        assert!(controls[1].name().contains("K2"));
+        assert!(controls[2].name().contains("K3"));
+        assert!(controls[3].name().contains("K4"));
     }
 
     #[tokio::test]
@@ -604,24 +598,12 @@ mod tests {
         let controls = make_controls_with_osm(&track, &maps);
         assert!(!controls.is_empty());
         for control in &controls {
-            log::debug!(
-                "found:{}",
-                control.name().unwrap_or("unnamed control".to_string())
-            );
+            log::debug!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 4);
-        assert!(controls[0]
-            .name()
-            .unwrap_or(String::new())
-            .contains("Furtwangen"));
-        assert!(controls[1]
-            .name()
-            .unwrap_or(String::new())
-            .contains("Haslach"));
-        assert!(controls[2]
-            .name()
-            .unwrap_or(String::new())
-            .contains("Forbach"));
+        assert!(controls[0].name().contains("Furtwangen"));
+        assert!(controls[1].name().contains("Haslach"));
+        assert!(controls[2].name().contains("Forbach"));
     }
 
     #[tokio::test]

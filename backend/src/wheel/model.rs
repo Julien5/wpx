@@ -30,13 +30,6 @@ fn angle(point: &InputPoint, track: &Track) -> f64 {
     360.0 * part / total
 }
 
-fn name(point: &InputPoint) -> String {
-    match point.name() {
-        Some(text) => text,
-        None => "noname".to_string(),
-    }
-}
-
 fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
     match segment.points.get(&InputType::Control) {
         Some(points) => {
@@ -69,7 +62,7 @@ impl WheelModel {
             for c in get_control_points(segment) {
                 let cp = CirclePoint {
                     angle: angle(&c, &segment.track),
-                    name: name(&c),
+                    name: c.name(),
                 };
                 control_points.push(cp);
             }
@@ -83,7 +76,7 @@ impl WheelModel {
             for c in get_mid_points(segment) {
                 let cp = CirclePoint {
                     angle: angle(&c, &segment.track),
-                    name: name(&c),
+                    name: c.name(),
                 };
                 mid_points.push(cp);
             }

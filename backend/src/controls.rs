@@ -52,16 +52,19 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
     let maxdist = 200f64;
     for (index, point) in candidates {
         let mut name = parts[index].name.clone();
+        let mut description = String::new();
         let nearest = tree.nearest_neighbor(&[point.0, point.1]);
         match nearest {
             Some(neighbor) => {
                 if math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt() < maxdist
                 {
-                    match neighbor.name() {
-                        Some(text) => name = text.clone(),
-                        _ => {}
-                    }
                     log::debug!("control point also found as waypoint.");
+                    if !neighbor.name().is_empty() {
+                        name = neighbor.name();
+                    }
+                    if !neighbor.description().is_empty() {
+                        description = neighbor.description();
+                    }
                 }
             }
             None => {
@@ -73,6 +76,7 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
             track,
             parts[index].end,
             &name,
+            &description,
         ));
     }
     ret.sort_by_key(|w| w.round_track_index().unwrap_or(0));
@@ -94,7 +98,8 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
             let control = InputPoint::create_control_on_track(
                 track,
                 projection.track_index,
-                &point.name().unwrap_or("control".to_string()),
+                &point.name(),
+                &point.description(),
             );
             ret.push(control);
         } else {
@@ -162,8 +167,11 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
         points.sort_by_key(|w| -control_point_goodness(&w));
         let selected = points.first().unwrap().clone();
         let index = selected.round_track_index().unwrap();
-        let name = selected.name().unwrap_or("unnamed".to_string());
-        ret.push(InputPoint::create_control_on_track(&track, index, &name));
+        let name = selected.name();
+        let desc = String::new();
+        ret.push(InputPoint::create_control_on_track(
+            &track, index, &name, &desc,
+        ));
     }
     ret
 }

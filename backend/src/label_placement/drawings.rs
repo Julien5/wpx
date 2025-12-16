@@ -16,19 +16,12 @@ pub fn make_label_text(w: &InputPoint, segment: &Segment) -> String {
             return timestr;
         }
         InputType::GPX => {
-            let name = w.name().unwrap_or("".to_string());
-            return format!("{} ({})", name, timestr);
+            return format!("{} ({})", w.name(), timestr);
         }
-        _ => match w.name() {
-            Some(name) => {
-                return name.clone().trim().to_string();
-            }
-            None => {
-                log::debug!("missing name for point {:?}", w);
-            }
-        },
+        _ => {
+            return w.name().clone().trim().to_string();
+        }
     }
-    String::new()
 }
 
 fn make_circle(
