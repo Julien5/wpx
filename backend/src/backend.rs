@@ -10,6 +10,7 @@ use crate::gpxexport;
 use crate::inputpoint::*;
 use crate::locate;
 use crate::make_points;
+use crate::make_points::is_close_to_track;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::parameters::Parameters;
@@ -191,17 +192,22 @@ impl BackendData {
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
         let mut points = Vec::new();
         let segpoints = &segment.points;
+        let range = &segment.range();
         for kind in &kinds {
             match segpoints.get(kind) {
                 Some(kpoints) => {
                     let mut copy = kpoints.clone();
-                    copy.retain(|w| make_points::is_close_to_track(w));
+                    copy.retain(|w| {
+                        assert!(kinds.contains(&w.kind()));
+                        assert!(is_close_to_track(&w));
+                        range.contains(&w.track_projection.as_ref().unwrap().track_index)
+                    });
                     points.extend_from_slice(&copy);
                 }
                 None => {}
             }
         }
-        log::trace!("export {} waypoints", points.len());
+        log::trace!("segment: {} export {} waypoints", segment.id, points.len());
         self.export_points(&points)
     }
 

@@ -101,13 +101,13 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
     let templates = Templates::new();
     let mut document = templates.header.clone();
     let segments = backend.segments();
-    let export_points = HashSet::from([InputType::UserStep, InputType::Control]);
+    let pacing_and_controls = HashSet::from([InputType::UserStep, InputType::Control]);
     for segment in &segments {
         let range = segment.range();
         if range.is_empty() {
             break;
         }
-        let mut waypoints_table = backend.get_waypoints(&segment, export_points.clone());
+        let mut waypoints_table = backend.get_waypoints(&segment, pacing_and_controls.clone());
         waypoints_table.truncate(15);
         let table = points_table(&templates, &backend.track, &waypoints_table);
         let rendered_profile = segment.render_profile();

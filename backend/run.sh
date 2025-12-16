@@ -68,8 +68,8 @@ function pdf() {
 		 --step-elevation-gain 250 \
 		 --segment-length $(segment-length ${file}) \
 		 --segment-overlap $(segment-overlap ${file}) \
-		 --profile-max-area-ratio 0.10 \
-		 --map-max-area-ratio 0.15 \
+		 --profile-max-area-ratio 0.05 \
+		 --map-max-area-ratio 0.07 \
 		 ${options} \
 		 "${file}"
 	${TYPST} compile /tmp/document.typst

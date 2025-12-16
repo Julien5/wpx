@@ -13,9 +13,12 @@ pub fn make_label_text(w: &InputPoint, segment: &Segment) -> String {
     let timestr = format!("{}", t.format("%H:%M"));
     match w.kind() {
         InputType::UserStep => {
-            return timestr;
+            return format!("{}", timestr);
         }
         InputType::GPX => {
+            return format!("{} ({})", w.name(), timestr);
+        }
+        InputType::Control => {
             return format!("{} ({})", w.name(), timestr);
         }
         _ => {
