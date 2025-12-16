@@ -104,17 +104,9 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::{NaiveDate, TimeZone, Utc};
 
     // Helper function to create a test WaypointInfoData
-    fn setup_test_data(slope: f64, hour: u32, minute: u32) -> WaypointInfoData {
-        let test_datetime = Utc.from_utc_datetime(
-            &NaiveDate::from_ymd_opt(2025, 1, 1)
-                .unwrap()
-                .and_hms_opt(hour, minute, 30) // Set seconds to 30 for rounding checks
-                .unwrap(),
-        );
-
+    fn setup_test_data(slope: f64) -> WaypointInfoData {
         WaypointInfoData {
             distance: 15000.0,
             elevation: 10.0,
@@ -137,9 +129,8 @@ mod tests {
     #[test]
     fn test_time_formatting() {
         // Time is 12:32:30 UTC
-        let data = setup_test_data(0.0, 12, 32);
+        let data = setup_test_data(0.0);
 
-        // Example 1: TIME[HH:MM] -> "12:32" (Using chrono's "%H:%M")
         let format1 = "TIME[%H:%M]";
         assert_eq!(make_gpx_name(&data, &parameters(&format1)), "09:00");
 
@@ -151,7 +142,7 @@ mod tests {
     #[test]
     fn test_name_formatting() {
         // Time is 12:32:30 UTC
-        let data = setup_test_data(0.0, 12, 32);
+        let data = setup_test_data(0.0);
 
         // Example 1: TIME[HH:MM] -> "12:32" (Using chrono's "%H:%M")
         let format1 = "NAME-TIME[%H:%M]";
@@ -161,7 +152,7 @@ mod tests {
     #[test]
     fn test_slope_formatting_standard_examples() {
         // Slope is 9.1% (Ratio 0.091)
-        let data = setup_test_data(0.091, 0, 0);
+        let data = setup_test_data(0.091);
 
         // Example 2: SLOPE[4.1] -> " 9.1"
         let format1 = "SLOPE[4.1]";
@@ -173,7 +164,7 @@ mod tests {
         assert_eq!(make_gpx_name(&data, &parameters(&format2)), " 9.1%");
 
         // High slope (10.1% / Ratio 0.101)
-        let data_high = setup_test_data(0.101, 0, 0);
+        let data_high = setup_test_data(0.101);
 
         // Test with high slope and tight width
         let format3 = "SLOPE[4.1%]";
@@ -189,7 +180,7 @@ mod tests {
     #[test]
     fn test_slope_formatting_edge_cases() {
         // Low slope (1.5%)
-        let data_low = setup_test_data(0.015, 0, 0);
+        let data_low = setup_test_data(0.015);
 
         // No width, just precision (defaults to width 0)
         let format1 = "SLOPE[.0%]";
@@ -203,7 +194,7 @@ mod tests {
     #[test]
     fn test_combined_formatting() {
         // Time 12:32, Slope 10.1%
-        let data = setup_test_data(0.101, 12, 32);
+        let data = setup_test_data(0.101);
 
         // Example 4: TIME[HH:MM]-SLOPE[4.1%] -> "12:32-10.1%"
         let format1 = "TIME[%H:%M]-SLOPE[4.1%]";
@@ -220,7 +211,7 @@ mod tests {
         );
 
         // Test a format that requires padding
-        let data_low_slope = setup_test_data(0.05, 10, 5); // 5.0% slope
+        let data_low_slope = setup_test_data(0.05); // 5.0% slope
         let format3 = "T:TIME[%H]-S:SLOPE[5.1%]"; // Width 5 for slope
                                                   // Slope 5.0% is 4 characters, width 5 adds one space: " 5.0%"
         assert_eq!(

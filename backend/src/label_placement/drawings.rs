@@ -16,10 +16,10 @@ pub fn make_label_text(w: &InputPoint, segment: &Segment) -> String {
             return timestr;
         }
         InputType::GPX => {
-            let short = w.short_name().unwrap_or("".to_string());
-            return format!("{} ({})", short, timestr);
+            let name = w.name().unwrap_or("".to_string());
+            return format!("{} ({})", name, timestr);
         }
-        _ => match w.short_name() {
+        _ => match w.name() {
             Some(name) => {
                 return name.clone().trim().to_string();
             }

@@ -85,25 +85,6 @@ where
     return None;
 }
 
-/*
-fn shorten_name(name: &String) -> String {
-    if name.len() < 10 {
-        return name.clone();
-    }
-    let parts = name.split_whitespace().collect::<Vec<_>>();
-    let n = 1;
-    for n in 0..parts.len() {
-        let mut ret = parts.clone();
-        ret.truncate(n);
-        let candidate = ret.join(" ");
-        if candidate.len() > 5 {
-            return candidate;
-        }
-    }
-    name.clone()
-}
-*/
-
 impl InputPoint {
     pub fn create_user_step_on_track(track: &Track, index: usize, name: &String) -> InputPoint {
         let wgs = track.wgs84[index].clone();
@@ -195,12 +176,6 @@ impl InputPoint {
             }
         }
         return None;
-    }
-    pub fn short_name(&self) -> Option<String> {
-        match self.name() {
-            Some(n) => Some(n),
-            None => None,
-        }
     }
     pub fn description(&self) -> String {
         let desc = self.tags.get("description");
