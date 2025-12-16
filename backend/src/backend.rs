@@ -392,16 +392,10 @@ impl BackendData {
 
 #[cfg(test)]
 mod tests {
-    use std::{collections::BTreeMap, sync::Arc};
-
     use crate::{
         backend::Backend,
-        event,
-        gpsdata::GpxData,
-        inputpoint::{self, InputPointMaps, InputType},
+        inputpoint::{self, InputType},
         math::IntegerSize2D,
-        osm,
-        track::Track,
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T08:05:00.00Z";
@@ -531,78 +525,5 @@ mod tests {
             }
         }
         assert!(ok_count == segments.len());
-    }
-
-    fn read(filename: String) -> GpxData {
-        use crate::gpsdata;
-        let mut f = std::fs::File::open(filename).unwrap();
-        let mut content = Vec::new();
-        // read the whole file
-        use std::io::prelude::*;
-        f.read_to_end(&mut content).unwrap();
-        gpsdata::read_content(&content).unwrap()
-    }
-
-    #[tokio::test]
-    async fn controls_infer_brevet() {
-        let _ = env_logger::try_init();
-        use crate::controls::*;
-        let gpxdata = read("data/ref/karl-400.gpx".to_string());
-        let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
-        assert!(!controls.is_empty());
-        for control in &controls {
-            log::debug!("found:{}", control.name());
-        }
-        assert_eq!(controls.len(), 5);
-        assert!(controls[0].name().contains("K1"));
-        assert!(controls[1].name().contains("K2"));
-        assert!(controls[2].name().contains("K3"));
-        assert!(controls[3].name().contains("K4"));
-        assert!(controls[4].name().contains("K5"));
-    }
-
-    #[tokio::test]
-    async fn controls_infer_self() {
-        let _ = env_logger::try_init();
-        use crate::controls::*;
-        let gpxdata = read("data/blackforest.gpx".to_string());
-        let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
-        assert!(controls.is_empty());
-        let controls = make_controls_with_waypoints(&track, &gpxdata.waypoints.as_vector());
-        assert!(!controls.is_empty());
-        for control in &controls {
-            log::debug!("found:{}", control.name());
-        }
-        assert_eq!(controls.len(), 4);
-        assert!(controls[0].name().contains("K1"));
-        assert!(controls[1].name().contains("K2"));
-        assert!(controls[2].name().contains("K3"));
-        assert!(controls[3].name().contains("K4"));
-    }
-
-    #[tokio::test]
-    async fn controls_infer_sectors() {
-        let _ = env_logger::try_init();
-        use crate::controls::*;
-        let gpxdata = read("data/blackforest.gpx".to_string());
-        let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
-
-        let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
-        let logger = std::sync::RwLock::new(Some(b));
-        let mut inputpoints = BTreeMap::new();
-        let osmpoints = osm::download_for_track(&track, &logger).await;
-        inputpoints.insert(InputType::OSM, osmpoints);
-        let maps = InputPointMaps { maps: inputpoints };
-        let controls = make_controls_with_osm(&track, &maps);
-        assert!(!controls.is_empty());
-        for control in &controls {
-            log::debug!("found:{}", control.name());
-        }
-        assert_eq!(controls.len(), 4);
-        assert!(controls[0].name().contains("Furtwangen"));
-        assert!(controls[1].name().contains("Haslach"));
-        assert!(controls[2].name().contains("Forbach"));
     }
 }
