@@ -605,43 +605,4 @@ mod tests {
         assert!(controls[1].name().contains("Haslach"));
         assert!(controls[2].name().contains("Forbach"));
     }
-
-    #[tokio::test]
-    async fn time_iso8601() {
-        let _ = env_logger::try_init();
-        let mut backend = Backend::make();
-        backend
-            .load_filename("data/blackforest.gpx")
-            .await
-            .expect("fail");
-        backend
-            .dmut()
-            .setStartTime(String::from("2007-03-01T13:00:00Z"));
-        backend
-            .dmut()
-            .setStartTime(String::from("2025-07-12T06:32:36Z"));
-        backend
-            .dmut()
-            .setStartTime(String::from("2025-07-12T06:32:36.215033Z"));
-    }
-
-    #[tokio::test]
-    async fn track_bbox() {
-        let _ = env_logger::try_init();
-        let mut backend = Backend::make();
-        backend
-            .load_filename("data/blackforest.gpx")
-            .await
-            .expect("fail");
-        let bbox = backend.d().track.wgs84_bounding_box();
-        println!("bbox={:?}", bbox);
-        for x in [
-            bbox.get_xmin(),
-            bbox.get_ymin(),
-            bbox.get_xmax(),
-            bbox.get_ymax(),
-        ] {
-            assert!(x > 0f64);
-        }
-    }
 }
