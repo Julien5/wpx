@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/log.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/waypointstable.dart';
+import 'package:ui/src/models/waypointsmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/utils.dart';

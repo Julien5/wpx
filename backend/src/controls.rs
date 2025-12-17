@@ -190,7 +190,12 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
     let mut proto = Vec::new();
     for segment in &mut segments {
         let points = segment.points.get_mut(&InputType::OSM).unwrap();
+        log::debug!("segment.id: {} osmpoints: {}", segment.id, points.len());
+        assert!(!points.is_empty());
         points.retain(|w| is_close_to_track(w));
+        if points.is_empty() {
+            continue;
+        }
         points.sort_by_key(|w| -control_point_goodness(&w));
         let selected = points.first().unwrap().clone();
         let index = selected.round_track_index().unwrap();
