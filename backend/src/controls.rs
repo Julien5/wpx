@@ -161,6 +161,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
     let track_distance_km = total / 1000f64;
     let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
     let step_size = (total / n_controls as f64).ceil();
+    // no control in first 10 and the last 10 kms.
     let mut start = 0f64;
     let mut segments = Vec::new();
     loop {
@@ -182,17 +183,24 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
         ));
         start = end;
     }
+
     struct Control {
         index: usize,
-        name: String,
+        osm_name: String,
     }
 
     let mut proto = Vec::new();
+    let margin = 10_000f64;
     for segment in &mut segments {
         let points = segment.points.get_mut(&InputType::OSM).unwrap();
-        log::debug!("segment.id: {} osmpoints: {}", segment.id, points.len());
         assert!(!points.is_empty());
-        points.retain(|w| is_close_to_track(w));
+        points.retain(|w| {
+            let total_distance = track.total_distance();
+            let distance = track.distance(w.round_track_index().unwrap());
+            let is_far_from_begin = distance > margin;
+            let is_far_from_end = distance < total_distance - margin;
+            is_close_to_track(w) && is_far_from_begin && is_far_from_end
+        });
         if points.is_empty() {
             continue;
         }
@@ -200,14 +208,18 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
         let selected = points.first().unwrap().clone();
         let index = selected.round_track_index().unwrap();
         let name = selected.name();
-        proto.push(Control { index, name });
+        proto.push(Control {
+            index,
+            osm_name: name,
+        });
     }
     proto.sort_by_key(|c| c.index);
     let mut ret = Vec::new();
     for k in 0..proto.len() {
         let p = &proto[k];
         let name = format!("K{}", k + 1);
-        let w = InputPoint::create_control_on_track(&track, p.index, &name, &p.name);
+        //log::debug!("make control: {} ({})", name, p.osm_name);
+        let w = InputPoint::create_control_on_track(&track, p.index, &name, &p.osm_name);
         ret.push(w);
     }
     ret
