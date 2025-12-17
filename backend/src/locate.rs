@@ -160,11 +160,11 @@ pub fn compute_track_projection(
 ) -> TrackProjection {
     // user steps projection on track is unique...
     if point.kind() == InputType::UserStep {
-        assert!(point.track_projection.is_some());
-        return point.track_projection.as_ref().unwrap().clone();
+        assert!(!point.track_projections.is_empty());
+        return point.track_projections.first().unwrap().clone();
     }
     // as opposed to GPX and OSM points, which may be on several segments
-    assert!(!point.track_projection.is_some());
+    assert!(point.track_projections.is_empty());
     let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
     let (index1, index2) = two_closest_index(track, &index, point);
     let p1 = &track.euclidian[index1];
@@ -180,20 +180,25 @@ pub fn compute_track_projection(
     let a1 = (t1.0, t1.1, track.elevation(index1));
     let a2 = (t2.0, t2.1, track.elevation(index2));
     let m = middle_point(&a1, &a2, index_floating_part);
-    let euclidean = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
-    let elevation = m.2;
-    let track_distance = euclidean.d2(&point.euclidean).sqrt();
 
-    // check
+    let middle = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
+
+    let elevation = m.2;
+    let track_distance = middle.d2(&point.euclidean).sqrt();
+
     let di = point.euclidean.d2(&track.euclidian[index]);
-    let df = point.euclidean.d2(&euclidean);
+    let df = point.euclidean.d2(&middle);
     debug_assert!(df <= di);
+
+    let distance_on_track_to_projection =
+        track.distance(index) + track.euclidian[index].d2(&middle).sqrt();
     let new_proj = TrackProjection {
         track_floating_index: floating_index,
         track_index: index1,
-        euclidean,
+        euclidean: middle,
         elevation,
         track_distance,
+        distance_on_track_to_projection,
     };
     new_proj
 }

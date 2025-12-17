@@ -1,6 +1,6 @@
 use core::fmt;
 use std::{
-    collections::{BTreeMap, HashSet},
+    collections::{BTreeMap, BTreeSet, HashSet},
     str::FromStr,
 };
 
@@ -11,7 +11,7 @@ use crate::{
     bboxes,
     mercator::{EuclideanBoundingBox, MercatorPoint},
     track::Track,
-    track_projection::TrackProjection,
+    track_projection::{TrackProjection, TrackProjections},
     waypoint::Waypoint,
     wgs84point::WGS84Point,
 };
@@ -50,7 +50,7 @@ pub struct InputPoint {
     pub wgs84: WGS84Point,
     pub euclidean: MercatorPoint,
     pub tags: Tags,
-    pub track_projection: Option<TrackProjection>,
+    pub track_projections: TrackProjections,
 }
 
 impl PartialEq for InputPoint {
@@ -83,13 +83,14 @@ impl InputPoint {
         let euc = track.euclidian[index].clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::UserStep);
         p.tags.insert("name".to_string(), name.clone());
-        p.track_projection = Some(TrackProjection {
+        p.track_projections = BTreeSet::from([TrackProjection {
             track_floating_index: index as f64,
             track_index: index,
             track_distance: 0f64,
             elevation: wgs.z(),
             euclidean: euc.clone(),
-        });
+            distance_on_track_to_projection: track.distance(index),
+        }]);
 
         p
     }
@@ -106,13 +107,14 @@ impl InputPoint {
         p.tags.insert("name".to_string(), name.clone());
         p.tags
             .insert("description".to_string(), description.clone());
-        p.track_projection = Some(TrackProjection {
+        p.track_projections = BTreeSet::from([TrackProjection {
             track_floating_index: index as f64,
             track_index: index,
             track_distance: 0f64,
             elevation: wgs.z(),
             euclidean: euc.clone(),
-        });
+            distance_on_track_to_projection: track.distance(index),
+        }]);
 
         p
     }
@@ -125,7 +127,7 @@ impl InputPoint {
         InputPoint {
             wgs84: wgs84.clone(),
             euclidean: euclidean.clone(),
-            track_projection: None,
+            track_projections: TrackProjections::new(),
             tags: Self::tags_for_type(kind),
         }
     }
@@ -147,19 +149,19 @@ impl InputPoint {
         }
         InputPoint {
             wgs84: wgs84.clone(),
-            track_projection: None,
+            track_projections: TrackProjections::new(),
             tags,
             euclidean: euclidean.clone(),
         }
     }
     pub fn round_track_index(&self) -> Option<usize> {
-        match &self.track_projection {
+        match &self.track_projections.first() {
             None => None,
             Some(p) => Some(p.track_floating_index.round() as usize),
         }
     }
     pub fn distance_to_track(&self) -> f64 {
-        return self.track_projection.as_ref().unwrap().track_distance;
+        return self.track_projections.first().unwrap().track_distance;
     }
     pub fn ele(&self) -> Option<f64> {
         read::<f64>(self.tags.get("ele"))
@@ -412,7 +414,7 @@ mod tests {
             wgs84: WGS84Point::new(&1.0f64, &1.1f64, &0f64),
             euclidean: MercatorPoint::from_point2d(&Point2D::new(0f64, 0f64)),
             tags: Tags::new(),
-            track_projection: None,
+            track_projections: TrackProjections::new(),
         }
     }
 

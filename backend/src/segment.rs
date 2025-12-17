@@ -6,6 +6,7 @@ use crate::math::IntegerSize2D;
 use crate::parameters::{Parameters, ProfileIndication, UserStepsOptions};
 use crate::profile::ProfileRenderResult;
 use crate::track::{self, Track};
+use crate::track_projection::TrackProjections;
 use crate::{bboxes, locate, make_points, profile, svgmap};
 
 pub type SegmentPoints = BTreeMap<InputType, Vec<InputPoint>>;
@@ -122,9 +123,11 @@ impl Segment {
                 points.extend_from_slice(_points.unwrap());
             }
             points.iter_mut().for_each(|p| {
-                if p.track_projection.is_none() {
-                    p.track_projection =
-                        Some(locate::compute_track_projection(track, tracktree, p));
+                if p.track_projections.is_empty() {
+                    p.track_projections =
+                        TrackProjections::from([locate::compute_track_projection(
+                            track, tracktree, p,
+                        )]);
                 }
             });
             log::trace!("insert {} points of type {:?}", points.len(), input_type);

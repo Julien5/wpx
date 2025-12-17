@@ -5,6 +5,7 @@ use crate::{
     event::{self, SenderHandlerLock},
     inputpoint::{InputPoint, InputPoints, Tags},
     mercator,
+    track_projection::TrackProjections,
     wgs84point::WGS84Point,
 };
 
@@ -118,7 +119,7 @@ fn read_download_element(
         wgs84: wgs,
         euclidean,
         tags,
-        track_projection: None,
+        track_projections: TrackProjections::new(),
     };
     Ok(ret)
 }

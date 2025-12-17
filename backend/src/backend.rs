@@ -10,7 +10,6 @@ use crate::gpxexport;
 use crate::inputpoint::*;
 use crate::locate;
 use crate::make_points;
-use crate::make_points::is_close_to_track;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::parameters::Parameters;
@@ -19,6 +18,7 @@ use crate::profile;
 use crate::render;
 use crate::track;
 use crate::track::Track;
+use crate::track_projection::is_close_to_track;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
@@ -201,7 +201,7 @@ impl BackendData {
                     copy.retain(|w| {
                         assert!(kinds.contains(&w.kind()));
                         assert!(is_close_to_track(&w));
-                        range.contains(&w.track_projection.as_ref().unwrap().track_index)
+                        range.contains(&w.track_projections.first().unwrap().track_index)
                     });
                     points.extend_from_slice(&copy);
                 }
@@ -386,7 +386,7 @@ impl BackendData {
                 Some(p) => {
                     let v = p.as_vector();
                     v.iter().for_each(|p| {
-                        assert!(!p.track_projection.is_none());
+                        assert!(!p.track_projections.is_empty());
                     });
                     gpxpoints.extend_from_slice(&v);
                 }

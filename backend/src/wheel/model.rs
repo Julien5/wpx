@@ -18,7 +18,7 @@ pub struct WheelModel {
 }
 
 fn angle(point: &InputPoint, track: &Track) -> f64 {
-    let proj = point.track_projection.as_ref().unwrap();
+    let proj = point.track_projections.first().unwrap();
     let index = proj.track_index;
     let part = track.distance(index);
     let total = track.total_distance();

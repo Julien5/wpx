@@ -3,12 +3,11 @@ use std::{collections::BTreeMap, sync::Arc};
 use crate::{
     backend::Segment,
     inputpoint::{InputPoint, InputPointMaps, InputType, OSMType},
-    locate,
-    make_points::is_close_to_track,
-    math,
+    locate, math,
     mercator::MercatorPoint,
     parameters::Parameters,
     track::Track,
+    track_projection::is_close_to_track,
 };
 use rstar::{RTree, AABB};
 

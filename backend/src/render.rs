@@ -111,7 +111,7 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
         }
         let segment_waypoints = backend.get_points(&segment, pacing_and_controls.clone());
         for w in segment_waypoints {
-            let index = w.track_projection.as_ref().unwrap().track_index;
+            let index = w.track_projections.first().unwrap().track_index;
             all_points.insert(index, w.clone());
         }
     }

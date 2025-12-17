@@ -1,7 +1,7 @@
 use crate::{
     inputpoint::{InputPoint, InputType, OSMType},
-    make_points::is_close_to_track,
     segment::Segment,
+    track_projection::is_close_to_track,
 };
 
 fn merge_flip_flop<'a>(_a: &Vec<&'a InputPoint>, _b: &Vec<&'a InputPoint>) -> Vec<&'a InputPoint> {
@@ -41,7 +41,7 @@ fn sort_by_elevation(mountains: &mut Vec<&InputPoint>) {
 }
 
 fn sort_by_distance_to_track(mountains: &mut Vec<&InputPoint>) {
-    mountains.sort_by_key(|w| w.track_projection.as_ref().unwrap().track_distance.floor() as i32);
+    mountains.sort_by_key(|w| w.track_projections.first().unwrap().track_distance.floor() as i32);
 }
 
 fn sort_by_population(cities: &mut Vec<&InputPoint>) {
@@ -64,7 +64,7 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
             for k in indices {
                 let wi = &points[k];
                 assert!(is_close_to_track(wi));
-                let d = wi.track_projection.as_ref().unwrap().track_distance;
+                let d = wi.track_projections.first().unwrap().track_distance;
                 assert_eq!(wi.kind(), InputType::UserStep);
                 assert_eq!(d, 0f64);
                 if user1.len() < user2.len() {

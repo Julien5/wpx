@@ -1,23 +1,4 @@
-use crate::{
-    inputpoint::{InputPoint, InputType, OSMType},
-    parameters::UserStepsOptions,
-    track::Track,
-};
-
-pub fn is_close_to_track(w: &InputPoint) -> bool {
-    let d = w.track_projection.as_ref().unwrap().track_distance;
-    match w.kind() {
-        InputType::OSM => {
-            let kind = w.osmkind().unwrap();
-            let pop = w.population().unwrap_or(0);
-            if kind == OSMType::City || pop > 1000 {
-                return d < 2000.0;
-            }
-        }
-        _ => {}
-    }
-    return d < 300.0;
-}
+use crate::{inputpoint::InputPoint, parameters::UserStepsOptions, track::Track};
 
 fn profile_points_elevation_gain_track(track: &Track, d: &f64) -> Vec<InputPoint> {
     let mut ret = Vec::new();
@@ -79,7 +60,7 @@ pub fn user_points(track: &Track, options: &UserStepsOptions) -> Vec<InputPoint>
         Some(d) => {
             let loc = profile_points_elevation_gain_track(track, &d);
             for p in &loc {
-                let d = p.track_projection.as_ref().unwrap().track_distance;
+                let d = p.track_projections.first().unwrap().track_distance;
                 assert_eq!(d, 0f64);
             }
             ret.extend_from_slice(&loc);
