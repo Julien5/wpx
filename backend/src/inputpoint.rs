@@ -11,6 +11,7 @@ use crate::{
     bboxes,
     mercator::{EuclideanBoundingBox, MercatorPoint},
     track::Track,
+    track_projection::TrackProjection,
     waypoint::Waypoint,
     wgs84point::WGS84Point,
 };
@@ -42,15 +43,6 @@ pub fn allkinds() -> Kinds {
         InputType::OSM,
         InputType::Control,
     ])
-}
-
-#[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
-pub struct TrackProjection {
-    pub track_floating_index: f64,
-    pub track_index: usize,
-    pub euclidean: MercatorPoint,
-    pub elevation: f64,
-    pub track_distance: f64,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

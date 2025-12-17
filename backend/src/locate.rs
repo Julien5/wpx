@@ -2,6 +2,7 @@ use crate::bbox::BoundingBox;
 use crate::math::Point2D;
 use crate::mercator::MercatorPoint;
 use crate::track::{self, Track};
+use crate::track_projection::TrackProjection;
 use crate::{inputpoint::*, math, mercator};
 use geo::LineLocatePoint;
 use rstar::{RTree, AABB};

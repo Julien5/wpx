@@ -18,6 +18,7 @@ mod osm;
 pub mod parameters;
 mod pdf;
 mod profile;
+mod track_projection;
 pub mod wheel;
 //mod project;
 mod render;
