@@ -39,7 +39,7 @@ function pdf() {
 				shift
 				;;
 			flamegraph)
-				cmd=flamegraph
+				cmd="flamegraph --no-inline"
 				shift
 				;;
 			--release)

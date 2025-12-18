@@ -157,7 +157,7 @@ pub fn read_waypoints(gpx: &gpx::Gpx) -> InputPointMap {
         let (lon, lat) = w.point().x_y();
         let wgs = WGS84Point::new(&lon, &lat, &0f64);
         let euc = projection.project(&wgs);
-        let bbox = bboxes::snap_point(&euc, &bboxes::BBOXWIDTH);
+        let bbox = bboxes::snap_point(&euc);
         let p = InputPoint::from_gpx(&wgs, &euc, &w.name, &w.description);
         ret.insert_point(&bbox, &p);
     }

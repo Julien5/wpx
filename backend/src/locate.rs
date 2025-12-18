@@ -164,7 +164,6 @@ pub fn compute_track_projection(
         return point.track_projections.first().unwrap().clone();
     }
     // as opposed to GPX and OSM points, which may be on several segments
-    assert!(point.track_projections.is_empty());
     let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
     let (index1, index2) = two_closest_index(track, &index, point);
     let p1 = &track.euclidian[index1];

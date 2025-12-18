@@ -1,7 +1,10 @@
+#[allow(dead_code)]
 use std::{cmp::Ordering, collections::BTreeSet};
 
 use crate::{
-    inputpoint::{InputPoint, InputType, OSMType},
+    bbox::BoundingBox,
+    bboxes,
+    inputpoint::{InputPoint, InputPointMap, InputType, OSMType},
     locate,
     mercator::MercatorPoint,
     track::Track,
@@ -96,5 +99,128 @@ pub fn update_track_projection(
 
     if !known {
         point.track_projections.insert(new_projection);
+    }
+}
+
+fn find_global_max<F>(start: usize, end: usize, f: F) -> usize
+where
+    F: Fn(&usize) -> f64,
+{
+    let mut best_idx = start;
+    // Handle empty range case
+    if start >= end {
+        return start;
+    }
+
+    let mut max_val = f(&start);
+
+    for i in (start + 1)..end {
+        let current_val = f(&i);
+        // Using partial_cmp to safely handle f64 (NaNs)
+        if current_val > max_val {
+            max_val = current_val;
+            best_idx = i;
+        }
+    }
+    best_idx
+}
+
+pub struct ProjectionTrees {
+    total_tree: locate::IndexedPointsTree,
+    trees: Vec<locate::IndexedPointsTree>,
+}
+
+impl ProjectionTrees {
+    fn find_appropriate_projection_ranges(track: &Track) -> Vec<std::ops::Range<usize>> {
+        let start = 0;
+        let end = track.wgs84.len();
+        let start_point = track.euclidian.first().unwrap();
+        let f = |index: &usize| -> f64 { start_point.d2(&track.euclidian[*index]) };
+        let extremity = find_global_max(start, end, f);
+        vec![0..extremity, extremity..end]
+    }
+
+    fn make_appropriate_projection_trees(track: &Track) -> Vec<locate::IndexedPointsTree> {
+        Self::find_appropriate_projection_ranges(track)
+            .iter()
+            .map(|range| locate::IndexedPointsTree::from_track(track, range))
+            .collect()
+    }
+
+    pub fn make(track: &Track) -> Self {
+        let range = 0..track.len();
+        let total = locate::IndexedPointsTree::from_track(track, &range);
+        Self {
+            total_tree: total,
+            trees: Self::make_appropriate_projection_trees(track),
+        }
+    }
+
+    pub fn iter_on(&self, map: &mut InputPointMap, track: &Track) {
+        let mut boxes: BTreeSet<BoundingBox> = BTreeSet::new();
+        log::trace!("building boxes..");
+        for e in &track.euclidian {
+            boxes.insert(bboxes::snap_point(&e));
+        }
+        log::trace!("built {} boxes", boxes.len());
+        for bbox in boxes {
+            match map.get_mut(&bbox) {
+                None => {}
+                Some(vector) => {
+                    for mut point in vector {
+                        update_track_projection(&mut point, track, &self.total_tree);
+                        if is_close_to_track(&point) {
+                            for tree in &self.trees {
+                                update_track_projection(point, track, tree);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{bboxes, event, gpsdata::GpxData, osm, track::Track, wgs84point::WGS84Point};
+
+    fn read(filename: String) -> GpxData {
+        use crate::gpsdata;
+        let mut f = std::fs::File::open(filename).unwrap();
+        let mut content = Vec::new();
+        // read the whole file
+        use std::io::prelude::*;
+        f.read_to_end(&mut content).unwrap();
+        gpsdata::read_content(&content).unwrap()
+    }
+
+    #[tokio::test]
+    async fn projection() {
+        let _ = env_logger::try_init();
+        use crate::track_projection::*;
+        //let gpxdata = read("data/ref/pbp2023.gpx".to_string());
+        let gpxdata = read("data/ref/pbp2019.gpx".to_string());
+        let mut tags = std::collections::BTreeMap::new();
+        tags.insert("wpxtype".to_string(), "OSM".to_string());
+        tags.insert("name".to_string(), "Mortagne-au-Perche".to_string());
+        tags.insert("place".to_string(), "town".to_string());
+        tags.insert("population".to_string(), "3815".to_string());
+        let pos = MercatorPoint::new(&61237.909420542324, &6193890.266343569);
+        let mortagne = InputPoint {
+            wgs84: WGS84Point::new(&0.5501095, &48.5205106, &0.0),
+            euclidean: pos.clone(),
+            tags: tags,
+            track_projections: TrackProjections::new(),
+        };
+        let track = Track::from_tracks(&gpxdata.tracks).unwrap();
+        let trees = ProjectionTrees::make(&track);
+        let mut map = InputPointMap::new();
+        map.insert_point(&bboxes::snap_point(&pos), &mortagne);
+        trees.iter_on(&mut map, &track);
+        map.iter().for_each(|p| {
+            assert_eq!(p.track_projections.len(), 2);
+            log::debug!("p={:?}", p);
+        });
     }
 }

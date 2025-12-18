@@ -332,6 +332,57 @@ pub struct InputPointMap {
     map: BTreeMap<EuclideanBoundingBox, Vec<InputPoint>>,
 }
 
+use std::slice::{Iter, IterMut};
+
+impl InputPointMap {
+    // Returns an iterator over all InputPoints
+    pub fn iter(&self) -> impl Iterator<Item = &InputPoint> {
+        self.map.values().flat_map(|vector| vector.iter())
+    }
+    // Returns a mutable iterator over all InputPoints
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut InputPoint> {
+        self.map.values_mut().flat_map(|vector| vector.iter_mut())
+    }
+    /*
+    pub fn points_in<'a>(
+        &'a self,
+        bbox: &'a EuclideanBoundingBox,
+    ) -> impl Iterator<Item = &'a InputPoint> {
+        self.map
+            .iter()
+            .filter(move |(k, _)| k.overlap(bbox))
+            .flat_map(|(_, vector)| vector.iter())
+    }*/
+}
+
+// Implement IntoIterator for &InputPointMap
+impl<'a> IntoIterator for &'a InputPointMap {
+    type Item = &'a InputPoint;
+    type IntoIter = std::iter::FlatMap<
+        std::collections::btree_map::Values<'a, EuclideanBoundingBox, Vec<InputPoint>>,
+        Iter<'a, InputPoint>,
+        fn(&'a Vec<InputPoint>) -> Iter<'a, InputPoint>,
+    >;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.map.values().flat_map(|v| v.iter())
+    }
+}
+
+// Implement IntoIterator for &mut InputPointMap
+impl<'a> IntoIterator for &'a mut InputPointMap {
+    type Item = &'a mut InputPoint;
+    type IntoIter = std::iter::FlatMap<
+        std::collections::btree_map::ValuesMut<'a, EuclideanBoundingBox, Vec<InputPoint>>,
+        IterMut<'a, InputPoint>,
+        fn(&'a mut Vec<InputPoint>) -> IterMut<'a, InputPoint>,
+    >;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.map.values_mut().flat_map(|vector| vector.iter_mut())
+    }
+}
+
 pub struct InputPointMaps {
     pub maps: BTreeMap<InputType, InputPointMap>,
 }
@@ -347,7 +398,7 @@ impl InputPointMap {
         let mut ret = InputPointMap::new();
         for w in points {
             let euc = &w.euclidean;
-            let bbox = bboxes::snap_point(euc, &bboxes::BBOXWIDTH);
+            let bbox = bboxes::snap_point(euc);
             ret.insert_point(&bbox, &w);
         }
         ret
@@ -372,7 +423,7 @@ impl InputPointMap {
     pub fn sort_and_insert(&mut self, p: &Vec<InputPoint>) {
         for w in p {
             let euc = &w.euclidean;
-            let bbox = bboxes::snap_point(euc, &bboxes::BBOXWIDTH);
+            let bbox = bboxes::snap_point(euc);
             self.insert_point(&bbox, &w);
         }
     }
@@ -395,6 +446,9 @@ impl InputPointMap {
     }
     pub fn get(&self, bbox: &EuclideanBoundingBox) -> Option<&Vec<InputPoint>> {
         self.map.get(bbox)
+    }
+    pub fn get_mut(&mut self, bbox: &EuclideanBoundingBox) -> Option<&mut Vec<InputPoint>> {
+        self.map.get_mut(bbox)
     }
     pub fn retain_points(&mut self, predicate: impl Fn(&InputPoint) -> bool) {
         for (_bbox, points) in &mut self.map {

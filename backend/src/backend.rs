@@ -19,6 +19,7 @@ use crate::render;
 use crate::track;
 use crate::track::Track;
 use crate::track_projection::is_close_to_track;
+use crate::track_projection::ProjectionTrees;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
@@ -118,14 +119,18 @@ impl Backend {
 
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
         self.send(&"read gpx".to_string()).await;
-        let gpxdata = gpsdata::read_content(content)?;
+        let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
         let track = std::sync::Arc::new(track_data);
         self.send(&"download osm data".to_string()).await;
         let mut inputpoints_map = BTreeMap::new();
-        let osmpoints = osm::download_for_track(&track, &self.sender).await;
-        let gpx_waypoints = gpxdata.waypoints.as_vector();
+        let mut osmpoints = osm::download_for_track(&track, &self.sender).await;
+
+        let trees = ProjectionTrees::make(&track);
+        trees.iter_on(&mut osmpoints, &track);
         inputpoints_map.insert(InputType::OSM, osmpoints);
+        trees.iter_on(&mut gpxdata.waypoints, &track);
+        let gpx_waypoints = gpxdata.waypoints.as_vector();
         inputpoints_map.insert(InputType::GPX, gpxdata.waypoints);
 
         let mut controls = controls::infer_controls_from_gpx_data(&track, &gpx_waypoints);

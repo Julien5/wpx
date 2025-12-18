@@ -21,7 +21,7 @@ fn ceil_snap(x: &f64, step: &f64) -> f64 {
     (x / step).ceil() * step
 }
 
-pub fn snap(bbox: &mut BoundingBox, step: &f64) {
+fn snap(bbox: &mut BoundingBox, step: &f64) {
     bbox.set_min(Point2D::new(
         floor_snap(&bbox.get_min().x, step),
         floor_snap(&bbox.get_min().y, step),
@@ -32,7 +32,8 @@ pub fn snap(bbox: &mut BoundingBox, step: &f64) {
     ));
 }
 
-pub fn snap_point(p: &MercatorPoint, step: &f64) -> EuclideanBoundingBox {
+pub fn snap_point(p: &MercatorPoint) -> EuclideanBoundingBox {
+    let step = &BBOXWIDTH;
     let min = Point2D::new(floor_snap(&p.x(), step), floor_snap(&p.y(), step));
     let max = Point2D::new(ceil_snap(&p.x(), step), ceil_snap(&p.y(), step));
     EuclideanBoundingBox::minmax(min, max)

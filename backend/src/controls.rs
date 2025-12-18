@@ -192,7 +192,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
     let margin = 10_000f64;
     for segment in &mut segments {
         let points = segment.points.get_mut(&InputType::OSM).unwrap();
-        assert!(!points.is_empty());
+        //assert!(!points.is_empty());
         points.retain(|w| {
             let total_distance = track.total_distance();
             let distance = track.distance(w.round_track_index().unwrap());

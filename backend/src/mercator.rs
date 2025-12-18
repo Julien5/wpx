@@ -7,6 +7,9 @@ pub type DateTime = chrono::DateTime<chrono::Utc>;
 pub struct MercatorPoint(pub f64, pub f64);
 
 impl MercatorPoint {
+    pub fn new(x: &f64, y: &f64) -> MercatorPoint {
+        MercatorPoint(*x, *y)
+    }
     pub fn x(&self) -> f64 {
         self.0
     }
