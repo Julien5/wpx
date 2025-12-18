@@ -349,7 +349,7 @@ impl InputPointMap {
     ) -> impl Iterator<Item = &'a InputPoint> {
         self.map
             .iter()
-            .filter(|(smallbox, _)| smallbox.overlap(largebox))
+            .filter(move |(smallbox, _)| smallbox.overlap(&largebox))
             .flat_map(|(_, vector)| vector.iter())
     }
 }
