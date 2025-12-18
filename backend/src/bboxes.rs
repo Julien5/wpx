@@ -39,6 +39,20 @@ pub fn pointbox(p: &MercatorPoint) -> EuclideanBoundingBox {
     EuclideanBoundingBox::minmax(min, max)
 }
 
+pub fn neighbors(middle: &EuclideanBoundingBox) -> [EuclideanBoundingBox; 8] {
+    let step = BBOXWIDTH;
+    [
+        middle.make_translate(&Point2D::new(-step, -step)),
+        middle.make_translate(&Point2D::new(0f64, -step)),
+        middle.make_translate(&Point2D::new(step, -step)),
+        middle.make_translate(&Point2D::new(-step, 0f64)),
+        middle.make_translate(&Point2D::new(step, 0f64)),
+        middle.make_translate(&Point2D::new(-step, step)),
+        middle.make_translate(&Point2D::new(0f64, step)),
+        middle.make_translate(&Point2D::new(step, step)),
+    ]
+}
+
 pub struct Index {
     index: (usize, usize),
     size: (usize, usize),

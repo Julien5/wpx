@@ -208,6 +208,14 @@ impl Track {
         for e in &euclidean {
             boxes.insert(bboxes::pointbox(&e));
         }
+        // we need to enlarge to make sure we dont miss points that are close to the track,
+        // but not in a box on the track.
+        for b in boxes.clone() {
+            for n in bboxes::neighbors(&b) {
+                boxes.insert(n);
+            }
+        }
+
         log::trace!("built {} boxes", boxes.len());
 
         let ret = Track {

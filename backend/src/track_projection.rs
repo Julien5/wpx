@@ -44,6 +44,9 @@ impl Ord for TrackProjection {
 }
 
 pub fn is_close_to_track(w: &InputPoint) -> bool {
+    if w.track_projections.is_empty() {
+        return false;
+    }
     let d = w.track_projections.first().unwrap().track_distance;
     match w.kind() {
         InputType::OSM => {
