@@ -57,24 +57,18 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
     return d < 300.0;
 }
 
-fn is_close(
-    track_distance: &f64,
-    kind: &InputType,
-    osmkind: &Option<OSMType>,
-    population: &Option<i32>,
-) -> bool {
-    let d = track_distance;
+fn dmax(kind: &InputType, osmkind: &Option<OSMType>, population: &Option<i32>) -> f64 {
     match kind {
         InputType::OSM => {
             let okind = osmkind.as_ref().unwrap();
             let pop = population.unwrap_or(0);
             if *okind == OSMType::City || pop > 1000 {
-                return *d < 2000.0;
+                return 2000.0;
             }
         }
         _ => {}
     }
-    return *d < 300.0;
+    return 300.0;
 }
 
 pub fn update_track_projection(
@@ -88,18 +82,16 @@ pub fn update_track_projection(
         return;
     }
 
-    if !is_close(
-        &new_projection.track_distance,
-        &point.kind(),
-        &point.osmkind(),
-        &point.population(),
-    ) {
+    let dmax = dmax(&point.kind(), &point.osmkind(), &point.population());
+    let d = new_projection.track_distance;
+    if d > dmax {
         return;
     }
+
     let known = point.track_projections.iter().any(|proj| {
         let d1 = proj.distance_on_track_to_projection;
         let d2 = new_projection.distance_on_track_to_projection;
-        (d1 - d2).abs() < 10f64
+        (d1 - d2).abs() < 10f64 * dmax
     });
 
     if !known {
