@@ -343,16 +343,15 @@ impl InputPointMap {
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut InputPoint> {
         self.map.values_mut().flat_map(|vector| vector.iter_mut())
     }
-    /*
     pub fn points_in<'a>(
         &'a self,
-        bbox: &'a EuclideanBoundingBox,
+        largebox: &'a EuclideanBoundingBox,
     ) -> impl Iterator<Item = &'a InputPoint> {
         self.map
             .iter()
-            .filter(move |(k, _)| k.overlap(bbox))
+            .filter(|(smallbox, _)| smallbox.overlap(largebox))
             .flat_map(|(_, vector)| vector.iter())
-    }*/
+    }
 }
 
 // Implement IntoIterator for &InputPointMap

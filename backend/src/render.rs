@@ -43,7 +43,7 @@ fn points_table(
     // TODO: avoid recomputing the automatic points
     let mut lines = Vec::new();
     for k in 0..waypoints.len() {
-        let info = &waypoints[k].info.as_ref().unwrap();
+        let info = &waypoints[k].get_info();
         let mut copy = template_line.clone();
         copy = copy.replace("{name}", info.name.as_str());
         let datetime = chrono::DateTime::parse_from_rfc3339(info.time.as_str()).unwrap();

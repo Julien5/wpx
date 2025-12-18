@@ -59,6 +59,10 @@ impl Waypoint {
         }
     }
 
+    pub fn get_info(&self) -> &WaypointInfo {
+        self.info.as_ref().expect("Waypoint info is missing")
+    }
+
     pub fn get_track_index(&self) -> usize {
         self.track_index.unwrap()
     }
