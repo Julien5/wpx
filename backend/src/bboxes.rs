@@ -32,7 +32,7 @@ fn snap(bbox: &mut BoundingBox, step: &f64) {
     ));
 }
 
-pub fn snap_point(p: &MercatorPoint) -> EuclideanBoundingBox {
+pub fn pointbox(p: &MercatorPoint) -> EuclideanBoundingBox {
     let step = &BBOXWIDTH;
     let min = Point2D::new(floor_snap(&p.x(), step), floor_snap(&p.y(), step));
     let max = Point2D::new(ceil_snap(&p.x(), step), ceil_snap(&p.y(), step));

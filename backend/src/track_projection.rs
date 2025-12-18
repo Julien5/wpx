@@ -2,8 +2,6 @@
 use std::{cmp::Ordering, collections::BTreeSet};
 
 use crate::{
-    bbox::BoundingBox,
-    bboxes,
     inputpoint::{InputPoint, InputPointMap, InputType, OSMType},
     locate,
     mercator::MercatorPoint,
@@ -157,13 +155,7 @@ impl ProjectionTrees {
     }
 
     pub fn iter_on(&self, map: &mut InputPointMap, track: &Track) {
-        let mut boxes: BTreeSet<BoundingBox> = BTreeSet::new();
-        log::trace!("building boxes..");
-        for e in &track.euclidian {
-            boxes.insert(bboxes::snap_point(&e));
-        }
-        log::trace!("built {} boxes", boxes.len());
-        for bbox in boxes {
+        for bbox in &track.boxes {
             match map.get_mut(&bbox) {
                 None => {}
                 Some(vector) => {
@@ -216,7 +208,7 @@ mod tests {
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let trees = ProjectionTrees::make(&track);
         let mut map = InputPointMap::new();
-        map.insert_point(&bboxes::snap_point(&pos), &mortagne);
+        map.insert_point(&bboxes::pointbox(&pos), &mortagne);
         trees.iter_on(&mut map, &track);
         map.iter().for_each(|p| {
             assert_eq!(p.track_projections.len(), 2);

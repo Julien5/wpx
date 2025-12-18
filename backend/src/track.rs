@@ -1,7 +1,11 @@
+use std::collections::BTreeSet;
+
 use geo::SimplifyIdx;
 use gpx::TrackSegment;
 
 use super::wgs84point::WGS84Point;
+use crate::bbox::BoundingBox;
+use crate::bboxes;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
 use crate::mercator;
@@ -23,6 +27,7 @@ pub struct Track {
     pub euclidian: Vec<MercatorPoint>,
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
+    pub boxes: BTreeSet<BoundingBox>,
 }
 
 // (long,lat)
@@ -198,6 +203,13 @@ impl Track {
 
         let smooth_elevation_gain = Self::compute_elevation_gain(&track_smooth_elevation);
 
+        let mut boxes: BTreeSet<BoundingBox> = BTreeSet::new();
+        log::trace!("building boxes..");
+        for e in &euclidean {
+            boxes.insert(bboxes::pointbox(&e));
+        }
+        log::trace!("built {} boxes", boxes.len());
+
         let ret = Track {
             wgs84: wgs,
             euclidian: euclidean,
@@ -205,6 +217,7 @@ impl Track {
             smooth_elevation_gain,
             _distance,
             parts,
+            boxes,
         };
         Ok(ret)
     }

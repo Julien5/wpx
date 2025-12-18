@@ -397,7 +397,7 @@ impl InputPointMap {
         let mut ret = InputPointMap::new();
         for w in points {
             let euc = &w.euclidean;
-            let bbox = bboxes::snap_point(euc);
+            let bbox = bboxes::pointbox(euc);
             ret.insert_point(&bbox, &w);
         }
         ret
@@ -422,7 +422,7 @@ impl InputPointMap {
     pub fn sort_and_insert(&mut self, p: &Vec<InputPoint>) {
         for w in p {
             let euc = &w.euclidean;
-            let bbox = bboxes::snap_point(euc);
+            let bbox = bboxes::pointbox(euc);
             self.insert_point(&bbox, &w);
         }
     }
