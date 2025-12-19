@@ -118,6 +118,9 @@ impl MapData {
             let mut feature_packet = Vec::new();
             for w in packet {
                 let euclidean = w.euclidean.clone();
+                if !bbox.contains(&euclidean.point2d()) {
+                    continue;
+                }
                 let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
                 let k = counter;
                 counter += 1;

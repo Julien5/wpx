@@ -174,16 +174,21 @@ impl Graph {
         self.remove_node(a);
     }
     pub fn max_node(&self) -> Node {
-        /*self.ordered_nodes.first().unwrap()*/
+        // more predictable
+        *self.ordered_nodes.first().unwrap()
+        /* There is a flaw with using the node with max degree.
+         * A node with higher priority may not be placed because there is
+         * no more place when its turn comes.
+         */
         /*assert!(!self.map.is_empty());*/
-        let node = *self
+        /*let node = *self
             .map
             .iter()
             .map(|(node, edges)| (node, edges.len()))
             .max_by_key(|(_node, len)| *len)
             .unwrap()
             .0;
-        node
+        node*/
     }
 
     fn candidate_blocks_other(&self, node: &Node, candidate_index: usize, other: &Node) -> bool {
@@ -220,17 +225,19 @@ impl Graph {
         while !self.map.is_empty() {
             let m = self.max_node();
             let target = &self.nodes[m].feature;
+            /*log::trace!(
+                "placing:{} [#edges:{}] [{:.1} + {:.1} max {:.1}]",
+                target.text(),
+                self.map.get(&m).unwrap().len(),
+                self.used_area,
+                target.area(),
+                self.max_area
+            );*/
             if self.used_area + target.area() > self.max_area {
                 //log::trace!("remove {} because it is too large", target.text());
                 self.remove_node(&m);
                 continue;
             }
-            /*log::trace!(
-                "placing:{} ({} conflict edges) (priority {})",
-                target.text(),
-                self.map.get(&m).unwrap().len(),
-                target.priority
-            );*/
             match self.best_candidate_for_node(&m) {
                 Some(best_index) => {
                     let candidates = &self.nodes[m].candidates;
@@ -376,7 +383,7 @@ mod tests {
         }
         graph.build_map();
 
-        assert_eq!(graph.max_node(), 2);
+        assert_eq!(graph.max_node(), 0);
         graph.select(&2, &cc1);
         assert!(!graph.map.contains_key(&2));
         assert!(graph.nodes[0].candidates.len() == 1);

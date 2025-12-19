@@ -329,8 +329,8 @@ Wildschapbach
 <circle cx="896.3408587985004" cy="187.0573333333333" fill="white" id="34/wp-little-white" r="0.5"/>
 </g>
 <g transform="translate(896.3408587985004 187.0573333333333)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="117.83157894736843" x="-121.83157894736843" y="4"/>
-<text font-size="16.0" id="34/wp/text" text-anchor="end" x="-4.000" y="16.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="117.83157894736843" x="4" y="-16"/>
+<text font-size="16.0" id="34/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Mittellangenbach
 </text>
 </g>
@@ -339,8 +339,8 @@ Mittellangenbach
 <circle cx="912.5315509586371" cy="197.37416666666664" fill="white" id="35/wp-little-white" r="0.5"/>
 </g>
 <g transform="translate(912.5315509586371 197.37416666666664)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="128.53684210526316" x="4" y="-16"/>
-<text font-size="16.0" id="35/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="128.53684210526316" x="-132.53684210526316" y="4"/>
+<text font-size="16.0" id="35/wp/text" text-anchor="end" x="-4.000" y="16.000">
 Vorderlangenbach
 </text>
 </g>

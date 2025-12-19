@@ -1,6 +1,6 @@
 use crate::math::Point2D;
 use crate::mercator::MercatorPoint;
-use crate::track::{self, Track};
+use crate::track::{self};
 use crate::track_projection::TrackProjection;
 use crate::{inputpoint::*, math, mercator};
 use geo::LineLocatePoint;
@@ -69,17 +69,6 @@ impl rstar::PointDistance for IndexedPoint {
     }
 }
 
-fn indexed_track(points: &Track, range: &std::ops::Range<usize>) -> Vec<IndexedPoint> {
-    let mut ret = Vec::new();
-    for k in range.start..range.end {
-        ret.push(IndexedPoint {
-            coord: points.euclidean[k].clone(),
-            index: k,
-        });
-    }
-    ret
-}
-
 #[derive(Clone)]
 pub struct IndexedPointsTree {
     tree: RTree<IndexedPoint>,
@@ -91,8 +80,25 @@ fn coord(point: &MercatorPoint) -> [f64; 2] {
 }
 
 impl IndexedPointsTree {
-    pub fn from_track(track: &Track, range: &std::ops::Range<usize>) -> IndexedPointsTree {
-        let ipoints = indexed_track(track, range);
+    fn indexed_track(
+        euclideans: &Vec<MercatorPoint>,
+        range: &std::ops::Range<usize>,
+    ) -> Vec<IndexedPoint> {
+        let mut ret = Vec::new();
+        for k in range.start..range.end {
+            ret.push(IndexedPoint {
+                coord: euclideans[k].clone(),
+                index: k,
+            });
+        }
+        ret
+    }
+
+    pub fn from_track(
+        euclideans: &Vec<MercatorPoint>,
+        range: &std::ops::Range<usize>,
+    ) -> IndexedPointsTree {
+        let ipoints = Self::indexed_track(euclideans, range);
         let tree = RTree::bulk_load(ipoints);
         IndexedPointsTree {
             tree,

@@ -8,6 +8,8 @@ use crate::bboxes;
 use crate::bboxes::BoundingBoxes;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
+use crate::locate;
+use crate::locate::IndexedPointsTree;
 use crate::mercator;
 use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
@@ -28,6 +30,7 @@ pub struct Track {
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
     pub boxes: BoundingBoxes,
+    pub tree: IndexedPointsTree,
 }
 
 // (long,lat)
@@ -234,7 +237,7 @@ impl Track {
         }
 
         log::trace!("built {} boxes", boxes.len());
-
+        let tree = locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len()));
         let ret = Track {
             wgs84: wgs,
             euclidean,
@@ -243,6 +246,7 @@ impl Track {
             _distance,
             parts,
             boxes,
+            tree,
         };
         Ok(ret)
     }

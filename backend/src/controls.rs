@@ -102,10 +102,7 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
 }
 
 pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) -> Vec<InputPoint> {
-    let start = 0f64;
-    let end = track.total_distance();
-    let range = track.subrange(start, end);
-    let tracktree = locate::IndexedPointsTree::from_track(&track, &range);
+    let tracktree = &track.tree;
 
     let mut ret = Vec::new();
     let maxdist = 100f64;

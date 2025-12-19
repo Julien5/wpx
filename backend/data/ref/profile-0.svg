@@ -269,8 +269,8 @@ Im Grund
 <circle cx="897.5188285197634" cy="297.23235" fill="white" id="24/wp-little-white" r="0.5"/>
 </g>
 <g transform="translate(897.5188285197634 297.23235)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="66.67368421052632" x="-70.67368421052632" y="4"/>
-<text font-size="16.0" id="24/wp/text" text-anchor="end" x="-4.000" y="16.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="66.67368421052632" x="4" y="-16"/>
+<text font-size="16.0" id="24/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Eichhalde
 </text>
 </g>
@@ -279,8 +279,8 @@ Eichhalde
 <circle cx="879.8430301049408" cy="282.10365" fill="white" id="25/wp-little-white" r="0.5"/>
 </g>
 <g transform="translate(879.8430301049408 282.10365)">
-<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="91.21052631578948" x="4" y="-16"/>
-<text font-size="16.0" id="25/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="91.21052631578948" x="-95.21052631578948" y="4"/>
+<text font-size="16.0" id="25/wp/text" text-anchor="end" x="-4.000" y="16.000">
 Oberbüchern
 </text>
 </g>

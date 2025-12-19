@@ -144,15 +144,13 @@ impl ProjectionTrees {
     fn make_appropriate_projection_trees(track: &Track) -> Vec<locate::IndexedPointsTree> {
         Self::find_appropriate_projection_ranges(track)
             .iter()
-            .map(|range| locate::IndexedPointsTree::from_track(track, range))
+            .map(|range| locate::IndexedPointsTree::from_track(&track.euclidean, range))
             .collect()
     }
 
     pub fn make(track: &Track) -> Self {
-        let range = 0..track.len();
-        let total = locate::IndexedPointsTree::from_track(track, &range);
         Self {
-            total_tree: total,
+            total_tree: track.tree.clone(),
             trees: Self::make_appropriate_projection_trees(track),
         }
     }
@@ -181,7 +179,7 @@ impl ProjectionTrees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{bboxes, gpsdata::GpxData, osm, track::Track, wgs84point::WGS84Point};
+    use crate::{bboxes, gpsdata::GpxData, wgs84point::WGS84Point};
 
     fn read(filename: String) -> GpxData {
         use crate::gpsdata;

@@ -7,7 +7,7 @@
 <path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(42.47157110057345)"/>
 <path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(102.75229956070679)"/>
 <path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(195.9026791965864)"/>
-<path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(359.96194629944097)"/>
+<path d="M0,-151 L0,-159" stroke="#333" stroke-width="3" transform="rotate(359.9911010879491)"/>
 <path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(4.391899409471661)"/>
 <path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(8.691471984172233)"/>
 <path d="M0,-152 L0,-158" stroke="#666" stroke-width="1" transform="rotate(13.133541843478412)"/>
@@ -103,7 +103,7 @@ K2
 <text text-anchor="end" x="-45.75869976132954" y="165.60865915682288">
 K3
 </text>
-<text text-anchor="end" x="-0.11091510718860638" y="-166.99996316717858">
+<text text-anchor="end" x="-0.025937657523047716" y="-166.99999798574228">
 K4
 </text>
 </g>
