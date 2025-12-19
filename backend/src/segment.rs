@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::{InputPoint, InputPointMap, InputPointMaps, InputType, SharedPointMaps};
+use crate::inputpoint::{InputPoint, InputType, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::{Parameters, ProfileIndication, UserStepsOptions};
 use crate::profile::ProfileRenderResult;

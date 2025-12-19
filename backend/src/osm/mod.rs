@@ -97,8 +97,8 @@ async fn process(bbox: &EuclideanBoundingBox, logger: &SenderHandlerLock) -> Inp
     }
     download_chunk(&not_cached, logger).await;
     let mut ret = InputPointMap::new();
-    log::trace!("about to read {} tiles", tiles.len());
     for (_index, tile) in tiles {
+        // event::send_worker(logger, &format!("read {}/{}", count, total)).await;
         let points = read(&tile).await;
         ret.insert_points(&tile, &points.points);
     }

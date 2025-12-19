@@ -121,11 +121,12 @@ impl Backend {
         let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
         let track = std::sync::Arc::new(track_data);
+        log::trace!("make projection trees");
+        let trees = ProjectionTrees::make(&track);
         self.send(&"download osm data".to_string()).await;
         let mut inputpoints_map = BTreeMap::new();
         let mut osmpoints = osm::download_for_track(&track, &self.sender).await;
-
-        let trees = ProjectionTrees::make(&track);
+        log::trace!("project osm points");
         trees.iter_on(&mut osmpoints, &track);
         for point in &osmpoints {
             assert!(!point.track_projections.is_empty());

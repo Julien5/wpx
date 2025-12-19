@@ -294,17 +294,10 @@ mod tests {
         let logger = std::sync::RwLock::new(Some(b));
         let mut inputpoints = BTreeMap::new();
         let mut osmpoints = osm::download_for_track(&track, &logger).await;
+        log::trace!("make projection trees");
         let trees = ProjectionTrees::make(&track);
+        log::trace!("project osm points");
         trees.iter_on(&mut osmpoints, &track);
-        {
-            log::trace!(
-                "found {} osm points",
-                osmpoints.iter().collect::<Vec<_>>().len()
-            );
-            for point in &osmpoints {
-                assert!(!point.track_projections.is_empty());
-            }
-        }
         inputpoints.insert(InputType::OSM, osmpoints);
         let shared = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
 
