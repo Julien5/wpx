@@ -69,9 +69,10 @@ impl Segment {
         if map.is_none() {
             return Vec::new();
         }
+        // todo: we need a bounding box in the input parameters
         map.unwrap()
             .points_in(&bbox)
-            .filter(|w| w.is_in_range(&range))
+            .filter(|w| w.track_projections.is_empty() || w.is_in_range(&range))
             .map(|w| w.clone())
             .collect()
     }

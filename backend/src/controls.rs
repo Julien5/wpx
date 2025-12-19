@@ -193,7 +193,9 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
         let mut points = segment.osmpoints();
         points.retain(|w| {
             let total_distance = track.total_distance();
-            assert!(!w.track_projections.is_empty());
+            if w.track_projections.is_empty() {
+                return false;
+            }
             let distance = w
                 .track_projections
                 .first()
