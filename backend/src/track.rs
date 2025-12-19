@@ -4,8 +4,8 @@ use geo::SimplifyIdx;
 use gpx::TrackSegment;
 
 use super::wgs84point::WGS84Point;
-use crate::bbox::BoundingBox;
 use crate::bboxes;
+use crate::bboxes::BoundingBoxes;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
 use crate::mercator;
@@ -27,7 +27,7 @@ pub struct Track {
     pub euclidean: Vec<MercatorPoint>,
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
-    pub boxes: BTreeSet<BoundingBox>,
+    pub boxes: BoundingBoxes,
 }
 
 // (long,lat)
@@ -38,7 +38,7 @@ impl Track {
         self.wgs84.len()
     }
 
-    pub fn subboxes(&self, start: f64, end: f64) -> BTreeSet<BoundingBox> {
+    pub fn subboxes(&self, start: f64, end: f64) -> BoundingBoxes {
         let range = self.subrange(start, end);
         let mut boxes = BTreeSet::new();
         for k in range.start..range.end {
@@ -220,7 +220,7 @@ impl Track {
 
         let smooth_elevation_gain = Self::compute_elevation_gain(&track_smooth_elevation);
 
-        let mut boxes: BTreeSet<BoundingBox> = BTreeSet::new();
+        let mut boxes = BoundingBoxes::new();
         log::trace!("building boxes..");
         for e in &euclidean {
             boxes.insert(bboxes::pointbox(&e));

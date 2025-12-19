@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, collections::BTreeMap};
+use std::collections::BTreeSet;
 
 use crate::{
     bbox::*,
@@ -53,51 +53,7 @@ pub fn neighbors(middle: &EuclideanBoundingBox) -> [EuclideanBoundingBox; 8] {
     ]
 }
 
-pub struct Index {
-    index: (usize, usize),
-    size: (usize, usize),
-}
-
-impl Index {
-    fn flat(&self) -> usize {
-        let (x, y) = &self.index;
-        let (nx, _ny) = &self.size;
-        y * nx + x
-    }
-}
-
-impl PartialEq for Index {
-    fn eq(&self, other: &Self) -> bool {
-        if self.size.0 != other.size.0 {
-            return false;
-        }
-        if self.size.1 != other.size.1 {
-            return false;
-        }
-        if self.index.0 != other.index.0 {
-            return false;
-        }
-        if self.index.1 != other.index.1 {
-            return false;
-        }
-        true
-    }
-}
-
-impl Eq for Index {}
-impl PartialOrd for Index {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.flat().partial_cmp(&other.flat())
-    }
-}
-
-impl Ord for Index {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.flat().cmp(&other.flat())
-    }
-}
-
-pub type BoundingBoxes = BTreeMap<Index, BoundingBox>;
+pub type BoundingBoxes = BTreeSet<BoundingBox>;
 
 pub const BBOXWIDTH: f64 = 10000f64;
 
@@ -112,11 +68,7 @@ pub fn split(orig: &BoundingBox, step: &f64) -> BoundingBoxes {
         for ky in 0..ny {
             let min = Point2D::new(min0.x + (kx as f64) * step, min0.y + (ky as f64) * step);
             let max = Point2D::new(min.x + step, min.y + step);
-            let index = Index {
-                index: (kx, ky),
-                size: (nx, ny),
-            };
-            ret.insert(index, BoundingBox::minmax(min, max));
+            ret.insert(BoundingBox::minmax(min, max));
         }
     }
     ret

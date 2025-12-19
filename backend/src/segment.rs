@@ -1,6 +1,5 @@
-use std::collections::BTreeSet;
-
 use crate::bbox::BoundingBox;
+use crate::bboxes::BoundingBoxes;
 use crate::inputpoint::{InputPoint, InputType, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::{Parameters, ProfileIndication, UserStepsOptions};
@@ -14,7 +13,7 @@ pub struct Segment {
     pub start: f64,
     pub end: f64,
     pub track: std::sync::Arc<Track>,
-    pub boxes: BTreeSet<BoundingBox>,
+    pub boxes: BoundingBoxes,
     pub pointmaps: SharedPointMaps,
     pub parameters: Parameters,
 }

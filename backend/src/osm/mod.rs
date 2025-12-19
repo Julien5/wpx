@@ -77,7 +77,7 @@ async fn read(bbox: &EuclideanBoundingBox) -> InputPoints {
 
 async fn remove_cache(tiles: &BoundingBoxes) -> Vec<EuclideanBoundingBox> {
     let mut uncached = Vec::new();
-    for (_index, tile) in tiles {
+    for tile in tiles {
         if !(cache::hit_cache(&tile).await) {
             uncached.push(tile.clone());
         }
@@ -97,7 +97,7 @@ async fn process(bbox: &EuclideanBoundingBox, logger: &SenderHandlerLock) -> Inp
     }
     download_chunk(&not_cached, logger).await;
     let mut ret = InputPointMap::new();
-    for (_index, tile) in tiles {
+    for tile in tiles {
         // event::send_worker(logger, &format!("read {}/{}", count, total)).await;
         let points = read(&tile).await;
         ret.insert_points(&tile, &points.points);
