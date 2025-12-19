@@ -33,6 +33,8 @@ pub struct Track {
     pub tree: IndexedPointsTree,
 }
 
+pub type SharedTrack = std::sync::Arc<Track>;
+
 // (long,lat)
 pub type WGS84BoundingBox = super::bbox::BoundingBox;
 

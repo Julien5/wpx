@@ -15,7 +15,7 @@ use crate::parameters::Parameters;
 use crate::pdf;
 use crate::profile;
 use crate::render;
-use crate::track;
+use crate::track::SharedTrack;
 use crate::track::Track;
 use crate::track_projection::is_close_to_track;
 use crate::track_projection::ProjectionTrees;
@@ -32,7 +32,7 @@ pub type SenderHandlerLock = crate::event::SenderHandlerLock;
 
 pub struct BackendData {
     pub parameters: Parameters,
-    pub track: std::sync::Arc<track::Track>,
+    pub track: SharedTrack,
     pub inputpoints: SharedPointMaps,
 }
 

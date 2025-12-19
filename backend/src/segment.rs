@@ -4,7 +4,7 @@ use crate::inputpoint::{InputPoint, InputType, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::{Parameters, ProfileIndication, UserStepsOptions};
 use crate::profile::ProfileRenderResult;
-use crate::track::Track;
+use crate::track::SharedTrack;
 use crate::{bboxes, make_points, profile, svgmap};
 
 #[derive(Clone)]
@@ -12,7 +12,7 @@ pub struct Segment {
     pub id: i32,
     pub start: f64,
     pub end: f64,
-    pub track: std::sync::Arc<Track>,
+    pub track: SharedTrack,
     pub boxes: BoundingBoxes,
     pub pointmaps: SharedPointMaps,
     pub parameters: Parameters,
@@ -30,7 +30,7 @@ impl Segment {
         id: i32,
         start: f64,
         end: f64,
-        track: std::sync::Arc<Track>,
+        track: SharedTrack,
         inputpoints: &SharedPointMaps,
         parameters: &Parameters,
     ) -> Segment {
