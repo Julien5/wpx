@@ -38,6 +38,23 @@ impl Track {
         self.wgs84.len()
     }
 
+    pub fn subboxes(&self, start: f64, end: f64) -> BTreeSet<BoundingBox> {
+        let range = self.segment(start, end);
+        let mut boxes = BTreeSet::new();
+        for k in range.start..range.end {
+            let e = &self.euclidian[k];
+            boxes.insert(bboxes::pointbox(&e));
+        }
+        // we need to enlarge to make sure we dont miss points that are close to the track,
+        // but not in a box on the track.
+        for b in boxes.clone() {
+            for n in bboxes::neighbors(&b) {
+                boxes.insert(n);
+            }
+        }
+        boxes
+    }
+
     pub fn wgs84_bounding_box(&self) -> WGS84BoundingBox {
         assert!(!self.wgs84.is_empty());
         let mut ret = WGS84BoundingBox::new();

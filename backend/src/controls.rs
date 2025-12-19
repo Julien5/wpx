@@ -79,7 +79,6 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
             Some(neighbor) => {
                 if math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt() < maxdist
                 {
-                    log::debug!("control point also found as waypoint.");
                     if !neighbor.name().is_empty() {
                         name = neighbor.name();
                     }
@@ -88,9 +87,7 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
                     }
                 }
             }
-            None => {
-                log::debug!("control point not found as waypoint.");
-            }
+            None => {}
         }
 
         ret.push(InputPoint::create_control_on_track(
@@ -115,7 +112,7 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
     for point in gpxpoints {
         let projection = locate::compute_track_projection(track, &tracktree, &point);
         if projection.track_distance < maxdist {
-            log::debug!("use waypoint {} as control", point.name().trim());
+            log::info!("use waypoint {} as control", point.name().trim());
             let control = InputPoint::create_control_on_track(
                 track,
                 projection.track_index,
@@ -124,7 +121,7 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
             );
             ret.push(control);
         } else {
-            log::debug!("point is too far from track");
+            log::info!("point {} is too far from track", point.name());
         }
     }
     ret.sort_by_key(|w| w.round_track_index().unwrap_or(0));
@@ -205,7 +202,6 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
             let is_far_from_end = distance < total_distance - margin;
             is_close_to_track(w) && is_far_from_begin && is_far_from_end
         });
-        log::debug!("post points length={}", points.len());
         if points.is_empty() {
             continue;
         }
@@ -223,7 +219,6 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
     for k in 0..proto.len() {
         let p = &proto[k];
         let name = format!("K{}", k + 1);
-        //log::debug!("make control: {} ({})", name, p.osm_name);
         let w = InputPoint::create_control_on_track(&track, p.index, &name, &p.osm_name);
         ret.push(w);
     }
@@ -255,7 +250,7 @@ mod tests {
         let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
         assert!(!controls.is_empty());
         for control in &controls {
-            log::debug!("found:{}", control.name());
+            log::info!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 5);
         assert!(controls[0].name().contains("K1"));
@@ -276,7 +271,7 @@ mod tests {
         let controls = make_controls_with_waypoints(&track, &gpxdata.waypoints.as_vector());
         assert!(!controls.is_empty());
         for control in &controls {
-            log::debug!("found:{}", control.name());
+            log::info!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 4);
         assert!(controls[0].name().contains("K1"));
@@ -306,11 +301,11 @@ mod tests {
         let controls = make_controls_with_osm(&track, shared);
         assert!(!controls.is_empty());
         for control in &controls {
-            log::debug!("found:{}", control.name());
+            log::info!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 4);
         for c in &controls {
-            log::debug!("c={} {}", c.name(), c.description());
+            log::info!("c={} {}", c.name(), c.description());
         }
         assert!(controls[0].name().contains("K1"));
         assert!(controls[0].description().contains("Furtwangen"));

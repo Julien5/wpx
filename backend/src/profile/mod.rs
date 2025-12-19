@@ -249,7 +249,6 @@ impl ProfileView {
         range: &std::ops::Range<usize>,
         kind: &ProfileIndication,
     ) {
-        log::info!("add profile indication: {:?}", kind);
         match kind {
             ProfileIndication::None => {}
             ProfileIndication::GainTicks => self.add_gain_ticks(track, range),

@@ -35,20 +35,7 @@ impl Segment {
         inputpoints: &SharedPointMaps,
         parameters: &Parameters,
     ) -> Segment {
-        let mut boxes: BTreeSet<BoundingBox> = BTreeSet::new();
-        log::trace!("building boxes..");
-        let range = track.segment(start, end);
-        for k in range {
-            let e = &track.euclidian[k];
-            boxes.insert(bboxes::pointbox(&e));
-        }
-        // we need to enlarge to make sure we dont miss points that are close to the track,
-        // but not in a box on the track.
-        for b in boxes.clone() {
-            for n in bboxes::neighbors(&b) {
-                boxes.insert(n);
-            }
-        }
+        let boxes = track.subboxes(start, end);
         Segment {
             id,
             start,
@@ -126,7 +113,7 @@ impl Segment {
     }
 
     pub fn render_map(&self, size: &IntegerSize2D) -> String {
-        log::trace!("render map:{}", self.id);
+        log::info!("render map:{}", self.id);
         let ret = svgmap::map(&self, size);
         if self.parameters.debug {
             let filename = std::format!("/tmp/map-{}.svg", self.id);

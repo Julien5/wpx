@@ -22,7 +22,6 @@ fn angle(point: &InputPoint, track: &Track) -> f64 {
     let index = proj.track_index;
     let part = track.distance(index);
     let total = track.total_distance();
-    // log::debug!("part:{:.1} total:{:.1}", part, total);
     assert!(part <= total);
     if part == total {
         return 0.0;
@@ -81,9 +80,6 @@ impl WheelModel {
                 control_points.push(cp);
             }
             control_points.sort_by_key(|p| p.angle.floor() as i32);
-            for p in &control_points {
-                log::debug!("control:{} at {:.1}", p.name, p.angle);
-            }
         }
         let mut mid_points = Vec::new();
         if kinds.contains(&InputType::UserStep) {
@@ -96,8 +92,6 @@ impl WheelModel {
             }
             mid_points.sort_by_key(|p| p.angle.floor() as i32);
         }
-        log::debug!("controls:{}", control_points.len());
-        log::debug!("mids:{}", mid_points.len());
         WheelModel {
             control_points,
             mid_points,

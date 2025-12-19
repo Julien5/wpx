@@ -80,7 +80,6 @@ pub fn update_track_projection(
     track: &Track,
     tracktree: &locate::IndexedPointsTree,
 ) {
-    //log::debug!("project:{}", point.name());
     let new_projection = locate::compute_track_projection(track, tracktree, point);
     if point.track_projections.is_empty() {
         point.track_projections.insert(new_projection);
@@ -219,7 +218,7 @@ mod tests {
         trees.iter_on(&mut map, &track);
         map.iter().for_each(|p| {
             assert_eq!(p.track_projections.len(), 2);
-            log::debug!("p={:?}", p);
+            log::info!("p={:?}", p);
         });
     }
 }

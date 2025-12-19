@@ -510,7 +510,7 @@ mod tests {
         let waypoints = backend.get_waypoints(&seg, kinds);
         assert!(!waypoints.is_empty());
         for waypoint in waypoints {
-            log::debug!("gpx name={}", waypoint.info.unwrap().gpx_name);
+            log::info!("gpx name={}", waypoint.info.unwrap().gpx_name);
         }
     }
 
