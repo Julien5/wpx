@@ -58,7 +58,7 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
             candidates.insert(
                 index,
                 Candidate {
-                    position: track.euclidian[part.end].clone(),
+                    position: track.euclidean[part.end].clone(),
                     segment_name: part.name.clone(),
                 },
             );
@@ -104,7 +104,7 @@ pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) 
 pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) -> Vec<InputPoint> {
     let start = 0f64;
     let end = track.total_distance();
-    let range = track.segment(start, end);
+    let range = track.subrange(start, end);
     let tracktree = locate::IndexedPointsTree::from_track(&track, &range);
 
     let mut ret = Vec::new();
@@ -162,7 +162,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
     let mut segments = Vec::new();
     loop {
         let end = start + step_size;
-        let range = track.segment(start, end);
+        let range = track.subrange(start, end);
         if range.is_empty() {
             break;
         }

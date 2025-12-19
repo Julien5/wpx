@@ -24,7 +24,7 @@ pub struct Track {
     pub wgs84: Vec<WGS84Point>,
     pub smooth_elevation: Vec<f64>,
     pub smooth_elevation_gain: Vec<f64>,
-    pub euclidian: Vec<MercatorPoint>,
+    pub euclidean: Vec<MercatorPoint>,
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
     pub boxes: BTreeSet<BoundingBox>,
@@ -39,10 +39,10 @@ impl Track {
     }
 
     pub fn subboxes(&self, start: f64, end: f64) -> BTreeSet<BoundingBox> {
-        let range = self.segment(start, end);
+        let range = self.subrange(start, end);
         let mut boxes = BTreeSet::new();
         for k in range.start..range.end {
-            let e = &self.euclidian[k];
+            let e = &self.euclidean[k];
             boxes.insert(bboxes::pointbox(&e));
         }
         // we need to enlarge to make sure we dont miss points that are close to the track,
@@ -69,10 +69,10 @@ impl Track {
     }
 
     pub fn euclidean_bounding_box(&self) -> EuclideanBoundingBox {
-        assert!(!self.euclidian.is_empty());
+        assert!(!self.euclidean.is_empty());
         let mut ret = EuclideanBoundingBox::new();
         let _: Vec<_> = self
-            .euclidian
+            .euclidean
             .iter()
             .map(|p| {
                 ret.update(&p.point2d());
@@ -134,7 +134,7 @@ impl Track {
         }
     }
 
-    pub fn segment(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {
+    pub fn subrange(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {
         assert!(!self._distance.is_empty());
         assert!(d0 < d1);
         let startidx = self.index_after(d0);
@@ -237,7 +237,7 @@ impl Track {
 
         let ret = Track {
             wgs84: wgs,
-            euclidian: euclidean,
+            euclidean,
             smooth_elevation: track_smooth_elevation,
             smooth_elevation_gain,
             _distance,

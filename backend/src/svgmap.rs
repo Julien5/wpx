@@ -76,7 +76,7 @@ pub fn euclidean_bounding_box(
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
     for k in range.start..range.end {
-        bbox.update(&track.euclidian[k].point2d());
+        bbox.update(&track.euclidean[k].point2d());
     }
     bbox
 }
@@ -88,7 +88,7 @@ impl MapData {
         let mut path = Vec::new();
         let range = segment.range();
         for k in range.start..range.end {
-            path.push(segment.track.euclidian[k].clone());
+            path.push(segment.track.euclidean[k].clone());
         }
 
         let margin = 20i32;

@@ -65,7 +65,7 @@ impl Segment {
     }
 
     pub fn range(&self) -> std::ops::Range<usize> {
-        self.track.segment(self.start, self.end)
+        self.track.subrange(self.start, self.end)
     }
 
     pub fn set_profile_indication(&mut self, p: &ProfileIndication) {

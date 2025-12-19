@@ -286,7 +286,7 @@ impl BackendData {
         let mut k = 0usize;
         loop {
             let end = start + self.parameters.segment_length;
-            let range = self.track.segment(start, end);
+            let range = self.track.subrange(start, end);
             if range.is_empty() {
                 break;
             }

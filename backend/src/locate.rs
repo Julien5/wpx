@@ -73,7 +73,7 @@ fn indexed_track(points: &Track, range: &std::ops::Range<usize>) -> Vec<IndexedP
     let mut ret = Vec::new();
     for k in range.start..range.end {
         ret.push(IndexedPoint {
-            coord: points.euclidian[k].clone(),
+            coord: points.euclidean[k].clone(),
             index: k,
         });
     }
@@ -114,15 +114,15 @@ fn middle_point(a: &(f64, f64, f64), b: &(f64, f64, f64), alpha: f64) -> (f64, f
 }
 
 fn two_closest_index(track: &track::Track, index: &usize, p: &InputPoint) -> (usize, usize) {
-    let tracklen = track.euclidian.len();
+    let tracklen = track.euclidean.len();
     if *index == 0 {
         return (0, 1);
     }
     if *index == tracklen - 1 {
         return (index - 1, *index);
     }
-    let dbefore = p.euclidean.d2(&track.euclidian[index - 1]);
-    let dafter = p.euclidean.d2(&track.euclidian[index - 1]);
+    let dbefore = p.euclidean.d2(&track.euclidean[index - 1]);
+    let dafter = p.euclidean.d2(&track.euclidean[index - 1]);
     if dbefore < dafter {
         (index - 1, *index)
     } else {
@@ -143,16 +143,16 @@ pub fn compute_track_projection(
     // as opposed to GPX and OSM points, which may be on several segments
     let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
     let (index1, index2) = two_closest_index(track, &index, point);
-    let p1 = &track.euclidian[index1];
-    let p2 = &track.euclidian[index2];
+    let p1 = &track.euclidean[index1];
+    let p2 = &track.euclidean[index2];
     let linestring: geo::LineString = vec![p1.xy(), p2.xy()].into();
     let index_floating_part = linestring
         .line_locate_point(&geo::point!(point.euclidean.xy()))
         .unwrap();
     assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
     let floating_index = index1 as f64 + index_floating_part;
-    let t1 = &track.euclidian[index1];
-    let t2 = &track.euclidian[index2];
+    let t1 = &track.euclidean[index1];
+    let t2 = &track.euclidean[index2];
     let a1 = (t1.0, t1.1, track.elevation(index1));
     let a2 = (t2.0, t2.1, track.elevation(index2));
     let m = middle_point(&a1, &a2, index_floating_part);
@@ -162,12 +162,12 @@ pub fn compute_track_projection(
     let elevation = m.2;
     let track_distance = middle.d2(&point.euclidean).sqrt();
 
-    let di = point.euclidean.d2(&track.euclidian[index]);
+    let di = point.euclidean.d2(&track.euclidean[index]);
     let df = point.euclidean.d2(&middle);
     debug_assert!(df <= di);
 
     let distance_on_track_to_projection =
-        track.distance(index) + track.euclidian[index].d2(&middle).sqrt();
+        track.distance(index) + track.euclidean[index].d2(&middle).sqrt();
     let new_proj = TrackProjection {
         track_floating_index: floating_index,
         track_index: index1,

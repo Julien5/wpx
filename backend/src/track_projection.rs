@@ -135,8 +135,8 @@ impl ProjectionTrees {
     fn find_appropriate_projection_ranges(track: &Track) -> Vec<std::ops::Range<usize>> {
         let start = 0;
         let end = track.wgs84.len();
-        let start_point = track.euclidian.first().unwrap();
-        let f = |index: &usize| -> f64 { start_point.d2(&track.euclidian[*index]) };
+        let start_point = track.euclidean.first().unwrap();
+        let f = |index: &usize| -> f64 { start_point.d2(&track.euclidean[*index]) };
         let extremity = find_global_max(start, end, f);
         vec![0..extremity, extremity..end]
     }

@@ -80,7 +80,7 @@ where
 impl InputPoint {
     pub fn create_user_step_on_track(track: &Track, index: usize, name: &String) -> InputPoint {
         let wgs = track.wgs84[index].clone();
-        let euc = track.euclidian[index].clone();
+        let euc = track.euclidean[index].clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::UserStep);
         p.tags.insert("name".to_string(), name.clone());
         p.track_projections = BTreeSet::from([TrackProjection {
@@ -102,7 +102,7 @@ impl InputPoint {
         description: &String,
     ) -> InputPoint {
         let wgs = track.wgs84[index].clone();
-        let euc = track.euclidian[index].clone();
+        let euc = track.euclidean[index].clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::Control);
         p.tags.insert("name".to_string(), name.clone());
         p.tags
