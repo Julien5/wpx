@@ -159,13 +159,20 @@ impl ProjectionTrees {
     }
 
     pub fn iter_on(&self, map: &mut InputPointMap, track: &Track) {
-        for mut point in &mut *map {
-            update_track_projection(&mut point, track, &self.total_tree);
-            let index = point.track_projections.first().unwrap().track_index;
-            if is_close_to_track(&point) {
-                for tree in &self.trees {
-                    if !tree.range.contains(&index) {
-                        update_track_projection(&mut point, track, tree);
+        let boxes = &track.boxes;
+        for b in boxes {
+            if map.get_mut(b).is_none() {
+                continue;
+            }
+            let points = map.get_mut(b).unwrap();
+            for mut point in points {
+                update_track_projection(&mut point, track, &self.total_tree);
+                let index = point.track_projections.first().unwrap().track_index;
+                if is_close_to_track(&point) {
+                    for tree in &self.trees {
+                        if !tree.range.contains(&index) {
+                            update_track_projection(&mut point, track, tree);
+                        }
                     }
                 }
             }
