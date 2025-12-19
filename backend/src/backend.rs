@@ -12,6 +12,7 @@ use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::parameters::Parameters;
+use crate::parameters::UserStepsOptions;
 use crate::pdf;
 use crate::profile;
 use crate::render;
@@ -95,6 +96,9 @@ impl Backend {
     }
     pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
         self.dmut().set_userstep_gpx_name_format(format);
+    }
+    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
+        self.dmut().set_user_step_options(options);
     }
     pub fn set_control_gpx_name_format(&mut self, format: &String) {
         self.dmut().set_control_gpx_name_format(format);
@@ -228,6 +232,14 @@ impl BackendData {
 
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
         self.export_points(&self.get_points(segment, kinds))
+    }
+
+    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
+        self.parameters.user_steps_options = options.clone();
+        let new_points = make_points::user_points(&self.track, &self.parameters.user_steps_options);
+        let mut lock = self.inputpoints.write().unwrap();
+        lock.maps
+            .insert(InputType::UserStep, InputPointMap::from_vector(&new_points));
     }
 
     // used by bridge

@@ -22,11 +22,11 @@ class SegmentModel extends ChangeNotifier {
   }
 
   bridge.UserStepsOptions userStepsOptions() {
-    return _bridge.getUserStepOptions(segment: _segment);
+    return _bridge.getParameters().userStepsOptions;
   }
 
   void setUserStepsOptions(bridge.UserStepsOptions p) {
-    _bridge.setUserStepOptions(segment: _segment, userStepsOptions: p);
+    _bridge.setUserStepOptions(userStepsOptions: p);
     notifyListeners();
   }
 

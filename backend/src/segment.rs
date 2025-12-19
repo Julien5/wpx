@@ -2,10 +2,10 @@ use crate::bbox::BoundingBox;
 use crate::bboxes::BoundingBoxes;
 use crate::inputpoint::{InputPoint, InputType, SharedPointMaps};
 use crate::math::IntegerSize2D;
-use crate::parameters::{Parameters, ProfileIndication, UserStepsOptions};
+use crate::parameters::{Parameters, ProfileIndication};
 use crate::profile::ProfileRenderResult;
 use crate::track::SharedTrack;
-use crate::{bboxes, make_points, profile, svgmap};
+use crate::{bboxes, profile, svgmap};
 
 #[derive(Clone)]
 pub struct Segment {
@@ -81,24 +81,6 @@ impl Segment {
             &self.range(),
             &self.parameters.map_options.size2d(),
         )
-    }
-
-    // used by bridge
-    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
-        self.parameters.user_steps_options = options.clone();
-        let range = self.range();
-        let mut new_points =
-            make_points::user_points(&self.track, &self.parameters.user_steps_options);
-        new_points.retain(|w| {
-            let index = w.round_track_index().unwrap();
-            range.contains(&index)
-        });
-        // FIXME
-        //self.points.insert(InputType::UserStep, new_points);
-    }
-
-    pub fn get_user_step_options(&mut self) -> UserStepsOptions {
-        self.parameters.user_steps_options.clone()
     }
 
     pub fn render_profile(&self) -> ProfileRenderResult {
