@@ -128,9 +128,6 @@ impl Backend {
         let mut osmpoints = osm::download_for_track(&track, &self.sender).await;
         log::trace!("project osm points");
         trees.iter_on(&mut osmpoints, &track);
-        for point in &osmpoints {
-            assert!(!point.track_projections.is_empty());
-        }
         inputpoints_map.insert(InputType::OSM, osmpoints);
         trees.iter_on(&mut gpxdata.waypoints, &track);
         let gpx_waypoints = gpxdata.waypoints.as_vector();
@@ -152,17 +149,6 @@ impl Backend {
         );
 
         if controls.is_empty() {
-            {
-                let lock = inputpoints.read().unwrap();
-                let osmpoints = lock.maps.get(&InputType::OSM).unwrap();
-                log::trace!(
-                    "found {} osm points",
-                    osmpoints.iter().collect::<Vec<_>>().len()
-                );
-                for point in osmpoints {
-                    assert!(!point.track_projections.is_empty());
-                }
-            }
             controls = controls::make_controls_with_osm(&track, inputpoints.clone());
             log::info!(
                 "control from gpx_data or waypoints empty => tried osm => {} points",
