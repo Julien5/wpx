@@ -1,15 +1,12 @@
-use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::{InputPoint, InputPointMaps, InputType};
+use crate::inputpoint::{InputPoint, InputPointMap, InputPointMaps, InputType, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::{Parameters, ProfileIndication, UserStepsOptions};
 use crate::profile::ProfileRenderResult;
-use crate::track::{self, Track};
-use crate::track_projection::TrackProjections;
-use crate::{bboxes, locate, make_points, profile, svgmap};
-
-pub type SegmentPoints = BTreeMap<InputType, Vec<InputPoint>>;
+use crate::track::Track;
+use crate::{bboxes, make_points, profile, svgmap};
 
 #[derive(Clone)]
 pub struct Segment {
@@ -17,7 +14,8 @@ pub struct Segment {
     pub start: f64,
     pub end: f64,
     pub track: std::sync::Arc<Track>,
-    pub points: SegmentPoints,
+    pub boxes: BTreeSet<BoundingBox>,
+    pub pointmaps: SharedPointMaps,
     pub parameters: Parameters,
 }
 
@@ -29,31 +27,53 @@ pub struct SegmentStatistics {
 }
 
 impl Segment {
-    pub fn osmpoints(&self) -> &Vec<InputPoint> {
-        return self.points.get(&InputType::OSM).unwrap();
-    }
-
     pub fn new(
         id: i32,
         start: f64,
         end: f64,
-        track_tree: locate::IndexedPointsTree,
         track: std::sync::Arc<Track>,
-        inputpoints: &InputPointMaps,
+        inputpoints: &SharedPointMaps,
         parameters: &Parameters,
     ) -> Segment {
+        let mut boxes: BTreeSet<BoundingBox> = BTreeSet::new();
+        log::trace!("building boxes..");
         let range = track.segment(start, end);
-        let map_box =
-            svgmap::euclidean_bounding_box(&track, &range, &parameters.map_options.size2d());
-        let points = Self::copy_segment_points(inputpoints, &map_box, &track, &track_tree);
+        for k in range {
+            let e = &track.euclidian[k];
+            boxes.insert(bboxes::pointbox(&e));
+        }
+        // we need to enlarge to make sure we dont miss points that are close to the track,
+        // but not in a box on the track.
+        for b in boxes.clone() {
+            for n in bboxes::neighbors(&b) {
+                boxes.insert(n);
+            }
+        }
         Segment {
             id,
             start,
             end,
             track,
-            points,
+            boxes,
+            pointmaps: inputpoints.clone(),
+            //pointmaps: SharedPointMaps::new(InputPointMaps::new().into()),
             parameters: parameters.clone(),
         }
+    }
+
+    pub fn osmpoints(&self) -> Vec<InputPoint> {
+        let bbox = bboxes::bounding_box(&self.boxes);
+        let range = self.range();
+        let lock = self.pointmaps.read().unwrap();
+        let map = lock.maps.get(&InputType::OSM);
+        if map.is_none() {
+            return Vec::new();
+        }
+        map.unwrap()
+            .points_in(&bbox)
+            .filter(|w| w.is_in_range(&range))
+            .map(|w| w.clone())
+            .collect()
     }
 
     pub fn range(&self) -> std::ops::Range<usize> {
@@ -86,7 +106,8 @@ impl Segment {
             let index = w.round_track_index().unwrap();
             range.contains(&index)
         });
-        self.points.insert(InputType::UserStep, new_points);
+        // FIXME
+        //self.points.insert(InputType::UserStep, new_points);
     }
 
     pub fn get_user_step_options(&mut self) -> UserStepsOptions {
@@ -99,39 +120,6 @@ impl Segment {
         if self.parameters.debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id);
             std::fs::write(filename, &ret.svg).expect("Unable to write file");
-        }
-        ret
-    }
-
-    fn copy_segment_points(
-        inputpoints: &InputPointMaps,
-        map_box: &BoundingBox,
-        track: &track::Track,
-        tracktree: &locate::IndexedPointsTree,
-    ) -> SegmentPoints {
-        let mut ret = SegmentPoints::new();
-        let mut bbox = map_box.clone();
-        bbox.enlarge(&5000f64);
-        let bboxs = bboxes::split(&bbox, &bboxes::BBOXWIDTH);
-        for (input_type, map) in &inputpoints.maps {
-            let mut points = Vec::new();
-            for (_index, bbox) in &bboxs {
-                let _points = map.get(&bbox);
-                if _points.is_none() {
-                    continue;
-                }
-                points.extend_from_slice(_points.unwrap());
-            }
-            points.iter_mut().for_each(|p| {
-                if p.track_projections.is_empty() {
-                    p.track_projections =
-                        TrackProjections::from([locate::compute_track_projection(
-                            track, tracktree, p,
-                        )]);
-                }
-            });
-            log::trace!("insert {} points of type {:?}", points.len(), input_type);
-            ret.insert(input_type.clone(), points);
         }
         ret
     }

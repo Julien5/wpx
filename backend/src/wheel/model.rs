@@ -31,11 +31,18 @@ fn angle(point: &InputPoint, track: &Track) -> f64 {
 }
 
 fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
-    match segment.points.get(&InputType::Control) {
+    match segment
+        .pointmaps
+        .read()
+        .unwrap()
+        .maps
+        .get(&InputType::Control)
+    {
         Some(points) => {
-            log::trace!("segment.id={} controls={}", segment.id, points.len());
-            if !points.is_empty() {
-                return points.clone();
+            let ret = points.as_vector();
+            log::trace!("segment.id={} controls={}", segment.id, ret.len());
+            if !ret.is_empty() {
+                return ret;
             }
         }
         None => {}
@@ -44,8 +51,15 @@ fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
 }
 
 fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
-    match segment.points.get(&InputType::UserStep) {
-        Some(points) => {
+    match segment
+        .pointmaps
+        .read()
+        .unwrap()
+        .maps
+        .get(&InputType::UserStep)
+    {
+        Some(map) => {
+            let points = map.as_vector();
             if !points.is_empty() {
                 return points.clone();
             }

@@ -472,7 +472,7 @@ impl ProfileView {
                 let circle = draw_for_profile(&g, id.as_str(), &w);
                 let mut label = label_placement::features::Label::new();
                 //assert!(label.unplaced());
-                label.set_text(&drawings::make_label_text(w, segment));
+                label.set_text(&drawings::make_label_text(&w, segment));
                 label.id = format!("{}/wp/text", k);
                 //assert!(label.unplaced());
                 feature_packet.push(PointFeature {

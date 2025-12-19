@@ -124,7 +124,7 @@ impl MapData {
                 let id = format!("{}/wp/circle", k);
                 let circle = draw_for_map(&p, id.as_str(), &w);
                 let mut label = Label::new();
-                label.set_text(&drawings::make_label_text(w, segment));
+                label.set_text(&drawings::make_label_text(&w, segment));
                 label.id = format!("{}/wp/text", k);
                 feature_packet.push(PointFeature {
                     circle,

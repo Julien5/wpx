@@ -122,8 +122,10 @@ pub fn split(orig: &BoundingBox, step: &f64) -> BoundingBoxes {
     ret
 }
 
-pub fn bounding_box(boxes: &Vec<BoundingBox>) -> BoundingBox {
-    assert!(!boxes.is_empty());
+pub fn bounding_box<'a, I>(boxes: I) -> BoundingBox
+where
+    I: IntoIterator<Item = &'a BoundingBox>,
+{
     let mut ret = BoundingBox::new();
     for b in boxes {
         ret.update(&b.get_min());

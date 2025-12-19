@@ -8,7 +8,6 @@ use crate::event;
 use crate::gpsdata;
 use crate::gpxexport;
 use crate::inputpoint::*;
-use crate::locate;
 use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
@@ -34,7 +33,7 @@ pub type SenderHandlerLock = crate::event::SenderHandlerLock;
 pub struct BackendData {
     pub parameters: Parameters,
     pub track: std::sync::Arc<track::Track>,
-    pub inputpoints: InputPointMaps,
+    pub inputpoints: SharedPointMaps,
 }
 
 pub struct Backend {
@@ -128,6 +127,9 @@ impl Backend {
 
         let trees = ProjectionTrees::make(&track);
         trees.iter_on(&mut osmpoints, &track);
+        for point in &osmpoints {
+            assert!(!point.track_projections.is_empty());
+        }
         inputpoints_map.insert(InputType::OSM, osmpoints);
         trees.iter_on(&mut gpxdata.waypoints, &track);
         let gpx_waypoints = gpxdata.waypoints.as_vector();
@@ -141,18 +143,39 @@ impl Backend {
             log::trace!("infer_controls_from_gpx_data OK");
         }
 
-        let mut inputpoints = InputPointMaps {
-            maps: inputpoints_map,
-        };
+        let inputpoints = SharedPointMaps::new(
+            InputPointMaps {
+                maps: inputpoints_map,
+            }
+            .into(),
+        );
 
         if controls.is_empty() {
-            log::info!("control from gpx_data or waypoints empty => try osm");
-            controls = controls::make_controls_with_osm(&track, &inputpoints);
+            {
+                let lock = inputpoints.read().unwrap();
+                let osmpoints = lock.maps.get(&InputType::OSM).unwrap();
+                log::trace!(
+                    "found {} osm points",
+                    osmpoints.iter().collect::<Vec<_>>().len()
+                );
+                for point in osmpoints {
+                    assert!(!point.track_projections.is_empty());
+                }
+            }
+            controls = controls::make_controls_with_osm(&track, inputpoints.clone());
+            log::info!(
+                "control from gpx_data or waypoints empty => tried osm => {} points",
+                controls.len()
+            );
         }
 
-        inputpoints
-            .maps
-            .insert(InputType::Control, InputPointMap::from_vector(&controls));
+        {
+            let mut locked = inputpoints.write().unwrap();
+
+            locked
+                .maps
+                .insert(InputType::Control, InputPointMap::from_vector(&controls));
+        }
 
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
@@ -197,12 +220,11 @@ impl BackendData {
 
     pub fn get_points(&self, segment: &Segment, kinds: Kinds) -> Vec<InputPoint> {
         let mut points = Vec::new();
-        let segpoints = &segment.points;
         let range = &segment.range();
         for kind in &kinds {
-            match segpoints.get(kind) {
+            match self.inputpoints.read().unwrap().maps.get(kind) {
                 Some(kpoints) => {
-                    let mut copy = kpoints.clone();
+                    let mut copy = kpoints.as_vector();
                     copy.retain(|w| {
                         assert!(kinds.contains(&w.kind()));
                         assert!(is_close_to_track(&w));
@@ -238,20 +260,24 @@ impl BackendData {
         }
 
         // update user steps
-        self.inputpoints
-            .maps
-            .insert(InputType::UserStep, InputPointMap::new());
-        // update user points
-        match self.inputpoints.maps.get_mut(&InputType::UserStep) {
-            Some(user_steps_map) => {
-                user_steps_map.clear();
-                user_steps_map.sort_and_insert(&make_points::user_points(
-                    &self.track,
-                    &self.parameters.user_steps_options,
-                ));
-            }
-            _ => {
-                assert!(false);
+        {
+            let mut locked = self.inputpoints.write().unwrap();
+            locked
+                .maps
+                .insert(InputType::UserStep, InputPointMap::new());
+
+            // update user points
+            match locked.maps.get_mut(&InputType::UserStep) {
+                Some(user_steps_map) => {
+                    user_steps_map.clear();
+                    user_steps_map.sort_and_insert(&make_points::user_points(
+                        &self.track,
+                        &self.parameters.user_steps_options,
+                    ));
+                }
+                _ => {
+                    assert!(false);
+                }
             }
         }
     }
@@ -277,13 +303,11 @@ impl BackendData {
             if range.is_empty() {
                 break;
             }
-            let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
             log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
             ret.push(Segment::new(
                 k as i32,
                 start,
                 end,
-                tracktree,
                 self.track.clone(),
                 &self.inputpoints,
                 &self.parameters,
@@ -297,13 +321,10 @@ impl BackendData {
     pub fn trackSegment(&self) -> Segment {
         let start = 0f64;
         let end = self.track.total_distance();
-        let range = self.track.segment(start, end);
-        let tracktree = locate::IndexedPointsTree::from_track(&self.track, &range);
         let ret = Segment::new(
             0,
             start,
             end,
-            tracktree,
             self.track.clone(),
             &self.inputpoints,
             &self.parameters,
@@ -387,7 +408,7 @@ impl BackendData {
     pub fn generateGpx(&mut self) -> Vec<u8> {
         let mut gpxpoints = Vec::new();
         for kind in [InputType::UserStep] {
-            match self.inputpoints.maps.get(&kind) {
+            match self.inputpoints.read().unwrap().maps.get(&kind) {
                 Some(p) => {
                     let v = p.as_vector();
                     v.iter().for_each(|p| {
@@ -488,7 +509,15 @@ mod tests {
         let mut backend = Backend::make();
         let _ = backend.load_demo().await;
         let seg = backend.trackSegment();
-        let len = seg.points.get(&InputType::Control).unwrap().len();
+        let controls = seg
+            .pointmaps
+            .read()
+            .unwrap()
+            .maps
+            .get(&InputType::Control)
+            .unwrap()
+            .as_vector();
+        let len = controls.len();
         assert!(len > 0);
         let kinds = std::collections::HashSet::from([InputType::Control]);
         let waypoints = backend.get_waypoints(&seg, kinds);

@@ -80,6 +80,7 @@ pub fn update_track_projection(
     track: &Track,
     tracktree: &locate::IndexedPointsTree,
 ) {
+    //log::debug!("project:{}", point.name());
     let new_projection = locate::compute_track_projection(track, tracktree, point);
     if point.track_projections.is_empty() {
         point.track_projections.insert(new_projection);
@@ -158,17 +159,13 @@ impl ProjectionTrees {
     }
 
     pub fn iter_on(&self, map: &mut InputPointMap, track: &Track) {
-        for bbox in &track.boxes {
-            match map.get_mut(&bbox) {
-                None => {}
-                Some(vector) => {
-                    for mut point in vector {
-                        update_track_projection(&mut point, track, &self.total_tree);
-                        if is_close_to_track(&point) {
-                            for tree in &self.trees {
-                                update_track_projection(point, track, tree);
-                            }
-                        }
+        for mut point in &mut *map {
+            update_track_projection(&mut point, track, &self.total_tree);
+            let index = point.track_projections.first().unwrap().track_index;
+            if is_close_to_track(&point) {
+                for tree in &self.trees {
+                    if !tree.range.contains(&index) {
+                        update_track_projection(&mut point, track, tree);
                     }
                 }
             }
@@ -178,7 +175,7 @@ impl ProjectionTrees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{bboxes, event, gpsdata::GpxData, osm, track::Track, wgs84point::WGS84Point};
+    use crate::{bboxes, gpsdata::GpxData, osm, track::Track, wgs84point::WGS84Point};
 
     fn read(filename: String) -> GpxData {
         use crate::gpsdata;

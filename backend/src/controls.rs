@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, sync::Arc};
 
 use crate::{
     backend::Segment,
-    inputpoint::{InputPoint, InputPointMaps, InputType, OSMType},
+    inputpoint::{InputPoint, InputType, OSMType, SharedPointMaps},
     locate, math,
     mercator::MercatorPoint,
     parameters::Parameters,
@@ -155,7 +155,7 @@ fn control_point_goodness(point: &InputPoint) -> i32 {
     };
 }
 
-pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) -> Vec<InputPoint> {
+pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) -> Vec<InputPoint> {
     let total = track.total_distance();
     let track_distance_km = total / 1000f64;
     let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
@@ -169,13 +169,11 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
         if range.is_empty() {
             break;
         }
-        let tracktree = locate::IndexedPointsTree::from_track(&track, &range);
         log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
         segments.push(Segment::new(
             segments.len() as i32,
             start,
             end,
-            tracktree,
             track.clone(),
             &inputpoints,
             &Parameters::default(),
@@ -191,15 +189,21 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
     let mut proto = Vec::new();
     let margin = 10_000f64;
     for segment in &mut segments {
-        let points = segment.points.get_mut(&InputType::OSM).unwrap();
-        //assert!(!points.is_empty());
+        // it has all the osm points, not only those from the segment!
+        let mut points = segment.osmpoints();
         points.retain(|w| {
             let total_distance = track.total_distance();
-            let distance = track.distance(w.round_track_index().unwrap());
+            assert!(!w.track_projections.is_empty());
+            let distance = w
+                .track_projections
+                .first()
+                .unwrap()
+                .distance_on_track_to_projection;
             let is_far_from_begin = distance > margin;
             let is_far_from_end = distance < total_distance - margin;
             is_close_to_track(w) && is_far_from_begin && is_far_from_end
         });
+        log::debug!("post points length={}", points.len());
         if points.is_empty() {
             continue;
         }
@@ -226,7 +230,9 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: &InputPointMaps) 
 
 #[cfg(test)]
 mod tests {
-    use crate::{event, gpsdata::GpxData, osm};
+    use crate::{
+        event, gpsdata::GpxData, inputpoint::InputPointMaps, osm, track_projection::ProjectionTrees,
+    };
 
     fn read(filename: String) -> GpxData {
         use crate::gpsdata;
@@ -287,15 +293,30 @@ mod tests {
         let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
         let logger = std::sync::RwLock::new(Some(b));
         let mut inputpoints = BTreeMap::new();
-        let osmpoints = osm::download_for_track(&track, &logger).await;
+        let mut osmpoints = osm::download_for_track(&track, &logger).await;
+        let trees = ProjectionTrees::make(&track);
+        trees.iter_on(&mut osmpoints, &track);
+        {
+            log::trace!(
+                "found {} osm points",
+                osmpoints.iter().collect::<Vec<_>>().len()
+            );
+            for point in &osmpoints {
+                assert!(!point.track_projections.is_empty());
+            }
+        }
         inputpoints.insert(InputType::OSM, osmpoints);
-        let maps = InputPointMaps { maps: inputpoints };
-        let controls = make_controls_with_osm(&track, &maps);
+        let shared = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
+
+        let controls = make_controls_with_osm(&track, shared);
         assert!(!controls.is_empty());
         for control in &controls {
             log::debug!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 4);
+        for c in &controls {
+            log::debug!("c={} {}", c.name(), c.description());
+        }
         assert!(controls[0].name().contains("K1"));
         assert!(controls[0].description().contains("Furtwangen"));
         assert!(controls[1].name().contains("K2"));

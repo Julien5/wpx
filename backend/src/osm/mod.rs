@@ -45,7 +45,7 @@ async fn download_chunk(
     if bboxes.is_empty() {
         return InputPoints::new();
     }
-    let eucbbox = bounding_box(&bboxes);
+    let eucbbox = bounding_box(bboxes);
     let wgsbbox = eucbbox.unproject();
 
     log::info!("downloading for {} tiles", bboxes.len());

@@ -154,14 +154,32 @@ impl InputPoint {
             euclidean: euclidean.clone(),
         }
     }
+
     pub fn round_track_index(&self) -> Option<usize> {
         match &self.track_projections.first() {
             None => None,
             Some(p) => Some(p.track_floating_index.round() as usize),
         }
     }
+
+    pub fn is_in_range(&self, range: &std::ops::Range<usize>) -> bool {
+        for proj in &self.track_projections {
+            if range.contains(&proj.track_index) {
+                return true;
+            }
+        }
+        false
+    }
+
     pub fn distance_to_track(&self) -> f64 {
-        return self.track_projections.first().unwrap().track_distance;
+        if self.track_projections.is_empty() {
+            return f64::MAX;
+        }
+        // returns the minimum of all track_distances
+        self.track_projections
+            .iter()
+            .map(|proj| proj.track_distance)
+            .fold(f64::INFINITY, f64::min)
     }
     pub fn ele(&self) -> Option<f64> {
         read::<f64>(self.tags.get("ele"))
@@ -384,6 +402,16 @@ impl<'a> IntoIterator for &'a mut InputPointMap {
 
 pub struct InputPointMaps {
     pub maps: BTreeMap<InputType, InputPointMap>,
+}
+
+pub type SharedPointMaps = std::sync::Arc<std::sync::RwLock<InputPointMaps>>;
+
+impl InputPointMaps {
+    pub fn new() -> Self {
+        Self {
+            maps: BTreeMap::new(),
+        }
+    }
 }
 
 impl InputPointMap {

@@ -4,7 +4,7 @@ use crate::{
     track_projection::is_close_to_track,
 };
 
-fn merge_flip_flop<'a>(_a: &Vec<&'a InputPoint>, _b: &Vec<&'a InputPoint>) -> Vec<&'a InputPoint> {
+fn merge_flip_flop(_a: &Vec<InputPoint>, _b: &Vec<InputPoint>) -> Vec<InputPoint> {
     let mut a = _a.clone();
     let mut b = _b.clone();
     let mut ret = Vec::new();
@@ -12,19 +12,19 @@ fn merge_flip_flop<'a>(_a: &Vec<&'a InputPoint>, _b: &Vec<&'a InputPoint>) -> Ve
         match ret.len() % 2 {
             0 => {
                 if !a.is_empty() {
-                    ret.push(*a.first().unwrap());
+                    ret.push(a.first().unwrap().clone());
                     a.remove(0);
                 } else {
-                    ret.push(*b.first().unwrap());
+                    ret.push(b.first().unwrap().clone());
                     b.remove(0);
                 }
             }
             1 => {
                 if !b.is_empty() {
-                    ret.push(*b.first().unwrap());
+                    ret.push(b.first().unwrap().clone());
                     b.remove(0);
                 } else {
-                    ret.push(*a.first().unwrap());
+                    ret.push(a.first().unwrap().clone());
                     a.remove(0);
                 }
             }
@@ -36,19 +36,19 @@ fn merge_flip_flop<'a>(_a: &Vec<&'a InputPoint>, _b: &Vec<&'a InputPoint>) -> Ve
     ret
 }
 
-fn sort_by_elevation(mountains: &mut Vec<&InputPoint>) {
+fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
     mountains.sort_by_key(|w| std::cmp::Reverse(w.ele().unwrap_or(0f64).floor() as i32));
 }
 
-fn sort_by_distance_to_track(mountains: &mut Vec<&InputPoint>) {
-    mountains.sort_by_key(|w| w.track_projections.first().unwrap().track_distance.floor() as i32);
+fn sort_by_distance_to_track(mountains: &mut Vec<InputPoint>) {
+    mountains.sort_by_key(|w| w.distance_to_track().floor() as i32);
 }
 
-fn sort_by_population(cities: &mut Vec<&InputPoint>) {
+fn sort_by_population(cities: &mut Vec<InputPoint>) {
     cities.sort_by_key(|w| std::cmp::Reverse(w.population().unwrap_or(0)));
 }
 
-pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
+pub fn profile(segment: &Segment) -> Vec<Vec<InputPoint>> {
     let mut user1 = Vec::new();
     let mut user2 = Vec::new();
     let mut cities = Vec::new();
@@ -56,15 +56,22 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     let mut villages = Vec::new();
     let mut osmrest = Vec::new();
     let trackrange = segment.range();
-    match segment.points.get(&InputType::UserStep) {
-        Some(points) => {
+    match segment
+        .pointmaps
+        .read()
+        .unwrap()
+        .maps
+        .get(&InputType::UserStep)
+    {
+        Some(map) => {
+            let points = map.as_vector();
             let mut indices: Vec<_> = (0..points.len()).collect();
             indices.sort_by_key(|i| points[*i].round_track_index());
             indices.retain(|i| trackrange.contains(&points[*i].round_track_index().unwrap()));
             for k in indices {
-                let wi = &points[k];
-                assert!(is_close_to_track(wi));
-                let d = wi.track_projections.first().unwrap().track_distance;
+                let wi = points[k].clone();
+                assert!(is_close_to_track(&wi));
+                let d = wi.distance_to_track();
                 assert_eq!(wi.kind(), InputType::UserStep);
                 assert_eq!(d, 0f64);
                 if user1.len() < user2.len() {
@@ -78,16 +85,18 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     }
 
     let gpx: Vec<_> = segment
-        .points
+        .pointmaps
+        .read()
+        .unwrap()
+        .maps
         .get(&InputType::GPX)
         .unwrap()
-        .iter()
-        .map(|w| w)
-        .collect();
+        .as_vector();
+
     let osmpoints = segment.osmpoints();
     for k in 0..osmpoints.len() {
-        let wi = &osmpoints[k];
-        if !is_close_to_track(wi) {
+        let wi = osmpoints[k].clone();
+        if !is_close_to_track(&wi) {
             continue;
         }
         match wi.osmkind().unwrap() {
@@ -113,7 +122,7 @@ pub fn profile(segment: &Segment) -> Vec<Vec<&InputPoint>> {
     vec![gpx, user1, cities_and_mountains, user2, villages, osmrest]
 }
 
-pub fn map(segment: &Segment) -> Vec<Vec<&InputPoint>> {
+pub fn map(segment: &Segment) -> Vec<Vec<InputPoint>> {
     let profile_points = profile(segment);
     let gpx = &profile_points.get(0).unwrap();
     let user1 = &profile_points.get(1).unwrap();
