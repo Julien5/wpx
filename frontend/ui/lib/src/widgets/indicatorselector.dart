@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/log.dart';
-import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
@@ -42,20 +40,14 @@ class _ElevationIndicatorGroupState extends State<ElevationIndicatorGroup> {
   }
 
   void updateModel() {
-    ProfileRenderer model = Provider.of<ProfileRenderer>(
-      context,
-      listen: false,
-    );
+    RootModel root = Provider.of<RootModel>(context, listen: false);
     if (selectedValue == none) {
-      model.setProfileIndication(ProfileIndication.none);
+      root.setProfileIndication(ProfileIndication.none);
     } else if (selectedValue == percent) {
-      model.setProfileIndication(ProfileIndication.numericSlope);
+      root.setProfileIndication(ProfileIndication.numericSlope);
     } else if (selectedValue == ticks) {
-      model.setProfileIndication(ProfileIndication.gainTicks);
+      root.setProfileIndication(ProfileIndication.gainTicks);
     }
-    log("set parameters on root model to update all segments");
-    model.reset();
-    log("done set parameters on root model");
   }
 
   void onChanged(String? newValue) {

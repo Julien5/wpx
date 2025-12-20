@@ -63,6 +63,11 @@ class RootModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setProfileIndication(bridge.ProfileIndication p) {
+    _bridge.setProfileIndication(p: p);
+    notifyListeners();
+  }
+
   Future<List<int>> generateGpx() {
     return _bridge.generateGpx();
   }
