@@ -82,7 +82,7 @@ class _SegmentsViewState extends State<SegmentsView> {
         developer.log("[segments] [build] #segments=${segmentWidgets.length}");
         List<Tab> tabs = [];
         for (var segmentWidget in segmentWidgets) {
-          var id = segmentWidget.renderers.profileRenderer.segment.id();
+          var id = segmentWidget.renderers.profileRenderer.id();
           tabs.add(Tab(text: "Page ${1 + id.toInt()}"));
         }
         if (viewType == ScreenOrientation.desktop) {

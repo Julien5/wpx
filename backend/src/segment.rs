@@ -2,7 +2,7 @@ use crate::bbox::BoundingBox;
 use crate::bboxes::BoundingBoxes;
 use crate::inputpoint::{InputPoint, InputType, SharedPointMaps};
 use crate::math::IntegerSize2D;
-use crate::parameters::{Parameters, ProfileIndication};
+use crate::parameters::Parameters;
 use crate::profile::ProfileRenderResult;
 use crate::track::SharedTrack;
 use crate::{bboxes, profile, svgmap};
@@ -65,14 +65,6 @@ impl Segment {
 
     pub fn range(&self) -> std::ops::Range<usize> {
         self.track.subrange(self.start, self.end)
-    }
-
-    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
-        self.parameters.profile_options.elevation_indicators.clear();
-        self.parameters
-            .profile_options
-            .elevation_indicators
-            .insert(p.clone());
     }
 
     pub fn map_box(&self) -> BoundingBox {

@@ -12,6 +12,7 @@ use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::parameters::Parameters;
+use crate::parameters::ProfileIndication;
 use crate::parameters::UserStepsOptions;
 use crate::pdf;
 use crate::profile;
@@ -94,9 +95,15 @@ impl Backend {
     pub fn segments(&self) -> Vec<Segment> {
         self.d().segments()
     }
+
     pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
         self.dmut().set_userstep_gpx_name_format(format);
     }
+
+    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
+        self.dmut().set_profile_indication(p);
+    }
+
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
         self.dmut().set_user_step_options(options);
     }
@@ -242,12 +249,18 @@ impl BackendData {
             .insert(InputType::UserStep, InputPointMap::from_vector(&new_points));
     }
 
-    // used by bridge
+    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
+        self.parameters.profile_options.elevation_indicators.clear();
+        self.parameters
+            .profile_options
+            .elevation_indicators
+            .insert(p.clone());
+    }
+
     pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
         self.parameters.user_steps_options.gpx_name_format = format.clone();
     }
 
-    // used by bridge
     pub fn set_control_gpx_name_format(&mut self, format: &String) {
         self.parameters.control_gpx_name_format = format.clone();
     }
@@ -333,11 +346,13 @@ impl BackendData {
 
     pub fn render_segment_what(
         &mut self,
-        segment: &Segment,
+        _segment: &Segment,
         what: &String,
         size: &IntegerSize2D,
         kinds: Kinds,
     ) -> String {
+        let mut segment = _segment.clone();
+        segment.parameters = self.parameters.clone();
         log::info!(
             "start - render_segment_what:{} {} size:{}x{}",
             segment.id,
@@ -347,14 +362,14 @@ impl BackendData {
         );
         let ret = match what.as_str() {
             "profile" => segment.render_profile().svg,
-            "ylabels" => self.render_yaxis_labels_overlay(segment),
+            "map" => segment.render_map(size),
+            "ylabels" => self.render_yaxis_labels_overlay(&segment),
             "wheel" => {
                 let model = wheel::model::WheelModel::make(&segment, kinds);
                 wheel::render(size, &model)
             }
-            "map" => segment.render_map(size),
             _ => {
-                // assert!(false);
+                assert!(false);
                 String::new()
             }
         };

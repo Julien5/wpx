@@ -6,7 +6,7 @@ import 'package:ui/src/rust/api/bridge.dart' as bridge;
 enum TrackData { profile, yaxis, map, wheel }
 
 class FutureRenderer with ChangeNotifier {
-  bridge.Segment segment;
+  final bridge.Segment _segment;
   final TrackData trackData;
   final bridge.Bridge _bridge;
   Size? size;
@@ -17,10 +17,16 @@ class FutureRenderer with ChangeNotifier {
 
   FutureRenderer({
     required bridge.Bridge bridge,
-    required this.segment,
+    required bridge.Segment segment,
     required this.trackData,
-  }) : _bridge = bridge {
+  }) : _segment = segment,
+       _bridge = bridge {
     assert(_bridge.isLoaded());
+  }
+
+  void setProfileIndication(bridge.ProfileIndication p) {
+    _bridge.setProfileIndication(p: p);
+    reset();
   }
 
   void setKinds(Set<bridge.InputType> k) {
@@ -32,11 +38,6 @@ class FutureRenderer with ChangeNotifier {
       return bridge.allkinds();
     }
     return kinds!;
-  }
-
-  void updateSegment(bridge.Segment newSegment) {
-    segment = newSegment;
-    reset();
   }
 
   (int, int) getSizeAsTuple() {
@@ -52,21 +53,21 @@ class FutureRenderer with ChangeNotifier {
     _result = null;
     if (trackData == TrackData.profile) {
       _future = _bridge.renderSegmentWhat(
-        segment: segment,
+        segment: _segment,
         what: "profile",
         size: getSizeAsTuple(),
         kinds: getKinds(),
       );
     } else if (trackData == TrackData.map) {
       _future = _bridge.renderSegmentWhat(
-        segment: segment,
+        segment: _segment,
         what: "map",
         size: getSizeAsTuple(),
         kinds: getKinds(),
       );
     } else if (trackData == TrackData.yaxis) {
       _future = _bridge.renderSegmentWhat(
-        segment: segment,
+        segment: _segment,
         what: "ylabels",
         size: getSizeAsTuple(),
         kinds: getKinds(),
@@ -76,7 +77,7 @@ class FutureRenderer with ChangeNotifier {
       assert(_bridge.isLoaded());
       log("[render-request-started:B]");
       _future = _bridge.renderSegmentWhat(
-        segment: segment,
+        segment: _segment,
         what: "wheel",
         size: getSizeAsTuple(),
         kinds: getKinds(),
@@ -89,7 +90,7 @@ class FutureRenderer with ChangeNotifier {
   }
 
   int id() {
-    return segment.id();
+    return _segment.id();
   }
 
   bool started() {
@@ -175,12 +176,6 @@ class Renderers {
     var m = MapRenderer(bridge, segment);
     var y = YAxisRenderer(bridge, segment);
     return Renderers(t, y, m);
-  }
-
-  void updateSegment(bridge.Segment segment) {
-    profileRenderer.updateSegment(segment);
-    mapRenderer.updateSegment(segment);
-    yaxisRenderer.updateSegment(segment);
   }
 
   void reset() {

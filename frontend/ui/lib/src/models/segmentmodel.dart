@@ -13,14 +13,6 @@ class SegmentModel extends ChangeNotifier {
     _segment = segment;
   }
 
-  bridge.Segment segment() {
-    return _segment;
-  }
-
-  bridge.Bridge getBridge() {
-    return _bridge;
-  }
-
   bridge.UserStepsOptions userStepsOptions() {
     return _bridge.getParameters().userStepsOptions;
   }

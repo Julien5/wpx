@@ -55,11 +55,6 @@ impl Segment {
     pub fn id(&self) -> i32 {
         self._impl.id
     }
-
-    #[frb(sync)]
-    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
-        self._impl.set_profile_indication(p);
-    }
 }
 
 #[frb(mirror(WaypointOrigin))]
@@ -210,6 +205,11 @@ impl Bridge {
     #[frb(sync)]
     pub fn set_user_step_options(&mut self, user_steps_options: &UserStepsOptions) {
         self.backend.set_user_step_options(user_steps_options);
+    }
+
+    #[frb(sync)]
+    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
+        self.backend.set_profile_indication(p);
     }
 
     #[frb(sync)]

@@ -16,9 +16,9 @@ class ProfileConsumer extends StatelessWidget {
         // It would be more accurate to check visibility with a scroll controller
         // at the list view level. Because "Callbacks are not fired immediately
         // on visibility changes."
-        developer.log("update profile renderer:${pRenderer.segment.id()}");
+        developer.log("update profile renderer:${pRenderer.id()}");
         pRenderer.setSize(Size(1000, 285));
-        return FutureRenderingWidget(future: pRenderer, interactive: false,);
+        return FutureRenderingWidget(future: pRenderer, interactive: false);
       },
     );
   }
@@ -32,7 +32,7 @@ class YAxisConsumer extends StatelessWidget {
     return Consumer<YAxisRenderer>(
       builder: (context, yRenderer, child) {
         yRenderer.setSize(Size(1000, 285));
-        return FutureRenderingWidget(future: yRenderer, interactive: false,);
+        return FutureRenderingWidget(future: yRenderer, interactive: false);
       },
     );
   }
@@ -52,7 +52,7 @@ class ProfileScrollWidget extends StatelessWidget {
 
 class ProfileStack extends StatelessWidget {
   final double profileHeight;
-  const ProfileStack({super.key,required this.profileHeight});
+  const ProfileStack({super.key, required this.profileHeight});
 
   @override
   Widget build(BuildContext context) {
@@ -85,4 +85,3 @@ class ProfileStack extends StatelessWidget {
     );
   }
 }
-

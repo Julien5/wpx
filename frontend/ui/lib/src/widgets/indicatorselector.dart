@@ -42,13 +42,16 @@ class _ElevationIndicatorGroupState extends State<ElevationIndicatorGroup> {
   }
 
   void updateModel() {
-    ProfileRenderer model = Provider.of<ProfileRenderer>(context, listen: false);
+    ProfileRenderer model = Provider.of<ProfileRenderer>(
+      context,
+      listen: false,
+    );
     if (selectedValue == none) {
-      model.segment.setProfileIndication(p: ProfileIndication.none);
+      model.setProfileIndication(ProfileIndication.none);
     } else if (selectedValue == percent) {
-      model.segment.setProfileIndication(p: ProfileIndication.numericSlope);
+      model.setProfileIndication(ProfileIndication.numericSlope);
     } else if (selectedValue == ticks) {
-      model.segment.setProfileIndication(p: ProfileIndication.gainTicks);
+      model.setProfileIndication(ProfileIndication.gainTicks);
     }
     log("set parameters on root model to update all segments");
     model.reset();
@@ -94,7 +97,7 @@ class _ElevationIndicatorGroupState extends State<ElevationIndicatorGroup> {
 
 class ElevationIndicatorChooser extends StatelessWidget {
   const ElevationIndicatorChooser({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return Center(
