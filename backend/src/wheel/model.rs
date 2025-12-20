@@ -4,6 +4,7 @@ use crate::{
     inputpoint::{InputPoint, InputType},
     segment::SegmentData,
     track::Track,
+    wheel::shorten::shorten_name,
 };
 
 #[derive(Debug, Clone)]
@@ -68,6 +69,10 @@ fn get_mid_points(segment: &SegmentData) -> Vec<InputPoint> {
     Vec::new()
 }
 
+fn control_name(w: &InputPoint) -> String {
+    format!("{} ({})", w.name(), shorten_name(&w.description()))
+}
+
 impl WheelModel {
     pub fn make(segment: &SegmentData, kinds: HashSet<InputType>) -> WheelModel {
         let mut control_points = Vec::new();
@@ -75,7 +80,7 @@ impl WheelModel {
             for c in get_control_points(segment) {
                 let cp = CirclePoint {
                     angle: angle(&c, &segment.track),
-                    name: c.name(),
+                    name: control_name(&c),
                 };
                 control_points.push(cp);
             }
