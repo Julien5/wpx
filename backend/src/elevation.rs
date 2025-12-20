@@ -63,7 +63,7 @@ mod tests {
         let S = backend.segments();
         let km = 1000f64;
         for s in &S {
-            let stat = backend.d().segment_statistics(s);
+            let stat = backend.segment_statistics(s);
             log::info!(
                 "{0} {1:8.1} -> {2:8.1}:  {3:8.1}",
                 s.id,

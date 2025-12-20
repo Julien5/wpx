@@ -51,14 +51,8 @@ impl Backend {
             sender: std::sync::RwLock::new(None),
         }
     }
-    pub fn d(&self) -> &BackendData {
-        self.backend_data.as_ref().unwrap()
-    }
     pub fn loaded(&self) -> bool {
         self.backend_data.is_some()
-    }
-    fn dmut(&mut self) -> &mut BackendData {
-        self.backend_data.as_mut().unwrap()
     }
     pub fn set_sink(&mut self, sink: SenderHandler) {
         self.sender = std::sync::RwLock::new(Some(sink));
@@ -69,67 +63,6 @@ impl Backend {
             return;
         }
         event::send_worker(&self.sender, data).await
-    }
-
-    pub fn get_parameters(&self) -> Parameters {
-        self.d().get_parameters()
-    }
-
-    pub fn set_parameters(&mut self, p: &Parameters) {
-        self.dmut().set_parameters(p)
-    }
-
-    pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
-        self.d().segment_statistics(segment)
-    }
-
-    pub fn make_segment_data(&self, segment: &Segment) -> SegmentData {
-        self.d().make_segment_data(segment)
-    }
-
-    pub fn statistics(&self) -> SegmentStatistics {
-        self.d().statistics()
-    }
-
-    pub async fn generatePdf(&mut self) -> Vec<u8> {
-        self.dmut().generatePdf().await
-    }
-    pub fn generateGpx(&mut self) -> Vec<u8> {
-        self.dmut().generateGpx()
-    }
-    pub fn segments(&self) -> Vec<Segment> {
-        self.d().segments()
-    }
-
-    pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
-        self.dmut().set_userstep_gpx_name_format(format);
-    }
-
-    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
-        self.dmut().set_profile_indication(p);
-    }
-
-    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
-        self.dmut().set_user_step_options(options);
-    }
-    pub fn set_control_gpx_name_format(&mut self, format: &String) {
-        self.dmut().set_control_gpx_name_format(format);
-    }
-    pub fn trackSegment(&self) -> Segment {
-        self.d().trackSegment()
-    }
-    pub fn render_segment_what(
-        &mut self,
-        segment: &Segment,
-        what: &String,
-        size: &IntegerSize2D,
-        kinds: Kinds,
-    ) -> String {
-        self.dmut().render_segment_what(segment, what, size, kinds)
-    }
-
-    pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
-        return self.d().get_waypoints(segment, kinds);
     }
 
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
@@ -208,24 +141,62 @@ impl Backend {
     }
 }
 
-impl BackendData {
-    pub fn get_parameters(self: &BackendData) -> Parameters {
-        self.parameters.clone()
+// methods that access BackendData (should not be used in bridge)
+impl Backend {
+    pub fn d(&self) -> &BackendData {
+        self.backend_data.as_ref().unwrap()
     }
-    pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
-        let mut ret = Waypoints::new();
-        for p in points {
-            ret.push(p.waypoint());
+    fn dmut(&mut self) -> &mut BackendData {
+        self.backend_data.as_mut().unwrap()
+    }
+
+    pub fn make_segment_data(&self, segment: &Segment) -> SegmentData {
+        SegmentData::new(
+            segment,
+            self.d().track.clone(),
+            self.d().inputpoints.clone(),
+            self.d().parameters.clone(),
+        )
+    }
+
+    pub fn get_parameters(&self) -> Parameters {
+        self.d().parameters.clone()
+    }
+
+    pub fn set_parameters(&mut self, parameters: &Parameters) {
+        self.dmut().parameters = parameters.clone();
+        if self.d().parameters.segment_overlap > self.d().parameters.segment_length {
+            assert!(false);
         }
-        WaypointInfo::make_waypoint_infos(&mut ret, &self.track, &self.parameters);
-        ret
+
+        // update user steps
+        {
+            let mut locked = self.d().inputpoints.write().unwrap();
+            locked
+                .maps
+                .insert(InputType::UserStep, InputPointMap::new());
+
+            // update user points
+            match locked.maps.get_mut(&InputType::UserStep) {
+                Some(user_steps_map) => {
+                    user_steps_map.clear();
+                    user_steps_map.sort_and_insert(&make_points::user_points(
+                        &self.d().track,
+                        &self.d().parameters.user_steps_options,
+                    ));
+                }
+                _ => {
+                    assert!(false);
+                }
+            }
+        }
     }
 
     pub fn get_points(&self, segment: &SegmentData, kinds: Kinds) -> Vec<InputPoint> {
         let mut points = Vec::new();
         let range = &segment.range();
         for kind in &kinds {
-            match self.inputpoints.read().unwrap().maps.get(kind) {
+            match self.d().inputpoints.read().unwrap().maps.get(kind) {
                 Some(kpoints) => {
                     let mut copy = kpoints.as_vector();
                     copy.retain(|w| {
@@ -246,13 +217,13 @@ impl BackendData {
         points
     }
 
-    pub fn make_segment_data(&self, segment: &Segment) -> SegmentData {
-        SegmentData::new(
-            segment,
-            self.track.clone(),
-            self.inputpoints.clone(),
-            self.parameters.clone(),
-        )
+    pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
+        let mut ret = Waypoints::new();
+        for p in points {
+            ret.push(p.waypoint());
+        }
+        WaypointInfo::make_waypoint_infos(&mut ret, &self.d().track, &self.d().parameters);
+        ret
     }
 
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
@@ -260,67 +231,68 @@ impl BackendData {
         self.export_points(&self.get_points(&segment_data, kinds))
     }
 
+    pub async fn generatePdf(&mut self) -> Vec<u8> {
+        let typbytes = render::make_typst_document(self);
+        let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;
+        log::info!("generated {} pdf bytes", ret.len());
+        ret
+    }
+    pub fn generateGpx(&mut self) -> Vec<u8> {
+        let mut gpxpoints = Vec::new();
+        for kind in [InputType::UserStep] {
+            match self.d().inputpoints.read().unwrap().maps.get(&kind) {
+                Some(p) => {
+                    let v = p.as_vector();
+                    v.iter().for_each(|p| {
+                        assert!(!p.track_projections.is_empty());
+                    });
+                    gpxpoints.extend_from_slice(&v);
+                }
+                _ => {}
+            }
+        }
+        let waypoints = self.export_points(&gpxpoints);
+        gpxexport::generate(&self.d().track, &waypoints)
+    }
+
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
-        self.parameters.user_steps_options = options.clone();
-        let new_points = make_points::user_points(&self.track, &self.parameters.user_steps_options);
-        let mut lock = self.inputpoints.write().unwrap();
+        self.dmut().parameters.user_steps_options = options.clone();
+        let new_points =
+            make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
+        let mut lock = self.dmut().inputpoints.write().unwrap();
         lock.maps
             .insert(InputType::UserStep, InputPointMap::from_vector(&new_points));
     }
 
     pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
-        self.parameters.profile_options.elevation_indicators.clear();
-        self.parameters
+        self.dmut()
+            .parameters
+            .profile_options
+            .elevation_indicators
+            .clear();
+        self.dmut()
+            .parameters
             .profile_options
             .elevation_indicators
             .insert(p.clone());
     }
 
     pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
-        self.parameters.user_steps_options.gpx_name_format = format.clone();
+        self.dmut().parameters.user_steps_options.gpx_name_format = format.clone();
     }
 
     pub fn set_control_gpx_name_format(&mut self, format: &String) {
-        self.parameters.control_gpx_name_format = format.clone();
-    }
-
-    pub fn set_parameters(self: &mut BackendData, parameters: &Parameters) {
-        self.parameters = parameters.clone();
-        if self.parameters.segment_overlap > self.parameters.segment_length {
-            assert!(false);
-        }
-
-        // update user steps
-        {
-            let mut locked = self.inputpoints.write().unwrap();
-            locked
-                .maps
-                .insert(InputType::UserStep, InputPointMap::new());
-
-            // update user points
-            match locked.maps.get_mut(&InputType::UserStep) {
-                Some(user_steps_map) => {
-                    user_steps_map.clear();
-                    user_steps_map.sort_and_insert(&make_points::user_points(
-                        &self.track,
-                        &self.parameters.user_steps_options,
-                    ));
-                }
-                _ => {
-                    assert!(false);
-                }
-            }
-        }
+        self.dmut().parameters.control_gpx_name_format = format.clone();
     }
 
     pub fn setStartTime(&mut self, rfc3339: String) {
-        self.parameters.start_time = rfc3339;
+        self.dmut().parameters.start_time = rfc3339;
     }
     pub fn setSpeed(&mut self, s: f64) {
-        self.parameters.speed = s;
+        self.dmut().parameters.speed = s;
     }
     pub fn setSegmentLength(&mut self, length: f64) {
-        self.parameters.segment_length = length;
+        self.dmut().parameters.segment_length = length;
     }
 
     pub fn segments(&self) -> Vec<Segment> {
@@ -329,8 +301,8 @@ impl BackendData {
         let mut start = 0f64;
         let mut k = 0usize;
         loop {
-            let end = start + self.parameters.segment_length;
-            let range = self.track.subrange(start, end);
+            let end = start + self.d().parameters.segment_length;
+            let range = self.d().track.subrange(start, end);
             if range.is_empty() {
                 break;
             }
@@ -340,7 +312,8 @@ impl BackendData {
                 start,
                 end,
             });
-            start = start + self.parameters.segment_length - self.parameters.segment_overlap;
+            start =
+                start + self.d().parameters.segment_length - self.d().parameters.segment_overlap;
             k = k + 1;
         }
         ret
@@ -348,7 +321,7 @@ impl BackendData {
 
     pub fn trackSegment(&self) -> Segment {
         let start = 0f64;
-        let end = self.track.total_distance();
+        let end = self.d().track.total_distance();
         Segment { id: 0, start, end }
     }
 
@@ -387,9 +360,9 @@ impl BackendData {
     fn render_yaxis_labels_overlay(&mut self, segment: &Segment) -> String {
         log::info!("render_segment_track:{}", segment.id);
         let profile_bbox =
-            gpsdata::ProfileBoundingBox::from_track(&self.track, &segment.start, &segment.end);
+            gpsdata::ProfileBoundingBox::from_track(&self.d().track, &segment.start, &segment.end);
         let mut profile =
-            profile::ProfileView::init(&profile_bbox, &self.parameters.profile_options);
+            profile::ProfileView::init(&profile_bbox, &self.d().parameters.profile_options);
         profile.add_yaxis_labels_overlay();
         let ret = profile.render().svg;
         if self.get_parameters().debug {
@@ -400,48 +373,25 @@ impl BackendData {
     }
 
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
-        let range = self.track.subrange(segment.start, segment.end);
+        let range = self.d().track.subrange(segment.start, segment.end);
         assert!(range.end > 0);
         SegmentStatistics {
-            length: self.track.distance(range.end - 1) - self.track.distance(range.start),
-            elevation_gain: self.track.elevation_gain_on_range(&range),
-            distance_start: self.track.distance(range.start),
-            distance_end: self.track.distance(range.end - 1),
+            length: self.d().track.distance(range.end - 1) - self.d().track.distance(range.start),
+            elevation_gain: self.d().track.elevation_gain_on_range(&range),
+            distance_start: self.d().track.distance(range.start),
+            distance_end: self.d().track.distance(range.end - 1),
         }
     }
 
     pub fn statistics(&self) -> SegmentStatistics {
-        let range = 0..self.track.len();
+        let range = 0..self.d().track.len();
         assert!(range.end > 0);
         SegmentStatistics {
-            length: self.track.distance(range.end - 1) - self.track.distance(range.start),
-            elevation_gain: self.track.elevation_gain_on_range(&range),
-            distance_start: self.track.distance(range.start),
-            distance_end: self.track.distance(range.end - 1),
+            length: self.d().track.distance(range.end - 1) - self.d().track.distance(range.start),
+            elevation_gain: self.d().track.elevation_gain_on_range(&range),
+            distance_start: self.d().track.distance(range.start),
+            distance_end: self.d().track.distance(range.end - 1),
         }
-    }
-    pub async fn generatePdf(&mut self) -> Vec<u8> {
-        let typbytes = render::make_typst_document(self);
-        let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;
-        log::info!("generated {} pdf bytes", ret.len());
-        ret
-    }
-    pub fn generateGpx(&mut self) -> Vec<u8> {
-        let mut gpxpoints = Vec::new();
-        for kind in [InputType::UserStep] {
-            match self.inputpoints.read().unwrap().maps.get(&kind) {
-                Some(p) => {
-                    let v = p.as_vector();
-                    v.iter().for_each(|p| {
-                        assert!(!p.track_projections.is_empty());
-                    });
-                    gpxpoints.extend_from_slice(&v);
-                }
-                _ => {}
-            }
-        }
-        let waypoints = self.export_points(&gpxpoints);
-        gpxexport::generate(&self.track, &waypoints)
     }
 }
 

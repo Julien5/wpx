@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::backend::BackendData;
+use crate::backend::Backend;
 use crate::inputpoint::InputType;
 use crate::{track, waypoint};
 
@@ -96,7 +96,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn make_typst_document(backend: &mut BackendData) -> String {
+pub fn make_typst_document(backend: &mut Backend) -> String {
     let debug = backend.get_parameters().debug;
     let templates = Templates::new();
     let mut document = templates.header.clone();
@@ -133,7 +133,7 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
             .filter(|w| range.contains(&w.track_index.unwrap()))
             .collect();
         waypoints_table.truncate(15);
-        let table = points_table(&templates, &backend.track, &waypoints_table);
+        let table = points_table(&templates, &backend.d().track, &waypoints_table);
         let rendered_profile = segment.render_profile();
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id());
@@ -147,7 +147,7 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
         }
         log::trace!("link segment {}", segment.id());
         link(&templates, &rendered_profile.svg, &m, &table, &mut document);
-        if range.end == backend.track.len() {
+        if range.end == backend.d().track.len() {
             break;
         }
     }
