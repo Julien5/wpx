@@ -187,6 +187,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
 
     let mut proto = Vec::new();
     let margin = 10_000f64;
+    let mut last_control_distance = 0f64;
     for segment in &mut segments {
         // it has all the osm points, not only those from the segment!
         let mut points = segment.osmpoints();
@@ -200,9 +201,9 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
                 .first()
                 .unwrap()
                 .distance_on_track_to_projection;
-            let is_far_from_begin = distance > margin;
+            let is_far_from_last = distance > last_control_distance + margin;
             let is_far_from_end = distance < total_distance - margin;
-            is_close_to_track(w) && is_far_from_begin && is_far_from_end
+            is_close_to_track(w) && is_far_from_last && is_far_from_end
         });
         if points.is_empty() {
             continue;
@@ -215,6 +216,11 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
             index,
             osm_name: name,
         });
+        last_control_distance = selected
+            .track_projections
+            .first()
+            .unwrap()
+            .distance_on_track_to_projection;
     }
     proto.sort_by_key(|c| c.index);
     let mut ret = Vec::new();
