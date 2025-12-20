@@ -91,10 +91,13 @@ impl Track {
     }
 
     pub fn elevation_gain_on_range(&self, range: &std::ops::Range<usize>) -> f64 {
+        assert!(range.end <= self.len());
+        assert!(range.start < self.len());
         return self.elevation_gain(range.end - 1) - self.elevation_gain(range.start);
     }
 
     pub fn elevation_gain(&self, index: usize) -> f64 {
+        assert_eq!(self.smooth_elevation_gain.len(), self.len());
         self.smooth_elevation_gain[index]
     }
 
@@ -144,6 +147,7 @@ impl Track {
         assert!(d0 < d1);
         let startidx = self.index_after(d0);
         let endidx = self.index_before(d1);
+        assert!(endidx <= self.len());
         startidx..endidx
     }
 
@@ -171,6 +175,7 @@ impl Track {
                 ret[k] = ret[k - 1];
             }
         }
+        assert_eq!(ret.len(), smooth_elevation.len());
         ret
     }
 
@@ -222,6 +227,7 @@ impl Track {
             |index: usize| -> f64 { _distance[index] },
             |index: usize| -> f64 { wgs[index].z() },
         );
+        assert_eq!(track_smooth_elevation.len(), wgs.len());
 
         let smooth_elevation_gain = Self::compute_elevation_gain(&track_smooth_elevation);
 
