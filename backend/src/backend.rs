@@ -192,9 +192,9 @@ impl Backend {
         }
     }
 
-    pub fn get_points(&self, segment: &SegmentData, kinds: Kinds) -> Vec<InputPoint> {
+    pub fn get_points(&self, segment: &Segment, kinds: Kinds) -> Vec<InputPoint> {
         let mut points = Vec::new();
-        let range = &segment.range();
+        let range = self.d().track.subrange(segment.start, segment.end);
         for kind in &kinds {
             match self.d().inputpoints.read().unwrap().maps.get(kind) {
                 Some(kpoints) => {
@@ -209,11 +209,7 @@ impl Backend {
                 None => {}
             }
         }
-        log::trace!(
-            "segment: {} export {} waypoints",
-            segment.id(),
-            points.len()
-        );
+        log::trace!("segment: {} export {} waypoints", segment.id, points.len());
         points
     }
 
@@ -227,8 +223,7 @@ impl Backend {
     }
 
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
-        let segment_data = self.make_segment_data(segment);
-        self.export_points(&self.get_points(&segment_data, kinds))
+        self.export_points(&self.get_points(&segment, kinds))
     }
 
     pub async fn generatePdf(&mut self) -> Vec<u8> {

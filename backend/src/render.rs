@@ -108,11 +108,7 @@ pub fn make_typst_document(backend: &mut Backend) -> String {
 
     let pacing_and_controls = HashSet::from([InputType::UserStep, InputType::Control]);
     let mut all_points = BTreeMap::new();
-    for segment in &segments {
-        let range = segment.range();
-        if range.is_empty() {
-            continue;
-        }
+    for segment in &fsegments {
         let segment_waypoints = backend.get_points(&segment, pacing_and_controls.clone());
         for w in segment_waypoints {
             let index = w.track_projections.first().unwrap().track_index;
