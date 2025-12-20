@@ -126,8 +126,9 @@ impl Track {
         it.position(|&d| d >= distance).unwrap()
     }
     pub fn index_before(&self, distance: f64) -> usize {
+        assert!(self.len() > 0);
         assert!(distance >= 0f64);
-        let maxdist = *self._distance.last().unwrap();
+        let maxdist = self.total_distance();
         let end = self._distance.len();
         if distance > maxdist {
             return end;
