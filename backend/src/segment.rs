@@ -12,6 +12,10 @@ pub struct Segment {
     pub id: i32,
     pub start: f64,
     pub end: f64,
+}
+
+pub struct SegmentData {
+    pub segment: Segment,
     pub track: SharedTrack,
     pub boxes: BoundingBoxes,
     pub pointmaps: SharedPointMaps,
@@ -25,26 +29,34 @@ pub struct SegmentStatistics {
     pub distance_end: f64,
 }
 
-impl Segment {
+impl SegmentData {
     pub fn new(
-        id: i32,
-        start: f64,
-        end: f64,
+        segment: &Segment,
         track: SharedTrack,
-        inputpoints: &SharedPointMaps,
-        parameters: &Parameters,
-    ) -> Segment {
-        let boxes = track.subboxes(start, end);
-        Segment {
-            id,
-            start,
-            end,
+        inputpoints: SharedPointMaps,
+        parameters: Parameters,
+    ) -> SegmentData {
+        let boxes = track.subboxes(segment.start, segment.end);
+        SegmentData {
+            segment: segment.clone(),
             track,
             boxes,
             pointmaps: inputpoints.clone(),
             //pointmaps: SharedPointMaps::new(InputPointMaps::new().into()),
             parameters: parameters.clone(),
         }
+    }
+
+    pub fn id(&self) -> i32 {
+        self.segment.id
+    }
+
+    pub fn start(&self) -> f64 {
+        self.segment.start
+    }
+
+    pub fn end(&self) -> f64 {
+        self.segment.end
     }
 
     pub fn osmpoints(&self) -> Vec<InputPoint> {
@@ -64,7 +76,7 @@ impl Segment {
     }
 
     pub fn range(&self) -> std::ops::Range<usize> {
-        self.track.subrange(self.start, self.end)
+        self.track.subrange(self.segment.start, self.segment.end)
     }
 
     pub fn map_box(&self) -> BoundingBox {
@@ -76,20 +88,20 @@ impl Segment {
     }
 
     pub fn render_profile(&self) -> ProfileRenderResult {
-        log::info!("render profile:{}", self.id);
+        log::info!("render profile:{}", self.id());
         let ret = profile::profile(&self);
         if self.parameters.debug {
-            let filename = std::format!("/tmp/profile-{}.svg", self.id);
+            let filename = std::format!("/tmp/profile-{}.svg", self.id());
             std::fs::write(filename, &ret.svg).expect("Unable to write file");
         }
         ret
     }
 
     pub fn render_map(&self, size: &IntegerSize2D) -> String {
-        log::info!("render map:{}", self.id);
+        log::info!("render map:{}", self.id());
         let ret = svgmap::map(&self, size);
         if self.parameters.debug {
-            let filename = std::format!("/tmp/map-{}.svg", self.id);
+            let filename = std::format!("/tmp/map-{}.svg", self.id());
             std::fs::write(filename, &ret).expect("Unable to write file");
         }
         ret

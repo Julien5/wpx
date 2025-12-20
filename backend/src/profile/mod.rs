@@ -4,7 +4,6 @@ mod ticks;
 
 use svg::Node;
 
-use crate::backend::Segment;
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
@@ -16,7 +15,7 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::*;
 use crate::math::{distance2, Point2D};
 use crate::parameters::{ProfileIndication, ProfileOptions};
-use crate::segment;
+use crate::segment::{self, SegmentData};
 use crate::track::Track;
 use elements::*;
 
@@ -407,7 +406,7 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_segment(&mut self, segment: &Segment) {
+    pub fn add_segment(&mut self, segment: &SegmentData) {
         let bbox = &self.bboxview;
 
         /*if render_device != RenderDevice::PDF {
@@ -631,8 +630,9 @@ pub struct ProfileRenderResult {
     pub rendered: Vec<InputPoint>,
 }
 
-pub fn profile(segment: &segment::Segment) -> ProfileRenderResult {
-    let profile_bbox = ProfileBoundingBox::from_track(&segment.track, &segment.start, &segment.end);
+pub fn profile(segment: &segment::SegmentData) -> ProfileRenderResult {
+    let profile_bbox =
+        ProfileBoundingBox::from_track(&segment.track, &segment.start(), &segment.end());
     let mut view = ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
     view.add_canvas();
     view.add_segment(&segment);

@@ -1,19 +1,19 @@
 use crate::{
-    backend::Segment,
     inputpoint::{InputPoint, InputType, OSMType},
     label_placement::features::PointFeatureDrawing,
     math::Point2D,
+    segment::SegmentData,
     speed,
 };
 
-pub fn timestr(w: &InputPoint, segment: &Segment) -> String {
+pub fn timestr(w: &InputPoint, segment: &SegmentData) -> String {
     let index = w.round_track_index().unwrap();
     let track = &segment.track;
     let t = speed::time_at_distance(&track.distance(index), &segment.parameters);
     format!("{}", t.format("%H:%M"))
 }
 
-pub fn make_label_text(w: &InputPoint, segment: &Segment) -> String {
+pub fn make_label_text(w: &InputPoint, segment: &SegmentData) -> String {
     match w.kind() {
         InputType::OSM => {
             return w.name().clone().trim().to_string();

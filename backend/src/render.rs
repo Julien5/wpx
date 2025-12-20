@@ -100,9 +100,13 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
     let debug = backend.get_parameters().debug;
     let templates = Templates::new();
     let mut document = templates.header.clone();
-    let segments = backend.segments();
-    let pacing_and_controls = HashSet::from([InputType::UserStep, InputType::Control]);
+    let fsegments = backend.segments();
+    let segments: Vec<_> = fsegments
+        .iter()
+        .map(|f| backend.make_segment_data(&f))
+        .collect();
 
+    let pacing_and_controls = HashSet::from([InputType::UserStep, InputType::Control]);
     let mut all_points = BTreeMap::new();
     for segment in &segments {
         let range = segment.range();
@@ -132,16 +136,16 @@ pub fn make_typst_document(backend: &mut BackendData) -> String {
         let table = points_table(&templates, &backend.track, &waypoints_table);
         let rendered_profile = segment.render_profile();
         if backend.get_parameters().debug {
-            let f = format!("/tmp/segment-{}.svg", segment.id);
+            let f = format!("/tmp/segment-{}.svg", segment.id());
             std::fs::write(&f, &rendered_profile.svg).unwrap();
         }
         let map_options = &backend.get_parameters().map_options;
         let m = segment.render_map(&map_options.size2d());
         if debug {
-            let f = format!("/tmp/map-{}.svg", segment.id);
+            let f = format!("/tmp/map-{}.svg", segment.id());
             std::fs::write(&f, &m).unwrap();
         }
-        log::trace!("link segment {}", segment.id);
+        log::trace!("link segment {}", segment.id());
         link(&templates, &rendered_profile.svg, &m, &table, &mut document);
         if range.end == backend.track.len() {
             break;

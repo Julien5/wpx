@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
 use crate::{
-    backend::Segment,
     inputpoint::{InputPoint, InputType},
+    segment::SegmentData,
     track::Track,
 };
 
@@ -29,7 +29,7 @@ fn angle(point: &InputPoint, track: &Track) -> f64 {
     360.0 * part / total
 }
 
-fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
+fn get_control_points(segment: &SegmentData) -> Vec<InputPoint> {
     match segment
         .pointmaps
         .read()
@@ -39,7 +39,7 @@ fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
     {
         Some(points) => {
             let ret = points.as_vector();
-            log::trace!("segment.id={} controls={}", segment.id, ret.len());
+            log::trace!("segment.id={} controls={}", segment.id(), ret.len());
             if !ret.is_empty() {
                 return ret;
             }
@@ -49,7 +49,7 @@ fn get_control_points(segment: &Segment) -> Vec<InputPoint> {
     Vec::new()
 }
 
-fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
+fn get_mid_points(segment: &SegmentData) -> Vec<InputPoint> {
     match segment
         .pointmaps
         .read()
@@ -69,7 +69,7 @@ fn get_mid_points(segment: &Segment) -> Vec<InputPoint> {
 }
 
 impl WheelModel {
-    pub fn make(segment: &Segment, kinds: HashSet<InputType>) -> WheelModel {
+    pub fn make(segment: &SegmentData, kinds: HashSet<InputType>) -> WheelModel {
         let mut control_points = Vec::new();
         if kinds.contains(&InputType::Control) {
             for c in get_control_points(segment) {

@@ -17,6 +17,7 @@ use crate::parameters::UserStepsOptions;
 use crate::pdf;
 use crate::profile;
 use crate::render;
+use crate::segment::SegmentData;
 use crate::track::SharedTrack;
 use crate::track::Track;
 use crate::track_projection::is_close_to_track;
@@ -80,6 +81,10 @@ impl Backend {
 
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
         self.d().segment_statistics(segment)
+    }
+
+    pub fn make_segment_data(&self, segment: &Segment) -> SegmentData {
+        self.d().make_segment_data(segment)
     }
 
     pub fn statistics(&self) -> SegmentStatistics {
@@ -216,7 +221,7 @@ impl BackendData {
         ret
     }
 
-    pub fn get_points(&self, segment: &Segment, kinds: Kinds) -> Vec<InputPoint> {
+    pub fn get_points(&self, segment: &SegmentData, kinds: Kinds) -> Vec<InputPoint> {
         let mut points = Vec::new();
         let range = &segment.range();
         for kind in &kinds {
@@ -233,12 +238,26 @@ impl BackendData {
                 None => {}
             }
         }
-        log::trace!("segment: {} export {} waypoints", segment.id, points.len());
+        log::trace!(
+            "segment: {} export {} waypoints",
+            segment.id(),
+            points.len()
+        );
         points
     }
 
+    pub fn make_segment_data(&self, segment: &Segment) -> SegmentData {
+        SegmentData::new(
+            segment,
+            self.track.clone(),
+            self.inputpoints.clone(),
+            self.parameters.clone(),
+        )
+    }
+
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
-        self.export_points(&self.get_points(segment, kinds))
+        let segment_data = self.make_segment_data(segment);
+        self.export_points(&self.get_points(&segment_data, kinds))
     }
 
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
@@ -316,14 +335,11 @@ impl BackendData {
                 break;
             }
             log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
-            ret.push(Segment::new(
-                k as i32,
+            ret.push(Segment {
+                id: k as i32,
                 start,
                 end,
-                self.track.clone(),
-                &self.inputpoints,
-                &self.parameters,
-            ));
+            });
             start = start + self.parameters.segment_length - self.parameters.segment_overlap;
             k = k + 1;
         }
@@ -333,26 +349,16 @@ impl BackendData {
     pub fn trackSegment(&self) -> Segment {
         let start = 0f64;
         let end = self.track.total_distance();
-        let ret = Segment::new(
-            0,
-            start,
-            end,
-            self.track.clone(),
-            &self.inputpoints,
-            &self.parameters,
-        );
-        ret
+        Segment { id: 0, start, end }
     }
 
     pub fn render_segment_what(
         &mut self,
-        _segment: &Segment,
+        segment: &Segment,
         what: &String,
         size: &IntegerSize2D,
         kinds: Kinds,
     ) -> String {
-        let mut segment = _segment.clone();
-        segment.parameters = self.parameters.clone();
         log::info!(
             "start - render_segment_what:{} {} size:{}x{}",
             segment.id,
@@ -360,12 +366,13 @@ impl BackendData {
             size.width,
             size.height
         );
+        let data = self.make_segment_data(segment);
         let ret = match what.as_str() {
-            "profile" => segment.render_profile().svg,
-            "map" => segment.render_map(size),
+            "profile" => data.render_profile().svg,
+            "map" => data.render_map(size),
             "ylabels" => self.render_yaxis_labels_overlay(&segment),
             "wheel" => {
-                let model = wheel::model::WheelModel::make(&segment, kinds);
+                let model = wheel::model::WheelModel::make(&data, kinds);
                 wheel::render(size, &model)
             }
             _ => {
@@ -380,9 +387,9 @@ impl BackendData {
     fn render_yaxis_labels_overlay(&mut self, segment: &Segment) -> String {
         log::info!("render_segment_track:{}", segment.id);
         let profile_bbox =
-            gpsdata::ProfileBoundingBox::from_track(&segment.track, &segment.start, &segment.end);
+            gpsdata::ProfileBoundingBox::from_track(&self.track, &segment.start, &segment.end);
         let mut profile =
-            profile::ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
+            profile::ProfileView::init(&profile_bbox, &self.parameters.profile_options);
         profile.add_yaxis_labels_overlay();
         let ret = profile.render().svg;
         if self.get_parameters().debug {
@@ -393,7 +400,7 @@ impl BackendData {
     }
 
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
-        let range = &segment.range();
+        let range = self.track.subrange(segment.start, segment.end);
         assert!(range.end > 0);
         SegmentStatistics {
             length: self.track.distance(range.end - 1) - self.track.distance(range.start),
@@ -464,12 +471,16 @@ mod tests {
         parameters.profile_options.max_area_ratio = 0.1f64;
         backend.set_parameters(&parameters);
 
-        let segments = backend.segments();
+        let fsegments = backend.segments();
+        let segments: Vec<_> = fsegments
+            .iter()
+            .map(|f| backend.make_segment_data(&f))
+            .collect();
         let mut ok_count = 0;
         for k in 0..segments.len() {
             let segment = &segments[k];
             let rendered_profile = segment.render_profile();
-            let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
+            let reffilename = std::format!("data/ref/profile-{}.svg", segment.id());
             println!("test {}", reffilename);
             let reference_svg = if std::fs::exists(&reffilename).unwrap() {
                 std::fs::read_to_string(&reffilename).unwrap()
@@ -479,7 +490,7 @@ mod tests {
             if reference_svg == rendered_profile.svg {
                 ok_count += 1;
             }
-            let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id);
+            let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id());
             std::fs::write(&tmpfilename, rendered_profile.svg.clone()).unwrap();
             if reference_svg != rendered_profile.svg {
                 println!("test failed: {} {}", tmpfilename, reffilename);
@@ -506,7 +517,9 @@ mod tests {
         } else {
             String::new()
         };
-        let model = wheel::model::WheelModel::make(&backend.trackSegment(), inputpoint::allkinds());
+        let segment = backend.trackSegment();
+        let sgdata = backend.make_segment_data(&segment);
+        let model = wheel::model::WheelModel::make(&sgdata, inputpoint::allkinds());
         let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
 
         let tmpfilename = std::format!("/tmp/segment-wheel.svg");
@@ -522,7 +535,8 @@ mod tests {
         let _ = env_logger::try_init();
         let mut backend = Backend::make();
         let _ = backend.load_demo().await;
-        let seg = backend.trackSegment();
+        let fseg = backend.trackSegment();
+        let seg = backend.make_segment_data(&fseg);
         let controls = seg
             .pointmaps
             .read()
@@ -534,7 +548,7 @@ mod tests {
         let len = controls.len();
         assert!(len > 0);
         let kinds = std::collections::HashSet::from([InputType::Control]);
-        let waypoints = backend.get_waypoints(&seg, kinds);
+        let waypoints = backend.get_waypoints(&fseg, kinds);
         assert!(!waypoints.is_empty());
         for waypoint in waypoints {
             log::info!("gpx name={}", waypoint.info.unwrap().gpx_name);
@@ -555,12 +569,17 @@ mod tests {
         parameters.map_options.max_area_ratio = 0.15f64;
         backend.set_parameters(&parameters);
 
-        let segments = backend.segments();
+        let fsegments = backend.segments();
+        let segments: Vec<_> = fsegments
+            .iter()
+            .map(|f| backend.make_segment_data(&f))
+            .collect();
+
         let mut ok_count = 0;
         for segment in &segments {
             let _ = segment.render_profile();
             let svg = segment.render_map(&parameters.map_options.size2d());
-            let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
+            let reffilename = std::format!("data/ref/map-{}.svg", segment.id());
             println!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {
                 std::fs::read_to_string(&reffilename).unwrap()
@@ -570,7 +589,7 @@ mod tests {
             if data == svg {
                 ok_count += 1;
             }
-            let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id);
+            let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id());
             std::fs::write(&tmpfilename, svg.clone()).unwrap();
             if data != svg {
                 println!("test failed: {} {}", tmpfilename, reffilename);

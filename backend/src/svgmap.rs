@@ -1,12 +1,12 @@
 #![allow(non_snake_case)]
 
-use crate::backend::Segment;
 use crate::bbox::BoundingBox;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
+use crate::segment::SegmentData;
 use crate::track::Track;
 
 use svg::Document;
@@ -82,7 +82,7 @@ pub fn euclidean_bounding_box(
 }
 
 impl MapData {
-    pub fn make(segment: &Segment, size: &IntegerSize2D) -> MapData {
+    pub fn make(segment: &SegmentData, size: &IntegerSize2D) -> MapData {
         let mut bbox = segment.map_box().clone();
         bbox.fix_aspect_ratio(size);
         let mut path = Vec::new();
@@ -192,7 +192,7 @@ impl MapData {
     }
 }
 
-pub fn map(segment: &Segment, size: &IntegerSize2D) -> String {
+pub fn map(segment: &SegmentData, size: &IntegerSize2D) -> String {
     let svgMap = MapData::make(segment, size);
     svgMap.render()
 }

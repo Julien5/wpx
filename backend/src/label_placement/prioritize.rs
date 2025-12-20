@@ -1,7 +1,7 @@
 use crate::{
     inputpoint::{InputPoint, InputType, OSMType},
     locate,
-    segment::Segment,
+    segment::SegmentData,
     track_projection::is_close_to_track,
 };
 
@@ -49,7 +49,7 @@ fn sort_by_population(cities: &mut Vec<InputPoint>) {
     cities.sort_by_key(|w| std::cmp::Reverse(w.population().unwrap_or(0)));
 }
 
-pub fn profile(segment: &Segment) -> Vec<Vec<InputPoint>> {
+pub fn profile(segment: &SegmentData) -> Vec<Vec<InputPoint>> {
     let mut user1 = Vec::new();
     let mut user2 = Vec::new();
     let mut cities = Vec::new();
@@ -123,7 +123,7 @@ pub fn profile(segment: &Segment) -> Vec<Vec<InputPoint>> {
     vec![gpx, user1, cities_and_mountains, user2, villages, osmrest]
 }
 
-pub fn map(segment: &Segment) -> Vec<Vec<InputPoint>> {
+pub fn map(segment: &SegmentData) -> Vec<Vec<InputPoint>> {
     let profile_points = profile(segment);
     let gpx = &profile_points.get(0).unwrap();
     let user1 = &profile_points.get(1).unwrap();

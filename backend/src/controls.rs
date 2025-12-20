@@ -6,6 +6,7 @@ use crate::{
     locate, math,
     mercator::MercatorPoint,
     parameters::Parameters,
+    segment::SegmentData,
     track::Track,
     track_projection::is_close_to_track,
 };
@@ -164,14 +165,18 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
             break;
         }
         log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
-        segments.push(Segment::new(
-            segments.len() as i32,
+        let segment = Segment {
+            id: segments.len() as i32,
             start,
             end,
+        };
+        let data = SegmentData::new(
+            &segment,
             track.clone(),
-            &inputpoints,
-            &Parameters::default(),
-        ));
+            inputpoints.clone(),
+            Parameters::default(),
+        );
+        segments.push(data);
         start = end;
     }
 
