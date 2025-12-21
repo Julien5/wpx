@@ -43,6 +43,15 @@ impl Ord for TrackProjection {
     }
 }
 
+fn population_estimate(kind: &OSMType) -> i32 {
+    match kind {
+        OSMType::City => 10000,
+        OSMType::Village => 1000,
+        OSMType::Hamlet => 300,
+        _ => 0,
+    }
+}
+
 pub fn is_close_to_track(w: &InputPoint) -> bool {
     if w.track_projections.is_empty() {
         return false;
@@ -51,10 +60,10 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
     match w.kind() {
         InputType::OSM => {
             let kind = w.osmkind().unwrap();
-            let pop = w.population().unwrap_or(0);
-            if kind == OSMType::City || pop > 1000 {
-                return d < 2000.0;
-            }
+            let pop = w.population().unwrap_or(population_estimate(&kind));
+            // the factor 20 was suggested by gemini
+            let radius = 20f64 * (pop as f64).sqrt();
+            return d < radius;
         }
         _ => {}
     }
