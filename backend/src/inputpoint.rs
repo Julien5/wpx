@@ -155,7 +155,16 @@ impl InputPoint {
         }
     }
 
-    pub fn round_track_index(&self) -> Option<usize> {
+    pub fn single_track_index(&self) -> Option<usize> {
+        if self.track_projections.len() != 1 {
+            log::error!(
+                "this point has {} track indices => cannot return a single index (kind={:?})",
+                self.track_projections.len(),
+                self.kind()
+            );
+            assert!(false);
+            return None;
+        }
         match &self.track_projections.first() {
             None => None,
             Some(p) => Some(p.track_floating_index.round() as usize),
@@ -292,7 +301,7 @@ impl InputPoint {
         Waypoint {
             wgs84: self.wgs84.clone(),
             euclidean: self.euclidean.clone(),
-            track_index: self.round_track_index(),
+            track_index: self.single_track_index(),
             name: self.name(),
             description: self.description(),
             info: None,

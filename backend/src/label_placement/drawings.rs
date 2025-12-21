@@ -7,7 +7,7 @@ use crate::{
 };
 
 pub fn timestr(w: &InputPoint, segment: &SegmentData) -> String {
-    let index = w.round_track_index().unwrap();
+    let index = w.single_track_index().unwrap();
     let track = &segment.track;
     let t = speed::time_at_distance(&track.distance(index), &segment.parameters);
     format!("{}", t.format("%H:%M"))
@@ -18,12 +18,13 @@ pub fn make_label_text(w: &InputPoint, segment: &SegmentData) -> String {
         InputType::OSM => {
             return w.name().clone().trim().to_string();
         }
+        InputType::GPX => {
+            return w.name().clone().trim().to_string();
+        }
         InputType::UserStep => {
             return format!("{}", timestr(w, segment));
         }
-        InputType::GPX => {
-            return format!("{} ({})", w.name(), timestr(w, segment));
-        }
+
         InputType::Control => {
             return format!("{} ({})", w.name(), timestr(w, segment));
         }

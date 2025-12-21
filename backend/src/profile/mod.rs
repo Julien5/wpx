@@ -463,28 +463,30 @@ impl ProfileView {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
-                let index = w.round_track_index().unwrap();
-                let trackpoint = &track.wgs84[index];
-                // Note: It would be better to use the middle point with the float
-                // track_index from track_projection.
-                let p = Point2D::new(track.distance(index), trackpoint.z());
-                let g = self.toSD(&p);
-                let k = counter;
-                counter += 1;
-                let id = format!("{}/wp", k);
-                let circle = draw_for_profile(&g, id.as_str(), &w);
-                let mut label = label_placement::features::Label::new();
-                //assert!(label.unplaced());
-                label.set_text(&drawings::make_label_text(&w, segment));
-                label.id = format!("{}/wp/text", k);
-                //assert!(label.unplaced());
-                feature_packet.push(PointFeature {
-                    circle,
-                    label,
-                    input_point: Some(w.clone()),
-                    link: None,
-                    xmlid: k,
-                });
+                for proj in &w.track_projections {
+                    let index = proj.track_index;
+                    let trackpoint = &track.wgs84[index];
+                    // Note: It would be better to use the middle point with the float
+                    // track_index from track_projection.
+                    let p = Point2D::new(track.distance(index), trackpoint.z());
+                    let g = self.toSD(&p);
+                    let k = counter;
+                    counter += 1;
+                    let id = format!("{}/wp", k);
+                    let circle = draw_for_profile(&g, id.as_str(), &w);
+                    let mut label = label_placement::features::Label::new();
+                    //assert!(label.unplaced());
+                    label.set_text(&drawings::make_label_text(&w, segment));
+                    label.id = format!("{}/wp/text", k);
+                    //assert!(label.unplaced());
+                    feature_packet.push(PointFeature {
+                        circle,
+                        label,
+                        input_point: Some(w.clone()),
+                        link: None,
+                        xmlid: k,
+                    });
+                }
             }
             feature_packets.push(PointFeatures::make(feature_packet));
         }
@@ -553,11 +555,13 @@ impl ProfileGenerator {
     fn header(&self, feature: &PointFeature, ys: Vec<f64>) -> Vec<LabelBoundingBox> {
         let target = feature.circle.center;
         let width = feature.width();
-        let x = target.x - width / 2f64;
         let mut ret = Vec::new();
-        for y in ys {
-            let bbox = BoundingBox::minsize(Point2D::new(x, y), &width, &feature.height());
-            ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+        for dx in [0.0, -0.5 * width, 0.5 * width] {
+            let x = target.x + dx - width / 2f64;
+            for y in &ys {
+                let bbox = BoundingBox::minsize(Point2D::new(x, *y), &width, &feature.height());
+                ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+            }
         }
         ret
     }

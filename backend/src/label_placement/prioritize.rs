@@ -86,8 +86,7 @@ impl ProfilePoints {
         {
             let points = segment.points(&InputType::UserStep);
             let mut indices: Vec<_> = (0..points.len()).collect();
-            indices.sort_by_key(|i| points[*i].round_track_index());
-            indices.retain(|i| trackrange.contains(&points[*i].round_track_index().unwrap()));
+            indices.retain(|i| points[*i].is_in_range(&trackrange));
             for k in indices {
                 let wi = points[k].clone();
                 assert!(is_close_to_track(&wi));

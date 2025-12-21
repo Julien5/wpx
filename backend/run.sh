@@ -9,7 +9,7 @@ function segment-length() {
 	local file=$1
 	shift
 	if [[ "${file}" = *jerome* ]]; then
-		echo 35
+		echo 28
 		return
 	fi
 	echo 110
@@ -19,7 +19,7 @@ function segment-overlap() {
 	local file=$1
 	shift
 	if [[ "${file}" = *jerome* ]]; then
-		echo 5
+		echo 3
 		return
 	fi
 	echo 10

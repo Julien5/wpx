@@ -101,7 +101,7 @@ pub fn infer_controls_from_gpx_segments(
             &description,
         ));
     }
-    ret.sort_by_key(|w| w.round_track_index().unwrap_or(0));
+    ret.sort_by_key(|w| w.single_track_index().unwrap_or(0));
     ret
 }
 
@@ -125,7 +125,7 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
             log::info!("point {} is too far from track", point.name());
         }
     }
-    ret.sort_by_key(|w| w.round_track_index().unwrap_or(0));
+    ret.sort_by_key(|w| w.single_track_index().unwrap_or(0));
     ret
 }
 
@@ -213,7 +213,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
         }
         points.sort_by_key(|w| -control_point_goodness(&w));
         let selected = points.first().unwrap().clone();
-        let index = selected.round_track_index().unwrap();
+        let index = selected.single_track_index().unwrap();
         let name = selected.name();
         proto.push(Control {
             index,
