@@ -187,11 +187,11 @@ impl InputPoint {
     pub fn name(&self) -> String {
         let ret = self.tags.get("name");
         if ret.is_some() {
-            return ret.unwrap().clone();
+            return ret.unwrap().clone().trim().to_string();
         }
         for (k, v) in &self.tags {
             if k.contains("name") {
-                return v.as_str().to_string();
+                return v.as_str().to_string().trim().to_string();
             }
         }
         return String::new();
