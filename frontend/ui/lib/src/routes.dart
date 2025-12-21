@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ui/src/screens/controls/controls_screen.dart';
-import 'package:ui/src/screens/controls/controls_table.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/screens/export/export_screen.dart';
 import 'package:ui/src/screens/interactive/interactive_screen.dart';
 import 'package:ui/src/screens/segments/segments_screen.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
-import 'package:ui/src/screens/usersteps/usersteps_table.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
 import 'screens/usersteps/usersteps_screen.dart';
@@ -18,10 +16,8 @@ class RouteManager {
   static const String segmentsView = '/segments';
   static const String exportView = '/export';
   static const String userStepsView = '/usersteps';
-  static const String userStepsTable = '/usersteps/table';
   static const String interactiveView = '/interactive';
   static const String controlsView = '/controls';
-  static const String controlsTable = '/controls/table';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -48,18 +44,6 @@ class RouteManager {
 
       case controlsView:
         return MaterialPageRoute(builder: (_) => ControlsProvider());
-
-      case userStepsTable:
-        return MaterialPageRoute(
-          builder: (_) => UserStepsTableScreen(),
-          settings: settings,
-        );
-
-      case controlsTable:
-        return MaterialPageRoute(
-          builder: (_) => ControlsTableScreen(),
-          settings: settings,
-        );
 
       default:
         return MaterialPageRoute(

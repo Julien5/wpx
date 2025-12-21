@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/screens/controls/controls_table.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
 class ButtonWidget extends StatelessWidget {
@@ -11,9 +11,12 @@ class ButtonWidget extends StatelessWidget {
 
   void gotoTable(BuildContext context) {
     SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
-    Navigator.of(
+    Navigator.push(
       context,
-    ).pushNamed(RouteManager.controlsTable, arguments: model);
+      MaterialPageRoute(
+        builder: (context) => ControlsTableScreen(model: model),
+      ),
+    );
   }
 
   @override

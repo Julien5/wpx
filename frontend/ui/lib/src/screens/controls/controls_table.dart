@@ -96,14 +96,11 @@ class ControlsTableWidget extends StatelessWidget {
 }
 
 class ControlsTableScreen extends StatelessWidget {
-  const ControlsTableScreen({super.key});
+  final SegmentModel model;
+  const ControlsTableScreen({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
-    assert(ModalRoute.of(context) != null);
-    assert(ModalRoute.of(context)!.settings.arguments != null);
-    var arg = ModalRoute.of(context)!.settings.arguments;
-    SegmentModel model = arg as SegmentModel;
     return ChangeNotifierProvider.value(
       value: model,
       builder: (innercontext, child) {
