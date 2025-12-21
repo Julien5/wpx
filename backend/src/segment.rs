@@ -18,7 +18,7 @@ pub struct SegmentData {
     pub segment: Segment,
     pub track: SharedTrack,
     pub boxes: BoundingBoxes,
-    pub pointmaps: SharedPointMaps,
+    _pointmaps: SharedPointMaps,
     pub parameters: Parameters,
 }
 
@@ -41,7 +41,7 @@ impl SegmentData {
             segment: segment.clone(),
             track,
             boxes,
-            pointmaps: inputpoints.clone(),
+            _pointmaps: inputpoints.clone(),
             //pointmaps: SharedPointMaps::new(InputPointMaps::new().into()),
             parameters: parameters.clone(),
         }
@@ -59,11 +59,11 @@ impl SegmentData {
         self.segment.end
     }
 
-    pub fn osmpoints(&self) -> Vec<InputPoint> {
+    pub fn points(&self, kind: &InputType) -> Vec<InputPoint> {
         let bbox = bboxes::bounding_box(&self.boxes);
         let range = self.range();
-        let lock = self.pointmaps.read().unwrap();
-        let map = lock.maps.get(&InputType::OSM);
+        let lock = self._pointmaps.read().unwrap();
+        let map = lock.maps.get(kind);
         if map.is_none() {
             return Vec::new();
         }
@@ -73,6 +73,10 @@ impl SegmentData {
             .filter(|w| w.track_projections.is_empty() || w.is_in_range(&range))
             .map(|w| w.clone())
             .collect()
+    }
+
+    pub fn osmpoints(&self) -> Vec<InputPoint> {
+        self.points(&InputType::OSM)
     }
 
     pub fn range(&self) -> std::ops::Range<usize> {

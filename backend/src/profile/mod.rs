@@ -229,11 +229,11 @@ impl ProfileView {
                 start: track.index_after(x0),
                 end: track.index_before(x1),
             };
-            if range.start == range.end {
+            if range.start >= range.end {
                 break;
             }
-            assert!(range.start < track.len());
-            assert!(range.end <= track.len());
+            assert!(range.start <= track.len());
+            assert!(range.end < track.len());
             let elevation_gain = track.elevation_gain_on_range(&range);
             let slope_percent = 100.0 * elevation_gain / (x1 - x0);
             //log::trace!("{} {} {}",elevation_gain,dx,slop);

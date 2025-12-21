@@ -18,55 +18,29 @@ pub struct WheelModel {
     pub mid_points: Vec<CirclePoint>,
 }
 
-fn angle(point: &InputPoint, track: &Track) -> f64 {
-    let proj = point.track_projections.first().unwrap();
-    let index = proj.track_index;
-    let part = track.distance(index);
-    let total = track.total_distance();
-    assert!(part <= total);
-    if part == total {
-        return 0.0;
+fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
+    let mut ret = Vec::new();
+    for proj in &point.track_projections {
+        let index = proj.track_index;
+        let part = track.distance(index);
+        let total = track.total_distance();
+        assert!(part <= total);
+        let a = if part == total {
+            0.0
+        } else {
+            360.0 * part / total
+        };
+        ret.push(a);
     }
-    360.0 * part / total
+    ret
 }
 
 fn get_control_points(segment: &SegmentData) -> Vec<InputPoint> {
-    match segment
-        .pointmaps
-        .read()
-        .unwrap()
-        .maps
-        .get(&InputType::Control)
-    {
-        Some(points) => {
-            let ret = points.as_vector();
-            log::trace!("segment.id={} controls={}", segment.id(), ret.len());
-            if !ret.is_empty() {
-                return ret;
-            }
-        }
-        None => {}
-    }
-    Vec::new()
+    segment.points(&InputType::Control)
 }
 
 fn get_mid_points(segment: &SegmentData) -> Vec<InputPoint> {
-    match segment
-        .pointmaps
-        .read()
-        .unwrap()
-        .maps
-        .get(&InputType::UserStep)
-    {
-        Some(map) => {
-            let points = map.as_vector();
-            if !points.is_empty() {
-                return points.clone();
-            }
-        }
-        None => {}
-    }
-    Vec::new()
+    segment.points(&InputType::UserStep)
 }
 
 fn control_name(w: &InputPoint) -> String {
@@ -78,22 +52,26 @@ impl WheelModel {
         let mut control_points = Vec::new();
         if kinds.contains(&InputType::Control) {
             for c in get_control_points(segment) {
-                let cp = CirclePoint {
-                    angle: angle(&c, &segment.track),
-                    name: control_name(&c),
-                };
-                control_points.push(cp);
+                for a in angles(&c, &segment.track) {
+                    let cp = CirclePoint {
+                        angle: a,
+                        name: control_name(&c),
+                    };
+                    control_points.push(cp)
+                }
             }
             control_points.sort_by_key(|p| p.angle.floor() as i32);
         }
         let mut mid_points = Vec::new();
         if kinds.contains(&InputType::UserStep) {
             for c in get_mid_points(segment) {
-                let cp = CirclePoint {
-                    angle: angle(&c, &segment.track),
-                    name: c.name(),
-                };
-                mid_points.push(cp);
+                for a in angles(&c, &segment.track) {
+                    let cp = CirclePoint {
+                        angle: a,
+                        name: c.name(),
+                    };
+                    mid_points.push(cp);
+                }
             }
             mid_points.sort_by_key(|p| p.angle.floor() as i32);
         }

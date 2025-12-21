@@ -131,7 +131,7 @@ impl Track {
         let maxdist = self.total_distance();
         let end = self._distance.len();
         if distance > maxdist {
-            return end;
+            return end - 1;
         }
         let mut it = self._distance.iter();
         match it.rposition(|&d| d < distance) {
@@ -147,7 +147,8 @@ impl Track {
         assert!(!self._distance.is_empty());
         assert!(d0 < d1);
         let startidx = self.index_after(d0);
-        let endidx = self.index_before(d1);
+        // past the end
+        let endidx = self.index_before(d1) + 1;
         assert!(endidx <= self.len());
         startidx..endidx
     }

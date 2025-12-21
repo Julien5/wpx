@@ -39,7 +39,10 @@ fn extract_last_part(name: &String) -> String {
         .to_string()
 }
 
-pub fn infer_controls_from_gpx_data(track: &Track, waypoints: &Vec<InputPoint>) -> Vec<InputPoint> {
+pub fn infer_controls_from_gpx_segments(
+    track: &Track,
+    waypoints: &Vec<InputPoint>,
+) -> Vec<InputPoint> {
     let parts = &track.parts;
     if parts.len() == 1 {
         log::info!("cannot infer control from a single track/segment");
@@ -110,13 +113,13 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
     for point in gpxpoints {
         let projection = locate::compute_track_projection(track, &tracktree, &point);
         if projection.track_distance < maxdist {
-            log::info!("use waypoint {} as control", point.name().trim());
             let control = InputPoint::create_control_on_track(
                 track,
                 projection.track_index,
                 &point.name(),
                 &point.description(),
             );
+            log::info!("use waypoint {} as control", point.name().trim());
             ret.push(control);
         } else {
             log::info!("point {} is too far from track", point.name());
@@ -255,7 +258,7 @@ mod tests {
         use crate::controls::*;
         let gpxdata = read("data/ref/karl-400.gpx".to_string());
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
+        let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints.as_vector());
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -274,7 +277,7 @@ mod tests {
         use crate::controls::*;
         let gpxdata = read("data/blackforest.gpx".to_string());
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let controls = infer_controls_from_gpx_data(&track, &gpxdata.waypoints.as_vector());
+        let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints.as_vector());
         assert!(controls.is_empty());
         let controls = make_controls_with_waypoints(&track, &gpxdata.waypoints.as_vector());
         assert!(!controls.is_empty());

@@ -12,7 +12,7 @@ class ElevationIndicatorGroup extends StatefulWidget {
 }
 
 class _ElevationIndicatorGroupState extends State<ElevationIndicatorGroup> {
-  String? selectedValue = "none"; // Initially, "A" is selected
+  String? selectedValue = "none";
   static const String none = "none";
   static const String ticks = "ticks";
   static const String percent = "percent";

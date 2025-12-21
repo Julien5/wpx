@@ -82,7 +82,7 @@ impl Backend {
         let gpx_waypoints = gpxdata.waypoints.as_vector();
         inputpoints_map.insert(InputType::GPX, gpxdata.waypoints);
 
-        let mut controls = controls::infer_controls_from_gpx_data(&track, &gpx_waypoints);
+        let mut controls = controls::infer_controls_from_gpx_segments(&track, &gpx_waypoints);
         if controls.is_empty() {
             log::info!("infer_controls_from_gpx_data empty => try waypoints");
             controls = controls::make_controls_with_waypoints(&track, &gpx_waypoints);
@@ -396,6 +396,7 @@ mod tests {
         backend::Backend,
         inputpoint::{self, InputType},
         math::IntegerSize2D,
+        parameters::ProfileIndication,
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T08:05:00.00Z";
@@ -414,6 +415,9 @@ mod tests {
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
         parameters.profile_options.size = (1420, 400);
         parameters.profile_options.max_area_ratio = 0.1f64;
+        parameters.profile_options.elevation_indicators =
+            std::collections::HashSet::from([ProfileIndication::NumericSlope]);
+
         backend.set_parameters(&parameters);
 
         let fsegments = backend.segments();
@@ -482,14 +486,7 @@ mod tests {
         let _ = backend.load_demo().await;
         let fseg = backend.trackSegment();
         let seg = backend.make_segment_data(&fseg);
-        let controls = seg
-            .pointmaps
-            .read()
-            .unwrap()
-            .maps
-            .get(&InputType::Control)
-            .unwrap()
-            .as_vector();
+        let controls = seg.points(&InputType::Control);
         let len = controls.len();
         assert!(len > 0);
         let kinds = std::collections::HashSet::from([InputType::Control]);

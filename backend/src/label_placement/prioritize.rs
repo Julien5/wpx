@@ -57,42 +57,26 @@ pub fn profile(segment: &SegmentData) -> Vec<Vec<InputPoint>> {
     let mut villages = Vec::new();
     let mut osmrest = Vec::new();
     let trackrange = segment.range();
-    match segment
-        .pointmaps
-        .read()
-        .unwrap()
-        .maps
-        .get(&InputType::UserStep)
     {
-        Some(map) => {
-            let points = map.as_vector();
-            let mut indices: Vec<_> = (0..points.len()).collect();
-            indices.sort_by_key(|i| points[*i].round_track_index());
-            indices.retain(|i| trackrange.contains(&points[*i].round_track_index().unwrap()));
-            for k in indices {
-                let wi = points[k].clone();
-                assert!(is_close_to_track(&wi));
-                let d = wi.distance_to_track();
-                assert_eq!(wi.kind(), InputType::UserStep);
-                assert_eq!(d, 0f64);
-                if user1.len() < user2.len() {
-                    user1.push(wi);
-                } else {
-                    user2.push(wi);
-                }
+        let points = segment.points(&InputType::UserStep);
+        let mut indices: Vec<_> = (0..points.len()).collect();
+        indices.sort_by_key(|i| points[*i].round_track_index());
+        indices.retain(|i| trackrange.contains(&points[*i].round_track_index().unwrap()));
+        for k in indices {
+            let wi = points[k].clone();
+            assert!(is_close_to_track(&wi));
+            let d = wi.distance_to_track();
+            assert_eq!(wi.kind(), InputType::UserStep);
+            assert_eq!(d, 0f64);
+            if user1.len() < user2.len() {
+                user1.push(wi);
+            } else {
+                user2.push(wi);
             }
         }
-        _ => {}
     }
 
-    let gpx: Vec<_> = segment
-        .pointmaps
-        .read()
-        .unwrap()
-        .maps
-        .get(&InputType::GPX)
-        .unwrap()
-        .as_vector();
+    let gpx = segment.points(&InputType::GPX);
 
     let osmpoints = segment.osmpoints();
     for k in 0..osmpoints.len() {
