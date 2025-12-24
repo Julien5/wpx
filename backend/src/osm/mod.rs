@@ -27,13 +27,25 @@ async fn download_chunk_real(
 ) -> std::result::Result<InputPoints, std::io::Error> {
     use download::*;
     let bboxparam = osm3(&bbox);
-    let result = parse_osm_content(all(&bboxparam, logger).await.unwrap().as_bytes());
-    match result {
-        Ok(points) => Ok(points),
+    let dl_result = all(&bboxparam, logger).await;
+    match dl_result {
         Err(e) => {
-            log::info!("could not download(ignore)");
-            log::info!("reason: {}", e.to_string());
-            Err(std::io::Error::new(std::io::ErrorKind::InvalidData, "data"))
+            log::error!("download failed, error = {:?}", e);
+            Err(std::io::Error::new(
+                std::io::ErrorKind::ConnectionRefused,
+                e.to_string(),
+            ))
+        }
+        Ok(content) => {
+            let result = parse_osm_content(content.as_bytes());
+            match result {
+                Ok(points) => Ok(points),
+                Err(e) => {
+                    log::error!("cannot read OSM data: len:{}", content.len());
+                    log::error!("reason: {}", e.to_string());
+                    Err(std::io::Error::new(std::io::ErrorKind::InvalidData, "data"))
+                }
+            }
         }
     }
 }

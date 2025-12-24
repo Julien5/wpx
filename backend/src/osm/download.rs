@@ -11,11 +11,11 @@ use crate::{
 
 use log;
 
-async fn dl_worker(req: &str) -> Option<String> {
+async fn dl_worker(req: &str) -> std::result::Result<String, reqwest::Error> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
     let client = Client::new();
-    let response = client
+    let request = client
         .post(url)
         .header("User-Agent", "jbo/WPX")
         .header("Accept", "*/*")
@@ -32,24 +32,26 @@ async fn dl_worker(req: &str) -> Option<String> {
         .header("Sec-Fetch-Mode", "cors")
         .header("Sec-Fetch-Site", "cross-site")
         .header("Priority", "u=0")
-        .body(format!("data={}", urlencoding::encode(&req)))
-        .send()
-        .await
-        .unwrap();
+        .body(format!("data={}", urlencoding::encode(&req)));
+    log::debug!("request={:?}", request);
+    match request.send().await {
+        Ok(response) => {
+            let text = response.text().await;
 
-    let text = response.text().await;
+            /*
+                if true {
+                    let filename = std::format!("/tmp/dl.data");
+                    let data = text.as_ref().unwrap().clone();
+                    std::fs::write(filename, data).expect("Unable to write file");
+            }
+                */
 
-    /*
-        if true {
-            let filename = std::format!("/tmp/dl.data");
-            let data = text.as_ref().unwrap().clone();
-            std::fs::write(filename, data).expect("Unable to write file");
-    }
-        */
-
-    match text {
-        Ok(json) => Some(json),
-        Err(_) => None,
+            match text {
+                Ok(json) => Ok(json),
+                Err(e) => Err(e),
+            }
+        }
+        Err(e) => Err(e),
     }
 }
 
@@ -59,7 +61,10 @@ Grabener Höhe is tourism = viewpoint.
 To get it: node["tourism"="viewpoint"]({{bbox}});
 */
 
-pub async fn all(bbox: &str, logger: &SenderHandlerLock) -> Option<String> {
+pub async fn all(
+    bbox: &str,
+    logger: &SenderHandlerLock,
+) -> std::result::Result<String, reqwest::Error> {
     let timeout = 250;
     let header = format!("[out:json][timeout:{}]", timeout);
     let mut reqs = Vec::new();
