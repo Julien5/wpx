@@ -5,36 +5,21 @@ use crate::{
     track_projection::is_close_to_track,
 };
 
-fn merge_flip_flop(_a: &Vec<InputPoint>, _b: &Vec<InputPoint>) -> Vec<InputPoint> {
-    let mut a = _a.clone();
-    let mut b = _b.clone();
-    let mut ret = Vec::new();
-    while !a.is_empty() || !b.is_empty() {
-        match ret.len() % 2 {
-            0 => {
-                if !a.is_empty() {
-                    ret.push(a.first().unwrap().clone());
-                    a.remove(0);
-                } else {
-                    ret.push(b.first().unwrap().clone());
-                    b.remove(0);
-                }
-            }
-            1 => {
-                if !b.is_empty() {
-                    ret.push(b.first().unwrap().clone());
-                    b.remove(0);
-                } else {
-                    ret.push(a.first().unwrap().clone());
-                    a.remove(0);
-                }
-            }
-            _ => {
-                assert!(false);
-            }
+fn merge_flip_flop<T: Clone>(a: &[T], b: &[T]) -> Vec<T> {
+    // gemini
+    let mut result = Vec::with_capacity(a.len() + b.len());
+    let max_len = std::cmp::max(a.len(), b.len());
+
+    for i in 0..max_len {
+        if let Some(val_a) = a.get(i) {
+            result.push(val_a.clone());
+        }
+        if let Some(val_b) = b.get(i) {
+            result.push(val_b.clone());
         }
     }
-    ret
+
+    result
 }
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
