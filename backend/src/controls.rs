@@ -9,6 +9,7 @@ use crate::{
     segment::SegmentData,
     track::Track,
     track_projection::is_close_to_track,
+    wheel::shorten::shorten_name,
 };
 use rstar::{RTree, AABB};
 
@@ -229,7 +230,8 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
     let mut ret = Vec::new();
     for k in 0..proto.len() {
         let p = &proto[k];
-        let name = format!("K{}", k + 1);
+        let short_name = shorten_name(&p.osm_name);
+        let name = format!("K{} - {}", k + 1, short_name);
         let w = InputPoint::create_control_on_track(&track, p.index, &name, &p.osm_name);
         ret.push(w);
     }

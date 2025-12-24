@@ -1,5 +1,5 @@
 pub mod model;
-mod shorten;
+pub mod shorten;
 
 use svg::node::element::path::Data;
 use svg::node::element::Text;
@@ -67,8 +67,7 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
             .set("stroke-width", hour_thick);
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
-        let name = point.name.clone();
-        log::trace!("name={}", name);
+
         let label_position_radius = page.wheel_outer_radius() + 7;
         let mut label_position = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos())
             * label_position_radius as f64;
@@ -82,7 +81,10 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
             label_position.y += text_height;
         }
 
-        let label = Text::new(format!("{}", shorten_name(&name)))
+        let name = point.name.clone();
+        log::trace!("name={}", name);
+
+        let label = Text::new(format!("{}", name))
             .set("text-anchor", anchor)
             .set("x", label_position.x)
             .set("y", label_position.y);

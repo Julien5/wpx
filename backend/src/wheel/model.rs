@@ -44,7 +44,7 @@ fn get_mid_points(segment: &SegmentData) -> Vec<InputPoint> {
 }
 
 fn control_name(w: &InputPoint) -> String {
-    format!("{} ({})", w.name(), shorten_name(&w.description()))
+    format!("{}", w.name())
 }
 
 impl WheelModel {
