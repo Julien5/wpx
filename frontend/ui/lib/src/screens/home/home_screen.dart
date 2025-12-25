@@ -40,7 +40,8 @@ class FindResult {
 
 class _ChooseDataState extends State<ChooseData> {
   FindResult? findResult;
-  String? errorMessage; // State variable to store the error message
+  String? errorMessage;
+  bool loading = false;
 
   void chooseGPX(RootModel rootModel) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -77,6 +78,9 @@ class _ChooseDataState extends State<ChooseData> {
   }
 
   void onDone(RootModel model, FindResult findResult) async {
+    setState(() {
+      loading = true;
+    });
     try {
       await create(model, findResult);
       if (!mounted) {
@@ -93,6 +97,9 @@ class _ChooseDataState extends State<ChooseData> {
         errorMessage = makeErrorMessage(e);
       });
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   String makeErrorMessage(Object e) {
@@ -121,7 +128,7 @@ class _ChooseDataState extends State<ChooseData> {
         children: [
           StreamWidget(),
           ElevatedButton(
-            onPressed: () => chooseGPX(rootModel),
+            onPressed: loading ? null : () => chooseGPX(rootModel),
             child: const Text("Choose GPX file"),
           ),
           if (errorMessage != null) // Conditionally display the error message
@@ -134,7 +141,7 @@ class _ChooseDataState extends State<ChooseData> {
             ),
           const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => chooseDemo(rootModel),
+            onPressed: loading ? null : () => chooseDemo(rootModel),
             child: const Text("Demo"),
           ),
         ],
