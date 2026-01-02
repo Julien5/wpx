@@ -105,6 +105,8 @@ impl Backend {
             );
         }
 
+        controls::insert_start_end_controls(&track, &mut controls);
+
         {
             let mut locked = inputpoints.write().unwrap();
 

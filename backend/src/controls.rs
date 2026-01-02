@@ -154,6 +154,32 @@ fn control_point_goodness(point: &InputPoint) -> i32 {
     };
 }
 
+pub fn insert_start_end_controls(track: &Arc<Track>, controls: &mut Vec<InputPoint>) {
+    let length = track.len();
+    let start = InputPoint::create_control_on_track(track, 0, "Start", "start");
+    let end = InputPoint::create_control_on_track(track, length - 1, "End", "end");
+    if controls.is_empty() {
+        controls.push(start);
+        controls.push(end);
+        return;
+    }
+
+    let mut indices: Vec<_> = controls
+        .iter()
+        .map(|p| p.single_track_index().unwrap())
+        .collect();
+    indices.sort();
+    let maxdist = 1000f64;
+    let first = indices.first().unwrap();
+    if track.distance(*first) > maxdist {
+        controls.push(start.clone());
+    }
+    let last = indices.last().unwrap();
+    if (track.total_distance() - track.distance(*last)).abs() > maxdist {
+        controls.push(end.clone());
+    }
+}
+
 pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) -> Vec<InputPoint> {
     let total = track.total_distance();
     let track_distance_km = total / 1000f64;

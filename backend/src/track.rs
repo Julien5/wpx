@@ -129,8 +129,8 @@ impl Track {
         assert!(self.len() > 0);
         assert!(distance >= 0f64);
         let maxdist = self.total_distance();
-        let end = self._distance.len();
-        if distance > maxdist {
+        let end = self.len();
+        if distance >= maxdist {
             return end - 1;
         }
         let mut it = self._distance.iter();

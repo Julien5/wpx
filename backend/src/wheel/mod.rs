@@ -8,6 +8,10 @@ use svg::Document;
 
 use crate::math::*;
 
+mod constants {
+    pub const ARCANGLE: f64 = 40f64.to_radians();
+}
+
 struct Page {
     pub total_size: IntegerSize2D,
     pub wheel_width: i32,
@@ -47,8 +51,8 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
     let min_thick = (hour_thick / 4).max(1);
     let little_space = (hour_thick / 4).max(1);
     let mut ret = Group::new();
-    let hour_tick_start = page.wheel_inner_radius() + little_space;
-    let hour_tick_stop = page.wheel_outer_radius() - little_space;
+    let hour_tick_start = page.wheel_inner_radius();
+    let hour_tick_stop = page.wheel_outer_radius();
     let hour_tick_data =
         Data::parse(format!("M 0 -{} L 0 -{}", hour_tick_start, hour_tick_stop).as_str()).unwrap();
     let min_tick_start = hour_tick_start + little_space;
@@ -105,6 +109,10 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
     ret
 }
 
+/*
+ <path d="M 180 180 L 110 35 A 160 160 0 0 1 250 35 Z"
+        fill="white" stroke="white" stroke-width="3"/>
+*/
 pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let margin = 20;
     let wheel_width = 10;
@@ -135,6 +143,26 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         .set("fill", "#f0f0f0")
         .set("stroke", "#333")
         .set("stroke-width", 3);
+    let arcradius = page.wheel_outer_radius() as f64 + 3f64;
+    let yarc = center.y as f64 - arcradius * (0.5 * constants::ARCANGLE).cos();
+    let x1arc = center.x as f64 - arcradius * (0.5 * constants::ARCANGLE).sin();
+    let x2arc = center.x as f64 + arcradius * (0.5 * constants::ARCANGLE).sin();
+    let d = format!(
+        "M {} {} L {} {} A {} {} 0 0 1 {} {} Z",
+        center.x,
+        center.y,
+        x1arc,
+        yarc,
+        page.wheel_outer_radius(),
+        page.wheel_outer_radius(),
+        x2arc,
+        yarc
+    );
+    let middle_arc = Path::new()
+        .set("d", d)
+        .set("fill", "white")
+        .set("stroke", "white")
+        .set("stroke-width", 0);
 
     let inner_circle = Circle::new()
         .set("cx", center.x)
@@ -157,6 +185,7 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let assembled_group = main_group
         .add(outer_circle)
         .add(inner_circle)
+        .add(middle_arc)
         .add(features)
         .add(center_dot);
 
@@ -172,8 +201,12 @@ mod tests {
         // 1. Define the Control Points
         let control_points = vec![
             CirclePoint {
-                angle: 0.0,
-                name: String::from("Start/End"),
+                angle: 20.0,
+                name: String::from("Start"),
+            },
+            CirclePoint {
+                angle: 360.0 - 20.0,
+                name: String::from("End"),
             },
             CirclePoint {
                 angle: 60.0,

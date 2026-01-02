@@ -19,13 +19,12 @@ pub struct WheelModel {
 }
 
 fn angle(proj: &TrackProjection, total: f64) -> f64 {
-    let part = proj.distance_on_track_to_projection;
-    assert!(part <= total);
-    if part == total {
-        0.0
-    } else {
-        360.0 * part / total
-    }
+    let topmargin = super::constants::ARCANGLE.to_degrees() / 2.0;
+    let a = (360.0 - 2.0 * topmargin) / total;
+    let b = topmargin;
+    let x = proj.distance_on_track_to_projection;
+    assert!(x <= total);
+    a * x + b
 }
 
 fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
