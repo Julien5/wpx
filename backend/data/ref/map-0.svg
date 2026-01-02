@@ -210,13 +210,13 @@ Walke
 </g>
 <path d="M196.02,19.99 L177.58,33.61" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
-<circle cx="90.16529820481901" cy="177.46482558042044" fill="Black" id="26/wp/circle" r="5"/>
-<circle cx="90.16529820481901" cy="177.46482558042044" fill="white" id="26/wp/circle-little-white" r="3.5"/>
-<circle cx="90.16529820481901" cy="177.46482558042044" fill="black" id="26/wp/circle-little-white" r="2.5"/>
+<circle cx="90.16529820481901" cy="177.46482558042044" fill="Black" id="27/wp/circle" r="5"/>
+<circle cx="90.16529820481901" cy="177.46482558042044" fill="white" id="27/wp/circle-little-white" r="3.5"/>
+<circle cx="90.16529820481901" cy="177.46482558042044" fill="black" id="27/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(90.16529820481901 177.46482558042044)">
 <rect fill="white" fill-opacity="0.75" height="12" id="label-bg" width="44.22105263157895" x="-48.22105263157895" y="4"/>
-<text font-size="16.0" id="26/wp/text" text-anchor="end" x="-4.000" y="16.000">
+<text font-size="16.0" id="27/wp/text" text-anchor="end" x="-4.000" y="16.000">
 Elzach
 </text>
 </g>

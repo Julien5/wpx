@@ -7,7 +7,6 @@ use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
 use crate::math::*;
-use crate::wheel::shorten::shorten_name;
 
 struct Page {
     pub total_size: IntegerSize2D,

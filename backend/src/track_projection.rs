@@ -57,6 +57,10 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
         return false;
     }
     let d = w.track_projections.first().unwrap().track_distance;
+    let dmin = 300f64;
+    if d < dmin {
+        return true;
+    }
     match w.kind() {
         InputType::OSM => {
             let kind = w.osmkind().unwrap();
@@ -67,7 +71,7 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
         }
         _ => {}
     }
-    return d < 300.0;
+    return d < dmin;
 }
 
 fn dmax(kind: &InputType, osmkind: &Option<OSMType>, population: &Option<i32>) -> f64 {

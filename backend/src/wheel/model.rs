@@ -4,7 +4,7 @@ use crate::{
     inputpoint::{InputPoint, InputType},
     segment::SegmentData,
     track::Track,
-    wheel::shorten::shorten_name,
+    track_projection::TrackProjection,
 };
 
 #[derive(Debug, Clone)]
@@ -18,21 +18,23 @@ pub struct WheelModel {
     pub mid_points: Vec<CirclePoint>,
 }
 
-fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
-    let mut ret = Vec::new();
-    for proj in &point.track_projections {
-        let index = proj.track_index;
-        let part = track.distance(index);
-        let total = track.total_distance();
-        assert!(part <= total);
-        let a = if part == total {
-            0.0
-        } else {
-            360.0 * part / total
-        };
-        ret.push(a);
+fn angle(proj: &TrackProjection, total: f64) -> f64 {
+    let part = proj.distance_on_track_to_projection;
+    assert!(part <= total);
+    if part == total {
+        0.0
+    } else {
+        360.0 * part / total
     }
-    ret
+}
+
+fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
+    let total = track.total_distance();
+    point
+        .track_projections
+        .iter()
+        .map(|proj| angle(proj, total))
+        .collect()
 }
 
 fn get_control_points(segment: &SegmentData) -> Vec<InputPoint> {
