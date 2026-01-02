@@ -1,10 +1,10 @@
 use std::collections::HashSet;
 
 use crate::{
+    controls,
     inputpoint::{InputPoint, InputType},
     segment::SegmentData,
     track::Track,
-    track_projection::TrackProjection,
 };
 
 #[derive(Debug, Clone)]
@@ -16,13 +16,14 @@ pub struct CirclePoint {
 pub struct WheelModel {
     pub control_points: Vec<CirclePoint>,
     pub mid_points: Vec<CirclePoint>,
+    pub has_start_control: bool,
+    pub has_end_control: bool,
 }
 
-fn angle(proj: &TrackProjection, total: f64) -> f64 {
-    let topmargin = super::constants::ARCANGLE.to_degrees() / 2.0;
+fn angle(x: f64, total: f64) -> f64 {
+    let topmargin = super::constants::ARCANGLE / 2.0;
     let a = (360.0 - 2.0 * topmargin) / total;
     let b = topmargin;
-    let x = proj.distance_on_track_to_projection;
     assert!(x <= total);
     a * x + b
 }
@@ -32,7 +33,7 @@ fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
     point
         .track_projections
         .iter()
-        .map(|proj| angle(proj, total))
+        .map(|proj| angle(proj.distance_on_track_to_projection, total))
         .collect()
 }
 
@@ -51,8 +52,12 @@ fn control_name(w: &InputPoint) -> String {
 impl WheelModel {
     pub fn make(segment: &SegmentData, kinds: HashSet<InputType>) -> WheelModel {
         let mut control_points = Vec::new();
+        let (mut has_start_control, mut has_end_control) = (false, false);
         if kinds.contains(&InputType::Control) {
-            for c in get_control_points(segment) {
+            let controls = get_control_points(segment);
+            (has_start_control, has_end_control) =
+                controls::has_startend_controls(&segment.track, &controls);
+            for c in &controls {
                 for a in angles(&c, &segment.track) {
                     let cp = CirclePoint {
                         angle: a,
@@ -79,6 +84,8 @@ impl WheelModel {
         WheelModel {
             control_points,
             mid_points,
+            has_start_control,
+            has_end_control,
         }
     }
 }

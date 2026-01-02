@@ -154,16 +154,10 @@ fn control_point_goodness(point: &InputPoint) -> i32 {
     };
 }
 
-pub fn insert_start_end_controls(track: &Arc<Track>, controls: &mut Vec<InputPoint>) {
-    let length = track.len();
-    let start = InputPoint::create_control_on_track(track, 0, "Start", "start");
-    let end = InputPoint::create_control_on_track(track, length - 1, "End", "end");
+pub fn has_startend_controls(track: &Track, controls: &Vec<InputPoint>) -> (bool, bool) {
     if controls.is_empty() {
-        controls.push(start);
-        controls.push(end);
-        return;
+        return (false, false);
     }
-
     let mut indices: Vec<_> = controls
         .iter()
         .map(|p| p.single_track_index().unwrap())
@@ -171,11 +165,21 @@ pub fn insert_start_end_controls(track: &Arc<Track>, controls: &mut Vec<InputPoi
     indices.sort();
     let maxdist = 1000f64;
     let first = indices.first().unwrap();
-    if track.distance(*first) > maxdist {
+    let has_start = track.distance(*first) <= maxdist;
+    let last = indices.last().unwrap();
+    let has_end = (track.total_distance() - track.distance(*last)).abs() <= maxdist;
+    (has_start, has_end)
+}
+
+pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) {
+    let length = track.len();
+    let (has_start, has_end) = has_startend_controls(track, controls);
+    let start = InputPoint::create_control_on_track(track, 0, "Start", "start");
+    let end = InputPoint::create_control_on_track(track, length - 1, "End", "end");
+    if !has_start {
         controls.push(start.clone());
     }
-    let last = indices.last().unwrap();
-    if (track.total_distance() - track.distance(*last)).abs() > maxdist {
+    if !has_end {
         controls.push(end.clone());
     }
 }

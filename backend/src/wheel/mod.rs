@@ -7,9 +7,10 @@ use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
 use crate::math::*;
+use crate::wheel::model::CirclePoint;
 
 mod constants {
-    pub const ARCANGLE: f64 = 40f64.to_radians();
+    pub const ARCANGLE: f64 = 40f64;
 }
 
 struct Page {
@@ -44,6 +45,47 @@ impl Page {
     }
 }
 
+fn add_control_point(
+    page: &Page,
+    point: &CirclePoint,
+    mut ticks_group: Group,
+    mut label_group: Group,
+    hour_thick: i32,
+    hour_tick_data: &Data,
+) -> (Group, Group) {
+    let angle = point.angle;
+
+    let tick = Path::new()
+        .set("d", hour_tick_data.clone())
+        .set("stroke", "#333")
+        .set("stroke-width", hour_thick);
+    let tick_rotated = tick.set("transform", format!("rotate({})", angle));
+    ticks_group = ticks_group.add(tick_rotated);
+
+    let label_position_radius = page.wheel_outer_radius() + 7;
+    let mut label_position = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos())
+        * label_position_radius as f64;
+
+    let anchor = if angle < 180.0 { "start" } else { "end" };
+    let text_height = 5 as f64;
+    if angle < 30.0 || angle > 330.0 {
+        // label_position.y -= text_height;
+    }
+    if angle > 150.0 && angle < 210.0 {
+        label_position.y += text_height;
+    }
+
+    let name = point.name.clone();
+    log::trace!("name={}", name);
+
+    let label = Text::new(format!("{}", name))
+        .set("text-anchor", anchor)
+        .set("x", label_position.x)
+        .set("y", label_position.y);
+    label_group = label_group.add(label);
+    (ticks_group, label_group)
+}
+
 fn features(page: &Page, model: &model::WheelModel) -> Group {
     let mut ticks_group = page.make_centered_group();
     let mut label_group = page.make_centered_group();
@@ -62,36 +104,34 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
 
     for i in 0..model.control_points.len() {
         let point = &model.control_points[i];
-        let angle = point.angle;
+        (ticks_group, label_group) = add_control_point(
+            page,
+            point,
+            ticks_group,
+            label_group,
+            hour_thick,
+            &hour_tick_data,
+        );
+    }
 
-        let tick = Path::new()
-            .set("d", hour_tick_data.clone())
-            .set("stroke", "#333")
-            .set("stroke-width", hour_thick);
-        let tick_rotated = tick.set("transform", format!("rotate({})", angle));
-        ticks_group = ticks_group.add(tick_rotated);
-
-        let label_position_radius = page.wheel_outer_radius() + 7;
-        let mut label_position = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos())
-            * label_position_radius as f64;
-
-        let anchor = if angle < 180.0 { "start" } else { "end" };
-        let text_height = 5 as f64;
-        if angle < 30.0 || angle > 330.0 {
-            // label_position.y -= text_height;
+    for (not_needed, a, name) in [
+        (model.has_end_control, -constants::ARCANGLE / 2.0, "End"),
+        (model.has_start_control, constants::ARCANGLE / 2.0, "Start"),
+    ] {
+        if not_needed {
+            continue;
         }
-        if angle > 150.0 && angle < 210.0 {
-            label_position.y += text_height;
-        }
-
-        let name = point.name.clone();
-        log::trace!("name={}", name);
-
-        let label = Text::new(format!("{}", name))
-            .set("text-anchor", anchor)
-            .set("x", label_position.x)
-            .set("y", label_position.y);
-        label_group = label_group.add(label);
+        (ticks_group, label_group) = add_control_point(
+            page,
+            &CirclePoint {
+                angle: a,
+                name: name.to_string().clone(),
+            },
+            ticks_group,
+            label_group,
+            hour_thick,
+            &hour_tick_data,
+        );
     }
 
     for i in 0..model.mid_points.len() {
@@ -144,9 +184,9 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         .set("stroke", "#333")
         .set("stroke-width", 3);
     let arcradius = page.wheel_outer_radius() as f64 + 3f64;
-    let yarc = center.y as f64 - arcradius * (0.5 * constants::ARCANGLE).cos();
-    let x1arc = center.x as f64 - arcradius * (0.5 * constants::ARCANGLE).sin();
-    let x2arc = center.x as f64 + arcradius * (0.5 * constants::ARCANGLE).sin();
+    let yarc = center.y as f64 - arcradius * (0.5 * constants::ARCANGLE.to_radians()).cos();
+    let x1arc = center.x as f64 - arcradius * (0.5 * constants::ARCANGLE.to_radians()).sin();
+    let x2arc = center.x as f64 + arcradius * (0.5 * constants::ARCANGLE.to_radians()).sin();
     let d = format!(
         "M {} {} L {} {} A {} {} 0 0 1 {} {} Z",
         center.x,
