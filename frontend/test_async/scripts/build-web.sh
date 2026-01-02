@@ -8,7 +8,7 @@ function init() {
 }
 
 function build() {
-	SRC=$HOME/projects/sandbox/desktop/track/profile/frontend/test_async
+	SRC=$HOME/projects/wpx/frontend/test_async
 	cd ${SRC}
 	dev.flutter-rust
 	set -x

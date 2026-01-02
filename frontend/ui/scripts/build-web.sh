@@ -9,7 +9,7 @@ function init() {
 }
 
 function build() {
-	SRC=$HOME/projects/sandbox/desktop/track/profile/frontend/ui
+	SRC=$HOME/projects/wpx/frontend/ui
 	cd ${SRC}
 	dev.flutter-rust
 	dos2unix pubspec.yaml
