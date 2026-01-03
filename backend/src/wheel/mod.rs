@@ -241,10 +241,6 @@ mod tests {
         // 1. Define the Control Points
         let control_points = vec![
             CirclePoint {
-                angle: 20.0,
-                name: String::from("Start"),
-            },
-            CirclePoint {
                 angle: 360.0 - 20.0,
                 name: String::from("End"),
             },
@@ -275,6 +271,8 @@ mod tests {
         WheelModel {
             control_points,
             mid_points,
+            has_start_control: false,
+            has_end_control: true,
         }
     }
 

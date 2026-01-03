@@ -5,11 +5,11 @@
 <path d="M 180 180 L 124.250716637916 26.83010281189692 A 160 160 0 0 1 235.749283362084 26.83010281189692 Z" fill="white" stroke="white" stroke-width="0"/>
 <g>
 <g transform="translate(180, 180)">
-<path d="M0,-150 L0,-160" stroke="#333" stroke-width="3" transform="rotate(20)"/>
 <path d="M0,-150 L0,-160" stroke="#333" stroke-width="3" transform="rotate(340)"/>
 <path d="M0,-150 L0,-160" stroke="#333" stroke-width="3" transform="rotate(60)"/>
 <path d="M0,-150 L0,-160" stroke="#333" stroke-width="3" transform="rotate(180)"/>
 <path d="M0,-150 L0,-160" stroke="#333" stroke-width="3" transform="rotate(250)"/>
+<path d="M0,-150 L0,-160" stroke="#333" stroke-width="3" transform="rotate(20)"/>
 <path d="M0,-151 L0,-159" stroke="#666" stroke-width="1" transform="rotate(0)"/>
 <path d="M0,-151 L0,-159" stroke="#666" stroke-width="1" transform="rotate(7.2)"/>
 <path d="M0,-151 L0,-159" stroke="#666" stroke-width="1" transform="rotate(14.4)"/>
@@ -62,9 +62,6 @@
 <path d="M0,-151 L0,-159" stroke="#666" stroke-width="1" transform="rotate(352.8)"/>
 </g>
 <g transform="translate(180, 180)">
-<text text-anchor="start" x="57.11736393538668" y="-156.9286676712467">
-Start
-</text>
 <text text-anchor="end" x="-57.117363935386656" y="-156.9286676712467">
 End
 </text>
@@ -76,6 +73,9 @@ Winterstettenstadt
 </text>
 <text text-anchor="end" x="-156.9286676712467" y="57.11736393538665">
 Noirmoutiers
+</text>
+<text text-anchor="start" x="57.11736393538668" y="-156.9286676712467">
+Start
 </text>
 </g>
 </g>
