@@ -221,8 +221,10 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
 
     double km = model.getCurrentValue(SelectedParameter.distance) / 1000;
     Text kmtext = Text(
-      "${km.toStringAsFixed(0)} km",
+      "one point every ${km.toStringAsFixed(0)} km",
+      textAlign: TextAlign.start, // Added to flush text to the left
       style: TextStyle(
+        fontSize: 13,
         color:
             selectedParameter == SelectedParameter.distance
                 ? Colors.black
@@ -232,8 +234,10 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
 
     double hm = model.getCurrentValue(SelectedParameter.elevation);
     Text hmtext = Text(
-      "${hm.toStringAsFixed(0)} m",
+      "one point every ${hm.toStringAsFixed(0)} m elevation gain",
+      textAlign: TextAlign.start, // Added to flush text to the left
       style: TextStyle(
+        fontSize: 13,
         color:
             selectedParameter == SelectedParameter.elevation
                 ? Colors.black
@@ -245,20 +249,39 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
       groupValue: selectedParameter,
       onChanged: onSelected,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           RadioListTile<SelectedParameter>(
-            title: Text("None", textAlign: TextAlign.start),
+            title: Row(
+              children: [
+                SizedBox(width: 25),
+                Text("None", textAlign: TextAlign.start),
+              ],
+            ),
             value: SelectedParameter.none,
             controlAffinity: side,
           ),
+          SizedBox(height: 30),
           RadioListTile<SelectedParameter>(
-            title: Row(children: [distanceSlider, kmtext]),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                distanceSlider,
+                Row(children: [SizedBox(width: 25), kmtext]),
+              ],
+            ),
             value: SelectedParameter.distance,
             controlAffinity: side,
           ),
+          SizedBox(height: 30),
           RadioListTile<SelectedParameter>(
-            title: Row(children: [elevationSlider, hmtext]),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                elevationSlider,
+                Row(children: [SizedBox(width: 25), hmtext]),
+              ],
+            ),
             value: SelectedParameter.elevation,
             controlAffinity: side,
           ),
