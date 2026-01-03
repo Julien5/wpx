@@ -244,7 +244,18 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
         }
         points.sort_by_key(|w| -control_point_goodness(&w));
         let selected = points.first().unwrap().clone();
-        let index = selected.single_track_index().unwrap();
+        // In case the selected point has several projection, take the first one on this segment.
+        // Taking the first one is arbitrary.
+        let indices_on_segment: Vec<_> = selected
+            .track_projections
+            .iter()
+            .map(|proj| proj.track_index)
+            .filter(|index| segment.range().contains(index))
+            .collect();
+        if indices_on_segment.len() > 1 {
+            log::warn!("{} ambiguous projections", indices_on_segment.len());
+        }
+        let index = *indices_on_segment.first().unwrap();
         let name = selected.name();
         proto.push(Control {
             index,
