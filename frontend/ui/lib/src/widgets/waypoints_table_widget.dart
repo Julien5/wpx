@@ -37,14 +37,13 @@ class WaypointsTableWidget extends StatelessWidget {
       rows:
           waypoints.map((w) {
             final formattedDistance = _formatDistance(w.info!.distance);
-            final name = w.info!.name;
+            // split at anything but letters and numbers
+            final name = w.info!.name.split(RegExp(r'[^a-zA-Z0-9]')).first;
             final gpxName = w.info!.gpxName;
 
             return DataRow(
               cells: <DataCell>[
-                DataCell(
-                  Text(name.replaceAll(RegExp(r'[\r\n]|'), '').trimLeft()),
-                ),
+                DataCell(Text(name, textAlign: TextAlign.left, maxLines: 1)),
                 DataCell(Text(formattedDistance)),
                 DataCell(
                   SizedBox(
