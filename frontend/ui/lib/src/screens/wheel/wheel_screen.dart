@@ -56,17 +56,17 @@ class _WheelScreenState extends State<WheelScreen> {
   Widget build(BuildContext ctx) {
     Widget pdfButton = ElevatedButton(
       onPressed: () => gotoSettings(ctx),
-      child: const Text("Feuille de route"),
+      child: const Text("PDF"),
     );
 
     Widget controlsButtons = ElevatedButton(
       onPressed: () => gotoControls(ctx),
-      child: const Text("Control Points"),
+      child: const Text("Controls"),
     );
 
     Widget userStepsButton = ElevatedButton(
       onPressed: () => gotoUserSteps(ctx),
-      child: const Text("Pacing Points"),
+      child: const Text("Pacing"),
     );
 
     Widget vspace = SizedBox(height: 50);
@@ -80,12 +80,13 @@ class _WheelScreenState extends State<WheelScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               WheelWidget(kinds: allkinds()),
+              Expanded(child: vspace),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [controlsButtons, userStepsButton, pdfButton],
+              ),
               vspace,
-              controlsButtons,
-              vspace,
-              userStepsButton,
-              vspace,
-              pdfButton,
             ],
           ),
         ),
