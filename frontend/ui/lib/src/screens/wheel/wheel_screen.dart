@@ -54,7 +54,7 @@ class _WheelScreenState extends State<WheelScreen> {
 
   @override
   Widget build(BuildContext ctx) {
-    Widget settingsButton = ElevatedButton(
+    Widget pdfButton = ElevatedButton(
       onPressed: () => gotoSettings(ctx),
       child: const Text("Feuille de route"),
     );
@@ -85,7 +85,7 @@ class _WheelScreenState extends State<WheelScreen> {
               vspace,
               userStepsButton,
               vspace,
-              settingsButton,
+              pdfButton,
             ],
           ),
         ),
