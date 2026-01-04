@@ -8,7 +8,6 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/utils.dart';
-import 'statistics_widget.dart';
 
 class Selector extends StatelessWidget {
   final String text;
@@ -336,28 +335,12 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Card infoCard = Card(
-      elevation: 4, // Add shadow to the card
-      margin: const EdgeInsets.all(1), // Add margin around the card
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8), // Rounded corners
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16), // Add padding inside the card
-        child: StatisticsWidget(),
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 500),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [infoCard, SizedBox(height: 15), SegmentsSettings()],
-          ),
+          child: SegmentsSettings(),
         ),
       ),
     );

@@ -6,6 +6,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/segments/future_rendering_widget.dart';
+import 'package:ui/src/screens/wheel/statistics_widget.dart';
 
 class WheelWidget extends StatefulWidget {
   final Set<InputType> kinds;
@@ -69,6 +70,18 @@ class _WheelScreenState extends State<WheelScreen> {
       child: const Text("Pacing"),
     );
 
+    Card statisticsCard = Card(
+      elevation: 4, // Add shadow to the card
+      margin: const EdgeInsets.all(1), // Add margin around the card
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), // Rounded corners
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16), // Add padding inside the card
+        child: StatisticsWidget(),
+      ),
+    );
+
     Widget vspace = SizedBox(height: 50);
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
@@ -80,6 +93,8 @@ class _WheelScreenState extends State<WheelScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               WheelWidget(kinds: allkinds()),
+              Expanded(child: vspace),
+              statisticsCard,
               Expanded(child: vspace),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
