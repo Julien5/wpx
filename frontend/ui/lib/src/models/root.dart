@@ -89,3 +89,49 @@ class RootModel extends ChangeNotifier {
     return _trackSegment!;
   }
 }
+
+class ParameterChanger {
+  bridge.Parameters init;
+  ParameterChanger({required this.init});
+  bridge.Parameters current() {
+    return init;
+  }
+
+  bridge.Parameters changeSpeed(double speed) {
+    bridge.Parameters ret = bridge.Parameters(
+      speed: speed,
+      startTime: init.startTime,
+      segmentLength: init.segmentLength,
+      segmentOverlap: init.segmentOverlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
+
+  bridge.Parameters changeStartTime(DateTime time) {
+    String rfc3339time = time.toIso8601String();
+    if (!rfc3339time.endsWith("Z")) {
+      rfc3339time = "${rfc3339time}Z";
+    }
+    bridge.Parameters ret = bridge.Parameters(
+      speed: init.speed,
+      startTime: rfc3339time,
+      segmentLength: init.segmentLength,
+      segmentOverlap: init.segmentOverlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
+}

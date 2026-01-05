@@ -1,8 +1,11 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/src/widgets/slidervalues.dart';
 
 class StatisticsWidget extends StatefulWidget {
   const StatisticsWidget({super.key});
@@ -11,9 +14,21 @@ class StatisticsWidget extends StatefulWidget {
   State<StatisticsWidget> createState() => _StatisticsWidgetState();
 }
 
+List<double> fromKmh(List<double> list) {
+  List<double> ret = list;
+  for (int k = 0; k < list.length; ++k) {
+    ret[k] = list[k] * 1000 / 3600;
+  }
+  return ret;
+}
+
+List<double> speedSliderValues() {
+  return fromKmh([5, 10, 12.5, 13.5, 15, 18.0, 20, 25, 28]);
+}
+
 class _StatisticsWidgetState extends State<StatisticsWidget> {
   DateTime? startTime;
-
+  double? speed;
   @override
   void initState() {
     super.initState();
@@ -24,11 +39,25 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   }
 
   void readModel() {
+    developer.log("read model");
     RootModel rootModel = Provider.of<RootModel>(context, listen: false);
     bridge.Parameters parameters = rootModel.parameters();
     setState(() {
       startTime = DateTime.parse(parameters.startTime);
+      speed = parameters.speed;
     });
+  }
+
+  void writeModel() {
+    developer.log("mounted?");
+    if (!mounted) return;
+    developer.log("mounted");
+    RootModel rootModel = Provider.of<RootModel>(context, listen: false);
+    bridge.Parameters oldParameters = rootModel.parameters();
+    ParameterChanger changer = ParameterChanger(init: oldParameters);
+    changer.changeSpeed(speed!);
+    changer.changeStartTime(startTime!);
+    rootModel.setParameters(changer.current());
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -36,6 +65,8 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
       context: context,
       initialTime: TimeOfDay(hour: startTime!.hour, minute: startTime!.minute),
     );
+
+    // Guard against using the BuildContext after an async gap
 
     if (picked != null) {
       DateTime dateTime = DateTime(
@@ -48,16 +79,65 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
       setState(() {
         startTime = dateTime;
       });
+      writeModel();
     }
   }
 
+  void onSpeedChanged(double newSpeed) {
+    developer.log("new speed: $newSpeed");
+    speed = newSpeed;
+    setState(() {});
+    writeModel();
+  }
+
   void openTimeBottomSheet() {
-    showModalBottomSheet(
+    showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SizedBox(
-          height: 200, // Set your desired height
-          child: Center(child: Text('This is a Modal Bottom Sheet')),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            String kmh = "none";
+            int index = 0;
+            if (speed != null) {
+              kmh = "${(speed! * 3600 / 1000).toStringAsFixed(1)} km/h";
+              index = getClosestIndex(speedSliderValues(), speed!);
+            }
+            return SimpleDialog(
+              title: Text('Speed', textAlign: TextAlign.center),
+              children: [
+                SliderValuesWidget(
+                  values: speedSliderValues(),
+                  initIndex: index,
+                  formatLabel:
+                      (value) =>
+                          "${(value * 3600 / 1000).toStringAsFixed(1)} km/h",
+                  onValueChanged: (newSpeed) {
+                    setDialogState(() {
+                      speed = newSpeed;
+                    });
+                    setState(() {}); // Also update parent widget if needed
+                  },
+                  enabled: true,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(kmh, textAlign: TextAlign.right),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(
+                    8.0,
+                  ), // Add padding to the right
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      writeModel();
+                    },
+                    child: Text('OK', textAlign: TextAlign.right),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -84,7 +164,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("start time"),
+                child: Text("Start time"),
               ),
 
               Padding(
@@ -108,7 +188,10 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
           ),
           TableRow(
             children: [
-              const Padding(padding: EdgeInsets.all(8.0), child: Text("speed")),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Minimal average speed"),
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -135,7 +218,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("distance"),
+                child: Text("Distance"),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -153,7 +236,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("elevation"),
+                child: Text("Elevation"),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),

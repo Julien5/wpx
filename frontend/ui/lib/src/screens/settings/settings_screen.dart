@@ -267,7 +267,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
           children: [
             Expanded(child: Text(speedAsString())),
             Expanded(
-              child: SliderValuesWidget(
+              child: SliderValuesWidgetDeprecated(
                 values: _speedSliderValues,
                 onChanged:
                     (value) => setState(() {
@@ -285,7 +285,7 @@ class _SegmentsSettingsState extends State<SegmentsSettings> {
           children: [
             Expanded(child: Text(segmentLengthAsString())),
             Expanded(
-              child: SliderValuesWidget(
+              child: SliderValuesWidgetDeprecated(
                 values: _segmentLengthSliderValues,
                 onChanged:
                     (value) => setState(() {
