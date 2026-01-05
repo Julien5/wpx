@@ -1,12 +1,14 @@
 pub mod model;
 pub mod shorten;
+mod time_points;
 
+use euclid::Point2D;
 use svg::node::element::path::Data;
 use svg::node::element::Text;
 use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
-use crate::math::*;
+use crate::math::{self, *};
 use crate::wheel::model::CirclePoint;
 
 mod constants {
@@ -45,6 +47,53 @@ impl Page {
     }
 }
 
+enum Region {
+    Inner,
+    Outer,
+}
+
+fn anchor(angle: f64, region: Region) -> String {
+    if angle < 140.0 {
+        match region {
+            Region::Outer => "start".into(),
+            Region::Inner => "end".into(),
+        }
+    } else if angle > 220.0 {
+        match region {
+            Region::Outer => "end".into(),
+            Region::Inner => "start".into(),
+        }
+    } else {
+        "middle".into()
+    }
+}
+
+fn label_position(angle: f64, radius: f64, text_height: f64, region: Region) -> math::Point2D {
+    let mut ret = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos()) * radius;
+    match region {
+        Region::Inner => {
+            if angle < 60.0 {
+                ret.x -= text_height;
+                ret.y += text_height;
+            }
+            if angle > 300.0 {
+                ret.x += text_height;
+                ret.y += text_height;
+            }
+            ret
+        }
+        Region::Outer => {
+            if angle < 40.0 || angle > 320.0 {
+                // label_position.y -= text_height;
+            }
+            if angle > 150.0 && angle < 210.0 {
+                ret.y += text_height;
+            }
+            ret
+        }
+    }
+}
+
 fn add_control_point(
     page: &Page,
     point: &CirclePoint,
@@ -62,26 +111,21 @@ fn add_control_point(
     let tick_rotated = tick.set("transform", format!("rotate({})", angle));
     ticks_group = ticks_group.add(tick_rotated);
 
-    let label_position_radius = page.wheel_outer_radius() + 7;
-    let mut label_position = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos())
-        * label_position_radius as f64;
-
-    let anchor = if angle < 180.0 { "start" } else { "end" };
-    let text_height = 5 as f64;
-    if angle < 30.0 || angle > 330.0 {
-        // label_position.y -= text_height;
-    }
-    if angle > 150.0 && angle < 210.0 {
-        label_position.y += text_height;
-    }
+    let text_height: f64 = 5.0;
+    let label_pos = label_position(
+        angle,
+        (page.wheel_outer_radius() + 7) as f64,
+        text_height,
+        Region::Outer,
+    );
 
     let name = point.name.clone();
     log::trace!("name={}", name);
 
     let label = Text::new(format!("{}", name))
-        .set("text-anchor", anchor)
-        .set("x", label_position.x)
-        .set("y", label_position.y);
+        .set("text-anchor", anchor(angle, Region::Outer))
+        .set("x", label_pos.x)
+        .set("y", label_pos.y);
     label_group = label_group.add(label);
     (ticks_group, label_group)
 }
@@ -89,18 +133,14 @@ fn add_control_point(
 fn features(page: &Page, model: &model::WheelModel) -> Group {
     let mut ticks_group = page.make_centered_group();
     let mut label_group = page.make_centered_group();
-    let hour_thick = page.wheel_width / 3;
-    let min_thick = (hour_thick / 4).max(1);
-    let little_space = (hour_thick / 4).max(1);
     let mut ret = Group::new();
-    let hour_tick_start = page.wheel_inner_radius();
-    let hour_tick_stop = page.wheel_outer_radius();
-    let hour_tick_data =
-        Data::parse(format!("M 0 -{} L 0 -{}", hour_tick_start, hour_tick_stop).as_str()).unwrap();
-    let min_tick_start = hour_tick_start + little_space;
-    let min_tick_stop = hour_tick_stop - little_space;
-    let minute_tick_data =
-        Data::parse(format!("M 0 -{} L 0 -{}", min_tick_start, min_tick_stop).as_str()).unwrap();
+
+    let control_thick = page.wheel_width / 3;
+    let control_tick_start = page.wheel_inner_radius();
+    let control_tick_end = page.wheel_outer_radius();
+    let control_tick_path =
+        Data::parse(format!("M 0 -{} L 0 -{}", control_tick_start, control_tick_end).as_str())
+            .unwrap();
 
     for i in 0..model.control_points.len() {
         let point = &model.control_points[i];
@@ -109,8 +149,8 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
             point,
             ticks_group,
             label_group,
-            hour_thick,
-            &hour_tick_data,
+            control_thick,
+            &control_tick_path,
         );
     }
 
@@ -129,30 +169,73 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
             },
             ticks_group,
             label_group,
-            hour_thick,
-            &hour_tick_data,
+            control_thick,
+            &control_tick_path,
         );
     }
+
+    let steps_thick = (control_thick / 4).max(1);
+    let little_space = (control_thick / 4).max(1);
+    let step_tick_start = control_tick_start + little_space;
+    let step_tick_stop = control_tick_end - little_space;
+    let step_tick_path =
+        Data::parse(format!("M 0 -{} L 0 -{}", step_tick_start, step_tick_stop).as_str()).unwrap();
 
     for i in 0..model.mid_points.len() {
         let point = &model.mid_points[i];
         let angle = point.angle;
         let tick = Path::new()
-            .set("d", minute_tick_data.clone())
+            .set("d", step_tick_path.clone())
             .set("stroke", "#666")
-            .set("stroke-width", min_thick);
+            .set("stroke-width", steps_thick);
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
     }
+
+    let time_tick_path = Data::parse(
+        format!(
+            "M 0 -{} L 0 -{}",
+            page.wheel_inner_radius() - 5,
+            page.wheel_inner_radius()
+        )
+        .as_str(),
+    )
+    .unwrap();
+    let label_position_radius = page.wheel_inner_radius() - 7;
+    for i in 0..model.time_points.len() {
+        let point = &model.time_points[i];
+        let angle = point.angle;
+        let tick = Path::new()
+            .set("d", time_tick_path.clone())
+            .set("stroke", "#666")
+            .set("stroke-width", "2");
+        let tick_rotated = tick.set("transform", format!("rotate({})", angle));
+        ticks_group = ticks_group.add(tick_rotated);
+
+        let text_height: f64 = 5.0;
+        let label_pos = label_position(
+            angle,
+            label_position_radius as f64,
+            text_height,
+            Region::Inner,
+        );
+
+        let label = Text::new(format!("{}", point.name))
+            .set("text-anchor", anchor(angle, Region::Inner))
+            .set("x", label_pos.x)
+            .set("y", label_pos.y);
+        label_group = label_group.add(label);
+    }
+
     ret = ret.add(ticks_group);
     ret = ret.add(label_group);
     ret
 }
 
 /*
- <path d="M 180 180 L 110 35 A 160 160 0 0 1 250 35 Z"
-        fill="white" stroke="white" stroke-width="3"/>
-*/
+<path d="M 180 180 L 110 35 A 160 160 0 0 1 250 35 Z"
+fill="white" stroke="white" stroke-width="3"/>
+ */
 pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let margin = 20;
     let wheel_width = 10;
@@ -268,11 +351,31 @@ mod tests {
             });
         }
 
+        let time_points = vec![
+            CirclePoint {
+                angle: 60.0,
+                name: String::from("3"),
+            },
+            CirclePoint {
+                angle: 120.0,
+                name: String::from("6"),
+            },
+            CirclePoint {
+                angle: 180.0,
+                name: String::from("12"),
+            },
+            CirclePoint {
+                angle: 240.0,
+                name: String::from("Wed"),
+            },
+        ];
+
         WheelModel {
             control_points,
             mid_points,
             has_start_control: false,
             has_end_control: true,
+            time_points,
         }
     }
 

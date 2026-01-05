@@ -60,6 +60,10 @@
 <path d="M0,-151 L0,-159" stroke="#666" stroke-width="1" transform="rotate(338.40000000000003)"/>
 <path d="M0,-151 L0,-159" stroke="#666" stroke-width="1" transform="rotate(345.6)"/>
 <path d="M0,-151 L0,-159" stroke="#666" stroke-width="1" transform="rotate(352.8)"/>
+<path d="M0,-145 L0,-150" stroke="#666" stroke-width="2" transform="rotate(60)"/>
+<path d="M0,-145 L0,-150" stroke="#666" stroke-width="2" transform="rotate(120)"/>
+<path d="M0,-145 L0,-150" stroke="#666" stroke-width="2" transform="rotate(180)"/>
+<path d="M0,-145 L0,-150" stroke="#666" stroke-width="2" transform="rotate(240)"/>
 </g>
 <g transform="translate(180, 180)">
 <text text-anchor="end" x="-57.117363935386656" y="-156.9286676712467">
@@ -68,7 +72,7 @@ End
 <text text-anchor="start" x="144.62624243200125" y="-83.50000000000001">
 Angers
 </text>
-<text text-anchor="end" x="0.000000000000020451601545760798" y="172">
+<text text-anchor="middle" x="0.000000000000020451601545760798" y="172">
 Winterstettenstadt
 </text>
 <text text-anchor="end" x="-156.9286676712467" y="57.11736393538665">
@@ -76,6 +80,18 @@ Noirmoutiers
 </text>
 <text text-anchor="start" x="57.11736393538668" y="-156.9286676712467">
 Start
+</text>
+<text text-anchor="end" x="123.84163274117472" y="-71.50000000000001">
+3
+</text>
+<text text-anchor="end" x="123.84163274117473" y="71.49999999999997">
+6
+</text>
+<text text-anchor="middle" x="0.00000000000001751244922780715" y="143">
+12
+</text>
+<text text-anchor="start" x="-123.84163274117469" y="71.50000000000006">
+Wed
 </text>
 </g>
 </g>

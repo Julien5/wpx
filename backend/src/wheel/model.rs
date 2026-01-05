@@ -5,6 +5,7 @@ use crate::{
     inputpoint::{InputPoint, InputType},
     segment::SegmentData,
     track::Track,
+    wheel::time_points,
 };
 
 #[derive(Debug, Clone)]
@@ -18,9 +19,10 @@ pub struct WheelModel {
     pub mid_points: Vec<CirclePoint>,
     pub has_start_control: bool,
     pub has_end_control: bool,
+    pub time_points: Vec<CirclePoint>,
 }
 
-fn angle(x: f64, total: f64) -> f64 {
+pub fn angle(x: f64, total: f64) -> f64 {
     let topmargin = super::constants::ARCANGLE / 2.0;
     let a = (360.0 - 2.0 * topmargin) / total;
     let b = topmargin;
@@ -81,11 +83,13 @@ impl WheelModel {
             }
             mid_points.sort_by_key(|p| p.angle.floor() as i32);
         }
+
         WheelModel {
             control_points,
             mid_points,
             has_start_control,
             has_end_control,
+            time_points: time_points::generate(&segment),
         }
     }
 }
