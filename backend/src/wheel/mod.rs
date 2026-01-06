@@ -52,46 +52,90 @@ enum Region {
     Outer,
 }
 
+fn zone(angle: f64) -> usize {
+    let mut ret = 1;
+    if angle < 22.5 {
+        return ret; // 1
+    }
+    ret += 1;
+    if angle < 67.5 {
+        return ret; // 2
+    }
+    ret += 1;
+    if angle < 112.5 {
+        return ret;
+    }
+    ret += 1;
+    if angle < 157.5 {
+        return ret;
+    }
+    ret += 1;
+    if angle < 202.5 {
+        return ret;
+    }
+    ret += 1;
+    if angle < 247.5 {
+        return ret;
+    }
+    ret += 1;
+    if angle < 292.5 {
+        return ret;
+    }
+    ret += 1;
+    if angle < 337.5 {
+        return ret; // 8
+    }
+    return 1;
+}
+
 fn anchor(angle: f64, region: Region) -> String {
-    if angle < 140.0 {
-        match region {
-            Region::Outer => "start".into(),
-            Region::Inner => "end".into(),
-        }
-    } else if angle > 220.0 {
-        match region {
-            Region::Outer => "end".into(),
-            Region::Inner => "start".into(),
-        }
-    } else {
-        "middle".into()
+    match region {
+        Region::Inner => match zone(angle) {
+            1 | 5 => "middle".into(),
+            2 | 3 | 4 => "end".into(),
+            _ => "start".into(),
+        },
+        Region::Outer => match zone(angle) {
+            1 | 5 => "middle".into(),
+            2 | 3 | 4 => "start".into(),
+            _ => "end".into(),
+        },
     }
 }
 
 fn label_position(angle: f64, radius: f64, text_height: f64, region: Region) -> math::Point2D {
     let mut ret = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos()) * radius;
     match region {
-        Region::Inner => {
-            if angle < 60.0 {
-                ret.x -= text_height;
+        Region::Inner => match zone(angle) {
+            1 | 2 | 8 => {
                 ret.y += text_height;
             }
-            if angle > 300.0 {
-                ret.x += text_height;
+            3 | 7 => {
+                ret.y += text_height / 2f64;
+            }
+            4 | 5 | 6 => {}
+            _ => {
+                assert!(false);
+            }
+        },
+        Region::Outer => match zone(angle) {
+            1 | 2 | 8 => {}
+            3 | 7 => {
+                ret.y += text_height / 2f64;
+            }
+            4 | 5 | 6 => {
                 ret.y += text_height;
             }
-            ret
-        }
-        Region::Outer => {
-            if angle < 40.0 || angle > 320.0 {
-                // label_position.y -= text_height;
+            _ => {
+                assert!(false);
             }
-            if angle > 150.0 && angle < 210.0 {
-                ret.y += text_height;
-            }
-            ret
-        }
+        },
     }
+    ret
+}
+
+fn text_height() -> f64 {
+    10.0
 }
 
 fn add_control_point(
@@ -111,11 +155,10 @@ fn add_control_point(
     let tick_rotated = tick.set("transform", format!("rotate({})", angle));
     ticks_group = ticks_group.add(tick_rotated);
 
-    let text_height: f64 = 5.0;
     let label_pos = label_position(
         angle,
         (page.wheel_outer_radius() + 7) as f64,
-        text_height,
+        text_height(),
         Region::Outer,
     );
 
@@ -212,11 +255,10 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
 
-        let text_height: f64 = 5.0;
         let label_pos = label_position(
             angle,
             label_position_radius as f64,
-            text_height,
+            text_height(),
             Region::Inner,
         );
 

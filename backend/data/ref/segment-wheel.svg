@@ -110,31 +110,31 @@
 <path d="M0,-145 L0,-150" stroke="#666" stroke-width="2" transform="rotate(322.65487929480486)"/>
 </g>
 <g transform="translate(180, 180)">
-<text text-anchor="start" x="57.11736393538668" y="-156.9286676712467">
+<text text-anchor="middle" x="57.11736393538668" y="-156.9286676712467">
 Start
 </text>
 <text text-anchor="start" x="141.24044629506352" y="-89.10744262053129">
 K1
 </text>
-<text text-anchor="start" x="155.5549488931439" y="60.75901476202019">
+<text text-anchor="start" x="155.5549488931439" y="65.7590147620202">
 K2
 </text>
-<text text-anchor="middle" x="-40.784660836489024" y="166.94323524140353">
+<text text-anchor="middle" x="-40.784660836489024" y="171.94323524140353">
 K3
 </text>
-<text text-anchor="end" x="-57.139028658075475" y="-156.92078066340235">
+<text text-anchor="middle" x="-57.139028658075475" y="-156.92078066340235">
 K4
 </text>
-<text text-anchor="end" x="81.91497913091301" y="-108.55521301407943">
+<text text-anchor="end" x="86.91497913091301" y="-103.55521301407943">
  9
 </text>
-<text text-anchor="end" x="114.17033869036376" y="-74.04068810697432">
+<text text-anchor="end" x="119.17033869036376" y="-69.04068810697432">
 10
 </text>
-<text text-anchor="end" x="138.42028206871623" y="-35.90021604415542">
+<text text-anchor="end" x="138.42028206871623" y="-30.90021604415542">
 11
 </text>
-<text text-anchor="end" x="142.56400525845194" y="11.158154178361608">
+<text text-anchor="end" x="142.56400525845194" y="16.158154178361606">
 12
 </text>
 <text text-anchor="end" x="131.14929133030793" y="56.99880159756006">
@@ -143,7 +143,7 @@ K4
 <text text-anchor="end" x="105.42186222193361" y="96.61899898912039">
 14
 </text>
-<text text-anchor="middle" x="68.18942936975844" y="125.69487548116957">
+<text text-anchor="end" x="68.18942936975844" y="125.69487548116957">
 15
 </text>
 <text text-anchor="middle" x="23.515279746016994" y="141.0532935399474">
@@ -152,7 +152,7 @@ K4
 <text text-anchor="middle" x="-23.725162825053566" y="141.01814297786188">
 17
 </text>
-<text text-anchor="middle" x="-68.37640727941955" y="125.59325988108972">
+<text text-anchor="start" x="-68.37640727941955" y="125.59325988108972">
 18
 </text>
 <text text-anchor="start" x="-105.56552950261792" y="96.46200796599615">
@@ -161,16 +161,16 @@ K4
 <text text-anchor="start" x="-131.23396914114414" y="56.80356805220269">
 20
 </text>
-<text text-anchor="start" x="-142.58045245618806" y="10.94598453263558">
+<text text-anchor="start" x="-142.58045245618806" y="15.94598453263558">
 21
 </text>
-<text text-anchor="start" x="-138.3667037213757" y="-36.10616708099933">
+<text text-anchor="start" x="-138.3667037213757" y="-31.106167080999327">
 22
 </text>
-<text text-anchor="start" x="-114.052581963551" y="-74.21794448110839">
+<text text-anchor="start" x="-119.052581963551" y="-69.21794448110839">
 23
 </text>
-<text text-anchor="start" x="-81.74589516910873" y="-108.6844302062072">
+<text text-anchor="start" x="-86.74589516910873" y="-103.6844302062072">
 Sat
 </text>
 </g>
