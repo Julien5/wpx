@@ -338,9 +338,9 @@ impl Backend {
         );
         let data = self.make_segment_data(segment);
         let ret = match what.as_str() {
-            "profile" => data.render_profile().svg,
+            "profile" => data.render_profile(size).svg,
             "map" => data.render_map(size),
-            "ylabels" => self.render_yaxis_labels_overlay(&segment),
+            "ylabels" => self.render_yaxis_labels_overlay(&segment, size),
             "wheel" => {
                 let model = wheel::model::WheelModel::make(&data, kinds);
                 wheel::render(size, &model)
@@ -354,12 +354,12 @@ impl Backend {
         ret
     }
 
-    fn render_yaxis_labels_overlay(&mut self, segment: &Segment) -> String {
+    fn render_yaxis_labels_overlay(&mut self, segment: &Segment, size: &IntegerSize2D) -> String {
         log::info!("render_segment_track:{}", segment.id);
         let profile_bbox =
             gpsdata::ProfileBoundingBox::from_track(&self.d().track, &segment.start, &segment.end);
         let mut profile =
-            profile::ProfileView::init(&profile_bbox, &self.d().parameters.profile_options);
+            profile::ProfileView::init(&profile_bbox, size, &self.d().parameters.profile_options);
         profile.add_yaxis_labels_overlay();
         let ret = profile.render().svg;
         if self.get_parameters().debug {

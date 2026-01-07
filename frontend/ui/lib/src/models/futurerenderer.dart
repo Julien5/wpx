@@ -41,7 +41,13 @@ class FutureRenderer with ChangeNotifier {
   }
 
   (int, int) getSizeAsTuple() {
-    return (size!.width.floor(), size!.height.floor());
+    assert(size != null);
+    int w = size!.width.floor();
+    int h = w;
+    if (size!.height.isFinite) {
+      h = size!.height.floor();
+    }
+    return (w, h);
   }
 
   void start() {

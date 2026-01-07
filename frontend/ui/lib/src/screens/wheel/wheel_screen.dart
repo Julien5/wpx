@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
@@ -10,23 +12,86 @@ import 'package:ui/src/screens/segments/future_rendering_widget.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 
-class WheelWidget extends StatefulWidget {
+class ProfileWidget extends StatelessWidget {
   final Set<InputType> kinds;
-  const WheelWidget({super.key, required this.kinds});
-  @override
-  State<WheelWidget> createState() => _WheelWidgetState();
-}
+  const ProfileWidget({super.key, required this.kinds});
 
-class _WheelWidgetState extends State<WheelWidget> {
   @override
   Widget build(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(context);
+    SegmentModel model = Provider.of<SegmentModel>(ctx);
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        WheelRenderer wheelRenderer = model.createWheelRenderer(widget.kinds);
-        wheelRenderer.setSize(Size(250, 250));
-        return FutureRenderingWidget(future: wheelRenderer, interactive: false);
+        developer.log("size: ${constraints.biggest}");
+        var renderer = model.createProfileRenderer(kinds);
+        renderer.setSize(constraints.biggest);
+        return FutureRenderingWidget(future: renderer, interactive: false);
       },
+    );
+  }
+}
+
+class MapWidget extends StatelessWidget {
+  final Set<InputType> kinds;
+  const MapWidget({super.key, required this.kinds});
+
+  @override
+  Widget build(BuildContext ctx) {
+    SegmentModel model = Provider.of<SegmentModel>(ctx);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        developer.log("size: ${constraints.biggest}");
+        MapRenderer renderer = model.createMapRenderer(kinds);
+        // the 1.5 is to balance font size of wheel (small) and map (larger)
+        renderer.setSize(constraints.biggest);
+        return FutureRenderingWidget(future: renderer, interactive: false);
+      },
+    );
+  }
+}
+
+class WheelWidget extends StatelessWidget {
+  final Set<InputType> kinds;
+  const WheelWidget({super.key, required this.kinds});
+
+  @override
+  Widget build(BuildContext ctx) {
+    SegmentModel model = Provider.of<SegmentModel>(ctx);
+    WheelRenderer renderer = model.createWheelRenderer(kinds);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        developer.log("size: ${constraints.biggest}");
+        renderer.setSize(constraints.biggest);
+        return FutureRenderingWidget(future: renderer, interactive: false);
+      },
+    );
+  }
+}
+
+class StackWidget extends StatefulWidget {
+  final Set<InputType> kinds;
+  const StackWidget({super.key, required this.kinds});
+
+  @override
+  State<StackWidget> createState() => _StackWidgetState();
+}
+
+class _StackWidgetState extends State<StackWidget> {
+  int i = 0;
+  @override
+  Widget build(BuildContext ctx) {
+    Widget? current;
+    if (i == 0) {
+      current = WheelWidget(kinds: widget.kinds);
+    }
+    if (i == 1) {
+      current = MapWidget(kinds: widget.kinds);
+    }
+    if (i == 2) {
+      current = ProfileWidget(kinds: widget.kinds);
+    }
+    return GestureDetector(
+      onTap: () => setState(() => i = (i + 1) % 3),
+      child: SizedBox(width: 250, height: 250, child: current),
     );
   }
 }
@@ -93,7 +158,7 @@ class WheelScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              WheelWidget(kinds: allkinds()),
+              StackWidget(kinds: allkinds()),
               Expanded(child: vspace),
               statisticsCard,
               Expanded(child: vspace),

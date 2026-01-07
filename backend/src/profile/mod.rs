@@ -13,7 +13,7 @@ use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::*;
-use crate::math::{distance2, Point2D};
+use crate::math::{distance2, IntegerSize2D, Point2D};
 use crate::parameters::{ProfileIndication, ProfileOptions};
 use crate::segment::{self, SegmentData};
 use crate::track::Track;
@@ -49,8 +49,8 @@ pub struct ProfileView {
     model: Option<ProfileModel>,
 }
 
-fn fix_margins(bbox: &ProfileBoundingBox, options: &ProfileOptions) -> ProfileBoundingBox {
-    let H = options.size.1;
+fn fix_margins(bbox: &ProfileBoundingBox, size: &IntegerSize2D) -> ProfileBoundingBox {
+    let H = size.height;
     let ticks = ticks::yticks(bbox, H as f64);
     let mut ret = bbox.clone();
     ret.set_ymin(ticks.first().unwrap().clone());
@@ -112,9 +112,13 @@ impl ProfileView {
         }
         ret
     }
-    pub fn init(bbox: &gpsdata::ProfileBoundingBox, options: &ProfileOptions) -> ProfileView {
-        let W = options.size.0 as f64;
-        let H = options.size.1 as f64;
+    pub fn init(
+        bbox: &gpsdata::ProfileBoundingBox,
+        size: &IntegerSize2D,
+        options: &ProfileOptions,
+    ) -> ProfileView {
+        let W = size.width as f64;
+        let H = size.height as f64;
         let Mleft = (W * 0.05f64).floor() as f64;
         let Mbottom = (H / 10f64).floor() as f64;
 
@@ -124,7 +128,7 @@ impl ProfileView {
             Mleft,
             Mbottom,
             options: options.clone(),
-            bboxview: fix_margins(bbox, options),
+            bboxview: fix_margins(bbox, size),
             bboxdata: bbox.clone(),
             BG: Group::new().set("id", "BG"),
             SL: Group::new()
@@ -639,10 +643,10 @@ pub struct ProfileRenderResult {
     pub rendered: Vec<InputPoint>,
 }
 
-pub fn profile(segment: &segment::SegmentData) -> ProfileRenderResult {
+pub fn profile(segment: &segment::SegmentData, size: &IntegerSize2D) -> ProfileRenderResult {
     let profile_bbox =
         ProfileBoundingBox::from_track(&segment.track, &segment.start(), &segment.end());
-    let mut view = ProfileView::init(&profile_bbox, &segment.parameters.profile_options);
+    let mut view = ProfileView::init(&profile_bbox, size, &segment.parameters.profile_options);
     view.add_canvas();
     view.add_segment(&segment);
     view.render_model();

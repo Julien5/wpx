@@ -26,6 +26,14 @@ class SegmentModel extends ChangeNotifier {
     return WheelRenderer(_bridge, _segment, kinds);
   }
 
+  MapRenderer createMapRenderer(Kinds kinds) {
+    return MapRenderer(_bridge, _segment);
+  }
+
+  ProfileRenderer createProfileRenderer(Kinds kinds) {
+    return ProfileRenderer(_bridge, _segment);
+  }
+
   bridge.SegmentStatistics statistics() {
     return _bridge.segmentStatistics(segment: _segment);
   }

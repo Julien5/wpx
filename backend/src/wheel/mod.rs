@@ -23,10 +23,7 @@ struct Page {
 
 impl Page {
     fn size(&self) -> IntegerSize2D {
-        IntegerSize2D::new(
-            self.total_size.width - 2 * self.margin,
-            self.total_size.height - 2 * self.margin,
-        )
+        IntegerSize2D::new(self.total_size.width, self.total_size.height)
     }
     fn wheel_outer_radius(&self) -> i32 {
         let size = self.size();

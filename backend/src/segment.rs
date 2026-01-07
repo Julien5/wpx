@@ -91,9 +91,9 @@ impl SegmentData {
         )
     }
 
-    pub fn render_profile(&self) -> ProfileRenderResult {
+    pub fn render_profile(&self, size: &IntegerSize2D) -> ProfileRenderResult {
         log::info!("render profile:{}", self.id());
-        let ret = profile::profile(&self);
+        let ret = profile::profile(&self, size);
         if self.parameters.debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id());
             std::fs::write(filename, &ret.svg).expect("Unable to write file");

@@ -17,7 +17,7 @@ pub struct UserStepsOptions {
 impl Default for UserStepsOptions {
     fn default() -> UserStepsOptions {
         UserStepsOptions {
-            step_distance: None,
+            step_distance: Some(10_000.0),
             step_elevation_gain: None,
             gpx_name_format: "NAME[*]-TIME[%H:%M]-SLOPE[4.1%]".to_string(),
         }

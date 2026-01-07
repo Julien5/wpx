@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use euclid::Size2D;
+
 use crate::backend::Backend;
 use crate::inputpoint::InputType;
 use crate::{track, waypoint};
@@ -130,7 +132,11 @@ pub fn make_typst_document(backend: &mut Backend) -> String {
             .collect();
         waypoints_table.truncate(15);
         let table = points_table(&templates, &backend.d().track, &waypoints_table);
-        let rendered_profile = segment.render_profile();
+        let size = Size2D::new(
+            segment.parameters.profile_options.size.0,
+            segment.parameters.profile_options.size.1,
+        );
+        let rendered_profile = segment.render_profile(&size);
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id());
             std::fs::write(&f, &rendered_profile.svg).unwrap();
