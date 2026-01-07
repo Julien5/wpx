@@ -60,7 +60,7 @@ fn generate_time_intervals(
     let mut times = Vec::new();
 
     // Add start time
-    // times.push(start_time);
+    times.push(start_time);
 
     // Calculate end time
     let end_time = start_time + ChronoDuration::from_std(duration).unwrap();
@@ -92,12 +92,15 @@ fn generate_time_intervals(
     }
 
     // Add end time
-    //times.push(end_time);
+    times.push(end_time);
 
     times
 }
 
-fn format_time(time: &Time) -> String {
+fn format_time(time: &Time, force: bool) -> String {
+    if force {
+        return time.format("%k:%M").to_string();
+    }
     if time.hour() == 0 && time.minute() == 0 && time.second() == 0 {
         time.format("%a").to_string()
     } else if time.minute() == 0 && time.second() == 0 {
@@ -109,20 +112,42 @@ fn format_time(time: &Time) -> String {
 }
 
 fn make(times: &Vec<Time>, start_time: &Time, duration_seconds: f64) -> Vec<CirclePoint> {
-    times
-        .iter()
-        .map(|time| {
-            log::debug!("time:{:?}", time);
-            let x = time
-                .signed_duration_since(start_time)
-                .as_seconds_f64()
-                .floor();
-            CirclePoint {
-                angle: angle(x, duration_seconds),
-                name: format_time(time),
-            }
-        })
-        .collect()
+    let mut ret = Vec::new();
+    let a_start = angle(0.0, duration_seconds);
+    let a_end = 360.0 - super::constants::ARCANGLE / 2.0;
+    for (index, time) in times.iter().enumerate() {
+        log::debug!("time:{:?}", time);
+        let force = index == 0 || index == times.len() - 1;
+        let x = time
+            .signed_duration_since(start_time)
+            .as_seconds_f64()
+            .floor();
+        let a = angle(x, duration_seconds);
+        // this condition is needed if we include the start time (or the end time)
+        // to ensure no label overlap
+        log::trace!(
+            "index:{} times.len():{} a:{}, a_end:{}",
+            index,
+            times.len(),
+            a,
+            a_end
+        );
+        let margin = 10.0;
+        // this condition is needed if we include the start time (or the end time)
+        // to ensure no label overlap
+        if index > 0 && (a - a_start).abs() < margin {
+            continue;
+        }
+        if 0 < index && index < times.len() - 1 && (a - a_end).abs() < margin {
+            continue;
+        }
+        let c = CirclePoint {
+            angle: a,
+            name: format_time(time, force),
+        };
+        ret.push(c);
+    }
+    ret
 }
 
 pub fn generate(segment: &SegmentData) -> Vec<CirclePoint> {
