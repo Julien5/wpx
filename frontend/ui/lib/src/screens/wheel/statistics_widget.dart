@@ -90,6 +90,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     writeModel();
   }
 
+  // TODO: move this in another file
   void openTimeBottomSheet() {
     showDialog(
       context: context,
@@ -146,14 +147,22 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   @override
   Widget build(BuildContext ctx) {
     RootModel rootModel = Provider.of<RootModel>(ctx);
+    bridge.Parameters parameters = rootModel.parameters();
     bridge.SegmentStatistics statistics = rootModel.statistics();
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
     double kmh = rootModel.parameters().speed * 3600 / 1000;
     String startTimeText = "?";
+    String endTimeText = "?";
     if (startTime != null) {
       startTimeText = DateFormat('HH:mm').format(startTime!);
+      Duration duration = Duration(
+        seconds: (statistics.distanceEnd / parameters.speed).round(),
+      );
+      DateTime endTime = startTime!.add(duration);
+      endTimeText = DateFormat('HH:mm').format(endTime!);
     }
+
     EdgeInsets valuePadding = const EdgeInsets.fromLTRB(15, 0, 15, 0);
     return Container(
       constraints: const BoxConstraints(maxWidth: 300), // Set max width
@@ -218,16 +227,25 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(8.0),
+                child: Text("End time"),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0).add(valuePadding),
+                child: Text(endTimeText, textAlign: TextAlign.right),
+              ),
+            ],
+          ),
+          TableRow(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
                 child: Text("Distance"),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: valuePadding,
-                  child: Text(
-                    "${km.toStringAsFixed(0)} km",
-                    textAlign: TextAlign.right,
-                  ),
+                padding: const EdgeInsets.all(8.0).add(valuePadding),
+                child: Text(
+                  "${km.toStringAsFixed(0)} km",
+                  textAlign: TextAlign.right,
                 ),
               ),
             ],
@@ -239,14 +257,12 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
                 child: Text("Elevation"),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: valuePadding,
-                  child: Text(
+                padding: const EdgeInsets.all(8.0).add(valuePadding),
+                child: Text(
                     "${hm.toStringAsFixed(0)} m",
                     textAlign: TextAlign.right,
                   ),
-                ),
+                ,
               ),
             ],
           ),
