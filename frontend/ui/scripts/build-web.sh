@@ -39,8 +39,20 @@ function main() {
     build # dont put an if around build
 	if [ "$1" = "deploy" ]; then
 		DOMAIN=vps-e637d6c5.vps.ovh.net
-		scp -i ~/.ssh/ovh/id scripts/start-ovh.sh /tmp/web.tgz debian@${DOMAIN}:/tmp/
-		ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "chmod +x /tmp/start-ovh.sh; /tmp/start-ovh.sh"
+
+		# upload package
+		scp -i ~/.ssh/ovh/id /tmp/web.tgz debian@${DOMAIN}:/tmp/
+
+		# upload script
+		scp -i ~/.ssh/ovh/id scripts/start-ovh.sh debian@${DOMAIN}:/tmp/
+		ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "chmod +x /tmp/start-ovh.sh"
+
+		# run start-ovh.sh 
+		if [ "${2:-}" = "master" ]; then
+			ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "/tmp/start-ovh.sh master"
+		else
+			ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "/tmp/start-ovh.sh"
+		fi
 	fi
 
 	if [ "$1" = "serve" ]; then

@@ -43,39 +43,6 @@ function make-dist() {
 	grep href "$DISTDIR/index.html"
 }
 
-function runminiserve() {
-	local CARGO_TARGET_DIR=$HOME/delme/rust-targets
-	for a in /tmp/miniserve \
-			 ${CARGO_TARGET_DIR}/release/miniserve; do
-		if [ -f ${a} ]; then
-			MINISERVE=${a}
-			break;
-		fi
-	done
-	
-	if [ -z "${MINISERVE}" ]; then
-		echo could not find miniserve
-		return 1
-	fi
-	
-	DOMAIN=localhost
-	if [ "$(hostname)" = vps-e637d6c5 ]; then
-		DOMAIN=vps-e637d6c5.vps.ovh.net
-	fi
-	
-	nohup ${MINISERVE} \
-		  --tls-cert /tmp/${DOMAIN}.cert  \
-		  --tls-key /tmp/${DOMAIN}.key \
-		  --spa --index index.html \
-		  --header "Cross-Origin-Opener-Policy:same-origin" \
-		  --header "Cross-Origin-Embedder-Policy:require-corp" \
-		  --header "Access-Control-Allow-Headers:*" \
-		  --port 8123 \
-		  --verbose \
-		  "$@" \
-		&> /tmp/server.log 
-}
-
 function runserver() {
 	local CARGO_TARGET_DIR=$HOME/delme/rust-targets
 	for a in /tmp/server \
@@ -95,29 +62,58 @@ function runserver() {
 	if [ "$(hostname)" = vps-e637d6c5 ]; then
 		DOMAIN=vps-e637d6c5.vps.ovh.net
 	fi
+
+	local PORT=$1
+	shift
+	local DIR=$1
+	shift
+
+	echo port: $PORT
+	echo dir: $DIR
+	set +e
+	OLDPID=$(lsof -ti :${PORT})
+	if [ ! -z "${OLDPID}" ]; then
+		echo kill ${OLDPID}
+		lsof -i :${PORT} || true
+		kill ${OLDPID} || true
+	fi
+	echo continuing
+
+	LOGDIR=$HOME/logs/${PORT}
+	TIMESTAMP=$(date +%Y.%m.%d-%H.%M.%S)
+	mkdir -p ${LOGDIR}
 	
 	nohup ${SERVER} \
 		  --cert /tmp/${DOMAIN}.cert  \
 		  --key /tmp/${DOMAIN}.key \
-		  --port 8123 \
-		  "$@" \
-		&> /tmp/server.log 
+		  --port ${PORT} \
+		  --directory ${DIR} \
+		&> ${LOGDIR}/${TIMESTAMP}.log 
 }
 
 function main() {
 	echo stop old server.. 
-	killall miniserve || true
-	killall server || true
 	sleep 1
+	local MASTER=
+	if [ "${1:-}" = "master" ]; then
+		MASTER=1
+	fi
 
-	if ! make-dist /tmp/dist; then
-		echo make-dist failed.
+	DIR=/tmp/dist-test
+	PORT=8124
+	if [ "${MASTER}" = "1" ]; then
+		DIR=/tmp/dist
+		PORT=8123
+	fi
+
+	if ! make-dist ${DIR}; then
+		echo make-dist failed on ${DIR}
 		echo moving on.
 	fi
-	cd /tmp/dist
+	cd ${DIR}
 	
 	# runminiserve &
-	runserver &
+	runserver ${PORT} ${DIR} &
 	sleep 5
 	echo ok
 }
