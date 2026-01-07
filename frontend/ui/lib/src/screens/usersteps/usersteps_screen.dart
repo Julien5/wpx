@@ -80,15 +80,16 @@ class UserStepsScreen extends StatelessWidget {
 }
 
 class UserStepsProvider extends StatelessWidget {
-  const UserStepsProvider({super.key});
+  final SegmentModel model;
+  const UserStepsProvider({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
     RootModel root = Provider.of<RootModel>(context);
     Bridge bridge = root.getBridge();
     assert(bridge.isLoaded());
-    return ChangeNotifierProvider(
-      create: (context) => SegmentModel(bridge, root.trackSegment()),
+    return ChangeNotifierProvider.value(
+      value: model,
       builder: (context, child) {
         return UserStepsScreen();
       },

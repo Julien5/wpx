@@ -160,7 +160,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
         seconds: (statistics.distanceEnd / parameters.speed).round(),
       );
       DateTime endTime = startTime!.add(duration);
-      endTimeText = DateFormat('HH:mm').format(endTime!);
+      endTimeText = DateFormat('HH:mm').format(endTime);
     }
 
     EdgeInsets valuePadding = const EdgeInsets.fromLTRB(15, 0, 15, 0);
@@ -259,10 +259,9 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
               Padding(
                 padding: const EdgeInsets.all(8.0).add(valuePadding),
                 child: Text(
-                    "${hm.toStringAsFixed(0)} m",
-                    textAlign: TextAlign.right,
-                  ),
-                ,
+                  "${hm.toStringAsFixed(0)} m",
+                  textAlign: TextAlign.right,
+                ),
               ),
             ],
           ),

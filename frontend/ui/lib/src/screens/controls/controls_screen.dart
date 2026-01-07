@@ -77,15 +77,16 @@ class ControlsScreen extends StatelessWidget {
 }
 
 class ControlsProvider extends StatelessWidget {
-  const ControlsProvider({super.key});
+  final SegmentModel model;
+  const ControlsProvider({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
     RootModel root = Provider.of<RootModel>(context);
     Bridge bridge = root.getBridge();
     assert(bridge.isLoaded());
-    return ChangeNotifierProvider(
-      create: (context) => SegmentModel(bridge, root.trackSegment()),
+    return ChangeNotifierProvider.value(
+      value: model,
       builder: (context, child) {
         return ControlsScreen();
       },

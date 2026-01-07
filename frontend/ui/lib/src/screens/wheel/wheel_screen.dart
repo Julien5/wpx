@@ -5,7 +5,9 @@ import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/segments/future_rendering_widget.dart';
+import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 
 class WheelWidget extends StatefulWidget {
@@ -29,28 +31,27 @@ class _WheelWidgetState extends State<WheelWidget> {
   }
 }
 
-class WheelScreen extends StatefulWidget {
+class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
 
-  @override
-  State<WheelScreen> createState() => _WheelScreenState();
-}
-
-class _WheelScreenState extends State<WheelScreen> {
   void gotoSettings(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(RouteManager.settingsView);
   }
 
-  Future<void> gotoUserSteps(BuildContext ctx) async {
-    await Navigator.of(ctx).pushNamed(RouteManager.userStepsView);
-    // rebuild
-    setState(() {});
+  void gotoUserSteps(BuildContext ctx) {
+    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    Navigator.push(
+      ctx,
+      MaterialPageRoute(builder: (context) => UserStepsProvider(model: model)),
+    );
   }
 
-  Future<void> gotoControls(BuildContext ctx) async {
-    await Navigator.of(ctx).pushNamed(RouteManager.controlsView);
-    // rebuild
-    setState(() {});
+  void gotoControls(BuildContext ctx) {
+    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    Navigator.push(
+      ctx,
+      MaterialPageRoute(builder: (context) => ControlsProvider(model: model)),
+    );
   }
 
   @override

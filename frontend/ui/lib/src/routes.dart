@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/screens/export/export_screen.dart';
 import 'package:ui/src/screens/interactive/interactive_screen.dart';
@@ -7,17 +6,13 @@ import 'package:ui/src/screens/segments/segments_screen.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
-import 'screens/usersteps/usersteps_screen.dart';
-
 class RouteManager {
   static const String home = '/';
   static const String wheelView = '/wheel';
   static const String settingsView = '/settings';
   static const String segmentsView = '/segments';
   static const String exportView = '/export';
-  static const String userStepsView = '/usersteps';
   static const String interactiveView = '/interactive';
-  static const String controlsView = '/controls';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -38,12 +33,6 @@ class RouteManager {
 
       case wheelView:
         return MaterialPageRoute(builder: (_) => WheelProvider());
-
-      case userStepsView:
-        return MaterialPageRoute(builder: (_) => UserStepsProvider());
-
-      case controlsView:
-        return MaterialPageRoute(builder: (_) => ControlsProvider());
 
       default:
         return MaterialPageRoute(
