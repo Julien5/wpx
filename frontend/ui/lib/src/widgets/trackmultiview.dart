@@ -126,6 +126,37 @@ class WhiteWidget extends StatelessWidget {
   }
 }
 
+class SideIconButton extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final double size;
+  final IconData iconData;
+  const SideIconButton({
+    super.key,
+    required this.iconData,
+    this.onPressed,
+    this.size = 30,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: IconButton(
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          minimumSize: Size(size, size),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          backgroundColor: Colors.grey, // gray background
+          foregroundColor: Colors.blue, // icon/text color
+        ),
+        onPressed: () => {print("hi")},
+        icon: Icon(iconData),
+      ),
+    );
+  }
+}
+
 class TrackMultiView extends StatefulWidget {
   final Set<InputType> kinds;
   const TrackMultiView({super.key, required this.kinds});
@@ -160,6 +191,19 @@ class _TrackMultiViewState extends State<TrackMultiView> {
   @override
   Widget build(BuildContext ctx) {
     double margin = 8;
+    Widget _pos = Positioned.fill(
+      right: 8,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SideIconButton(iconData: Icons.abc),
+          SideIconButton(iconData: Icons.access_alarm),
+          SideIconButton(iconData: Icons.account_balance_wallet_rounded),
+        ],
+      ),
+    );
+
     return GestureDetector(
       onTap: onTap,
       child: ConstrainedBox(
@@ -169,7 +213,7 @@ class _TrackMultiViewState extends State<TrackMultiView> {
           child: SizedBox(
             width: double.infinity,
             height: 200,
-            child: Stack(children: widgets),
+            child: Stack(children: [...widgets]),
           ),
         ),
       ),
