@@ -124,6 +124,8 @@ impl Backend {
         };
         self.send(&"update waypoints".to_string()).await;
         self.backend_data = Some(data);
+
+        self.set_user_step_options(&self.get_parameters().user_steps_options);
         self.send(&"done".to_string()).await;
         Ok(())
     }
