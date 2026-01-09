@@ -131,15 +131,15 @@ class WhiteWidget extends StatelessWidget {
   }
 }
 
-class StackWidget extends StatefulWidget {
+class TrackMultiView extends StatefulWidget {
   final Set<InputType> kinds;
-  const StackWidget({super.key, required this.kinds});
+  const TrackMultiView({super.key, required this.kinds});
 
   @override
-  State<StackWidget> createState() => _StackWidgetState();
+  State<TrackMultiView> createState() => _TrackMultiViewState();
 }
 
-class _StackWidgetState extends State<StackWidget> {
+class _TrackMultiViewState extends State<TrackMultiView> {
   List<Widget> widgets = [Text("loading"), Text("loading"), Text("loading")];
 
   @override
@@ -250,7 +250,7 @@ class WheelScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              StackWidget(kinds: allkinds()),
+              TrackMultiView(kinds: allkinds()),
               Expanded(child: vspace),
               statisticsCard,
               Expanded(child: vspace),

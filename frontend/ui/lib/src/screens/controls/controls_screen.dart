@@ -61,7 +61,7 @@ class ControlsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            StackWidget(kinds: control),
+            TrackMultiView(kinds: control),
             SizedBox(height: 10),
             TextWidget(),
             SizedBox(height: 10),
