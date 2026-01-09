@@ -5,7 +5,7 @@ import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/screens/segments/future_rendering_widget.dart';
+import 'package:ui/src/widgets/future_rendering_widget.dart';
 
 class InteractiveMapView extends StatelessWidget {
   const InteractiveMapView({super.key});

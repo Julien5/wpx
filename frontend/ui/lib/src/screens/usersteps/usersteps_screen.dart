@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/usersteps/usersteps_table.dart';
-import 'package:ui/src/screens/wheel/wheel_screen.dart';
+import 'package:ui/src/widgets/trackmultiview.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
 class ButtonWidget extends StatelessWidget {

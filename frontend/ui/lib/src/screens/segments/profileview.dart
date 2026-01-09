@@ -3,8 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-
-import 'future_rendering_widget.dart';
+import 'package:ui/src/widgets/future_rendering_widget.dart';
 
 class ProfileConsumer extends StatelessWidget {
   const ProfileConsumer({super.key});
