@@ -161,19 +161,15 @@ impl BoundingBox {
         let x = (self._min.x + self._max.x) / 2f64;
         let y = (self._min.y + self._max.y) / 2f64;
         let (wanted_width, wanted_height) = (wanted.width as f64, wanted.height as f64);
-        let alpha = (wanted_width / self.width()) * (self.height() / wanted_height);
-        let alpha_w = if self.height() > self.width() {
-            alpha
+        let ratio = self.height() / self.width();
+        let wanted_ratio = wanted_height / wanted_width;
+        let mut new_height = self.height();
+        let mut new_width = self.width();
+        if wanted_ratio > ratio {
+            new_height = wanted_ratio * self.width();
         } else {
-            1f64
-        };
-        let alpha_h = if self.height() < self.width() {
-            1f64 / alpha
-        } else {
-            1f64
-        };
-        let new_width = alpha_w * self.width();
-        let new_height = alpha_h * self.height();
+            new_width = self.height() / wanted_ratio;
+        }
         let deltaw = 0.5f64 * new_width;
         let deltah = 0.5f64 * new_height;
         self._max.x = x + deltaw;

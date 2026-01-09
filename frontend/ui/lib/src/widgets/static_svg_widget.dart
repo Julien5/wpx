@@ -16,15 +16,17 @@ class StaticSvgWidget extends StatelessWidget {
         double scale = scaleDown(svgRootElement.size, displaySize);
         Size scaledSize = svgRootElement.size * scale;
         developer.log(
-          "scaledSize=$scaledSize, constraints-size=$displaySize => scale=$scale",
+          "objectSize=${svgRootElement.size}, constraints-size=$displaySize => scale=$scale",
         );
-        return ClipRect(child:CustomPaint(
-          size: scaledSize,
-          painter: StaticSvgPainter(
-            root: svgRootElement,
-            renderingScale: scale,
+        return ClipRect(
+          child: CustomPaint(
+            size: scaledSize,
+            painter: StaticSvgPainter(
+              root: svgRootElement,
+              renderingScale: scale,
+            ),
           ),
-        ));
+        );
       },
     );
   }
