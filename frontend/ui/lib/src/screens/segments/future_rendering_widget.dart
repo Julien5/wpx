@@ -33,16 +33,12 @@ class _FutureRenderingInnerWidgetState extends State<FutureRenderingInnerWidget>
         svgWidget = SvgWidget(svgRootElement: svgRootElement);
       }
     }
+
     if (!future.done() && svgWidget == null) {
       return Text("starting ${future.trackData} ${future.id()}");
     }
 
-    if (!future.done()) {
-      /*return Stack(
-        children: <Widget>[,
-          ,
-        ],
-      );*/
+    if (!future.done()) {    
     }
     return svgWidget!;
   }

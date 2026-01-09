@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/widgets/slidervalues.dart';
 
@@ -40,8 +41,11 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
   void readModel() {
     developer.log("read model");
-    RootModel rootModel = Provider.of<RootModel>(context, listen: false);
-    bridge.Parameters parameters = rootModel.parameters();
+    SegmentModel segmentModel = Provider.of<SegmentModel>(
+      context,
+      listen: false,
+    );
+    bridge.Parameters parameters = segmentModel.parameters();
     setState(() {
       startTime = DateTime.parse(parameters.startTime);
       speed = parameters.speed;
@@ -49,15 +53,18 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   }
 
   void writeModel() {
-    developer.log("mounted?");
     if (!mounted) return;
-    developer.log("mounted");
-    RootModel rootModel = Provider.of<RootModel>(context, listen: false);
-    bridge.Parameters oldParameters = rootModel.parameters();
+    SegmentModel segmentModel = Provider.of<SegmentModel>(context, listen: false);
+    bridge.Parameters oldParameters = segmentModel.parameters();
     ParameterChanger changer = ParameterChanger(init: oldParameters);
     changer.changeSpeed(speed!);
     changer.changeStartTime(startTime!);
-    rootModel.setParameters(changer.current());
+    bridge.Parameters parameters=changer.current();
+    segmentModel.setParameters(parameters);
+    setState(() {
+      startTime = DateTime.parse(parameters.startTime);
+      speed = parameters.speed;
+    });
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -67,18 +74,14 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     );
 
     // Guard against using the BuildContext after an async gap
-
     if (picked != null) {
-      DateTime dateTime = DateTime(
+      startTime = DateTime(
         startTime!.year,
         startTime!.month,
         startTime!.day,
         picked.hour,
         picked.minute,
       );
-      setState(() {
-        startTime = dateTime;
-      });
       writeModel();
     }
   }
@@ -91,7 +94,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   }
 
   // TODO: move this in another file
-  void openTimeBottomSheet() {
+  void openSpeedDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -116,7 +119,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
                     setDialogState(() {
                       speed = newSpeed;
                     });
-                    setState(() {}); // Also update parent widget if needed
+                    writeModel();
                   },
                   enabled: true,
                 ),
@@ -146,12 +149,12 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
   @override
   Widget build(BuildContext ctx) {
-    RootModel rootModel = Provider.of<RootModel>(ctx);
-    bridge.Parameters parameters = rootModel.parameters();
-    bridge.SegmentStatistics statistics = rootModel.statistics();
+    SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
+    bridge.Parameters parameters = segmentModel.parameters();
+    bridge.SegmentStatistics statistics = segmentModel.statistics();
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
-    double kmh = rootModel.parameters().speed * 3600 / 1000;
+    double kmh = segmentModel.parameters().speed * 3600 / 1000;
     String startTimeText = "?";
     String endTimeText = "?";
     if (startTime != null) {
@@ -207,7 +210,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: openTimeBottomSheet,
+                      onPressed: openSpeedDialog,
                       style: ElevatedButton.styleFrom(
                         padding: valuePadding,
                         minimumSize: Size.zero,

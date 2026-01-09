@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui/src/log.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/utils.dart';
 
 enum TrackData { profile, yaxis, map, wheel }
 
@@ -26,7 +27,7 @@ class FutureRenderer with ChangeNotifier {
 
   void setProfileIndication(bridge.ProfileIndication p) {
     _bridge.setProfileIndication(p: p);
-    reset();
+    restart();
   }
 
   void setKinds(Set<bridge.InputType> k) {
@@ -40,14 +41,10 @@ class FutureRenderer with ChangeNotifier {
     return kinds!;
   }
 
-  (int, int) getSizeAsTuple() {
+  Size getSize() {
+    // this size is passed to the backend for rendering
     assert(size != null);
-    int w = size!.width.floor();
-    int h = w;
-    if (size!.height.isFinite) {
-      h = size!.height.floor();
-    }
-    return (w, h);
+    return size!;
   }
 
   void start() {
@@ -57,25 +54,26 @@ class FutureRenderer with ChangeNotifier {
     }
     log("[render-request-start:$trackData]");
     _result = null;
+    (int, int) sizeParameter = sizeAsTuple(makeFinite(getSize()));
     if (trackData == TrackData.profile) {
       _future = _bridge.renderSegmentWhat(
         segment: _segment,
         what: "profile",
-        size: getSizeAsTuple(),
+        size: sizeParameter,
         kinds: getKinds(),
       );
     } else if (trackData == TrackData.map) {
       _future = _bridge.renderSegmentWhat(
         segment: _segment,
         what: "map",
-        size: getSizeAsTuple(),
+        size: sizeParameter,
         kinds: getKinds(),
       );
     } else if (trackData == TrackData.yaxis) {
       _future = _bridge.renderSegmentWhat(
         segment: _segment,
         what: "ylabels",
-        size: getSizeAsTuple(),
+        size: sizeParameter,
         kinds: getKinds(),
       );
     } else if (trackData == TrackData.wheel) {
@@ -85,7 +83,7 @@ class FutureRenderer with ChangeNotifier {
       _future = _bridge.renderSegmentWhat(
         segment: _segment,
         what: "wheel",
-        size: getSizeAsTuple(),
+        size: sizeParameter,
         kinds: getKinds(),
       );
       log("[render-request-started:C]");
@@ -114,7 +112,13 @@ class FutureRenderer with ChangeNotifier {
     notifyListeners();
   }
 
-  void reset() {
+void reset() {
+    _future = null;
+    _result = null;
+    notifyListeners();
+  }
+
+  void restart() {
     _future = null;
     _result = null;
     start();
@@ -185,8 +189,8 @@ class Renderers {
   }
 
   void reset() {
-    profileRenderer.reset();
-    mapRenderer.reset();
-    yaxisRenderer.reset();
+    profileRenderer.restart();
+    mapRenderer.restart();
+    yaxisRenderer.restart();
   }
 }

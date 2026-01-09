@@ -26,3 +26,23 @@ ScreenOrientation screenOrientation(Size size) {
   }
   return ScreenOrientation.portrait;
 }
+
+(int, int) sizeAsTuple(Size s) {
+  assert(s.width.isFinite);
+  assert(s.height.isFinite);
+  return (s.width.floor(), s.height.floor());
+}
+
+Size makeFinite(Size size) {
+  // this size is passed to the backend for rendering
+  int max = 1280 * 1280 * 1280;
+  int w = max;
+  int h = max;
+  if (size.width.isFinite) {
+    w = size.width.floor();
+  }
+  if (size.height.isFinite) {
+    h = size.height.floor();
+  }
+  return Size(w.toDouble(), h.toDouble());
+}

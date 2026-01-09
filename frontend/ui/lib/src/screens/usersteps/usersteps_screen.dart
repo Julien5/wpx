@@ -63,7 +63,7 @@ class UserStepsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Divider(height: 5),
-            WheelWidget(kinds: usersteps),
+            StackWidget(kinds: usersteps),
             Divider(height: 5),
             SizedBox(height: 10),
             TextWidget(),
@@ -85,9 +85,6 @@ class UserStepsProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    Bridge bridge = root.getBridge();
-    assert(bridge.isLoaded());
     return ChangeNotifierProvider.value(
       value: model,
       builder: (context, child) {
