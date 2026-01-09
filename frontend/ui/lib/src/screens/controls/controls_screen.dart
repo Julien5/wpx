@@ -62,7 +62,7 @@ class ControlsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Divider(),
-            WheelWidget(kinds: control),
+            StackWidget(kinds: control),
             Divider(),
             SizedBox(height: 10),
             TextWidget(),

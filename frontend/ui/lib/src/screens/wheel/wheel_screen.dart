@@ -32,15 +32,30 @@ class _SvgWidgetState extends State<SvgWidget> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initState());
+  }
+
+  void _initState() {
+    assert(mounted);
+    SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
+    renderer = model.giveRenderer(widget.kinds, widget.trackData);
+    if (widget.trackData == TrackData.wheel) {
+      renderer!.setSize(widget.rendererSize);
+    } else {
+      renderer!.setSize(widget.rendererSize * 1.5);
+    }
+    renderer!.addListener(_onRendererChanged);
+    _onRendererChanged();
   }
 
   @override
   void dispose() {
-    renderer?.removeListener(_onRendererChanged);
     super.dispose();
+    renderer!.removeListener(_onRendererChanged);
   }
 
   void _onRendererChanged() {
+    developer.log("[_onRendererChanged] _onRendererChanged");
     if (!mounted) {
       return;
     }
@@ -52,59 +67,36 @@ class _SvgWidgetState extends State<SvgWidget> {
     });
   }
 
-  FutureRenderer makeRenderer(SegmentModel model) {
-    return model.giveRenderer(widget.kinds, widget.trackData);
-  }
-
   @override
   Widget build(BuildContext ctx) {
-    if (renderer == null || renderer!.getSize() != widget.rendererSize) {
-      developer.log("[REMAKE MODEL] $renderer");
-      renderer?.removeListener(_onRendererChanged);
-      SegmentModel model = Provider.of<SegmentModel>(ctx);
-      renderer = makeRenderer(model);
-      renderer!.setSize(widget.rendererSize);
-      renderer!.addListener(_onRendererChanged);
-      assert(renderer!.getSize() == widget.rendererSize);
+    if (renderer == null) {
+      return Text("hi");
     }
     return FutureRenderingWidget(future: renderer!, interactive: false);
   }
 }
 
-class ProfileWidget extends StatelessWidget {
+class LayoutWidget extends StatelessWidget {
   final Set<InputType> kinds;
-  const ProfileWidget({super.key, required this.kinds});
+  final TrackData trackData;
+  final bool isCurrent;
+  const LayoutWidget({
+    super.key,
+    required this.kinds,
+    required this.trackData,
+    required this.isCurrent,
+  });
 
   @override
   Widget build(BuildContext ctx) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        Size size = constraints.biggest * 1.5;
+        Size size = constraints.biggest;
         developer.log("ProfileWidget size: $size");
         return SvgWidget(
           rendererSize: size,
           kinds: kinds,
-          trackData: TrackData.profile,
-        );
-      },
-    );
-  }
-}
-
-class MapWidget extends StatelessWidget {
-  final Set<InputType> kinds;
-  const MapWidget({super.key, required this.kinds});
-
-  @override
-  Widget build(BuildContext ctx) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        Size size = constraints.biggest * 1.5;
-        developer.log("ProfileWidget size: $size");
-        return SvgWidget(
-          rendererSize: size,
-          kinds: kinds,
-          trackData: TrackData.map,
+          trackData: trackData,
         );
       },
     );
@@ -131,26 +123,6 @@ class WhiteWidget extends StatelessWidget {
   }
 }
 
-class WheelWidget extends StatelessWidget {
-  final Set<InputType> kinds;
-  const WheelWidget({super.key, required this.kinds});
-
-  @override
-  Widget build(BuildContext ctx) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        Size size = constraints.biggest;
-        developer.log("ProfileWidget size: $size");
-        return SvgWidget(
-          rendererSize: size,
-          kinds: kinds,
-          trackData: TrackData.wheel,
-        );
-      },
-    );
-  }
-}
-
 class StackWidget extends StatefulWidget {
   final Set<InputType> kinds;
   const StackWidget({super.key, required this.kinds});
@@ -161,19 +133,35 @@ class StackWidget extends StatefulWidget {
 
 class _StackWidgetState extends State<StackWidget> {
   List<Widget> widgets = [Text("loading"), Text("loading"), Text("loading")];
-  int i = 0;
 
   @override
   void initState() {
     super.initState();
     widgets.clear();
     widgets.add(
-      ProfileWidget(key: const ValueKey('wheel'), kinds: widget.kinds),
+      LayoutWidget(
+        key: const ValueKey('wheel'),
+        kinds: widget.kinds,
+        trackData: TrackData.wheel,
+        isCurrent: false,
+      ),
     );
-    widgets.add(MapWidget(key: const ValueKey('map'), kinds: widget.kinds));
+    widgets.add(
+      LayoutWidget(
+        key: const ValueKey('map'),
+        kinds: widget.kinds,
+        trackData: TrackData.map,
+        isCurrent: false,
+      ),
+    );
     widgets.add(WhiteWidget(key: const ValueKey('white'), color: Colors.white));
     widgets.add(
-      WheelWidget(key: const ValueKey('profile'), kinds: widget.kinds),
+      LayoutWidget(
+        key: const ValueKey('profile'),
+        kinds: widget.kinds,
+        trackData: TrackData.profile,
+        isCurrent: false,
+      ),
     );
   }
 
@@ -225,12 +213,15 @@ class WheelScreen extends StatelessWidget {
     model.notify();
   }
 
-  void gotoControls(BuildContext ctx) {
+  Future<void> gotoControls(BuildContext ctx) async {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
     Navigator.push(
       ctx,
-      MaterialPageRoute(builder: (context) => ControlsProvider(model: model)),
+      MaterialPageRoute(
+        builder: (context) => ControlsProvider(model: model.copy()),
+      ),
     );
+    model.notify();
   }
 
   @override

@@ -112,7 +112,7 @@ class FutureRenderer with ChangeNotifier {
     notifyListeners();
   }
 
-void reset() {
+  void reset() {
     _future = null;
     _result = null;
     notifyListeners();
@@ -131,9 +131,6 @@ void reset() {
     size = newSize;
     _future = null;
     _result = null;
-    Future.delayed(const Duration(milliseconds: 0), () {
-      start();
-    });
     return true;
   }
 
