@@ -12,15 +12,23 @@ import 'package:ui/src/screens/segments/future_rendering_widget.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 
-class SvgWidget extends StatefulWidget {
+class RendererParameters {
   final Set<InputType> kinds;
   final TrackData trackData;
+  const RendererParameters({required this.kinds, required this.trackData});
+  ValueKey createKey() {
+    final sortedKinds = kinds.map((k) => k.toString()).toList()..sort();
+    return ValueKey('${trackData.toString()}|${sortedKinds.join(",")}');
+  }
+}
+
+class SvgWidget extends StatefulWidget {
+  final RendererParameters parameters;
   final Size rendererSize;
   const SvgWidget({
     super.key,
     required this.rendererSize,
-    required this.kinds,
-    required this.trackData,
+    required this.parameters,
   });
 
   @override
@@ -38,8 +46,11 @@ class _SvgWidgetState extends State<SvgWidget> {
   void _initState() {
     assert(mounted);
     SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
-    renderer = model.giveRenderer(widget.kinds, widget.trackData);
-    if (widget.trackData == TrackData.wheel) {
+    renderer = model.giveRenderer(
+      widget.parameters.kinds,
+      widget.parameters.trackData,
+    );
+    if (widget.parameters.trackData == TrackData.wheel) {
       renderer!.setSize(widget.rendererSize);
     } else {
       renderer!.setSize(widget.rendererSize * 1.5);
@@ -77,15 +88,16 @@ class _SvgWidgetState extends State<SvgWidget> {
 }
 
 class LayoutWidget extends StatelessWidget {
-  final Set<InputType> kinds;
-  final TrackData trackData;
-  final bool isCurrent;
-  const LayoutWidget({
-    super.key,
-    required this.kinds,
-    required this.trackData,
-    required this.isCurrent,
-  });
+  final RendererParameters parameters;
+  const LayoutWidget({super.key, required this.parameters});
+
+  static LayoutWidget make(Set<InputType> kinds, TrackData trackData) {
+    RendererParameters p = RendererParameters(
+      kinds: kinds,
+      trackData: trackData,
+    );
+    return LayoutWidget(key: p.createKey(), parameters: p);
+  }
 
   @override
   Widget build(BuildContext ctx) {
@@ -93,11 +105,7 @@ class LayoutWidget extends StatelessWidget {
       builder: (BuildContext context, BoxConstraints constraints) {
         Size size = constraints.biggest;
         developer.log("ProfileWidget size: $size");
-        return SvgWidget(
-          rendererSize: size,
-          kinds: kinds,
-          trackData: trackData,
-        );
+        return SvgWidget(rendererSize: size, parameters: parameters);
       },
     );
   }
@@ -138,31 +146,10 @@ class _StackWidgetState extends State<StackWidget> {
   void initState() {
     super.initState();
     widgets.clear();
-    widgets.add(
-      LayoutWidget(
-        key: const ValueKey('wheel'),
-        kinds: widget.kinds,
-        trackData: TrackData.wheel,
-        isCurrent: false,
-      ),
-    );
-    widgets.add(
-      LayoutWidget(
-        key: const ValueKey('map'),
-        kinds: widget.kinds,
-        trackData: TrackData.map,
-        isCurrent: false,
-      ),
-    );
+    widgets.add(LayoutWidget.make(widget.kinds, TrackData.profile));
+    widgets.add(LayoutWidget.make(widget.kinds, TrackData.map));
     widgets.add(WhiteWidget(key: const ValueKey('white'), color: Colors.white));
-    widgets.add(
-      LayoutWidget(
-        key: const ValueKey('profile'),
-        kinds: widget.kinds,
-        trackData: TrackData.profile,
-        isCurrent: false,
-      ),
-    );
+    widgets.add(LayoutWidget.make(widget.kinds, TrackData.wheel));
   }
 
   void onTap() {
