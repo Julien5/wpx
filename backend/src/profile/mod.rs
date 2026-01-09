@@ -7,7 +7,7 @@ use svg::Node;
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
-use crate::inputpoint::{InputPoint, InputType};
+use crate::inputpoint::{InputPoint, InputType, Kinds};
 use crate::label_placement;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
@@ -415,7 +415,7 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_segment(&mut self, segment: &SegmentData) {
+    pub fn add_segment(&mut self, segment: &SegmentData, kinds: &Kinds) {
         let bbox = &self.bboxview;
 
         /*if render_device != RenderDevice::PDF {
@@ -467,6 +467,9 @@ impl ProfileView {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
+                if !kinds.contains(&w.kind()) {
+                    continue;
+                }
                 for proj in &w.track_projections {
                     let index = proj.track_index;
                     let trackpoint = &track.wgs84[index];
@@ -643,12 +646,16 @@ pub struct ProfileRenderResult {
     pub rendered: Vec<InputPoint>,
 }
 
-pub fn profile(segment: &segment::SegmentData, size: &IntegerSize2D) -> ProfileRenderResult {
+pub fn profile(
+    segment: &segment::SegmentData,
+    size: &IntegerSize2D,
+    kinds: &Kinds,
+) -> ProfileRenderResult {
     let profile_bbox =
         ProfileBoundingBox::from_track(&segment.track, &segment.start(), &segment.end());
     let mut view = ProfileView::init(&profile_bbox, size, &segment.parameters.profile_options);
     view.add_canvas();
-    view.add_segment(&segment);
+    view.add_segment(&segment, kinds);
     view.render_model();
     view.render()
 }

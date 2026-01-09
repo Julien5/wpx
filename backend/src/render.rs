@@ -3,7 +3,7 @@
 use euclid::Size2D;
 
 use crate::backend::Backend;
-use crate::inputpoint::InputType;
+use crate::inputpoint::{self, InputType};
 use crate::{track, waypoint};
 
 use std::collections::{BTreeMap, HashSet};
@@ -120,6 +120,7 @@ pub fn make_typst_document(backend: &mut Backend) -> String {
 
     let vector: Vec<_> = all_points.iter().map(|(_k, w)| w.clone()).collect();
     let all_waypoints = backend.export_points(&vector);
+    let allkinds = inputpoint::allkinds();
 
     for segment in &segments {
         let range = segment.range();
@@ -136,13 +137,13 @@ pub fn make_typst_document(backend: &mut Backend) -> String {
             segment.parameters.profile_options.size.0,
             segment.parameters.profile_options.size.1,
         );
-        let rendered_profile = segment.render_profile(&size);
+        let rendered_profile = segment.render_profile(&size, &allkinds);
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id());
             std::fs::write(&f, &rendered_profile.svg).unwrap();
         }
         let map_options = &backend.get_parameters().map_options;
-        let m = segment.render_map(&map_options.size2d());
+        let m = segment.render_map(&map_options.size2d(), &allkinds);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id());
             std::fs::write(&f, &m).unwrap();

@@ -1,6 +1,6 @@
 use crate::bbox::BoundingBox;
 use crate::bboxes::BoundingBoxes;
-use crate::inputpoint::{InputPoint, InputType, SharedPointMaps};
+use crate::inputpoint::{InputPoint, InputType, Kinds, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
 use crate::profile::ProfileRenderResult;
@@ -91,9 +91,9 @@ impl SegmentData {
         )
     }
 
-    pub fn render_profile(&self, size: &IntegerSize2D) -> ProfileRenderResult {
+    pub fn render_profile(&self, size: &IntegerSize2D, kinds: &Kinds) -> ProfileRenderResult {
         log::info!("render profile:{}", self.id());
-        let ret = profile::profile(&self, size);
+        let ret = profile::profile(&self, size, kinds);
         if self.parameters.debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id());
             std::fs::write(filename, &ret.svg).expect("Unable to write file");
@@ -101,9 +101,9 @@ impl SegmentData {
         ret
     }
 
-    pub fn render_map(&self, size: &IntegerSize2D) -> String {
+    pub fn render_map(&self, size: &IntegerSize2D, kinds: &Kinds) -> String {
         log::info!("render map:{}", self.id());
-        let ret = svgmap::map(&self, size);
+        let ret = svgmap::map(&self, size, kinds);
         if self.parameters.debug {
             let filename = std::format!("/tmp/map-{}.svg", self.id());
             std::fs::write(filename, &ret).expect("Unable to write file");

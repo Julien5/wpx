@@ -338,8 +338,8 @@ impl Backend {
         );
         let data = self.make_segment_data(segment);
         let ret = match what.as_str() {
-            "profile" => data.render_profile(size).svg,
-            "map" => data.render_map(size),
+            "profile" => data.render_profile(size, &kinds).svg,
+            "map" => data.render_map(size, &kinds),
             "ylabels" => self.render_yaxis_labels_overlay(&segment, size),
             "wheel" => {
                 let model = wheel::model::WheelModel::make(&data, kinds);

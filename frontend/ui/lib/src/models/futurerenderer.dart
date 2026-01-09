@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui/src/log.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/utils.dart';
 
@@ -11,7 +12,7 @@ class FutureRenderer with ChangeNotifier {
   final TrackData trackData;
   final bridge.Bridge _bridge;
   Size? size;
-  Set<bridge.InputType>? kinds;
+  final Set<bridge.InputType> kinds;
 
   Future<String>? _future;
   String? _result;
@@ -20,6 +21,7 @@ class FutureRenderer with ChangeNotifier {
     required bridge.Bridge bridge,
     required bridge.Segment segment,
     required this.trackData,
+    required this.kinds,
   }) : _segment = segment,
        _bridge = bridge {
     assert(_bridge.isLoaded());
@@ -28,17 +30,6 @@ class FutureRenderer with ChangeNotifier {
   void setProfileIndication(bridge.ProfileIndication p) {
     _bridge.setProfileIndication(p: p);
     restart();
-  }
-
-  void setKinds(Set<bridge.InputType> k) {
-    kinds = k;
-  }
-
-  Set<bridge.InputType> getKinds() {
-    if (kinds == null) {
-      return bridge.allkinds();
-    }
-    return kinds!;
   }
 
   Size getSize() {
@@ -60,21 +51,21 @@ class FutureRenderer with ChangeNotifier {
         segment: _segment,
         what: "profile",
         size: sizeParameter,
-        kinds: getKinds(),
+        kinds: kinds,
       );
     } else if (trackData == TrackData.map) {
       _future = _bridge.renderSegmentWhat(
         segment: _segment,
         what: "map",
         size: sizeParameter,
-        kinds: getKinds(),
+        kinds: kinds,
       );
     } else if (trackData == TrackData.yaxis) {
       _future = _bridge.renderSegmentWhat(
         segment: _segment,
         what: "ylabels",
         size: sizeParameter,
-        kinds: getKinds(),
+        kinds: kinds,
       );
     } else if (trackData == TrackData.wheel) {
       log("[render-request-started:A]");
@@ -84,7 +75,7 @@ class FutureRenderer with ChangeNotifier {
         segment: _segment,
         what: "wheel",
         size: sizeParameter,
-        kinds: getKinds(),
+        kinds: kinds,
       );
       log("[render-request-started:C]");
     }
@@ -145,18 +136,33 @@ class FutureRenderer with ChangeNotifier {
 }
 
 class ProfileRenderer extends FutureRenderer {
-  ProfileRenderer(bridge.Bridge bridge, bridge.Segment segment)
-    : super(bridge: bridge, segment: segment, trackData: TrackData.profile);
+  ProfileRenderer(bridge.Bridge bridge, bridge.Segment segment, Kinds kinds)
+    : super(
+        bridge: bridge,
+        segment: segment,
+        trackData: TrackData.profile,
+        kinds: kinds,
+      );
 }
 
 class YAxisRenderer extends FutureRenderer {
-  YAxisRenderer(bridge.Bridge bridge, bridge.Segment segment)
-    : super(bridge: bridge, segment: segment, trackData: TrackData.yaxis);
+  YAxisRenderer(bridge.Bridge bridge, bridge.Segment segment, Kinds kinds)
+    : super(
+        bridge: bridge,
+        segment: segment,
+        trackData: TrackData.yaxis,
+        kinds: kinds,
+      );
 }
 
 class MapRenderer extends FutureRenderer {
-  MapRenderer(bridge.Bridge bridge, bridge.Segment segment)
-    : super(bridge: bridge, segment: segment, trackData: TrackData.map);
+  MapRenderer(bridge.Bridge bridge, bridge.Segment segment, Kinds kinds)
+    : super(
+        bridge: bridge,
+        segment: segment,
+        trackData: TrackData.map,
+        kinds: kinds,
+      );
 }
 
 class WheelRenderer extends FutureRenderer {
@@ -164,9 +170,12 @@ class WheelRenderer extends FutureRenderer {
     bridge.Bridge bridge,
     bridge.Segment segment,
     Set<bridge.InputType> kinds,
-  ) : super(bridge: bridge, segment: segment, trackData: TrackData.wheel) {
-    super.setKinds(kinds);
-  }
+  ) : super(
+        bridge: bridge,
+        segment: segment,
+        trackData: TrackData.wheel,
+        kinds: kinds,
+      );
 }
 
 class Renderers {
@@ -178,10 +187,14 @@ class Renderers {
       yaxisRenderer = yaxis,
       mapRenderer = map;
 
-  static Renderers make(bridge.Bridge bridge, bridge.Segment segment) {
-    var t = ProfileRenderer(bridge, segment);
-    var m = MapRenderer(bridge, segment);
-    var y = YAxisRenderer(bridge, segment);
+  static Renderers make(
+    bridge.Bridge bridge,
+    bridge.Segment segment,
+    Kinds kinds,
+  ) {
+    var t = ProfileRenderer(bridge, segment, kinds);
+    var m = MapRenderer(bridge, segment, kinds);
+    var y = YAxisRenderer(bridge, segment, kinds);
     return Renderers(t, y, m);
   }
 

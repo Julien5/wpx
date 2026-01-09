@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::bbox::BoundingBox;
+use crate::inputpoint::Kinds;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
@@ -82,7 +83,7 @@ pub fn euclidean_bounding_box(
 }
 
 impl MapData {
-    pub fn make(segment: &SegmentData, size: &IntegerSize2D) -> MapData {
+    pub fn make(segment: &SegmentData, size: &IntegerSize2D, kinds: &Kinds) -> MapData {
         let mut bbox = segment.map_box().clone();
         bbox.fix_aspect_ratio(size);
         let mut path = Vec::new();
@@ -117,6 +118,9 @@ impl MapData {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
+                if !kinds.contains(&w.kind()) {
+                    continue;
+                }
                 let euclidean = w.euclidean.clone();
                 if !bbox.contains(&euclidean.point2d()) {
                     continue;
@@ -192,8 +196,8 @@ impl MapData {
     }
 }
 
-pub fn map(segment: &SegmentData, size: &IntegerSize2D) -> String {
-    let svgMap = MapData::make(segment, size);
+pub fn map(segment: &SegmentData, size: &IntegerSize2D, kinds: &Kinds) -> String {
+    let svgMap = MapData::make(segment, size, kinds);
     svgMap.render()
 }
 

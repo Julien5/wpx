@@ -61,9 +61,7 @@ class UserStepsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Divider(height: 5),
             StackWidget(kinds: usersteps),
-            Divider(height: 5),
             SizedBox(height: 10),
             TextWidget(),
             SizedBox(height: 10),

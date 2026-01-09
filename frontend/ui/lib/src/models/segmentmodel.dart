@@ -37,10 +37,10 @@ class SegmentModel extends ChangeNotifier {
         _renderers[key] = WheelRenderer(_bridge, _segment, kinds);
       }
       if (trackData == TrackData.profile) {
-        _renderers[key] = ProfileRenderer(_bridge, _segment);
+        _renderers[key] = ProfileRenderer(_bridge, _segment, kinds);
       }
       if (trackData == TrackData.map) {
-        _renderers[key] = MapRenderer(_bridge, _segment);
+        _renderers[key] = MapRenderer(_bridge, _segment, kinds);
       }
     }
     return _renderers[key]!;
@@ -72,7 +72,7 @@ class SegmentModel extends ChangeNotifier {
   }
 
   ProfileRenderer createProfileRenderer(Kinds kinds) {
-    return ProfileRenderer(_bridge, _segment);
+    return ProfileRenderer(_bridge, _segment, kinds);
   }
 
   bridge.SegmentStatistics statistics() {

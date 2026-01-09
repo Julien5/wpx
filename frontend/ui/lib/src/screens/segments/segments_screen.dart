@@ -54,7 +54,7 @@ class _SegmentsViewState extends State<SegmentsView> {
     log("[_initRenderingProviders] length=${segments!.length}");
     for (var segment in segments!) {
       var w = RenderersProvider(
-        Renderers.make(rootModel.getBridge(), segment),
+        Renderers.make(rootModel.getBridge(), segment, allkinds()),
         WaypointsModel(brd: rootModel.getBridge(), segment: segment),
         SegmentView(screenOrientation: screenOrientation),
       );

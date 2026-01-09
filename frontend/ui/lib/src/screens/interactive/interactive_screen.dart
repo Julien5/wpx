@@ -92,7 +92,7 @@ class _InteractiveScreenState extends State<InteractiveScreen> {
     return Scaffold(
       appBar: appBar(ctx),
       body: ChangeNotifierProvider<MapRenderer>(
-        create: (_) => MapRenderer(root.getBridge(), trackSegment!),
+        create: (_) => MapRenderer(root.getBridge(), trackSegment!, allkinds()),
         child: InteractiveConsumer(),
       ),
     );
