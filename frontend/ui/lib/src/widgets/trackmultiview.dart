@@ -128,32 +128,35 @@ class WhiteWidget extends StatelessWidget {
 
 class SideIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
-  final double size;
-  final IconData iconData;
-  const SideIconButton({
-    super.key,
-    required this.iconData,
-    this.onPressed,
-    this.size = 30,
-  });
+  final TrackData trackData;
+  const SideIconButton({super.key, required this.trackData, this.onPressed});
+
+  final double size = 30;
+  Image icon(TrackData data) {
+    String filename = 'icons/png/map.png';
+    if (data == TrackData.wheel) {
+      filename = 'icons/png/clock.png';
+    }
+    if (data == TrackData.profile) {
+      filename = 'icons/png/profile.png';
+    }
+    return Image.asset(filename, width: size, height: size);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: IconButton(
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.zero,
-          minimumSize: Size(size, size),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          backgroundColor: Colors.white, // gray background
-          foregroundColor: Colors.blue, // icon/text color
-        ),
-        onPressed: onPressed,
-        icon: Icon(iconData),
+    IconButton button = IconButton(
+      icon: icon(trackData),
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.zero,
+        minimumSize: Size(size, size),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        backgroundColor: Colors.white, // gray background
+        foregroundColor: Colors.blue, // icon/text color
       ),
+      onPressed: onPressed,
     );
+    return SizedBox(width: size, height: size, child: button);
   }
 }
 
@@ -179,6 +182,7 @@ class _TrackMultiViewState extends State<TrackMultiView> {
   }
 
   void onTap() {
+    return;
     setState(() {
       cycleToFront();
     });
@@ -212,6 +216,10 @@ class _TrackMultiViewState extends State<TrackMultiView> {
   @override
   Widget build(BuildContext ctx) {
     double margin = 8;
+    IconButton(
+      icon: Image.asset('assets/images/profile.png', width: 20, height: 20),
+      onPressed: () {},
+    );
     Widget buttons = Positioned.fill(
       right: 8,
       child: Column(
@@ -219,15 +227,15 @@ class _TrackMultiViewState extends State<TrackMultiView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           SideIconButton(
-            iconData: Icons.abc,
+            trackData: TrackData.map,
             onPressed: () => onButtonPressed(TrackData.map),
           ),
           SideIconButton(
-            iconData: Icons.access_alarm,
+            trackData: TrackData.profile,
             onPressed: () => onButtonPressed(TrackData.profile),
           ),
           SideIconButton(
-            iconData: Icons.account_balance_wallet_rounded,
+            trackData: TrackData.wheel,
             onPressed: () => onButtonPressed(TrackData.wheel),
           ),
         ],
