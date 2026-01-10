@@ -147,10 +147,10 @@ class SideIconButton extends StatelessWidget {
           padding: EdgeInsets.zero,
           minimumSize: Size(size, size),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          backgroundColor: Colors.grey, // gray background
+          backgroundColor: Colors.white, // gray background
           foregroundColor: Colors.blue, // icon/text color
         ),
-        onPressed: () => {print("hi")},
+        onPressed: onPressed,
         icon: Icon(iconData),
       ),
     );
@@ -180,26 +180,56 @@ class _TrackMultiViewState extends State<TrackMultiView> {
 
   void onTap() {
     setState(() {
-      int end = 3;
-      Widget current = widgets[end];
-      widgets[end] = widgets[1];
-      widgets[1] = widgets[0];
-      widgets[0] = current;
+      cycleToFront();
+    });
+  }
+
+  void cycleToFront() {
+    int end = 3;
+    Widget current = widgets[end];
+    widgets[end] = widgets[1];
+    widgets[1] = widgets[0];
+    widgets[0] = current;
+  }
+
+  void bringToFront(int index) {
+    int end = 3;
+    Widget current = widgets[end];
+    widgets[end] = widgets[index];
+    widgets[index] = current;
+  }
+
+  void onButtonPressed(TrackData data) {
+    int index = widgets.indexWhere((widget) {
+      return widget is LayoutWidget && widget.parameters.trackData == data;
+    });
+    developer.log("index = $index");
+    setState(() {
+      bringToFront(index);
     });
   }
 
   @override
   Widget build(BuildContext ctx) {
     double margin = 8;
-    Widget _pos = Positioned.fill(
+    Widget buttons = Positioned.fill(
       right: 8,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          SideIconButton(iconData: Icons.abc),
-          SideIconButton(iconData: Icons.access_alarm),
-          SideIconButton(iconData: Icons.account_balance_wallet_rounded),
+          SideIconButton(
+            iconData: Icons.abc,
+            onPressed: () => onButtonPressed(TrackData.map),
+          ),
+          SideIconButton(
+            iconData: Icons.access_alarm,
+            onPressed: () => onButtonPressed(TrackData.profile),
+          ),
+          SideIconButton(
+            iconData: Icons.account_balance_wallet_rounded,
+            onPressed: () => onButtonPressed(TrackData.wheel),
+          ),
         ],
       ),
     );
@@ -213,7 +243,7 @@ class _TrackMultiViewState extends State<TrackMultiView> {
           child: SizedBox(
             width: double.infinity,
             height: 200,
-            child: Stack(children: [...widgets]),
+            child: Stack(children: [...widgets, buttons]),
           ),
         ),
       ),
