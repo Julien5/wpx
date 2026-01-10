@@ -120,11 +120,11 @@ async function download(url) {
 // Example usage
 (async () => {
     try {
+		await download("main.dart.js");
         await download("https://www.gstatic.com/flutter-canvaskit/a8bfdfc394deaed5c57bd45a64ac4294dc976a72/canvaskit.wasm");
         await download("pkg/rust_lib_ui_bg.wasm");
 		// main.dart.js is loaded by flutter again
 		// it does not bring any advantage to pre-load it
-        //await download("main.dart.js");
         const htmltext = document.querySelector(".loading-text");
         htmltext.textContent = `starting app...`;
         console.log("start app");

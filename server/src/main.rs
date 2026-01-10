@@ -3,7 +3,7 @@ use axum::{
     extract::State,
     http::{HeaderName, HeaderValue, Request, StatusCode},
     middleware::{self, Next},
-    response::IntoResponse,
+    response::{IntoResponse, Response},
     routing::{get, post},
     Router,
 };
@@ -113,6 +113,31 @@ async fn typst_handler(body: String) -> impl IntoResponse {
     }
 }
 
+async fn cache_control_middleware(req: axum::extract::Request, next: Next) -> Response {
+    let path = req.uri().path().to_string(); // Clone the path before moving req
+    let mut res = next.run(req).await;
+
+    let headers = res.headers_mut();
+
+    // Don't cache index.html or root path
+    if path == "/" || path == "/index.html" {
+        headers.insert(
+            "Cache-Control",
+            HeaderValue::from_static("no-cache, no-store, must-revalidate"),
+        );
+        headers.insert("Pragma", HeaderValue::from_static("no-cache"));
+        headers.insert("Expires", HeaderValue::from_static("0"));
+    } else {
+        // Cache everything else aggressively
+        headers.insert(
+            "Cache-Control",
+            HeaderValue::from_static("public, max-age=31535000, immutable"),
+        );
+    }
+
+    res
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize logging
@@ -149,6 +174,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/api/hello", get(hello_handler))
         .route("/api/typst", post(typst_handler))
         .layer(middleware::from_fn(log_request))
+        .layer(middleware::from_fn(cache_control_middleware))
         .layer(cors)
         .layer(
             ServiceBuilder::new().map_response(|mut res: axum::response::Response| {
@@ -165,8 +191,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "Access-Control-Allow-Headers",
                     HeaderValue::from_static("*"),
                 );
-                // does not seems to help for the case of main.dart.js
-                headers.insert("Cache-Control", HeaderValue::from_static("max-age=604800"));
                 res
             }),
         );

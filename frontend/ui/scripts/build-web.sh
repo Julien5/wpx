@@ -28,7 +28,7 @@ function build() {
 	local RELEASE="--release"
 	# RELEASE=
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web ${RELEASE}
-	flutter build web ${RELEASE} --build-name=${version}
+	flutter build web ${RELEASE} --pwa-strategy=none --build-name=${version}
 	mkdir -p build/web/pkg/
 	cp -Rv $(find /opt/flutter/ -name "flutter.js.map") build/web/
 	cp -Rf web/pkg/* build/web/pkg/
