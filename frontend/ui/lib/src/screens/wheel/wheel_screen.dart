@@ -71,24 +71,21 @@ class WheelScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
       body: Center(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 500),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TrackMultiView(kinds: allkinds()),
-              Expanded(child: vspace),
-              statisticsCard,
-              Expanded(child: vspace),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [controlsButtons, userStepsButton, pdfButton],
-              ),
-              vspace,
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TrackMultiView(kinds: allkinds()),
+            Expanded(child: vspace),
+            statisticsCard,
+            Expanded(child: vspace),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [controlsButtons, userStepsButton, pdfButton],
+            ),
+            vspace,
+          ],
         ),
       ),
     );
