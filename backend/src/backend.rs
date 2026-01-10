@@ -432,7 +432,8 @@ mod tests {
         let mut ok_count = 0;
         for k in 0..segments.len() {
             let segment = &segments[k];
-            let rendered_profile = segment.render_profile();
+            let rendered_profile =
+                segment.render_profile(&IntegerSize2D::new(1420, 400), &inputpoint::allkinds());
             let reffilename = std::format!("data/ref/profile-{}.svg", segment.id());
             println!("test {}", reffilename);
             let reference_svg = if std::fs::exists(&reffilename).unwrap() {
@@ -521,10 +522,13 @@ mod tests {
             .map(|f| backend.make_segment_data(&f))
             .collect();
 
+        let map_size = IntegerSize2D::new(400, 400);
+        let profile_size = IntegerSize2D::new(1420, 400);
+
         let mut ok_count = 0;
         for segment in &segments {
-            let _ = segment.render_profile();
-            let svg = segment.render_map(&parameters.map_options.size2d());
+            let _ = segment.render_profile(&profile_size, &inputpoint::allkinds());
+            let svg = segment.render_map(&map_size, &inputpoint::allkinds());
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id());
             println!("test {}", reffilename);
             let data = if std::fs::exists(&reffilename).unwrap() {
