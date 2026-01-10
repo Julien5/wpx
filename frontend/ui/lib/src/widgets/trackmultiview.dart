@@ -129,7 +129,13 @@ class WhiteWidget extends StatelessWidget {
 class SideIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final TrackData trackData;
-  const SideIconButton({super.key, required this.trackData, this.onPressed});
+  final TrackData selected;
+  const SideIconButton({
+    super.key,
+    required this.selected,
+    required this.trackData,
+    this.onPressed,
+  });
 
   final double size = 30;
   final double margin = 8;
@@ -146,12 +152,16 @@ class SideIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double frameWidth = 1.0;
+    if (selected == trackData) {
+      frameWidth = 3.0;
+    }
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.black, width: 3.0),
+        border: Border.all(color: Colors.black, width: frameWidth),
         borderRadius: BorderRadius.circular(margin),
       ),
       child: IconButton(
@@ -186,14 +196,13 @@ class _TrackMultiViewState extends State<TrackMultiView> {
   }
 
   void onTap() {
-    return;
     setState(() {
       cycleToFront();
     });
   }
 
   void cycleToFront() {
-    int end = 3;
+    const int end = 3;
     Widget current = widgets[end];
     widgets[end] = widgets[1];
     widgets[1] = widgets[0];
@@ -201,7 +210,7 @@ class _TrackMultiViewState extends State<TrackMultiView> {
   }
 
   void bringToFront(int index) {
-    int end = 3;
+    const int end = 3;
     Widget current = widgets[end];
     widgets[end] = widgets[index];
     widgets[index] = current;
@@ -217,13 +226,20 @@ class _TrackMultiViewState extends State<TrackMultiView> {
     });
   }
 
+  TrackData currentTrackData() {
+    const int end = 3;
+    Widget current = widgets[end];
+    if ((current is LayoutWidget) == false) {
+      return TrackData.yaxis;
+    }
+    LayoutWidget currentLayout = current as LayoutWidget;
+    return currentLayout.parameters.trackData;
+  }
+
   @override
   Widget build(BuildContext ctx) {
     double margin = 8;
-    IconButton(
-      icon: Image.asset('assets/images/profile.png', width: 20, height: 20),
-      onPressed: () {},
-    );
+    TrackData currentData = currentTrackData();
     Widget buttons = Positioned.fill(
       right: 8,
       child: Column(
@@ -231,14 +247,17 @@ class _TrackMultiViewState extends State<TrackMultiView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           SideIconButton(
+            selected: currentData,
             trackData: TrackData.map,
             onPressed: () => onButtonPressed(TrackData.map),
           ),
           SideIconButton(
+            selected: currentData,
             trackData: TrackData.profile,
             onPressed: () => onButtonPressed(TrackData.profile),
           ),
           SideIconButton(
+            selected: currentData,
             trackData: TrackData.wheel,
             onPressed: () => onButtonPressed(TrackData.wheel),
           ),
