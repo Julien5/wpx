@@ -132,6 +132,7 @@ class SideIconButton extends StatelessWidget {
   const SideIconButton({super.key, required this.trackData, this.onPressed});
 
   final double size = 30;
+  final double margin = 8;
   Image icon(TrackData data) {
     String filename = 'icons/png/map.png';
     if (data == TrackData.wheel) {
@@ -140,23 +141,26 @@ class SideIconButton extends StatelessWidget {
     if (data == TrackData.profile) {
       filename = 'icons/png/profile.png';
     }
-    return Image.asset(filename, width: size, height: size);
+    return Image.asset(filename, width: size - margin, height: size - margin);
   }
 
   @override
   Widget build(BuildContext context) {
-    IconButton button = IconButton(
-      icon: icon(trackData),
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.zero,
-        minimumSize: Size(size, size),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        backgroundColor: Colors.white, // gray background
-        foregroundColor: Colors.blue, // icon/text color
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black, width: 3.0),
+        borderRadius: BorderRadius.circular(margin),
       ),
-      onPressed: onPressed,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        constraints: BoxConstraints.tight(Size(size, size)),
+        icon: icon(trackData),
+        onPressed: onPressed,
+      ),
     );
-    return SizedBox(width: size, height: size, child: button);
   }
 }
 
