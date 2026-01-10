@@ -417,7 +417,6 @@ mod tests {
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        parameters.profile_options.size = (1420, 400);
         parameters.profile_options.max_area_ratio = 0.1f64;
         parameters.profile_options.elevation_indicators =
             std::collections::HashSet::from([ProfileIndication::NumericSlope]);

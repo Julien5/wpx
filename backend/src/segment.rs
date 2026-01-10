@@ -84,11 +84,7 @@ impl SegmentData {
     }
 
     pub fn map_box(&self) -> BoundingBox {
-        svgmap::euclidean_bounding_box(
-            &self.track,
-            &self.range(),
-            &self.parameters.map_options.size2d(),
-        )
+        svgmap::euclidean_bounding_box(&self.track, &self.range())
     }
 
     pub fn render_profile(&self, size: &IntegerSize2D, kinds: &Kinds) -> ProfileRenderResult {

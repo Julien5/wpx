@@ -1,4 +1,4 @@
-use crate::{math::IntegerSize2D, speed};
+use crate::speed;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ProfileIndication {
@@ -28,7 +28,6 @@ impl Default for UserStepsOptions {
 pub struct ProfileOptions {
     pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
     pub max_area_ratio: f64,
-    pub size: (i32, i32),
 }
 
 impl Default for ProfileOptions {
@@ -36,7 +35,6 @@ impl Default for ProfileOptions {
         ProfileOptions {
             elevation_indicators: std::collections::HashSet::default(),
             max_area_ratio: 0.05f64,
-            size: (1000, 285),
         }
     }
 }
@@ -44,20 +42,12 @@ impl Default for ProfileOptions {
 #[derive(Clone)]
 pub struct MapOptions {
     pub max_area_ratio: f64,
-    pub size: (i32, i32),
-}
-
-impl MapOptions {
-    pub fn size2d(&self) -> IntegerSize2D {
-        IntegerSize2D::new(self.size.0, self.size.1)
-    }
 }
 
 impl Default for MapOptions {
     fn default() -> MapOptions {
         MapOptions {
             max_area_ratio: 0.07f64,
-            size: (400, 400),
         }
     }
 }

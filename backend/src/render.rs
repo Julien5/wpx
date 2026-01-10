@@ -133,17 +133,14 @@ pub fn make_typst_document(backend: &mut Backend) -> String {
             .collect();
         waypoints_table.truncate(15);
         let table = points_table(&templates, &backend.d().track, &waypoints_table);
-        let size = Size2D::new(
-            segment.parameters.profile_options.size.0,
-            segment.parameters.profile_options.size.1,
-        );
-        let rendered_profile = segment.render_profile(&size, &allkinds);
+        let profile_size = Size2D::new(1420, 400);
+        let map_size = Size2D::new(400, 400);
+        let rendered_profile = segment.render_profile(&profile_size, &allkinds);
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id());
             std::fs::write(&f, &rendered_profile.svg).unwrap();
         }
-        let map_options = &backend.get_parameters().map_options;
-        let m = segment.render_map(&map_options.size2d(), &allkinds);
+        let m = segment.render_map(&map_size, &allkinds);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id());
             std::fs::write(&f, &m).unwrap();

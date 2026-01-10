@@ -72,7 +72,6 @@ struct MapData {
 pub fn euclidean_bounding_box(
     track: &Track,
     range: &std::ops::Range<usize>,
-    _size: &IntegerSize2D,
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();

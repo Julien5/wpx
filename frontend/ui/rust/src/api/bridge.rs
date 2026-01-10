@@ -95,13 +95,11 @@ pub struct _UserStepsOptions {
 pub struct _ProfileOptions {
     pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
     pub max_area_ratio: f64,
-    pub size: (i32, i32),
 }
 
 #[frb(mirror(MapOptions))]
 pub struct _MapOptions {
     pub max_area_ratio: f64,
-    pub size: (i32, i32),
 }
 
 #[frb(mirror(Parameters))]
