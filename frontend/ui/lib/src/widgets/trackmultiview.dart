@@ -17,71 +17,6 @@ class RendererParameters {
   }
 }
 
-class SvgWidget extends StatefulWidget {
-  final RendererParameters parameters;
-  final Size rendererSize;
-  const SvgWidget({
-    super.key,
-    required this.rendererSize,
-    required this.parameters,
-  });
-
-  @override
-  State<SvgWidget> createState() => _SvgWidgetState();
-}
-
-class _SvgWidgetState extends State<SvgWidget> {
-  FutureRenderer? renderer;
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initState());
-  }
-
-  void _initState() {
-    assert(mounted);
-    SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
-    renderer = model.giveRenderer(
-      widget.parameters.kinds,
-      widget.parameters.trackData,
-    );
-    if (widget.parameters.trackData == TrackData.wheel) {
-      renderer!.setSize(widget.rendererSize);
-    } else {
-      renderer!.setSize(widget.rendererSize * 1.5);
-    }
-    renderer!.addListener(_onRendererChanged);
-    _onRendererChanged();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    renderer!.removeListener(_onRendererChanged);
-  }
-
-  void _onRendererChanged() {
-    developer.log("[_onRendererChanged] _onRendererChanged");
-    if (!mounted) {
-      return;
-    }
-    assert(renderer != null);
-    setState(() {
-      if (renderer!.needsStart()) {
-        renderer!.start();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext ctx) {
-    if (renderer == null) {
-      return Text("hi");
-    }
-    return FutureRenderingWidget(future: renderer!, interactive: false);
-  }
-}
-
 class LayoutWidget extends StatelessWidget {
   final RendererParameters parameters;
   const LayoutWidget({super.key, required this.parameters});
@@ -100,7 +35,10 @@ class LayoutWidget extends StatelessWidget {
       builder: (BuildContext context, BoxConstraints constraints) {
         Size size = constraints.biggest;
         developer.log("ProfileWidget size: $size");
-        return SvgWidget(rendererSize: size, parameters: parameters);
+        Model model = Provider.of<Model>(ctx, listen: false);
+        FutureRenderer renderer = model.renderer(parameters.trackData);
+        model.setSize(parameters.trackData, size);
+        return FutureRenderingWidget(future: renderer, interactive: false);
       },
     );
   }
@@ -174,15 +112,15 @@ class SideIconButton extends StatelessWidget {
   }
 }
 
-class TrackMultiView extends StatefulWidget {
+class View extends StatefulWidget {
   final Set<InputType> kinds;
-  const TrackMultiView({super.key, required this.kinds});
+  const View({super.key, required this.kinds});
 
   @override
-  State<TrackMultiView> createState() => _TrackMultiViewState();
+  State<View> createState() => _TrackMultiViewState();
 }
 
-class _TrackMultiViewState extends State<TrackMultiView> {
+class _TrackMultiViewState extends State<View> {
   List<Widget> widgets = [Text("loading"), Text("loading"), Text("loading")];
 
   @override
@@ -199,6 +137,16 @@ class _TrackMultiViewState extends State<TrackMultiView> {
     setState(() {
       cycleToFront();
     });
+    updateModel();
+  }
+
+  TrackData currentVisibleData() {
+    Widget current = widgets[3];
+    if ((current is LayoutWidget) == false) {
+      throw Exception("bad widget");
+    }
+    LayoutWidget l = current as LayoutWidget;
+    return l.parameters.trackData;
   }
 
   void cycleToFront() {
@@ -216,6 +164,11 @@ class _TrackMultiViewState extends State<TrackMultiView> {
     widgets[index] = current;
   }
 
+  void updateModel() {
+    Model model = Provider.of<Model>(context, listen: false);
+    model.setCurrentData(currentVisibleData());
+  }
+
   void onButtonPressed(TrackData data) {
     int index = widgets.indexWhere((widget) {
       return widget is LayoutWidget && widget.parameters.trackData == data;
@@ -224,21 +177,18 @@ class _TrackMultiViewState extends State<TrackMultiView> {
     setState(() {
       bringToFront(index);
     });
+    updateModel();
   }
 
   TrackData currentTrackData() {
-    const int end = 3;
-    Widget current = widgets[end];
-    if ((current is LayoutWidget) == false) {
-      return TrackData.yaxis;
-    }
-    LayoutWidget currentLayout = current as LayoutWidget;
-    return currentLayout.parameters.trackData;
+    Model model = Provider.of<Model>(context, listen: false);
+    return model.currentData();
   }
 
   @override
   Widget build(BuildContext ctx) {
     double margin = 8;
+    developer.log("rebuild view");
     TrackData currentData = currentTrackData();
     Widget buttons = Positioned.fill(
       right: 8,
@@ -279,5 +229,96 @@ class _TrackMultiViewState extends State<TrackMultiView> {
         ),
       ),
     );
+  }
+}
+
+class Model extends ChangeNotifier {
+  final Kinds kinds;
+  final SegmentModel segment;
+  Map<TrackData, FutureRenderer> map = {};
+  TrackData current = TrackData.wheel;
+  Model({required this.segment, required this.kinds}) {
+    map[TrackData.map] = segment.makeRenderer(kinds, TrackData.map);
+    map[TrackData.profile] = segment.makeRenderer(kinds, TrackData.profile);
+    map[TrackData.wheel] = segment.makeRenderer(kinds, TrackData.wheel);
+    segment.addListener(_onSegmentChanged);
+  }
+
+  // propagate changes in segmentModel.
+  void _onSegmentChanged() {
+    for (FutureRenderer r in map.values) {
+      r.reset();
+    }
+    map[currentData()]!.start();
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    segment.removeListener(_onSegmentChanged);
+    super.dispose();
+  }
+
+  void setSize(TrackData d, Size size) {
+    developer.log("setSize: $d, current=${currentData()}");
+    Size rendererSize = size;
+    if (d != TrackData.wheel) {
+      rendererSize = size * 1.25;
+    }
+    map[d]!.setSize(rendererSize);
+    if (d == currentData()) {
+      startCurrent();
+    }
+  }
+
+  FutureRenderer renderer(TrackData d) {
+    assert(map.containsKey(d));
+    return map[d]!;
+  }
+
+  TrackData currentData() {
+    return current;
+  }
+
+  void startCurrent() {
+    FutureRenderer? r = map[currentData()];
+    assert(r != null);
+    developer.log("startCurrent: ${r!.trackData}");
+    if (r.needsStart()) {
+      developer.log("start: ${r.trackData}");
+      r.start();
+    }
+    // dont notifyListeners() because with are in build().
+  }
+
+  void setCurrentData(TrackData d) {
+    current = d;
+    startCurrent();
+  }
+}
+
+class ProviderWidget extends StatelessWidget {
+  final Kinds kinds;
+  const ProviderWidget({super.key, required this.kinds});
+
+  @override
+  Widget build(BuildContext context) {
+    SegmentModel segment = Provider.of<SegmentModel>(context);
+    return ChangeNotifierProvider(
+      create: (ctx) => Model(segment: segment, kinds: kinds),
+      builder: (context, child) {
+        return View(kinds: kinds);
+      },
+    );
+  }
+}
+
+class TrackMultiView extends StatelessWidget {
+  final Set<InputType> kinds;
+  const TrackMultiView({super.key, required this.kinds});
+
+  @override
+  Widget build(BuildContext context) {
+    return ProviderWidget(kinds: kinds);
   }
 }

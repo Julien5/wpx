@@ -9,12 +9,10 @@ typedef Kinds = Set<bridge.InputType>;
 class SegmentModel extends ChangeNotifier {
   late bridge.Bridge _bridge;
   late bridge.Segment _segment;
-  late Map<(TrackData, Kinds), FutureRenderer> _renderers;
 
   SegmentModel(bridge.Bridge bridge, bridge.Segment segment) {
     _bridge = bridge;
     _segment = segment;
-    _renderers = <(TrackData, Kinds), FutureRenderer>{};
   }
 
   SegmentModel copy() {
@@ -30,35 +28,20 @@ class SegmentModel extends ChangeNotifier {
     notify();
   }
 
-  FutureRenderer giveRenderer(Kinds kinds, TrackData trackData) {
-    var key = (trackData, kinds);
-    if (!_renderers.containsKey(key)) {
-      if (trackData == TrackData.wheel) {
-        _renderers[key] = WheelRenderer(_bridge, _segment, kinds);
-      }
-      if (trackData == TrackData.profile) {
-        _renderers[key] = ProfileRenderer(_bridge, _segment, kinds);
-      }
-      if (trackData == TrackData.map) {
-        _renderers[key] = MapRenderer(_bridge, _segment, kinds);
-      }
+  FutureRenderer makeRenderer(Kinds kinds, TrackData trackData) {
+    if (trackData == TrackData.wheel) {
+      return WheelRenderer(_bridge, _segment, kinds);
     }
-    return _renderers[key]!;
-  }
-
-  void resetRenderers() {
-    for (final renderer in _renderers.values) {
-      try {
-        developer.log("(reset renderer) ${renderer.trackData}");
-        renderer.reset();
-      } catch (e, st) {
-        developer.log('resetRenderers error: $e\n$st');
-      }
+    if (trackData == TrackData.profile) {
+      return ProfileRenderer(_bridge, _segment, kinds);
     }
+    if (trackData == TrackData.map) {
+      return MapRenderer(_bridge, _segment, kinds);
+    }
+    throw Exception("invalid track data");
   }
 
   void notify() {
-    resetRenderers();
     notifyListeners();
   }
 
