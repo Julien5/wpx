@@ -9,16 +9,15 @@ import 'package:ui/src/widgets/static_svg_widget.dart';
 
 class FutureRenderingInnerWidget extends StatefulWidget {
   final bool interactive;
-  const FutureRenderingInnerWidget({
-    super.key,
-    required this.interactive,
-  });
+  const FutureRenderingInnerWidget({super.key, required this.interactive});
 
   @override
-  State<FutureRenderingInnerWidget> createState() => _FutureRenderingInnerWidgetState();
+  State<FutureRenderingInnerWidget> createState() =>
+      _FutureRenderingInnerWidgetState();
 }
 
-class _FutureRenderingInnerWidgetState extends State<FutureRenderingInnerWidget> {
+class _FutureRenderingInnerWidgetState
+    extends State<FutureRenderingInnerWidget> {
   Widget? svgWidget;
 
   Widget buildWorker(FutureRenderer future) {
@@ -38,8 +37,7 @@ class _FutureRenderingInnerWidgetState extends State<FutureRenderingInnerWidget>
       return Text("starting ${future.trackData} ${future.id()}");
     }
 
-    if (!future.done()) {    
-    }
+    if (!future.done()) {}
     return svgWidget!;
   }
 
@@ -58,13 +56,13 @@ class FutureRenderingWidget extends StatelessWidget {
     required this.future,
     required this.interactive,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: future,
       builder: (context, child) {
-        return FutureRenderingInnerWidget(interactive: interactive,);
+        return FutureRenderingInnerWidget(interactive: interactive);
       },
     );
   }
