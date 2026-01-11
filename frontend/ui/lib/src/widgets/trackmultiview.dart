@@ -166,7 +166,7 @@ class _TrackMultiViewState extends State<View> {
 
   void updateModel() {
     Model model = Provider.of<Model>(context, listen: false);
-    model.setCurrentData(currentVisibleData());
+    model.changeCurrent(currentVisibleData());
   }
 
   void onButtonPressed(TrackData data) {
@@ -244,12 +244,16 @@ class Model extends ChangeNotifier {
     segment.addListener(_onSegmentChanged);
   }
 
+  TrackData currentData() {
+    return current;
+  }
+
   // propagate changes in segmentModel.
   void _onSegmentChanged() {
     for (FutureRenderer r in map.values) {
       r.reset();
     }
-    map[currentData()]!.start();
+    map[current]!.start();
     notifyListeners();
   }
 
@@ -260,14 +264,14 @@ class Model extends ChangeNotifier {
   }
 
   void setSize(TrackData d, Size size) {
-    developer.log("setSize: $d, current=${currentData()}");
+    developer.log("setSize: $d, current=$current");
     Size rendererSize = size;
     if (d != TrackData.wheel) {
       rendererSize = size * 1.25;
     }
     map[d]!.setSize(rendererSize);
-    if (d == currentData()) {
-      startCurrent();
+    if (d == current) {
+      _startCurrent();
     }
   }
 
@@ -276,12 +280,8 @@ class Model extends ChangeNotifier {
     return map[d]!;
   }
 
-  TrackData currentData() {
-    return current;
-  }
-
-  void startCurrent() {
-    FutureRenderer? r = map[currentData()];
+  void _startCurrent() {
+    FutureRenderer? r = map[current];
     assert(r != null);
     developer.log("startCurrent: ${r!.trackData}");
     if (r.needsStart()) {
@@ -291,9 +291,9 @@ class Model extends ChangeNotifier {
     // dont notifyListeners() because with are in build().
   }
 
-  void setCurrentData(TrackData d) {
+  void changeCurrent(TrackData d) {
     current = d;
-    startCurrent();
+    _startCurrent();
   }
 }
 
