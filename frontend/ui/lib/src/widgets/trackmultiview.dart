@@ -134,10 +134,8 @@ class _TrackMultiViewState extends State<View> {
   }
 
   void onTap() {
-    setState(() {
-      cycleToFront();
-    });
-    updateModel();
+    Model model = Provider.of<Model>(context, listen: false);
+    model.cycle();
   }
 
   TrackData currentVisibleData() {
@@ -149,15 +147,7 @@ class _TrackMultiViewState extends State<View> {
     return l.parameters.trackData;
   }
 
-  void cycleToFront() {
-    const int end = 3;
-    Widget current = widgets[end];
-    widgets[end] = widgets[1];
-    widgets[1] = widgets[0];
-    widgets[0] = current;
-  }
-
-  void bringToFront(int index) {
+  void _bringToFront(int index) {
     const int end = 3;
     Widget current = widgets[end];
     widgets[end] = widgets[index];
@@ -170,32 +160,41 @@ class _TrackMultiViewState extends State<View> {
   }
 
   void onButtonPressed(TrackData data) {
-    int index = widgets.indexWhere((widget) {
-      return widget is LayoutWidget && widget.parameters.trackData == data;
-    });
-    developer.log("index = $index");
-    setState(() {
-      bringToFront(index);
-    });
-    updateModel();
+    Model model = Provider.of<Model>(context, listen: false);
+    model.changeCurrent(data);
   }
 
   TrackData currentTrackData() {
-    Model model = Provider.of<Model>(context, listen: false);
+    Model model = Provider.of<Model>(context);
     return model.currentData();
   }
 
   @override
   Widget build(BuildContext ctx) {
+    // Instanciating a Provider.of<Model>(context) (listen=true)
+    // is necessary to get rebuild on notifyListeners.
+    // Provider.of<Model>(context);
     double margin = 8;
     developer.log("rebuild view");
     TrackData currentData = currentTrackData();
+    int index = widgets.indexWhere((widget) {
+      return widget is LayoutWidget &&
+          widget.parameters.trackData == currentData;
+    });
+    developer.log("index = $index");
+    _bringToFront(index);
+
     Widget buttons = Positioned.fill(
       right: 8,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          SideIconButton(
+            selected: currentData,
+            trackData: TrackData.wheel,
+            onPressed: () => onButtonPressed(TrackData.wheel),
+          ),
           SideIconButton(
             selected: currentData,
             trackData: TrackData.map,
@@ -205,11 +204,6 @@ class _TrackMultiViewState extends State<View> {
             selected: currentData,
             trackData: TrackData.profile,
             onPressed: () => onButtonPressed(TrackData.profile),
-          ),
-          SideIconButton(
-            selected: currentData,
-            trackData: TrackData.wheel,
-            onPressed: () => onButtonPressed(TrackData.wheel),
           ),
         ],
       ),
@@ -242,6 +236,18 @@ class Model extends ChangeNotifier {
     map[TrackData.profile] = segment.makeRenderer(kinds, TrackData.profile);
     map[TrackData.wheel] = segment.makeRenderer(kinds, TrackData.wheel);
     segment.addListener(_onSegmentChanged);
+  }
+
+  void cycle() {
+    if (current == TrackData.wheel) {
+      return changeCurrent(TrackData.map);
+    }
+    if (current == TrackData.map) {
+      return changeCurrent(TrackData.profile);
+    }
+    if (current == TrackData.profile) {
+      return changeCurrent(TrackData.wheel);
+    }
   }
 
   TrackData currentData() {
@@ -294,6 +300,7 @@ class Model extends ChangeNotifier {
   void changeCurrent(TrackData d) {
     current = d;
     _startCurrent();
+    notifyListeners();
   }
 }
 
