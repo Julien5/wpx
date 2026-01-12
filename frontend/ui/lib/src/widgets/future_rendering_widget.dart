@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/log.dart';
@@ -8,22 +10,15 @@ import 'package:ui/src/widgets/interactive_svg_widget.dart';
 import 'package:ui/src/widgets/static_svg_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class FutureRenderingInnerWidget extends StatefulWidget {
+class FutureRenderingWidget extends StatefulWidget {
   final bool interactive;
-  final FutureRenderer renderer;
-  const FutureRenderingInnerWidget({
-    super.key,
-    required this.interactive,
-    required this.renderer,
-  });
+  const FutureRenderingWidget({super.key, required this.interactive});
 
   @override
-  State<FutureRenderingInnerWidget> createState() =>
-      _FutureRenderingInnerWidgetState();
+  State<FutureRenderingWidget> createState() => _FutureRenderingWidgetState();
 }
 
-class _FutureRenderingInnerWidgetState
-    extends State<FutureRenderingInnerWidget> {
+class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   Widget? svgWidget;
   VisibilityInfo? visibilityInfo;
 
@@ -47,60 +42,10 @@ class _FutureRenderingInnerWidgetState
     return svgWidget!;
   }
 
-  void _onVisibilityChanged(VisibilityInfo info) {
-    if (!mounted) {
-      return;
-    }
-    visibilityInfo = info;
-    final future = Provider.of<FutureRenderer>(context, listen: false);
-
-    if (visibilityInfo!.visibleFraction == 0) {
-      return;
-    }
-    future.setSize(visibilityInfo!.size);
-    if (visibilityInfo!.visibleFraction > 0 && future.needsStart()) {
-      // start() is called in build().
-      setState(() {});
-    }
-  }
-
-  bool isVisible() {
-    return visibilityInfo != null && visibilityInfo!.visibleFraction > 0;
-  }
-
   @override
   Widget build(BuildContext context) {
+    developer.log("rebuild widget");
     FutureRenderer future = Provider.of<FutureRenderer>(context);
-    if (future.needsStart() && isVisible()) {
-      future.start();
-    }
-    return VisibilityDetector(
-      key: Key('future-renderer-${future.id()}'),
-      onVisibilityChanged: _onVisibilityChanged,
-      child: buildWorker(future),
-    );
-  }
-}
-
-class FutureRenderingWidget extends StatelessWidget {
-  final FutureRenderer future;
-  final bool interactive;
-  const FutureRenderingWidget({
-    super.key,
-    required this.future,
-    required this.interactive,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: future,
-      builder: (context, child) {
-        return FutureRenderingInnerWidget(
-          interactive: interactive,
-          renderer: future,
-        );
-      },
-    );
+    return buildWorker(future);
   }
 }

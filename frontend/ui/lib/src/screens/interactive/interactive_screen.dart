@@ -17,10 +17,7 @@ class InteractiveMapView extends StatelessWidget {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             mapRenderer.setSize(constraints.biggest);
-            return FutureRenderingWidget(
-              future: mapRenderer,
-              interactive: true,
-            );
+            return FutureRenderingWidget(interactive: true);
           },
         );
       },
