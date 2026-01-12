@@ -42,6 +42,17 @@ class _TrackViewState extends State<TrackView> {
   VisibilityInfo? visibilityInfo;
   FutureRenderer? futureRenderer;
 
+  // The argument type is BuildContext, but using it yields
+  // a crash. Dont ask me why.
+  FutureRenderer _createRenderer(_) {
+    SegmentModel model = Provider.of<SegmentModel>(context);
+    futureRenderer = model.makeRenderer(
+      widget.parameters.kinds,
+      widget.parameters.trackData,
+    );
+    return futureRenderer!;
+  }
+
   FutureRenderer _onSegmentModelChanged(FutureRenderer? renderer) {
     developer.log("update future");
     renderer!.reset();
@@ -96,13 +107,7 @@ class _TrackViewState extends State<TrackView> {
       providers: [
         ChangeNotifierProvider.value(value: model),
         ChangeNotifierProxyProvider<SegmentModel, FutureRenderer>(
-          create: (_) {
-            futureRenderer = model.makeRenderer(
-              widget.parameters.kinds,
-              widget.parameters.trackData,
-            );
-            return futureRenderer!;
-          },
+          create: _createRenderer,
           update: (context, segment, futureRenderer) {
             return _onSegmentModelChanged(futureRenderer);
           },
