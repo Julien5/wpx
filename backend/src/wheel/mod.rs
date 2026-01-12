@@ -276,8 +276,10 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
 fill="white" stroke="white" stroke-width="3"/>
  */
 pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
-    let margin = 20;
+    // TODO: remove hardcoded values.
+    // crash with height=60.
     let wheel_width = 10;
+    let margin = 20;
     let page = Page {
         total_size: total_size.clone(),
         wheel_width,

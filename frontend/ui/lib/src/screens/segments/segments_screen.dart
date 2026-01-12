@@ -66,43 +66,9 @@ class _SegmentsViewState extends State<SegmentsView> {
 
   @override
   Widget build(BuildContext context) {
-    var rootModel = Provider.of<RootModel>(context);
-
     return LayoutBuilder(
       builder: (context, constraints) {
-        ScreenOrientation viewType = screenOrientation(
-          Size(constraints.maxWidth, constraints.maxHeight),
-        );
-
-        if (segments == null) {
-          return const Text("building");
-        }
-
-        var segmentWidgets = renderingProviders(rootModel, viewType);
-        developer.log("[segments] [build] #segments=${segmentWidgets.length}");
-        List<Tab> tabs = [];
-        for (var segmentWidget in segmentWidgets) {
-          var id = segmentWidget.renderers.profileRenderer.id();
-          tabs.add(Tab(text: "Page ${1 + id.toInt()}"));
-        }
-        if (viewType == ScreenOrientation.desktop) {
-          return DefaultTabController(
-            length: segmentWidgets.length,
-            child: Scaffold(
-              appBar: TabBar(tabs: tabs),
-              body: TabBarView(children: segmentWidgets),
-            ),
-          );
-        }
-        return DefaultTabController(
-          length: segmentWidgets.length,
-          child: Column(
-            children: [
-              Expanded(child: TabBarView(children: segmentWidgets)),
-              const TabPageSelector(),
-            ],
-          ),
-        );
+        return const Text("building");
       },
     );
   }

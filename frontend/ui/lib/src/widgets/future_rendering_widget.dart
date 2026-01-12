@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/log.dart';
@@ -6,6 +8,7 @@ import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/svgelements.dart';
 import 'package:ui/src/widgets/interactive_svg_widget.dart';
 import 'package:ui/src/widgets/static_svg_widget.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class FutureRenderingInnerWidget extends StatefulWidget {
   final bool interactive;
@@ -34,17 +37,35 @@ class _FutureRenderingInnerWidgetState
     }
 
     if (!future.done() && svgWidget == null) {
-      return Text("starting ${future.trackData} ${future.id()}");
+      return Center(child: Text("rendering..."));
     }
 
-    if (!future.done()) {}
     return svgWidget!;
+  }
+
+  void _onVisibilityChanged(VisibilityInfo info) {
+    if (!mounted) {
+      return;
+    }
+    final future = Provider.of<FutureRenderer>(context, listen: false);
+    future.setSize(info.size);
+    developer.log(
+      "_onVisibilityChanged:$info fraction:${info.visibleFraction} size:${info.size}",
+    );
+    if (info.visibleFraction > 0 && future.needsStart()) {
+      future.start();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     FutureRenderer future = Provider.of<FutureRenderer>(context);
-    return buildWorker(future);
+    developer.log("build future rendering widget");
+    return VisibilityDetector(
+      key: Key('future-renderer-${future.id()}'),
+      onVisibilityChanged: _onVisibilityChanged,
+      child: buildWorker(future),
+    );
   }
 }
 

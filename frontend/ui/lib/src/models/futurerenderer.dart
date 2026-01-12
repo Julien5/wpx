@@ -84,8 +84,9 @@ class FutureRenderer with ChangeNotifier {
     _future!.then((value) => onCompleted(value));
   }
 
-  int id() {
-    return _segment.id();
+  String id() {
+    final sortedKinds = kinds.map((k) => k.toString()).toList()..sort();
+    return "${trackData.toString()}|${sortedKinds.join(",")}|${_segment.id()}";
   }
 
   bool started() {

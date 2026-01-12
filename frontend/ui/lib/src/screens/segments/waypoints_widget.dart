@@ -84,7 +84,7 @@ class WayPointsConsumer extends StatelessWidget {
   Widget build(BuildContext ctx) {
     return Consumer<ProfileRenderer>(
       builder: (context, wp, child) {
-        return Center(child: WayPointsTable(segmentid: wp.id().toInt()));
+        return Center(child: Text(wp.id()));
       },
     );
   }

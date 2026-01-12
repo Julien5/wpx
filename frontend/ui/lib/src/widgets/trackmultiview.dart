@@ -33,11 +33,8 @@ class LayoutWidget extends StatelessWidget {
   Widget build(BuildContext ctx) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        Size size = constraints.biggest;
-        developer.log("ProfileWidget size: $size");
-        Model model = Provider.of<Model>(ctx, listen: false);
+        Model model = Provider.of<Model>(ctx);
         FutureRenderer renderer = model.renderer(parameters.trackData);
-        model.setSize(parameters.trackData, size);
         return FutureRenderingWidget(future: renderer, interactive: false);
       },
     );
@@ -121,42 +118,35 @@ class View extends StatefulWidget {
 }
 
 class _TrackMultiViewState extends State<View> {
-  List<Widget> widgets = [Text("loading"), Text("loading"), Text("loading")];
+  Map<TrackData, LayoutWidget> hidden = {};
+  LayoutWidget? visible;
 
   @override
   void initState() {
     super.initState();
-    widgets.clear();
-    widgets.add(LayoutWidget.make(widget.kinds, TrackData.profile));
-    widgets.add(LayoutWidget.make(widget.kinds, TrackData.map));
-    widgets.add(WhiteWidget(key: const ValueKey('white'), color: Colors.white));
-    widgets.add(LayoutWidget.make(widget.kinds, TrackData.wheel));
+    assert(hidden.isEmpty);
+    for (TrackData data in {
+      TrackData.profile,
+      TrackData.map,
+      TrackData.wheel,
+    }) {
+      hidden[data] = LayoutWidget.make(widget.kinds, data);
+    }
+    //hidden.add(LayoutWidget.make(widget.kinds, TrackData.map));
+    //hidden.add(WhiteWidget(key: const ValueKey('white'), color: Colors.white));
+    //hidden.add(LayoutWidget.make(widget.kinds, TrackData.wheel));
+  }
+
+  void _makeVisible(TrackData trackData) {
+    if (visible != null) {
+      hidden[visible!.parameters.trackData] = visible!;
+    }
+    visible = hidden[trackData]!;
   }
 
   void onTap() {
     Model model = Provider.of<Model>(context, listen: false);
     model.cycle();
-  }
-
-  TrackData currentVisibleData() {
-    Widget current = widgets[3];
-    if ((current is LayoutWidget) == false) {
-      throw Exception("bad widget");
-    }
-    LayoutWidget l = current as LayoutWidget;
-    return l.parameters.trackData;
-  }
-
-  void _bringToFront(int index) {
-    const int end = 3;
-    Widget current = widgets[end];
-    widgets[end] = widgets[index];
-    widgets[index] = current;
-  }
-
-  void updateModel() {
-    Model model = Provider.of<Model>(context, listen: false);
-    model.changeCurrent(currentVisibleData());
   }
 
   void onButtonPressed(TrackData data) {
@@ -173,16 +163,11 @@ class _TrackMultiViewState extends State<View> {
   Widget build(BuildContext ctx) {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    // Provider.of<Model>(context);
+    Provider.of<Model>(context);
     double margin = 8;
     developer.log("rebuild view");
-    TrackData currentData = currentTrackData();
-    int index = widgets.indexWhere((widget) {
-      return widget is LayoutWidget &&
-          widget.parameters.trackData == currentData;
-    });
-    developer.log("index = $index");
-    _bringToFront(index);
+    TrackData currentModelData = currentTrackData();
+    _makeVisible(currentModelData);
     const double buttonSize = 30;
     Widget buttons = ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: buttonSize),
@@ -191,19 +176,19 @@ class _TrackMultiViewState extends State<View> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           SideIconButton(
-            selected: currentData,
+            selected: currentModelData,
             size: buttonSize,
             trackData: TrackData.wheel,
             onPressed: () => onButtonPressed(TrackData.wheel),
           ),
           SideIconButton(
-            selected: currentData,
+            selected: currentModelData,
             size: buttonSize,
             trackData: TrackData.map,
             onPressed: () => onButtonPressed(TrackData.map),
           ),
           SideIconButton(
-            selected: currentData,
+            selected: currentModelData,
             size: buttonSize,
             trackData: TrackData.profile,
             onPressed: () => onButtonPressed(TrackData.profile),
@@ -215,15 +200,14 @@ class _TrackMultiViewState extends State<View> {
       onTap: onTap,
       child: Padding(
         padding: EdgeInsetsGeometry.fromLTRB(margin, margin, margin, margin),
-        child: Stack(children: widgets),
+        child:  visible!,
       ),
     );
-    //return g;
     return Padding(
       padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 200),
-        child: Row(children: [Expanded(child: g), buttons]),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch,children: [Expanded(child: g), buttons]),
       ),
     );
   }
@@ -272,37 +256,13 @@ class Model extends ChangeNotifier {
     super.dispose();
   }
 
-  void setSize(TrackData d, Size size) {
-    developer.log("setSize: $d, current=$current");
-    Size rendererSize = size;
-    if (d != TrackData.wheel) {
-      rendererSize = size * 1.25;
-    }
-    map[d]!.setSize(rendererSize);
-    if (d == current) {
-      _startCurrent();
-    }
-  }
-
   FutureRenderer renderer(TrackData d) {
     assert(map.containsKey(d));
     return map[d]!;
   }
 
-  void _startCurrent() {
-    FutureRenderer? r = map[current];
-    assert(r != null);
-    developer.log("startCurrent: ${r!.trackData}");
-    if (r.needsStart()) {
-      developer.log("start: ${r.trackData}");
-      r.start();
-    }
-    // dont notifyListeners() because with are in build().
-  }
-
   void changeCurrent(TrackData d) {
     current = d;
-    _startCurrent();
     notifyListeners();
   }
 }
