@@ -79,7 +79,6 @@ class FutureRenderer with ChangeNotifier {
       );
       log("[render-request-started:C]");
     }
-    notifyListeners();
     log("[render-request-started:$trackData]");
     _future!.then((value) => onCompleted(value));
   }

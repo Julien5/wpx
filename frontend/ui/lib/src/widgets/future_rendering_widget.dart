@@ -1,7 +1,4 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/log.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
@@ -29,32 +26,6 @@ class _FutureRenderingInnerWidgetState
     extends State<FutureRenderingInnerWidget> {
   Widget? svgWidget;
   VisibilityInfo? visibilityInfo;
-
-  @override
-  void initState() {
-    super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _initState();
-    });
-  }
-
-  void _onRendererChanged() {
-    setState(() {
-      if (widget.renderer.needsStart() && isVisible()) {
-        widget.renderer.start();
-      }
-    });
-  }
-
-  void _initState() {
-    widget.renderer.addListener(_onRendererChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.renderer.removeListener(_onRendererChanged);
-    super.dispose();
-  }
 
   Widget buildWorker(FutureRenderer future) {
     if (future.done()) {
@@ -101,6 +72,9 @@ class _FutureRenderingInnerWidgetState
   @override
   Widget build(BuildContext context) {
     FutureRenderer future = Provider.of<FutureRenderer>(context);
+    if (future.needsStart() && isVisible()) {
+      future.start();
+    }
     return VisibilityDetector(
       key: Key('future-renderer-${future.id()}'),
       onVisibilityChanged: _onVisibilityChanged,
@@ -120,7 +94,6 @@ class FutureRenderingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    developer.log("(FutureRenderingWidget build) ${future.trackData}");
     return ChangeNotifierProvider.value(
       value: future,
       builder: (context, child) {

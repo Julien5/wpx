@@ -39,17 +39,7 @@ class TrackView extends StatefulWidget {
 
 class _TrackViewState extends State<TrackView> {
   FutureRenderer? renderer;
-  SegmentModel? segmentModel;
   TrackData current = TrackData.wheel;
-
-  void _onSegmentChanged() {
-    if (renderer == null) {
-      return;
-    }
-    setState(() {
-      renderer!.reset();
-    });
-  }
 
   @override
   void initState() {
@@ -59,24 +49,11 @@ class _TrackViewState extends State<TrackView> {
     });
   }
 
-  @override
-  void dispose() {
-    if (segmentModel != null) {
-      segmentModel!.removeListener(_onSegmentChanged);
-    }
-    super.dispose();
-  }
-
   void _initState() {
-    if (segmentModel == null) {
-      segmentModel = Provider.of<SegmentModel>(context, listen: false);
-      segmentModel!.addListener(_onSegmentChanged);
-    }
-
     if (renderer == null) {
-      assert(segmentModel != null);
+      SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
       setState(() {
-        renderer = segmentModel!.makeRenderer(
+        renderer = model.makeRenderer(
           widget.parameters.kinds,
           widget.parameters.trackData,
         );
@@ -86,11 +63,14 @@ class _TrackViewState extends State<TrackView> {
 
   @override
   Widget build(BuildContext ctx) {
+    // reacts on change in the segmentmodel
+    Provider.of<SegmentModel>(ctx);
     if (renderer == null) {
       return Center(
         child: Text("waiting for ${widget.parameters.trackData} renderer.."),
       );
     }
+    renderer!.reset();
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return FutureRenderingWidget(future: renderer!, interactive: false);
