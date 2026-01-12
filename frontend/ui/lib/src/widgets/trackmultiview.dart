@@ -45,11 +45,11 @@ class _TrackViewState extends State<TrackView> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      _initState();
+      _initRenderer();
     });
   }
 
-  void _initState() {
+  void _initRenderer() {
     if (renderer == null) {
       SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
       setState(() {

@@ -59,9 +59,8 @@ class _FutureRenderingInnerWidgetState
     }
     future.setSize(visibilityInfo!.size);
     if (visibilityInfo!.visibleFraction > 0 && future.needsStart()) {
-      setState(() {
-        future.start();
-      });
+      // start() is called in build().
+      setState(() {});
     }
   }
 
