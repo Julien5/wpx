@@ -118,30 +118,22 @@ class View extends StatefulWidget {
 }
 
 class _TrackMultiViewState extends State<View> {
-  Map<TrackData, LayoutWidget> hidden = {};
-  LayoutWidget? visible;
+  Map<TrackData, LayoutWidget> widgets = {};
 
   @override
   void initState() {
     super.initState();
-    assert(hidden.isEmpty);
+    assert(widgets.isEmpty);
     for (TrackData data in {
       TrackData.profile,
       TrackData.map,
       TrackData.wheel,
     }) {
-      hidden[data] = LayoutWidget.make(widget.kinds, data);
+      widgets[data] = LayoutWidget.make(widget.kinds, data);
     }
     //hidden.add(LayoutWidget.make(widget.kinds, TrackData.map));
     //hidden.add(WhiteWidget(key: const ValueKey('white'), color: Colors.white));
     //hidden.add(LayoutWidget.make(widget.kinds, TrackData.wheel));
-  }
-
-  void _makeVisible(TrackData trackData) {
-    if (visible != null) {
-      hidden[visible!.parameters.trackData] = visible!;
-    }
-    visible = hidden[trackData]!;
   }
 
   void onTap() {
@@ -167,7 +159,6 @@ class _TrackMultiViewState extends State<View> {
     double margin = 8;
     developer.log("rebuild view");
     TrackData currentModelData = currentTrackData();
-    _makeVisible(currentModelData);
     const double buttonSize = 30;
     Widget buttons = ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: buttonSize),
@@ -196,18 +187,35 @@ class _TrackMultiViewState extends State<View> {
         ],
       ),
     );
-    Widget g = GestureDetector(
+    // I would like to have `visible = widgets[currentModelData]`
+    // but then the widget states are disposed.
+    // AI says: In Flutter, when you swap a widget out of the build tree,
+    // the previous widget is unmounted and its State object is disposed of.
+    // Solution: Stack with Offstaged widgets.
+    Widget visible = Stack(
+      children:
+          widgets.entries.map((entry) {
+            return Offstage(
+              offstage: entry.key != currentModelData,
+              child: entry.value,
+            );
+          }).toList(),
+    );
+    Widget gesture = GestureDetector(
       onTap: onTap,
       child: Padding(
         padding: EdgeInsetsGeometry.fromLTRB(margin, margin, margin, margin),
-        child:  visible!,
+        child: visible,
       ),
     );
     return Padding(
       padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 200),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch,children: [Expanded(child: g), buttons]),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [Expanded(child: gesture), buttons],
+        ),
       ),
     );
   }

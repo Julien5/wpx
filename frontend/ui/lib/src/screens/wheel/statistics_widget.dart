@@ -54,12 +54,15 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
   void writeModel() {
     if (!mounted) return;
-    SegmentModel segmentModel = Provider.of<SegmentModel>(context, listen: false);
+    SegmentModel segmentModel = Provider.of<SegmentModel>(
+      context,
+      listen: false,
+    );
     bridge.Parameters oldParameters = segmentModel.parameters();
     ParameterChanger changer = ParameterChanger(init: oldParameters);
     changer.changeSpeed(speed!);
     changer.changeStartTime(startTime!);
-    bridge.Parameters parameters=changer.current();
+    bridge.Parameters parameters = changer.current();
     segmentModel.setParameters(parameters);
     setState(() {
       startTime = DateTime.parse(parameters.startTime);
@@ -93,7 +96,6 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     writeModel();
   }
 
-  // TODO: move this in another file
   void openSpeedDialog() {
     showDialog(
       context: context,
