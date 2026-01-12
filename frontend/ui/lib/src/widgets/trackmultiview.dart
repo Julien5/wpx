@@ -68,14 +68,14 @@ class SideIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final TrackData trackData;
   final TrackData selected;
+  final double size;
   const SideIconButton({
     super.key,
     required this.selected,
+    required this.size,
     required this.trackData,
     this.onPressed,
   });
-
-  final double size = 30;
   final double margin = 8;
   Image icon(TrackData data) {
     String filename = 'icons/png/map.png';
@@ -183,44 +183,47 @@ class _TrackMultiViewState extends State<View> {
     });
     developer.log("index = $index");
     _bringToFront(index);
-
-    Widget buttons = Positioned.fill(
-      right: 8,
+    const double buttonSize = 30;
+    Widget buttons = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: buttonSize),
       child: Column(
+        mainAxisSize: MainAxisSize.max, // Makes Column fill available space
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           SideIconButton(
             selected: currentData,
+            size: buttonSize,
             trackData: TrackData.wheel,
             onPressed: () => onButtonPressed(TrackData.wheel),
           ),
           SideIconButton(
             selected: currentData,
+            size: buttonSize,
             trackData: TrackData.map,
             onPressed: () => onButtonPressed(TrackData.map),
           ),
           SideIconButton(
             selected: currentData,
+            size: buttonSize,
             trackData: TrackData.profile,
             onPressed: () => onButtonPressed(TrackData.profile),
           ),
         ],
       ),
     );
-
-    return GestureDetector(
+    Widget g = GestureDetector(
       onTap: onTap,
+      child: Padding(
+        padding: EdgeInsetsGeometry.fromLTRB(margin, margin, margin, margin),
+        child: Stack(children: widgets),
+      ),
+    );
+    //return g;
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 200),
-        child: Padding(
-          padding: EdgeInsetsGeometry.fromLTRB(margin, margin, margin, margin),
-          child: SizedBox(
-            width: double.infinity,
-            height: 200,
-            child: Stack(children: [...widgets, buttons]),
-          ),
-        ),
+        child: Row(children: [Expanded(child: g), buttons]),
       ),
     );
   }
