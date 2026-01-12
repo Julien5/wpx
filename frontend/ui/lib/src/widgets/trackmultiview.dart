@@ -79,26 +79,6 @@ class _TrackViewState extends State<TrackView> {
   }
 }
 
-class WhiteWidget extends StatelessWidget {
-  final Color color;
-  const WhiteWidget({super.key, required this.color});
-
-  @override
-  Widget build(BuildContext ctx) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        Size size = constraints.biggest;
-        developer.log("WhiteWidget size: $size");
-        final double width =
-            size.width.isFinite ? size.width : constraints.maxWidth;
-        final double height =
-            size.height.isFinite ? size.height : constraints.maxHeight;
-        return Container(width: width, height: height, color: color);
-      },
-    );
-  }
-}
-
 class SideIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final TrackData trackData;

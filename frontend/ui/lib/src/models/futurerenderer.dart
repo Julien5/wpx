@@ -106,7 +106,6 @@ class FutureRenderer with ChangeNotifier {
   void reset() {
     _future = null;
     _result = null;
-    notifyListeners();
   }
 
   void restart() {

@@ -136,7 +136,8 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      writeModel();
+                      // already called when the slider changed
+                      // writeModel();
                     },
                     child: Text('OK', textAlign: TextAlign.right),
                   ),
