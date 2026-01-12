@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/segmentmodel.dart';
@@ -17,25 +18,82 @@ class RendererParameters {
   }
 }
 
-class LayoutWidget extends StatelessWidget {
+// Requires a SegmentModel.
+// Makes a FutureRenderer with the given TrackData and Kinds.
+// Not perfect, but hopefully okay.
+class TrackView extends StatefulWidget {
   final RendererParameters parameters;
-  const LayoutWidget({super.key, required this.parameters});
+  const TrackView({super.key, required this.parameters});
 
-  static LayoutWidget make(Set<InputType> kinds, TrackData trackData) {
+  static TrackView make(Set<InputType> kinds, TrackData trackData) {
     RendererParameters p = RendererParameters(
       kinds: kinds,
       trackData: trackData,
     );
-    return LayoutWidget(key: p.createKey(), parameters: p);
+    return TrackView(key: p.createKey(), parameters: p);
+  }
+
+  @override
+  State<TrackView> createState() => _TrackViewState();
+}
+
+class _TrackViewState extends State<TrackView> {
+  FutureRenderer? renderer;
+  SegmentModel? segmentModel;
+  TrackData current = TrackData.wheel;
+
+  void _onSegmentChanged() {
+    if (renderer == null) {
+      return;
+    }
+    setState(() {
+      renderer!.reset();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _initState();
+    });
+  }
+
+  @override
+  void dispose() {
+    if (segmentModel != null) {
+      segmentModel!.removeListener(_onSegmentChanged);
+    }
+    super.dispose();
+  }
+
+  void _initState() {
+    if (segmentModel == null) {
+      segmentModel = Provider.of<SegmentModel>(context, listen: false);
+      segmentModel!.addListener(_onSegmentChanged);
+    }
+
+    if (renderer == null) {
+      assert(segmentModel != null);
+      setState(() {
+        renderer = segmentModel!.makeRenderer(
+          widget.parameters.kinds,
+          widget.parameters.trackData,
+        );
+      });
+    }
   }
 
   @override
   Widget build(BuildContext ctx) {
+    if (renderer == null) {
+      return Center(
+        child: Text("waiting for ${widget.parameters.trackData} renderer.."),
+      );
+    }
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        Model model = Provider.of<Model>(ctx);
-        FutureRenderer renderer = model.renderer(parameters.trackData);
-        return FutureRenderingWidget(future: renderer, interactive: false);
+        return FutureRenderingWidget(future: renderer!, interactive: false);
       },
     );
   }
@@ -118,7 +176,7 @@ class View extends StatefulWidget {
 }
 
 class _TrackMultiViewState extends State<View> {
-  Map<TrackData, LayoutWidget> widgets = {};
+  Map<TrackData, TrackView> widgets = {};
 
   @override
   void initState() {
@@ -129,11 +187,8 @@ class _TrackMultiViewState extends State<View> {
       TrackData.map,
       TrackData.wheel,
     }) {
-      widgets[data] = LayoutWidget.make(widget.kinds, data);
+      widgets[data] = TrackView.make(widget.kinds, data);
     }
-    //hidden.add(LayoutWidget.make(widget.kinds, TrackData.map));
-    //hidden.add(WhiteWidget(key: const ValueKey('white'), color: Colors.white));
-    //hidden.add(LayoutWidget.make(widget.kinds, TrackData.wheel));
   }
 
   void onTap() {
@@ -193,6 +248,7 @@ class _TrackMultiViewState extends State<View> {
     // the previous widget is unmounted and its State object is disposed of.
     // Solution: Stack with Offstaged widgets.
     Widget visible = Stack(
+      fit: StackFit.expand, // <--- Add this line
       children:
           widgets.entries.map((entry) {
             return Offstage(
@@ -223,15 +279,8 @@ class _TrackMultiViewState extends State<View> {
 
 class Model extends ChangeNotifier {
   final Kinds kinds;
-  final SegmentModel segment;
-  Map<TrackData, FutureRenderer> map = {};
   TrackData current = TrackData.wheel;
-  Model({required this.segment, required this.kinds}) {
-    map[TrackData.map] = segment.makeRenderer(kinds, TrackData.map);
-    map[TrackData.profile] = segment.makeRenderer(kinds, TrackData.profile);
-    map[TrackData.wheel] = segment.makeRenderer(kinds, TrackData.wheel);
-    segment.addListener(_onSegmentChanged);
-  }
+  Model({required this.kinds});
 
   void cycle() {
     if (current == TrackData.wheel) {
@@ -249,26 +298,6 @@ class Model extends ChangeNotifier {
     return current;
   }
 
-  // propagate changes in segmentModel.
-  void _onSegmentChanged() {
-    for (FutureRenderer r in map.values) {
-      r.reset();
-    }
-    map[current]!.start();
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    segment.removeListener(_onSegmentChanged);
-    super.dispose();
-  }
-
-  FutureRenderer renderer(TrackData d) {
-    assert(map.containsKey(d));
-    return map[d]!;
-  }
-
   void changeCurrent(TrackData d) {
     current = d;
     notifyListeners();
@@ -281,9 +310,8 @@ class ProviderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SegmentModel segment = Provider.of<SegmentModel>(context);
     return ChangeNotifierProvider(
-      create: (ctx) => Model(segment: segment, kinds: kinds),
+      create: (ctx) => Model(kinds: kinds),
       builder: (context, child) {
         return View(kinds: kinds);
       },
