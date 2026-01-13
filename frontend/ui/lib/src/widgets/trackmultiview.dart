@@ -7,6 +7,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 
+
 class SideIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final TrackData trackData;
@@ -50,6 +51,51 @@ class SideIconButton extends StatelessWidget {
         constraints: BoxConstraints.tight(Size(size, size)),
         icon: icon(trackData),
         onPressed: onPressed,
+      ),
+    );
+  }
+}
+
+class SideIconButtons extends StatelessWidget {
+  final void Function(TrackData) onButtonPressed;
+  final TrackData selected;
+  final double size;
+
+  const SideIconButtons({
+    super.key,
+    required this.selected,
+    required this.size,
+    required this.onButtonPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+     const double buttonSize = 30;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: buttonSize),
+      child: Column(
+        mainAxisSize: MainAxisSize.max, // Makes Column fill available space
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          SideIconButton(
+            selected: selected,
+            size: buttonSize,
+            trackData: TrackData.wheel,
+            onPressed: () => onButtonPressed(TrackData.wheel),
+          ),
+          SideIconButton(
+            selected: selected,
+            size: buttonSize,
+            trackData: TrackData.map,
+            onPressed: () => onButtonPressed(TrackData.map),
+          ),
+          SideIconButton(
+            selected: selected,
+            size: buttonSize,
+            trackData: TrackData.profile,
+            onPressed: () => onButtonPressed(TrackData.profile),
+          ),
+        ],
       ),
     );
   }
@@ -102,34 +148,8 @@ class _TrackMultiViewState extends State<View> {
     double margin = 8;
     developer.log("rebuild view");
     TrackData currentModelData = currentTrackData();
-    const double buttonSize = 30;
-    Widget buttons = ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: buttonSize),
-      child: Column(
-        mainAxisSize: MainAxisSize.max, // Makes Column fill available space
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SideIconButton(
-            selected: currentModelData,
-            size: buttonSize,
-            trackData: TrackData.wheel,
-            onPressed: () => onButtonPressed(TrackData.wheel),
-          ),
-          SideIconButton(
-            selected: currentModelData,
-            size: buttonSize,
-            trackData: TrackData.map,
-            onPressed: () => onButtonPressed(TrackData.map),
-          ),
-          SideIconButton(
-            selected: currentModelData,
-            size: buttonSize,
-            trackData: TrackData.profile,
-            onPressed: () => onButtonPressed(TrackData.profile),
-          ),
-        ],
-      ),
-    );
+   
+    Widget buttons = SideIconButtons(onButtonPressed: onButtonPressed, selected: currentModelData, size: 30);
     // I would like to have `visible = widgets[currentModelData]`
     // but then the widget states are disposed.
     // AI says: In Flutter, when you swap a widget out of the build tree,
