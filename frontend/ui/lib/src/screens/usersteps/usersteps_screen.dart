@@ -76,17 +76,38 @@ class UserStepsScreen extends StatelessWidget {
   }
 }
 
+class UserStepsScreenProviders extends MultiProvider {
+  UserStepsScreenProviders({
+    super.key,
+    required SegmentModel segmentModel,
+    required TrackMultiModel multiTrackModel,
+    required Widget child,
+  }) : super(
+         providers: [
+           ChangeNotifierProvider.value(value: segmentModel),
+           ChangeNotifierProvider.value(value: multiTrackModel),
+         ],
+         child: child,
+       );
+}
+
 class UserStepsProvider extends StatelessWidget {
   final SegmentModel model;
-  const UserStepsProvider({super.key, required this.model});
+  final TrackMultiModel multiTrackModel;
+  const UserStepsProvider({
+    super.key,
+    required this.model,
+    required this.multiTrackModel,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: model,
-      builder: (context, child) {
-        return UserStepsScreen();
-      },
+    return UserStepsScreenProviders(
+      segmentModel: model,
+      multiTrackModel: multiTrackModel,
+      child: UserStepsScreen(),
     );
   }
 }
+
+class MultiTrackModel {}

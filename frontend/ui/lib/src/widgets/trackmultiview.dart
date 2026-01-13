@@ -3,10 +3,8 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
-
 
 class SideIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -70,7 +68,7 @@ class SideIconButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     const double buttonSize = 30;
+    const double buttonSize = 30;
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: buttonSize),
       child: Column(
@@ -126,17 +124,23 @@ class _TrackMultiViewState extends State<View> {
   }
 
   void onTap() {
-    Model model = Provider.of<Model>(context, listen: false);
+    TrackMultiModel model = Provider.of<TrackMultiModel>(
+      context,
+      listen: false,
+    );
     model.cycle();
   }
 
   void onButtonPressed(TrackData data) {
-    Model model = Provider.of<Model>(context, listen: false);
+    TrackMultiModel model = Provider.of<TrackMultiModel>(
+      context,
+      listen: false,
+    );
     model.changeCurrent(data);
   }
 
   TrackData currentTrackData() {
-    Model model = Provider.of<Model>(context);
+    TrackMultiModel model = Provider.of<TrackMultiModel>(context);
     return model.currentData();
   }
 
@@ -144,12 +148,16 @@ class _TrackMultiViewState extends State<View> {
   Widget build(BuildContext ctx) {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    Provider.of<Model>(context);
+    Provider.of<TrackMultiModel>(context);
     double margin = 8;
     developer.log("rebuild view");
     TrackData currentModelData = currentTrackData();
-   
-    Widget buttons = SideIconButtons(onButtonPressed: onButtonPressed, selected: currentModelData, size: 30);
+
+    Widget buttons = SideIconButtons(
+      onButtonPressed: onButtonPressed,
+      selected: currentModelData,
+      size: 30,
+    );
     // I would like to have `visible = widgets[currentModelData]`
     // but then the widget states are disposed.
     // AI says: In Flutter, when you swap a widget out of the build tree,
@@ -185,11 +193,8 @@ class _TrackMultiViewState extends State<View> {
   }
 }
 
-class Model extends ChangeNotifier {
-  final Kinds kinds;
+class TrackMultiModel extends ChangeNotifier {
   TrackData current = TrackData.wheel;
-  Model({required this.kinds});
-
   void cycle() {
     if (current == TrackData.wheel) {
       return changeCurrent(TrackData.map);
@@ -212,27 +217,12 @@ class Model extends ChangeNotifier {
   }
 }
 
-class ProviderWidget extends StatelessWidget {
-  final Kinds kinds;
-  const ProviderWidget({super.key, required this.kinds});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => Model(kinds: kinds),
-      builder: (context, child) {
-        return View(kinds: kinds);
-      },
-    );
-  }
-}
-
 class TrackMultiView extends StatelessWidget {
   final Set<InputType> kinds;
   const TrackMultiView({super.key, required this.kinds});
 
   @override
   Widget build(BuildContext context) {
-    return ProviderWidget(kinds: kinds);
+    return View(kinds: kinds);
   }
 }

@@ -18,10 +18,13 @@ class WheelScreen extends StatelessWidget {
 
   Future<void> gotoUserSteps(BuildContext ctx) async {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    TrackMultiModel multi = Provider.of<TrackMultiModel>(ctx, listen: false);
     await Navigator.push(
       ctx,
       MaterialPageRoute(
-        builder: (context) => UserStepsProvider(model: model.copy()),
+        builder:
+            (context) =>
+                UserStepsProvider(model: model, multiTrackModel: multi),
       ),
     );
     model.notify();
@@ -92,6 +95,22 @@ class WheelScreen extends StatelessWidget {
   }
 }
 
+class WheelScreenProviders extends MultiProvider {
+  WheelScreenProviders({
+    super.key,
+    required RootModel root,
+    required Widget child,
+  }) : super(
+         providers: [
+           ChangeNotifierProvider(
+             create: (_) => SegmentModel(root.getBridge(), root.trackSegment()),
+           ),
+           ChangeNotifierProvider(create: (_) => TrackMultiModel()),
+         ],
+         child: child,
+       );
+}
+
 class WheelProvider extends StatelessWidget {
   const WheelProvider({super.key});
 
@@ -100,11 +119,6 @@ class WheelProvider extends StatelessWidget {
     RootModel root = Provider.of<RootModel>(context);
     Bridge bridge = root.getBridge();
     assert(bridge.isLoaded());
-    return ChangeNotifierProvider(
-      create: (ctx) => SegmentModel(bridge, root.trackSegment()),
-      builder: (context, child) {
-        return WheelScreen();
-      },
-    );
+    return WheelScreenProviders(root: root, child: WheelScreen());
   }
 }
