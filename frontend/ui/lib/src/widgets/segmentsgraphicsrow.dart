@@ -18,6 +18,12 @@ class SegmentSelector extends StatefulWidget {
 
 class _SegmentSelectorState extends State<SegmentSelector> {
   @override
+  void initState() {
+    super.initState();
+    developer.log("SegmentSelector init staete");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [

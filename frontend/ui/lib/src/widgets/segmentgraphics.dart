@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
@@ -108,7 +106,11 @@ class SegmentGraphics extends StatefulWidget {
   State<SegmentGraphics> createState() => _SegmentGraphicsState();
 }
 
-class _SegmentGraphicsState extends State<SegmentGraphics> {
+class _SegmentGraphicsState extends State<SegmentGraphics>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true; // This is crucial!
+
   Map<TrackData, TrackView> widgets = {};
 
   @override
@@ -134,11 +136,11 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
 
   @override
   Widget build(BuildContext ctx) {
+    super.build(ctx);
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
     double margin = 8;
-    developer.log("rebuild view");
     TrackData currentModelData = model.currentData();
 
     // I would like to have `visible = widgets[currentModelData]`
@@ -188,7 +190,6 @@ class TrackGraphicsRow extends StatelessWidget {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
-    developer.log("rebuild view");
     TrackData currentModelData = model.currentData();
 
     Widget buttonColumn = SegmentGraphicsButtonsColumn(

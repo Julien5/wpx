@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
@@ -22,12 +20,17 @@ class TrackView extends StatefulWidget {
   final RendererParameters parameters;
   const TrackView({super.key, required this.parameters});
 
+  // we want a unique key, because we want to track visibility
+  // (1) visibility TrackView in WheelScreen
+  // (2) visibility TrackView in SettingsScreen
+  // must have different trackers.
+  // but we want to reuse state un
   static TrackView make(Set<InputType> kinds, TrackData trackData) {
     RendererParameters p = RendererParameters(
       kinds: kinds,
       trackData: trackData,
     );
-    return TrackView(key: UniqueKey(), parameters: p);
+    return TrackView(key: p.createKey(), parameters: p);
   }
 
   @override
@@ -35,7 +38,6 @@ class TrackView extends StatefulWidget {
 }
 
 class _TrackViewState extends State<TrackView> {
-  TrackData current = TrackData.wheel;
   VisibilityInfo? visibilityInfo;
   FutureRenderer? futureRenderer;
 
@@ -51,7 +53,6 @@ class _TrackViewState extends State<TrackView> {
   }
 
   FutureRenderer _onSegmentModelChanged(FutureRenderer? renderer) {
-    developer.log("_onSegmentModelChanged: $current ${futureRenderer?.kinds}");
     renderer!.reset();
     startRendererIfNeeded();
     return renderer;
@@ -62,7 +63,6 @@ class _TrackViewState extends State<TrackView> {
     if (!mounted) {
       return;
     }
-    developer.log("_onVisibilityChanged: $current ${info.size}");
     visibilityInfo = info;
 
     if (visibilityInfo!.visibleFraction == 0) {
@@ -77,14 +77,6 @@ class _TrackViewState extends State<TrackView> {
 
   // takes visibility and renderer dirtyness into account.
   void startRendererIfNeeded() {
-    developer.log(
-      "startRendererIfNeeded: $current kinds:${futureRenderer?.kinds}",
-    );
-    if (widget.key != null) {
-      developer.log("key:${widget.key!}");
-    } else {
-      developer.log("key:null");
-    }
     if (futureRenderer == null) {
       return;
     }
@@ -92,9 +84,6 @@ class _TrackViewState extends State<TrackView> {
         visibilityInfo != null &&
         visibilityInfo!.visibleFraction > 0 &&
         futureRenderer!.needsStart();
-    developer.log(
-      "startRendererIfNeeded: $current size:${visibilityInfo?.size} need:${futureRenderer?.needsStart()}",
-    );
     if (needed) {
       futureRenderer!.start();
       assert(!futureRenderer!.needsStart());
@@ -108,7 +97,7 @@ class _TrackViewState extends State<TrackView> {
     Widget innerWidget = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return VisibilityDetector(
-          key: widget.key!,
+          key: UniqueKey(),
           onVisibilityChanged: _onVisibilityChanged,
           child: FutureRenderingWidget(interactive: false),
         );

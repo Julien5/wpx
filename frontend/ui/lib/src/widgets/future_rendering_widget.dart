@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/log.dart';
@@ -44,7 +42,6 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    developer.log("rebuild widget");
     FutureRenderer future = Provider.of<FutureRenderer>(context);
     return buildWorker(future);
   }
