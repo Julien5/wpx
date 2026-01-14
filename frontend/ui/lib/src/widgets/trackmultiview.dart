@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 
@@ -124,7 +125,7 @@ class _TrackViewsState extends State<TrackViews> {
   }
 
   void onTap() {
-    TrackMultiModel model = Provider.of<TrackMultiModel>(
+    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
       context,
       listen: false,
     );
@@ -132,7 +133,7 @@ class _TrackViewsState extends State<TrackViews> {
   }
 
   TrackData currentTrackData() {
-    TrackMultiModel model = Provider.of<TrackMultiModel>(context);
+    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
     return model.currentData();
   }
 
@@ -140,7 +141,7 @@ class _TrackViewsState extends State<TrackViews> {
   Widget build(BuildContext ctx) {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    Provider.of<TrackMultiModel>(context);
+    Provider.of<TrackViewsSwitch>(context);
     double margin = 8;
     developer.log("rebuild view");
     TrackData currentModelData = currentTrackData();
@@ -170,26 +171,47 @@ class _TrackViewsState extends State<TrackViews> {
   }
 }
 
-class TrackMultiModel extends ChangeNotifier {
-  TrackData current = TrackData.wheel;
-  void cycle() {
-    if (current == TrackData.wheel) {
-      return changeCurrent(TrackData.map);
-    }
-    if (current == TrackData.map) {
-      return changeCurrent(TrackData.profile);
-    }
-    if (current == TrackData.profile) {
-      return changeCurrent(TrackData.wheel);
-    }
+class ScreenTrackView extends StatelessWidget {
+  final Set<InputType> kinds;
+  final double height;
+  const ScreenTrackView({super.key, required this.kinds, required this.height});
+
+  TrackData currentTrackData(BuildContext context) {
+    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
+    return model.currentData();
   }
 
-  TrackData currentData() {
-    return current;
+  void onButtonPressed(BuildContext context, TrackData data) {
+    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
+      context,
+      listen: false,
+    );
+    model.changeCurrent(data);
   }
 
-  void changeCurrent(TrackData d) {
-    current = d;
-    notifyListeners();
+  @override
+  Widget build(BuildContext context) {
+    // Instanciating a Provider.of<Model>(context) (listen=true)
+    // is necessary to get rebuild on notifyListeners.
+    Provider.of<TrackViewsSwitch>(context);
+    developer.log("rebuild view");
+    TrackData currentModelData = currentTrackData(context);
+
+    Widget buttons = SideIconButtons(
+      onButtonPressed: (trackData) => {onButtonPressed(context, trackData)},
+      selected: currentModelData,
+      size: 30,
+    );
+
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: height),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [Expanded(child: TrackViews(kinds: kinds)), buttons],
+        ),
+      ),
+    );
   }
 }

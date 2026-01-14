@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
+import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_table.dart';
-import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
 import '../../widgets/trackmultiview.dart';
 
@@ -79,7 +79,7 @@ class ControlsScreenProviders extends MultiProvider {
   ControlsScreenProviders({
     super.key,
     required SegmentModel segmentModel,
-    required TrackMultiModel multiTrackModel,
+    required TrackViewsSwitch multiTrackModel,
     required Widget child,
   }) : super(
          providers: [
@@ -92,7 +92,7 @@ class ControlsScreenProviders extends MultiProvider {
 
 class ControlsProvider extends StatelessWidget {
   final SegmentModel model;
-  final TrackMultiModel multiTrackModel;
+  final TrackViewsSwitch multiTrackModel;
   const ControlsProvider({
     super.key,
     required this.model,

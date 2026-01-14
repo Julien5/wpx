@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
+import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/usersteps/usersteps_table.dart';
 import 'package:ui/src/widgets/trackmultiview.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
-
-import '../wheel/wheel_screen.dart';
 
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget({super.key});
@@ -82,7 +81,7 @@ class UserStepsScreenProviders extends MultiProvider {
   UserStepsScreenProviders({
     super.key,
     required SegmentModel segmentModel,
-    required TrackMultiModel multiTrackModel,
+    required TrackViewsSwitch multiTrackModel,
     required Widget child,
   }) : super(
          providers: [
@@ -95,7 +94,7 @@ class UserStepsScreenProviders extends MultiProvider {
 
 class UserStepsProvider extends StatelessWidget {
   final SegmentModel model;
-  final TrackMultiModel multiTrackModel;
+  final TrackViewsSwitch multiTrackModel;
   const UserStepsProvider({
     super.key,
     required this.model,
