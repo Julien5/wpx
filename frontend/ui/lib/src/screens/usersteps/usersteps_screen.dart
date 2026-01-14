@@ -4,7 +4,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/usersteps/usersteps_table.dart';
-import 'package:ui/src/widgets/trackmultiview.dart';
+import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
 class ButtonWidget extends StatelessWidget {
@@ -62,7 +62,7 @@ class UserStepsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ScreenTrackView(kinds: usersteps, height: 200),
+            TrackGraphicsRow(kinds: usersteps, height: 200),
             SizedBox(height: 10),
             TextWidget(),
             SizedBox(height: 10),

@@ -7,12 +7,12 @@ import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 
-class SideIconButton extends StatelessWidget {
+class SegmentGraphicsButtons extends StatelessWidget {
   final VoidCallback? onPressed;
   final TrackData trackData;
   final TrackData selected;
   final double size;
-  const SideIconButton({
+  const SegmentGraphicsButtons({
     super.key,
     required this.selected,
     required this.size,
@@ -55,12 +55,12 @@ class SideIconButton extends StatelessWidget {
   }
 }
 
-class SideIconButtons extends StatelessWidget {
+class SegmentGraphicsButtonsColumn extends StatelessWidget {
   final void Function(TrackData) onButtonPressed;
   final TrackData selected;
   final double size;
 
-  const SideIconButtons({
+  const SegmentGraphicsButtonsColumn({
     super.key,
     required this.selected,
     required this.size,
@@ -76,19 +76,19 @@ class SideIconButtons extends StatelessWidget {
         mainAxisSize: MainAxisSize.max, // Makes Column fill available space
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SideIconButton(
+          SegmentGraphicsButtons(
             selected: selected,
             size: buttonSize,
             trackData: TrackData.wheel,
             onPressed: () => onButtonPressed(TrackData.wheel),
           ),
-          SideIconButton(
+          SegmentGraphicsButtons(
             selected: selected,
             size: buttonSize,
             trackData: TrackData.map,
             onPressed: () => onButtonPressed(TrackData.map),
           ),
-          SideIconButton(
+          SegmentGraphicsButtons(
             selected: selected,
             size: buttonSize,
             trackData: TrackData.profile,
@@ -100,15 +100,15 @@ class SideIconButtons extends StatelessWidget {
   }
 }
 
-class TrackViews extends StatefulWidget {
+class SegmentGraphics extends StatefulWidget {
   final Set<InputType> kinds;
-  const TrackViews({super.key, required this.kinds});
+  const SegmentGraphics({super.key, required this.kinds});
 
   @override
-  State<TrackViews> createState() => _TrackViewsState();
+  State<SegmentGraphics> createState() => _SegmentGraphicsState();
 }
 
-class _TrackViewsState extends State<TrackViews> {
+class _SegmentGraphicsState extends State<SegmentGraphics> {
   Map<TrackData, TrackView> widgets = {};
 
   @override
@@ -132,19 +132,14 @@ class _TrackViewsState extends State<TrackViews> {
     model.cycle();
   }
 
-  TrackData currentTrackData() {
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
-    return model.currentData();
-  }
-
   @override
   Widget build(BuildContext ctx) {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    Provider.of<TrackViewsSwitch>(context);
+    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
     double margin = 8;
     developer.log("rebuild view");
-    TrackData currentModelData = currentTrackData();
+    TrackData currentModelData = model.currentData();
 
     // I would like to have `visible = widgets[currentModelData]`
     // but then the widget states are disposed.
@@ -171,10 +166,14 @@ class _TrackViewsState extends State<TrackViews> {
   }
 }
 
-class ScreenTrackView extends StatelessWidget {
+class TrackGraphicsRow extends StatelessWidget {
   final Set<InputType> kinds;
   final double height;
-  const ScreenTrackView({super.key, required this.kinds, required this.height});
+  const TrackGraphicsRow({
+    super.key,
+    required this.kinds,
+    required this.height,
+  });
 
   TrackData currentTrackData(BuildContext context) {
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
@@ -197,7 +196,7 @@ class ScreenTrackView extends StatelessWidget {
     developer.log("rebuild view");
     TrackData currentModelData = currentTrackData(context);
 
-    Widget buttons = SideIconButtons(
+    Widget buttonColumn = SegmentGraphicsButtonsColumn(
       onButtonPressed: (trackData) => {onButtonPressed(context, trackData)},
       selected: currentModelData,
       size: 30,
@@ -209,7 +208,10 @@ class ScreenTrackView extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: height),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [Expanded(child: TrackViews(kinds: kinds)), buttons],
+          children: [
+            Expanded(child: SegmentGraphics(kinds: kinds)),
+            buttonColumn,
+          ],
         ),
       ),
     );

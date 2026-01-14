@@ -8,7 +8,7 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
-import 'package:ui/src/widgets/trackmultiview.dart';
+import 'package:ui/src/widgets/segmentgraphics.dart';
 
 class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
@@ -82,7 +82,7 @@ class WheelScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ScreenTrackView(kinds: allkinds(), height: 200),
+            TrackGraphicsRow(kinds: allkinds(), height: 200),
             Expanded(child: vspace),
             statisticsCard,
             Expanded(child: vspace),

@@ -4,8 +4,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_table.dart';
-
-import '../../widgets/trackmultiview.dart';
+import 'package:ui/src/widgets/segmentgraphics.dart';
 
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget({super.key});
@@ -62,7 +61,7 @@ class ControlsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ScreenTrackView(kinds: control, height: 200),
+            TrackGraphicsRow(kinds: control, height: 200),
             SizedBox(height: 10),
             TextWidget(),
             SizedBox(height: 10),
