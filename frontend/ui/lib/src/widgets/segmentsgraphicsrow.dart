@@ -1,16 +1,42 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
 import 'segmentgraphics.dart';
 
+class LocalSegmentGraphics extends StatelessWidget {
+  final Kinds kinds;
+  final SegmentModel model;
+
+  const LocalSegmentGraphics({
+    super.key,
+    required this.kinds,
+    required this.model,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: model,
+      child: SegmentGraphics(kinds: kinds),
+    );
+  }
+}
+
 class SegmentSelector extends StatefulWidget {
   final TabController tabController;
-  const SegmentSelector({super.key, required this.tabController});
+  final List<SegmentModel> segments;
+  const SegmentSelector({
+    super.key,
+    required this.tabController,
+    required this.segments,
+  });
 
   @override
   State<SegmentSelector> createState() => _SegmentSelectorState();
@@ -18,23 +44,19 @@ class SegmentSelector extends StatefulWidget {
 
 class _SegmentSelectorState extends State<SegmentSelector> {
   @override
-  void initState() {
-    super.initState();
-    developer.log("SegmentSelector init staete");
-  }
-
-  @override
   Widget build(BuildContext context) {
+    List<Widget> children = [];
+    for (SegmentModel model in widget.segments) {
+      children.add(
+        Center(child: LocalSegmentGraphics(model: model, kinds: allkinds())),
+      );
+    }
     return Column(
       children: [
         Expanded(
           child: TabBarView(
             controller: widget.tabController,
-            children: [
-              Center(child: SegmentGraphics(kinds: allkinds())),
-              Center(child: SegmentGraphics(kinds: {InputType.userStep})),
-              Center(child: SegmentGraphics(kinds: {InputType.osm})),
-            ],
+            children: children,
           ),
         ),
       ],
@@ -57,17 +79,35 @@ class SegmentsGraphicsRow extends StatefulWidget {
 
 class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  TabController? _tabController;
+  List<SegmentModel> segments = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    developer.log("initState");
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _initState();
+    });
+  }
+
+  void _initState() {
+    RootModel root = Provider.of<RootModel>(context, listen: false);
+    developer.log(
+      "_SegmentsGraphicsRowState:_initState:${root.segments().length}",
+    );
+    for (Segment segment in root.segments()) {
+      segments.add(SegmentModel(root.getBridge(), segment));
+    }
+    _tabController = TabController(length: root.segments().length, vsync: this);
+    setState(() {});
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    if (_tabController != null) {
+      _tabController!.dispose();
+    }
     super.dispose();
   }
 
@@ -82,7 +122,9 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
   @override
   Widget build(BuildContext context) {
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
-    developer.log("rebuild view");
+    if (_tabController == null) {
+      return Text("building tab controller");
+    }
 
     TrackData currentModelData = model.currentData();
 
@@ -99,7 +141,12 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(child: SegmentSelector(tabController: _tabController)),
+            Expanded(
+              child: SegmentSelector(
+                tabController: _tabController!,
+                segments: segments,
+              ),
+            ),
             //Expanded(child: Center(child: SegmentGraphics(kinds: allkinds()))),
             buttonColumn,
           ],
