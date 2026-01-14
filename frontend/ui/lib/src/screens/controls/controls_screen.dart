@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_table.dart';
-import 'package:ui/src/widgets/trackmultiview.dart';
+import 'package:ui/src/screens/wheel/wheel_screen.dart';
+
+import '../../widgets/trackmultiview.dart';
 
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget({super.key});
@@ -61,7 +62,7 @@ class ControlsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TrackMultiView(kinds: control),
+            ScreenTrackView(kinds: control, height: 200),
             SizedBox(height: 10),
             TextWidget(),
             SizedBox(height: 10),
@@ -74,20 +75,36 @@ class ControlsScreen extends StatelessWidget {
   }
 }
 
+class ControlsScreenProviders extends MultiProvider {
+  ControlsScreenProviders({
+    super.key,
+    required SegmentModel segmentModel,
+    required TrackMultiModel multiTrackModel,
+    required Widget child,
+  }) : super(
+         providers: [
+           ChangeNotifierProvider.value(value: segmentModel),
+           ChangeNotifierProvider.value(value: multiTrackModel),
+         ],
+         child: child,
+       );
+}
+
 class ControlsProvider extends StatelessWidget {
   final SegmentModel model;
-  const ControlsProvider({super.key, required this.model});
+  final TrackMultiModel multiTrackModel;
+  const ControlsProvider({
+    super.key,
+    required this.model,
+    required this.multiTrackModel,
+  });
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    Bridge bridge = root.getBridge();
-    assert(bridge.isLoaded());
-    return ChangeNotifierProvider.value(
-      value: model,
-      builder: (context, child) {
-        return ControlsScreen();
-      },
+    return ControlsScreenProviders(
+      segmentModel: model,
+      multiTrackModel: multiTrackModel,
+      child: ControlsScreen(),
     );
   }
 }

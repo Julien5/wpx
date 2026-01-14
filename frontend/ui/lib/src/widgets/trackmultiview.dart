@@ -99,15 +99,15 @@ class SideIconButtons extends StatelessWidget {
   }
 }
 
-class View extends StatefulWidget {
+class TrackViews extends StatefulWidget {
   final Set<InputType> kinds;
-  const View({super.key, required this.kinds});
+  const TrackViews({super.key, required this.kinds});
 
   @override
-  State<View> createState() => _TrackMultiViewState();
+  State<TrackViews> createState() => _TrackViewsState();
 }
 
-class _TrackMultiViewState extends State<View> {
+class _TrackViewsState extends State<TrackViews> {
   Map<TrackData, TrackView> widgets = {};
 
   @override
@@ -131,14 +131,6 @@ class _TrackMultiViewState extends State<View> {
     model.cycle();
   }
 
-  void onButtonPressed(TrackData data) {
-    TrackMultiModel model = Provider.of<TrackMultiModel>(
-      context,
-      listen: false,
-    );
-    model.changeCurrent(data);
-  }
-
   TrackData currentTrackData() {
     TrackMultiModel model = Provider.of<TrackMultiModel>(context);
     return model.currentData();
@@ -153,11 +145,6 @@ class _TrackMultiViewState extends State<View> {
     developer.log("rebuild view");
     TrackData currentModelData = currentTrackData();
 
-    Widget buttons = SideIconButtons(
-      onButtonPressed: onButtonPressed,
-      selected: currentModelData,
-      size: 30,
-    );
     // I would like to have `visible = widgets[currentModelData]`
     // but then the widget states are disposed.
     // AI says: In Flutter, when you swap a widget out of the build tree,
@@ -173,21 +160,11 @@ class _TrackMultiViewState extends State<View> {
             );
           }).toList(),
     );
-    Widget gesture = GestureDetector(
+    return GestureDetector(
       onTap: onTap,
       child: Padding(
         padding: EdgeInsetsGeometry.fromLTRB(margin, margin, margin, margin),
         child: visible,
-      ),
-    );
-    return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 200),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [Expanded(child: gesture), buttons],
-        ),
       ),
     );
   }
@@ -214,15 +191,5 @@ class TrackMultiModel extends ChangeNotifier {
   void changeCurrent(TrackData d) {
     current = d;
     notifyListeners();
-  }
-}
-
-class TrackMultiView extends StatelessWidget {
-  final Set<InputType> kinds;
-  const TrackMultiView({super.key, required this.kinds});
-
-  @override
-  Widget build(BuildContext context) {
-    return View(kinds: kinds);
   }
 }

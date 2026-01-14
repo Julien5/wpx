@@ -6,6 +6,8 @@ import 'package:ui/src/screens/usersteps/usersteps_table.dart';
 import 'package:ui/src/widgets/trackmultiview.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
+import '../wheel/wheel_screen.dart';
+
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget({super.key});
 
@@ -61,7 +63,7 @@ class UserStepsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TrackMultiView(kinds: usersteps),
+            ScreenTrackView(kinds: usersteps, height: 200),
             SizedBox(height: 10),
             TextWidget(),
             SizedBox(height: 10),
@@ -109,5 +111,3 @@ class UserStepsProvider extends StatelessWidget {
     );
   }
 }
-
-class MultiTrackModel {}

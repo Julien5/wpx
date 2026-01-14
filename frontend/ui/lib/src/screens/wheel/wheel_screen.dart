@@ -1,5 +1,8 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
@@ -8,6 +11,51 @@ import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/trackmultiview.dart';
+
+class ScreenTrackView extends StatelessWidget {
+  final Set<InputType> kinds;
+  final double height;
+  const ScreenTrackView({super.key, required this.kinds, required this.height});
+
+  TrackData currentTrackData(BuildContext context) {
+    TrackMultiModel model = Provider.of<TrackMultiModel>(context);
+    return model.currentData();
+  }
+
+  void onButtonPressed(BuildContext context, TrackData data) {
+    TrackMultiModel model = Provider.of<TrackMultiModel>(
+      context,
+      listen: false,
+    );
+    model.changeCurrent(data);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Instanciating a Provider.of<Model>(context) (listen=true)
+    // is necessary to get rebuild on notifyListeners.
+    Provider.of<TrackMultiModel>(context);
+    developer.log("rebuild view");
+    TrackData currentModelData = currentTrackData(context);
+
+    Widget buttons = SideIconButtons(
+      onButtonPressed: (trackData) => {onButtonPressed(context, trackData)},
+      selected: currentModelData,
+      size: 30,
+    );
+
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: height),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [Expanded(child: TrackViews(kinds: kinds)), buttons],
+        ),
+      ),
+    );
+  }
+}
 
 class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
@@ -32,10 +80,12 @@ class WheelScreen extends StatelessWidget {
 
   Future<void> gotoControls(BuildContext ctx) async {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    TrackMultiModel multi = Provider.of<TrackMultiModel>(ctx, listen: false);
     Navigator.push(
       ctx,
       MaterialPageRoute(
-        builder: (context) => ControlsProvider(model: model.copy()),
+        builder:
+            (context) => ControlsProvider(model: model, multiTrackModel: multi),
       ),
     );
     model.notify();
@@ -71,6 +121,7 @@ class WheelScreen extends StatelessWidget {
     );
 
     Widget vspace = SizedBox(height: 50);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
       body: Center(
@@ -78,7 +129,7 @@ class WheelScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TrackMultiView(kinds: allkinds()),
+            ScreenTrackView(kinds: allkinds(), height: 200),
             Expanded(child: vspace),
             statisticsCard,
             Expanded(child: vspace),
