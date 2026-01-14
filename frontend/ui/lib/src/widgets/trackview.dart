@@ -20,11 +20,6 @@ class TrackView extends StatefulWidget {
   final RendererParameters parameters;
   const TrackView({super.key, required this.parameters});
 
-  // we want a unique key, because we want to track visibility
-  // (1) visibility TrackView in WheelScreen
-  // (2) visibility TrackView in SettingsScreen
-  // must have different trackers.
-  // but we want to reuse state un
   static TrackView make(Set<InputType> kinds, TrackData trackData) {
     RendererParameters p = RendererParameters(
       kinds: kinds,
@@ -97,7 +92,9 @@ class _TrackViewState extends State<TrackView> {
     Widget innerWidget = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return VisibilityDetector(
-          key: UniqueKey(),
+          // widget.key! causes an initial rendering problem in PDF
+          // UniqueKey() causes flicker when adjusting the speed in WheelScreen
+          key: widget.key!,
           onVisibilityChanged: _onVisibilityChanged,
           child: FutureRenderingWidget(interactive: false),
         );
