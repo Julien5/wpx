@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
-import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_screen.dart';
+import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
@@ -14,13 +14,21 @@ class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
 
   void gotoSettings(BuildContext ctx) {
-    Navigator.of(ctx).pushNamed(RouteManager.settingsView);
-  }
-
-  Future<void> gotoUserSteps(BuildContext ctx) async {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
     TrackViewsSwitch multi = Provider.of<TrackViewsSwitch>(ctx, listen: false);
-    await Navigator.push(
+    Navigator.push(
+      ctx,
+      MaterialPageRoute(
+        builder:
+            (context) => SettingsProvider(model: model, multiTrackModel: multi),
+      ),
+    );
+  }
+
+  void gotoUserSteps(BuildContext ctx) {
+    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    TrackViewsSwitch multi = Provider.of<TrackViewsSwitch>(ctx, listen: false);
+    Navigator.push(
       ctx,
       MaterialPageRoute(
         builder:
@@ -28,10 +36,9 @@ class WheelScreen extends StatelessWidget {
                 UserStepsProvider(model: model, multiTrackModel: multi),
       ),
     );
-    model.notify();
   }
 
-  Future<void> gotoControls(BuildContext ctx) async {
+  void gotoControls(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
     TrackViewsSwitch multi = Provider.of<TrackViewsSwitch>(ctx, listen: false);
     Navigator.push(
@@ -41,7 +48,6 @@ class WheelScreen extends StatelessWidget {
             (context) => ControlsProvider(model: model, multiTrackModel: multi),
       ),
     );
-    model.notify();
   }
 
   @override

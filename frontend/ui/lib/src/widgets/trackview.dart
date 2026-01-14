@@ -27,7 +27,7 @@ class TrackView extends StatefulWidget {
       kinds: kinds,
       trackData: trackData,
     );
-    return TrackView(key: p.createKey(), parameters: p);
+    return TrackView(key: UniqueKey(), parameters: p);
   }
 
   @override
@@ -51,16 +51,18 @@ class _TrackViewState extends State<TrackView> {
   }
 
   FutureRenderer _onSegmentModelChanged(FutureRenderer? renderer) {
-    developer.log("update future");
+    developer.log("_onSegmentModelChanged: $current ${futureRenderer?.kinds}");
     renderer!.reset();
     startRendererIfNeeded();
     return renderer;
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
+    visibilityInfo = null;
     if (!mounted) {
       return;
     }
+    developer.log("_onVisibilityChanged: $current ${info.size}");
     visibilityInfo = info;
 
     if (visibilityInfo!.visibleFraction == 0) {
@@ -75,6 +77,14 @@ class _TrackViewState extends State<TrackView> {
 
   // takes visibility and renderer dirtyness into account.
   void startRendererIfNeeded() {
+    developer.log(
+      "startRendererIfNeeded: $current kinds:${futureRenderer?.kinds}",
+    );
+    if (widget.key != null) {
+      developer.log("key:${widget.key!}");
+    } else {
+      developer.log("key:null");
+    }
     if (futureRenderer == null) {
       return;
     }
@@ -82,8 +92,12 @@ class _TrackViewState extends State<TrackView> {
         visibilityInfo != null &&
         visibilityInfo!.visibleFraction > 0 &&
         futureRenderer!.needsStart();
+    developer.log(
+      "startRendererIfNeeded: $current size:${visibilityInfo?.size} need:${futureRenderer?.needsStart()}",
+    );
     if (needed) {
       futureRenderer!.start();
+      assert(!futureRenderer!.needsStart());
     }
   }
 
@@ -94,7 +108,7 @@ class _TrackViewState extends State<TrackView> {
     Widget innerWidget = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return VisibilityDetector(
-          key: widget.parameters.createKey(),
+          key: widget.key!,
           onVisibilityChanged: _onVisibilityChanged,
           child: FutureRenderingWidget(interactive: false),
         );

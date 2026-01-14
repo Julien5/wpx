@@ -175,11 +175,6 @@ class TrackGraphicsRow extends StatelessWidget {
     required this.height,
   });
 
-  TrackData currentTrackData(BuildContext context) {
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
-    return model.currentData();
-  }
-
   void onButtonPressed(BuildContext context, TrackData data) {
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
       context,
@@ -192,9 +187,9 @@ class TrackGraphicsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    Provider.of<TrackViewsSwitch>(context);
+    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
     developer.log("rebuild view");
-    TrackData currentModelData = currentTrackData(context);
+    TrackData currentModelData = model.currentData();
 
     Widget buttonColumn = SegmentGraphicsButtonsColumn(
       onButtonPressed: (trackData) => {onButtonPressed(context, trackData)},
