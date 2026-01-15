@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 typedef Kinds = Set<bridge.InputType>;
@@ -10,8 +11,8 @@ class SegmentModel extends ChangeNotifier {
   late bridge.Bridge _bridge;
   late bridge.Segment _segment;
 
-  SegmentModel(bridge.Bridge bridge, bridge.Segment segment) {
-    _bridge = bridge;
+  SegmentModel(RootModel root, bridge.Segment segment) {
+    _bridge = root.getBridge();
     _segment = segment;
   }
 
@@ -22,10 +23,6 @@ class SegmentModel extends ChangeNotifier {
   void debug() {
     double length = _bridge.segmentStatistics(segment: _segment).length / 1000;
     developer.log("segment length:$length");
-  }
-
-  SegmentModel copy() {
-    return SegmentModel(_bridge, _segment);
   }
 
   bridge.UserStepsOptions userStepsOptions() {
