@@ -35,6 +35,13 @@ class TrackView extends StatefulWidget {
 class _TrackViewState extends State<TrackView> {
   VisibilityInfo? visibilityInfo;
   FutureRenderer? futureRenderer;
+  late final Key _visibilityKey;
+
+  @override
+  void initState() {
+    super.initState();
+    _visibilityKey = UniqueKey();
+  }
 
   // The argument type is BuildContext, but using it yields
   // a crash. Dont ask me why.
@@ -94,7 +101,8 @@ class _TrackViewState extends State<TrackView> {
         return VisibilityDetector(
           // widget.key! causes an initial rendering problem in PDF
           // UniqueKey() causes flicker when adjusting the speed in WheelScreen
-          key: widget.key!,
+          // => we use a specific key
+          key: _visibilityKey,
           onVisibilityChanged: _onVisibilityChanged,
           child: FutureRenderingWidget(interactive: false),
         );

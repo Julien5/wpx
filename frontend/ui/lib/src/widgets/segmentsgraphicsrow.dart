@@ -137,7 +137,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     Widget graphics = Padding(
       padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 200),
+        constraints: BoxConstraints(maxHeight: widget.height),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
