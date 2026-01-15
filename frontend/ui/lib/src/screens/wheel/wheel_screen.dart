@@ -63,21 +63,6 @@ class WheelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Widget pdfButton = ElevatedButton(
-      onPressed: () => gotoSettings(ctx),
-      child: const Text("PDF"),
-    );
-
-    Widget controlsButtons = ElevatedButton(
-      onPressed: () => gotoControls(ctx),
-      child: const Text("Controls"),
-    );
-
-    Widget userStepsButton = ElevatedButton(
-      onPressed: () => gotoUserSteps(ctx),
-      child: const Text("Pacing"),
-    );
-
     Card statisticsCard = Card(
       elevation: 4, // Add shadow to the card
       margin: const EdgeInsets.all(1), // Add margin around the card
@@ -86,7 +71,11 @@ class WheelScreen extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16), // Add padding inside the card
-        child: StatisticsWidget(),
+        child: StatisticsWidget(
+          onPacingPointPressed: () => gotoUserSteps(ctx),
+          onControlsPointPressed: () => gotoControls(ctx),
+          onPagesPressed: () => gotoSettings(ctx),
+        ),
       ),
     );
 
@@ -103,11 +92,6 @@ class WheelScreen extends StatelessWidget {
             Expanded(child: vspace),
             statisticsCard,
             Expanded(child: vspace),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [controlsButtons, userStepsButton, pdfButton],
-            ),
             vspace,
           ],
         ),

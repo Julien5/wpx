@@ -6,11 +6,20 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/utils.dart';
 
 class StatisticsWidget extends StatefulWidget {
-  const StatisticsWidget({super.key});
+  final void Function() onPacingPointPressed;
+  final void Function() onControlsPointPressed;
+  final void Function() onPagesPressed;
+  const StatisticsWidget({
+    super.key,
+    required this.onPacingPointPressed,
+    required this.onControlsPointPressed,
+    required this.onPagesPressed,
+  });
 
   @override
   State<StatisticsWidget> createState() => _StatisticsWidgetState();
@@ -163,6 +172,21 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
       endTimeText = DateFormat('HH:mm').format(endTime);
     }
 
+    List<Waypoint> pacingPoints = segmentModel.someWaypoints({
+      InputType.userStep,
+    });
+    String pacingPointsText = "${pacingPoints.length}";
+
+    List<Waypoint> controlPoints = segmentModel.someWaypoints({
+      InputType.control,
+    });
+    String controlPointsText = "${controlPoints.length}";
+
+    RootModel root = Provider.of<RootModel>(context);
+    List<Segment> segments = root.segments();
+    String pagesCountText =
+        "${(segments.length / 2).ceil().toString().padLeft(2)} pages";
+
     EdgeInsets valuePadding = const EdgeInsets.fromLTRB(15, 0, 15, 0);
     return Container(
       constraints: const BoxConstraints(maxWidth: 300), // Set max width
@@ -261,6 +285,81 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
                 child: Text(
                   "${hm.toStringAsFixed(0)} m",
                   textAlign: TextAlign.right,
+                ),
+              ),
+            ],
+          ),
+          TableRow(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Pacing points"),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: widget.onPacingPointPressed,
+                      style: ElevatedButton.styleFrom(
+                        padding: valuePadding,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(pacingPointsText, textAlign: TextAlign.right),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          TableRow(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Control points"),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: widget.onControlsPointPressed,
+                      style: ElevatedButton.styleFrom(
+                        padding: valuePadding,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        controlPointsText,
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          TableRow(
+            children: [
+              const Padding(padding: EdgeInsets.all(8.0), child: Text("PDF")),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: widget.onPagesPressed,
+                      style: ElevatedButton.styleFrom(
+                        padding: valuePadding,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(pagesCountText, textAlign: TextAlign.right),
+                    ),
+                  ],
                 ),
               ),
             ],
