@@ -62,18 +62,95 @@ class SliderWidget extends StatelessWidget {
     RootModel root = Provider.of<RootModel>(context);
     double trackLength = root.statistics().length;
     List<double> values = segmentLengthSliderValues(trackLength);
-    Widget w = SliderValuesWidget(
+    return SliderValuesWidget(
       values: values,
       initIndex: 1,
       formatLabel: (value) => "${(value / 1000).toStringAsFixed(1)} km",
       onValueChanged: (value) => {onValueChanged(context, value)},
       enabled: true,
     );
+  }
+}
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
-        child: w,
+class SettingsWidget extends StatelessWidget {
+  const SettingsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    RootModel root = Provider.of<RootModel>(context);
+    List<Segment> segments = root.segments();
+    Parameters parameters = root.parameters();
+    String km =
+        "${(parameters.segmentLength / 1000).ceil().toString().padLeft(3)} km per segment";
+    String segmentCount = "${segments.length.toString().padLeft(2)} segments";
+    String pageCount =
+        "${(segments.length / 2).ceil().toString().padLeft(2)} pages";
+    String countText = "$segmentCount on $pageCount";
+    SizedBox placeHolder = SizedBox(
+      width: 120, // or 40–56 depending on your design
+      child: Container(color: Colors.red),
+    );
+    // there is a bug with Slider in a Table:
+    // https://github.com/flutter/flutter/issues/174133
+    return Card(
+      elevation: 4, // Add shadow to the card
+      margin: const EdgeInsets.fromLTRB(
+        30,
+        5,
+        20,
+        10,
+      ), // Add margin around the card
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8), // Rounded corners
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Segment length:"),
+              ),
+              SizedBox(
+                width: 200, // or 40–56 depending on your design
+                child: SliderWidget(),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              placeHolder,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [Text(km)],
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              placeHolder,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [Text(countText)],
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              placeHolder,
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("(2 segments per page)"),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -94,9 +171,8 @@ class SettingsScreen extends StatelessWidget {
           children: [
             row,
             Divider(height: 5),
-            TextWidget(),
             SizedBox(height: 10),
-            SliderWidget(),
+            SettingsWidget(),
           ],
         ),
       ),
