@@ -134,4 +134,21 @@ class ParameterChanger {
     init = ret;
     return ret;
   }
+
+  bridge.Parameters changeSegmentLength(double length) {
+    bridge.Parameters ret = bridge.Parameters(
+      speed: init.speed,
+      startTime: init.startTime,
+      segmentLength: length,
+      segmentOverlap: init.segmentOverlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
 }

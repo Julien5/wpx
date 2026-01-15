@@ -22,6 +22,8 @@ class LocalSegmentGraphics extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    developer.log("[LocalSegmentGraphics]");
+    model.debug();
     return ChangeNotifierProvider.value(
       value: model,
       child: SegmentGraphics(kinds: kinds),
@@ -32,10 +34,12 @@ class LocalSegmentGraphics extends StatelessWidget {
 class SegmentSelector extends StatefulWidget {
   final TabController tabController;
   final List<SegmentModel> segments;
+  final Kinds kinds;
   const SegmentSelector({
     super.key,
     required this.tabController,
     required this.segments,
+    required this.kinds,
   });
 
   @override
@@ -48,7 +52,7 @@ class _SegmentSelectorState extends State<SegmentSelector> {
     List<Widget> children = [];
     for (SegmentModel model in widget.segments) {
       children.add(
-        Center(child: LocalSegmentGraphics(model: model, kinds: allkinds())),
+        Center(child: LocalSegmentGraphics(model: model, kinds: widget.kinds)),
       );
     }
     return Column(
@@ -78,9 +82,10 @@ class SegmentsGraphicsRow extends StatefulWidget {
 }
 
 class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   TabController? _tabController;
   List<SegmentModel> segments = [];
+  RootModel? root;
 
   @override
   void initState() {
@@ -91,22 +96,41 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     });
   }
 
-  void _initState() {
+  void _onRootChanged() {
     RootModel root = Provider.of<RootModel>(context, listen: false);
-    developer.log(
-      "_SegmentsGraphicsRowState:_initState:${root.segments().length}",
-    );
-    for (Segment segment in root.segments()) {
-      segments.add(SegmentModel(root.getBridge(), segment));
+    List<Segment> newSegments = root.segments();
+    int oldLength = segments.length;
+    int newLength = newSegments.length;
+    developer.log("_onRootChanged: new length:$newLength");
+    if (oldLength != newLength) {
+      segments.clear();
+    } else {
+      return;
     }
-    _tabController = TabController(length: root.segments().length, vsync: this);
+    for (Segment segment in newSegments) {
+      SegmentModel model = SegmentModel(root.getBridge(), segment);
+      segments.add(model);
+      model.notify();
+    }
+    _tabController = TabController(length: segments.length, vsync: this);
     setState(() {});
+  }
+
+  void _initState() {
+    if (root == null) {
+      root = Provider.of<RootModel>(context, listen: false);
+      root!.addListener(_onRootChanged);
+    }
+    _onRootChanged();
   }
 
   @override
   void dispose() {
     if (_tabController != null) {
       _tabController!.dispose();
+    }
+    if (root != null) {
+      root!.removeListener(_onRootChanged);
     }
     super.dispose();
   }
@@ -121,6 +145,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
 
   @override
   Widget build(BuildContext context) {
+    developer.log("[rebuild _SegmentsGraphicsRowState]");
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
     if (_tabController == null) {
       return Text("building tab controller");
@@ -145,6 +170,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
               child: SegmentSelector(
                 tabController: _tabController!,
                 segments: segments,
+                kinds: widget.kinds,
               ),
             ),
             //Expanded(child: Center(child: SegmentGraphics(kinds: allkinds()))),

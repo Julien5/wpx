@@ -15,37 +15,48 @@ class WheelScreen extends StatelessWidget {
 
   void gotoSettings(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    TrackViewsSwitch multi = Provider.of<TrackViewsSwitch>(ctx, listen: false);
+    TrackViewsSwitch viewsSwitch = Provider.of<TrackViewsSwitch>(
+      ctx,
+      listen: false,
+    );
     Navigator.push(
       ctx,
       MaterialPageRoute(
         builder:
-            (context) => SettingsProvider(model: model, multiTrackModel: multi),
+            (context) =>
+                SettingsProvider(model: model, trackViewSwitch: viewsSwitch),
       ),
     );
   }
 
   void gotoUserSteps(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    TrackViewsSwitch multi = Provider.of<TrackViewsSwitch>(ctx, listen: false);
+    TrackViewsSwitch viewsSwitch = Provider.of<TrackViewsSwitch>(
+      ctx,
+      listen: false,
+    );
     Navigator.push(
       ctx,
       MaterialPageRoute(
         builder:
             (context) =>
-                UserStepsProvider(model: model, multiTrackModel: multi),
+                UserStepsProvider(model: model, multiTrackModel: viewsSwitch),
       ),
     );
   }
 
   void gotoControls(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    TrackViewsSwitch multi = Provider.of<TrackViewsSwitch>(ctx, listen: false);
+    TrackViewsSwitch viewsSwitch = Provider.of<TrackViewsSwitch>(
+      ctx,
+      listen: false,
+    );
     Navigator.push(
       ctx,
       MaterialPageRoute(
         builder:
-            (context) => ControlsProvider(model: model, multiTrackModel: multi),
+            (context) =>
+                ControlsProvider(model: model, multiTrackModel: viewsSwitch),
       ),
     );
   }

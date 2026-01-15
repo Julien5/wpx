@@ -8,7 +8,7 @@ import 'package:ui/utils.dart';
 enum TrackData { profile, yaxis, map, wheel }
 
 class FutureRenderer with ChangeNotifier {
-  final bridge.Segment _segment;
+  bridge.Segment _segment;
   final TrackData trackData;
   final bridge.Bridge _bridge;
   Size? size;
@@ -32,6 +32,11 @@ class FutureRenderer with ChangeNotifier {
     restart();
   }
 
+  void updateSegment(bridge.Segment segment) {
+    _segment = segment;
+    reset();
+  }
+
   Size getSize() {
     // this size is passed to the backend for rendering
     assert(size != null);
@@ -43,7 +48,8 @@ class FutureRenderer with ChangeNotifier {
       log("[render-request:$trackData] size is not set");
       return;
     }
-    log("[render-request-start:$trackData]");
+    double length = _bridge.segmentStatistics(segment: _segment).length / 1000;
+    log("[render-request-start:$trackData] [length:$length]");
     _result = null;
     (int, int) sizeParameter = sizeAsTuple(makeFinite(getSize()));
     if (trackData == TrackData.profile) {

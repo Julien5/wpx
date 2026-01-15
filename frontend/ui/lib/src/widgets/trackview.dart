@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
@@ -54,8 +56,13 @@ class _TrackViewState extends State<TrackView> {
     return futureRenderer!;
   }
 
-  FutureRenderer _onSegmentModelChanged(FutureRenderer? renderer) {
-    renderer!.reset();
+  FutureRenderer _onSegmentModelChanged(
+    SegmentModel segment,
+    FutureRenderer? renderer,
+  ) {
+    assert(renderer != null);
+    renderer!.updateSegment(segment.segment());
+    renderer.reset();
     startRendererIfNeeded();
     return renderer;
   }
@@ -95,7 +102,7 @@ class _TrackViewState extends State<TrackView> {
   @override
   Widget build(BuildContext ctx) {
     // reacts on change in the segmentmodel..
-    SegmentModel model = Provider.of<SegmentModel>(ctx);
+    SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
     Widget innerWidget = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return VisibilityDetector(
@@ -110,11 +117,13 @@ class _TrackViewState extends State<TrackView> {
     );
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: model),
+        ChangeNotifierProvider.value(value: segmentModel),
         ChangeNotifierProxyProvider<SegmentModel, FutureRenderer>(
           create: _createRenderer,
           update: (context, segment, futureRenderer) {
-            return _onSegmentModelChanged(futureRenderer);
+            developer.log("[update => _onSegmentModelChanged]");
+            segment.debug();
+            return _onSegmentModelChanged(segment, futureRenderer);
           },
         ),
       ],

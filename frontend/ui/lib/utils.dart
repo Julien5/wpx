@@ -15,6 +15,14 @@ List<double> fromKm(List<double> list) {
   return ret;
 }
 
+List<double> fromKmh(List<double> list) {
+  List<double> ret = list;
+  for (int k = 0; k < list.length; ++k) {
+    ret[k] = list[k] * 1000 / 3600;
+  }
+  return ret;
+}
+
 enum ScreenOrientation { desktop, landscape, portrait }
 
 ScreenOrientation screenOrientation(Size size) {

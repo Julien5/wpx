@@ -7,20 +7,13 @@ import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/widgets/slidervalues.dart';
+import 'package:ui/utils.dart';
 
 class StatisticsWidget extends StatefulWidget {
   const StatisticsWidget({super.key});
 
   @override
   State<StatisticsWidget> createState() => _StatisticsWidgetState();
-}
-
-List<double> fromKmh(List<double> list) {
-  List<double> ret = list;
-  for (int k = 0; k < list.length; ++k) {
-    ret[k] = list[k] * 1000 / 3600;
-  }
-  return ret;
 }
 
 List<double> speedSliderValues() {
@@ -97,6 +90,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   }
 
   void openSpeedDialog() {
+    List<double> values = speedSliderValues();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -106,13 +100,13 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
             int index = 0;
             if (speed != null) {
               kmh = "${(speed! * 3600 / 1000).toStringAsFixed(1)} km/h";
-              index = getClosestIndex(speedSliderValues(), speed!);
+              index = getClosestIndex(values, speed!);
             }
             return SimpleDialog(
               title: Text('Speed', textAlign: TextAlign.center),
               children: [
                 SliderValuesWidget(
-                  values: speedSliderValues(),
+                  values: values,
                   initIndex: index,
                   formatLabel:
                       (value) =>
