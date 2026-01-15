@@ -80,7 +80,11 @@ class _TrackViewState extends State<TrackView> {
     if (futureRenderer == null) {
       return;
     }
-    futureRenderer!.setSize(visibilityInfo!.size);
+    Size size = visibilityInfo!.size;
+    if (futureRenderer!.trackData != TrackData.wheel) {
+      size = size * 1.5;
+    }
+    futureRenderer!.setSize(size);
     startRendererIfNeeded();
   }
 
