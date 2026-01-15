@@ -124,26 +124,44 @@ class _ChooseDataState extends State<ChooseData> {
   Widget buildFromModel(BuildContext ctx, RootModel rootModel, Widget? child) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          StreamWidget(),
-          ElevatedButton(
-            onPressed: loading ? null : () => chooseGPX(rootModel),
-            child: const Text("Choose GPX file"),
-          ),
-          if (errorMessage != null) // Conditionally display the error message
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Text(
-                errorMessage!,
-                style: const TextStyle(color: Colors.red),
+          SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/png/combined.png',
+                width: 250,
+                fit: BoxFit.cover,
               ),
-            ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: loading ? null : () => chooseDemo(rootModel),
-            child: const Text("Demo"),
+            ],
           ),
+          SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: loading ? null : () => chooseGPX(rootModel),
+                child: const Text("GPX file"),
+              ),
+              if (errorMessage !=
+                  null) // Conditionally display the error message
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: loading ? null : () => chooseDemo(rootModel),
+                child: const Text("Demo"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          StreamWidget(),
         ],
       ),
     );

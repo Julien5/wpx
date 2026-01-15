@@ -19,12 +19,15 @@ class SegmentGraphicsButtons extends StatelessWidget {
   });
   final double margin = 8;
   Image icon(TrackData data) {
-    String filename = 'icons/png/map.png';
+    String filename = 'assets/icons/png/map.png';
     if (data == TrackData.wheel) {
-      filename = 'icons/png/clock.png';
+      filename = 'assets/icons/png/clock.png';
     }
     if (data == TrackData.profile) {
-      filename = 'icons/png/profile.png';
+      filename = 'assets/icons/png/profile.png';
+    }
+    if (data == TrackData.map) {
+      filename = 'assets/icons/png/map.png';
     }
     return Image.asset(filename, width: size - margin, height: size - margin);
   }
