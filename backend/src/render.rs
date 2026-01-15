@@ -98,7 +98,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn make_typst_document(backend: &mut Backend) -> String {
+pub fn make_typst_document(backend: &Backend) -> String {
     let debug = backend.get_parameters().debug;
     let templates = Templates::new();
     let mut document = templates.header.clone();

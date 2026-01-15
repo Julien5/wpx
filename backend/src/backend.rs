@@ -30,6 +30,7 @@ use crate::wheel;
 pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
 pub use crate::event::Sender;
+use crate::zipexport;
 pub type SenderHandler = crate::event::SenderHandler;
 pub type SenderHandlerLock = crate::event::SenderHandlerLock;
 
@@ -230,13 +231,13 @@ impl Backend {
         self.export_points(&self.get_points(&segment, kinds))
     }
 
-    pub async fn generatePdf(&mut self) -> Vec<u8> {
+    pub async fn generatePdf(&self) -> Vec<u8> {
         let typbytes = render::make_typst_document(self);
         let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;
         log::info!("generated {} pdf bytes", ret.len());
         ret
     }
-    pub fn generateGpx(&mut self) -> Vec<u8> {
+    pub fn generateGpx(&self) -> Vec<u8> {
         let mut gpxpoints = Vec::new();
         for kind in [InputType::UserStep] {
             match self.d().inputpoints.read().unwrap().maps.get(&kind) {
@@ -252,6 +253,11 @@ impl Backend {
         }
         let waypoints = self.export_points(&gpxpoints);
         gpxexport::generate(&self.d().track, &waypoints)
+    }
+    pub async fn generateZip(&self) -> Vec<u8> {
+        let gpx = self.generateGpx();
+        let pdf = self.generatePdf().await;
+        zipexport::generate(&gpx, &pdf)
     }
 
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {

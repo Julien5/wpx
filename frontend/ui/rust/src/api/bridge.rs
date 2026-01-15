@@ -187,6 +187,9 @@ impl Bridge {
     pub async fn generateGpx(&mut self) -> Vec<u8> {
         self.backend.generateGpx()
     }
+    pub async fn generateZip(&mut self) -> Vec<u8> {
+        self.backend.generateZip().await
+    }
     #[frb(sync)]
     pub fn get_waypoints(&mut self, segment: &Segment, kinds: HashSet<InputType>) -> Vec<Waypoint> {
         self.backend.get_waypoints(&segment._impl, kinds)

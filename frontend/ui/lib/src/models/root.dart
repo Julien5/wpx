@@ -76,6 +76,10 @@ class RootModel extends ChangeNotifier {
     return _bridge.generatePdf();
   }
 
+  Future<List<int>> generateZip() {
+    return _bridge.generateZip();
+  }
+
   bridge.SegmentStatistics statistics() {
     return _bridge.statistics();
   }

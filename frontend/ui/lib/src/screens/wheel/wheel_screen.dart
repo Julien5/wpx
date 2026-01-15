@@ -8,6 +8,7 @@ import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
+import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 
 class WheelScreen extends StatelessWidget {
@@ -92,7 +93,19 @@ class WheelScreen extends StatelessWidget {
             Expanded(child: vspace),
             statisticsCard,
             Expanded(child: vspace),
-            vspace,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(
+                    16,
+                  ), // Add padding inside the card
+                  child: ExportButton(text: "export zip", type: Type.zip),
+                ),
+              ],
+            ),
+            Expanded(child: vspace),
           ],
         ),
       ),

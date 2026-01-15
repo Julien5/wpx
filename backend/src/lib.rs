@@ -20,6 +20,7 @@ mod pdf;
 mod profile;
 mod track_projection;
 pub mod wheel;
+mod zipexport;
 //mod project;
 mod render;
 mod segment;
