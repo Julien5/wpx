@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,6 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
-import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/utils.dart';
 
 class TextWidget extends StatelessWidget {
@@ -45,29 +45,105 @@ List<double> segmentLengthSliderValues(double trackLength) {
   return fromKm(values);
 }
 
+List<int> niceSegmentLengths() {
+  List<int> km = [
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    50,
+    60,
+    75,
+    100,
+    150,
+    200,
+    250,
+    300,
+    400,
+    500,
+    750,
+    1000,
+  ];
+  return km.map((e) => e * 1000).toList();
+}
+
+double niceSegmentLength(double value) {
+  for (int p in niceSegmentLengths()) {
+    if (p > value) {
+      return p.toDouble();
+    }
+  }
+  return 0;
+}
+
+int segmentCount(double trackLength, double segmentLength) {
+  double segmentOverlap = ((segmentLength * 0.1 / 1.1) / 1000).round() * 1000;
+  return (trackLength / (segmentLength - segmentOverlap)).ceil();
+}
+
+int projectNumberOfPages(int wanted, double trackLength, Parameters p) {
+  double nice = niceSegmentLength(0.5 * trackLength / wanted);
+  double segmentOverlap = nice / 10;
+  double segmentLength = nice + segmentOverlap;
+  int nsegment = segmentCount(trackLength, segmentLength);
+  int npages = (nsegment * 0.5).ceil();
+  return npages;
+}
+
 class SliderWidget extends StatelessWidget {
   const SliderWidget({super.key});
 
-  void onValueChanged(BuildContext context, double value) {
+  void onChanged(BuildContext context, double pages) {
     RootModel root = Provider.of<RootModel>(context, listen: false);
+    double trackLength = root.statistics().length;
+    double nice = niceSegmentLength(0.5 * trackLength / pages);
+    double segmentOverlap = nice / 10;
+    double segmentLength = nice + segmentOverlap;
     Parameters p = root.parameters();
     ParameterChanger changer = ParameterChanger(init: p);
-    changer.changeSegmentLength(value);
+    changer.changeSegmentLength(segmentLength);
+    changer.changeSegmentOverlap(segmentOverlap);
     root.setParameters(changer.current());
-    developer.log("length:${value / 1000} km");
+    developer.log("wanted:$pages pages");
+    int npages = projectNumberOfPages(pages.round(), trackLength, p);
+    developer.log("length:${nice / 1000} km => $npages pages");
   }
 
   @override
   Widget build(BuildContext context) {
     RootModel root = Provider.of<RootModel>(context);
+    Parameters parameters = root.parameters();
     double trackLength = root.statistics().length;
-    List<double> values = segmentLengthSliderValues(trackLength);
-    return SliderValuesWidget(
-      values: values,
-      initIndex: 1,
-      formatLabel: (value) => "${(value / 1000).toStringAsFixed(1)} km",
-      onValueChanged: (value) => {onValueChanged(context, value)},
-      enabled: true,
+    double segmentLength = parameters.segmentLength;
+    double segmentOverlap = parameters.segmentOverlap;
+    assert(segmentOverlap == (segmentLength - segmentOverlap) / 10);
+    int nsegment = segmentCount(trackLength, segmentLength);
+    int bsegment = root.segments().length;
+    assert(nsegment == bsegment);
+
+    int high = projectNumberOfPages(5, trackLength, parameters);
+
+    int lmin = niceSegmentLengths().reduce(min);
+    int lmax = niceSegmentLengths().reduce(max);
+    int pmax = min(
+      high,
+      (segmentCount(trackLength, lmin.toDouble()) / 2).ceil(),
+    );
+    int pmin = (segmentCount(trackLength, lmax.toDouble()) / 2).ceil();
+
+    int p = ((nsegment * 0.5).ceil()).clamp(pmin, pmax);
+
+    developer.log("$pmin $pmax $p $segmentLength");
+    return Slider(
+      min: pmin.toDouble(),
+      max: pmax.toDouble(),
+      divisions: pmax - pmin,
+      value: p.toDouble(),
+      label: "$p pages",
+      onChanged: (value) => {onChanged(context, value)},
     );
   }
 }
@@ -80,8 +156,9 @@ class SettingsWidget extends StatelessWidget {
     RootModel root = Provider.of<RootModel>(context);
     List<Segment> segments = root.segments();
     Parameters parameters = root.parameters();
+
     String km =
-        "${(parameters.segmentLength / 1000).ceil().toString().padLeft(3)} km per segment";
+        "${((parameters.segmentLength - parameters.segmentOverlap) / 1000).ceil().toString().padLeft(3)} km per segment";
     String segmentCount = "${segments.length.toString().padLeft(2)} segments";
     String pageCount =
         "${(segments.length / 2).ceil().toString().padLeft(2)} pages";
@@ -109,7 +186,7 @@ class SettingsWidget extends StatelessWidget {
             children: [
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("Segment length:"),
+                child: Text("Number of pages:"),
               ),
               SizedBox(
                 width: 200, // or 40–56 depending on your design

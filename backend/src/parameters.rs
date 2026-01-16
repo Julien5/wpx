@@ -72,7 +72,7 @@ impl Default for Parameters {
             control_gpx_name_format: "NAME[3]-TIME[%H:%M]-SLOPE[4.1%]".to_string(),
             start_time: chrono::Local::now().to_rfc3339(),
             speed: speed::mps(15f64),
-            segment_length: 100f64 * 1000f64,
+            segment_length: 110f64 * 1000f64,
             segment_overlap: 10f64 * 1000f64,
             smooth_width: 200f64,
             debug: false,

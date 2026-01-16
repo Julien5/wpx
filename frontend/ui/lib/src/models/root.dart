@@ -155,4 +155,21 @@ class ParameterChanger {
     init = ret;
     return ret;
   }
+
+  bridge.Parameters changeSegmentOverlap(double overlap) {
+    bridge.Parameters ret = bridge.Parameters(
+      speed: init.speed,
+      startTime: init.startTime,
+      segmentLength: init.segmentLength,
+      segmentOverlap: overlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
 }
