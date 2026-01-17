@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui/src/log.dart';
@@ -30,6 +32,13 @@ class FutureRenderer with ChangeNotifier {
   void setProfileIndication(bridge.ProfileIndication p) {
     _bridge.setProfileIndication(p: p);
     restart();
+  }
+
+  @override
+  void dispose() {
+    developer.log("[renderer dispose]");
+    _future = null; // Clear the future reference
+    super.dispose();
   }
 
   void updateSegment(bridge.Segment segment) {
@@ -103,6 +112,10 @@ class FutureRenderer with ChangeNotifier {
   }
 
   void onCompleted(String value) {
+    if (_future == null) {
+      developer.log("[renderer was disposed?]");
+      return;
+    }
     _result = value;
     _future = null;
     log("[render-request-comleted:$trackData]");
