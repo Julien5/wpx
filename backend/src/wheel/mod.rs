@@ -1,5 +1,6 @@
 pub mod model;
 pub mod shorten;
+mod text;
 mod time_points;
 
 use svg::node::element::path::Data;
@@ -7,7 +8,7 @@ use svg::node::element::Text;
 use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
-use crate::math::{IntegerSize2D, Point2D, ScreenSpace};
+use crate::math::{IntegerSize2D, ScreenSpace};
 use crate::wheel::model::CirclePoint;
 
 mod constants {
@@ -43,97 +44,6 @@ impl Page {
     }
 }
 
-enum Region {
-    Inner,
-    Outer,
-}
-
-fn zone(angle: f64) -> usize {
-    let mut ret = 1;
-    if angle < 22.5 {
-        return ret; // 1
-    }
-    ret += 1;
-    if angle < 67.5 {
-        return ret; // 2
-    }
-    ret += 1;
-    if angle < 112.5 {
-        return ret;
-    }
-    ret += 1;
-    if angle < 157.5 {
-        return ret;
-    }
-    ret += 1;
-    if angle < 202.5 {
-        return ret;
-    }
-    ret += 1;
-    if angle < 247.5 {
-        return ret;
-    }
-    ret += 1;
-    if angle < 292.5 {
-        return ret;
-    }
-    ret += 1;
-    if angle < 337.5 {
-        return ret; // 8
-    }
-    return 1;
-}
-
-fn anchor(angle: f64, region: Region) -> String {
-    match region {
-        Region::Inner => match zone(angle) {
-            1 | 5 => "middle".into(),
-            2 | 3 | 4 => "end".into(),
-            _ => "start".into(),
-        },
-        Region::Outer => match zone(angle) {
-            1 | 5 => "middle".into(),
-            2 | 3 | 4 => "start".into(),
-            _ => "end".into(),
-        },
-    }
-}
-
-fn label_position(angle: f64, radius: f64, text_height: f64, region: Region) -> Point2D {
-    let mut ret = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos()) * radius;
-    match region {
-        Region::Inner => match zone(angle) {
-            1 | 2 | 8 => {
-                ret.y += text_height;
-            }
-            3 | 7 => {
-                ret.y += text_height / 2f64;
-            }
-            4 | 5 | 6 => {}
-            _ => {
-                assert!(false);
-            }
-        },
-        Region::Outer => match zone(angle) {
-            1 | 2 | 8 => {}
-            3 | 7 => {
-                ret.y += text_height / 2f64;
-            }
-            4 | 5 | 6 => {
-                ret.y += text_height;
-            }
-            _ => {
-                assert!(false);
-            }
-        },
-    }
-    ret
-}
-
-fn text_height() -> f64 {
-    10.0
-}
-
 fn add_control_point(
     page: &Page,
     point: &CirclePoint,
@@ -151,18 +61,18 @@ fn add_control_point(
     let tick_rotated = tick.set("transform", format!("rotate({})", angle));
     ticks_group = ticks_group.add(tick_rotated);
 
-    let label_pos = label_position(
+    let label_pos = text::position(
         angle,
         (page.wheel_outer_radius() + 7) as f64,
-        text_height(),
-        Region::Outer,
+        text::height(),
+        text::Region::Outer,
     );
 
     let name = point.name.clone();
     log::trace!("name={}", name);
 
     let label = Text::new(format!("{}", name))
-        .set("text-anchor", anchor(angle, Region::Outer))
+        .set("text-anchor", text::anchor(angle, text::Region::Outer))
         .set("x", label_pos.x)
         .set("y", label_pos.y);
     label_group = label_group.add(label);
@@ -251,15 +161,15 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
         let tick_rotated = tick.set("transform", format!("rotate({})", angle));
         ticks_group = ticks_group.add(tick_rotated);
 
-        let label_pos = label_position(
+        let label_pos = text::position(
             angle,
             label_position_radius as f64,
-            text_height(),
-            Region::Inner,
+            text::height(),
+            text::Region::Inner,
         );
 
         let label = Text::new(format!("{}", point.name))
-            .set("text-anchor", anchor(angle, Region::Inner))
+            .set("text-anchor", text::anchor(angle, text::Region::Inner))
             .set("x", label_pos.x)
             .set("y", label_pos.y);
         label_group = label_group.add(label);
