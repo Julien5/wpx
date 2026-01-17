@@ -116,22 +116,12 @@ fn make(times: &Vec<Time>, start_time: &Time, duration_seconds: f64) -> Vec<Circ
     let a_start = angle(0.0, duration_seconds);
     let a_end = 360.0 - super::constants::ARCANGLE / 2.0;
     for (index, time) in times.iter().enumerate() {
-        log::debug!("time:{:?}", time);
         let force = index == 0 || index == times.len() - 1;
         let x = time
             .signed_duration_since(start_time)
             .as_seconds_f64()
             .floor();
         let a = angle(x, duration_seconds);
-        // this condition is needed if we include the start time (or the end time)
-        // to ensure no label overlap
-        log::trace!(
-            "index:{} times.len():{} a:{}, a_end:{}",
-            index,
-            times.len(),
-            a,
-            a_end
-        );
         let margin = 10.0;
         // this condition is needed if we include the start time (or the end time)
         // to ensure no label overlap
