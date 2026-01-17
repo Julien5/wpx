@@ -1,3 +1,4 @@
+mod arc;
 pub mod model;
 pub mod shorten;
 mod text;
@@ -8,7 +9,7 @@ use svg::node::element::Text;
 use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
-use crate::math::{IntegerSize2D, ScreenSpace};
+use crate::math::{IntegerSize2D, Point2D, ScreenSpace};
 use crate::wheel::model::CirclePoint;
 
 mod constants {
@@ -77,6 +78,126 @@ fn add_control_point(
         .set("y", label_pos.y);
     label_group = label_group.add(label);
     (ticks_group, label_group)
+}
+
+fn draw_arc1(page: &Page, m: &model::Arc) -> Group {
+    let mut ret = Group::new();
+    let start = m.start_angle;
+    let end = m.end_angle;
+    let dash_length = 10f64;
+
+    let zero = Point2D::new(0f64, 0f64);
+    let radius = page.wheel_inner_radius() as f64 / 2.0;
+
+    let a1 = arc::Arc {
+        center: zero,
+        radius,
+        angle1: start + 5f64,
+        angle2: end - 5f64,
+    };
+    let dash_start = Path::new()
+        .set(
+            "d",
+            a1.dash(radius - dash_length, radius + dash_length, start),
+        )
+        .set("fill", "none")
+        .set("stroke", "black")
+        .set("stroke-width", 4);
+    ret = ret.add(dash_start);
+
+    let dash_end = Path::new()
+        .set(
+            "d",
+            a1.dash(radius - dash_length, radius + dash_length, end),
+        )
+        .set("fill", "none")
+        .set("stroke", "black")
+        .set("stroke-width", 4);
+    ret = ret.add(dash_end);
+
+    let arc1 = Path::new()
+        .set("d", a1.open_path())
+        .set("fill", "none")
+        .set("stroke", "black")
+        .set("stroke-width", 3);
+    ret = ret.add(arc1);
+    ret
+}
+
+fn draw_arc2(page: &Page, m: &model::Arc) -> Group {
+    let mut ret = Group::new();
+    let start = m.start_angle;
+    let mid = m.middle_angle.unwrap();
+    let end = m.end_angle;
+
+    let zero = Point2D::new(0f64, 0f64);
+    let radius = page.wheel_inner_radius() as f64 / 2.0;
+    let dash_length = 10f64;
+    let mid_dash_length = 5f64;
+
+    let a1 = arc::Arc {
+        center: zero,
+        radius,
+        angle1: start + 5f64,
+        angle2: mid - 2f64,
+    };
+    let a2 = arc::Arc {
+        center: zero,
+        radius,
+        angle1: mid + 2f64,
+        angle2: end - 5f64,
+    };
+    let dash_start = Path::new()
+        .set(
+            "d",
+            a1.dash(radius - dash_length, radius + dash_length, start),
+        )
+        .set("fill", "none")
+        .set("stroke", "black")
+        .set("stroke-width", 4);
+    ret = ret.add(dash_start);
+
+    let dash_end = Path::new()
+        .set(
+            "d",
+            a1.dash(radius - dash_length, radius + dash_length, end),
+        )
+        .set("fill", "none")
+        .set("stroke", "black")
+        .set("stroke-width", 4);
+    ret = ret.add(dash_end);
+
+    /*let dash_mid = Path::new()
+        .set(
+            "d",
+            a1.dash(radius - mid_dash_length, radius + mid_dash_length, mid),
+        )
+        .set("fill", "none")
+        .set("stroke", "blue")
+        .set("stroke-width", 2);
+    ret = ret.add(dash_mid);*/
+
+    let arc1 = Path::new()
+        .set("d", a1.open_path())
+        .set("fill", "none")
+        .set("stroke", "black")
+        .set("stroke-width", 3);
+    ret = ret.add(arc1);
+
+    let arc2 = Path::new()
+        .set("d", a2.open_path())
+        .set("fill", "none")
+        .set("stroke", "black")
+        .set("stroke-width", 3);
+    ret = ret.add(arc2);
+    ret
+}
+
+fn draw_arc(page: &Page, m: &model::Arc) -> Group {
+    match m.middle_angle {
+        Some(_) => draw_arc2(page, m),
+        None => draw_arc1(page, m),
+    }
 }
 
 fn features(page: &Page, model: &model::WheelModel) -> Group {
@@ -175,8 +296,15 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
         label_group = label_group.add(label);
     }
 
+    let mut arc_group = page.make_centered_group();
+    log::debug!("n={}", model.outer_arcs.len());
+    for m in &model.outer_arcs {
+        arc_group = arc_group.add(draw_arc(&page, m));
+    }
+
     ret = ret.add(ticks_group);
     ret = ret.add(label_group);
+    ret = ret.add(arc_group);
     ret
 }
 
@@ -200,7 +328,7 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let mut document = Document::new()
         .set("width", size.width)
         .set("height", size.height)
-        .set("viewBox", (0, 0, size.width, size.height));
+        .set("viewBox", (0, 0, size.width + 200, size.height + 200));
 
     let main_group = Group::new()
         .set("id", "world")
@@ -216,23 +344,16 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         .set("fill", "#f0f0f0")
         .set("stroke", "#333")
         .set("stroke-width", 3);
-    let arcradius = page.wheel_outer_radius() as f64 + 3f64;
-    let yarc = center.y as f64 - arcradius * (0.5 * constants::ARCANGLE.to_radians()).cos();
-    let x1arc = center.x as f64 - arcradius * (0.5 * constants::ARCANGLE.to_radians()).sin();
-    let x2arc = center.x as f64 + arcradius * (0.5 * constants::ARCANGLE.to_radians()).sin();
-    let d = format!(
-        "M {} {} L {} {} A {} {} 0 0 1 {} {} Z",
-        center.x,
-        center.y,
-        x1arc,
-        yarc,
-        page.wheel_outer_radius(),
-        page.wheel_outer_radius(),
-        x2arc,
-        yarc
-    );
+    let radius = page.wheel_outer_radius() as f64 + 3f64;
+    let arc = arc::Arc {
+        center: center.to_point().to_f64(),
+        radius,
+        angle1: -0.5 * constants::ARCANGLE,
+        angle2: 0.5 * constants::ARCANGLE,
+    };
+    let darc = arc.closed_path();
     let middle_arc = Path::new()
-        .set("d", d)
+        .set("d", darc)
         .set("fill", "white")
         .set("stroke", "white")
         .set("stroke-width", 0);
@@ -268,8 +389,11 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::{math::IntegerSize2D, wheel::model::*, wheel::*};
-
+    use super::model;
+    use super::model::CirclePoint;
+    use super::model::WheelModel;
+    use super::render;
+    use crate::{math::IntegerSize2D, mercator::DateTime};
     fn create_wheel_model(nmid: usize) -> WheelModel {
         // 1. Define the Control Points
         let control_points = vec![
@@ -320,13 +444,41 @@ mod tests {
             },
         ];
 
+        let arcs = vec![
+            model::Arc {
+                start_angle: 45f64,
+                middle_angle: Some(55f64),
+                end_angle: 180f64,
+                label: String::new(),
+            },
+            model::Arc {
+                start_angle: 180f64,
+                middle_angle: None,
+                end_angle: 255f64,
+                label: String::new(),
+            },
+            model::Arc {
+                start_angle: 65f64,
+                middle_angle: Some(180f64),
+                end_angle: 300f64,
+                label: String::new(),
+            },
+        ];
+
+        let time_parameters = model::TimeParameters {
+            start: DateTime::from_timestamp_nanos(0),
+            speed: 1f64,
+            total_distance: 1f64,
+        };
+
         WheelModel {
+            time_parameters,
             control_points,
             mid_points,
             has_start_control: false,
             has_end_control: true,
             time_points,
-            outer_arcs: Vec::new(),
+            outer_arcs: arcs,
         }
     }
 

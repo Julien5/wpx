@@ -475,6 +475,8 @@ mod tests {
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((3_000) as f64);
+        parameters.segment_length = 55000f64;
+        parameters.segment_overlap = 5000f64;
         backend.set_parameters(&parameters);
         let reffilename = std::format!("data/ref/segment-wheel.svg");
         let data = if std::fs::exists(&reffilename).unwrap() {
@@ -484,12 +486,14 @@ mod tests {
         };
         let segment = backend.trackSegment();
         let sgdata = backend.make_segment_data(&segment);
+        let segments = backend.segments();
         let time_parameters = wheel::model::TimeParameters {
             start: parameters.start_time.parse().unwrap(),
             speed: parameters.speed,
-            total_distance: backend.d().track.total_distance(),
+            total_distance: segments.last().unwrap().end,
         };
         let mut model = wheel::model::WheelModel::new(&time_parameters);
+        model.add_pages(&segments);
         model.add_points(&sgdata, inputpoint::allkinds());
         let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
 

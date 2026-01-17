@@ -11,6 +11,7 @@ use crate::{
 };
 
 pub fn angle(x: f64, total: f64) -> f64 {
+    log::debug!("x={} total={}", x, total);
     let topmargin = super::constants::ARCANGLE / 2.0;
     let a = (360.0 - 2.0 * topmargin) / total;
     let b = topmargin;
@@ -31,27 +32,53 @@ impl TimeParameters {
     }
 }
 
-pub struct OuterArc {
+pub struct Arc {
     pub start_angle: f64,
+    pub middle_angle: Option<f64>,
     pub end_angle: f64,
     pub label: String,
 }
 
-impl OuterArc {
-    pub fn from_segments(
-        segments: &[Segment],
-        time_parameters: &TimeParameters,
-        label: &str,
-    ) -> Self {
-        assert!(segments.len() <= 2);
-        OuterArc {
-            start_angle: angle(
-                segments.first().unwrap().start,
-                time_parameters.total_distance,
-            ),
-            end_angle: angle(segments.last().unwrap().end, time_parameters.total_distance),
-            label: label.to_string(),
+impl Arc {
+    fn distances(segments: &[Segment]) -> Vec<f64> {
+        if segments.is_empty() {
+            return vec![];
         }
+        let mut ret = Vec::new();
+        for (index, segment) in segments.iter().enumerate() {
+            ret.push(segment.start);
+            if index == (segments.len() - 1) {
+                ret.push(segment.end);
+            }
+        }
+        ret
+    }
+
+    pub fn from_segments(segments: &[Segment], time_parameters: &TimeParameters) -> Vec<Self> {
+        let distances = Self::distances(segments);
+        let mut ret = Vec::new();
+        for i in 0..distances.len() - 1 {
+            if i % 2 == 0 {
+                let begin = distances[i];
+                let (middle, end) = if (i + 2) < distances.len() {
+                    (Some(distances[i + 1]), distances[i + 2])
+                } else {
+                    (None, distances[i + 2])
+                };
+                let a = Arc {
+                    start_angle: angle(begin, time_parameters.total_distance),
+                    end_angle: angle(end, time_parameters.total_distance),
+                    middle_angle: if middle.is_some() {
+                        Some(angle(middle.unwrap(), time_parameters.total_distance))
+                    } else {
+                        None
+                    },
+                    label: String::new(),
+                };
+                ret.push(a);
+            }
+        }
+        ret
     }
 }
 
@@ -68,7 +95,7 @@ pub struct WheelModel {
     pub has_start_control: bool,
     pub has_end_control: bool,
     pub time_points: Vec<CirclePoint>,
-    pub outer_arcs: Vec<OuterArc>,
+    pub outer_arcs: Vec<Arc>,
 }
 
 fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
@@ -133,14 +160,7 @@ impl WheelModel {
             self.mid_points.sort_by_key(|p| p.angle.floor() as i32);
         }
     }
-    pub fn add_pages(&mut self, segments: Vec<Segment>) {
-        self.outer_arcs = segments
-            .chunks(2)
-            .enumerate()
-            .map(|(index, segments)| {
-                let label = format!("page {}", index + 1);
-                OuterArc::from_segments(segments, &self.time_parameters, &label)
-            })
-            .collect();
+    pub fn add_pages(&mut self, segments: &Vec<Segment>) {
+        self.outer_arcs = Arc::from_segments(segments, &self.time_parameters);
     }
 }
