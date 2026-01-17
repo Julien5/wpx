@@ -2,13 +2,12 @@ pub mod model;
 pub mod shorten;
 mod time_points;
 
-use euclid::Point2D;
 use svg::node::element::path::Data;
 use svg::node::element::Text;
 use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
-use crate::math::{self, *};
+use crate::math::{IntegerSize2D, Point2D, ScreenSpace};
 use crate::wheel::model::CirclePoint;
 
 mod constants {
@@ -100,7 +99,7 @@ fn anchor(angle: f64, region: Region) -> String {
     }
 }
 
-fn label_position(angle: f64, radius: f64, text_height: f64, region: Region) -> math::Point2D {
+fn label_position(angle: f64, radius: f64, text_height: f64, region: Region) -> Point2D {
     let mut ret = Point2D::new(angle.to_radians().sin(), -angle.to_radians().cos()) * radius;
     match region {
         Region::Inner => match zone(angle) {
@@ -417,6 +416,7 @@ mod tests {
             has_start_control: false,
             has_end_control: true,
             time_points,
+            outer_arcs: Vec::new(),
         }
     }
 

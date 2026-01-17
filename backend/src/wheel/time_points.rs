@@ -43,20 +43,19 @@ fn nice_interval(total_duration: Duration, n: usize) -> Duration {
     Duration::from_secs_f64(best_interval)
 }
 
-use chrono::{DateTime, Duration as ChronoDuration, Timelike, Utc};
+use chrono::{Duration as ChronoDuration, Timelike};
+use mercator::DateTime;
 
 use crate::{
-    segment::SegmentData,
-    wheel::model::{angle, CirclePoint},
+    mercator,
+    wheel::model::{angle, CirclePoint, TimeParameters},
 };
 
-type Time = DateTime<Utc>;
-
 fn generate_time_intervals(
-    start_time: DateTime<Utc>,
+    start_time: DateTime,
     duration: Duration,
     interval: Duration,
-) -> Vec<Time> {
+) -> Vec<DateTime> {
     let mut times = Vec::new();
 
     // Add start time
@@ -97,7 +96,7 @@ fn generate_time_intervals(
     times
 }
 
-fn format_time(time: &Time, force: bool) -> String {
+fn format_time(time: &DateTime, force: bool) -> String {
     if force {
         return time.format("%k:%M").to_string();
     }
@@ -111,7 +110,7 @@ fn format_time(time: &Time, force: bool) -> String {
     }
 }
 
-fn make(times: &Vec<Time>, start_time: &Time, duration_seconds: f64) -> Vec<CirclePoint> {
+fn make(times: &Vec<DateTime>, start_time: &DateTime, duration_seconds: f64) -> Vec<CirclePoint> {
     let mut ret = Vec::new();
     let a_start = angle(0.0, duration_seconds);
     let a_end = 360.0 - super::constants::ARCANGLE / 2.0;
@@ -140,9 +139,9 @@ fn make(times: &Vec<Time>, start_time: &Time, duration_seconds: f64) -> Vec<Circ
     ret
 }
 
-pub fn generate(segment: &SegmentData) -> Vec<CirclePoint> {
-    let duration_seconds = segment.track.total_distance() / segment.parameters.speed;
-    let start_time: DateTime<Utc> = segment.parameters.start_time.parse().unwrap();
+pub fn generate(time_parameters: &TimeParameters) -> Vec<CirclePoint> {
+    let duration_seconds = time_parameters.duration_seconds();
+    let start_time: DateTime = time_parameters.start;
     let duration = std::time::Duration::from_secs_f64(duration_seconds);
     let interval = nice_interval(duration, 12);
     let times = generate_time_intervals(start_time, duration, interval);

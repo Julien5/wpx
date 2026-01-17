@@ -350,7 +350,13 @@ impl Backend {
             "map" => data.render_map(size, &kinds),
             "ylabels" => self.render_yaxis_labels_overlay(&segment, size),
             "wheel" => {
-                let model = wheel::model::WheelModel::make(&data, kinds);
+                let time_parameters = wheel::model::TimeParameters {
+                    start: self.d().parameters.start_time.parse().unwrap(),
+                    speed: self.d().parameters.speed,
+                    total_distance: self.d().track.total_distance(),
+                };
+                let mut model = wheel::model::WheelModel::new(&time_parameters);
+                model.add(&data, kinds);
                 wheel::render(size, &model)
             }
             _ => {
@@ -478,7 +484,13 @@ mod tests {
         };
         let segment = backend.trackSegment();
         let sgdata = backend.make_segment_data(&segment);
-        let model = wheel::model::WheelModel::make(&sgdata, inputpoint::allkinds());
+        let time_parameters = wheel::model::TimeParameters {
+            start: parameters.start_time.parse().unwrap(),
+            speed: parameters.speed,
+            total_distance: backend.d().track.total_distance(),
+        };
+        let mut model = wheel::model::WheelModel::new(&time_parameters);
+        model.add(&sgdata, inputpoint::allkinds());
         let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
 
         let tmpfilename = std::format!("/tmp/segment-wheel.svg");
