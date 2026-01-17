@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 
 use crate::{
+    backend::Segment,
     controls,
     inputpoint::{InputPoint, InputType},
     mercator::DateTime,
@@ -9,6 +10,15 @@ use crate::{
     wheel::time_points,
 };
 
+pub fn angle(x: f64, total: f64) -> f64 {
+    let topmargin = super::constants::ARCANGLE / 2.0;
+    let a = (360.0 - 2.0 * topmargin) / total;
+    let b = topmargin;
+    assert!(x <= total);
+    a * x + b
+}
+
+#[derive(Clone)]
 pub struct TimeParameters {
     pub start: DateTime,
     pub speed: f64,
@@ -27,6 +37,24 @@ pub struct OuterArc {
     pub label: String,
 }
 
+impl OuterArc {
+    pub fn from_segments(
+        segments: &[Segment],
+        time_parameters: &TimeParameters,
+        label: &str,
+    ) -> Self {
+        assert!(segments.len() <= 2);
+        OuterArc {
+            start_angle: angle(
+                segments.first().unwrap().start,
+                time_parameters.total_distance,
+            ),
+            end_angle: angle(segments.last().unwrap().end, time_parameters.total_distance),
+            label: label.to_string(),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct CirclePoint {
     pub angle: f64,
@@ -34,20 +62,13 @@ pub struct CirclePoint {
 }
 
 pub struct WheelModel {
+    pub time_parameters: TimeParameters,
     pub control_points: Vec<CirclePoint>,
     pub mid_points: Vec<CirclePoint>,
     pub has_start_control: bool,
     pub has_end_control: bool,
     pub time_points: Vec<CirclePoint>,
     pub outer_arcs: Vec<OuterArc>,
-}
-
-pub fn angle(x: f64, total: f64) -> f64 {
-    let topmargin = super::constants::ARCANGLE / 2.0;
-    let a = (360.0 - 2.0 * topmargin) / total;
-    let b = topmargin;
-    assert!(x <= total);
-    a * x + b
 }
 
 fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
@@ -74,6 +95,7 @@ fn control_name(w: &InputPoint) -> String {
 impl WheelModel {
     pub fn new(time_parameters: &TimeParameters) -> Self {
         Self {
+            time_parameters: time_parameters.clone(),
             control_points: Vec::new(),
             mid_points: Vec::new(),
             has_start_control: false,
@@ -82,7 +104,7 @@ impl WheelModel {
             outer_arcs: Vec::new(),
         }
     }
-    pub fn add(&mut self, segment: &SegmentData, kinds: HashSet<InputType>) {
+    pub fn add_points(&mut self, segment: &SegmentData, kinds: HashSet<InputType>) {
         if kinds.contains(&InputType::Control) {
             let controls = get_control_points(segment);
             (self.has_start_control, self.has_end_control) =
@@ -110,5 +132,15 @@ impl WheelModel {
             }
             self.mid_points.sort_by_key(|p| p.angle.floor() as i32);
         }
+    }
+    pub fn add_pages(&mut self, segments: Vec<Segment>) {
+        self.outer_arcs = segments
+            .chunks(2)
+            .enumerate()
+            .map(|(index, segments)| {
+                let label = format!("page {}", index + 1);
+                OuterArc::from_segments(segments, &self.time_parameters, &label)
+            })
+            .collect();
     }
 }

@@ -356,7 +356,7 @@ impl Backend {
                     total_distance: self.d().track.total_distance(),
                 };
                 let mut model = wheel::model::WheelModel::new(&time_parameters);
-                model.add(&data, kinds);
+                model.add_points(&data, kinds);
                 wheel::render(size, &model)
             }
             _ => {
@@ -490,7 +490,7 @@ mod tests {
             total_distance: backend.d().track.total_distance(),
         };
         let mut model = wheel::model::WheelModel::new(&time_parameters);
-        model.add(&sgdata, inputpoint::allkinds());
+        model.add_points(&sgdata, inputpoint::allkinds());
         let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
 
         let tmpfilename = std::format!("/tmp/segment-wheel.svg");
