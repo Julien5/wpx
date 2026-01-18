@@ -359,6 +359,17 @@ impl Backend {
                 model.add_points(&data, kinds);
                 wheel::render(size, &model)
             }
+            "wheel/pages" => {
+                let time_parameters = wheel::model::TimeParameters {
+                    start: self.d().parameters.start_time.parse().unwrap(),
+                    speed: self.d().parameters.speed,
+                    total_distance: self.d().track.total_distance(),
+                };
+                let mut model = wheel::model::WheelModel::new(&time_parameters);
+                model.add_points(&data, kinds);
+                model.add_pages(&self.segments());
+                wheel::render(size, &model)
+            }
             _ => {
                 assert!(false);
                 String::new()

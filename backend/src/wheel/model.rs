@@ -54,22 +54,27 @@ impl Arc {
         ret
     }
 
+    fn clamp_angle(x: f64, total: f64) -> f64 {
+        angle(x.min(total), total)
+    }
+
     pub fn from_segments(segments: &[Segment], time_parameters: &TimeParameters) -> Vec<Self> {
         let distances = Self::distances(segments);
         let mut ret = Vec::new();
+        let end_distance = time_parameters.total_distance;
         for i in 0..distances.len() - 1 {
             if i % 2 == 0 {
                 let begin = distances[i];
                 let (middle, end) = if (i + 2) < distances.len() {
                     (Some(distances[i + 1]), distances[i + 2])
                 } else {
-                    (None, distances[i + 2])
+                    (None, distances[i + 1])
                 };
                 let a = Arc {
-                    start_angle: angle(begin, time_parameters.total_distance),
-                    end_angle: angle(end, time_parameters.total_distance),
+                    start_angle: Self::clamp_angle(begin, end_distance),
+                    end_angle: Self::clamp_angle(end, end_distance),
                     middle_angle: if middle.is_some() {
-                        Some(angle(middle.unwrap(), time_parameters.total_distance))
+                        Some(Self::clamp_angle(middle.unwrap(), end_distance))
                     } else {
                         None
                     },
