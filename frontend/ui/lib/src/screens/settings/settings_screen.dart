@@ -274,18 +274,13 @@ class SettingsScreenProviders extends MultiProvider {
 
 class SettingsProvider extends StatelessWidget {
   final SegmentModel model;
-  final TrackViewsSwitch trackViewSwitch;
-  const SettingsProvider({
-    super.key,
-    required this.model,
-    required this.trackViewSwitch,
-  });
+  const SettingsProvider({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
     return SettingsScreenProviders(
       segmentModel: model,
-      multiTrackModel: trackViewSwitch,
+      multiTrackModel: TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
       child: SettingsScreen(),
     );
   }

@@ -16,17 +16,9 @@ class WheelScreen extends StatelessWidget {
 
   void gotoSettings(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    TrackViewsSwitch viewsSwitch = Provider.of<TrackViewsSwitch>(
-      ctx,
-      listen: false,
-    );
     Navigator.push(
       ctx,
-      MaterialPageRoute(
-        builder:
-            (context) =>
-                SettingsProvider(model: model, trackViewSwitch: viewsSwitch),
-      ),
+      MaterialPageRoute(builder: (context) => SettingsProvider(model: model)),
     );
   }
 
