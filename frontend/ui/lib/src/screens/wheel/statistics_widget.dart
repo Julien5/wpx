@@ -10,6 +10,47 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/utils.dart';
 
+class SmallButton extends StatelessWidget {
+  final VoidCallback? callback;
+  final String text;
+  const SmallButton({super.key, this.callback, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    EdgeInsets valuePadding = const EdgeInsets.fromLTRB(15, 0, 15, 0);
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ElevatedButton(
+            onPressed: callback,
+            style: ElevatedButton.styleFrom(
+              padding: valuePadding,
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(text, textAlign: TextAlign.left),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SmallText extends StatelessWidget {
+  final String text;
+  const SmallText({super.key, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(text, textAlign: TextAlign.left),
+    );
+  }
+}
+
 class StatisticsWidget extends StatefulWidget {
   final void Function() onPacingPointPressed;
   final void Function() onControlsPointPressed;
@@ -175,7 +216,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     String pacingPointsText = "none";
     if (parameters.userStepsOptions.stepElevationGain != null) {
       double hm = parameters.userStepsOptions.stepElevationGain!;
-      pacingPointsText = "every ${hm.toStringAsFixed(0)} m climb";
+      pacingPointsText = "every ${hm.toStringAsFixed(0)} m elevation gain";
     } else if (parameters.userStepsOptions.stepDistance != null) {
       double km = parameters.userStepsOptions.stepDistance! / 1000;
       pacingPointsText = "every ${km.toStringAsFixed(0)} km";
@@ -192,170 +233,69 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     List<Segment> segments = root.segments();
     String pagesCountText =
         "${(segments.length / 2).ceil().toString().padLeft(2)} pages";
-
-    EdgeInsets valuePadding = const EdgeInsets.fromLTRB(15, 0, 15, 0);
-    Widget table1 = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Column(
-          children: [
-            const Padding(padding: EdgeInsets.all(8.0), child: Text("start")),
-            ElevatedButton(
-              onPressed: () => _selectTime(context),
-              style: ElevatedButton.styleFrom(
-                padding: valuePadding,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(startTimeText, textAlign: TextAlign.right),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            const Padding(padding: EdgeInsets.all(8.0), child: Text("speed")),
-            ElevatedButton(
-              onPressed: openSpeedDialog,
-              style: ElevatedButton.styleFrom(
-                padding: valuePadding,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(
-                "${kmh.toStringAsFixed(1)} kmh",
-                textAlign: TextAlign.right,
-              ),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            const Padding(padding: EdgeInsets.all(8.0), child: Text("end")),
-            Text(endTimeText, textAlign: TextAlign.right),
-          ],
-        ),
-      ],
-    );
-
-    Widget table3 = Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Pacing points"),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: widget.onPacingPointPressed,
-                    style: ElevatedButton.styleFrom(
-                      padding: valuePadding,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(pacingPointsText, textAlign: TextAlign.right),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Control points"),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: widget.onControlsPointPressed,
-                    style: ElevatedButton.styleFrom(
-                      padding: valuePadding,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(controlPointsText, textAlign: TextAlign.right),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            const Padding(padding: EdgeInsets.all(8.0), child: Text("PDF")),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: widget.onPagesPressed,
-                    style: ElevatedButton.styleFrom(
-                      padding: valuePadding,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(pagesCountText, textAlign: TextAlign.right),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-
     Widget table2 = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
         TableRow(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Distance"),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0).add(valuePadding),
-              child: Text(
-                "${km.toStringAsFixed(0)} km",
-                textAlign: TextAlign.right,
-              ),
+            SmallText(text: "Start time"),
+            SmallButton(
+              text: startTimeText,
+              callback: () => _selectTime(context),
             ),
           ],
         ),
         TableRow(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Elevation"),
+            SmallText(text: "Average speed"),
+            SmallButton(
+              callback: openSpeedDialog,
+              text: "${kmh.toStringAsFixed(1)} kmh",
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0).add(valuePadding),
-              child: Text(
-                "${hm.toStringAsFixed(0)} m",
-                textAlign: TextAlign.right,
-              ),
+          ],
+        ),
+        TableRow(
+          children: [SmallText(text: "End time"), SmallText(text: endTimeText)],
+        ),
+        TableRow(
+          children: [
+            SmallText(text: "Distance"),
+            SmallText(text: "${km.toStringAsFixed(0)} km"),
+          ],
+        ),
+        TableRow(
+          children: [
+            SmallText(text: "Elevation"),
+            SmallText(text: "${hm.toStringAsFixed(0)} m"),
+          ],
+        ),
+        TableRow(
+          children: [
+            SmallText(text: "Control points"),
+            SmallText(text: controlPointsText),
+          ],
+        ),
+        TableRow(
+          children: [
+            SmallText(text: "Pacing points"),
+            SmallButton(
+              callback: widget.onPacingPointPressed,
+              text: pacingPointsText,
             ),
+          ],
+        ),
+        TableRow(
+          children: [
+            SmallText(text: "PDF"),
+            SmallButton(callback: widget.onPagesPressed, text: pagesCountText),
           ],
         ),
       ],
     );
     return Column(
-      children: [
-        Card(elevation: 4, child: table1),
-        Card(elevation: 4, child: table2),
-        Card(elevation: 4, child: table3),
-      ],
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [Card(elevation: 4, child: table2)],
     );
   }
 }
