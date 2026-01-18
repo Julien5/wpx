@@ -56,12 +56,15 @@ class WheelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Widget statisticsCard = Padding(
-      padding: const EdgeInsets.all(1), // Add padding inside the card
-      child: StatisticsWidget(
-        onPacingPointPressed: () => gotoUserSteps(ctx),
-        onControlsPointPressed: () => gotoControls(ctx),
-        onPagesPressed: () => gotoSettings(ctx),
+    Widget statisticsCard = ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: 500),
+      child: Padding(
+        padding: const EdgeInsets.all(2), // Add padding inside the card
+        child: StatisticsWidget(
+          onPacingPointPressed: () => gotoUserSteps(ctx),
+          onControlsPointPressed: () => gotoControls(ctx),
+          onPagesPressed: () => gotoSettings(ctx),
+        ),
       ),
     );
 

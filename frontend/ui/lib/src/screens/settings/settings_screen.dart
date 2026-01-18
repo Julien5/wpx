@@ -170,7 +170,10 @@ class SettingsWidget extends StatelessWidget {
         .toString()
         .padLeft(3);
     String pageCount = (segments.length / 2).ceil().toString().padLeft(2);
-
+    IconData showIcon = Icons.arrow_right;
+    if (show) {
+      showIcon = Icons.arrow_drop_down;
+    }
     // there is a bug with Slider in a Table:
     // https://github.com/flutter/flutter/issues/174133
     return Card(
@@ -209,9 +212,10 @@ class SettingsWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ElevatedButton(
+                    ElevatedButton.icon(
                       onPressed: onShowPressed,
-                      child: Text(
+                      icon: Icon(showIcon, color: Colors.green, size: 30.0),
+                      label: Text(
                         "$segLength km per segment",
                         style: TextStyle(fontSize: 12),
                       ),
@@ -284,9 +288,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TopRow(),
-            SettingsWidget(
-              show: showBottomWidget,
-              onShowPressed: onShowPressed,
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 500),
+              child: SettingsWidget(
+                show: showBottomWidget,
+                onShowPressed: onShowPressed,
+              ),
             ),
             if (showBottomWidget) BottomRow(),
           ],

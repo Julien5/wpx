@@ -23,14 +23,14 @@ class SmallButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          ElevatedButton(
+          OutlinedButton(
             onPressed: callback,
             style: ElevatedButton.styleFrom(
               padding: valuePadding,
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: Text(text, textAlign: TextAlign.left),
+            child: Text(text, textAlign: TextAlign.center),
           ),
         ],
       ),

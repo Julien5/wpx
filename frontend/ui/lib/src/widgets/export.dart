@@ -104,7 +104,7 @@ class _ExportButtonState extends State<ExportButton> {
   @override
   Widget build(BuildContext context) {
     RootModel model = Provider.of<RootModel>(context);
-    VoidCallback? callback = null;
+    VoidCallback? callback;
     if (!busy) {
       callback = () => onPressed(model);
     }
