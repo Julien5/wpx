@@ -501,7 +501,7 @@ mod tests {
         let time_parameters = wheel::model::TimeParameters {
             start: parameters.start_time.parse().unwrap(),
             speed: parameters.speed,
-            total_distance: segments.last().unwrap().end,
+            total_distance: backend.d().track.total_distance(),
         };
         let mut model = wheel::model::WheelModel::new(&time_parameters);
         model.add_pages(&segments);

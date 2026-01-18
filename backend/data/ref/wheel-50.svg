@@ -2,7 +2,7 @@
 <g font-size="12" id="world" shape-rendering="geometricPrecision">
 <circle cx="200" cy="200" fill="#f0f0f0" r="180" stroke="#333" stroke-width="3"/>
 <circle cx="200" cy="200" fill="#f0f0f0" r="170" stroke="#555" stroke-width="2"/>
-<path d="M 200 200 L 137.41031377140263 28.036250396178758 A 180 180 0 0 1 262.5896862285974 28.036250396178758 Z" fill="white" stroke="white" stroke-width="0"/>
+<path d="M 200 200 L 137.41031377140263 28.036250396178758 A 183 183 0 0 1 262.5896862285974 28.036250396178758 Z" fill="white" stroke="white" stroke-width="0"/>
 <g>
 <g transform="translate(200, 200)">
 <path d="M0,-170 L0,-180" stroke="#333" stroke-width="3" transform="rotate(340)"/>
@@ -93,6 +93,25 @@ Start
 <text text-anchor="start" x="-141.16214081686346" y="81.50000000000007">
 Wed
 </text>
+</g>
+<g transform="translate(200, 200)">
+<g>
+<path d="M 56.5685424949238 -56.568542494923804 L 63.63961030678927 -63.63961030678928" fill="none" stroke="black" stroke-width="4"/>
+<path d="M 0.000000000000009797174393178826 80 L 0.000000000000011021821192326179 90" fill="none" stroke="black" stroke-width="4"/>
+<path d="M 65.11377766511313 -54.63694682335585 M 65.11377766511313 -54.63694682335585 A 85 85 0 0 1 67.88401835401989 -51.15427696792411" fill="none" stroke="black" stroke-width="3"/>
+<path d="M 71.28699827536104 -46.294317976277306 M 71.28699827536104 -46.294317976277306 A 85 85 0 0 1 7.408238133550946 84.67654933779838" fill="none" stroke="black" stroke-width="3"/>
+</g>
+<g>
+<path d="M 0.000000000000009797174393178826 80 L 0.000000000000011021821192326179 90" fill="none" stroke="black" stroke-width="4"/>
+<path d="M -77.27406610312546 20.705523608201652 L -86.93332436601615 23.293714059226858" fill="none" stroke="black" stroke-width="4"/>
+<path d="M -7.408238133550925 84.67654933779838 M -7.408238133550925 84.67654933779838 A 85 85 0 0 1 -79.87387276680222 29.071712182681825" fill="none" stroke="black" stroke-width="3"/>
+</g>
+<g>
+<path d="M 72.50462296293199 -33.809460939255956 L 81.56770083329849 -38.03564355666295" fill="none" stroke="black" stroke-width="4"/>
+<path d="M -69.28203230275508 -40.00000000000001 L -77.94228634059948 -45.00000000000001" fill="none" stroke="black" stroke-width="4"/>
+<path d="M 79.87387276680221 -29.07171218268185 M 79.87387276680221 -29.07171218268185 A 85 85 0 0 1 2.966457219712597 84.94822029662313" fill="none" stroke="black" stroke-width="3"/>
+<path d="M -2.9664572197125767 84.94822029662313 M -2.9664572197125767 84.94822029662313 A 85 85 0 0 1 -77.03616189811524 -35.922552247959466" fill="none" stroke="black" stroke-width="3"/>
+</g>
 </g>
 </g>
 <circle cx="200" cy="200" fill="#333" r="5"/>
