@@ -83,7 +83,7 @@ class WheelScreen extends StatelessWidget {
           children: [
             TrackGraphicsRow(kinds: allkinds(), height: 200),
             Expanded(child: vspace),
-            statisticsCard,
+            Padding(padding: const EdgeInsets.all(16), child: statisticsCard),
             Expanded(child: vspace),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

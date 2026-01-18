@@ -171,11 +171,6 @@ class SettingsWidget extends StatelessWidget {
         .padLeft(3);
     String pageCount = (segments.length / 2).ceil().toString().padLeft(2);
 
-    String showText = "show";
-    if (show) {
-      showText = "hide";
-    }
-
     // there is a bug with Slider in a Table:
     // https://github.com/flutter/flutter/issues/174133
     return Card(
