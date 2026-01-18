@@ -3,10 +3,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
 import 'package:ui/utils.dart';
 
@@ -156,15 +158,15 @@ class SettingsWidget extends StatelessWidget {
     RootModel root = Provider.of<RootModel>(context);
     List<Segment> segments = root.segments();
     Parameters parameters = root.parameters();
+    String segLength = ((parameters.segmentLength - parameters.segmentOverlap) /
+            1000)
+        .ceil()
+        .toString()
+        .padLeft(3);
+    String pageCount = (segments.length / 2).ceil().toString().padLeft(2);
 
-    String km =
-        "${((parameters.segmentLength - parameters.segmentOverlap) / 1000).ceil().toString().padLeft(3)} km per segment";
-    String segmentCount = "${segments.length.toString().padLeft(2)} segments";
-    String pageCount =
-        "${(segments.length / 2).ceil().toString().padLeft(2)} pages";
-    String countText = "$segmentCount on $pageCount";
     SizedBox placeHolder = SizedBox(
-      width: 120, // or 40–56 depending on your design
+      width: 155,
       child: Container(color: Colors.red),
     );
     // there is a bug with Slider in a Table:
@@ -201,7 +203,7 @@ class SettingsWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [Text(km)],
+                  children: [Text("$pageCount pages")],
                 ),
               ),
             ],
@@ -213,17 +215,13 @@ class SettingsWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [Text(countText)],
+                  children: [
+                    Text(
+                      "$segLength km per segment ",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              placeHolder,
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("(2 segments per page)"),
               ),
             ],
           ),
@@ -233,12 +231,35 @@ class SettingsWidget extends StatelessWidget {
   }
 }
 
+class TopRow extends StatelessWidget {
+  const TopRow({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => TrackViewsSwitch(exposed: [TrackData.pages]),
+      child: TrackGraphicsRow(kinds: allkinds(), height: 200),
+    );
+  }
+}
+
+class BottomRow extends StatelessWidget {
+  const BottomRow({super.key});
+  @override
+  Widget build(BuildContext context) {
+    developer.log("[LocalSegmentGraphics]");
+    return ChangeNotifierProvider(
+      create:
+          (_) => TrackViewsSwitch(exposed: [TrackData.map, TrackData.profile]),
+      child: SegmentsGraphicsRow(kinds: allkinds(), height: 200),
+    );
+  }
+}
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext ctx) {
-    Widget row = SegmentsGraphicsRow(kinds: allkinds(), height: 200);
     return Scaffold(
       appBar: AppBar(title: const Text('PDF')),
       body: Center(
@@ -246,10 +267,11 @@ class SettingsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            row,
+            TopRow(),
             Divider(height: 5),
             SizedBox(height: 10),
             SettingsWidget(),
+            BottomRow(),
           ],
         ),
       ),

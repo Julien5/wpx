@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
@@ -22,12 +23,14 @@ class SegmentGraphicsButtons extends StatelessWidget {
     String filename = 'assets/icons/png/map.png';
     if (data == TrackData.wheel) {
       filename = 'assets/icons/png/clock.png';
-    }
-    if (data == TrackData.profile) {
+    } else if (data == TrackData.profile) {
       filename = 'assets/icons/png/profile.png';
-    }
-    if (data == TrackData.map) {
+    } else if (data == TrackData.map) {
       filename = 'assets/icons/png/map.png';
+    } else if (data == TrackData.pages) {
+      filename = 'assets/icons/png/clock.png';
+    } else {
+      assert(false, "no icon for $data");
     }
     return Image.asset(filename, width: size - margin, height: size - margin);
   }
@@ -71,6 +74,9 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
+    if (model.exposed.length <= 1) {
+      return SizedBox();
+    }
     const double buttonSize = 30;
     List<Widget> children = [];
     for (TrackData data in model.exposed) {
@@ -113,13 +119,21 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
   void initState() {
     super.initState();
     assert(widgets.isEmpty);
-    for (TrackData data in {
-      TrackData.profile,
-      TrackData.map,
-      TrackData.wheel,
-    }) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _initState();
+    });
+  }
+
+  void _initState() {
+    assert(widgets.isEmpty);
+    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
+      context,
+      listen: false,
+    );
+    for (TrackData data in model.exposed) {
       widgets[data] = TrackView.make(widget.kinds, data);
     }
+    setState(() {});
   }
 
   void onTap() {

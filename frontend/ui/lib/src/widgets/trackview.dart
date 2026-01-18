@@ -23,6 +23,7 @@ class TrackView extends StatefulWidget {
   const TrackView({super.key, required this.parameters});
 
   static TrackView make(Set<InputType> kinds, TrackData trackData) {
+    developer.log("[TrackView make] $trackData");
     RendererParameters p = RendererParameters(
       kinds: kinds,
       trackData: trackData,
@@ -61,7 +62,7 @@ class _TrackViewState extends State<TrackView> {
     FutureRenderer? renderer,
   ) {
     assert(renderer != null);
-    renderer!.updateSegment(segment.segment());
+    renderer!.updateSegment(segment.segment);
     renderer.reset();
     startRendererIfNeeded();
     return renderer;

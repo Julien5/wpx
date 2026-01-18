@@ -9,19 +9,26 @@ typedef Kinds = Set<bridge.InputType>;
 
 class SegmentModel extends ChangeNotifier {
   late bridge.Bridge _bridge;
-  late bridge.Segment _segment;
+  final bridge.Segment segment;
+  final RootModel root;
 
-  SegmentModel(RootModel root, bridge.Segment segment) {
+  SegmentModel({required this.segment, required this.root}) {
     _bridge = root.getBridge();
-    _segment = segment;
+    root.addListener(_onRootChanged);
   }
 
-  bridge.Segment segment() {
-    return _segment;
+  @override
+  void dispose() {
+    root.removeListener(_onRootChanged);
+    super.dispose();
+  }
+
+  void _onRootChanged() {
+    notifyListeners();
   }
 
   void debug() {
-    double length = _bridge.segmentStatistics(segment: _segment).length / 1000;
+    double length = _bridge.segmentStatistics(segment: segment).length / 1000;
     developer.log("segment length:$length");
   }
 
@@ -37,7 +44,7 @@ class SegmentModel extends ChangeNotifier {
   FutureRenderer makeRenderer(Kinds kinds, TrackData trackData) {
     return FutureRenderer(
       bridge: _bridge,
-      segment: _segment,
+      segment: segment,
       kinds: kinds,
       trackData: trackData,
     );
@@ -57,15 +64,15 @@ class SegmentModel extends ChangeNotifier {
   }
 
   bridge.SegmentStatistics statistics() {
-    return _bridge.segmentStatistics(segment: _segment);
+    return _bridge.segmentStatistics(segment: segment);
   }
 
   List<bridge.Waypoint> allWaypoints() {
-    return _bridge.getWaypoints(segment: _segment, kinds: bridge.allkinds());
+    return _bridge.getWaypoints(segment: segment, kinds: bridge.allkinds());
   }
 
   List<bridge.Waypoint> someWaypoints(Kinds kinds) {
-    return _bridge.getWaypoints(segment: _segment, kinds: kinds);
+    return _bridge.getWaypoints(segment: segment, kinds: kinds);
   }
 
   void setUserStepGpxNameFormat(String format) {

@@ -108,7 +108,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
       return;
     }
     for (Segment segment in newSegments) {
-      SegmentModel model = SegmentModel(root, segment);
+      SegmentModel model = SegmentModel(root: root, segment: segment);
       segments.add(model);
     }
     _tabController = TabController(length: segments.length, vsync: this);

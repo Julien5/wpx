@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 
 class TrackViewsSwitch extends ChangeNotifier {
-  TrackData current = TrackData.wheel;
+  int currentIndex = 0;
   final List<TrackData> exposed;
   TrackViewsSwitch({required this.exposed});
 
@@ -11,23 +11,19 @@ class TrackViewsSwitch extends ChangeNotifier {
   }
 
   void cycle() {
-    if (current == TrackData.wheel) {
-      return changeCurrent(TrackData.map);
+    currentIndex++;
+    if (currentIndex >= exposed.length) {
+      currentIndex = 0;
     }
-    if (current == TrackData.map) {
-      return changeCurrent(TrackData.profile);
-    }
-    if (current == TrackData.profile) {
-      return changeCurrent(TrackData.wheel);
-    }
+    notifyListeners();
   }
 
   TrackData currentData() {
-    return current;
+    return exposed[currentIndex];
   }
 
   void changeCurrent(TrackData d) {
-    current = d;
+    currentIndex = exposed.indexOf(d);
     notifyListeners();
   }
 }
