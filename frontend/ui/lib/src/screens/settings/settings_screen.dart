@@ -151,7 +151,13 @@ class SliderWidget extends StatelessWidget {
 }
 
 class SettingsWidget extends StatelessWidget {
-  const SettingsWidget({super.key});
+  final VoidCallback? onShowPressed;
+  final bool show;
+  const SettingsWidget({
+    super.key,
+    required this.onShowPressed,
+    required this.show,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -165,10 +171,11 @@ class SettingsWidget extends StatelessWidget {
         .padLeft(3);
     String pageCount = (segments.length / 2).ceil().toString().padLeft(2);
 
-    SizedBox placeHolder = SizedBox(
-      width: 155,
-      child: Container(color: Colors.red),
-    );
+    String showText = "show";
+    if (show) {
+      showText = "hide";
+    }
+
     // there is a bug with Slider in a Table:
     // https://github.com/flutter/flutter/issues/174133
     return Card(
@@ -185,10 +192,12 @@ class SettingsWidget extends StatelessWidget {
       child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("Number of pages:"),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("$pageCount pages"),
               ),
               SizedBox(
                 width: 200, // or 40–56 depending on your design
@@ -197,28 +206,20 @@ class SettingsWidget extends StatelessWidget {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              placeHolder,
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [Text("$pageCount pages")],
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              placeHolder,
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      "$segLength km per segment ",
-                      style: TextStyle(fontSize: 12),
+                    ElevatedButton(
+                      onPressed: onShowPressed,
+                      child: Text(
+                        "$segLength km per segment",
+                        style: TextStyle(fontSize: 12),
+                      ),
                     ),
                   ],
                 ),
@@ -249,14 +250,34 @@ class BottomRow extends StatelessWidget {
     developer.log("[LocalSegmentGraphics]");
     return ChangeNotifierProvider(
       create:
-          (_) => TrackViewsSwitch(exposed: [TrackData.map, TrackData.profile]),
-      child: SegmentsGraphicsRow(kinds: allkinds(), height: 200),
+          (_) => TrackViewsSwitch(exposed: [TrackData.profile, TrackData.map]),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Divider(height: 5),
+          SegmentsGraphicsRow(kinds: allkinds(), height: 200),
+          Divider(height: 5),
+        ],
+      ),
     );
   }
 }
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool showBottomWidget = false;
+  void onShowPressed() {
+    setState(() {
+      showBottomWidget = !showBottomWidget;
+    });
+  }
 
   @override
   Widget build(BuildContext ctx) {
@@ -268,10 +289,11 @@ class SettingsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TopRow(),
-            Divider(height: 5),
-            SizedBox(height: 10),
-            SettingsWidget(),
-            BottomRow(),
+            SettingsWidget(
+              show: showBottomWidget,
+              onShowPressed: onShowPressed,
+            ),
+            if (showBottomWidget) BottomRow(),
           ],
         ),
       ),
