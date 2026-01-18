@@ -56,19 +56,12 @@ class WheelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Card statisticsCard = Card(
-      elevation: 4, // Add shadow to the card
-      margin: const EdgeInsets.all(1), // Add margin around the card
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8), // Rounded corners
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16), // Add padding inside the card
-        child: StatisticsWidget(
-          onPacingPointPressed: () => gotoUserSteps(ctx),
-          onControlsPointPressed: () => gotoControls(ctx),
-          onPagesPressed: () => gotoSettings(ctx),
-        ),
+    Widget statisticsCard = Padding(
+      padding: const EdgeInsets.all(1), // Add padding inside the card
+      child: StatisticsWidget(
+        onPacingPointPressed: () => gotoUserSteps(ctx),
+        onControlsPointPressed: () => gotoControls(ctx),
+        onPagesPressed: () => gotoSettings(ctx),
       ),
     );
 

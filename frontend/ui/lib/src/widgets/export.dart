@@ -85,29 +85,31 @@ class ExportButton extends StatefulWidget {
 }
 
 class _ExportButtonState extends State<ExportButton> {
-  int length = 0;
+  bool busy = false;
 
   void onPressed(RootModel root) async {
     if (!mounted) {
       return;
     }
     setState(() {
-      length = 0;
+      busy = true;
     });
     var data = await generate(root, widget.type);
     fileSave(data, widget.type);
+    setState(() {
+      busy = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     RootModel model = Provider.of<RootModel>(context);
+    VoidCallback? callback = null;
+    if (!busy) {
+      callback = () => onPressed(model);
+    }
     return Row(
-      children: [
-        ElevatedButton(
-          onPressed: () => onPressed(model),
-          child: Text(widget.text),
-        ),
-      ],
+      children: [ElevatedButton(onPressed: callback, child: Text(widget.text))],
     );
   }
 }
