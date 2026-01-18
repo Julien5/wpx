@@ -2,28 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/log.dart';
 import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/waypointsmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/utils.dart';
-import 'segment_stack.dart';
-
-class RenderersProvider extends MultiProvider {
-  final Renderers renderers;
-
-  RenderersProvider(Renderers r, WaypointsModel d, Widget child, {super.key})
-    : renderers = r,
-      super(
-        providers: [
-          ChangeNotifierProvider.value(value: r.profileRenderer),
-          ChangeNotifierProvider.value(value: r.mapRenderer),
-          ChangeNotifierProvider.value(value: r.yaxisRenderer),
-          ChangeNotifierProvider.value(value: d),
-        ],
-        child: child,
-      );
-}
 
 class SegmentsView extends StatefulWidget {
   const SegmentsView({super.key});
@@ -43,24 +24,6 @@ class _SegmentsViewState extends State<SegmentsView> {
       log("update segments");
       segments = rootModel.segments();
     }
-  }
-
-  List<RenderersProvider> renderingProviders(
-    RootModel rootModel,
-    ScreenOrientation screenOrientation,
-  ) {
-    List<RenderersProvider> ret = [];
-    log("[_initRenderingProviders] length=${segments!.length}");
-    for (var segment in segments!) {
-      var w = RenderersProvider(
-        Renderers.make(rootModel.getBridge(), segment, allkinds()),
-        WaypointsModel(brd: rootModel.getBridge(), segment: segment),
-        SegmentView(screenOrientation: screenOrientation),
-      );
-      ret.add(w);
-    }
-    log("[renderingProviders] [build] #segments=${ret.length}");
-    return ret;
   }
 
   @override

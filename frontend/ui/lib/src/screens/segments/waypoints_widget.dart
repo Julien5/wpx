@@ -82,7 +82,7 @@ class WayPointsConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<ProfileRenderer>(
+    return Consumer<FutureRenderer>(
       builder: (context, wp, child) {
         return Center(child: Text(wp.id()));
       },

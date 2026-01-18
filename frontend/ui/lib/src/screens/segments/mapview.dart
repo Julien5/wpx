@@ -8,7 +8,7 @@ class MapConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<MapRenderer>(
+    return Consumer<FutureRenderer>(
       builder: (context, mapRenderer, child) {
         mapRenderer.setSize(Size(400, 400));
         return FutureRenderingWidget(interactive: false);

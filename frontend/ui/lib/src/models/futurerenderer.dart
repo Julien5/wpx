@@ -3,11 +3,10 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui/src/log.dart';
-import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/utils.dart';
 
-enum TrackData { profile, yaxis, map, wheel }
+enum TrackData { profile, yaxis, map, wheel, pages }
 
 class FutureRenderer with ChangeNotifier {
   bridge.Segment _segment;
@@ -151,75 +150,5 @@ class FutureRenderer with ChangeNotifier {
   String result() {
     assert(_result != null);
     return _result!;
-  }
-}
-
-class ProfileRenderer extends FutureRenderer {
-  ProfileRenderer(bridge.Bridge bridge, bridge.Segment segment, Kinds kinds)
-    : super(
-        bridge: bridge,
-        segment: segment,
-        trackData: TrackData.profile,
-        kinds: kinds,
-      );
-}
-
-class YAxisRenderer extends FutureRenderer {
-  YAxisRenderer(bridge.Bridge bridge, bridge.Segment segment, Kinds kinds)
-    : super(
-        bridge: bridge,
-        segment: segment,
-        trackData: TrackData.yaxis,
-        kinds: kinds,
-      );
-}
-
-class MapRenderer extends FutureRenderer {
-  MapRenderer(bridge.Bridge bridge, bridge.Segment segment, Kinds kinds)
-    : super(
-        bridge: bridge,
-        segment: segment,
-        trackData: TrackData.map,
-        kinds: kinds,
-      );
-}
-
-class WheelRenderer extends FutureRenderer {
-  WheelRenderer(
-    bridge.Bridge bridge,
-    bridge.Segment segment,
-    Set<bridge.InputType> kinds,
-  ) : super(
-        bridge: bridge,
-        segment: segment,
-        trackData: TrackData.wheel,
-        kinds: kinds,
-      );
-}
-
-class Renderers {
-  final ProfileRenderer profileRenderer;
-  final YAxisRenderer yaxisRenderer;
-  final MapRenderer mapRenderer;
-  Renderers(ProfileRenderer profile, YAxisRenderer yaxis, MapRenderer map)
-    : profileRenderer = profile,
-      yaxisRenderer = yaxis,
-      mapRenderer = map;
-
-  static Renderers make(
-    bridge.Bridge bridge,
-    bridge.Segment segment,
-    Kinds kinds,
-  ) {
-    var t = ProfileRenderer(bridge, segment, kinds);
-    var m = MapRenderer(bridge, segment, kinds);
-    var y = YAxisRenderer(bridge, segment, kinds);
-    return Renderers(t, y, m);
-  }
-
-  void reset() {
-    profileRenderer.restart();
-    mapRenderer.restart();
-    yaxisRenderer.restart();
   }
 }

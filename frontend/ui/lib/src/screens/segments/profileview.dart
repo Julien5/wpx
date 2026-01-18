@@ -10,7 +10,7 @@ class ProfileConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Consumer<ProfileRenderer>(
+    return Consumer<FutureRenderer>(
       builder: (context, pRenderer, child) {
         // It would be more accurate to check visibility with a scroll controller
         // at the list view level. Because "Callbacks are not fired immediately
@@ -28,7 +28,7 @@ class YAxisConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<YAxisRenderer>(
+    return Consumer<FutureRenderer>(
       builder: (context, yRenderer, child) {
         yRenderer.setSize(Size(1000, 285));
         return FutureRenderingWidget(interactive: false);

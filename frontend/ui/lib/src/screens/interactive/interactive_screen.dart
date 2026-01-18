@@ -12,7 +12,7 @@ class InteractiveMapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MapRenderer>(
+    return Consumer<FutureRenderer>(
       builder: (context, mapRenderer, child) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -88,8 +88,14 @@ class _InteractiveScreenState extends State<InteractiveScreen> {
     }
     return Scaffold(
       appBar: appBar(ctx),
-      body: ChangeNotifierProvider<MapRenderer>(
-        create: (_) => MapRenderer(root.getBridge(), trackSegment!, allkinds()),
+      body: ChangeNotifierProvider<FutureRenderer>(
+        create:
+            (_) => FutureRenderer(
+              bridge: root.getBridge(),
+              segment: trackSegment!,
+              kinds: allkinds(),
+              trackData: TrackData.map,
+            ),
         child: InteractiveConsumer(),
       ),
     );

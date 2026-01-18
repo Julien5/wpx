@@ -35,16 +35,12 @@ class SegmentModel extends ChangeNotifier {
   }
 
   FutureRenderer makeRenderer(Kinds kinds, TrackData trackData) {
-    if (trackData == TrackData.wheel) {
-      return WheelRenderer(_bridge, _segment, kinds);
-    }
-    if (trackData == TrackData.profile) {
-      return ProfileRenderer(_bridge, _segment, kinds);
-    }
-    if (trackData == TrackData.map) {
-      return MapRenderer(_bridge, _segment, kinds);
-    }
-    throw Exception("invalid track data");
+    return FutureRenderer(
+      bridge: _bridge,
+      segment: _segment,
+      kinds: kinds,
+      trackData: trackData,
+    );
   }
 
   void notify() {
@@ -58,10 +54,6 @@ class SegmentModel extends ChangeNotifier {
 
   bridge.Parameters parameters() {
     return _bridge.getParameters();
-  }
-
-  ProfileRenderer createProfileRenderer(Kinds kinds) {
-    return ProfileRenderer(_bridge, _segment, kinds);
   }
 
   bridge.SegmentStatistics statistics() {
