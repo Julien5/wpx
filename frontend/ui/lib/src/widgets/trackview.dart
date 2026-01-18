@@ -82,7 +82,8 @@ class _TrackViewState extends State<TrackView> {
       return;
     }
     Size size = visibilityInfo!.size;
-    if (futureRenderer!.trackData != TrackData.wheel) {
+    TrackData currentData = futureRenderer!.trackData;
+    if (currentData == TrackData.map || currentData == TrackData.profile) {
       size = size * 1.5;
     }
     futureRenderer!.setSize(size);

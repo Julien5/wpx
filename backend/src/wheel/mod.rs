@@ -329,7 +329,7 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
     let mut document = Document::new()
         .set("width", size.width)
         .set("height", size.height)
-        .set("viewBox", (0, 0, size.width + 200, size.height + 200));
+        .set("viewBox", (0, 0, size.width, size.height));
 
     let main_group = Group::new()
         .set("id", "world")
