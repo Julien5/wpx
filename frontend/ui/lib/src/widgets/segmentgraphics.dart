@@ -70,32 +70,25 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
     const double buttonSize = 30;
+    List<Widget> children = [];
+    for (TrackData data in model.exposed) {
+      children.add(
+        SegmentGraphicsButtons(
+          selected: selected,
+          size: buttonSize,
+          trackData: data,
+          onPressed: () => onButtonPressed(data),
+        ),
+      );
+    }
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: buttonSize),
       child: Column(
         mainAxisSize: MainAxisSize.max, // Makes Column fill available space
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SegmentGraphicsButtons(
-            selected: selected,
-            size: buttonSize,
-            trackData: TrackData.wheel,
-            onPressed: () => onButtonPressed(TrackData.wheel),
-          ),
-          SegmentGraphicsButtons(
-            selected: selected,
-            size: buttonSize,
-            trackData: TrackData.map,
-            onPressed: () => onButtonPressed(TrackData.map),
-          ),
-          SegmentGraphicsButtons(
-            selected: selected,
-            size: buttonSize,
-            trackData: TrackData.profile,
-            onPressed: () => onButtonPressed(TrackData.profile),
-          ),
-        ],
+        children: children,
       ),
     );
   }

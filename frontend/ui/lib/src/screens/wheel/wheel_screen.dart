@@ -123,7 +123,9 @@ class WheelScreenProviders extends MultiProvider {
            ChangeNotifierProvider(
              create: (_) => SegmentModel(root, root.trackSegment()),
            ),
-           ChangeNotifierProvider(create: (_) => TrackViewsSwitch()),
+           ChangeNotifierProvider(
+             create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
+           ),
          ],
          child: child,
        );

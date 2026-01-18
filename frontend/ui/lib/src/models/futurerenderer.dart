@@ -91,6 +91,16 @@ class FutureRenderer with ChangeNotifier {
         size: sizeParameter,
         kinds: kinds,
       );
+    } else if (trackData == TrackData.pages) {
+      log("[render-request-started:A]");
+      assert(_bridge.isLoaded());
+      log("[render-request-started:B]");
+      _future = _bridge.renderSegmentWhat(
+        segment: _segment,
+        what: "wheel/pages",
+        size: sizeParameter,
+        kinds: kinds,
+      );
       log("[render-request-started:C]");
     }
     log("[render-request-started:$trackData]");

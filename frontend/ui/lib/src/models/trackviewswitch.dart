@@ -3,6 +3,13 @@ import 'package:ui/src/models/futurerenderer.dart';
 
 class TrackViewsSwitch extends ChangeNotifier {
   TrackData current = TrackData.wheel;
+  final List<TrackData> exposed;
+  TrackViewsSwitch({required this.exposed});
+
+  static List<TrackData> wmp() {
+    return [TrackData.wheel, TrackData.map, TrackData.profile];
+  }
+
   void cycle() {
     if (current == TrackData.wheel) {
       return changeCurrent(TrackData.map);

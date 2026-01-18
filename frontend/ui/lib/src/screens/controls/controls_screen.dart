@@ -53,7 +53,6 @@ class ControlsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     Set<InputType> control = {InputType.control};
-
     return Scaffold(
       appBar: AppBar(title: const Text('Control Points')),
       body: Center(
