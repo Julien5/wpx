@@ -42,6 +42,9 @@ async fn download_chunk_real(
                 Ok(points) => Ok(points),
                 Err(e) => {
                     log::error!("cannot read OSM data: len:{}", content.len());
+                    let mut short = content.clone();
+                    short.truncate(1000);
+                    log::error!("cannot read OSM data: {}", short);
                     log::error!("reason: {}", e.to_string());
                     Err(std::io::Error::new(std::io::ErrorKind::InvalidData, "data"))
                 }
