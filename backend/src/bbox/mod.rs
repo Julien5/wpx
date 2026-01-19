@@ -1,7 +1,7 @@
 use core::fmt;
 pub mod quadtree;
 
-#[derive(Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct BoundingBox {
     _min: Point2D,
     _max: Point2D,
@@ -17,7 +17,7 @@ impl BoundingBox {
     pub fn minsize(min: Point2D, width: &f64, height: &f64) -> BoundingBox {
         BoundingBox {
             _min: min,
-            _max: min + Point2D::new(*width, *height).to_vector(),
+            _max: min + Point2D::new(*width, *height),
         }
     }
     pub fn get_min(&self) -> Point2D {
@@ -60,13 +60,13 @@ impl BoundingBox {
         self._max.x = m;
     }
     pub fn translate(&mut self, v: &Point2D) {
-        self._min = self._min + v.to_vector();
-        self._max = self._max + v.to_vector();
+        self._min = self._min + *v;
+        self._max = self._max + *v;
     }
     pub fn make_translate(&self, v: &Point2D) -> Self {
         BoundingBox {
-            _min: self._min + v.to_vector(),
-            _max: self._max + v.to_vector(),
+            _min: self._min + *v,
+            _max: self._max + *v,
         }
     }
     pub fn contains_other(&self, other: &Self) -> bool {
@@ -259,6 +259,8 @@ use std::{
     cmp::Ordering,
     hash::{Hash, Hasher},
 };
+
+use serde::{Deserialize, Serialize};
 
 use crate::math::{distance2, partial_compare, IntegerSize2D, Point2D};
 

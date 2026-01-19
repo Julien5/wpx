@@ -98,7 +98,7 @@ async fn remove_cache(tiles: &BoundingBoxes) -> Vec<EuclideanBoundingBox> {
 }
 
 async fn process(bbox: &EuclideanBoundingBox, logger: &SenderHandlerLock) -> InputPointMap {
-    let tiles = split(&bbox, &BBOXWIDTH);
+    let tiles = split(&bbox, BBOXWIDTH);
     let not_cached = remove_cache(&tiles).await;
     if !not_cached.is_empty() {
         log::info!(

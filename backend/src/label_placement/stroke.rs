@@ -31,7 +31,7 @@ pub fn _compute(
     for i in 0..n {
         for j in (i + 1)..n {
             if original_obstacles._is_clear(&pointsnet[i], &pointsnet[j]) {
-                let d = pointsnet[i].distance_to(pointsnet[j]);
+                let d = pointsnet[i].distance_to(&pointsnet[j]);
                 graph.add_edge(node_indices[i], node_indices[j], d);
             }
         }

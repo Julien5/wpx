@@ -9,7 +9,7 @@ use svg::node::element::Text;
 use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
-use crate::math::{IntegerSize2D, Point2D, ScreenSpace};
+use crate::math::{IntegerSize2D, Point2D};
 use crate::wheel::model::CirclePoint;
 
 mod constants {
@@ -33,8 +33,8 @@ impl Page {
     fn wheel_inner_radius(&self) -> i32 {
         self.wheel_outer_radius() - self.wheel_width
     }
-    fn center(&self) -> euclid::Vector2D<i32, ScreenSpace> {
-        (self.size() / 2).to_vector()
+    fn center(&self) -> Point2D {
+        Point2D::new(self.total_size.width as f64, self.total_size.height as f64) * 0.5
     }
     fn make_centered_group(&self) -> Group {
         let center = self.center();
@@ -347,7 +347,7 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         .set("stroke-width", 3);
     let radius = page.wheel_outer_radius() as f64 + 3f64;
     let arc = arc::Arc {
-        center: center.to_point().to_f64(),
+        center,
         radius,
         angle1: -0.5 * constants::ARCANGLE,
         angle2: 0.5 * constants::ARCANGLE,

@@ -1,5 +1,6 @@
+use crate::math::Point2D;
+
 use super::BoundingBox;
-use euclid::Point2D;
 
 const MAX_OBJECTS: usize = 8;
 const MAX_DEPTH: usize = 4;

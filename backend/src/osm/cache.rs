@@ -1,3 +1,6 @@
+use std::collections::{BTreeMap, BTreeSet};
+
+use crate::bboxes;
 use crate::event::{self, SenderHandlerLock};
 use crate::inputpoint::InputPoints;
 use crate::mercator::EuclideanBoundingBox;
@@ -32,7 +35,7 @@ pub fn cache_filename(bbox: &EuclideanBoundingBox) -> String {
     format!("{}/{}", key(bbox), "data")
 }
 
-fn cache_path(filename: &String) -> String {
+fn cache_path(filename: &str) -> String {
     format!("{}/{}", cache_dir(), filename)
 }
 
@@ -42,7 +45,7 @@ async fn write_worker(filename: &String, data: String) {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-async fn read_worker(filename: &String) -> Option<String> {
+async fn read_worker(filename: &str) -> Option<String> {
     super::filesystem::read(&cache_path(filename))
 }
 
@@ -52,7 +55,7 @@ async fn write_worker(path: &String, data: String) {
 }
 
 #[cfg(target_arch = "wasm32")]
-async fn read_worker(path: &String) -> Option<String> {
+async fn read_worker(path: &str) -> Option<String> {
     super::indexdb::read(&path).await
 }
 
@@ -84,6 +87,21 @@ pub async fn write(
     points: &InputPoints,
     logger: &SenderHandlerLock,
 ) {
+    use bboxes::Chunk;
+    pub type BoxSet = BTreeSet<EuclideanBoundingBox>;
+    let mut chunks: BTreeMap<Chunk, BoxSet> = BTreeMap::new();
+    for b in bboxes {
+        let chunk = bboxes::chunk(&b);
+        if chunks.contains_key(&chunk) {
+            chunks.get_mut(&chunk).unwrap().insert(b.clone());
+        } else {
+            chunks.insert(chunk, BTreeSet::new());
+        }
+    } /*
+      for (chunk, boxset) in &chunks {
+          let key = chunk.basename();
+          let _data = read_worker(&key);
+      }*/
     for katom in 0..bboxes.len() {
         let atom = &bboxes[katom];
         let local = points

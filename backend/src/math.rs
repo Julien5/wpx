@@ -1,8 +1,67 @@
 use std::cmp::Ordering;
+
+use euclid::Point2D as EuclidPoint2D;
+use serde::{Deserialize, Serialize};
+
 pub struct ScreenSpace;
-pub type Point2D = euclid::Point2D<f64, ScreenSpace>;
+
+// Create a newtype wrapper that can derive Serialize/Deserialize
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub struct Point2D {
+    pub x: f64,
+    pub y: f64,
+}
+
 pub type IntegerSize2D = euclid::Size2D<i32, ScreenSpace>;
-pub type Vector2D = euclid::Vector2D<f64, ScreenSpace>;
+pub type Vector2D = Point2D;
+
+impl Point2D {
+    pub fn new(x: f64, y: f64) -> Self {
+        Self { x, y }
+    }
+
+    pub fn zero() -> Point2D {
+        Point2D::new(0f64, 0f64)
+    }
+
+    pub fn length(&self) -> f64 {
+        norm2(self).sqrt()
+    }
+
+    pub fn distance_to(&self, other: &Self) -> f64 {
+        distance2(self, other).sqrt()
+    }
+
+    pub fn to_tuple(&self) -> (f64, f64) {
+        (self.x, self.y)
+    }
+
+    // Convert to euclid::Point2D when needed
+    pub fn to_euclid(&self) -> EuclidPoint2D<f64, ScreenSpace> {
+        EuclidPoint2D::new(self.x, self.y)
+    }
+
+    // Convert from euclid::Point2D
+    pub fn from_euclid(point: EuclidPoint2D<f64, ScreenSpace>) -> Self {
+        Self {
+            x: point.x,
+            y: point.y,
+        }
+    }
+}
+
+// Implement From traits for easy conversion
+impl From<EuclidPoint2D<f64, ScreenSpace>> for Point2D {
+    fn from(point: EuclidPoint2D<f64, ScreenSpace>) -> Self {
+        Self::from_euclid(point)
+    }
+}
+
+impl From<Point2D> for EuclidPoint2D<f64, ScreenSpace> {
+    fn from(point: Point2D) -> Self {
+        point.to_euclid()
+    }
+}
 
 pub fn partial_compare(p: &Point2D, q: &Point2D) -> Option<Ordering> {
     match p.x.partial_cmp(&q.x) {
@@ -70,4 +129,61 @@ pub fn segments_intersect(p1: &Point2D, p2: &Point2D, q1: &Point2D, q2: &Point2D
 pub fn nearly_equal(a: f64, b: f64) -> bool {
     let diff = (a - b).abs();
     diff <= 1e-5
+}
+
+impl PartialEq for Point2D {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}
+
+impl Eq for Point2D {}
+
+use std::ops::Add;
+impl Add for Point2D {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+use std::ops::Mul;
+
+impl Mul<f64> for Point2D {
+    type Output = Self;
+
+    fn mul(self, scalar: f64) -> Self {
+        Self {
+            x: self.x * scalar,
+            y: self.y * scalar,
+        }
+    }
+}
+
+impl Mul<Point2D> for f64 {
+    type Output = Point2D;
+
+    fn mul(self, point: Point2D) -> Point2D {
+        Point2D {
+            x: point.x * self,
+            y: point.y * self,
+        }
+    }
+}
+
+use std::ops::Sub;
+
+impl Sub for Point2D {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
 }
