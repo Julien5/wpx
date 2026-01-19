@@ -1,9 +1,8 @@
-use serde::{Deserialize, Serialize};
-use serde_json::json;
 use std::{cmp::Ordering, collections::BTreeSet};
 
 use crate::{
     bbox::*,
+    inputpoint::InputPointMap,
     math::Point2D,
     mercator::{EuclideanBoundingBox, MercatorPoint},
 };
@@ -41,49 +40,52 @@ pub fn pointbox(p: &MercatorPoint) -> EuclideanBoundingBox {
     EuclideanBoundingBox::minmax(min, max)
 }
 
-#[derive(Deserialize, Serialize, PartialEq, Clone)]
+#[derive(Clone)]
 pub struct Chunk {
+    pub data: InputPointMap,
     pub bbox: BoundingBox,
 }
 
 impl Chunk {
     pub fn new() -> Self {
         Self {
+            data: InputPointMap::new(),
             bbox: BoundingBox::new(),
         }
     }
     fn step() -> f64 {
         (CHUNKWIDTH as f64) * BBOXWIDTH
     }
-    fn xy(&self) -> (i32, i32) {
-        let rx = self.bbox.get_xmin() / Self::step();
-        let ry = self.bbox.get_ymin() / Self::step();
+    fn xy(bbox: &BoundingBox) -> (i32, i32) {
+        let rx = bbox.get_xmin() / Self::step();
+        let ry = bbox.get_ymin() / Self::step();
         assert!((rx - rx.round()).abs() < 0.0001);
         assert!((ry - ry.round()).abs() < 0.0001);
         return (rx.round() as i32, ry.round() as i32);
     }
-    pub fn basename(&self) -> String {
-        let coord = self.xy();
+    pub fn basename(bbox: &BoundingBox) -> String {
+        let coord = Self::xy(bbox);
         format!("{}-{}", coord.0, coord.1)
     }
-    pub fn from_string(data: &String) -> Chunk {
-        match serde_json::from_str(data.as_str()) {
-            Ok(points) => points,
-            Err(e) => {
-                log::error!("could not read osmpoints from: {}", data);
-                log::error!("because: {:?}", e);
-                Chunk::new()
-            }
-        }
+    pub fn load_map(&mut self, data: &str) {
+        self.data = InputPointMap::from_string(data).unwrap();
     }
-    pub fn as_string(&self) -> String {
-        json!(self).to_string()
+    pub fn map_as_string(&self) -> String {
+        self.data.as_string().unwrap()
     }
 }
 
+impl PartialEq for Chunk {
+    fn eq(&self, other: &Self) -> bool {
+        self.bbox == other.bbox
+    }
+}
+
+impl Eq for Chunk {}
+
 impl PartialOrd for Chunk {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.bbox.partial_cmp(&other.bbox)
+        Some(self.cmp(other))
     }
 }
 
@@ -93,9 +95,7 @@ impl Ord for Chunk {
     }
 }
 
-impl Eq for Chunk {}
-
-pub fn chunk(b: &BoundingBox) -> Chunk {
+pub fn chunk_bbox(b: &BoundingBox) -> BoundingBox {
     let step = (CHUNKWIDTH as f64) * BBOXWIDTH;
     let min = Point2D::new(
         floor_snap(b.get_xmin(), step),
@@ -105,7 +105,7 @@ pub fn chunk(b: &BoundingBox) -> Chunk {
     let bbox = EuclideanBoundingBox::minmax(min, max);
     assert_eq!(bbox.width(), step);
     assert_eq!(bbox.height(), step);
-    Chunk { bbox }
+    bbox
 }
 
 pub fn neighbors(middle: &EuclideanBoundingBox) -> [EuclideanBoundingBox; 8] {
@@ -142,6 +142,14 @@ pub fn split(orig: &BoundingBox, step: f64) -> BoundingBoxes {
         }
     }
     ret
+}
+
+pub fn split_chunks(orig: &BoundingBox) -> BoundingBoxes {
+    split(orig, BBOXWIDTH * (CHUNKWIDTH as f64))
+}
+
+pub fn split_tiles(orig: &BoundingBox) -> BoundingBoxes {
+    split(orig, BBOXWIDTH)
 }
 
 pub fn bounding_box<'a, I>(boxes: I) -> BoundingBox

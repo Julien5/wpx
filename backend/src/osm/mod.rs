@@ -64,7 +64,8 @@ async fn download_chunk(
     let osmpoints = match download_chunk_real(&wgsbbox, logger).await {
         Ok(points) => {
             log::info!("downloaded {:3} points", points.points.len());
-            cache::write(bboxes, &points, logger).await;
+            let map = InputPointMap::from_vector(&points.points);
+            cache::write(&map, logger).await;
             points
         }
         Err(e) => {
@@ -76,15 +77,9 @@ async fn download_chunk(
     osmpoints
 }
 
-async fn read(bbox: &EuclideanBoundingBox) -> InputPoints {
-    let osmpoints = match cache::read(bbox).await {
-        Some(d) => d,
-        None => {
-            // "could not find any data for {} (download probably failed) => skip",
-            InputPoints::new()
-        }
-    };
-    osmpoints
+async fn read(bbox: &EuclideanBoundingBox) -> InputPointMap {
+    let ret = cache::read(bbox).await;
+    ret
 }
 
 async fn remove_cache(tiles: &BoundingBoxes) -> Vec<EuclideanBoundingBox> {
@@ -108,13 +103,7 @@ async fn process(bbox: &EuclideanBoundingBox, logger: &SenderHandlerLock) -> Inp
         );
     }
     download_chunk(&not_cached, logger).await;
-    let mut ret = InputPointMap::new();
-    for tile in tiles {
-        // event::send_worker(logger, &format!("read {}/{}", count, total)).await;
-        let points = read(&tile).await;
-        ret.insert_points(&tile, &points.points);
-    }
-    ret
+    read(bbox).await
 }
 
 pub async fn download_for_track(track: &Track, logger: &SenderHandlerLock) -> InputPointMap {

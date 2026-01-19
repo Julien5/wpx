@@ -1,8 +1,9 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
-use crate::bboxes;
+use crate::bbox::BoundingBox;
+use crate::bboxes::{self, chunk_bbox, Chunk};
 use crate::event::{self, SenderHandlerLock};
-use crate::inputpoint::InputPoints;
+use crate::inputpoint::InputPointMap;
 use crate::mercator::EuclideanBoundingBox;
 
 #[cfg(test)]
@@ -74,53 +75,58 @@ pub async fn hit_cache(bbox: &EuclideanBoundingBox) -> bool {
     return hit_cache_worker(&filename).await;
 }
 
-pub async fn read(bbox: &EuclideanBoundingBox) -> Option<InputPoints> {
-    let filename = cache_filename(bbox);
-    match read_worker(&filename).await {
-        Some(data) => Some(InputPoints::from_string(&data)),
-        _ => None,
+pub async fn read(bbox: &EuclideanBoundingBox) -> InputPointMap {
+    let chunk_bboxes = bboxes::split_chunks(&bbox);
+    let mut ret = InputPointMap::new();
+    for (_index, chunkbox) in chunk_bboxes.iter().enumerate() {
+        let key = Chunk::basename(chunkbox);
+        let data = read_worker(&key).await;
+        let chunk = make_chunk(chunkbox, data);
+        for (tile, points) in chunk.data.map {
+            if bbox.contains_other(&tile) {
+                ret.insert_points(&tile, &points);
+            }
+        }
     }
+    ret
 }
 
-pub async fn write(
-    bboxes: &Vec<EuclideanBoundingBox>,
-    points: &InputPoints,
-    logger: &SenderHandlerLock,
-) {
+fn make_chunk(bbox: &BoundingBox, data: Option<String>) -> Chunk {
+    let mut ret = Chunk::new();
+    ret.bbox = bbox.clone();
+    match data {
+        Some(bytes) => ret.load_map(&bytes),
+        None => {}
+    }
+    ret
+}
+
+pub async fn write(points: &InputPointMap, logger: &SenderHandlerLock) {
     use bboxes::Chunk;
-    pub type BoxSet = BTreeSet<EuclideanBoundingBox>;
-    let mut chunks: BTreeMap<Chunk, BoxSet> = BTreeMap::new();
-    for b in bboxes {
-        let chunk = bboxes::chunk(&b);
-        if chunks.contains_key(&chunk) {
-            chunks.get_mut(&chunk).unwrap().insert(b.clone());
-        } else {
-            chunks.insert(chunk, BTreeSet::new());
+    let mut chunk_bboxes: BTreeSet<BoundingBox> = BTreeSet::new();
+    for b in points.map.keys() {
+        chunk_bboxes.insert(chunk_bbox(b));
+    }
+    for (index, chunkbox) in chunk_bboxes.iter().enumerate() {
+        let key = Chunk::basename(chunkbox);
+        let data = read_worker(&key).await;
+        let mut chunk = make_chunk(chunkbox, data);
+        for atom in points
+            .map
+            .keys()
+            .filter(|atom| chunk.bbox.contains_other(&atom))
+        {
+            chunk
+                .data
+                .map
+                .insert(atom.clone(), points.get(&atom).unwrap().clone());
         }
-    } /*
-      for (chunk, boxset) in &chunks {
-          let key = chunk.basename();
-          let _data = read_worker(&key);
-      }*/
-    for katom in 0..bboxes.len() {
-        let atom = &bboxes[katom];
-        let local = points
-            .clone()
-            .points
-            .iter()
-            .filter(|p| {
-                let coord = p.euclidean.point2d();
-                atom.contains(&coord)
-            })
-            .cloned()
-            .collect::<Vec<_>>();
-        let path = cache_filename(atom);
-        let out = InputPoints { points: local };
         event::send_worker(
             logger,
-            &format!("write cache {}/{}", katom + 1, bboxes.len()),
+            &format!("write cache {}/{}", index + 1, chunk_bboxes.len()),
         )
         .await;
-        write_worker(&path, out.as_string()).await;
+        let data = chunk.map_as_string();
+        write_worker(&key, data).await;
     }
 }

@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
-    bboxes,
+    bboxes::{self, pointbox},
     mercator::{EuclideanBoundingBox, MercatorPoint},
     track::Track,
     track_projection::{TrackProjection, TrackProjections},
@@ -358,8 +358,9 @@ impl InputPoints {
     }
 }
 
+#[derive(Clone)]
 pub struct InputPointMap {
-    map: BTreeMap<EuclideanBoundingBox, Vec<InputPoint>>,
+    pub map: BTreeMap<EuclideanBoundingBox, Vec<InputPoint>>,
 }
 
 use std::slice::{Iter, IterMut};
@@ -373,6 +374,7 @@ impl InputPointMap {
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut InputPoint> {
         self.map.values_mut().flat_map(|vector| vector.iter_mut())
     }
+
     pub fn points_in<'a>(
         &'a self,
         largebox: &'a EuclideanBoundingBox,
@@ -381,6 +383,16 @@ impl InputPointMap {
             .iter()
             .filter(move |(smallbox, _)| smallbox.overlap(&largebox))
             .flat_map(|(_, vector)| vector.iter())
+    }
+    pub fn from_string(data: &str) -> Result<InputPointMap, serde_json::Error> {
+        let map: Vec<(EuclideanBoundingBox, Vec<InputPoint>)> = serde_json::from_str(data)?;
+        Ok(InputPointMap {
+            map: map.into_iter().collect(),
+        })
+    }
+    pub fn as_string(&self) -> Result<String, serde_json::Error> {
+        let entries: Vec<(&EuclideanBoundingBox, &Vec<InputPoint>)> = self.map.iter().collect();
+        serde_json::to_string(&entries)
     }
 }
 
@@ -433,6 +445,15 @@ impl InputPointMap {
         }
     }
 
+    pub fn _from_vector(points: &Vec<InputPoint>) -> InputPointMap {
+        let mut map: BTreeMap<EuclideanBoundingBox, Vec<InputPoint>> = BTreeMap::new();
+        for w in points {
+            let bbox = pointbox(&w.euclidean);
+            map.entry(bbox).or_default().push(w.clone());
+        }
+        InputPointMap { map }
+    }
+
     pub fn from_vector(points: &Vec<InputPoint>) -> InputPointMap {
         let mut ret = InputPointMap::new();
         for w in points {
@@ -443,11 +464,12 @@ impl InputPointMap {
         ret
     }
 
-    pub fn insert_point(&mut self, b: &EuclideanBoundingBox, p: &InputPoint) {
-        match self.map.get_mut(&b) {
+    pub fn insert_point(&mut self, bbox: &EuclideanBoundingBox, p: &InputPoint) {
+        //self.map.entry(bbox).or_default().push(p.clone());
+        match self.map.get_mut(&bbox) {
             Some(v) => v.push(p.clone()),
             None => {
-                self.map.insert(b.clone(), vec![p.clone()]);
+                self.map.insert(bbox.clone(), vec![p.clone()]);
             }
         }
     }
