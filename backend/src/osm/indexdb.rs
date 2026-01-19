@@ -7,8 +7,8 @@ use indexed_db_futures::transaction::TransactionMode;
 // but may not start with a digit.
 // https://developer.mozilla.org/en-US/docs/Glossary/Identifier
 // 48.650/8.350/48.700/8.400/village
-fn identifier(filename: &String) -> String {
-    let mut ret = filename.clone();
+fn identifier(filename: &str) -> String {
+    let mut ret = filename.to_string();
     ret = ret.replace(".", "_");
     ret = ret.replace("/", "-");
     format!("id-{}", ret)
@@ -54,7 +54,7 @@ async fn opendb() -> Option<Database> {
     }
 }
 
-async fn awrite(filename: &String, data: String) {
+async fn awrite(filename: &str, data: String) {
     let db = match opendb().await {
         Some(db) => db,
         None => {
@@ -101,11 +101,11 @@ async fn awrite(filename: &String, data: String) {
     }
 }
 
-pub async fn write(filename: &String, data: String) {
+pub async fn write(filename: &str, data: String) {
     let _ = awrite(filename, data).await;
 }
 
-async fn aread(filename: &String) -> Option<String> {
+async fn aread(filename: &str) -> Option<String> {
     let db = match opendb().await {
         Some(db) => db,
         None => {
@@ -129,7 +129,7 @@ async fn aread(filename: &String) -> Option<String> {
     data
 }
 
-async fn ahit_cache(filename: &String) -> bool {
+async fn ahit_cache(filename: &str) -> bool {
     let db = match opendb().await {
         Some(db) => db,
         None => {
@@ -153,10 +153,10 @@ async fn ahit_cache(filename: &String) -> bool {
     data.is_some()
 }
 
-pub async fn read(filename: &String) -> Option<String> {
+pub async fn read(filename: &str) -> Option<String> {
     aread(filename).await
 }
 
-pub async fn hit_cache(filename: &String) -> bool {
+pub async fn hit_cache(filename: &str) -> bool {
     ahit_cache(filename).await
 }

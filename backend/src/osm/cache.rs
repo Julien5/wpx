@@ -41,7 +41,7 @@ fn cache_path(filename: &str) -> String {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-async fn write_worker(filename: &String, data: String) {
+async fn write_worker(filename: &str, data: String) {
     super::filesystem::write(&cache_path(filename), data)
 }
 
@@ -51,13 +51,13 @@ async fn read_worker(filename: &str) -> Option<String> {
 }
 
 #[cfg(target_arch = "wasm32")]
-async fn write_worker(path: &String, data: String) {
+async fn write_worker(path: &str, data: String) {
     super::indexdb::write(&path, data).await
 }
 
 #[cfg(target_arch = "wasm32")]
 async fn read_worker(path: &str) -> Option<String> {
-    super::indexdb::read(&path).await
+    super::indexdb::read(path).await
 }
 
 #[cfg(not(target_arch = "wasm32"))]

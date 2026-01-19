@@ -148,10 +148,6 @@ pub fn split_chunks(orig: &BoundingBox) -> BoundingBoxes {
     split(orig, BBOXWIDTH * (CHUNKWIDTH as f64))
 }
 
-pub fn split_tiles(orig: &BoundingBox) -> BoundingBoxes {
-    split(orig, BBOXWIDTH)
-}
-
 pub fn bounding_box<'a, I>(boxes: I) -> BoundingBox
 where
     I: IntoIterator<Item = &'a BoundingBox>,
