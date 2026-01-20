@@ -8,7 +8,7 @@ pub mod osmpoint;
 use crate::event::SenderHandlerLock;
 use crate::inputpoint::{InputPointMap, InputPoints};
 use crate::mercator::EuclideanBoundingBox;
-use crate::track::*;
+use crate::{bboxes, track::*};
 use crate::{bboxes::*, event};
 
 fn osm3(bbox: &WGS84BoundingBox) -> String {
@@ -87,11 +87,16 @@ async fn read(bbox: &EuclideanBoundingBox) -> InputPointMap {
 
 async fn remove_cache(tiles: &BoundingBoxes) -> Vec<EuclideanBoundingBox> {
     let mut uncached = Vec::new();
+
     for tile in tiles {
-        if !(cache::hit_cache(&tile).await) {
+        let chunk_bboxes = bboxes::split_chunks(&tile);
+        assert!(chunk_bboxes.len() == 1);
+        let chunk = chunk_bboxes.first().unwrap();
+        if !(cache::hit_cache(&chunk).await) {
             uncached.push(tile.clone());
         }
     }
+    log::trace!("not in  cache: {}", uncached.len());
     uncached
 }
 
@@ -105,6 +110,8 @@ async fn process(bbox: &EuclideanBoundingBox, logger: &SenderHandlerLock) -> Inp
             not_cached.len()
         );
     }
+    // we should probe the cache if there is something to read
+    // or version the cache.
     download_chunk(&not_cached, logger).await;
     read(bbox).await
 }

@@ -23,17 +23,11 @@ fn cache_dir() -> String {
 }
 
 pub fn key(bbox: &EuclideanBoundingBox) -> String {
-    format!(
-        "{:0.0}+{:0.0}-{:0.0}+{:0.0}",
-        bbox.get_min().y,
-        bbox.get_min().x,
-        bbox.get_max().y,
-        bbox.get_max().x
-    )
+    bboxes::Chunk::basename(bbox)
 }
 
 pub fn cache_filename(bbox: &EuclideanBoundingBox) -> String {
-    format!("{}/{}", key(bbox), "data")
+    key(bbox)
 }
 
 fn cache_path(filename: &str) -> String {

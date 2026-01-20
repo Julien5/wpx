@@ -65,7 +65,7 @@ impl Chunk {
     }
     pub fn basename(bbox: &BoundingBox) -> String {
         let coord = Self::xy(bbox);
-        format!("{}-{}", coord.0, coord.1)
+        format!("{:03}-{:03}", coord.0, coord.1)
     }
     pub fn load_map(&mut self, data: &str) {
         self.data = InputPointMap::from_string(data).unwrap();
