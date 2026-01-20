@@ -1,7 +1,8 @@
 use std::collections::BTreeSet;
 
-use crate::bbox::BoundingBox;
 use crate::bboxes::{self, chunk_bbox, Chunk};
+#[cfg(not(target_arch = "wasm32"))]
+use crate::error::GenericResult;
 use crate::event::{self, SenderHandlerLock};
 use crate::inputpoint::InputPointMap;
 use crate::mercator::EuclideanBoundingBox;
@@ -22,14 +23,6 @@ fn cache_dir() -> String {
     return format!("{}/{}", standart_cache_dir, "WPX");
 }
 
-pub fn key(bbox: &EuclideanBoundingBox) -> String {
-    bboxes::Chunk::basename(bbox)
-}
-
-pub fn cache_filename(bbox: &EuclideanBoundingBox) -> String {
-    key(bbox)
-}
-
 fn cache_path(filename: &str) -> String {
     format!("{}/{}", cache_dir(), filename)
 }
@@ -40,7 +33,7 @@ async fn write_worker(filename: &str, data: String) {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-async fn read_worker(filename: &str) -> Option<String> {
+async fn read_worker(filename: &str) -> GenericResult<String> {
     super::filesystem::read(&cache_path(filename))
 }
 
@@ -64,47 +57,39 @@ async fn hit_cache_worker(path: &String) -> bool {
     super::indexdb::hit_cache(&path).await
 }
 
-pub async fn hit_cache(bbox: &EuclideanBoundingBox) -> bool {
-    let filename = cache_filename(bbox);
+pub async fn hit_cache(chunk: &Chunk) -> bool {
+    let filename = chunk.basename();
     return hit_cache_worker(&filename).await;
 }
 
-pub async fn read(bbox: &EuclideanBoundingBox) -> InputPointMap {
-    let chunk_bboxes = bboxes::split_chunks(&bbox);
+pub async fn read(bbox: &EuclideanBoundingBox) -> GenericResult<InputPointMap> {
+    let chunks = bboxes::split_chunks(&bbox);
     let mut ret = InputPointMap::new();
-    for (_index, chunkbox) in chunk_bboxes.iter().enumerate() {
-        let key = Chunk::basename(chunkbox);
-        let data = read_worker(&key).await;
-        let chunk = make_chunk(chunkbox, data);
-        for (tile, points) in chunk.data.map {
+    for mut chunk in chunks {
+        let key = chunk.basename();
+        let data = read_worker(&key).await.unwrap();
+        chunk.load_map(&data);
+        for (tile, points) in &chunk.data.map {
             if bbox.contains_other(&tile) {
                 ret.insert_points(&tile, &points);
             }
         }
     }
-    ret
+    Ok(ret)
 }
 
-fn make_chunk(bbox: &BoundingBox, data: Option<String>) -> Chunk {
-    let mut ret = Chunk::new();
-    ret.bbox = bbox.clone();
-    match data {
-        Some(bytes) => ret.load_map(&bytes),
-        None => {}
-    }
-    ret
-}
-
-pub async fn write(points: &InputPointMap, logger: &SenderHandlerLock) {
+pub async fn write(points: &InputPointMap, logger: &SenderHandlerLock) -> GenericResult<()> {
     use bboxes::Chunk;
-    let mut chunk_bboxes: BTreeSet<BoundingBox> = BTreeSet::new();
+    let mut chunks = BTreeSet::new();
     for b in points.map.keys() {
-        chunk_bboxes.insert(chunk_bbox(b));
+        chunks.insert(Chunk::from_boundingbox(&chunk_bbox(b)));
     }
-    for (index, chunkbox) in chunk_bboxes.iter().enumerate() {
-        let key = Chunk::basename(chunkbox);
-        let data = read_worker(&key).await;
-        let mut chunk = make_chunk(chunkbox, data);
+    let index = 0;
+    let total = chunks.len();
+    for mut chunk in chunks {
+        let key = chunk.basename();
+        let data = read_worker(&key).await?;
+        chunk.load_map(&data);
         for atom in points
             .map
             .keys()
@@ -115,12 +100,9 @@ pub async fn write(points: &InputPointMap, logger: &SenderHandlerLock) {
                 .map
                 .insert(atom.clone(), points.get(&atom).unwrap().clone());
         }
-        event::send_worker(
-            logger,
-            &format!("write cache {}/{}", index + 1, chunk_bboxes.len()),
-        )
-        .await;
+        event::send_worker(logger, &format!("write cache {}/{}", index + 1, total)).await;
         let data = chunk.map_as_string();
         write_worker(&key, data).await;
     }
+    Ok(())
 }

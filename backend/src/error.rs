@@ -22,3 +22,16 @@ impl fmt::Display for Error {
 }
 
 impl std::error::Error for Error {}
+
+pub type GenericError = Box<dyn std::error::Error>;
+pub type GenericResult<T> = Result<T, GenericError>;
+
+#[derive(Debug)]
+pub struct StringError(pub String);
+// Implement Display so the error can be printed
+impl fmt::Display for StringError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+impl std::error::Error for StringError {}

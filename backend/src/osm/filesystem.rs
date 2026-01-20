@@ -1,13 +1,12 @@
 use std::path::{Path, PathBuf};
 
-pub fn read(path: &String) -> Option<String> {
+use crate::error::{GenericError, GenericResult};
+
+pub fn read(path: &String) -> GenericResult<String> {
     let path = Path::new(path.as_str());
-    if !path.exists() {
-        return None;
-    }
     match std::fs::read_to_string(path) {
-        Ok(data) => Some(data),
-        _ => None,
+        Ok(data) => Ok(data),
+        Err(e) => Err(GenericError::from(e)),
     }
 }
 

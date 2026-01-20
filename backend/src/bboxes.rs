@@ -47,10 +47,10 @@ pub struct Chunk {
 }
 
 impl Chunk {
-    pub fn new() -> Self {
+    pub fn from_boundingbox(bbox: &BoundingBox) -> Self {
         Self {
             data: InputPointMap::new(),
-            bbox: BoundingBox::new(),
+            bbox: bbox.clone(),
         }
     }
     fn step() -> f64 {
@@ -63,8 +63,8 @@ impl Chunk {
         assert!((ry - ry.round()).abs() < 0.0001);
         return (rx.round() as i32, ry.round() as i32);
     }
-    pub fn basename(bbox: &BoundingBox) -> String {
-        let coord = Self::xy(bbox);
+    pub fn basename(&self) -> String {
+        let coord = Self::xy(&self.bbox);
         format!("{:03}-{:03}", coord.0, coord.1)
     }
     pub fn load_map(&mut self, data: &str) {
@@ -144,8 +144,11 @@ pub fn split(orig: &BoundingBox, step: f64) -> BoundingBoxes {
     ret
 }
 
-pub fn split_chunks(orig: &BoundingBox) -> BoundingBoxes {
+pub fn split_chunks(orig: &BoundingBox) -> Vec<Chunk> {
     split(orig, BBOXWIDTH * (CHUNKWIDTH as f64))
+        .iter()
+        .map(|bbox| Chunk::from_boundingbox(bbox))
+        .collect()
 }
 
 pub fn bounding_box<'a, I>(boxes: I) -> BoundingBox

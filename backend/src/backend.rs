@@ -75,7 +75,13 @@ impl Backend {
         let trees = ProjectionTrees::make(&track);
         self.send(&"download osm data".to_string()).await;
         let mut inputpoints_map = BTreeMap::new();
-        let mut osmpoints = osm::download_for_track(&track, &self.sender).await;
+        let mut osmpoints = match osm::download_for_track(&track, &self.sender).await {
+            Ok(p) => p,
+            Err(_) => {
+                // todo: handle osm download separately and handle error
+                InputPointMap::new()
+            }
+        };
         log::trace!("project osm points");
         trees.iter_on(&mut osmpoints, &track);
         inputpoints_map.insert(InputType::OSM, osmpoints);

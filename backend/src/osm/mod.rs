@@ -5,6 +5,7 @@ mod filesystem;
 mod indexdb;
 pub mod osmpoint;
 
+use crate::error::{GenericError, GenericResult};
 use crate::event::SenderHandlerLock;
 use crate::inputpoint::{InputPointMap, InputPoints};
 use crate::mercator::EuclideanBoundingBox;
@@ -56,33 +57,31 @@ async fn download_chunk_real(
 async fn download_chunk(
     bboxes: &Vec<EuclideanBoundingBox>,
     logger: &SenderHandlerLock,
-) -> InputPoints {
+) -> GenericResult<InputPoints> {
     if bboxes.is_empty() {
-        return InputPoints::new();
+        return Ok(InputPoints::new());
     }
     let eucbbox = bounding_box(bboxes);
     let wgsbbox = eucbbox.unproject();
 
     log::info!("downloading for {} tiles", bboxes.len());
-    let osmpoints = match download_chunk_real(&wgsbbox, logger).await {
+    match download_chunk_real(&wgsbbox, logger).await {
         Ok(points) => {
             log::info!("downloaded {:3} points", points.points.len());
             let map = InputPointMap::from_vector(&points.points);
-            cache::write(&map, logger).await;
-            points
+            cache::write(&map, logger).await?;
+            Ok(points)
         }
         Err(e) => {
             log::info!("error downloading: {:?}", e);
             log::info!("assuming there is nothing");
-            InputPoints::new()
+            return Err(GenericError::from(e));
         }
-    };
-    osmpoints
+    }
 }
 
-async fn read(bbox: &EuclideanBoundingBox) -> InputPointMap {
-    let ret = cache::read(bbox).await;
-    ret
+async fn read(bbox: &EuclideanBoundingBox) -> GenericResult<InputPointMap> {
+    cache::read(bbox).await
 }
 
 async fn remove_cache(tiles: &BoundingBoxes) -> Vec<EuclideanBoundingBox> {
@@ -100,7 +99,10 @@ async fn remove_cache(tiles: &BoundingBoxes) -> Vec<EuclideanBoundingBox> {
     uncached
 }
 
-async fn process(bbox: &EuclideanBoundingBox, logger: &SenderHandlerLock) -> InputPointMap {
+async fn process(
+    bbox: &EuclideanBoundingBox,
+    logger: &SenderHandlerLock,
+) -> GenericResult<InputPointMap> {
     let tiles = split(&bbox, BBOXWIDTH);
     let not_cached = remove_cache(&tiles).await;
     if !not_cached.is_empty() {
@@ -112,11 +114,14 @@ async fn process(bbox: &EuclideanBoundingBox, logger: &SenderHandlerLock) -> Inp
     }
     // we should probe the cache if there is something to read
     // or version the cache.
-    download_chunk(&not_cached, logger).await;
+    download_chunk(&not_cached, logger).await?;
     read(bbox).await
 }
 
-pub async fn download_for_track(track: &Track, logger: &SenderHandlerLock) -> InputPointMap {
+pub async fn download_for_track(
+    track: &Track,
+    logger: &SenderHandlerLock,
+) -> GenericResult<InputPointMap> {
     let bbox = track.euclidean_bounding_box();
     assert!(!bbox.empty());
     event::send_worker(logger, &format!("{}", "download")).await;
