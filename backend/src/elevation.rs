@@ -34,7 +34,6 @@ pub fn smooth(
 }
 
 pub fn elevation_gain(smooth: &Vec<f64>, from: usize, to: usize) -> f64 {
-    // log::trace!("{} - {} / {}", from, to, smooth.len());
     debug_assert!(from <= to);
     let mut ret = 0f64;
     for k in from..to {

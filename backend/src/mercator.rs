@@ -70,7 +70,6 @@ impl WebMercatorProjection {
         let mut p = (merc.0, merc.1);
         proj4rs::transform::transform(&self.dst_spec, &self.wgs84_spec, &mut p).unwrap();
         let ret = WGS84Point::new(&p.0.to_degrees(), &p.1.to_degrees(), &0f64);
-        log::trace!("unproject {:?} to {:?}", merc, ret);
         ret
     }
 }

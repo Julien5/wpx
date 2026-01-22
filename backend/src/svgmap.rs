@@ -143,7 +143,6 @@ impl MapData {
             feature_packets.push(PointFeatures::make(feature_packet));
         }
 
-        log::trace!("map: place labels");
         let (results, obstacles) = crate::label_placement::place_labels(
             &feature_packets,
             &*generator,
@@ -154,7 +153,6 @@ impl MapData {
             &polyline,
             &segment.parameters.map_options.max_area_ratio,
         );
-        log::trace!("map: apply placement");
         let features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
         MapData {
             polyline,

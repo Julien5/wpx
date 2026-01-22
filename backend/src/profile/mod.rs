@@ -240,7 +240,6 @@ impl ProfileView {
             assert!(range.end < track.len());
             let elevation_gain = track.elevation_gain_on_range(&range);
             let slope_percent = 100.0 * elevation_gain / (x1 - x0);
-            //log::trace!("{} {} {}",elevation_gain,dx,slop);
             let mut text = elements::text(
                 format!("{:.1}%", slope_percent).as_str(),
                 Point2D::new(xg - 10.0, self.HD() - 4.0),
@@ -498,7 +497,6 @@ impl ProfileView {
             feature_packets.push(PointFeatures::make(feature_packet));
         }
 
-        log::trace!("profile: place labels");
         let (results, obstacles) = label_placement::place_labels(
             &feature_packets,
             &*generator,
@@ -509,7 +507,6 @@ impl ProfileView {
             &polyline,
             &self.options.max_area_ratio,
         );
-        log::trace!("profile: apply placement");
         let features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
         self.model = Some(ProfileModel {
             polylines: vec![polyline], // , polyline_dp

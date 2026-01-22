@@ -1,11 +1,11 @@
 use crate::bbox::BoundingBox;
-use crate::bboxes::BoundingBoxes;
 use crate::inputpoint::{InputPoint, InputType, Kinds, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
 use crate::profile::ProfileRenderResult;
+use crate::tile::Tiles;
 use crate::track::SharedTrack;
-use crate::{bboxes, profile, svgmap};
+use crate::{profile, svgmap, tile};
 
 #[derive(Clone)]
 pub struct Segment {
@@ -17,7 +17,7 @@ pub struct Segment {
 pub struct SegmentData {
     pub segment: Segment,
     pub track: SharedTrack,
-    pub boxes: BoundingBoxes,
+    pub boxes: Tiles,
     _pointmaps: SharedPointMaps,
     pub parameters: Parameters,
 }
@@ -60,7 +60,7 @@ impl SegmentData {
     }
 
     pub fn points(&self, kind: &InputType) -> Vec<InputPoint> {
-        let bbox = bboxes::bounding_box(&self.boxes);
+        let bbox = tile::bounding_box(&self.boxes);
         let range = self.range();
         let lock = self._pointmaps.read().unwrap();
         let map = lock.maps.get(kind);

@@ -70,7 +70,6 @@ fn add_control_point(
     );
 
     let name = point.name.clone();
-    log::trace!("name={}", name);
 
     let label = Text::new(format!("{}", name))
         .set("text-anchor", text::anchor(angle, text::Region::Outer))
@@ -298,7 +297,6 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
     }
 
     let mut arc_group = page.make_centered_group();
-    log::debug!("n={}", model.outer_arcs.len());
     for m in &model.outer_arcs {
         arc_group = arc_group.add(draw_arc(&page, m));
     }

@@ -4,8 +4,6 @@ use geo::SimplifyIdx;
 use gpx::TrackSegment;
 
 use super::wgs84point::WGS84Point;
-use crate::bboxes;
-use crate::bboxes::BoundingBoxes;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
 use crate::locate;
@@ -13,6 +11,8 @@ use crate::locate::IndexedPointsTree;
 use crate::mercator;
 use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
+use crate::tile;
+use crate::tile::Tiles;
 
 use super::elevation;
 
@@ -29,7 +29,7 @@ pub struct Track {
     pub euclidean: Vec<MercatorPoint>,
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
-    pub boxes: BoundingBoxes,
+    pub tiles: Tiles,
     pub tree: IndexedPointsTree,
 }
 
@@ -43,17 +43,17 @@ impl Track {
         self.wgs84.len()
     }
 
-    pub fn subboxes(&self, start: f64, end: f64) -> BoundingBoxes {
+    pub fn subboxes(&self, start: f64, end: f64) -> Tiles {
         let range = self.subrange(start, end);
         let mut boxes = BTreeSet::new();
         for k in range.start..range.end {
             let e = &self.euclidean[k];
-            boxes.insert(bboxes::pointbox(&e));
+            boxes.insert(tile::Tile::for_point(&e));
         }
         // we need to enlarge to make sure we dont miss points that are close to the track,
         // but not in a box on the track.
         for b in boxes.clone() {
-            for n in bboxes::neighbors(&b) {
+            for n in tile::neighbors(&b) {
                 boxes.insert(n);
             }
         }
@@ -233,20 +233,18 @@ impl Track {
 
         let smooth_elevation_gain = Self::compute_elevation_gain(&track_smooth_elevation);
 
-        let mut boxes = BoundingBoxes::new();
-        log::trace!("building boxes..");
+        let mut boxes = Tiles::new();
         for e in &euclidean {
-            boxes.insert(bboxes::pointbox(&e));
+            boxes.insert(tile::Tile::for_point(&e));
         }
         // we need to enlarge to make sure we dont miss points that are close to the track,
         // but not in a box on the track.
         for b in boxes.clone() {
-            for n in bboxes::neighbors(&b) {
+            for n in tile::neighbors(&b) {
                 boxes.insert(n);
             }
         }
 
-        log::trace!("built {} boxes", boxes.len());
         let tree = locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len()));
         let ret = Track {
             wgs84: wgs,
@@ -255,7 +253,7 @@ impl Track {
             smooth_elevation_gain,
             _distance,
             parts,
-            boxes,
+            tiles: boxes,
             tree,
         };
         Ok(ret)

@@ -43,7 +43,6 @@ impl<T: Clone + Ord + Eq> QuadTree<T> {
             children: None,
             depth: self.depth + 1,
         });
-        // log::trace!("create children at depth:{}", self.depth + 1);
         self.children = Some(Box::new(children));
     }
 
@@ -168,7 +167,6 @@ mod tests {
 
         let mut hits = Vec::new();
         qt.query(&query_box, &mut hits);
-        log::trace!("hits.len:{}", hits.len());
         assert_eq!(hits.len(), 2);
     }
 }

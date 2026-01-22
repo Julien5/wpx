@@ -157,6 +157,7 @@ pub async fn read(filename: &str) -> Option<String> {
     aread(filename).await
 }
 
+#[allow(dead_code)]
 pub async fn hit_cache(filename: &str) -> bool {
     ahit_cache(filename).await
 }

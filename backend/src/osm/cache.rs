@@ -1,11 +1,11 @@
 use std::collections::BTreeSet;
 
-use crate::bboxes::{self, chunk_bbox, Chunk};
 #[cfg(not(target_arch = "wasm32"))]
 use crate::error::GenericResult;
 use crate::event::{self, SenderHandlerLock};
 use crate::inputpoint::InputPointMap;
 use crate::mercator::EuclideanBoundingBox;
+use crate::tile::{self, Chunk, Tile};
 
 #[cfg(test)]
 fn cache_dir() -> String {
@@ -48,61 +48,122 @@ async fn read_worker(path: &str) -> Option<String> {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-async fn hit_cache_worker(filename: &String) -> bool {
+async fn _hit_cache_worker(filename: &str) -> bool {
     super::filesystem::hit_cache(&cache_path(filename))
 }
 
 #[cfg(target_arch = "wasm32")]
-async fn hit_cache_worker(path: &String) -> bool {
+async fn _hit_cache_worker(path: &String) -> bool {
     super::indexdb::hit_cache(&path).await
 }
 
-pub async fn hit_cache(chunk: &Chunk) -> bool {
-    let filename = chunk.basename();
-    return hit_cache_worker(&filename).await;
+async fn _valid_cache(key: &str) -> bool {
+    match read_worker(key).await {
+        Ok(data) => match InputPointMap::from_string(&data) {
+            Ok(_map) => {
+                return true;
+            }
+            _ => {
+                log::info!("invalid cache at {}", key);
+                return false;
+            }
+        },
+        Err(_) => {
+            panic!("this should not happen");
+        }
+    }
 }
 
-pub async fn read(bbox: &EuclideanBoundingBox) -> GenericResult<InputPointMap> {
-    let chunks = bboxes::split_chunks(&bbox);
-    let mut ret = InputPointMap::new();
+async fn _hit_cache(chunk: &Chunk) -> bool {
+    let filename = chunk.basename();
+    return _hit_cache_worker(&filename).await && _valid_cache(&filename).await;
+}
+
+pub type MissingTiles = BTreeSet<Tile>;
+
+pub fn tiles_from_bbox(bbox: &EuclideanBoundingBox) -> MissingTiles {
+    let ret: MissingTiles = tile::split_tiles(bbox)
+        .iter()
+        .map(|tile| tile.clone())
+        .collect();
+    ret
+}
+
+pub async fn read(bbox: &EuclideanBoundingBox) -> GenericResult<(InputPointMap, MissingTiles)> {
+    let chunks = tile::split_chunks(&bbox);
+    let mut missing: MissingTiles = tiles_from_bbox(bbox);
+    let mut good = InputPointMap::new();
     for mut chunk in chunks {
         let key = chunk.basename();
-        let data = read_worker(&key).await.unwrap();
-        chunk.load_map(&data);
-        for (tile, points) in &chunk.data.map {
-            if bbox.contains_other(&tile) {
-                ret.insert_points(&tile, &points);
+        match read_worker(&key).await {
+            Ok(bytes) => match chunk.load_map(&bytes) {
+                Ok(()) => {
+                    for (tile, points) in &chunk.data.map {
+                        if bbox.overlap(&tile.bbox()) {
+                            missing.remove(&tile);
+                            good.insert_points(tile, &points);
+                        }
+                    }
+                }
+                Err(e) => {
+                    log::info!(
+                        "could not load map for chunk: {} because {:?}",
+                        chunk.basename(),
+                        e
+                    );
+                    log::info!("this is probably because the format has changed");
+                }
+            },
+            Err(e) => {
+                log::info!("failed to read cache at {}", key);
+                log::info!("because: {:?}", e);
             }
         }
     }
-    Ok(ret)
+    Ok((good, missing))
 }
 
 pub async fn write(points: &InputPointMap, logger: &SenderHandlerLock) -> GenericResult<()> {
-    use bboxes::Chunk;
+    use tile::Chunk;
     let mut chunks = BTreeSet::new();
-    for b in points.map.keys() {
-        chunks.insert(Chunk::from_boundingbox(&chunk_bbox(b)));
+    for tile in points.map.keys() {
+        chunks.insert(Chunk::from_coord(&tile::chunk_coord(tile)));
     }
-    let index = 0;
+    let mut index = 0;
     let total = chunks.len();
     for mut chunk in chunks {
         let key = chunk.basename();
-        let data = read_worker(&key).await?;
-        chunk.load_map(&data);
-        for atom in points
+        match read_worker(&key).await {
+            Ok(bytes) => match chunk.load_map(&bytes) {
+                Ok(()) => {}
+                Err(e) => {
+                    log::warn!(
+                        "cannot load map for {} because {:?} => ignore",
+                        chunk.basename(),
+                        e
+                    );
+                }
+            },
+            Err(_) => {}
+        }
+        // we have a n^2 here.
+        let chunk_bbox = chunk.bbox().clone();
+        let ltiles: Vec<_> = points
             .map
             .keys()
-            .filter(|atom| chunk.bbox.contains_other(&atom))
-        {
+            .filter(|t| chunk_bbox.contains_other(&t.bbox()))
+            .collect();
+        for tile in ltiles {
             chunk
                 .data
                 .map
-                .insert(atom.clone(), points.get(&atom).unwrap().clone());
+                .insert(tile.clone(), points.get(&tile).unwrap().clone());
         }
         event::send_worker(logger, &format!("write cache {}/{}", index + 1, total)).await;
         let data = chunk.map_as_string();
+        log::debug!("rewrite chunk {}", chunk.basename());
         write_worker(&key, data).await;
+        index += 1;
     }
     Ok(())
 }

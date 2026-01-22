@@ -10,6 +10,7 @@ pub fn read(path: &String) -> GenericResult<String> {
     }
 }
 
+#[allow(dead_code)]
 pub fn hit_cache(path: &String) -> bool {
     let path = Path::new(path.as_str());
     if !path.exists() {

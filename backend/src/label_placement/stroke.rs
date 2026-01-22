@@ -60,7 +60,7 @@ pub fn _compute(
     }
 
     // Fallback: if no path found, return direct A–B
-    log::trace!("shortest path failed (no path found)");
+    log::info!("shortest path failed (no path found)");
     vec![start_point.clone(), dest_point.clone()]
 }
 

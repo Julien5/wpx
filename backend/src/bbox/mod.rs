@@ -70,10 +70,10 @@ impl BoundingBox {
         }
     }
     pub fn contains_other(&self, other: &Self) -> bool {
-        if other._max.x > self._max.x {
+        if other._max.x >= self._max.x {
             return false;
         }
-        if other._max.y > self._max.y {
+        if other._max.y >= self._max.y {
             return false;
         }
         if other._min.x < self._min.x {
@@ -120,13 +120,13 @@ impl BoundingBox {
         if self._max.x < other._min.x {
             return false;
         }
-        if self._min.x > other._max.x {
+        if self._min.x >= other._max.x {
             return false;
         }
         if self._max.y < other._min.y {
             return false;
         }
-        if self._min.y > other._max.y {
+        if self._min.y >= other._max.y {
             return false;
         }
         return true;
@@ -181,13 +181,13 @@ impl BoundingBox {
         if p.x < self._min.x {
             return false;
         }
-        if p.x > self._max.x {
+        if p.x >= self._max.x {
             return false;
         }
         if p.y < self._min.y {
             return false;
         }
-        if p.y > self._max.y {
+        if p.y >= self._max.y {
             return false;
         }
         return true;
@@ -247,10 +247,10 @@ impl BoundingBox {
 impl fmt::Debug for BoundingBox {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("BoundingBox")
-            .field("min.x", &format!("{:.1}", self._min.x))
-            .field("min.y", &format!("{:.1}", self._min.y))
-            .field("width", &format!("{:.1}", self._max.x - self._min.x))
-            .field("height", &format!("{:.1}", self._max.y - self._min.y))
+            .field("min.x", &format!("{:.5}", self._min.x))
+            .field("min.y", &format!("{:.5}", self._min.y))
+            .field("width", &format!("{:.5}", self._max.x - self._min.x))
+            .field("height", &format!("{:.5}", self._max.y - self._min.y))
             .finish()
     }
 }
@@ -309,5 +309,26 @@ impl fmt::Display for BoundingBox {
             "BoundingBox {{ min: ({:.2}, {:.2}), max: ({:.2}, {:.2})",
             self._min.x, self._min.y, self._max.x, self._max.y,
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::math::*;
+
+    #[tokio::test]
+    async fn bbox_bounds() {
+        let _ = env_logger::try_init();
+        let p = Point2D::new(1.0, 1.0);
+        let b1 = BoundingBox::minmax(Point2D::new(0.0, 0.0), Point2D::new(1.0, 2.0));
+        let b2 = BoundingBox::minmax(Point2D::new(1.0, 0.0), Point2D::new(2.0, 2.0));
+        let b1o = BoundingBox::minmax(Point2D::new(0.2, 0.2), Point2D::new(0.8, 0.8));
+        assert!(!b1.contains(&p));
+        assert!(b2.contains(&p));
+        assert!(!b1.contains_other(&b2));
+        assert!(!b1.contains_other(&b1));
+        assert!(b1.contains_other(&b1o));
+        assert!(!b2.contains_other(&b1));
     }
 }

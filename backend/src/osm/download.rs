@@ -14,6 +14,7 @@ use log;
 async fn dl_worker(req: &str) -> std::result::Result<String, reqwest::Error> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
+    // let url = "https://overpass.private.coffee/api/interpreter";
     let client = Client::new();
     let request = client
         .post(url)
@@ -38,13 +39,12 @@ async fn dl_worker(req: &str) -> std::result::Result<String, reqwest::Error> {
         Ok(response) => {
             let text = response.text().await;
 
-            /*
-                if true {
-                    let filename = std::format!("/tmp/dl.data");
-                    let data = text.as_ref().unwrap().clone();
-                    std::fs::write(filename, data).expect("Unable to write file");
+            let save = true;
+            if save {
+                let filename = std::format!("/tmp/dl.data");
+                let data = text.as_ref().unwrap().clone();
+                std::fs::write(filename, data).expect("Unable to write file");
             }
-                */
 
             match text {
                 Ok(json) => Ok(json),
@@ -65,6 +65,13 @@ pub async fn all(
     bbox: &str,
     logger: &SenderHandlerLock,
 ) -> std::result::Result<String, reqwest::Error> {
+    let fake = false;
+    if fake {
+        //let data = std::fs::read_to_string("data/ref/overpass/dl.txt").unwrap();
+        //let data = std::fs::read_to_string("/tmp/dl.data").unwrap();
+        let data = std::fs::read_to_string("/home/julien/delme/bug/dl/data").unwrap();
+        return Ok(data);
+    }
     let timeout = 250;
     let header = format!("[out:json][timeout:{}]", timeout);
     let mut reqs = Vec::new();

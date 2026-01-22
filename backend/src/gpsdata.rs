@@ -3,7 +3,7 @@ use crate::error::Error;
 use crate::inputpoint::{InputPoint, InputPointMap};
 use crate::math::Point2D;
 use crate::wgs84point::WGS84Point;
-use crate::{bboxes, mercator, track};
+use crate::{mercator, track};
 use geo::Distance;
 
 pub fn distance_wgs84(p1: &WGS84Point, p2: &WGS84Point) -> f64 {
@@ -157,9 +157,8 @@ pub fn read_waypoints(gpx: &gpx::Gpx) -> InputPointMap {
         let (lon, lat) = w.point().x_y();
         let wgs = WGS84Point::new(&lon, &lat, &0f64);
         let euc = projection.project(&wgs);
-        let bbox = bboxes::pointbox(&euc);
         let p = InputPoint::from_gpx(&wgs, &euc, &w.name, &w.description);
-        ret.insert_point(&bbox, &p);
+        ret.insert_point(&p);
     }
     ret
 }

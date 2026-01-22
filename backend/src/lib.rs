@@ -1,6 +1,5 @@
 pub mod backend;
 mod bbox;
-mod bboxes;
 mod controls;
 mod elevation;
 pub mod error;
@@ -18,6 +17,7 @@ mod osm;
 pub mod parameters;
 mod pdf;
 mod profile;
+mod tile;
 mod track_projection;
 pub mod wheel;
 mod zipexport;

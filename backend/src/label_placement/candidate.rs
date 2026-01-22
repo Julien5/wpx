@@ -146,7 +146,6 @@ pub mod utils {
         let mut ret = Candidates::new();
         let available_area = obstacles.available_area();
         if target.area() > available_area {
-            //log::trace!("no place left for {}", target.text());
             return ret;
         }
         for bbox in gen.gen(target) {

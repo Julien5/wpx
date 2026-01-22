@@ -198,7 +198,6 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
         if range.is_empty() {
             break;
         }
-        log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
         let segment = Segment {
             id: segments.len() as i32,
             start,
@@ -282,10 +281,11 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
 #[cfg(test)]
 mod tests {
     use crate::{
-        event, gpsdata::GpxData, inputpoint::InputPointMaps, osm, track_projection::ProjectionTrees,
+        event, gpsdata::GpxData, inputpoint::InputPoint, inputpoint::InputPointMaps, osm,
+        track_projection::ProjectionTrees,
     };
 
-    fn read(filename: String) -> GpxData {
+    fn read(filename: &str) -> GpxData {
         use crate::gpsdata;
         let mut f = std::fs::File::open(filename).unwrap();
         let mut content = Vec::new();
@@ -299,7 +299,7 @@ mod tests {
     async fn controls_infer_brevet() {
         let _ = env_logger::try_init();
         use crate::controls::*;
-        let gpxdata = read("data/ref/karl-400.gpx".to_string());
+        let gpxdata = read("data/ref/karl-400.gpx");
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints.as_vector());
         assert!(!controls.is_empty());
@@ -318,7 +318,7 @@ mod tests {
     async fn controls_infer_self() {
         let _ = env_logger::try_init();
         use crate::controls::*;
-        let gpxdata = read("data/blackforest.gpx".to_string());
+        let gpxdata = read("data/blackforest.gpx");
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints.as_vector());
         assert!(controls.is_empty());
@@ -334,25 +334,27 @@ mod tests {
         assert!(controls[3].name().contains("K4"));
     }
 
-    #[tokio::test]
-    async fn controls_infer_sectors() {
+    async fn get_controls(filename: &str) -> Vec<InputPoint> {
         let _ = env_logger::try_init();
         use crate::controls::*;
-        let gpxdata = read("data/blackforest.gpx".to_string());
+        let gpxdata = read(filename);
         let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
 
         let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
         let logger = std::sync::RwLock::new(Some(b));
         let mut inputpoints = BTreeMap::new();
-        let mut osmpoints = osm::download_for_track(&track, &logger).await;
-        log::trace!("make projection trees");
+        let mut osmpoints = osm::download_for_track(&track, &logger).await.unwrap();
         let trees = ProjectionTrees::make(&track);
-        log::trace!("project osm points");
         trees.iter_on(&mut osmpoints, &track);
         inputpoints.insert(InputType::OSM, osmpoints);
         let shared = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
+        make_controls_with_osm(&track, shared)
+    }
 
-        let controls = make_controls_with_osm(&track, shared);
+    #[tokio::test]
+    async fn controls_infer_sectors() {
+        let _ = env_logger::try_init();
+        let controls = get_controls("data/blackforest.gpx").await;
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -367,5 +369,23 @@ mod tests {
         assert!(controls[1].description().contains("Haslach"));
         assert!(controls[2].name().contains("K3"));
         assert!(controls[2].description().contains("Forbach"));
+    }
+
+    #[tokio::test]
+    async fn controls_infer_sectors_2() {
+        let _ = env_logger::try_init();
+        let controls = get_controls("data/ref/roland-nowaypoints.gpx").await;
+        assert!(!controls.is_empty());
+        for control in &controls {
+            log::info!("found:{}", control.name());
+        }
+        for c in &controls {
+            log::info!("c={} {}", c.name(), c.description());
+        }
+        assert_eq!(controls.len(), 4);
+        assert!(controls[0].name().contains("K1"));
+        assert!(controls[0].description().contains("Wangen"));
+        assert!(controls[1].name().contains("K2"));
+        assert!(controls[1].description().contains("Isny"));
     }
 }

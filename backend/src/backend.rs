@@ -71,7 +71,6 @@ impl Backend {
         let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
         let track = std::sync::Arc::new(track_data);
-        log::trace!("make projection trees");
         let trees = ProjectionTrees::make(&track);
         self.send(&"download osm data".to_string()).await;
         let mut inputpoints_map = BTreeMap::new();
@@ -82,7 +81,6 @@ impl Backend {
                 InputPointMap::new()
             }
         };
-        log::trace!("project osm points");
         trees.iter_on(&mut osmpoints, &track);
         inputpoints_map.insert(InputType::OSM, osmpoints);
         trees.iter_on(&mut gpxdata.waypoints, &track);
@@ -94,7 +92,7 @@ impl Backend {
             log::info!("infer_controls_from_gpx_data empty => try waypoints");
             controls = controls::make_controls_with_waypoints(&track, &gpx_waypoints);
         } else {
-            log::trace!("infer_controls_from_gpx_data OK");
+            log::info!("infer_controls_from_gpx_data OK");
         }
 
         let inputpoints = SharedPointMaps::new(
@@ -220,7 +218,7 @@ impl Backend {
                 None => {}
             }
         }
-        log::trace!("segment: {} export {} waypoints", segment.id, points.len());
+        log::info!("segment: {} export {} waypoints", segment.id, points.len());
         points
     }
 
@@ -317,7 +315,6 @@ impl Backend {
             if range.is_empty() {
                 break;
             }
-            log::trace!("make segment: {:.1} {:.1}", start / 1000f64, end / 1000f64);
             ret.push(Segment {
                 id: k as i32,
                 start,
@@ -381,12 +378,11 @@ impl Backend {
                 String::new()
             }
         };
-        log::trace!("done - render_segment_what:{} {}", segment.id, what);
+        log::info!("done - render_segment_what:{} {}", segment.id, what);
         ret
     }
 
     fn render_yaxis_labels_overlay(&mut self, segment: &Segment, size: &IntegerSize2D) -> String {
-        log::info!("render_segment_track:{}", segment.id);
         let profile_bbox =
             gpsdata::ProfileBoundingBox::from_track(&self.d().track, &segment.start, &segment.end);
         let mut profile =

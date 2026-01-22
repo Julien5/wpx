@@ -169,12 +169,12 @@ impl ProjectionTrees {
     }
 
     pub fn iter_on(&self, map: &mut InputPointMap, track: &Track) {
-        let boxes = &track.boxes;
-        for b in boxes {
-            if map.get_mut(b).is_none() {
+        let tiles = &track.tiles;
+        for tile in tiles {
+            if map.get_mut(tile).is_none() {
                 continue;
             }
-            let points = map.get_mut(b).unwrap();
+            let points = map.get_mut(tile).unwrap();
             for mut point in points {
                 update_track_projection(&mut point, track, &self.total_tree);
                 let index = point.track_projections.first().unwrap().track_index;
@@ -192,7 +192,7 @@ impl ProjectionTrees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{bboxes, gpsdata::GpxData, wgs84point::WGS84Point};
+    use crate::{gpsdata::GpxData, wgs84point::WGS84Point};
 
     fn read(filename: String) -> GpxData {
         use crate::gpsdata;
@@ -225,7 +225,7 @@ mod tests {
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let trees = ProjectionTrees::make(&track);
         let mut map = InputPointMap::new();
-        map.insert_point(&bboxes::pointbox(&pos), &mortagne);
+        map.insert_point(&mortagne);
         trees.iter_on(&mut map, &track);
         map.iter().for_each(|p| {
             assert_eq!(p.track_projections.len(), 2);

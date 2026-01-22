@@ -153,9 +153,7 @@ async fn main() -> Result<(), error::Error> {
         _ => {}
     }
 
-    log::trace!("start set parameters");
     backend.set_parameters(&parameters);
-    log::trace!("done set parameters");
 
     match args.main_test {
         Some(enabled) => {
