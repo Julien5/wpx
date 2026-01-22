@@ -1,6 +1,5 @@
 use std::collections::BTreeSet;
 
-#[cfg(not(target_arch = "wasm32"))]
 use crate::error::GenericResult;
 use crate::event::{self, SenderHandlerLock};
 use crate::inputpoint::InputPointMap;
@@ -43,7 +42,7 @@ async fn write_worker(path: &str, data: String) {
 }
 
 #[cfg(target_arch = "wasm32")]
-async fn read_worker(path: &str) -> Option<String> {
+async fn read_worker(path: &str) -> GenericResult<String> {
     super::indexdb::read(path).await
 }
 
@@ -104,6 +103,15 @@ pub async fn read(bbox: &EuclideanBoundingBox) -> GenericResult<(InputPointMap, 
                             good.insert_points(tile, &points);
                         }
                     }
+                    for tile in &missing {
+                        if tile.chunk_coord() == chunk.coord {
+                            log::warn!(
+                                "could not find data for tile {} in chunk {}",
+                                tile.basename(),
+                                chunk.basename()
+                            );
+                        }
+                    }
                 }
                 Err(e) => {
                     log::info!(
@@ -147,17 +155,20 @@ pub async fn write(points: &InputPointMap, logger: &SenderHandlerLock) -> Generi
             Err(_) => {}
         }
         // we have a n^2 here.
-        let chunk_bbox = chunk.bbox().clone();
         let ltiles: Vec<_> = points
             .map
             .keys()
-            .filter(|t| chunk_bbox.contains_other(&t.bbox()))
+            .filter(|tile| chunk.contains(&tile))
             .collect();
         for tile in ltiles {
-            chunk
-                .data
-                .map
-                .insert(tile.clone(), points.get(&tile).unwrap().clone());
+            let tpoints = points.get(&tile).unwrap();
+            log::trace!(
+                "tile {} chunk {} npoints {}",
+                tile.basename(),
+                chunk.basename(),
+                tpoints.len()
+            );
+            chunk.data.map.insert(tile.clone(), tpoints.clone());
         }
         event::send_worker(logger, &format!("write cache {}/{}", index + 1, total)).await;
         let data = chunk.map_as_string();

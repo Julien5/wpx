@@ -43,9 +43,11 @@ impl Tile {
             (self.coord.1 + 1) as f64 * BBOXWIDTH,
         )
     }
+
     pub fn bbox(&self) -> BoundingBox {
         BoundingBox::minmax(self.min(), self.max())
     }
+
     pub fn basename(&self) -> String {
         format!("{:03}-{:03}", self.coord.0, self.coord.1)
     }
@@ -69,6 +71,7 @@ impl Chunk {
     fn step() -> f64 {
         (CHUNKWIDTH as f64) * BBOXWIDTH
     }
+    /*
     fn min(&self) -> Point2D {
         Point2D::new(
             self.coord.0 as f64 * Self::step(),
@@ -83,7 +86,7 @@ impl Chunk {
     }
     pub fn bbox(&self) -> BoundingBox {
         BoundingBox::minmax(self.min(), self.max())
-    }
+    }*/
 
     pub fn basename(&self) -> String {
         format!("{:03}-{:03}", self.coord.0, self.coord.1)

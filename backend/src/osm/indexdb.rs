@@ -2,6 +2,9 @@ use indexed_db_futures::database::Database;
 use indexed_db_futures::prelude::*;
 use indexed_db_futures::transaction::TransactionMode;
 
+use crate::error::GenericError;
+use crate::error::GenericResult;
+
 // TODO: convert filename to a JavaScript identifier.
 // In JavaScript, identifiers can contain Unicode letters, $, _, and digits (0-9),
 // but may not start with a digit.
@@ -18,7 +21,7 @@ const DATABASE: &str = "db";
 const STORE: &str = "store";
 //const TRANSACTION: &str = "store";
 
-async fn opendb() -> Option<Database> {
+async fn opendb() -> GenericResult<Database> {
     match Database::open(DATABASE)
         .with_version(1u8)
         .with_on_upgrade_needed(|event, db| {
@@ -46,18 +49,19 @@ async fn opendb() -> Option<Database> {
         })
         .await
     {
-        Ok(db) => Some(db),
+        Ok(db) => Ok(db),
         Err(e) => {
             log::info!("could not open db {:?}", e);
-            None
+            Err(GenericError::from(e))
         }
     }
 }
 
 async fn awrite(filename: &str, data: String) {
     let db = match opendb().await {
-        Some(db) => db,
-        None => {
+        Ok(db) => db,
+        Err(e) => {
+            log::error!("could not open db: {:?}", e);
             return;
         }
     };
@@ -105,11 +109,11 @@ pub async fn write(filename: &str, data: String) {
     let _ = awrite(filename, data).await;
 }
 
-async fn aread(filename: &str) -> Option<String> {
+async fn aread(filename: &str) -> GenericResult<String> {
     let db = match opendb().await {
-        Some(db) => db,
-        None => {
-            return None;
+        Ok(db) => db,
+        Err(e) => {
+            return Err(e);
         }
     };
     let transaction = match db
@@ -120,19 +124,22 @@ async fn aread(filename: &str) -> Option<String> {
         Ok(d) => d,
         Err(e) => {
             log::error!("couldn not open transaction because {:?}", e);
-            return None;
+            return Err(GenericError::from(e));
         }
     };
 
     let store = transaction.object_store(STORE).unwrap();
     let data = store.get(identifier(&filename)).await.unwrap();
-    data
+    match data {
+        Some(bytes) => Ok(bytes),
+        None => Err(GenericError::from(format!("could not read {}", filename))),
+    }
 }
 
 async fn ahit_cache(filename: &str) -> bool {
     let db = match opendb().await {
-        Some(db) => db,
-        None => {
+        Ok(db) => db,
+        Err(e) => {
             return false;
         }
     };
@@ -153,7 +160,7 @@ async fn ahit_cache(filename: &str) -> bool {
     data.is_some()
 }
 
-pub async fn read(filename: &str) -> Option<String> {
+pub async fn read(filename: &str) -> GenericResult<String> {
     aread(filename).await
 }
 

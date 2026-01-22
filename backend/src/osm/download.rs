@@ -11,6 +11,22 @@ use crate::{
 
 use log;
 
+#[cfg(target_arch = "wasm32")]
+fn use_disk() -> bool {
+    false
+}
+
+/* For debugging:
+ * use_disk = true => write download in /tmp/last-dl.data
+ *                 => read download from /tmp/dl.data if exists
+ */
+
+#[cfg(not(target_arch = "wasm32"))]
+fn use_disk() -> bool {
+    // true
+    false
+}
+
 async fn dl_worker(req: &str) -> std::result::Result<String, reqwest::Error> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
@@ -38,14 +54,12 @@ async fn dl_worker(req: &str) -> std::result::Result<String, reqwest::Error> {
     match request.send().await {
         Ok(response) => {
             let text = response.text().await;
-
-            let save = true;
-            if save {
-                let filename = std::format!("/tmp/dl.data");
+            if use_disk() {
+                let filename = std::format!("/tmp/last-dl.data");
                 let data = text.as_ref().unwrap().clone();
+                // write overwrites.
                 std::fs::write(filename, data).expect("Unable to write file");
             }
-
             match text {
                 Ok(json) => Ok(json),
                 Err(e) => Err(e),
@@ -65,12 +79,15 @@ pub async fn all(
     bbox: &str,
     logger: &SenderHandlerLock,
 ) -> std::result::Result<String, reqwest::Error> {
-    let fake = false;
-    if fake {
+    if use_disk() {
         //let data = std::fs::read_to_string("data/ref/overpass/dl.txt").unwrap();
         //let data = std::fs::read_to_string("/tmp/dl.data").unwrap();
-        let data = std::fs::read_to_string("/home/julien/delme/bug/dl/data").unwrap();
-        return Ok(data);
+        match std::fs::read_to_string("/tmp/dl.data") {
+            Ok(bytes) => {
+                return Ok(bytes);
+            }
+            Err(_) => {}
+        }
     }
     let timeout = 250;
     let header = format!("[out:json][timeout:{}]", timeout);
