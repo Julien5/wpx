@@ -140,7 +140,7 @@ where
 }
 
 pub struct ProjectionTrees {
-    pub total_tree: locate::IndexedPointsTree,
+    total_tree: locate::IndexedPointsTree,
     trees: Vec<locate::IndexedPointsTree>,
 }
 
@@ -170,6 +170,10 @@ impl ProjectionTrees {
             total_tree: locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len())),
             trees: Self::make_appropriate_projection_trees(euclidean),
         }
+    }
+
+    pub fn project_single(&self, point: &mut InputPoint, track: &Track) {
+        update_track_projection(point, track, &track.trees.total_tree);
     }
 
     pub fn project(&self, point: &mut InputPoint, track: &Track) {

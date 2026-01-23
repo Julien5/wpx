@@ -1,6 +1,5 @@
 use crate::{
     inputpoint::{InputPoint, InputType, OSMType},
-    locate,
     segment::SegmentData,
     track_projection::is_close_to_track,
 };
@@ -151,13 +150,8 @@ pub fn map(segment: &SegmentData) -> Vec<Vec<InputPoint>> {
         }
     }
     for point in &mut offtrack_cities {
-        let proj = locate::compute_track_projection(
-            &segment.track,
-            &segment.track.trees.total_tree,
-            &point,
-        );
         if point.track_projections.is_empty() {
-            point.track_projections.insert(proj);
+            segment.track.trees.project(point, &segment.track);
         }
     }
     sort_by_distance_to_track(&mut offtrack_cities);

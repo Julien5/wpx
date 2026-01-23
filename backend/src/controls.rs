@@ -3,7 +3,7 @@ use std::{collections::BTreeMap, sync::Arc};
 use crate::{
     backend::Segment,
     inputpoint::{InputPoint, InputType, OSMType, SharedPointMaps},
-    locate, math,
+    math,
     mercator::MercatorPoint,
     parameters::Parameters,
     segment::SegmentData,
@@ -107,20 +107,18 @@ pub fn infer_controls_from_gpx_segments(
 }
 
 pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) -> Vec<InputPoint> {
-    let tracktree = &track.trees.total_tree;
-
     let mut ret = Vec::new();
     let maxdist = 100f64;
     for point in gpxpoints {
-        let projection = locate::compute_track_projection(track, &tracktree, &point);
-        if projection.track_distance < maxdist {
+        let mut clone = point.clone();
+        track.trees.project_single(&mut clone, &track);
+        if clone.distance_to_track() < maxdist {
             let control = InputPoint::create_control_on_track(
                 track,
-                projection.track_index,
+                clone.single_track_index().unwrap(),
                 &point.name(),
                 &point.description(),
             );
-            log::info!("use waypoint {} as control", point.name().trim());
             ret.push(control);
         } else {
             log::info!("point {} is too far from track", point.name());

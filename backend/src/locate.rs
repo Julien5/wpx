@@ -176,7 +176,7 @@ pub fn compute_track_projection(
         track.distance(index) + track.euclidean[index].d2(&middle).sqrt();
     let new_proj = TrackProjection {
         track_floating_index: floating_index,
-        track_index: index1,
+        track_index: index,
         euclidean: middle,
         elevation,
         track_distance,
