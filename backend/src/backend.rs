@@ -11,6 +11,7 @@ use crate::inputpoint::*;
 use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
+use crate::parameters::ControlSource;
 use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
 use crate::parameters::UserStepsOptions;
@@ -65,33 +66,67 @@ impl Backend {
         event::send_worker(&self.sender, data).await
     }
 
+    pub async fn load_osm(&mut self) -> Result<(), Error> {
+        self.send(&"read gpx".to_string()).await;
+        self.send(&"download osm data".to_string()).await;
+
+        let mut osmpoints = match osm::download_for_track(&self.d().track, &self.sender).await {
+            Ok(p) => p,
+            Err(e) => {
+                log::error!("OSM download failed {:?}", e);
+                return Err(Error::OSMDownloadFailed);
+            }
+        };
+
+        self.d().track.project_map(&mut osmpoints);
+
+        {
+            let mut locked = self.d().inputpoints.write().unwrap();
+            locked.maps.insert(InputType::OSM, osmpoints);
+        }
+        Ok(())
+    }
+
+    pub async fn load_controls(&mut self, source: ControlSource) -> Result<usize, Error> {
+        let inputpoints = self.d().inputpoints.read();
+        let waypoints_vector = inputpoints
+            .unwrap()
+            .maps
+            .get(&InputType::GPX)
+            .unwrap()
+            .as_vector();
+
+        let mut controls = match source {
+            ControlSource::Segments => {
+                controls::infer_controls_from_gpx_segments(&self.d().track, &waypoints_vector)
+            }
+            ControlSource::Waypoints => {
+                controls::make_controls_with_waypoints(&self.d().track, &waypoints_vector)
+            }
+            ControlSource::OSM => {
+                controls::make_controls_with_osm(&self.d().track, self.d().inputpoints.clone())
+            }
+        };
+
+        controls::insert_start_end_controls(&self.d().track, &mut controls);
+
+        let mut control_map = InputPointMap::from_vector(&controls);
+        self.d().track.project_map(&mut control_map);
+        {
+            let mut locked = self.d().inputpoints.write().unwrap();
+            locked.maps.insert(InputType::Control, control_map);
+        }
+        Ok(controls.len())
+    }
+
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
         self.send(&"read gpx".to_string()).await;
         let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
         let track = std::sync::Arc::new(track_data);
-        self.send(&"download osm data".to_string()).await;
         let mut inputpoints_map = BTreeMap::new();
-        let mut osmpoints = match osm::download_for_track(&track, &self.sender).await {
-            Ok(p) => p,
-            Err(_) => {
-                // todo: handle osm download separately and handle error
-                InputPointMap::new()
-            }
-        };
-        track.project_map(&mut osmpoints);
-        inputpoints_map.insert(InputType::OSM, osmpoints);
         track.project_map(&mut gpxdata.waypoints);
-        let gpx_waypoints = gpxdata.waypoints.as_vector();
         inputpoints_map.insert(InputType::GPX, gpxdata.waypoints);
-
-        let mut controls = controls::infer_controls_from_gpx_segments(&track, &gpx_waypoints);
-        if controls.is_empty() {
-            log::info!("infer_controls_from_gpx_data empty => try waypoints");
-            controls = controls::make_controls_with_waypoints(&track, &gpx_waypoints);
-        } else {
-            log::info!("infer_controls_from_gpx_data OK");
-        }
 
         let inputpoints = SharedPointMaps::new(
             InputPointMaps {
@@ -99,24 +134,6 @@ impl Backend {
             }
             .into(),
         );
-
-        if controls.is_empty() {
-            controls = controls::make_controls_with_osm(&track, inputpoints.clone());
-            log::info!(
-                "control from gpx_data or waypoints empty => tried osm => {} points",
-                controls.len()
-            );
-        }
-
-        controls::insert_start_end_controls(&track, &mut controls);
-
-        {
-            let mut locked = inputpoints.write().unwrap();
-
-            locked
-                .maps
-                .insert(InputType::Control, InputPointMap::from_vector(&controls));
-        }
 
         let parameters = Parameters::default();
         self.send(&"compute elevation".to_string()).await;
@@ -423,19 +440,29 @@ mod tests {
         backend::Backend,
         inputpoint::{self, InputType},
         math::IntegerSize2D,
-        parameters::ProfileIndication,
+        parameters::{ControlSource, ProfileIndication},
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T08:05:00.00Z";
 
-    #[tokio::test]
-    async fn svg_profile() {
-        let _ = env_logger::try_init();
+    async fn load_test_data() -> Backend {
         let mut backend = Backend::make();
         backend
             .load_filename("data/blackforest.gpx")
             .await
             .expect("fail");
+        backend.load_osm().await.unwrap();
+        backend
+            .load_controls(ControlSource::Waypoints)
+            .await
+            .unwrap();
+        backend
+    }
+
+    #[tokio::test]
+    async fn svg_profile() {
+        let _ = env_logger::try_init();
+        let mut backend = load_test_data().await;
 
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
@@ -478,11 +505,7 @@ mod tests {
     #[tokio::test]
     async fn svg_segment_wheel() {
         let _ = env_logger::try_init();
-        let mut backend = Backend::make();
-        backend
-            .load_filename("data/blackforest.gpx")
-            .await
-            .expect("fail");
+        let mut backend = load_test_data().await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((3_000) as f64);
@@ -519,8 +542,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_waypoints() {
         let _ = env_logger::try_init();
-        let mut backend = Backend::make();
-        let _ = backend.load_demo().await;
+        let backend = load_test_data().await;
         let fseg = backend.trackSegment();
         let seg = backend.make_segment_data(&fseg);
         let controls = seg.points(&InputType::Control);
@@ -537,11 +559,7 @@ mod tests {
     #[tokio::test]
     async fn svg_map() {
         let _ = env_logger::try_init();
-        let mut backend = Backend::make();
-        backend
-            .load_filename("data/blackforest.gpx")
-            .await
-            .expect("fail");
+        let mut backend = load_test_data().await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
