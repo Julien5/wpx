@@ -6,6 +6,7 @@ pub enum Error {
     GPXInvalid,
     GPXHasNoSegment,
     MissingElevation { index: usize },
+    OSMDownloadFailed,
 }
 
 impl fmt::Display for Error {
@@ -17,6 +18,7 @@ impl fmt::Display for Error {
                 write!(f, "{}", format!("missing elevation at index {}", index))
             }
             Error::GPXHasNoSegment => write!(f, "GPX file has no segment"),
+            Error::OSMDownloadFailed => write!(f, "OSM download failed"),
         }
     }
 }

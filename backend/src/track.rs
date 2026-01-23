@@ -6,6 +6,8 @@ use gpx::TrackSegment;
 use super::wgs84point::WGS84Point;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
+use crate::inputpoint::InputPoint;
+use crate::inputpoint::InputPointMap;
 use crate::mercator;
 use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
@@ -29,7 +31,7 @@ pub struct Track {
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
     pub tiles: Tiles,
-    pub trees: ProjectionTrees,
+    trees: ProjectionTrees,
 }
 
 pub type SharedTrack = std::sync::Arc<Track>;
@@ -271,5 +273,26 @@ impl Track {
             .iter()
             .map(|k| k + range.start)
             .collect::<Vec<_>>()
+    }
+
+    pub fn project_point(&self, point: &mut InputPoint) {
+        self.trees.project(
+            point,
+            &self.euclidean,
+            &|index| self.distance(index),
+            &|index| self.elevation(index),
+        );
+    }
+
+    pub fn project_map(&self, map: &mut InputPointMap) {
+        for tile in &self.tiles {
+            if map.get_mut(&tile).is_none() {
+                continue;
+            }
+            let points = map.get_mut(&tile).unwrap();
+            for mut point in points {
+                self.project_point(&mut point);
+            }
+        }
     }
 }

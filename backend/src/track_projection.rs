@@ -2,10 +2,9 @@
 use std::{cmp::Ordering, collections::BTreeSet};
 
 use crate::{
-    inputpoint::{InputPoint, InputPointMap, InputType, OSMType},
+    inputpoint::{InputPoint, InputType, OSMType},
     locate,
     mercator::MercatorPoint,
-    track::Track,
 };
 
 use serde::{Deserialize, Serialize};
@@ -90,10 +89,13 @@ fn dmax(kind: &InputType, osmkind: &Option<OSMType>, population: &Option<i32>) -
 
 pub fn update_track_projection(
     point: &mut InputPoint,
-    track: &Track,
+    euclidean: &Vec<MercatorPoint>,
+    distance: impl Fn(usize) -> f64,
+    elevation: impl Fn(usize) -> f64,
     tree: &locate::IndexedPointsTree,
 ) {
-    let new_projection = locate::compute_track_projection(track, tree, point);
+    let new_projection =
+        locate::compute_track_projection(euclidean, distance, elevation, tree, point);
     if point.track_projections.is_empty() {
         point.track_projections.insert(new_projection);
         return;
@@ -172,31 +174,20 @@ impl ProjectionTrees {
         }
     }
 
-    pub fn project_single(&self, point: &mut InputPoint, track: &Track) {
-        update_track_projection(point, track, &track.trees.total_tree);
-    }
-
-    pub fn project(&self, point: &mut InputPoint, track: &Track) {
-        update_track_projection(point, track, &track.trees.total_tree);
+    pub fn project(
+        &self,
+        point: &mut InputPoint,
+        euclidean: &Vec<MercatorPoint>,
+        distance: &impl Fn(usize) -> f64,
+        elevation: &impl Fn(usize) -> f64,
+    ) {
+        update_track_projection(point, euclidean, distance, elevation, &self.total_tree);
         let index = point.track_projections.first().unwrap().track_index;
         if is_close_to_track(&point) {
             for tree in &self.trees {
                 if !tree.range.contains(&index) {
-                    update_track_projection(point, track, tree);
+                    update_track_projection(point, euclidean, distance, elevation, tree);
                 }
-            }
-        }
-    }
-
-    pub fn iter_on(&self, map: &mut InputPointMap, track: &Track) {
-        let tiles = &track.tiles;
-        for tile in tiles {
-            if map.get_mut(tile).is_none() {
-                continue;
-            }
-            let points = map.get_mut(tile).unwrap();
-            for mut point in points {
-                self.project(&mut point, track);
             }
         }
     }
@@ -204,7 +195,9 @@ impl ProjectionTrees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{gpsdata::GpxData, wgs84point::WGS84Point};
+    use crate::{
+        gpsdata::GpxData, inputpoint::InputPointMap, track::Track, wgs84point::WGS84Point,
+    };
 
     fn read(filename: String) -> GpxData {
         use crate::gpsdata;
@@ -237,7 +230,7 @@ mod tests {
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let mut map = InputPointMap::new();
         map.insert_point(&mortagne);
-        track.trees.iter_on(&mut map, &track);
+        track.project_map(&mut map);
         map.iter().for_each(|p| {
             assert_eq!(p.track_projections.len(), 2);
             log::info!("p={:?}", p);

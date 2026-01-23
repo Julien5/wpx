@@ -79,9 +79,9 @@ impl Backend {
                 InputPointMap::new()
             }
         };
-        track.trees.iter_on(&mut osmpoints, &track);
+        track.project_map(&mut osmpoints);
         inputpoints_map.insert(InputType::OSM, osmpoints);
-        track.trees.iter_on(&mut gpxdata.waypoints, &track);
+        track.project_map(&mut gpxdata.waypoints);
         let gpx_waypoints = gpxdata.waypoints.as_vector();
         inputpoints_map.insert(InputType::GPX, gpxdata.waypoints);
 

@@ -111,7 +111,7 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
     let maxdist = 100f64;
     for point in gpxpoints {
         let mut clone = point.clone();
-        track.trees.project_single(&mut clone, &track);
+        track.project_point(&mut clone);
         if clone.distance_to_track() < maxdist {
             let control = InputPoint::create_control_on_track(
                 track,
@@ -278,10 +278,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        event, gpsdata::GpxData, inputpoint::InputPoint, inputpoint::InputPointMaps, osm,
-        track_projection::ProjectionTrees,
-    };
+    use crate::{event, gpsdata::GpxData, inputpoint::InputPoint, inputpoint::InputPointMaps, osm};
 
     fn read(filename: &str) -> GpxData {
         use crate::gpsdata;
@@ -342,7 +339,7 @@ mod tests {
         let logger = std::sync::RwLock::new(Some(b));
         let mut inputpoints = BTreeMap::new();
         let mut osmpoints = osm::download_for_track(&track, &logger).await.unwrap();
-        track.trees.iter_on(&mut osmpoints, &track);
+        track.project_map(&mut osmpoints);
         inputpoints.insert(InputType::OSM, osmpoints);
         let shared = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
         make_controls_with_osm(&track, shared)

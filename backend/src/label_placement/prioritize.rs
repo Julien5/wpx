@@ -151,7 +151,7 @@ pub fn map(segment: &SegmentData) -> Vec<Vec<InputPoint>> {
     }
     for point in &mut offtrack_cities {
         if point.track_projections.is_empty() {
-            segment.track.trees.project(point, &segment.track);
+            segment.track.project_point(point);
         }
     }
     sort_by_distance_to_track(&mut offtrack_cities);
