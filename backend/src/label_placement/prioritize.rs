@@ -151,7 +151,11 @@ pub fn map(segment: &SegmentData) -> Vec<Vec<InputPoint>> {
         }
     }
     for point in &mut offtrack_cities {
-        let proj = locate::compute_track_projection(&segment.track, &segment.track.tree, &point);
+        let proj = locate::compute_track_projection(
+            &segment.track,
+            &segment.track.trees.total_tree,
+            &point,
+        );
         if point.track_projections.is_empty() {
             point.track_projections.insert(proj);
         }

@@ -6,13 +6,12 @@ use gpx::TrackSegment;
 use super::wgs84point::WGS84Point;
 use crate::error;
 use crate::gpsdata::distance_wgs84;
-use crate::locate;
-use crate::locate::IndexedPointsTree;
 use crate::mercator;
 use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
 use crate::tile;
 use crate::tile::Tiles;
+use crate::track_projection::ProjectionTrees;
 
 use super::elevation;
 
@@ -30,7 +29,7 @@ pub struct Track {
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
     pub tiles: Tiles,
-    pub tree: IndexedPointsTree,
+    pub trees: ProjectionTrees,
 }
 
 pub type SharedTrack = std::sync::Arc<Track>;
@@ -245,7 +244,7 @@ impl Track {
             }
         }
 
-        let tree = locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len()));
+        let trees = ProjectionTrees::make(&euclidean);
         let ret = Track {
             wgs84: wgs,
             euclidean,
@@ -254,7 +253,7 @@ impl Track {
             _distance,
             parts,
             tiles: boxes,
-            tree,
+            trees,
         };
         Ok(ret)
     }

@@ -21,7 +21,6 @@ use crate::segment::SegmentData;
 use crate::track::SharedTrack;
 use crate::track::Track;
 use crate::track_projection::is_close_to_track;
-use crate::track_projection::ProjectionTrees;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
@@ -71,7 +70,6 @@ impl Backend {
         let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
         let track = std::sync::Arc::new(track_data);
-        let trees = ProjectionTrees::make(&track);
         self.send(&"download osm data".to_string()).await;
         let mut inputpoints_map = BTreeMap::new();
         let mut osmpoints = match osm::download_for_track(&track, &self.sender).await {
@@ -81,9 +79,9 @@ impl Backend {
                 InputPointMap::new()
             }
         };
-        trees.iter_on(&mut osmpoints, &track);
+        track.trees.iter_on(&mut osmpoints, &track);
         inputpoints_map.insert(InputType::OSM, osmpoints);
-        trees.iter_on(&mut gpxdata.waypoints, &track);
+        track.trees.iter_on(&mut gpxdata.waypoints, &track);
         let gpx_waypoints = gpxdata.waypoints.as_vector();
         inputpoints_map.insert(InputType::GPX, gpxdata.waypoints);
 

@@ -107,7 +107,7 @@ pub fn infer_controls_from_gpx_segments(
 }
 
 pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) -> Vec<InputPoint> {
-    let tracktree = &track.tree;
+    let tracktree = &track.trees.total_tree;
 
     let mut ret = Vec::new();
     let maxdist = 100f64;
@@ -344,8 +344,7 @@ mod tests {
         let logger = std::sync::RwLock::new(Some(b));
         let mut inputpoints = BTreeMap::new();
         let mut osmpoints = osm::download_for_track(&track, &logger).await.unwrap();
-        let trees = ProjectionTrees::make(&track);
-        trees.iter_on(&mut osmpoints, &track);
+        track.trees.iter_on(&mut osmpoints, &track);
         inputpoints.insert(InputType::OSM, osmpoints);
         let shared = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
         make_controls_with_osm(&track, shared)

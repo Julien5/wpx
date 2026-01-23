@@ -91,9 +91,9 @@ fn dmax(kind: &InputType, osmkind: &Option<OSMType>, population: &Option<i32>) -
 pub fn update_track_projection(
     point: &mut InputPoint,
     track: &Track,
-    tracktree: &locate::IndexedPointsTree,
+    tree: &locate::IndexedPointsTree,
 ) {
-    let new_projection = locate::compute_track_projection(track, tracktree, point);
+    let new_projection = locate::compute_track_projection(track, tree, point);
     if point.track_projections.is_empty() {
         point.track_projections.insert(new_projection);
         return;
@@ -140,31 +140,47 @@ where
 }
 
 pub struct ProjectionTrees {
-    total_tree: locate::IndexedPointsTree,
+    pub total_tree: locate::IndexedPointsTree,
     trees: Vec<locate::IndexedPointsTree>,
 }
 
 impl ProjectionTrees {
-    fn find_appropriate_projection_ranges(track: &Track) -> Vec<std::ops::Range<usize>> {
+    fn find_appropriate_projection_ranges(
+        euclidean: &Vec<MercatorPoint>,
+    ) -> Vec<std::ops::Range<usize>> {
         let start = 0;
-        let end = track.wgs84.len();
-        let start_point = track.euclidean.first().unwrap();
-        let f = |index: &usize| -> f64 { start_point.d2(&track.euclidean[*index]) };
+        let end = euclidean.len();
+        let start_point = euclidean.first().unwrap();
+        let f = |index: &usize| -> f64 { start_point.d2(&euclidean[*index]) };
         let extremity = find_global_max(start, end, f);
         vec![0..extremity, extremity..end]
     }
 
-    fn make_appropriate_projection_trees(track: &Track) -> Vec<locate::IndexedPointsTree> {
-        Self::find_appropriate_projection_ranges(track)
+    fn make_appropriate_projection_trees(
+        euclidean: &Vec<MercatorPoint>,
+    ) -> Vec<locate::IndexedPointsTree> {
+        Self::find_appropriate_projection_ranges(euclidean)
             .iter()
-            .map(|range| locate::IndexedPointsTree::from_track(&track.euclidean, range))
+            .map(|range| locate::IndexedPointsTree::from_track(&euclidean, range))
             .collect()
     }
 
-    pub fn make(track: &Track) -> Self {
+    pub fn make(euclidean: &Vec<MercatorPoint>) -> Self {
         Self {
-            total_tree: track.tree.clone(),
-            trees: Self::make_appropriate_projection_trees(track),
+            total_tree: locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len())),
+            trees: Self::make_appropriate_projection_trees(euclidean),
+        }
+    }
+
+    pub fn project(&self, point: &mut InputPoint, track: &Track) {
+        update_track_projection(point, track, &track.trees.total_tree);
+        let index = point.track_projections.first().unwrap().track_index;
+        if is_close_to_track(&point) {
+            for tree in &self.trees {
+                if !tree.range.contains(&index) {
+                    update_track_projection(point, track, tree);
+                }
+            }
         }
     }
 
@@ -176,15 +192,7 @@ impl ProjectionTrees {
             }
             let points = map.get_mut(tile).unwrap();
             for mut point in points {
-                update_track_projection(&mut point, track, &self.total_tree);
-                let index = point.track_projections.first().unwrap().track_index;
-                if is_close_to_track(&point) {
-                    for tree in &self.trees {
-                        if !tree.range.contains(&index) {
-                            update_track_projection(&mut point, track, tree);
-                        }
-                    }
-                }
+                self.project(&mut point, track);
             }
         }
     }
@@ -223,10 +231,9 @@ mod tests {
             track_projections: TrackProjections::new(),
         };
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let trees = ProjectionTrees::make(&track);
         let mut map = InputPointMap::new();
         map.insert_point(&mortagne);
-        trees.iter_on(&mut map, &track);
+        track.trees.iter_on(&mut map, &track);
         map.iter().for_each(|p| {
             assert_eq!(p.track_projections.len(), 2);
             log::info!("p={:?}", p);
