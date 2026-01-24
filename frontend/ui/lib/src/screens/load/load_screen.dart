@@ -10,59 +10,57 @@ import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/widgets/small.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class StreamWidget extends StatefulWidget {
-  const StreamWidget({super.key});
+class EventWidget extends StatefulWidget {
+  final LoadScreenModel screenModel;
+  final Job target;
+  final String? forcedString;
+  const EventWidget({
+    super.key,
+    required this.screenModel,
+    required this.target,
+    this.forcedString,
+  });
 
   @override
-  State<StreamWidget> createState() => _StreamWidgetState();
+  State<EventWidget> createState() => _EventWidgetState();
 }
 
-class _StreamWidgetState extends State<StreamWidget> {
+class _EventWidgetState extends State<EventWidget> {
   EventModel? model;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      try {
-        setState(() {
-          model = Provider.of<RootModel>(context, listen: false).eventModel();
-        });
-      } catch (e) {
-        developer.log("Error: RootModel not found in context. Exception: $e");
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (model == null) {
-      return Text("loading..");
+    if (widget.forcedString != null) {
+      return SmallText(text: widget.forcedString!);
     }
+    EventModel model = Provider.of<EventModel>(context, listen: false);
     return StreamBuilder<String>(
-      stream: model!.stream,
+      stream: model.broadcastStream,
       builder: (context, snap) {
         final error = snap.error;
-        String text = "<null>";
+        String event = "....";
         if (error != null) {
-          text = error.toString();
+          event = error.toString();
           developer.log("error: ${error.toString()}");
         }
         final data = snap.data;
         if (data != null) {
-          text = data;
+          event = data;
         }
-        return Text('text=$text');
+        return SmallText(
+          text: filterEvent(event, widget.target, widget.screenModel),
+        );
       },
     );
   }
 }
 
-String safeLast(EventModel eventModel) {
-  if (eventModel.events.isEmpty) {
-    return "?";
+String safeLast(String? event) {
+  if (event == null) {
+    return "...";
   }
-  return eventModel.events.last;
+  //developer.log("====> ${event.events.last} ($n)");
+  return event;
 }
 
 String errorString(Error e) {
@@ -82,45 +80,42 @@ String errorString(Error e) {
   return "";
 }
 
-String lastEvent(
-  EventModel eventModel,
-  Job targetJob,
-  LoadScreenModel screenModel,
-) {
+String filterEvent(String? event, Job targetJob, LoadScreenModel screenModel) {
   if (screenModel.errors.containsKey(targetJob)) {
+    //return "error: [${errorString(screenModel.errors[targetJob]!)}]";
     return errorString(screenModel.errors[targetJob]!);
   }
   if (screenModel.running != null && screenModel.running! == targetJob) {
-    return safeLast(eventModel);
+    //return "event: [${safeLast(eventModel)}]";
+    return safeLast(event);
   }
   if (screenModel.hasDone(targetJob)) {
     return "done";
   }
-  return "...";
+  return "..";
 }
 
 class GPXStrings {
-  final EventModel eventModel;
   final LoadScreenModel screenModel;
 
-  GPXStrings({required this.eventModel, required this.screenModel});
+  GPXStrings({required this.screenModel});
 
   SegmentStatistics? statistics;
   void setData(SegmentStatistics s) {
     statistics = s;
   }
 
-  String km() {
+  String? km() {
     if (statistics == null) {
-      return lastEvent(eventModel, Job.gpx, screenModel);
+      return null;
     }
     double km = statistics!.distanceEnd / 1000;
     return "${km.toStringAsFixed(0)} km";
   }
 
-  String elevation() {
+  String? elevation() {
     if (statistics == null) {
-      return "?";
+      return null;
     }
     double e = statistics!.elevationGain;
     return "${e.toStringAsFixed(0)} m";
@@ -133,29 +128,32 @@ class GPXCard extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
-    GPXStrings strings = GPXStrings(
-      eventModel: Provider.of<EventModel>(ctx),
-      screenModel: model,
-    );
-    developer.log("GPXCard build ");
+    GPXStrings strings = GPXStrings(screenModel: model);
     if (model.hasDone(Job.gpx)) {
-      developer.log("GPXCard build gpx done");
       strings.setData(model.statistics()!);
-      developer.log("km=${strings.km()}");
-    } else {
-      developer.log("GPXCard build gpx NOT done");
     }
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
-        TableRow(children: [SmallText(text: "GPX"), SmallText(text: "")]),
+        TableRow(children: [SmallText(text: "Track"), SmallText(text: "")]),
         TableRow(
-          children: [SmallText(text: "Length"), SmallText(text: strings.km())],
+          children: [
+            SmallText(text: "Length"),
+            EventWidget(
+              screenModel: model,
+              target: Job.gpx,
+              forcedString: strings.km(),
+            ),
+          ],
         ),
         TableRow(
           children: [
             SmallText(text: "Elevation"),
-            SmallText(text: strings.elevation()),
+            EventWidget(
+              screenModel: model,
+              target: Job.gpx,
+              forcedString: strings.elevation(),
+            ),
           ],
         ),
       ],
@@ -166,14 +164,13 @@ class GPXCard extends StatelessWidget {
 }
 
 class ControlStrings {
-  final EventModel eventModel;
   final LoadScreenModel screenModel;
 
-  ControlStrings({required this.eventModel, required this.screenModel});
+  ControlStrings({required this.screenModel});
 
-  String count() {
+  String? count() {
     if (!screenModel.hasDone(Job.controls)) {
-      return lastEvent(eventModel, Job.controls, screenModel);
+      return null;
     }
     return "${screenModel.controlsCount()}";
   }
@@ -185,10 +182,7 @@ class ControlsCard extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
-    ControlStrings strings = ControlStrings(
-      eventModel: Provider.of<EventModel>(ctx),
-      screenModel: model,
-    );
+    ControlStrings strings = ControlStrings(screenModel: model);
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
@@ -196,7 +190,11 @@ class ControlsCard extends StatelessWidget {
         TableRow(
           children: [
             SmallText(text: "Number"),
-            SmallText(text: strings.count()),
+            EventWidget(
+              screenModel: model,
+              target: Job.controls,
+              forcedString: strings.count(),
+            ),
           ],
         ),
       ],
@@ -205,27 +203,13 @@ class ControlsCard extends StatelessWidget {
   }
 }
 
-class OSMStrings {
-  final EventModel eventModel;
-  final LoadScreenModel screenModel;
-
-  OSMStrings({required this.eventModel, required this.screenModel});
-
-  String status() {
-    return lastEvent(eventModel, Job.osm, screenModel);
-  }
-}
-
 class OSMCard extends StatelessWidget {
   const OSMCard({super.key});
 
   @override
   Widget build(BuildContext ctx) {
+    developer.log("OSMCard build ");
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
-    OSMStrings strings = OSMStrings(
-      eventModel: Provider.of<EventModel>(ctx),
-      screenModel: model,
-    );
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
@@ -233,7 +217,7 @@ class OSMCard extends StatelessWidget {
         TableRow(
           children: [
             SmallText(text: "Status"),
-            SmallText(text: strings.status()),
+            EventWidget(screenModel: model, target: Job.osm),
           ],
         ),
       ],
@@ -335,7 +319,6 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   bool hasDone(Job job) {
-    developer.log("done=$done");
     return done.contains(job);
   }
 
@@ -383,6 +366,7 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   void startJob(Job job) {
+    events.take();
     developer.log("start $job");
     makeFuture(job);
     developer.log("future created");
@@ -432,6 +416,7 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   void onChange(RootModel root, EventModel event) {
+    developer.log("LoadScreenModel::onChange");
     notifyListeners();
   }
 }
@@ -461,6 +446,8 @@ class LoadScreenProviders extends MultiProvider {
                );
              },
              update: (context, root, events, loadscreen) {
+               // the problem with this function is that we cannot distinguish
+               // between changes in EventModel and RootModel
                loadscreen!.onChange(root, events);
                return loadscreen;
              },

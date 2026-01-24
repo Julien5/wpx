@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -5,16 +6,32 @@ import 'package:flutter/widgets.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class EventModel extends ChangeNotifier {
-  late Stream<String> stream;
-  List<String> events = [];
+  late Stream<String> _stream;
+
+  final StreamController<String> _broadcaster =
+      StreamController<String>.broadcast();
+  Stream<String> get broadcastStream => _broadcaster.stream;
+
+  String? _lastEvent;
+
   EventModel(bridge.Bridge bridge) {
-    stream = bridge.setSink();
-    stream.listen(onEvents);
+    _stream = bridge.setSink();
+    _stream.listen((data) {
+      developer.log("EventModel.listen:$data");
+      _broadcaster.sink.add(data);
+    });
   }
+
   void onEvents(String data) {
-    developer.log("EventModel:$data");
-    events.add(data);
+    _lastEvent = data;
+    developer.log("EventModel.onEvents:$data");
     notifyListeners();
+  }
+
+  String? take() {
+    String copy = "$_lastEvent";
+    _lastEvent = null;
+    return copy;
   }
 }
 

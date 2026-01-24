@@ -2,7 +2,6 @@
 
 use flutter_rust_bridge::frb;
 
-use std::collections::BTreeSet;
 use std::collections::HashSet;
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
@@ -39,7 +38,14 @@ use tracks::backend::Sender;
 
 impl Sender for EventSender {
     fn send(&mut self, data: &str) {
-        let _ = self.sink.add(data.to_string().clone());
+        match self.sink.add(data.to_string().clone()) {
+            Ok(()) => {
+                log::trace!("sent [{}]", data);
+            }
+            Err(e) => {
+                log::error!("failed to send [{}] because {:?}", data, e);
+            }
+        }
     }
 }
 
@@ -144,7 +150,7 @@ pub struct _WaypointInfo {
 pub struct _Waypoint {
     pub wgs84: WGS84Point,
     pub euclidean: MercatorPoint,
-    pub track_index: BTreeSet<usize>,
+    pub track_index: Option<usize>,
     pub origin: InputType,
     pub name: String,
     pub description: String,

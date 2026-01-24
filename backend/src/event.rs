@@ -6,7 +6,7 @@ pub type SenderHandler = Box<dyn Sender + Send + Sync>;
 pub type SenderHandlerLock = std::sync::RwLock<Option<SenderHandler>>;
 
 #[cfg(not(target_arch = "wasm32"))]
-pub async fn send_worker(handler: &SenderHandlerLock, data: &str) {
+pub fn send_worker(handler: &SenderHandlerLock, data: &str) {
     match handler.write() {
         Ok(mut lock) => match lock.as_mut() {
             Some(sender) => {
@@ -23,10 +23,10 @@ pub async fn send_worker(handler: &SenderHandlerLock, data: &str) {
 }
 
 #[cfg(target_arch = "wasm32")]
-pub async fn send_worker(handler: &SenderHandlerLock, data: &str) {
+pub fn send_worker(handler: &SenderHandlerLock, data: &str) {
     let _ = handler.write().unwrap().as_mut().unwrap().send(&data);
-    let tick = std::time::Duration::from_millis(0);
-    let _ = wasmtimer::tokio::sleep(tick).await;
+    //let tick = std::time::Duration::from_millis(0);
+    //let _ = wasmtimer::tokio::sleep(tick).await;
 }
 
 #[derive(Clone)]

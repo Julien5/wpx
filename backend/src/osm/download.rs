@@ -27,7 +27,10 @@ fn use_disk() -> bool {
     false
 }
 
-async fn dl_worker(req: &str) -> std::result::Result<String, reqwest::Error> {
+async fn dl_worker(
+    req: &str,
+    logger: &SenderHandlerLock,
+) -> std::result::Result<String, reqwest::Error> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
     // let url = "https://overpass.private.coffee/api/interpreter";
@@ -51,6 +54,9 @@ async fn dl_worker(req: &str) -> std::result::Result<String, reqwest::Error> {
         .header("Priority", "u=0")
         .body(format!("data={}", urlencoding::encode(&req)));
     log::debug!("request={:?}", request);
+    event::send_worker(logger, &format!("{}", "wait for response"));
+    //let tick = tokio::time::Duration::from_millis(20);
+    //tokio::time::sleep(tick).await;
     match request.send().await {
         Ok(response) => {
             let text = response.text().await;
@@ -101,8 +107,8 @@ pub async fn all(
     let body = reqs.join(";");
     let footer = "out geom".to_string();
     let request = format!("{};({};);{};", header, body, footer);
-    event::send_worker(logger, &format!("{}", "send request")).await;
-    dl_worker(&request).await
+    event::send_worker(logger, &format!("{}", "send request"));
+    dl_worker(&request, logger).await
 }
 
 fn read_f64(map: &serde_json::Map<String, Value>, name: &str) -> f64 {

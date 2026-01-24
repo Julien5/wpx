@@ -170,7 +170,7 @@ pub async fn write(points: &InputPointMap, logger: &SenderHandlerLock) -> Generi
             );
             chunk.data.map.insert(tile.clone(), tpoints.clone());
         }
-        event::send_worker(logger, &format!("write cache {}/{}", index + 1, total)).await;
+        event::send_worker(logger, &format!("write cache {}/{}", index + 1, total));
         let data = chunk.map_as_string();
         log::debug!("rewrite chunk {}", chunk.basename());
         write_worker(&key, data).await;

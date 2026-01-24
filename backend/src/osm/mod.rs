@@ -123,6 +123,7 @@ async fn process(
 ) -> GenericResult<InputPointMap> {
     let mut found = InputPointMap::new();
     let mut missing = tiles_from_bbox(bbox);
+    event::send_worker(logger, &format!("{}", "read from cache"));
     match read(bbox).await {
         Ok((local_found, local_missing)) => {
             found = local_found;
@@ -144,9 +145,11 @@ async fn process(
         }
     }
 
+    event::send_worker(logger, &format!("{}", "download"));
     // download and write in cache
     download_tiles(&missing, logger).await?;
 
+    event::send_worker(logger, &format!("{}", "read from cache"));
     match read(bbox).await {
         Ok((map, missing)) => {
             log::info!("found: {} missing: {}", map.map.len(), missing.len());
@@ -175,7 +178,6 @@ pub async fn download_for_track(
 ) -> GenericResult<InputPointMap> {
     let bbox = track.euclidean_bounding_box();
     assert!(!bbox.empty());
-    event::send_worker(logger, &format!("{}", "download")).await;
     let ret = process(&bbox, logger).await;
     ret
 }
