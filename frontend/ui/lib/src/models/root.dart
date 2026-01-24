@@ -8,14 +8,12 @@ class EventModel extends ChangeNotifier {
   late Stream<String> stream;
   EventModel(bridge.Bridge bridge) {
     stream = bridge.setSink();
-    //events.listen(onEvents);
+    stream.listen(onEvents);
   }
-  /*
   void onEvents(String data) {
-    developer.log("event:$data");
+    developer.log("EventModel:$data");
     notifyListeners();
   }
-  */
 }
 
 class RootModel extends ChangeNotifier {

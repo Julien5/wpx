@@ -8,48 +8,8 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/slidervalues.dart';
+import 'package:ui/src/widgets/small.dart';
 import 'package:ui/utils.dart';
-
-class SmallButton extends StatelessWidget {
-  final VoidCallback? callback;
-  final String text;
-  const SmallButton({super.key, this.callback, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    EdgeInsets valuePadding = const EdgeInsets.fromLTRB(15, 0, 15, 0);
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          OutlinedButton(
-            onPressed: callback,
-            style: ElevatedButton.styleFrom(
-              padding: valuePadding,
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(text, textAlign: TextAlign.center),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SmallText extends StatelessWidget {
-  final String text;
-  const SmallText({super.key, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(text, textAlign: TextAlign.left),
-    );
-  }
-}
 
 class StatisticsWidget extends StatefulWidget {
   final void Function() onPacingPointPressed;
@@ -233,7 +193,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     List<Segment> segments = root.segments();
     String pagesCountText =
         "${(segments.length / 2).ceil().toString().padLeft(2)} pages";
-    Widget table2 = Table(
+    Widget table = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
         TableRow(
@@ -295,7 +255,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [Card(elevation: 4, child: table2)],
+      children: [Card(elevation: 4, child: table)],
     );
   }
 }

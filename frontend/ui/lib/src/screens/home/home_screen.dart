@@ -1,11 +1,10 @@
 import 'dart:developer' as developer;
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
-import 'package:ui/src/routes.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/src/screens/load/load_screen.dart';
 
 class ChooseData extends StatefulWidget {
   const ChooseData({super.key});
@@ -14,36 +13,30 @@ class ChooseData extends StatefulWidget {
   State<ChooseData> createState() => _ChooseDataState();
 }
 
-class FindResult {
+class UserInput {
   List<int>? bytes;
   String? filename;
   bool demo = false;
 
-  static FindResult makeFilenameResult(String filename) {
-    var ret = FindResult();
-    ret.filename = filename;
-    return ret;
-  }
-
-  static FindResult makeBytesResult(List<int> bytes) {
-    var ret = FindResult();
+  static UserInput makeFromBytes(List<int> bytes) {
+    var ret = UserInput();
     ret.bytes = bytes;
     return ret;
   }
 
-  static FindResult makeDemoResult() {
-    var ret = FindResult();
+  static UserInput makeDemo() {
+    var ret = UserInput();
     ret.demo = true;
     return ret;
   }
 }
 
 class _ChooseDataState extends State<ChooseData> {
-  FindResult? findResult;
+  UserInput? findResult;
   String? errorMessage;
   bool loading = false;
 
-  void chooseGPX(RootModel rootModel) async {
+  void chooseGPX() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ["gpx"],
@@ -51,72 +44,37 @@ class _ChooseDataState extends State<ChooseData> {
     if (result == null) {
       return;
     }
+    if (!mounted) {
+      return;
+    }
     developer.log("result: ${result.count}");
-    FindResult? findResult;
     for (var file in result.files) {
-      if (!kIsWeb) {
-        findResult = FindResult.makeFilenameResult(file.path!);
+      List<int> bytes = [];
+      if (file.bytes == null) {
+        bytes = await File(file.path!).readAsBytes();
       } else {
-        var bytes = file.bytes!.buffer.asInt8List().toList();
-        findResult = FindResult.makeBytesResult(bytes);
+        bytes = file.bytes!.buffer.asInt8List().toList();
       }
+      onDone(UserInput.makeFromBytes(bytes));
       break;
     }
-    onDone(rootModel, findResult!);
   }
 
-  Future<void> create(RootModel model, FindResult findResult) async {
-    if (findResult.demo) {
-      await model.loadDemo(); // Await the async call
-    } else if (findResult.bytes != null) {
-      await model.loadContent(findResult.bytes!);
-    } else {
-      assert(false);
-    }
+  void chooseDemo() {
+    onDone(UserInput.makeDemo());
   }
 
-  void onDone(RootModel model, FindResult findResult) async {
-    setState(() {
-      loading = true;
-    });
-    try {
-      await create(model, findResult);
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        errorMessage = null;
-      });
-      developer.log("[push]");
-      //Navigator.of(context).pushNamed(RouteManager.settingsView);
-      Navigator.of(context).pushNamed(RouteManager.wheelView);
-    } catch (e) {
-      setState(() {
-        errorMessage = makeErrorMessage(e);
-      });
-    }
-    setState(() {
-      loading = false;
-    });
+  void gotoLoad(BuildContext ctx, UserInput userInput) {
+    Navigator.push(
+      ctx,
+      MaterialPageRoute(
+        builder: (context) => LoadProvider(userInput: userInput),
+      ),
+    );
   }
 
-  String makeErrorMessage(Object e) {
-    if (e is bridge.Error_MissingElevation) {
-      //bridge.Error_MissingElevation ev=e;
-      var index = e.index;
-      return "The track misses elevation data (at index=$index).";
-    }
-    if (e is bridge.Error_GPXHasNoSegment) {
-      return "The GPX file has no segments.";
-    }
-    if (e is bridge.Error_GPXInvalid) {
-      return "The GPX file is malformed.";
-    }
-    return "An unknown error occurred: ${e.toString()}";
-  }
-
-  void chooseDemo(RootModel model) {
-    onDone(model, FindResult.makeDemoResult());
+  void onDone(UserInput userInput) async {
+    gotoLoad(context, userInput);
   }
 
   Widget buildFromModel(BuildContext ctx, RootModel rootModel, Widget? child) {
@@ -139,7 +97,7 @@ class _ChooseDataState extends State<ChooseData> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: loading ? null : () => chooseGPX(rootModel),
+                onPressed: loading ? null : () => chooseGPX(),
                 child: const Text("GPX file"),
               ),
               if (errorMessage !=
@@ -153,13 +111,11 @@ class _ChooseDataState extends State<ChooseData> {
                 ),
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: loading ? null : () => chooseDemo(rootModel),
+                onPressed: loading ? null : () => chooseDemo(),
                 child: const Text("Demo"),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          StreamWidget(),
         ],
       ),
     );
@@ -170,54 +126,6 @@ class _ChooseDataState extends State<ChooseData> {
     return Consumer<RootModel>(
       builder: (context, rootModel, child) {
         return buildFromModel(context, rootModel, child);
-      },
-    );
-  }
-}
-
-class StreamWidget extends StatefulWidget {
-  const StreamWidget({super.key});
-
-  @override
-  State<StreamWidget> createState() => _StreamWidgetState();
-}
-
-class _StreamWidgetState extends State<StreamWidget> {
-  EventModel? model;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      try {
-        setState(() {
-          model = Provider.of<RootModel>(context, listen: false).eventModel();
-        });
-      } catch (e) {
-        developer.log("Error: RootModel not found in context. Exception: $e");
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (model == null) {
-      return Text("loading..");
-    }
-    return StreamBuilder<String>(
-      stream: model!.stream,
-      builder: (context, snap) {
-        final error = snap.error;
-        String text = "<null>";
-        if (error != null) {
-          text = error.toString();
-          developer.log("error: ${error.toString()}");
-        }
-        final data = snap.data;
-        if (data != null) {
-          text = data;
-        }
-        return Text('text=$text');
       },
     );
   }
