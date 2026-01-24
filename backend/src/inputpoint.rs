@@ -161,10 +161,12 @@ impl InputPoint {
     pub fn single_track_index(&self) -> Option<usize> {
         if self.track_projections.len() != 1 {
             log::error!(
-                "this point has {} track indices => cannot return a single index (kind={:?})",
+                "this point has {} track indices => cannot return a single index (kind={:?}) (name={})",
                 self.track_projections.len(),
-                self.kind()
+                self.kind(),
+				self.name()
             );
+            log::error!("projections: {:?}", self.track_projections);
             assert!(false);
             return None;
         }

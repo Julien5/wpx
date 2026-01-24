@@ -108,10 +108,14 @@ impl Backend {
             }
         };
 
+        // the case of mutiple projections for a single point is not handled correctly
+        // in export_points (the waypoint creation assume a single projections).
+        for c in &mut controls {
+            self.d().track.project_point(c);
+        }
         controls::insert_start_end_controls(&self.d().track, &mut controls);
+        let control_map = InputPointMap::from_vector(&controls);
 
-        let mut control_map = InputPointMap::from_vector(&controls);
-        self.d().track.project_map(&mut control_map);
         {
             let mut locked = self.d().inputpoints.write().unwrap();
             locked.maps.insert(InputType::Control, control_map);
@@ -238,6 +242,7 @@ impl Backend {
     }
 
     pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
+        // TODO: handle multiple projections.
         let mut ret = Waypoints::new();
         for p in points {
             ret.push(p.waypoint());

@@ -6,12 +6,14 @@ import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class EventModel extends ChangeNotifier {
   late Stream<String> stream;
+  List<String> events = [];
   EventModel(bridge.Bridge bridge) {
     stream = bridge.setSink();
     stream.listen(onEvents);
   }
   void onEvents(String data) {
     developer.log("EventModel:$data");
+    events.add(data);
     notifyListeners();
   }
 }

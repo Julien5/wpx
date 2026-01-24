@@ -103,6 +103,7 @@ pub fn infer_controls_from_gpx_segments(
         ));
     }
     ret.sort_by_key(|w| w.single_track_index().unwrap_or(0));
+    log::trace!("made {} controls from segments", ret.len());
     ret
 }
 
@@ -125,6 +126,7 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
         }
     }
     ret.sort_by_key(|w| w.single_track_index().unwrap_or(0));
+    log::trace!("made {} controls from waypoints", ret.len());
     ret
 }
 
@@ -273,6 +275,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
         let w = InputPoint::create_control_on_track(&track, p.index, &name, &p.osm_name);
         ret.push(w);
     }
+    log::trace!("made {} controls from OSM", ret.len());
     ret
 }
 
