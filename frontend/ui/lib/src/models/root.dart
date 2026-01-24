@@ -48,12 +48,6 @@ class RootModel extends ChangeNotifier {
     await _bridge.loadContent(content: bytes);
   }
 
-  Future<void> loadFilename(String filename) async {
-    developer.log("load $filename");
-    _trackSegment = null;
-    await _bridge.loadFilename(filename: filename);
-  }
-
   bridge.Parameters parameters() {
     return _bridge.getParameters();
   }

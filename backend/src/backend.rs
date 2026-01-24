@@ -58,7 +58,7 @@ impl Backend {
     pub fn set_sink(&mut self, sink: SenderHandler) {
         self.sender = std::sync::RwLock::new(Some(sink));
     }
-    pub async fn send(&self, data: &String) {
+    pub async fn send(&self, data: &str) {
         log::trace!("event:{}", data);
         if self.sender.read().unwrap().is_none() {
             return;
@@ -67,8 +67,8 @@ impl Backend {
     }
 
     pub async fn load_osm(&mut self) -> Result<(), Error> {
-        self.send(&"read gpx".to_string()).await;
-        self.send(&"download osm data".to_string()).await;
+        self.send("read gpx").await;
+        self.send("download osm data").await;
 
         let mut osmpoints = match osm::download_for_track(&self.d().track, &self.sender).await {
             Ok(p) => p,
@@ -120,7 +120,7 @@ impl Backend {
     }
 
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
-        self.send(&"read gpx".to_string()).await;
+        self.send("read gpx").await;
         let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
         let track = std::sync::Arc::new(track_data);
@@ -136,17 +136,17 @@ impl Backend {
         );
 
         let parameters = Parameters::default();
-        self.send(&"compute elevation".to_string()).await;
+        self.send("compute elevation").await;
         let data = BackendData {
             track,
             inputpoints,
             parameters,
         };
-        self.send(&"update waypoints".to_string()).await;
+        self.send("update waypoints").await;
         self.backend_data = Some(data);
 
         self.set_user_step_options(&self.get_parameters().user_steps_options);
-        self.send(&"done".to_string()).await;
+        self.send("done").await;
         Ok(())
     }
 

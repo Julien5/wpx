@@ -10,6 +10,7 @@ pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::Error;
 pub use tracks::inputpoint::InputType;
 pub use tracks::mercator::MercatorPoint;
+pub use tracks::parameters::ControlSource;
 pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
@@ -36,8 +37,8 @@ pub struct EventSender {
 use tracks::backend::Sender;
 
 impl Sender for EventSender {
-    fn send(&mut self, data: &String) {
-        let _ = self.sink.add(data.clone());
+    fn send(&mut self, data: &str) {
+        let _ = self.sink.add(data.to_string().clone());
     }
 }
 
@@ -82,6 +83,13 @@ pub enum _ProfileIndication {
     None,
     GainTicks,
     NumericSlope,
+}
+
+#[frb(mirror(ControlSource))]
+pub enum _ControlSource {
+    Segments,
+    Waypoints,
+    OSM,
 }
 
 #[frb(mirror(UserStepsOptions))]
@@ -155,6 +163,7 @@ pub enum _Error {
     GPXNotFound,
     GPXInvalid,
     GPXHasNoSegment,
+    OSMDownloadFailed,
     MissingElevation { index: usize },
 }
 
@@ -172,8 +181,11 @@ impl Bridge {
         self.backend.set_sink(cell);
         Ok(())
     }
-    pub async fn load_filename(&mut self, filename: &str) -> Result<(), Error> {
-        self.backend.load_filename(filename).await
+    pub async fn load_controls(&mut self, source: ControlSource) -> Result<usize, Error> {
+        self.backend.load_controls(source).await
+    }
+    pub async fn load_osm(&mut self) -> Result<(), Error> {
+        self.backend.load_osm().await
     }
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
         self.backend.load_content(content).await

@@ -1,12 +1,12 @@
 pub trait Sender {
-    fn send(&mut self, data: &String);
+    fn send(&mut self, data: &str);
 }
 
 pub type SenderHandler = Box<dyn Sender + Send + Sync>;
 pub type SenderHandlerLock = std::sync::RwLock<Option<SenderHandler>>;
 
 #[cfg(not(target_arch = "wasm32"))]
-pub async fn send_worker(handler: &SenderHandlerLock, data: &String) {
+pub async fn send_worker(handler: &SenderHandlerLock, data: &str) {
     match handler.write() {
         Ok(mut lock) => match lock.as_mut() {
             Some(sender) => {
@@ -23,7 +23,7 @@ pub async fn send_worker(handler: &SenderHandlerLock, data: &String) {
 }
 
 #[cfg(target_arch = "wasm32")]
-pub async fn send_worker(handler: &SenderHandlerLock, data: &String) {
+pub async fn send_worker(handler: &SenderHandlerLock, data: &str) {
     let _ = handler.write().unwrap().as_mut().unwrap().send(&data);
     let tick = std::time::Duration::from_millis(0);
     let _ = wasmtimer::tokio::sleep(tick).await;
@@ -34,7 +34,7 @@ pub async fn send_worker(handler: &SenderHandlerLock, data: &String) {
 pub struct ConsoleEventSender {}
 
 impl Sender for ConsoleEventSender {
-    fn send(&mut self, data: &String) {
+    fn send(&mut self, data: &str) {
         println!("EVENT: {}", data);
     }
 }
