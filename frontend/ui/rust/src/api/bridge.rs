@@ -2,6 +2,7 @@
 
 use flutter_rust_bridge::frb;
 
+use std::collections::BTreeSet;
 use std::collections::HashSet;
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
@@ -143,7 +144,7 @@ pub struct _WaypointInfo {
 pub struct _Waypoint {
     pub wgs84: WGS84Point,
     pub euclidean: MercatorPoint,
-    pub track_index: Option<usize>,
+    pub track_index: BTreeSet<usize>,
     pub origin: InputType,
     pub name: String,
     pub description: String,

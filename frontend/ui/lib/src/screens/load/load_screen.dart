@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
@@ -85,6 +86,7 @@ class GPXCard extends StatelessWidget {
       inner = Table(
         columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
         children: [
+          TableRow(children: [SmallText(text: "GPX"), SmallText(text: "")]),
           TableRow(
             children: [
               SmallText(text: "Length"),
@@ -104,6 +106,28 @@ class GPXCard extends StatelessWidget {
   }
 }
 
+class ControlsCard extends StatelessWidget {
+  const ControlsCard({super.key});
+
+  @override
+  Widget build(BuildContext ctx) {
+    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    Widget inner = Table(
+      columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
+      children: [
+        TableRow(children: [SmallText(text: "Controls"), SmallText(text: "")]),
+        TableRow(
+          children: [
+            SmallText(text: "Number"),
+            SmallText(text: "${model.controlsCount()}"),
+          ],
+        ),
+      ],
+    );
+    return Card(elevation: 4, child: inner);
+  }
+}
+
 class LoadScreen extends StatelessWidget {
   const LoadScreen({super.key});
 
@@ -119,6 +143,7 @@ class LoadScreen extends StatelessWidget {
         child: Column(
           children: [
             GPXCard(),
+            if (model.hasDone(Job.controls)) ControlsCard(),
             ElevatedButton(
               onPressed: () => {gotoWheel(ctx)},
               child: Text("OK"),
@@ -184,6 +209,10 @@ class LoadScreenModel extends ChangeNotifier {
 
   bool needsStart() {
     return running == null && done.isEmpty;
+  }
+
+  bool hasDone(Job job) {
+    return done.contains(job);
   }
 
   static Job next(Job old) {
@@ -260,6 +289,14 @@ class LoadScreenModel extends ChangeNotifier {
     }
     developer.log("bridge loaded");
     return root.statistics();
+  }
+
+  int controlsCount() {
+    List<Waypoint> w = root.getBridge().getWaypoints(
+      segment: root.trackSegment(),
+      kinds: {InputType.control},
+    );
+    return w.length;
   }
 
   void onChange(RootModel root, EventModel event) {
