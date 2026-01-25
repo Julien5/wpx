@@ -70,11 +70,11 @@ impl Backend {
         log::trace!("download osm data");
         self.send("download osm data");
 
-        let tick = tokio::time::Duration::from_millis(1000);
+        /*let tick = tokio::time::Duration::from_millis(1000);
         for i in 0..5 {
             self.send(&format!("download {}", i));
             tokio::time::sleep(tick).await;
-        }
+        }*/
 
         let mut osmpoints = match osm::download_for_track(&self.d().track, &self.sender).await {
             Ok(p) => p,
