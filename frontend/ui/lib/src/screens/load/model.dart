@@ -124,9 +124,9 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   int controlsCount() {
-    List<Waypoint> w = root.getBridge().getWaypoints(
+    List<bridge.Waypoint> w = root.getBridge().getWaypoints(
       segment: root.trackSegment(),
-      kinds: {InputType.control},
+      kinds: {bridge.InputType.control},
     );
     return w.length;
   }
