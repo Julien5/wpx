@@ -366,7 +366,6 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   void startJob(Job job) {
-    events.take();
     developer.log("start $job");
     makeFuture(job);
     developer.log("future created");
@@ -415,8 +414,8 @@ class LoadScreenModel extends ChangeNotifier {
     return w.length;
   }
 
-  void onChange(RootModel root, EventModel event) {
-    developer.log("LoadScreenModel::onChange");
+  void onRootChanged(RootModel root) {
+    developer.log("LoadScreenModel::onRootChanged");
     notifyListeners();
   }
 }
@@ -432,7 +431,7 @@ class LoadScreenProviders extends MultiProvider {
          providers: [
            ChangeNotifierProvider.value(value: root),
            ChangeNotifierProvider.value(value: root.eventModel()),
-           ChangeNotifierProxyProvider2<RootModel, EventModel, LoadScreenModel>(
+           ChangeNotifierProxyProvider<RootModel, LoadScreenModel>(
              create: (context) {
                RootModel root = Provider.of<RootModel>(context, listen: false);
                EventModel events = Provider.of<EventModel>(
@@ -445,10 +444,8 @@ class LoadScreenProviders extends MultiProvider {
                  userInput: userInput,
                );
              },
-             update: (context, root, events, loadscreen) {
-               // the problem with this function is that we cannot distinguish
-               // between changes in EventModel and RootModel
-               loadscreen!.onChange(root, events);
+             update: (context, root, loadscreen) {
+               loadscreen!.onRootChanged(root);
                return loadscreen;
              },
            ),

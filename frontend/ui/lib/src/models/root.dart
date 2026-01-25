@@ -12,26 +12,12 @@ class EventModel extends ChangeNotifier {
       StreamController<String>.broadcast();
   Stream<String> get broadcastStream => _broadcaster.stream;
 
-  String? _lastEvent;
-
   EventModel(bridge.Bridge bridge) {
     _stream = bridge.setSink();
     _stream.listen((data) {
       developer.log("EventModel.listen:$data");
       _broadcaster.sink.add(data);
     });
-  }
-
-  void onEvents(String data) {
-    _lastEvent = data;
-    developer.log("EventModel.onEvents:$data");
-    notifyListeners();
-  }
-
-  String? take() {
-    String copy = "$_lastEvent";
-    _lastEvent = null;
-    return copy;
   }
 }
 
