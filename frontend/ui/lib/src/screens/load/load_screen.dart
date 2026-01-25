@@ -1,107 +1,23 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/routes.dart';
-import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/widgets/small.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class EventWidget extends StatefulWidget {
-  final LoadScreenModel screenModel;
-  final Job target;
-  final String? forcedString;
-  const EventWidget({
-    super.key,
-    required this.screenModel,
-    required this.target,
-    this.forcedString,
-  });
-
-  @override
-  State<EventWidget> createState() => _EventWidgetState();
-}
-
-class _EventWidgetState extends State<EventWidget> {
-  EventModel? model;
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.forcedString != null) {
-      return SmallText(text: widget.forcedString!);
-    }
-    EventModel model = Provider.of<EventModel>(context, listen: false);
-    return StreamBuilder<String>(
-      stream: model.broadcastStream,
-      builder: (context, snap) {
-        final error = snap.error;
-        String event = "....";
-        if (error != null) {
-          event = error.toString();
-          developer.log("error: ${error.toString()}");
-        }
-        final data = snap.data;
-        if (data != null) {
-          event = data;
-        }
-        return SmallText(
-          text: filterEvent(event, widget.target, widget.screenModel),
-        );
-      },
-    );
-  }
-}
-
-String safeLast(String? event) {
-  if (event == null) {
-    return "...";
-  }
-  //developer.log("====> ${event.events.last} ($n)");
-  return event;
-}
-
-String errorString(Error e) {
-  if (e is bridge.Error_MissingElevation) {
-    //var index = e.index;
-    return "The track misses elevation data.";
-  }
-  if (e is bridge.Error_GPXHasNoSegment) {
-    return "no segment in gpx";
-  }
-  if (e is bridge.Error_GPXInvalid) {
-    return "invalid gpx file";
-  }
-  if (e is bridge.Error_OSMDownloadFailed) {
-    return "download failed";
-  }
-  return "";
-}
-
-String filterEvent(String? event, Job targetJob, LoadScreenModel screenModel) {
-  if (screenModel.errors.containsKey(targetJob)) {
-    //return "error: [${errorString(screenModel.errors[targetJob]!)}]";
-    return errorString(screenModel.errors[targetJob]!);
-  }
-  if (screenModel.running != null && screenModel.running! == targetJob) {
-    //return "event: [${safeLast(eventModel)}]";
-    return safeLast(event);
-  }
-  if (screenModel.hasDone(targetJob)) {
-    return "done";
-  }
-  return "..";
-}
+import 'eventwidget.dart';
+import 'model.dart';
 
 class GPXStrings {
   final LoadScreenModel screenModel;
 
   GPXStrings({required this.screenModel});
 
-  SegmentStatistics? statistics;
-  void setData(SegmentStatistics s) {
+  bridge.SegmentStatistics? statistics;
+  void setData(bridge.SegmentStatistics s) {
     statistics = s;
   }
 
@@ -233,30 +149,49 @@ String title(LoadScreenModel model) {
   return "Loading...";
 }
 
-class LoadScreen extends StatelessWidget {
-  const LoadScreen({super.key});
+class BodyWidget extends StatelessWidget {
+  const BodyWidget({super.key});
 
   void gotoWheel(BuildContext context) {
     Navigator.of(context).pushNamed(RouteManager.wheelView);
   }
 
+  @override
+  Widget build(BuildContext ctx) {
+    Widget vspace = SizedBox(height: 20);
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: 500),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              GPXCard(),
+              vspace,
+              ControlsCard(),
+              vspace,
+              OSMCard(),
+              vspace,
+              ElevatedButton(
+                onPressed: () => {gotoWheel(ctx)},
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LoadScreen extends StatelessWidget {
+  const LoadScreen({super.key});
+
   Widget buildScaffold(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     return Scaffold(
       appBar: AppBar(title: Text(title(model))),
-      body: Center(
-        child: Column(
-          children: [
-            GPXCard(),
-            ControlsCard(),
-            OSMCard(),
-            ElevatedButton(
-              onPressed: () => {gotoWheel(ctx)},
-              child: Text("OK"),
-            ),
-          ],
-        ),
-      ),
+      body: BodyWidget(),
     );
   }
 
@@ -288,135 +223,6 @@ class LoadScreen extends StatelessWidget {
       onVisibilityChanged: (info) => onVisibilityChanged(ctx, info),
       child: buildScaffold(ctx),
     );
-  }
-}
-
-enum Job { gpx, osm, controls, none }
-
-class FutureJob {
-  final Future<void> future;
-  final Job job;
-
-  FutureJob({required this.future, required this.job});
-}
-
-class LoadScreenModel extends ChangeNotifier {
-  Set<Job> done = {};
-  Map<Job, Error> errors = {};
-  Job? running;
-  final RootModel root;
-  final EventModel events;
-  final UserInput userInput;
-  FutureJob? runningFuture;
-  LoadScreenModel({
-    required this.root,
-    required this.events,
-    required this.userInput,
-  });
-
-  bool needsStart() {
-    return running == null && done.isEmpty;
-  }
-
-  bool hasDone(Job job) {
-    return done.contains(job);
-  }
-
-  static Job next(Job old) {
-    if (old == Job.gpx) {
-      return Job.controls;
-    }
-    if (old == Job.controls) {
-      return Job.osm;
-    }
-    return Job.none;
-  }
-
-  void _makeFuture(Job job) {
-    Future<void>? future;
-    if (job == Job.gpx) {
-      if (userInput.demo) {
-        future = root.loadDemo();
-      } else {
-        assert(userInput.bytes != null);
-        future = root.loadContent(userInput.bytes!);
-      }
-    } else if (job == Job.osm) {
-      future = root.getBridge().loadOsm();
-    } else if (job == Job.controls) {
-      future = root.getBridge().loadControls(source: ControlSource.waypoints);
-    } else {
-      assert(false);
-    }
-    future!.then((_) => onCompleted(job)).catchError((error) {
-      onError(job, error);
-    });
-    runningFuture = FutureJob(future: future, job: job);
-  }
-
-  void makeFuture(Job job) {
-    running = job;
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _makeFuture(job);
-    });
-  }
-
-  void start() {
-    startJob(Job.gpx);
-  }
-
-  void startJob(Job job) {
-    developer.log("start $job");
-    makeFuture(job);
-    developer.log("future created");
-    notifyListeners();
-  }
-
-  void onCompleted(Job job) {
-    running = null;
-    done.add(job);
-    developer.log("notify");
-    notifyListeners();
-    Job nextJob = next(job);
-    if (nextJob != Job.none) {
-      Future.delayed(const Duration(milliseconds: 250), () {
-        startJob(nextJob);
-      });
-    }
-  }
-
-  bool doneAll() {
-    return done.contains(Job.gpx) &&
-        done.contains(Job.controls) &&
-        done.contains(Job.osm);
-  }
-
-  void onError(Job job, Error e) {
-    developer.log("error: $e");
-    errors[job] = e;
-    notifyListeners();
-  }
-
-  SegmentStatistics? statistics() {
-    if (!root.getBridge().isLoaded()) {
-      developer.log("bridge not loaded");
-      return null;
-    }
-    developer.log("bridge loaded");
-    return root.statistics();
-  }
-
-  int controlsCount() {
-    List<Waypoint> w = root.getBridge().getWaypoints(
-      segment: root.trackSegment(),
-      kinds: {InputType.control},
-    );
-    return w.length;
-  }
-
-  void onRootChanged(RootModel root) {
-    developer.log("LoadScreenModel::onRootChanged");
-    notifyListeners();
   }
 }
 

@@ -119,7 +119,7 @@ impl Backend {
         for c in &mut controls {
             self.d().track.project_point(c);
         }
-        controls::insert_start_end_controls(&self.d().track, &mut controls);
+        // controls::insert_start_end_controls(&self.d().track, &mut controls);
         let control_map = InputPointMap::from_vector(&controls);
 
         {
