@@ -93,6 +93,11 @@ class LoadScreenModel extends ChangeNotifier {
   void onCompleted(Job job) {
     if (job == Job.gpx) {
       _statistics = root.statistics();
+    } else if (job == Job.controls) {
+      _controls = root.getBridge().getWaypoints(
+        segment: root.trackSegment(),
+        kinds: {bridge.InputType.control},
+      );
     }
     running = null;
     done.add(job);
@@ -122,12 +127,10 @@ class LoadScreenModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<bridge.Waypoint>? _controls;
   int controlsCount() {
-    List<bridge.Waypoint> w = root.getBridge().getWaypoints(
-      segment: root.trackSegment(),
-      kinds: {bridge.InputType.control},
-    );
-    return w.length;
+    assert(done.contains(Job.controls));
+    return _controls!.length;
   }
 
   String _lastEvent = "";
