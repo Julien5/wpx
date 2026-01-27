@@ -77,7 +77,14 @@ impl Backend {
         }*/
 
         let mut osmpoints = match osm::download_for_track(&self.d().track, &self.sender).await {
-            Ok(p) => p,
+            Ok(p) => {
+                /*
+                    if std::path::Path::new(&"/tmp/force_error").exists() {
+                        return Err(Error::OSMDownloadFailed);
+                }
+                */
+                p
+            }
             Err(e) => {
                 log::error!("OSM download failed {:?}", e);
                 return Err(Error::OSMDownloadFailed);

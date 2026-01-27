@@ -20,7 +20,11 @@ class SmallButton extends StatelessWidget {
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: Text(text, textAlign: TextAlign.center),
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -36,7 +40,11 @@ class SmallText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text(text, textAlign: TextAlign.left),
+      child: Text(
+        text,
+        textAlign: TextAlign.left,
+        style: TextStyle(fontSize: 12),
+      ),
     );
   }
 }
