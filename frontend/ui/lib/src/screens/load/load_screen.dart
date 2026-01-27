@@ -116,20 +116,33 @@ class ControlsCard extends StatelessWidget {
 class OSMCard extends StatelessWidget {
   const OSMCard({super.key});
 
+  void onRetryPressed(LoadScreenModel model) {
+    model.retry(Job.osm);
+  }
+
   @override
   Widget build(BuildContext ctx) {
     developer.log("OSMCard build ");
-    LoadScreenModel _ = Provider.of<LoadScreenModel>(ctx);
+    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+
+    Widget row = ScreenEventWidget(target: Job.osm);
+    if (model.error(Job.osm) != null) {
+      row = Row(
+        children: [
+          ScreenEventWidget(target: Job.osm),
+          ElevatedButton(
+            onPressed: () => onRetryPressed(model),
+            child: const Text("retry"),
+          ),
+        ],
+      );
+    }
+
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
         TableRow(children: [SmallText(text: "OSM"), SmallText(text: "")]),
-        TableRow(
-          children: [
-            SmallText(text: "Status"),
-            ScreenEventWidget(target: Job.osm),
-          ],
-        ),
+        TableRow(children: [SmallText(text: "Status"), row]),
       ],
     );
     return Card(elevation: 4, child: inner);

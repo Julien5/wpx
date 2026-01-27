@@ -83,6 +83,12 @@ class LoadScreenModel extends ChangeNotifier {
     startJob(Job.gpx);
   }
 
+  void retry(Job job) {
+    done.remove(job);
+    _failed.remove(job);
+    startJob(job);
+  }
+
   void startJob(Job job) {
     makeFuture(job);
     developer.log("future created");
