@@ -34,7 +34,7 @@ String safeLast(String? event) {
   return event;
 }
 
-String errorString(bridge.Error e) {
+String errorString(Error e) {
   if (e is bridge.Error_MissingElevation) {
     //var index = e.index;
     return "The track misses elevation data.";
@@ -48,7 +48,8 @@ String errorString(bridge.Error e) {
   if (e is bridge.Error_OSMDownloadFailed) {
     return "download failed";
   }
-  return "";
+  debugPrint(e.toString());
+  return "unknown error";
 }
 
 String filterEvent(String? event, Job targetJob, LoadScreenModel screenModel) {
