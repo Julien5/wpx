@@ -17,7 +17,7 @@ class FutureJob {
 
 class LoadScreenModel extends ChangeNotifier {
   Set<Job> done = {};
-  final Map<Job, bridge.Error> _failed = {};
+  final Map<Job, Error> _failed = {};
   Job? running;
 
   final RootModel root;
@@ -28,7 +28,15 @@ class LoadScreenModel extends ChangeNotifier {
     required this.root,
     required this.events,
     required this.userInput,
-  });
+  }) {
+    debugPrint('LoadScreenModel created');
+  }
+
+  @override
+  void dispose() {
+    debugPrint('LoadScreenModel disposed');
+    super.dispose();
+  }
 
   bool needsStart() {
     return running == null && done.isEmpty;
@@ -127,7 +135,7 @@ class LoadScreenModel extends ChangeNotifier {
         done.contains(Job.osm);
   }
 
-  void onError(Job job, bridge.Error e) {
+  void onError(Job job, Error e) {
     developer.log("error: $e");
     _failed[job] = e;
     notifyListeners();
@@ -151,7 +159,7 @@ class LoadScreenModel extends ChangeNotifier {
     return _lastEvent;
   }
 
-  bridge.Error? error(Job job) {
+  Error? error(Job job) {
     if (!_failed.containsKey(job)) {
       return null;
     }

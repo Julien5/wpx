@@ -191,9 +191,14 @@ class BodyWidget extends StatelessWidget {
   }
 }
 
-class LoadScreen extends StatelessWidget {
+class LoadScreen extends StatefulWidget {
   const LoadScreen({super.key});
 
+  @override
+  State<LoadScreen> createState() => _LoadScreenState();
+}
+
+class _LoadScreenState extends State<LoadScreen> {
   Widget buildScaffold(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     return Scaffold(
@@ -202,34 +207,23 @@ class LoadScreen extends StatelessWidget {
     );
   }
 
-  void onVisibilityChanged(
-    BuildContext context,
-    VisibilityInfo visibilityInfo,
-  ) {
-    if (!context.mounted) {
-      return;
-    }
-    var visiblePercentage = visibilityInfo.visibleFraction * 100;
-    if (visiblePercentage == 100) {
-      LoadScreenModel model = Provider.of<LoadScreenModel>(
-        context,
-        listen: false,
-      );
-      // The screen is now 100% visible and the transition is done
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final model = context.read<LoadScreenModel>();
       if (model.needsStart()) {
         model.start();
       }
-    }
+    });
   }
 
   @override
   Widget build(BuildContext ctx) {
-    Provider.of<LoadScreenModel>(ctx);
-    return VisibilityDetector(
-      key: Key('LoadingScreen'),
-      onVisibilityChanged: (info) => onVisibilityChanged(ctx, info),
-      child: buildScaffold(ctx),
-    );
+    LoadScreenModel _ = Provider.of<LoadScreenModel>(ctx);
+    debugPrint("LoadScreen build");
+    return buildScaffold(ctx);
   }
 }
 
