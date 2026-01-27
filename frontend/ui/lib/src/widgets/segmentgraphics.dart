@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
@@ -111,21 +110,17 @@ class SegmentGraphics extends StatefulWidget {
 class _SegmentGraphicsState extends State<SegmentGraphics>
     with AutomaticKeepAliveClientMixin {
   @override
-  bool get wantKeepAlive => true; // This is crucial!
+  bool get wantKeepAlive => true;
 
   Map<TrackData, TrackView> widgets = {};
 
   @override
-  void initState() {
-    super.initState();
-    assert(widgets.isEmpty);
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _initState();
-    });
-  }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widgets.isNotEmpty) {
+      return;
+    }
 
-  void _initState() {
-    assert(widgets.isEmpty);
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
       context,
       listen: false,

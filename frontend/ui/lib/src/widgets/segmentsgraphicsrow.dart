@@ -1,7 +1,6 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
@@ -87,15 +86,6 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
   List<SegmentModel> segments = [];
   RootModel? root;
 
-  @override
-  void initState() {
-    super.initState();
-    developer.log("initState");
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _initState();
-    });
-  }
-
   void _onRootChanged() {
     RootModel root = Provider.of<RootModel>(context, listen: false);
     List<Segment> newSegments = root.segments();
@@ -115,7 +105,9 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     setState(() {});
   }
 
-  void _initState() {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     if (root == null) {
       root = Provider.of<RootModel>(context, listen: false);
       root!.addListener(_onRootChanged);

@@ -6,7 +6,6 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/widgets/small.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 import 'eventwidget.dart';
 import 'model.dart';
