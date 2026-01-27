@@ -17,7 +17,7 @@ class FutureJob {
 
 class LoadScreenModel extends ChangeNotifier {
   Set<Job> done = {};
-  Map<Job, bridge.Error> errors = {};
+  final Map<Job, bridge.Error> _failed = {};
   Job? running;
 
   final RootModel root;
@@ -118,17 +118,16 @@ class LoadScreenModel extends ChangeNotifier {
 
   void onError(Job job, bridge.Error e) {
     developer.log("error: $e");
-    errors[job] = e;
+    _failed[job] = e;
     notifyListeners();
   }
 
   int controlsCount() {
-    return 1; /*
     List<bridge.Waypoint> w = root.getBridge().getWaypoints(
       segment: root.trackSegment(),
       kinds: {bridge.InputType.control},
     );
-    return w.length;*/
+    return w.length;
   }
 
   String _lastEvent = "";
@@ -141,5 +140,12 @@ class LoadScreenModel extends ChangeNotifier {
 
   String lastEvent() {
     return _lastEvent;
+  }
+
+  bridge.Error? error(Job job) {
+    if (!_failed.containsKey(job)) {
+      return null;
+    }
+    return _failed[job]!;
   }
 }

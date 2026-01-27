@@ -210,7 +210,7 @@ impl Bridge {
         self.backend.generateZip().await
     }
     #[frb(sync)]
-    pub fn get_waypoints(&mut self, segment: &Segment, kinds: HashSet<InputType>) -> Vec<Waypoint> {
+    pub fn get_waypoints(&self, segment: &Segment, kinds: HashSet<InputType>) -> Vec<Waypoint> {
         self.backend.get_waypoints(&segment._impl, kinds)
     }
     #[frb(sync)]
