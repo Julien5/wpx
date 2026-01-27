@@ -1,54 +1,28 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/widgets/small.dart';
 
 import 'model.dart';
 
-class EventWidget extends StatefulWidget {
-  final LoadScreenModel screenModel;
+class ScreenEventWidget extends StatefulWidget {
   final Job target;
   final String? forcedString;
-  const EventWidget({
-    super.key,
-    required this.screenModel,
-    required this.target,
-    this.forcedString,
-  });
+  const ScreenEventWidget({super.key, required this.target, this.forcedString});
 
   @override
-  State<EventWidget> createState() => _EventWidgetState();
+  State<ScreenEventWidget> createState() => _ScreenEventWidgetState();
 }
 
-class _EventWidgetState extends State<EventWidget> {
-  EventModel? model;
-
+class _ScreenEventWidgetState extends State<ScreenEventWidget> {
   @override
   Widget build(BuildContext context) {
+    LoadScreenModel screenModel = Provider.of<LoadScreenModel>(context);
     if (widget.forcedString != null) {
       return SmallText(text: widget.forcedString!);
     }
-    EventModel model = Provider.of<EventModel>(context, listen: false);
-    return StreamBuilder<String>(
-      stream: model.broadcastStream,
-      builder: (context, snap) {
-        final error = snap.error;
-        String event = "....";
-        if (error != null) {
-          event = error.toString();
-          developer.log("error: ${error.toString()}");
-        }
-        final data = snap.data;
-        if (data != null) {
-          event = data;
-        }
-        return SmallText(
-          text: filterEvent(event, widget.target, widget.screenModel),
-        );
-      },
+    return SmallText(
+      text: filterEvent(screenModel.lastEvent(), widget.target, screenModel),
     );
   }
 }
@@ -57,7 +31,6 @@ String safeLast(String? event) {
   if (event == null) {
     return "...";
   }
-  //developer.log("====> ${event.events.last} ($n)");
   return event;
 }
 

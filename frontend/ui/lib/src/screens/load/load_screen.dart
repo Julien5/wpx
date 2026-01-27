@@ -46,7 +46,7 @@ class GPXCard extends StatelessWidget {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     GPXStrings strings = GPXStrings(screenModel: model);
     if (model.hasDone(Job.gpx)) {
-      strings.setData(model.statistics()!);
+      strings.setData(model.root.getBridge().statistics());
     }
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
@@ -55,18 +55,13 @@ class GPXCard extends StatelessWidget {
         TableRow(
           children: [
             SmallText(text: "Length"),
-            EventWidget(
-              screenModel: model,
-              target: Job.gpx,
-              forcedString: strings.km(),
-            ),
+            ScreenEventWidget(target: Job.gpx, forcedString: strings.km()),
           ],
         ),
         TableRow(
           children: [
             SmallText(text: "Elevation"),
-            EventWidget(
-              screenModel: model,
+            ScreenEventWidget(
               target: Job.gpx,
               forcedString: strings.elevation(),
             ),
@@ -106,8 +101,7 @@ class ControlsCard extends StatelessWidget {
         TableRow(
           children: [
             SmallText(text: "Number"),
-            EventWidget(
-              screenModel: model,
+            ScreenEventWidget(
               target: Job.controls,
               forcedString: strings.count(),
             ),
@@ -126,6 +120,11 @@ class OSMCard extends StatelessWidget {
   Widget build(BuildContext ctx) {
     developer.log("OSMCard build ");
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    if (model.hasDone(Job.gpx)) {
+      developer.log("[1]");
+      model.root.getBridge().statistics();
+      developer.log("[2]");
+    }
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
@@ -133,7 +132,7 @@ class OSMCard extends StatelessWidget {
         TableRow(
           children: [
             SmallText(text: "Status"),
-            EventWidget(screenModel: model, target: Job.osm),
+            ScreenEventWidget(target: Job.osm),
           ],
         ),
       ],
@@ -237,7 +236,7 @@ class LoadScreenProviders extends MultiProvider {
          providers: [
            ChangeNotifierProvider.value(value: root),
            ChangeNotifierProvider.value(value: root.eventModel()),
-           ChangeNotifierProxyProvider<RootModel, LoadScreenModel>(
+           ChangeNotifierProxyProvider2<RootModel, EventModel, LoadScreenModel>(
              create: (context) {
                RootModel root = Provider.of<RootModel>(context, listen: false);
                EventModel events = Provider.of<EventModel>(
@@ -250,8 +249,8 @@ class LoadScreenProviders extends MultiProvider {
                  userInput: userInput,
                );
              },
-             update: (context, root, loadscreen) {
-               loadscreen!.onRootChanged(root);
+             update: (context, root, event, loadscreen) {
+               loadscreen!.onChanged(root, event);
                return loadscreen;
              },
            ),

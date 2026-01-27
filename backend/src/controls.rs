@@ -171,6 +171,7 @@ pub fn has_startend_controls(track: &Track, controls: &Vec<InputPoint>) -> (bool
     (has_start, has_end)
 }
 
+#[allow(dead_code)]
 pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) {
     let length = track.len();
     let (has_start, has_end) = has_startend_controls(track, controls);

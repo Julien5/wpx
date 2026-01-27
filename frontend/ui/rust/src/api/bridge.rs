@@ -188,10 +188,10 @@ impl Bridge {
         self.backend.set_sink(cell);
         Ok(())
     }
-    pub async fn load_controls(&mut self, source: ControlSource) -> Result<usize, Error> {
+    pub async fn load_controls(&self, source: ControlSource) -> Result<usize, Error> {
         self.backend.load_controls(source).await
     }
-    pub async fn load_osm(&mut self) -> Result<(), Error> {
+    pub async fn load_osm(&self) -> Result<(), Error> {
         self.backend.load_osm().await
     }
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {

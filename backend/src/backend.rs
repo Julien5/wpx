@@ -66,7 +66,7 @@ impl Backend {
         event::send_worker(&self.sender, data);
     }
 
-    pub async fn load_osm(&mut self) -> Result<(), Error> {
+    pub async fn load_osm(&self) -> Result<(), Error> {
         log::trace!("download osm data");
         self.send("download osm data");
 
@@ -93,7 +93,7 @@ impl Backend {
         Ok(())
     }
 
-    pub async fn load_controls(&mut self, source: ControlSource) -> Result<usize, Error> {
+    pub async fn load_controls(&self, source: ControlSource) -> Result<usize, Error> {
         let inputpoints = self.d().inputpoints.read();
         let waypoints_vector = inputpoints
             .unwrap()

@@ -83,7 +83,6 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   void startJob(Job job) {
-    developer.log("start $job");
     makeFuture(job);
     developer.log("future created");
     notifyListeners();
@@ -114,25 +113,24 @@ class LoadScreenModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bridge.SegmentStatistics? statistics() {
-    if (!root.getBridge().isLoaded()) {
-      developer.log("bridge not loaded");
-      return null;
-    }
-    developer.log("bridge loaded");
-    return root.statistics();
-  }
-
   int controlsCount() {
+    return 1; /*
     List<bridge.Waypoint> w = root.getBridge().getWaypoints(
       segment: root.trackSegment(),
       kinds: {bridge.InputType.control},
     );
-    return w.length;
+    return w.length;*/
   }
 
-  void onRootChanged(RootModel root) {
+  String _lastEvent = "";
+
+  void onChanged(RootModel root, EventModel event) {
     developer.log("LoadScreenModel::onRootChanged");
+    _lastEvent = event.get();
     notifyListeners();
+  }
+
+  String lastEvent() {
+    return _lastEvent;
   }
 }
