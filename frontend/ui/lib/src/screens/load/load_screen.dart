@@ -164,6 +164,11 @@ class BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
+    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    void Function()? onPressed;
+    if (model.doneAll()) {
+      onPressed = () => {gotoWheel(ctx)};
+    }
     Widget vspace = SizedBox(height: 20);
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: 500),
@@ -178,10 +183,7 @@ class BodyWidget extends StatelessWidget {
               vspace,
               OSMCard(),
               vspace,
-              ElevatedButton(
-                onPressed: () => {gotoWheel(ctx)},
-                child: Text("OK"),
-              ),
+              ElevatedButton(onPressed: onPressed, child: Text("OK")),
             ],
           ),
         ),

@@ -31,10 +31,12 @@ class LoadScreenModel extends ChangeNotifier {
   }) {
     debugPrint('LoadScreenModel created');
   }
-
+  bool _isDisposed = false;
   @override
   void dispose() {
-    debugPrint('LoadScreenModel disposed');
+    _isDisposed = true;
+    // TODO: cancel osm task if it is running, otherwise it
+    // blocks as soon as a &mut self function is called.
     super.dispose();
   }
 
@@ -105,6 +107,9 @@ class LoadScreenModel extends ChangeNotifier {
 
   bridge.SegmentStatistics? _statistics;
   void onCompleted(Job job) {
+    if (_isDisposed) {
+      return;
+    }
     if (job == Job.gpx) {
       _statistics = root.statistics();
     } else if (job == Job.controls) {
@@ -136,6 +141,9 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   void onError(Job job, Error e) {
+    if (_isDisposed) {
+      return;
+    }
     developer.log("error: $e");
     _failed[job] = e;
     notifyListeners();
