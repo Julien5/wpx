@@ -19,6 +19,7 @@ class LoadScreenModel extends ChangeNotifier {
   Set<Job> done = {};
   Map<Job, bridge.Error> errors = {};
   Job? running;
+
   final RootModel root;
   final EventModel events;
   final UserInput userInput;
@@ -88,7 +89,11 @@ class LoadScreenModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bridge.SegmentStatistics? _statistics;
   void onCompleted(Job job) {
+    if (job == Job.gpx) {
+      _statistics = root.statistics();
+    }
     running = null;
     done.add(job);
     developer.log("notify");
@@ -99,6 +104,10 @@ class LoadScreenModel extends ChangeNotifier {
         startJob(nextJob);
       });
     }
+  }
+
+  bridge.SegmentStatistics statistics() {
+    return _statistics!;
   }
 
   bool doneAll() {

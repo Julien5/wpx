@@ -46,7 +46,7 @@ class GPXCard extends StatelessWidget {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     GPXStrings strings = GPXStrings(screenModel: model);
     if (model.hasDone(Job.gpx)) {
-      strings.setData(model.root.getBridge().statistics());
+      strings.setData(model.statistics());
     }
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
@@ -119,12 +119,7 @@ class OSMCard extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     developer.log("OSMCard build ");
-    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
-    if (model.hasDone(Job.gpx)) {
-      developer.log("[1]");
-      model.root.getBridge().statistics();
-      developer.log("[2]");
-    }
+    LoadScreenModel _ = Provider.of<LoadScreenModel>(ctx);
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [

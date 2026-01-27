@@ -53,7 +53,6 @@ String errorString(bridge.Error e) {
 
 String filterEvent(String? event, Job targetJob, LoadScreenModel screenModel) {
   if (screenModel.errors.containsKey(targetJob)) {
-    //return "error: [${errorString(screenModel.errors[targetJob]!)}]";
     return errorString(screenModel.errors[targetJob]!);
   }
   if (screenModel.running != null && screenModel.running! == targetJob) {

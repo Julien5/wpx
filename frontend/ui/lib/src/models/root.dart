@@ -24,9 +24,7 @@ class EventModel extends ChangeNotifier {
   }
 
   String get() {
-    String copy = event;
-    //event = "";
-    return copy;
+    return event;
   }
 }
 
