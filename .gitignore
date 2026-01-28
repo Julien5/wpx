@@ -14,8 +14,6 @@ a.out
 screenlog.0
 
 delme
-*.pdf
-*.png
 
 Cargo.lock
 .dart_tool
