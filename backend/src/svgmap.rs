@@ -130,7 +130,10 @@ impl MapData {
                 let id = format!("{}/wp/circle", k);
                 let circle = draw_for_map(&p, id.as_str(), &w);
                 let mut label = Label::new();
-                label.set_text(&drawings::make_label_text(&w, segment));
+                // on the map, all projections are equivalent
+                assert!(w.track_projections.first().is_some());
+                let proj = w.track_projections.first().unwrap();
+                label.set_text(&drawings::make_label_text(&w, &proj, &segment));
                 label.id = format!("{}/wp/text", k);
                 feature_packet.push(PointFeature {
                     circle,

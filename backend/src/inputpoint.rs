@@ -61,20 +61,8 @@ impl PartialEq for InputPoint {
     }
 }
 
-fn read<T>(data: Option<&String>) -> Option<T>
-where
-    T: FromStr,
-{
-    match data {
-        Some(text) => match text.parse::<T>() {
-            Ok(f) => {
-                return Some(f);
-            }
-            Err(_e) => {}
-        },
-        None => {}
-    }
-    return None;
+fn read<T: FromStr>(data: Option<&String>) -> Option<T> {
+    data.and_then(|text| text.parse().ok())
 }
 
 impl InputPoint {
@@ -97,10 +85,11 @@ impl InputPoint {
 
     pub fn create_control_on_track(
         track: &Track,
-        index: usize,
+        proj: TrackProjection,
         name: &str,
         description: &str,
     ) -> InputPoint {
+        let index = proj.track_index;
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidean[index].clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::Control);
@@ -110,14 +99,7 @@ impl InputPoint {
             "description".to_string(),
             String::from_str(description).unwrap(),
         );
-        p.track_projections = BTreeSet::from([TrackProjection {
-            track_floating_index: index as f64,
-            track_index: index,
-            track_distance: 0f64,
-            elevation: wgs.z(),
-            euclidean: euc.clone(),
-            distance_on_track_to_projection: track.distance(index),
-        }]);
+        p.track_projections = BTreeSet::from([{ proj }]);
 
         p
     }
@@ -158,24 +140,6 @@ impl InputPoint {
         }
     }
 
-    pub fn single_track_index(&self) -> Option<usize> {
-        if self.track_projections.len() != 1 {
-            log::error!(
-                "this point has {} track indices => cannot return a single index (kind={:?}) (name={})",
-                self.track_projections.len(),
-                self.kind(),
-				self.name()
-            );
-            log::error!("projections: {:?}", self.track_projections);
-            assert!(false);
-            return None;
-        }
-        match &self.track_projections.first() {
-            None => None,
-            Some(p) => Some(p.track_floating_index.round() as usize),
-        }
-    }
-
     pub fn is_in_range(&self, range: &std::ops::Range<usize>) -> bool {
         for proj in &self.track_projections {
             if range.contains(&proj.track_index) {
@@ -199,16 +163,16 @@ impl InputPoint {
         read::<f64>(self.tags.get("ele"))
     }
     pub fn name(&self) -> String {
-        let ret = self.tags.get("name");
-        if ret.is_some() {
-            return ret.unwrap().clone().trim().to_string();
-        }
-        for (k, v) in &self.tags {
-            if k.contains("name") {
-                return v.as_str().to_string().trim().to_string();
-            }
-        }
-        return String::new();
+        self.tags
+            .get("name")
+            .map(|s| s.trim().to_string())
+            .or_else(|| {
+                self.tags
+                    .iter()
+                    .find(|(k, _)| k.contains("name"))
+                    .map(|(_, v)| v.trim().to_string())
+            })
+            .unwrap_or_default()
     }
     pub fn description(&self) -> String {
         let desc = self.tags.get("description");
@@ -302,11 +266,32 @@ impl InputPoint {
         return InputType::OSM;
     }
 
-    pub fn waypoint(&self) -> Waypoint {
+    pub fn flatten_projections(points: &[InputPoint]) -> Vec<(usize, TrackProjection)> {
+        let mut result: Vec<(usize, TrackProjection)> = points
+            .iter()
+            .enumerate()
+            .flat_map(|(idx, point)| {
+                point
+                    .track_projections
+                    .iter()
+                    .map(move |proj| (idx, proj.clone()))
+            })
+            .collect();
+
+        result.sort_by(|a, b| {
+            a.1.track_floating_index
+                .partial_cmp(&b.1.track_floating_index)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+
+        result
+    }
+
+    pub fn waypoint(&self, projection: &TrackProjection) -> Waypoint {
         Waypoint {
             wgs84: self.wgs84.clone(),
             euclidean: self.euclidean.clone(),
-            track_index: self.single_track_index(),
+            track_index: Some(projection.track_index),
             name: self.name(),
             description: self.description(),
             info: None,

@@ -5,6 +5,7 @@ use crate::{
     inputpoint::{InputPoint, InputType, OSMType},
     locate,
     mercator::MercatorPoint,
+    track::Track,
 };
 
 use serde::{Deserialize, Serialize};
@@ -17,6 +18,19 @@ pub struct TrackProjection {
     pub elevation: f64,
     pub track_distance: f64,
     pub distance_on_track_to_projection: f64,
+}
+
+impl TrackProjection {
+    pub fn at_track_index(track: &Track, index: usize) -> Self {
+        TrackProjection {
+            track_floating_index: index as f64,
+            track_index: index,
+            euclidean: track.euclidean[index].clone(),
+            elevation: track.elevation(index),
+            track_distance: 0f64,
+            distance_on_track_to_projection: track.distance(index),
+        }
+    }
 }
 
 pub type TrackProjections = BTreeSet<TrackProjection>;

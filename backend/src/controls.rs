@@ -8,7 +8,7 @@ use crate::{
     parameters::Parameters,
     segment::SegmentData,
     track::Track,
-    track_projection::is_close_to_track,
+    track_projection::{is_close_to_track, TrackProjection},
     wheel::shorten::shorten_name,
 };
 use rstar::{RTree, AABB};
@@ -95,39 +95,42 @@ pub fn infer_controls_from_gpx_segments(
             None => {}
         }
 
-        ret.push(InputPoint::create_control_on_track(
-            track,
+        ret.push((
             parts[index].end,
-            &name,
-            &description,
+            InputPoint::create_control_on_track(
+                track,
+                TrackProjection::at_track_index(track, parts[index].end),
+                &name,
+                &description,
+            ),
         ));
     }
-    ret.sort_by_key(|w| w.single_track_index().unwrap_or(0));
+    ret.sort_by_key(|(index, _)| *index);
     log::trace!("made {} controls from segments", ret.len());
-    ret
+    ret.iter().map(|(_, w)| w.clone()).collect()
 }
 
 pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) -> Vec<InputPoint> {
     let mut ret = Vec::new();
     let maxdist = 100f64;
-    for point in gpxpoints {
-        let mut clone = point.clone();
-        track.project_point(&mut clone);
-        if clone.distance_to_track() < maxdist {
+    let projections = InputPoint::flatten_projections(&gpxpoints);
+    for (index, projection) in projections {
+        let point = &gpxpoints[index];
+        if point.distance_to_track() < maxdist {
             let control = InputPoint::create_control_on_track(
                 track,
-                clone.single_track_index().unwrap(),
+                projection,
                 &point.name(),
                 &point.description(),
             );
-            ret.push(control);
+            ret.push((index, control));
         } else {
             log::info!("point {} is too far from track", point.name());
         }
     }
-    ret.sort_by_key(|w| w.single_track_index().unwrap_or(0));
+    ret.sort_by_key(|(index, _)| *index);
     log::trace!("made {} controls from waypoints", ret.len());
-    ret
+    ret.iter().map(|(_, w)| w.clone()).collect()
 }
 
 fn control_point_goodness(point: &InputPoint) -> i32 {
@@ -158,9 +161,9 @@ pub fn has_startend_controls(track: &Track, controls: &Vec<InputPoint>) -> (bool
     if controls.is_empty() {
         return (false, false);
     }
-    let mut indices: Vec<_> = controls
+    let mut indices: Vec<_> = InputPoint::flatten_projections(controls)
         .iter()
-        .map(|p| p.single_track_index().unwrap())
+        .map(|(_, proj)| proj.track_index)
         .collect();
     indices.sort();
     let maxdist = 1000f64;
@@ -175,12 +178,23 @@ pub fn has_startend_controls(track: &Track, controls: &Vec<InputPoint>) -> (bool
 pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) {
     let length = track.len();
     let (has_start, has_end) = has_startend_controls(track, controls);
-    let start = InputPoint::create_control_on_track(track, 0, "Start", "start");
-    let end = InputPoint::create_control_on_track(track, length - 1, "End", "end");
+
     if !has_start {
+        let start = InputPoint::create_control_on_track(
+            track,
+            TrackProjection::at_track_index(track, 0),
+            "Start",
+            "start",
+        );
         controls.push(start.clone());
     }
     if !has_end {
+        let end = InputPoint::create_control_on_track(
+            track,
+            TrackProjection::at_track_index(track, length - 1),
+            "End",
+            "end",
+        );
         controls.push(end.clone());
     }
 }
@@ -225,20 +239,25 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
     for segment in &mut segments {
         // it has all the osm points, not only those from the segment!
         let mut points = segment.osmpoints();
+        log::trace!("segment id={} before={}", segment.id(), points.len());
         points.retain(|w| {
             let total_distance = track.total_distance();
             if w.track_projections.is_empty() {
                 return false;
             }
-            let distance = w
-                .track_projections
-                .first()
-                .unwrap()
-                .distance_on_track_to_projection;
-            let is_far_from_last = distance > last_control_distance + margin;
-            let is_far_from_end = distance < total_distance - margin;
-            is_close_to_track(w) && is_far_from_last && is_far_from_end
+            assert!(!w.track_projections.is_empty());
+            for proj in &w.track_projections {
+                let distance = proj.distance_on_track_to_projection;
+                let is_far_from_last = distance > last_control_distance + margin;
+                let is_far_from_end = distance < total_distance - margin;
+                let good = is_close_to_track(w) && is_far_from_last && is_far_from_end;
+                if good {
+                    return true;
+                }
+            }
+            false
         });
+        log::trace!("segment id={} after={}", segment.id(), points.len());
         if points.is_empty() {
             continue;
         }
@@ -273,7 +292,12 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
         let p = &proto[k];
         let short_name = shorten_name(&p.osm_name);
         let name = format!("K{} - {}", k + 1, short_name);
-        let w = InputPoint::create_control_on_track(&track, p.index, &name, &p.osm_name);
+        let w = InputPoint::create_control_on_track(
+            &track,
+            TrackProjection::at_track_index(track, p.index),
+            &name,
+            &p.osm_name,
+        );
         ret.push(w);
     }
     log::trace!("made {} controls from OSM", ret.len());

@@ -257,9 +257,11 @@ impl Backend {
     pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
         // TODO: handle multiple projections.
         let mut ret = Waypoints::new();
-        for p in points {
-            ret.push(p.waypoint());
+        let projections = InputPoint::flatten_projections(&points);
+        for (index, projection) in projections {
+            ret.push(points[index].waypoint(&projection));
         }
+        debug_assert!(points.len() <= ret.len());
         WaypointInfo::make_waypoint_infos(&mut ret, &self.d().track, &self.d().parameters);
         ret
     }

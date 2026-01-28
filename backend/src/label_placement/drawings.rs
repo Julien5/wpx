@@ -2,18 +2,18 @@ use crate::{
     inputpoint::{InputPoint, InputType, OSMType},
     label_placement::features::PointFeatureDrawing,
     math::Point2D,
+    parameters::Parameters,
     segment::SegmentData,
     speed,
+    track_projection::TrackProjection,
 };
 
-pub fn timestr(w: &InputPoint, segment: &SegmentData) -> String {
-    let index = w.single_track_index().unwrap();
-    let track = &segment.track;
-    let t = speed::time_at_distance(&track.distance(index), &segment.parameters);
+pub fn timestr(proj: &TrackProjection, parameters: &Parameters) -> String {
+    let t = speed::time_at_distance(&proj.distance_on_track_to_projection, &parameters);
     format!("{}", t.format("%H:%M"))
 }
 
-pub fn make_label_text(w: &InputPoint, segment: &SegmentData) -> String {
+pub fn make_label_text(w: &InputPoint, proj: &TrackProjection, segment: &SegmentData) -> String {
     match w.kind() {
         InputType::OSM => {
             return w.name().clone().trim().to_string();
@@ -22,11 +22,11 @@ pub fn make_label_text(w: &InputPoint, segment: &SegmentData) -> String {
             return w.name().clone().trim().to_string();
         }
         InputType::UserStep => {
-            return format!("{}", timestr(w, segment));
+            return format!("{}", timestr(proj, &segment.parameters));
         }
 
         InputType::Control => {
-            return format!("{} ({})", w.name(), timestr(w, segment));
+            return format!("{} ({})", w.name(), timestr(proj, &segment.parameters));
         }
     }
 }
