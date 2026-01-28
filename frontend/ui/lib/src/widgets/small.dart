@@ -48,3 +48,21 @@ class SmallText extends StatelessWidget {
     );
   }
 }
+
+class SmallCentralWidget extends StatelessWidget {
+  final Widget child;
+  const SmallCentralWidget({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 500),
+        child: Padding(
+          padding: const EdgeInsets.all(20), // Add padding inside the card
+          child: child,
+        ),
+      ),
+    );
+  }
+}

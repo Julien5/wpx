@@ -10,6 +10,7 @@ import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
+import 'package:ui/src/widgets/small.dart';
 
 class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
@@ -56,15 +57,11 @@ class WheelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Widget statisticsCard = ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 500),
-      child: Padding(
-        padding: const EdgeInsets.all(2), // Add padding inside the card
-        child: StatisticsWidget(
-          onPacingPointPressed: () => gotoUserSteps(ctx),
-          onControlsPointPressed: () => gotoControls(ctx),
-          onPagesPressed: () => gotoSettings(ctx),
-        ),
+    Widget statisticsCard = SmallCentralWidget(
+      child: StatisticsWidget(
+        onPacingPointPressed: () => gotoUserSteps(ctx),
+        onControlsPointPressed: () => gotoControls(ctx),
+        onPagesPressed: () => gotoSettings(ctx),
       ),
     );
 

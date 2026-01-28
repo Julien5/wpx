@@ -38,7 +38,7 @@ use tracks::backend::Sender;
 
 impl Sender for EventSender {
     fn send(&mut self, data: &str) {
-        match self.sink.add(data.to_string().clone()) {
+        match self.sink.add(data.to_string()) {
             Ok(()) => {
                 log::trace!("sent [{}]", data);
             }
