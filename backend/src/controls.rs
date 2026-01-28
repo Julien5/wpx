@@ -113,7 +113,12 @@ pub fn infer_controls_from_gpx_segments(
 pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) -> Vec<InputPoint> {
     let mut ret = Vec::new();
     let maxdist = 100f64;
+    log::trace!("{} gpx waypoints", gpxpoints.len());
+    for p in gpxpoints {
+        assert!(p.track_projections.len() >= 1);
+    }
     let projections = InputPoint::flatten_projections(&gpxpoints);
+    assert!(projections.len() >= gpxpoints.len());
     for (index, projection) in projections {
         let point = &gpxpoints[index];
         if point.distance_to_track() < maxdist {
@@ -123,14 +128,14 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
                 &point.name(),
                 &point.description(),
             );
-            ret.push((index, control));
+            ret.push(control);
+            log::trace!("pushed {}", point.name());
         } else {
             log::info!("point {} is too far from track", point.name());
         }
     }
-    ret.sort_by_key(|(index, _)| *index);
     log::trace!("made {} controls from waypoints", ret.len());
-    ret.iter().map(|(_, w)| w.clone()).collect()
+    ret
 }
 
 fn control_point_goodness(point: &InputPoint) -> i32 {
@@ -345,7 +350,11 @@ mod tests {
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints.as_vector());
         assert!(controls.is_empty());
-        let controls = make_controls_with_waypoints(&track, &gpxdata.waypoints.as_vector());
+        let mut gpxpoints = gpxdata.waypoints.as_vector();
+        for p in &mut gpxpoints {
+            track.project_point(p);
+        }
+        let controls = make_controls_with_waypoints(&track, &gpxpoints);
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());

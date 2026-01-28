@@ -209,9 +209,7 @@ impl ProjectionTrees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        gpsdata::GpxData, inputpoint::InputPointMap, track::Track, wgs84point::WGS84Point,
-    };
+    use crate::{gpsdata::GpxData, inputpoint::InputPointMap, wgs84point::WGS84Point};
 
     fn read(filename: String) -> GpxData {
         use crate::gpsdata;
