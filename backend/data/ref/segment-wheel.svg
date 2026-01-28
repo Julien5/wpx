@@ -5,11 +5,11 @@
 <path d="M 200 200 L 137.41031377140263 28.036250396178758 A 183 183 0 0 1 262.5896862285974 28.036250396178758 Z" fill="white" stroke="white" stroke-width="0"/>
 <g>
 <g transform="translate(200, 200)">
-<path d="M0,-170 L0,-180" stroke="#333" stroke-width="3" transform="rotate(20)"/>
 <path d="M0,-170 L0,-180" stroke="#333" stroke-width="3" transform="rotate(57.75250764495417)"/>
 <path d="M0,-170 L0,-180" stroke="#333" stroke-width="3" transform="rotate(111.33537738729493)"/>
 <path d="M0,-170 L0,-180" stroke="#333" stroke-width="3" transform="rotate(194.13571484141016)"/>
 <path d="M0,-170 L0,-180" stroke="#333" stroke-width="3" transform="rotate(340)"/>
+<path d="M0,-170 L0,-180" stroke="#333" stroke-width="3" transform="rotate(20)"/>
 <path d="M0,-171 L0,-179" stroke="#666" stroke-width="1" transform="rotate(23.903910586197032)"/>
 <path d="M0,-171 L0,-179" stroke="#666" stroke-width="1" transform="rotate(27.725752874819765)"/>
 <path d="M0,-171 L0,-179" stroke="#666" stroke-width="1" transform="rotate(31.674259416425254)"/>
@@ -112,9 +112,6 @@
 <path d="M0,-165 L0,-170" stroke="#666" stroke-width="2" transform="rotate(339.99547211722796)"/>
 </g>
 <g transform="translate(200, 200)">
-<text text-anchor="middle" x="63.95776680190005" y="-175.72252008696486">
-Start
-</text>
 <text text-anchor="start" x="158.15546980345437" y="-99.77899263496617">
 K1
 </text>
@@ -126,6 +123,9 @@ K3
 </text>
 <text text-anchor="middle" x="-63.95776680190003" y="-175.72252008696486">
 K4
+</text>
+<text text-anchor="middle" x="63.95776680190005" y="-175.72252008696486">
+Start
 </text>
 <text text-anchor="middle" x="55.749283362084" y="-143.16989718810308">
  8:05
