@@ -71,7 +71,7 @@ class LoadScreenModel extends ChangeNotifier {
       future = root.getBridge().loadOsm();
     } else if (job == Job.controls) {
       future = root.getBridge().loadControls(
-        source: bridge.ControlSource.waypoints,
+        source: bridge.ControlSource.segments,
       );
     } else {
       assert(false);
