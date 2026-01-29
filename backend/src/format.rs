@@ -128,7 +128,7 @@ mod tests {
 
     fn parameters(format: &str) -> Parameters {
         let mut ret = Parameters::default();
-        ret.start_time = "1985-04-12T08:00:00.00Z".to_string();
+        ret.start_time = "1985-04-12T06:00:00.00Z".to_string();
         ret.speed = speed::mps(15f64);
         ret.user_steps_options.gpx_name_format = format.to_string();
         ret

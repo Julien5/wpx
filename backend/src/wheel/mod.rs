@@ -388,11 +388,12 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
 
 #[cfg(test)]
 mod tests {
+
     use super::model;
     use super::model::CirclePoint;
     use super::model::WheelModel;
     use super::render;
-    use crate::{math::IntegerSize2D, mercator::DateTime};
+    use crate::math::IntegerSize2D;
     fn create_wheel_model(nmid: usize) -> WheelModel {
         // 1. Define the Control Points
         let control_points = vec![
@@ -464,8 +465,13 @@ mod tests {
             },
         ];
 
+        use chrono::{DateTime, Local, TimeZone};
+
+        // Creates 1970-01-01 00:00:00 UTC, adjusted to your Local offset
+        let default_date: DateTime<Local> = Local.timestamp_opt(0, 0).unwrap();
+
         let time_parameters = model::TimeParameters {
-            start: DateTime::from_timestamp_nanos(0),
+            start: default_date,
             speed: 1f64,
             total_distance: 1f64,
         };

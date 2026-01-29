@@ -462,7 +462,7 @@ mod tests {
         parameters::{ControlSource, ProfileIndication},
         wheel,
     };
-    static START_TIME: &'static str = "1985-04-12T08:05:00.00Z";
+    static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
 
     async fn load_test_data() -> Backend {
         let mut backend = Backend::make();
