@@ -2,9 +2,6 @@ use indexed_db_futures::database::Database;
 use indexed_db_futures::prelude::*;
 use indexed_db_futures::transaction::TransactionMode;
 
-use crate::error::GenericError;
-use crate::error::GenericResult;
-
 // TODO: convert filename to a JavaScript identifier.
 // In JavaScript, identifiers can contain Unicode letters, $, _, and digits (0-9),
 // but may not start with a digit.
@@ -21,7 +18,14 @@ const DATABASE: &str = "db";
 const STORE: &str = "store";
 //const TRANSACTION: &str = "store";
 
-async fn opendb() -> GenericResult<Database> {
+use thiserror::Error;
+#[derive(Error, Debug, Clone)]
+pub enum Error {
+    #[error("OpenFailed")]
+    OpenFailed,
+}
+
+async fn opendb() -> Result<Database, Error> {
     match Database::open(DATABASE)
         .with_version(1u8)
         .with_on_upgrade_needed(|event, db| {
@@ -52,7 +56,7 @@ async fn opendb() -> GenericResult<Database> {
         Ok(db) => Ok(db),
         Err(e) => {
             log::info!("could not open db {}", e);
-            Err(GenericError::from(e))
+            Err(Error::OpenFailed)
         }
     }
 }
@@ -109,7 +113,7 @@ pub async fn write(filename: &str, data: String) {
     let _ = awrite(filename, data).await;
 }
 
-async fn aread(filename: &str) -> GenericResult<String> {
+async fn aread(filename: &str) -> Result<String, Error> {
     let db = match opendb().await {
         Ok(db) => db,
         Err(e) => {
@@ -124,7 +128,7 @@ async fn aread(filename: &str) -> GenericResult<String> {
         Ok(d) => d,
         Err(e) => {
             log::error!("couldn not open transaction because {}", e);
-            return Err(GenericError::from(e));
+            return Err(Error::OpenFailed);
         }
     };
 
@@ -132,7 +136,7 @@ async fn aread(filename: &str) -> GenericResult<String> {
     let data = store.get(identifier(&filename)).await.unwrap();
     match data {
         Some(bytes) => Ok(bytes),
-        None => Err(GenericError::from(format!("could not read {}", filename))),
+        None => Err(Error::OpenFailed),
     }
 }
 
@@ -160,7 +164,7 @@ async fn ahit_cache(filename: &str) -> bool {
     data.is_some()
 }
 
-pub async fn read(filename: &str) -> GenericResult<String> {
+pub async fn read(filename: &str) -> Result<String, Error> {
     aread(filename).await
 }
 

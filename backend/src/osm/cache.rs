@@ -43,7 +43,10 @@ async fn write_worker(path: &str, data: String) {
 
 #[cfg(target_arch = "wasm32")]
 async fn read_worker(path: &str) -> GenericResult<String> {
-    super::indexdb::read(path).await
+    match super::indexdb::read(path).await {
+        Ok(bytes) => Ok(bytes),
+        Err(e) => Err(e.into()),
+    }
 }
 
 #[cfg(not(target_arch = "wasm32"))]
