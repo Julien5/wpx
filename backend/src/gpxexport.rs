@@ -8,7 +8,7 @@ fn gps_name(w: &waypoint::Waypoint) -> String {
     match &w.info {
         Some(step) => {
             use chrono::*;
-            let t: DateTime<Utc> = step.time.parse().unwrap();
+            let t: DateTime<Local> = step.time.parse().unwrap();
             let time = format!("{}", t.format("%H:%M"));
             let percent = 100f64 * step.inter_slope;
             let info = if true {

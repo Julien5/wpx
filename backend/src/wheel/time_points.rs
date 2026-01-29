@@ -63,13 +63,9 @@ fn generate_time_intervals(
 
     // Calculate end time
     let end_time = start_time + ChronoDuration::from_std(duration).unwrap();
-
-    // Get midnight of the start day
-    let midnight = start_time
-        .date_naive()
-        .and_hms_opt(0, 0, 0)
-        .unwrap()
-        .and_utc();
+    use chrono::TimeZone;
+    let naive = start_time.date_naive().and_hms_opt(0, 0, 0).unwrap();
+    let midnight = chrono::Local.from_local_datetime(&naive).unwrap();
 
     let interval_chrono = ChronoDuration::from_std(interval).unwrap();
 

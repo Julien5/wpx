@@ -1,7 +1,7 @@
 use crate::{math::Point2D, track::WGS84BoundingBox, wgs84point::WGS84Point};
 use serde::{Deserialize, Serialize};
 
-pub type DateTime = chrono::DateTime<chrono::Utc>;
+pub type DateTime = chrono::DateTime<chrono::Local>;
 
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
 pub struct MercatorPoint(pub f64, pub f64);

@@ -139,9 +139,9 @@ impl WaypointInfo {
                 0 => None,
                 _ => Some(&waypoints[k - 1]),
             };
-            let step =
+            let info =
                 Self::create_waypoint_info(track, &track.smooth_elevation, parameters, w, wprev);
-            infos.push(step.clone());
+            infos.push(info.clone());
         }
         for k in 0..waypoints.len() {
             let w = &mut waypoints[k];

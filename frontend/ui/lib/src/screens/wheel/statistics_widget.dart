@@ -50,7 +50,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     );
     bridge.Parameters parameters = segmentModel.parameters();
     setState(() {
-      startTime = DateTime.parse(parameters.startTime);
+      startTime = DateTime.parse(parameters.startTime).toLocal();
       speed = parameters.speed;
     });
   }
