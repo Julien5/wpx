@@ -5,7 +5,7 @@ mod filesystem;
 mod indexdb;
 pub mod osmpoint;
 
-use crate::error::{GenericError, GenericResult};
+use crate::error::{GenericResult, TrackError};
 use crate::event::SenderHandlerLock;
 use crate::inputpoint::{InputPointMap, InputPoints};
 use crate::mercator::EuclideanBoundingBox;
@@ -27,17 +27,14 @@ fn osm3(bbox: &WGS84BoundingBox) -> String {
 async fn download_chunk_real(
     bbox: &WGS84BoundingBox,
     logger: &SenderHandlerLock,
-) -> std::result::Result<InputPoints, std::io::Error> {
+) -> GenericResult<InputPoints> {
     use download::*;
     let bboxparam = osm3(&bbox);
     let dl_result = all(&bboxparam, logger).await;
     match dl_result {
         Err(e) => {
-            log::error!("download failed, error = {:?}", e);
-            Err(std::io::Error::new(
-                std::io::ErrorKind::ConnectionRefused,
-                e.to_string(),
-            ))
+            log::error!("download failed, error = {}", e);
+            Err(e.into())
         }
         Ok(content) => {
             // std::fs::write("/tmp/dl.txt", &content).unwrap();
@@ -50,7 +47,7 @@ async fn download_chunk_real(
                     short.truncate(1000);
                     log::error!("cannot read OSM data: {}", short);
                     log::error!("reason: {}", e.to_string());
-                    Err(std::io::Error::new(std::io::ErrorKind::InvalidData, "data"))
+                    Err(e.into())
                 }
             }
         }
@@ -87,9 +84,9 @@ async fn download_tiles(
             Ok(points)
         }
         Err(e) => {
-            log::info!("error downloading: {:?}", e);
+            log::info!("error downloading: {}", e);
             log::info!("assuming there is nothing");
-            return Err(GenericError::from(e));
+            return Err(e.into());
         }
     }
 }
@@ -159,9 +156,7 @@ async fn process(
             } else {
                 log::error!("the cache has still {} missing tiles", missing.len());
                 //print_missing(&missing);
-                return Err(GenericError::from(
-                    "still missing data in cache".to_string(),
-                ));
+                return Err(TrackError::OSMDownloadFailed.into());
             }
         }
         Err(e) => {

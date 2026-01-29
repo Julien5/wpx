@@ -1,39 +1,44 @@
-use std::{fmt, usize};
+use thiserror::Error;
 
-#[derive(Debug, Clone)]
-pub enum Error {
+#[derive(Error, Debug, Clone)]
+pub enum TrackError {
+    #[error("GPX file not found")]
     GPXNotFound,
+
+    #[error("GPX file is invalid or malformed")]
     GPXInvalid,
+
+    #[error("GPX file contains no segments")]
     GPXHasNoSegment,
+
+    #[error("Missing elevation data at index {index}")]
     MissingElevation { index: usize },
+
+    #[error("OSM download failed")]
     OSMDownloadFailed,
+
+    #[error("OSM download timed out")]
+    OSMDownloadTimeout,
+
+    #[error("An unknown error occurred")]
+    Unknown,
 }
 
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Error::GPXNotFound => write!(f, "GPX file not found"),
-            Error::GPXInvalid => write!(f, "GPX file is invalid"),
-            Error::MissingElevation { index } => {
-                write!(f, "{}", format!("missing elevation at index {}", index))
-            }
-            Error::GPXHasNoSegment => write!(f, "GPX file has no segment"),
-            Error::OSMDownloadFailed => write!(f, "OSM download failed"),
-        }
+pub type GenericResult<T> = anyhow::Result<T>;
+
+pub fn from(e: anyhow::Error) -> TrackError {
+    if let Some(e) = e.downcast_ref::<TrackError>() {
+        return e.clone();
     }
-}
 
-impl std::error::Error for Error {}
-
-pub type GenericError = Box<dyn std::error::Error>;
-pub type GenericResult<T> = Result<T, GenericError>;
-
-#[derive(Debug)]
-pub struct StringError(pub String);
-// Implement Display so the error can be printed
-impl fmt::Display for StringError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
+    if let Some(_) = e.downcast_ref::<reqwest::Error>() {
+        return TrackError::OSMDownloadFailed;
     }
+
+    if let Some(_) = e.downcast_ref::<std::io::Error>() {
+        return TrackError::GPXNotFound;
+    }
+
+    // 3. Fallback for everything else
+    return TrackError::Unknown;
 }
-impl std::error::Error for StringError {}

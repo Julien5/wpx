@@ -1,5 +1,5 @@
 use crate::bbox::BoundingBox;
-use crate::error::Error;
+use crate::error::TrackError;
 use crate::inputpoint::{InputPoint, InputPointMap};
 use crate::math::Point2D;
 use crate::wgs84point::WGS84Point;
@@ -12,11 +12,11 @@ pub fn distance_wgs84(p1: &WGS84Point, p2: &WGS84Point) -> f64 {
     geo::Haversine::distance(p1, p2)
 }
 
-fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, Error> {
+fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, TrackError> {
     let reader_mem = std::io::Cursor::new(bytes);
     match gpx::read(reader_mem) {
         Ok(d) => Ok(d),
-        Err(_e) => Err(Error::GPXInvalid),
+        Err(_e) => Err(TrackError::GPXInvalid),
     }
 }
 
@@ -39,7 +39,7 @@ fn make_track_from_route(route: &gpx::Route, name: String) -> gpx::Track {
     return ret;
 }
 
-fn read_routes(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, Error> {
+fn read_routes(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
     let routes = &mut gpx.routes;
     routes.sort_by_key(|route| {
         let zero = "A".to_string();
@@ -64,12 +64,12 @@ fn read_routes(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, Error> {
         ret.push(make_track_from_route(route, "foo".to_string()));
     }
     if ret.is_empty() {
-        return Err(Error::GPXHasNoSegment);
+        return Err(TrackError::GPXHasNoSegment);
     }
     Ok(ret)
 }
 
-fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, Error> {
+fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
     let tracks = &mut gpx.tracks;
     tracks.sort_by_key(|track| {
         let zero = "A".to_string();
@@ -99,7 +99,7 @@ fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, Error> {
         }
     }
     if ret.is_empty() {
-        return Err(Error::GPXHasNoSegment);
+        return Err(TrackError::GPXHasNoSegment);
     }
     Ok(ret)
 }
@@ -109,7 +109,7 @@ pub struct GpxData {
     pub tracks: Vec<gpx::Track>,
 }
 
-pub fn read_content(content: &Vec<u8>) -> Result<GpxData, Error> {
+pub fn read_content(content: &Vec<u8>) -> Result<GpxData, TrackError> {
     let mut gpx = read_gpx_content(content)?;
     let tracks = if gpx.tracks.is_empty() {
         match read_routes(&mut gpx) {

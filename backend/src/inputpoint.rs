@@ -335,7 +335,7 @@ impl InputPoints {
             Ok(points) => points,
             Err(e) => {
                 log::error!("could not read osmpoints from: {}", data);
-                log::error!("because: {:?}", e);
+                log::error!("because: {}", e);
                 InputPoints::new()
             }
         }

@@ -51,7 +51,7 @@ async fn opendb() -> GenericResult<Database> {
     {
         Ok(db) => Ok(db),
         Err(e) => {
-            log::info!("could not open db {:?}", e);
+            log::info!("could not open db {}", e);
             Err(GenericError::from(e))
         }
     }
@@ -61,7 +61,7 @@ async fn awrite(filename: &str, data: String) {
     let db = match opendb().await {
         Ok(db) => db,
         Err(e) => {
-            log::error!("could not open db: {:?}", e);
+            log::error!("could not open db: {}", e);
             return;
         }
     };
@@ -79,7 +79,7 @@ async fn awrite(filename: &str, data: String) {
                     log::info!("write: {}", s);
                 }
                 Err(e) => {
-                    log::info!("could not put data because {:?}", e);
+                    log::info!("could not put data because {}", e);
                     return;
                 }
             }
@@ -95,12 +95,12 @@ async fn awrite(filename: &str, data: String) {
                     //   use an object that is not, or is no longer, usable.
                     //
                     // I think commit is not necessary. I just print the error and move on.
-                    log::info!("could not commit because {:?}", e);
+                    log::info!("could not commit because {}", e);
                 }
             }
         }
         Err(e) => {
-            log::info!("could not open transaction because {:?}", e);
+            log::info!("could not open transaction because {}", e);
         }
     }
 }
@@ -123,7 +123,7 @@ async fn aread(filename: &str) -> GenericResult<String> {
     {
         Ok(d) => d,
         Err(e) => {
-            log::error!("couldn not open transaction because {:?}", e);
+            log::error!("couldn not open transaction because {}", e);
             return Err(GenericError::from(e));
         }
     };
@@ -150,7 +150,7 @@ async fn ahit_cache(filename: &str) -> bool {
     {
         Ok(d) => d,
         Err(e) => {
-            log::error!("couldn not open transaction because {:?}", e);
+            log::error!("couldn not open transaction because {}", e);
             return false;
         }
     };

@@ -34,22 +34,32 @@ String safeLast(String? event) {
   return event;
 }
 
-String errorString(Error e) {
-  if (e is bridge.Error_MissingElevation) {
+String errorString(Object o) {
+  if (o is! bridge.TrackError) {
+    return o.toString();
+  }
+  bridge.TrackError e = o;
+  if (e is bridge.TrackError_MissingElevation) {
     //var index = e.index;
     return "The track misses elevation data.";
   }
-  if (e is bridge.Error_GPXHasNoSegment) {
+  if (e is bridge.TrackError_GPXHasNoSegment) {
     return "no segment in gpx";
   }
-  if (e is bridge.Error_GPXInvalid) {
+  if (e is bridge.TrackError_GPXInvalid) {
     return "invalid gpx file";
   }
-  if (e is bridge.Error_OSMDownloadFailed) {
+  if (e is bridge.TrackError_OSMDownloadFailed) {
     return "download failed";
   }
+  if (e is bridge.TrackError_OSMDownloadTimeout) {
+    return "download timed out";
+  }
+  if (e is bridge.TrackError_Unknown) {
+    return "unknown error";
+  }
   debugPrint(e.toString());
-  return "unknown error";
+  return e.toString();
 }
 
 String filterEvent(String? event, Job targetJob, LoadScreenModel screenModel) {

@@ -3,7 +3,8 @@
 use std::collections::BTreeMap;
 
 use crate::controls;
-use crate::error::Error;
+use crate::error;
+use crate::error::TrackError;
 use crate::event;
 use crate::gpsdata;
 use crate::gpxexport;
@@ -66,7 +67,7 @@ impl Backend {
         event::send_worker(&self.sender, data);
     }
 
-    pub async fn load_osm(&self) -> Result<(), Error> {
+    pub async fn load_osm(&self) -> Result<(), TrackError> {
         log::trace!("download osm data");
         self.send("download osm data");
 
@@ -78,16 +79,14 @@ impl Backend {
 
         let mut osmpoints = match osm::download_for_track(&self.d().track, &self.sender).await {
             Ok(p) => {
-                /*
-                    if std::path::Path::new(&"/tmp/force_error").exists() {
-                        return Err(Error::OSMDownloadFailed);
+                if std::path::Path::new(&"/tmp/force_error").exists() {
+                    return Err(TrackError::OSMDownloadFailed);
                 }
-                */
                 p
             }
             Err(e) => {
-                log::error!("OSM download failed {:?}", e);
-                return Err(Error::OSMDownloadFailed);
+                log::error!("OSM download failed {}", e);
+                return Err(error::from(e));
             }
         };
 
@@ -100,7 +99,7 @@ impl Backend {
         Ok(())
     }
 
-    pub async fn load_controls(&self, source: ControlSource) -> Result<usize, Error> {
+    pub async fn load_controls(&self, source: ControlSource) -> Result<usize, TrackError> {
         let inputpoints = self.d().inputpoints.read();
         let waypoints_vector = inputpoints
             .unwrap()
@@ -136,7 +135,7 @@ impl Backend {
         Ok(controls.len())
     }
 
-    pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
+    pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
         self.send("read gpx");
         let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
@@ -167,7 +166,7 @@ impl Backend {
         Ok(())
     }
 
-    pub async fn load_filename(&mut self, filename: &str) -> Result<(), Error> {
+    pub async fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
         let mut f = std::fs::File::open(filename).unwrap();
         let mut buffer = Vec::new();
         // read the whole file
@@ -176,7 +175,7 @@ impl Backend {
         self.load_content(&buffer).await
     }
 
-    pub async fn load_demo(&mut self) -> Result<(), Error> {
+    pub async fn load_demo(&mut self) -> Result<(), TrackError> {
         let content = include_bytes!("../data/ref/roland-nowaypoints.gpx");
         self.load_content(&content.to_vec()).await
     }

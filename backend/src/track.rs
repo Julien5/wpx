@@ -4,7 +4,7 @@ use geo::SimplifyIdx;
 use gpx::TrackSegment;
 
 use super::wgs84point::WGS84Point;
-use crate::error;
+use crate::error::TrackError;
 use crate::gpsdata::distance_wgs84;
 use crate::inputpoint::InputPoint;
 use crate::inputpoint::InputPointMap;
@@ -182,7 +182,7 @@ impl Track {
         ret
     }
 
-    pub fn from_tracks(gpxtracks: &Vec<gpx::Track>) -> Result<Track, error::Error> {
+    pub fn from_tracks(gpxtracks: &Vec<gpx::Track>) -> Result<Track, TrackError> {
         let mut _distance = Vec::new();
         let mut wgs = Vec::new();
         let mut dacc = 0f64;
@@ -200,7 +200,7 @@ impl Track {
                     let elevation = match point.elevation {
                         Some(e) => e,
                         None => {
-                            return Err(error::Error::MissingElevation { index: k });
+                            return Err(TrackError::MissingElevation { index: k });
                         }
                     };
 

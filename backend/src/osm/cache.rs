@@ -124,7 +124,7 @@ pub async fn read(bbox: &EuclideanBoundingBox) -> GenericResult<(InputPointMap, 
             },
             Err(e) => {
                 log::info!("failed to read cache at {}", key);
-                log::info!("because: {:?}", e);
+                log::info!("because: {}", e);
             }
         }
     }

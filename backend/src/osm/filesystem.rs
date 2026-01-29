@@ -1,12 +1,12 @@
 use std::path::{Path, PathBuf};
 
-use crate::error::{GenericError, GenericResult};
+use crate::error::GenericResult;
 
 pub fn read(path: &String) -> GenericResult<String> {
     let path = Path::new(path.as_str());
     match std::fs::read_to_string(path) {
         Ok(data) => Ok(data),
-        Err(e) => Err(GenericError::from(e)),
+        Err(e) => Err(e.into()),
     }
 }
 

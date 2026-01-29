@@ -7,7 +7,7 @@ use std::collections::HashSet;
 pub use std::ops::Range;
 pub use tracks::backend::Segment as SegmentImplementation;
 pub use tracks::backend::SegmentStatistics;
-pub use tracks::error::Error;
+pub use tracks::error::TrackError;
 pub use tracks::inputpoint::InputType;
 pub use tracks::mercator::MercatorPoint;
 pub use tracks::parameters::ControlSource;
@@ -63,13 +63,6 @@ impl Segment {
     pub fn id(&self) -> i32 {
         self._impl.id
     }
-}
-
-#[frb(mirror(WaypointOrigin))]
-pub enum _WaypointOrigin {
-    GPX,
-    DouglasPeucker,
-    OpenStreetMap,
 }
 
 #[frb(mirror(InputType))]
@@ -165,13 +158,15 @@ pub struct _SegmentStatistics {
     pub distance_end: f64,
 }
 
-#[frb(mirror(Error))]
-pub enum _Error {
+#[frb(mirror(TrackError), unignore)]
+pub enum _TrackError {
     GPXNotFound,
     GPXInvalid,
     GPXHasNoSegment,
-    OSMDownloadFailed,
     MissingElevation { index: usize },
+    OSMDownloadFailed,
+    OSMDownloadTimeout,
+    Unknown,
 }
 
 use tracks::backend;
@@ -183,21 +178,21 @@ impl Bridge {
         }
     }
     #[frb(sync)]
-    pub fn set_sink(&mut self, sink: StreamSink<String>) -> anyhow::Result<()> {
+    pub fn set_sink(&mut self, sink: StreamSink<String>) -> Result<(), TrackError> {
         let cell = Box::new(EventSender { sink });
         self.backend.set_sink(cell);
         Ok(())
     }
-    pub async fn load_controls(&self, source: ControlSource) -> Result<usize, Error> {
+    pub async fn load_controls(&self, source: ControlSource) -> Result<usize, TrackError> {
         self.backend.load_controls(source).await
     }
-    pub async fn load_osm(&self) -> Result<(), Error> {
+    pub async fn load_osm(&self) -> Result<(), TrackError> {
         self.backend.load_osm().await
     }
-    pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), Error> {
+    pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
         self.backend.load_content(content).await
     }
-    pub async fn load_demo(&mut self) -> Result<(), Error> {
+    pub async fn load_demo(&mut self) -> Result<(), TrackError> {
         self.backend.load_demo().await
     }
     pub async fn generatePdf(&mut self) -> Vec<u8> {

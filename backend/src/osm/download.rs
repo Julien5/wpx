@@ -2,6 +2,7 @@ use reqwest::Client;
 use serde_json::Value;
 
 use crate::{
+    error::{GenericResult, TrackError},
     event::{self, SenderHandlerLock},
     inputpoint::{InputPoint, InputPoints, Tags},
     mercator,
@@ -27,10 +28,7 @@ fn use_disk() -> bool {
     false
 }
 
-async fn dl_worker(
-    req: &str,
-    logger: &SenderHandlerLock,
-) -> std::result::Result<String, reqwest::Error> {
+async fn dl_worker(req: &str, logger: &SenderHandlerLock) -> GenericResult<String> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
     // let url = "https://overpass.private.coffee/api/interpreter";
@@ -59,6 +57,13 @@ async fn dl_worker(
     //tokio::time::sleep(tick).await;
     match request.send().await {
         Ok(response) => {
+            log::trace!("status = {}", response.status());
+            if response.status() == 504 {
+                return Err(TrackError::OSMDownloadTimeout.into());
+            }
+            if response.status() != 200 {
+                return Err(TrackError::OSMDownloadFailed.into());
+            }
             let text = response.text().await;
             if use_disk() {
                 let filename = std::format!("/tmp/last-dl.data");
@@ -68,10 +73,13 @@ async fn dl_worker(
             }
             match text {
                 Ok(json) => Ok(json),
-                Err(e) => Err(e),
+                Err(e) => Err(e.into()),
             }
         }
-        Err(e) => Err(e),
+        Err(e) => {
+            log::trace!("e = {}", e);
+            Err(e.into())
+        }
     }
 }
 
@@ -81,10 +89,7 @@ Grabener Höhe is tourism = viewpoint.
 To get it: node["tourism"="viewpoint"]({{bbox}});
 */
 
-pub async fn all(
-    bbox: &str,
-    logger: &SenderHandlerLock,
-) -> std::result::Result<String, reqwest::Error> {
+pub async fn all(bbox: &str, logger: &SenderHandlerLock) -> GenericResult<String> {
     if use_disk() {
         //let data = std::fs::read_to_string("data/ref/overpass/dl.txt").unwrap();
         //let data = std::fs::read_to_string("/tmp/dl.data").unwrap();

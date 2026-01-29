@@ -37,7 +37,7 @@ struct Cli {
     filename: std::path::PathBuf,
 }
 
-fn main_test(backend: &mut Backend) -> Result<(), error::Error> {
+fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
     let start = std::time::Instant::now();
     let segment = backend.trackSegment();
     backend.render_segment_what(
@@ -52,7 +52,7 @@ fn main_test(backend: &mut Backend) -> Result<(), error::Error> {
 }
 
 #[tokio::main(flavor = "current_thread")]
-async fn main() -> Result<(), error::Error> {
+async fn main() -> anyhow::Result<()> {
     env_logger::init();
     /*env_logger::Builder::new()
     .format(|buf, record| {
@@ -73,8 +73,8 @@ async fn main() -> Result<(), error::Error> {
     if args.filename.exists() {
         gpxinput = args.filename.as_os_str().to_str().unwrap();
     } else {
-        let e = error::Error::GPXNotFound;
-        return Err(e);
+        let e = error::TrackError::GPXNotFound;
+        return Err(e.into());
     }
 
     let gpxpath = std::path::Path::new(gpxinput);

@@ -17,7 +17,7 @@ class FutureJob {
 
 class LoadScreenModel extends ChangeNotifier {
   Set<Job> done = {};
-  final Map<Job, Error> _failed = {};
+  final Map<Job, Object> _failed = {};
   Job? running;
 
   final RootModel root;
@@ -140,10 +140,16 @@ class LoadScreenModel extends ChangeNotifier {
         done.contains(Job.osm);
   }
 
-  void onError(Job job, Error e) {
+  void onError(Job job, Object e) {
     if (_isDisposed) {
       return;
     }
+
+    if (error is bridge.TrackError) {
+      // Now you can handle your specific Rust variants
+      print(error.toString());
+    }
+
     developer.log("error: $e");
     _failed[job] = e;
     notifyListeners();
@@ -167,7 +173,7 @@ class LoadScreenModel extends ChangeNotifier {
     return _lastEvent;
   }
 
-  Error? error(Job job) {
+  Object? error(Job job) {
     if (!_failed.containsKey(job)) {
       return null;
     }

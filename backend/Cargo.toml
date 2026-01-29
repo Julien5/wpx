@@ -40,6 +40,7 @@ euclid = "0.22.11"
 regex = "1.12.2"
 # https://github.com/zip-rs/zip2/issues/176
 zip = {version="7.1.0",default-features = false }
+thiserror = "2.0.18"
 
 
 #[features]
