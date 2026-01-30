@@ -12,6 +12,7 @@ use crate::inputpoint::*;
 use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
+use crate::parameters;
 use crate::parameters::ControlSource;
 use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
@@ -176,7 +177,7 @@ impl Backend {
     }
 
     pub async fn load_demo(&mut self) -> Result<(), TrackError> {
-        let content = include_bytes!("../data/ref/roland-nowaypoints.gpx");
+        let content = include_bytes!("../data/ref/roland.gpx");
         self.load_content(&content.to_vec()).await
     }
 }
@@ -388,7 +389,7 @@ impl Backend {
             "ylabels" => self.render_yaxis_labels_overlay(&segment, size),
             "wheel" => {
                 let time_parameters = wheel::model::TimeParameters {
-                    start: self.d().parameters.start_time.parse().unwrap(),
+                    start: parameters::parse_time(&self.d().parameters.start_time),
                     speed: self.d().parameters.speed,
                     total_distance: self.d().track.total_distance(),
                 };
@@ -398,7 +399,7 @@ impl Backend {
             }
             "wheel/pages" => {
                 let time_parameters = wheel::model::TimeParameters {
-                    start: self.d().parameters.start_time.parse().unwrap(),
+                    start: parameters::parse_time(&self.d().parameters.start_time),
                     speed: self.d().parameters.speed,
                     total_distance: self.d().track.total_distance(),
                 };
@@ -459,7 +460,7 @@ mod tests {
         backend::Backend,
         inputpoint::{self, InputType},
         math::IntegerSize2D,
-        parameters::{ControlSource, ProfileIndication},
+        parameters::{self, ControlSource, ProfileIndication},
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
@@ -541,7 +542,7 @@ mod tests {
         let sgdata = backend.make_segment_data(&segment);
         let segments = backend.segments();
         let time_parameters = wheel::model::TimeParameters {
-            start: parameters.start_time.parse().unwrap(),
+            start: parameters::parse_time(&parameters.start_time),
             speed: parameters.speed,
             total_distance: backend.d().track.total_distance(),
         };

@@ -1,3 +1,4 @@
+use crate::parameters;
 use crate::{
     elevation, inputpoint::InputType, mercator::MercatorPoint, parameters::Parameters, speed,
     track, wgs84point::WGS84Point,
@@ -121,7 +122,7 @@ impl WaypointInfo {
             inter_elevation_gain,
             inter_slope,
             name,
-            time: time.to_rfc3339(),
+            time: parameters::time_to_iso8601(&time),
             track_index: w.track_index,
             origin,
         }

@@ -123,10 +123,8 @@ class ParameterChanger {
   }
 
   bridge.Parameters changeStartTime(DateTime time) {
-    String rfc3339time = time.toIso8601String();
-    if (!rfc3339time.endsWith("Z")) {
-      rfc3339time = "${rfc3339time}Z";
-    }
+    String rfc3339time = time.toUtc().toIso8601String();
+    developer.log("time = $rfc3339time");
     bridge.Parameters ret = bridge.Parameters(
       speed: init.speed,
       startTime: rfc3339time,
@@ -177,3 +175,8 @@ class ParameterChanger {
     return ret;
   }
 }
+
+DateTime parseDateTime(String data) {
+  return DateTime.parse(data).toLocal();
+}
+

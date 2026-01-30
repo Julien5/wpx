@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/waypointsmodel.dart';
 
 class WayPointsTable extends StatefulWidget {
@@ -48,7 +49,7 @@ class WayPointsTableState extends State<WayPointsTable> {
           local.asMap().entries.map((entry) {
             var index = entry.key;
             var info = entry.value.info!;
-            var dt = DateTime.parse(info.time);
+            var dt = parseDateTime(info.time);
             var km = info.distance / 1000;
             var ikm = info.interDistance / 1000;
             var egain = info.interElevationGain;

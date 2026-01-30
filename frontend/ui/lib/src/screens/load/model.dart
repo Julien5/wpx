@@ -147,7 +147,7 @@ class LoadScreenModel extends ChangeNotifier {
 
     if (error is bridge.TrackError) {
       // Now you can handle your specific Rust variants
-      print(error.toString());
+      developer.log("onError:${error.toString()}");
     }
 
     developer.log("error: $e");

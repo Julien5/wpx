@@ -1,4 +1,4 @@
-use crate::speed;
+use crate::{mercator::DateTime, speed};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ProfileIndication {
@@ -77,7 +77,7 @@ impl Default for Parameters {
     fn default() -> Parameters {
         Parameters {
             control_gpx_name_format: "NAME[3]-TIME[%H:%M]-SLOPE[4.1%]".to_string(),
-            start_time: chrono::Local::now().to_rfc3339(),
+            start_time: time_to_iso8601(&chrono::Local::now()),
             speed: speed::mps(15f64),
             segment_length: 110f64 * 1000f64,
             segment_overlap: 10f64 * 1000f64,
@@ -88,4 +88,15 @@ impl Default for Parameters {
             user_steps_options: UserStepsOptions::default(),
         }
     }
+}
+
+pub fn parse_time(data: &str) -> DateTime {
+    let parsed = chrono::DateTime::parse_from_rfc3339(data).expect("Failed to parse");
+    use chrono::{DateTime, Local};
+    let local_dt: DateTime<Local> = DateTime::from(parsed);
+    local_dt
+}
+
+pub fn time_to_iso8601(time: &DateTime) -> String {
+    time.to_rfc3339()
 }

@@ -63,9 +63,12 @@ fn generate_time_intervals(
 
     // Calculate end time
     let end_time = start_time + ChronoDuration::from_std(duration).unwrap();
-    use chrono::TimeZone;
-    let naive = start_time.date_naive().and_hms_opt(0, 0, 0).unwrap();
-    let midnight = chrono::Local.from_local_datetime(&naive).unwrap();
+    use chrono::{Local, TimeZone};
+    let midnight = start_time
+        .date_naive()
+        .and_hms_opt(0, 0, 0)
+        .and_then(|naive_midnight| Local.from_local_datetime(&naive_midnight).single())
+        .expect("Valid midnight");
 
     let interval_chrono = ChronoDuration::from_std(interval).unwrap();
 
@@ -113,7 +116,7 @@ fn make(times: &Vec<DateTime>, start_time: &DateTime, duration_seconds: f64) -> 
     for (index, time) in times.iter().enumerate() {
         let force = index == 0 || index == times.len() - 1;
         let x = time
-            .signed_duration_since(start_time)
+            .signed_duration_since(*start_time)
             .as_seconds_f64()
             .floor();
         let a = angle(x, duration_seconds);

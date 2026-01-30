@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="https://www.komoot.de" schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxpx="http://www.garmin.com/xmlschemas/PowerExtension/v1" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
+<gpx version="1.1" creator="https://www.komoot.de" schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxpx="http://www.garmin.com/xmlschemas/PowerExtension/v1" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
   <metadata>
-    <name>roland</name>
+    <name>Start-K1</name>
     <author>
       <name>gpx.studio</name>
       <link href="https://gpx.studio"/>
@@ -21,7 +21,7 @@
   </wpt>
   <wpt lat="47.695192" lon="10.042475">
     <ele>699.2816729826162</ele>
-    <name>Isny</name>
+    <name>K1 (Isny)</name>
   </wpt>
   <wpt lat="47.826151" lon="10.023269">
     <ele>657.3510787835355</ele>
@@ -31,9 +31,9 @@
     <ele>652.357936623228</ele>
     <name>Bad Wurzach</name>
   </wpt>
-  <wpt lat="47.919575" lon="9.754464">
+  <wpt lat="47.919786" lon="9.759508">
     <ele>587.7510816923822</ele>
-    <name>Bad Waldsee</name>
+    <name>K2 (Bad Waldsee)</name>
   </wpt>
   <wpt lat="47.952316" lon="9.642908">
     <ele>549.5276197159671</ele>
@@ -85,10 +85,10 @@
   </wpt>
   <wpt lat="47.909152" lon="9.431825">
     <ele>642.5960235407118</ele>
-    <name>Riedhausen</name>
+    <name>K3 (Riedhausen)</name>
   </wpt>
   <trk>
-    <name>roland</name>
+    <name>Start-K1</name>
     <extensions>
       <gpx_style:line>
         <gpx_style:color>000000</gpx_style:color>
@@ -6583,6 +6583,20 @@
         <ele>706.156328</ele>
         <time>2025-08-23T15:56:15.256Z</time>
       </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>K1-K2</name>
+    <extensions>
+      <gpx_style:line>
+        <gpx_style:color>000000</gpx_style:color>
+      </gpx_style:line>
+    </extensions>
+    <trkseg>
+      <trkpt lat="47.694702" lon="10.041787">
+        <ele>706.156328</ele>
+        <time>2025-08-23T15:56:15.256Z</time>
+      </trkpt>
       <trkpt lat="47.694681" lon="10.042101">
         <ele>706.718652</ele>
         <time>2025-08-23T15:56:20.617Z</time>
@@ -11243,6 +11257,20 @@
         <ele>590.267941</ele>
         <time>2025-08-23T18:59:11.017Z</time>
       </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>K2-K3</name>
+    <extensions>
+      <gpx_style:line>
+        <gpx_style:color>000000</gpx_style:color>
+      </gpx_style:line>
+    </extensions>
+    <trkseg>
+      <trkpt lat="47.919786" lon="9.759508">
+        <ele>590.267941</ele>
+        <time>2025-08-23T18:59:11.017Z</time>
+      </trkpt>
       <trkpt lat="47.919709" lon="9.759013">
         <ele>590.332675</ele>
         <time>2025-08-23T18:59:18.509Z</time>
@@ -14167,6 +14195,20 @@
         <ele>639.728066</ele>
         <time>2025-08-23T20:56:53.729Z</time>
       </trkpt>
+      <trkpt lat="47.908764" lon="9.431302">
+        <ele>639.590979</ele>
+        <time>2025-08-23T20:56:58.389Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>K3-Ziel</name>
+    <extensions>
+      <gpx_style:line>
+        <gpx_style:color>000000</gpx_style:color>
+      </gpx_style:line>
+    </extensions>
+    <trkseg>
       <trkpt lat="47.908764" lon="9.431302">
         <ele>639.590979</ele>
         <time>2025-08-23T20:56:58.389Z</time>
