@@ -1,11 +1,35 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
 
 function init() {
 	SCRIPTDIR=$(realpath $(dirname $0))
 	. $HOME/.profile
+	set -x
+}
+
+function parse-arguments() {
+	RELEASE=
+	TARBALL=/tmp/webapp.tgz
+	while [[ $# -gt 0 ]]; do
+		case $1 in
+			--tarball)
+				TARBALL="$2"
+				shift 
+				shift
+				;;
+			--release)
+				RELEASE="--release"
+				shift 
+				;;
+			-*|--*)
+				echo "Unknown option $1"
+				exit 1
+				;;
+		esac
+	done
+	echo RELEASE="${RELEASE}"
+	echo TARBALL="${TARBALL}"
 }
 
 function build() {
@@ -25,40 +49,18 @@ function build() {
 	rustup target add wasm32-unknown-unknown
 	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen generate
-	local RELEASE="--release"
-	# RELEASE=
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web ${RELEASE}
 	flutter build web ${RELEASE} --pwa-strategy=none --build-name=${version}
 	mkdir -p build/web/pkg/
 	cp -Rv $(find /opt/flutter/ -name "flutter.js.map") build/web/
 	cp -Rf web/pkg/* build/web/pkg/
-	tar -zcf /tmp/web.tgz build/web
+	tar -zcf ${TARBALL} build/web
 }
  
 function main() {
-    build # dont put an if around build
-	if [ "$1" = "deploy" ]; then
-		DOMAIN=vps-e637d6c5.vps.ovh.net
-
-		# upload package
-		scp -i ~/.ssh/ovh/id /tmp/web.tgz debian@${DOMAIN}:/tmp/
-
-		# upload script
-		scp -i ~/.ssh/ovh/id scripts/start-ovh.sh debian@${DOMAIN}:/tmp/
-		ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "chmod +x /tmp/start-ovh.sh"
-
-		# run start-ovh.sh 
-		if [ "${2:-}" = "master" ]; then
-			ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "/tmp/start-ovh.sh master"
-		else
-			ssh -i ~/.ssh/ovh/id debian@${DOMAIN} "/tmp/start-ovh.sh"
-		fi
-	fi
-
-	if [ "$1" = "serve" ]; then
-		./scripts/start-ovh.sh 
-	fi
+	build 
 }
 
 init
+parse-arguments "$@"
 main "$@"
