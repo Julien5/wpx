@@ -617,4 +617,29 @@ mod tests {
         }
         assert!(ok_count == segments.len());
     }
+
+    #[tokio::test]
+    async fn gpx() {
+        let _ = env_logger::try_init();
+        let mut backend = load_test_data().await;
+        let mut parameters = backend.get_parameters();
+        parameters.start_time = START_TIME.to_string();
+        parameters.user_steps_options.step_distance = Some((10_000) as f64);
+        parameters.map_options.max_area_ratio = 0.15f64;
+        backend.set_parameters(&parameters);
+        let svg = backend.generateGpx();
+        let reffilename = std::format!("data/ref/route.gpx");
+        println!("test {}", reffilename);
+        let data = if std::fs::exists(&reffilename).unwrap() {
+            std::fs::read(&reffilename).unwrap()
+        } else {
+            Vec::new()
+        };
+        let tmpfilename = std::format!("/tmp/route.gpx");
+        std::fs::write(&tmpfilename, svg.clone()).unwrap();
+        if data != svg {
+            println!("test failed: {} {}", tmpfilename, reffilename);
+            assert!(false);
+        }
+    }
 }
