@@ -150,7 +150,7 @@ class OSMCard extends StatelessWidget {
 
 String title(LoadScreenModel model) {
   if (model.doneAll()) {
-    return "Done";
+    return "Loaded";
   }
   return "Loading...";
 }
@@ -203,7 +203,13 @@ class _LoadScreenState extends State<LoadScreen> {
   Widget buildScaffold(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     return Scaffold(
-      appBar: AppBar(title: Text(title(model))),
+      appBar: AppBar(
+        title: Text(title(model)),
+        leading:
+            model.doneAll()
+                ? BackButton()
+                : IconButton(icon: Icon(Icons.arrow_back), onPressed: null),
+      ),
       body: BodyWidget(),
     );
   }
