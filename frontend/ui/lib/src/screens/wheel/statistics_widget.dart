@@ -191,8 +191,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
     RootModel root = Provider.of<RootModel>(context);
     List<Segment> segments = root.segments();
-    String pagesCountText =
-        "${(segments.length / 2).ceil().toString().padLeft(2)} pages";
+    String pagesCountText = "${segments.length.toString().padLeft(2)} pages";
     Widget table = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [

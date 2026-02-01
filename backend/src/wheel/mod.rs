@@ -94,7 +94,7 @@ fn draw_arc1(page: &Page, m: &model::Arc) -> Group {
         angle1: start + 5f64,
         angle2: end - 5f64,
     };
-    let dash_start = Path::new()
+    /*let dash_start = Path::new()
         .set(
             "d",
             a1.dash(radius - dash_length, radius + dash_length, start),
@@ -102,9 +102,9 @@ fn draw_arc1(page: &Page, m: &model::Arc) -> Group {
         .set("fill", "none")
         .set("stroke", "black")
         .set("stroke-width", 4);
-    ret = ret.add(dash_start);
+    ret = ret.add(dash_start);*/
 
-    let dash_end = Path::new()
+    /*let dash_end = Path::new()
         .set(
             "d",
             a1.dash(radius - dash_length, radius + dash_length, end),
@@ -112,7 +112,7 @@ fn draw_arc1(page: &Page, m: &model::Arc) -> Group {
         .set("fill", "none")
         .set("stroke", "black")
         .set("stroke-width", 4);
-    ret = ret.add(dash_end);
+    ret = ret.add(dash_end);*/
 
     let arc1 = Path::new()
         .set("d", a1.open_path())
@@ -137,15 +137,15 @@ fn draw_arc2(page: &Page, m: &model::Arc) -> Group {
         center: zero,
         radius,
         angle1: start + 5f64,
-        angle2: mid - 2f64,
+        angle2: mid - 5f64,
     };
     let a2 = arc::Arc {
         center: zero,
         radius,
-        angle1: mid + 2f64,
+        angle1: mid + 5f64,
         angle2: end - 5f64,
     };
-    let dash_start = Path::new()
+    /*let dash_start = Path::new()
         .set(
             "d",
             a1.dash(radius - dash_length, radius + dash_length, start),
@@ -163,7 +163,7 @@ fn draw_arc2(page: &Page, m: &model::Arc) -> Group {
         .set("fill", "none")
         .set("stroke", "black")
         .set("stroke-width", 4);
-    ret = ret.add(dash_end);
+    ret = ret.add(dash_end);*/
 
     /*
     let mid_dash_length = 5f64;

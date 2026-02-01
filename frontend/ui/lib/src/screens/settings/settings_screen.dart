@@ -12,17 +12,6 @@ import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
 import 'package:ui/utils.dart';
 
-class TextWidget extends StatelessWidget {
-  const TextWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    String text = "${root.segments().length} segments";
-    return Center(child: Text(text));
-  }
-}
-
 List<double> segmentLengthSliderValues(double trackLength) {
   double trackLengthKm = trackLength / 1000;
   List<double> values = [2, 5, 10];
@@ -87,12 +76,10 @@ int segmentCount(double trackLength, double segmentLength) {
 }
 
 int projectNumberOfPages(int wanted, double trackLength, Parameters p) {
-  double nice = niceSegmentLength(0.5 * trackLength / wanted);
+  double nice = niceSegmentLength(trackLength / wanted);
   double segmentOverlap = nice / 10;
   double segmentLength = nice + segmentOverlap;
-  int nsegment = segmentCount(trackLength, segmentLength);
-  int npages = (nsegment * 0.5).ceil();
-  return npages;
+  return segmentCount(trackLength, segmentLength);
 }
 
 class SliderWidget extends StatelessWidget {
@@ -101,7 +88,7 @@ class SliderWidget extends StatelessWidget {
   void onChanged(BuildContext context, double pages) {
     RootModel root = Provider.of<RootModel>(context, listen: false);
     double trackLength = root.statistics().length;
-    double nice = niceSegmentLength(0.5 * trackLength / pages);
+    double nice = niceSegmentLength(trackLength / pages);
     double segmentOverlap = nice / 10;
     double segmentLength = nice + segmentOverlap;
     Parameters p = root.parameters();
@@ -130,13 +117,10 @@ class SliderWidget extends StatelessWidget {
 
     int lmin = niceSegmentLengths().reduce(min);
     int lmax = niceSegmentLengths().reduce(max);
-    int pmax = min(
-      high,
-      (segmentCount(trackLength, lmin.toDouble()) / 2).ceil(),
-    );
-    int pmin = (segmentCount(trackLength, lmax.toDouble()) / 2).ceil();
+    int pmax = min(high, segmentCount(trackLength, lmin.toDouble()));
+    int pmin = segmentCount(trackLength, lmax.toDouble());
 
-    int p = ((nsegment * 0.5).ceil()).clamp(pmin, pmax);
+    int p = nsegment.clamp(pmin, pmax);
 
     developer.log("$pmin $pmax $p $segmentLength");
     return Slider(
@@ -169,7 +153,7 @@ class SettingsWidget extends StatelessWidget {
         .ceil()
         .toString()
         .padLeft(3);
-    String pageCount = (segments.length / 2).ceil().toString().padLeft(2);
+    String pageCount = segments.length.toString().padLeft(2);
     IconData showIcon = Icons.arrow_right;
     if (show) {
       showIcon = Icons.arrow_drop_down;
@@ -216,7 +200,7 @@ class SettingsWidget extends StatelessWidget {
                       onPressed: onShowPressed,
                       icon: Icon(showIcon, color: Colors.green, size: 30.0),
                       label: Text(
-                        "$segLength km per segment",
+                        "$segLength km per page",
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
