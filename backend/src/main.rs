@@ -3,6 +3,7 @@
 use clap::Parser;
 use tracks::backend::Backend;
 use tracks::math::IntegerSize2D;
+use tracks::parameters::ControlSource;
 use tracks::speed;
 use tracks::{error, inputpoint};
 
@@ -88,6 +89,7 @@ async fn main() -> anyhow::Result<()> {
     log::info!("outdir   {}", outdir);
     let mut backend = Backend::make();
     backend.load_filename(gpxinput).await?;
+    backend.load_controls(ControlSource::Segments).await?;
 
     let mut parameters = backend.get_parameters();
     match args.segment_length {
