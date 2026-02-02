@@ -221,7 +221,7 @@ class TopRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => TrackViewsSwitch(exposed: [TrackData.pages]),
-      child: TrackGraphicsRow(kinds: allkinds(), height: 200),
+      child: TrackGraphicsRow(kinds: allkinds(), maxHeight: 200),
     );
   }
 }

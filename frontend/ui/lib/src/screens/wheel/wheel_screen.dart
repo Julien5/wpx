@@ -99,7 +99,7 @@ class _WheelScaffold extends StatelessWidget {
     List<Widget> children = [
       Expanded(
         flex: 1,
-        child: TrackGraphicsRow(kinds: allkinds(), height: 200),
+        child: TrackGraphicsRow(kinds: allkinds(), maxHeight: 300),
       ),
 
       Expanded(
