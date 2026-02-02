@@ -6,14 +6,12 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/utils.dart';
 
-class SegmentsView extends StatefulWidget {
-  const SegmentsView({super.key});
-
+class _SegmentsView extends StatefulWidget {
   @override
-  State<SegmentsView> createState() => _SegmentsViewState();
+  State<_SegmentsView> createState() => _SegmentsViewState();
 }
 
-class _SegmentsViewState extends State<SegmentsView> {
+class _SegmentsViewState extends State<_SegmentsView> {
   List<Segment>? segments;
 
   @override
@@ -36,14 +34,13 @@ class _SegmentsViewState extends State<SegmentsView> {
   }
 }
 
-class SegmentsConsumer extends StatelessWidget {
-  const SegmentsConsumer({super.key});
+class _SegmentsConsumer extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1500),
-        child: Column(children: [Expanded(child: SegmentsView())]),
+        child: Column(children: [Expanded(child: _SegmentsView())]),
       ),
     );
   }
@@ -72,6 +69,6 @@ class SegmentsScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Scaffold(appBar: appBar(ctx), body: SegmentsConsumer());
+    return Scaffold(appBar: appBar(ctx), body: _SegmentsConsumer());
   }
 }

@@ -7,9 +7,7 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/future_rendering_widget.dart';
 
-class InteractiveMapView extends StatelessWidget {
-  const InteractiveMapView({super.key});
-
+class _InteractiveMapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<FutureRenderer>(
@@ -25,14 +23,13 @@ class InteractiveMapView extends StatelessWidget {
   }
 }
 
-class InteractiveConsumer extends StatelessWidget {
-  const InteractiveConsumer({super.key});
+class _InteractiveConsumer extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1500),
-        child: Column(children: [Expanded(child: InteractiveMapView())]),
+        child: Column(children: [Expanded(child: _InteractiveMapView())]),
       ),
     );
   }
@@ -96,7 +93,7 @@ class _InteractiveScaffoldState extends State<InteractiveScaffold> {
               kinds: allkinds(),
               trackData: TrackData.map,
             ),
-        child: InteractiveConsumer(),
+        child: _InteractiveConsumer(),
       ),
     );
   }

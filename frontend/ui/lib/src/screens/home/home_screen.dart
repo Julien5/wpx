@@ -6,11 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/screens/load/load_screen.dart';
 
-class ChooseData extends StatefulWidget {
-  const ChooseData({super.key});
+class _ChooseData extends StatefulWidget {
+  const _ChooseData();
 
   @override
-  State<ChooseData> createState() => _ChooseDataState();
+  State<_ChooseData> createState() => _ChooseDataState();
 }
 
 class UserInput {
@@ -31,7 +31,7 @@ class UserInput {
   }
 }
 
-class _ChooseDataState extends State<ChooseData> {
+class _ChooseDataState extends State<_ChooseData> {
   UserInput? findResult;
   String? errorMessage;
   bool loading = false;
@@ -129,12 +129,10 @@ class _ChooseDataState extends State<ChooseData> {
   }
 }
 
-class HomeBody extends StatelessWidget {
-  const HomeBody({super.key});
-
+class _HomeBody extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    return ChooseData();
+    return _ChooseData();
   }
 }
 
@@ -143,7 +141,7 @@ class HomeScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Scaffold(appBar: AppBar(title: Text('WPX xxx ')), body: HomeBody());
+    return Scaffold(appBar: AppBar(title: Text('WPX xxx ')), body: _HomeBody());
   }
 }
 

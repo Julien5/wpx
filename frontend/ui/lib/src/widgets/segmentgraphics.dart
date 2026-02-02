@@ -5,13 +5,12 @@ import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 
-class SegmentGraphicsButtons extends StatelessWidget {
+class _SegmentGraphicsButtons extends StatelessWidget {
   final VoidCallback? onPressed;
   final TrackData trackData;
   final TrackData selected;
   final double size;
-  const SegmentGraphicsButtons({
-    super.key,
+  const _SegmentGraphicsButtons({
     required this.selected,
     required this.size,
     required this.trackData,
@@ -80,7 +79,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
     List<Widget> children = [];
     for (TrackData data in model.exposed) {
       children.add(
-        SegmentGraphicsButtons(
+        _SegmentGraphicsButtons(
           selected: selected,
           size: buttonSize,
           trackData: data,

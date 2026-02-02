@@ -10,10 +10,10 @@ import 'package:ui/src/widgets/small.dart';
 import 'eventwidget.dart';
 import 'model.dart';
 
-class GPXStrings {
+class _GPXStrings {
   final LoadScreenModel screenModel;
 
-  GPXStrings({required this.screenModel});
+  _GPXStrings({required this.screenModel});
 
   bridge.SegmentStatistics? statistics;
   void setData(bridge.SegmentStatistics s) {
@@ -37,13 +37,11 @@ class GPXStrings {
   }
 }
 
-class GPXCard extends StatelessWidget {
-  const GPXCard({super.key});
-
+class _GPXCard extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
-    GPXStrings strings = GPXStrings(screenModel: model);
+    _GPXStrings strings = _GPXStrings(screenModel: model);
     if (model.hasDone(Job.gpx)) {
       strings.setData(model.statistics());
     }
@@ -54,16 +52,13 @@ class GPXCard extends StatelessWidget {
         TableRow(
           children: [
             SmallText(text: "Length"),
-            ScreenEventWidget(target: Job.gpx, forcedString: strings.km()),
+            EventWidget(target: Job.gpx, forcedString: strings.km()),
           ],
         ),
         TableRow(
           children: [
             SmallText(text: "Elevation"),
-            ScreenEventWidget(
-              target: Job.gpx,
-              forcedString: strings.elevation(),
-            ),
+            EventWidget(target: Job.gpx, forcedString: strings.elevation()),
           ],
         ),
       ],
@@ -73,10 +68,10 @@ class GPXCard extends StatelessWidget {
   }
 }
 
-class ControlStrings {
+class _ControlStrings {
   final LoadScreenModel screenModel;
 
-  ControlStrings({required this.screenModel});
+  _ControlStrings({required this.screenModel});
 
   String? count() {
     if (!screenModel.hasDone(Job.controls)) {
@@ -92,7 +87,7 @@ class ControlsCard extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
-    ControlStrings strings = ControlStrings(screenModel: model);
+    _ControlStrings strings = _ControlStrings(screenModel: model);
     Widget inner = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
@@ -100,10 +95,7 @@ class ControlsCard extends StatelessWidget {
         TableRow(
           children: [
             SmallText(text: "Number"),
-            ScreenEventWidget(
-              target: Job.controls,
-              forcedString: strings.count(),
-            ),
+            EventWidget(target: Job.controls, forcedString: strings.count()),
           ],
         ),
       ],
@@ -112,9 +104,7 @@ class ControlsCard extends StatelessWidget {
   }
 }
 
-class OSMCard extends StatelessWidget {
-  const OSMCard({super.key});
-
+class _OSMCard extends StatelessWidget {
   void onRetryPressed(LoadScreenModel model) {
     model.retry(Job.osm);
   }
@@ -124,11 +114,11 @@ class OSMCard extends StatelessWidget {
     developer.log("OSMCard build ");
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
 
-    Widget row = ScreenEventWidget(target: Job.osm);
+    Widget row = EventWidget(target: Job.osm);
     if (model.error(Job.osm) != null) {
       row = Row(
         children: [
-          ScreenEventWidget(target: Job.osm),
+          EventWidget(target: Job.osm),
           ElevatedButton(
             onPressed: () => onRetryPressed(model),
             child: const Text("retry"),
@@ -148,16 +138,14 @@ class OSMCard extends StatelessWidget {
   }
 }
 
-String title(LoadScreenModel model) {
+String _title(LoadScreenModel model) {
   if (model.doneAll()) {
     return "Loaded";
   }
   return "Loading...";
 }
 
-class BodyWidget extends StatelessWidget {
-  const BodyWidget({super.key});
-
+class _BodyWidget extends StatelessWidget {
   void gotoWheel(BuildContext context) {
     Navigator.of(context).pushNamed(RouteManager.wheelView);
   }
@@ -179,11 +167,11 @@ class BodyWidget extends StatelessWidget {
     return SmallCentralWidget(
       child: Column(
         children: [
-          GPXCard(),
+          _GPXCard(),
           vspace,
           ControlsCard(),
           vspace,
-          OSMCard(),
+          _OSMCard(),
           vspace,
           button,
         ],
@@ -192,25 +180,23 @@ class BodyWidget extends StatelessWidget {
   }
 }
 
-class LoadScaffold extends StatefulWidget {
-  const LoadScaffold({super.key});
-
+class _LoadScaffold extends StatefulWidget {
   @override
-  State<LoadScaffold> createState() => _LoadScaffoldState();
+  State<_LoadScaffold> createState() => _LoadScaffoldState();
 }
 
-class _LoadScaffoldState extends State<LoadScaffold> {
+class _LoadScaffoldState extends State<_LoadScaffold> {
   Widget buildScaffold(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     return Scaffold(
       appBar: AppBar(
-        title: Text(title(model)),
+        title: Text(_title(model)),
         leading:
             model.doneAll()
                 ? BackButton()
                 : IconButton(icon: Icon(Icons.arrow_back), onPressed: null),
       ),
-      body: BodyWidget(),
+      body: _BodyWidget(),
     );
   }
 
@@ -234,10 +220,9 @@ class _LoadScaffoldState extends State<LoadScaffold> {
   }
 }
 
-class LoadScreenProviders extends MultiProvider {
+class _LoadScreenProviders extends MultiProvider {
   final UserInput userInput;
-  LoadScreenProviders({
-    super.key,
+  _LoadScreenProviders({
     required RootModel root,
     required this.userInput,
     required Widget child,
@@ -276,10 +261,10 @@ class LoadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RootModel root = Provider.of<RootModel>(context);
-    return LoadScreenProviders(
+    return _LoadScreenProviders(
       root: root,
       userInput: userInput,
-      child: LoadScaffold(),
+      child: _LoadScaffold(),
     );
   }
 }

@@ -6,9 +6,7 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_table.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 
-class ButtonWidget extends StatelessWidget {
-  const ButtonWidget({super.key});
-
+class _ButtonWidget extends StatelessWidget {
   void gotoTable(BuildContext context) {
     SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
     Navigator.push(
@@ -33,9 +31,7 @@ class ButtonWidget extends StatelessWidget {
   }
 }
 
-class TextWidget extends StatelessWidget {
-  const TextWidget({super.key});
-
+class _TextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Set<InputType> control = {InputType.control};
@@ -47,9 +43,7 @@ class TextWidget extends StatelessWidget {
   }
 }
 
-class ControlsScaffold extends StatelessWidget {
-  const ControlsScaffold({super.key});
-
+class _ControlsScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     Set<InputType> control = {InputType.control};
@@ -62,10 +56,10 @@ class ControlsScaffold extends StatelessWidget {
           children: [
             TrackGraphicsRow(kinds: control, height: 200),
             SizedBox(height: 10),
-            TextWidget(),
+            _TextWidget(),
             SizedBox(height: 10),
             Divider(),
-            ButtonWidget(),
+            _ButtonWidget(),
           ],
         ),
       ),
@@ -102,7 +96,7 @@ class ControlsScreen extends StatelessWidget {
     return ControlsScreenProviders(
       segmentModel: model,
       multiTrackModel: multiTrackModel,
-      child: ControlsScaffold(),
+      child: _ControlsScaffold(),
     );
   }
 }

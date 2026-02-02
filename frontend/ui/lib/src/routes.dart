@@ -16,7 +16,7 @@ class RouteManager {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeBody());
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
 
       case segmentsView:
         return MaterialPageRoute(builder: (_) => SegmentsScaffold());

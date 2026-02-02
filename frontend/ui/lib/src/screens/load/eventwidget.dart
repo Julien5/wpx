@@ -5,16 +5,16 @@ import 'package:ui/src/widgets/small.dart';
 
 import 'model.dart';
 
-class ScreenEventWidget extends StatefulWidget {
+class EventWidget extends StatefulWidget {
   final Job target;
   final String? forcedString;
-  const ScreenEventWidget({super.key, required this.target, this.forcedString});
+  const EventWidget({super.key, required this.target, this.forcedString});
 
   @override
-  State<ScreenEventWidget> createState() => _ScreenEventWidgetState();
+  State<EventWidget> createState() => _EventWidgetState();
 }
 
-class _ScreenEventWidgetState extends State<ScreenEventWidget> {
+class _EventWidgetState extends State<EventWidget> {
   @override
   Widget build(BuildContext context) {
     LoadScreenModel screenModel = Provider.of<LoadScreenModel>(context);

@@ -12,9 +12,7 @@ import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/small.dart';
 
-class WheelScaffold extends StatelessWidget {
-  const WheelScaffold({super.key});
-
+class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
     Navigator.push(
@@ -98,23 +96,20 @@ class WheelScaffold extends StatelessWidget {
   }
 }
 
-class WheelScreenProviders extends MultiProvider {
-  WheelScreenProviders({
-    super.key,
-    required RootModel root,
-    required Widget child,
-  }) : super(
-         providers: [
-           ChangeNotifierProvider(
-             create:
-                 (_) => SegmentModel(root: root, segment: root.trackSegment()),
-           ),
-           ChangeNotifierProvider(
-             create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
-           ),
-         ],
-         child: child,
-       );
+class _WheelScreenProviders extends MultiProvider {
+  _WheelScreenProviders({required RootModel root, required Widget child})
+    : super(
+        providers: [
+          ChangeNotifierProvider(
+            create:
+                (_) => SegmentModel(root: root, segment: root.trackSegment()),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
+          ),
+        ],
+        child: child,
+      );
 }
 
 class WheelScreen extends StatelessWidget {
@@ -125,6 +120,6 @@ class WheelScreen extends StatelessWidget {
     RootModel root = Provider.of<RootModel>(context);
     Bridge bridge = root.getBridge();
     assert(bridge.isLoaded());
-    return WheelScreenProviders(root: root, child: WheelScaffold());
+    return _WheelScreenProviders(root: root, child: _WheelScaffold());
   }
 }
