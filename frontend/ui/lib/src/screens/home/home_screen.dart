@@ -129,11 +129,42 @@ class _ChooseDataState extends State<ChooseData> {
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeBody extends StatelessWidget {
+  const HomeBody({super.key});
 
   @override
   Widget build(BuildContext ctx) {
     return ChooseData();
+  }
+}
+
+class HomeScaffold extends StatelessWidget {
+  const HomeScaffold({super.key});
+
+  @override
+  Widget build(BuildContext ctx) {
+    return Scaffold(appBar: AppBar(title: Text('WPX xxx ')), body: HomeBody());
+  }
+}
+
+/*class HomeProviders extends MultiProvider {
+  final Widget child;
+  HomeProviders({super.key, required this.child})
+    : super(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => HomeModel(packageInfo: packageInfo),
+          ),
+        ],
+        child: child,
+      );
+}*/
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return HomeScaffold();
   }
 }

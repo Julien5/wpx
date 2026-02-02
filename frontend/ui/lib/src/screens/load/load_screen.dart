@@ -252,6 +252,7 @@ class LoadScreenProviders extends MultiProvider {
                  context,
                  listen: false,
                );
+               developer.log("make LoadScreenModel");
                return LoadScreenModel(
                  root: root,
                  events: events,

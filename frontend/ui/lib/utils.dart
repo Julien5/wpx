@@ -1,5 +1,8 @@
+import 'dart:developer' as developer;
 import 'dart:math';
 import 'dart:ui';
+
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 double scaleDown(Size object, Size drawArea) {
   double sw = drawArea.width / object.width;
@@ -53,4 +56,86 @@ Size makeFinite(Size size) {
     h = size.height.floor();
   }
   return Size(w.toDouble(), h.toDouble());
+}
+
+class ParameterChanger {
+  bridge.Parameters init;
+  ParameterChanger({required this.init});
+  bridge.Parameters current() {
+    return init;
+  }
+
+  bridge.Parameters changeSpeed(double speed) {
+    bridge.Parameters ret = bridge.Parameters(
+      speed: speed,
+      startTime: init.startTime,
+      segmentLength: init.segmentLength,
+      segmentOverlap: init.segmentOverlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
+
+  bridge.Parameters changeStartTime(DateTime time) {
+    String rfc3339time = time.toUtc().toIso8601String();
+    developer.log("time = $rfc3339time");
+    bridge.Parameters ret = bridge.Parameters(
+      speed: init.speed,
+      startTime: rfc3339time,
+      segmentLength: init.segmentLength,
+      segmentOverlap: init.segmentOverlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
+
+  bridge.Parameters changeSegmentLength(double length) {
+    bridge.Parameters ret = bridge.Parameters(
+      speed: init.speed,
+      startTime: init.startTime,
+      segmentLength: length,
+      segmentOverlap: init.segmentOverlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
+
+  bridge.Parameters changeSegmentOverlap(double overlap) {
+    bridge.Parameters ret = bridge.Parameters(
+      speed: init.speed,
+      startTime: init.startTime,
+      segmentLength: init.segmentLength,
+      segmentOverlap: overlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
+}
+
+DateTime parseDateTime(String data) {
+  return DateTime.parse(data).toLocal();
 }

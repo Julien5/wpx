@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/frb_generated.dart';
@@ -22,39 +23,68 @@ Future<void> main() async {
   await RustLib.init();
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   developer.log("frontend loaded");
-  runApp(Application(packageInfo: packageInfo));
+  runApp(ApplicationProvider(packageInfo: packageInfo, child: Application()));
+}
+
+class PackageModel extends ChangeNotifier {
+  final PackageInfo packageInfo;
+  PackageModel({required this.packageInfo});
+}
+
+class ApplicationProvider extends StatelessWidget {
+  final Widget child;
+  final PackageInfo? packageInfo;
+  const ApplicationProvider({super.key, required this.child, this.packageInfo});
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => RootModel()),
+        ChangeNotifierProvider(create: (_) => ScreenConfiguration()),
+        ChangeNotifierProvider(
+          create: (_) => PackageModel(packageInfo: packageInfo!),
+        ),
+      ],
+      child: child,
+    );
+  }
 }
 
 class Application extends StatelessWidget {
-  final PackageInfo? packageInfo;
-  const Application({super.key, required this.packageInfo});
+  const Application({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => RootModel(),
+    return MaterialApp(
+      title: "WPX",
+      onGenerateRoute: RouteManager.generateRoute,
+      initialRoute: RouteManager.home,
+      home: HomeScreen(),
+      // 2. The builder wraps the 'home' widget
       builder: (context, child) {
-        return MaterialApp(
-          title: "WPX",
-          onGenerateRoute: RouteManager.generateRoute,
-          initialRoute: RouteManager.home,
-          home: Scaffold(
-            appBar: AppBar(title: Text('WPX ${packageInfo!.version} ')),
-            body: HomeScreen(),
-          ),
-          theme: ThemeData(
-            pageTransitionsTheme: PageTransitionsTheme(
-              builders: {
-                TargetPlatform.android: ZoomPageTransitionsBuilder(),
-                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-                TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
-                //TargetPlatform.linux: ZoomPageTransitionsBuilder(),
-                //TargetPlatform.linux:PredictiveBackPageTransitionsBuilder(),
-              },
-            ),
-          ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            Future.microtask(() {
+              if (!context.mounted) return;
+              context.read<ScreenConfiguration>().updateConstraints(
+                constraints,
+              );
+            });
+            return child!;
+          },
         );
       },
+      theme: ThemeData(
+        pageTransitionsTheme: PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
+            //TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+            //TargetPlatform.linux:PredictiveBackPageTransitionsBuilder(),
+          },
+        ),
+      ),
     );
   }
 }
