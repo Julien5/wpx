@@ -1,6 +1,9 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -11,6 +14,30 @@ import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/small.dart';
+
+enum Orientation { vertical, horizontal }
+
+class _Container extends StatelessWidget {
+  final List<Widget> children;
+  final Orientation orientation;
+
+  const _Container({required this.children, required this.orientation});
+  @override
+  Widget build(BuildContext context) {
+    if (orientation == Orientation.vertical) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: children,
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: children,
+    );
+  }
+}
 
 class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
@@ -63,34 +90,36 @@ class _WheelScaffold extends StatelessWidget {
       ),
     );
 
-    Widget vspace = SizedBox(height: 50);
+    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
+    Orientation orientation = Orientation.vertical;
+    if (screen.width > screen.height) {
+      orientation = Orientation.horizontal;
+    }
+    developer.log("******** orien:$orientation");
+    List<Widget> children = [
+      Expanded(
+        flex: 1,
+        child: TrackGraphicsRow(kinds: allkinds(), height: 200),
+      ),
+
+      Expanded(
+        flex: 2,
+        child: _Container(
+          orientation: Orientation.vertical,
+          children: [
+            statisticsCard,
+            SmallCentralWidget(
+              child: ExportButton(text: "export zip", type: Type.zip),
+            ),
+          ],
+        ),
+      ),
+    ];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TrackGraphicsRow(kinds: allkinds(), height: 200),
-            Expanded(child: vspace),
-            Padding(padding: const EdgeInsets.all(16), child: statisticsCard),
-            Expanded(child: vspace),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(
-                    16,
-                  ), // Add padding inside the card
-                  child: ExportButton(text: "export zip", type: Type.zip),
-                ),
-              ],
-            ),
-            Expanded(child: vspace),
-          ],
-        ),
+        child: _Container(orientation: orientation, children: children),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
@@ -175,10 +176,12 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
 class TrackGraphicsRow extends StatelessWidget {
   final Set<InputType> kinds;
   final double height;
+  final double? width;
   const TrackGraphicsRow({
     super.key,
     required this.kinds,
     required this.height,
+    this.width,
   });
 
   void onButtonPressed(BuildContext context, TrackData data) {
@@ -201,7 +204,6 @@ class TrackGraphicsRow extends StatelessWidget {
       selected: currentModelData,
       size: 30,
     );
-
     return Padding(
       padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
       child: ConstrainedBox(
