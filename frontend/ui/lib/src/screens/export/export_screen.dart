@@ -92,7 +92,7 @@ class _ExportButtonState extends State<ExportButton> {
   @override
   Widget build(BuildContext context) {
     RootModel model = Provider.of<RootModel>(context);
-    String kB=(length/1024.0).ceil().toString();
+    String kB = (length / 1024.0).ceil().toString();
     return Row(
       children: [
         ElevatedButton(
@@ -132,8 +132,8 @@ class ExportWidget extends StatelessWidget {
   }
 }
 
-class ExportScreen extends StatelessWidget {
-  const ExportScreen({super.key});
+class ExportScaffold extends StatelessWidget {
+  const ExportScaffold({super.key});
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(

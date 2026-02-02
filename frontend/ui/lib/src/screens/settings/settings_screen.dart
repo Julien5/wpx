@@ -247,14 +247,14 @@ class BottomRow extends StatelessWidget {
   }
 }
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+class SettingsScaffold extends StatefulWidget {
+  const SettingsScaffold({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  State<SettingsScaffold> createState() => _SettingsScaffoldState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScaffoldState extends State<SettingsScaffold> {
   bool showBottomWidget = false;
   void onShowPressed() {
     setState(() {
@@ -302,16 +302,16 @@ class SettingsScreenProviders extends MultiProvider {
        );
 }
 
-class SettingsProvider extends StatelessWidget {
+class SettingsScreen extends StatelessWidget {
   final SegmentModel model;
-  const SettingsProvider({super.key, required this.model});
+  const SettingsScreen({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
     return SettingsScreenProviders(
       segmentModel: model,
       multiTrackModel: TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
-      child: SettingsScreen(),
+      child: SettingsScaffold(),
     );
   }
 }

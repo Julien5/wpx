@@ -192,14 +192,14 @@ class BodyWidget extends StatelessWidget {
   }
 }
 
-class LoadScreen extends StatefulWidget {
-  const LoadScreen({super.key});
+class LoadScaffold extends StatefulWidget {
+  const LoadScaffold({super.key});
 
   @override
-  State<LoadScreen> createState() => _LoadScreenState();
+  State<LoadScaffold> createState() => _LoadScaffoldState();
 }
 
-class _LoadScreenState extends State<LoadScreen> {
+class _LoadScaffoldState extends State<LoadScaffold> {
   Widget buildScaffold(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     return Scaffold(
@@ -268,9 +268,9 @@ class LoadScreenProviders extends MultiProvider {
        );
 }
 
-class LoadProvider extends StatelessWidget {
+class LoadScreen extends StatelessWidget {
   final UserInput userInput;
-  const LoadProvider({super.key, required this.userInput});
+  const LoadScreen({super.key, required this.userInput});
 
   @override
   Widget build(BuildContext context) {
@@ -278,7 +278,7 @@ class LoadProvider extends StatelessWidget {
     return LoadScreenProviders(
       root: root,
       userInput: userInput,
-      child: LoadScreen(),
+      child: LoadScaffold(),
     );
   }
 }

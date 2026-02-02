@@ -49,8 +49,8 @@ class SegmentsConsumer extends StatelessWidget {
   }
 }
 
-class SegmentsScreen extends StatelessWidget {
-  const SegmentsScreen({super.key});
+class SegmentsScaffold extends StatelessWidget {
+  const SegmentsScaffold({super.key});
 
   AppBar? appBar(BuildContext ctx) {
     ScreenOrientation type = screenOrientation(MediaQuery.of(ctx).size);

@@ -48,8 +48,8 @@ class TextWidget extends StatelessWidget {
   }
 }
 
-class UserStepsScreen extends StatelessWidget {
-  const UserStepsScreen({super.key});
+class UserStepsScaffold extends StatelessWidget {
+  const UserStepsScaffold({super.key});
 
   @override
   Widget build(BuildContext ctx) {
@@ -92,10 +92,10 @@ class UserStepsScreenProviders extends MultiProvider {
        );
 }
 
-class UserStepsProvider extends StatelessWidget {
+class UserStepsScreen extends StatelessWidget {
   final SegmentModel model;
   final TrackViewsSwitch multiTrackModel;
-  const UserStepsProvider({
+  const UserStepsScreen({
     super.key,
     required this.model,
     required this.multiTrackModel,
@@ -106,7 +106,7 @@ class UserStepsProvider extends StatelessWidget {
     return UserStepsScreenProviders(
       segmentModel: model,
       multiTrackModel: multiTrackModel,
-      child: UserStepsScreen(),
+      child: UserStepsScaffold(),
     );
   }
 }

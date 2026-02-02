@@ -47,8 +47,8 @@ class TextWidget extends StatelessWidget {
   }
 }
 
-class ControlsScreen extends StatelessWidget {
-  const ControlsScreen({super.key});
+class ControlsScaffold extends StatelessWidget {
+  const ControlsScaffold({super.key});
 
   @override
   Widget build(BuildContext ctx) {
@@ -88,10 +88,10 @@ class ControlsScreenProviders extends MultiProvider {
        );
 }
 
-class ControlsProvider extends StatelessWidget {
+class ControlsScreen extends StatelessWidget {
   final SegmentModel model;
   final TrackViewsSwitch multiTrackModel;
-  const ControlsProvider({
+  const ControlsScreen({
     super.key,
     required this.model,
     required this.multiTrackModel,
@@ -102,7 +102,7 @@ class ControlsProvider extends StatelessWidget {
     return ControlsScreenProviders(
       segmentModel: model,
       multiTrackModel: multiTrackModel,
-      child: ControlsScreen(),
+      child: ControlsScaffold(),
     );
   }
 }

@@ -38,14 +38,14 @@ class InteractiveConsumer extends StatelessWidget {
   }
 }
 
-class InteractiveScreen extends StatefulWidget {
-  const InteractiveScreen({super.key});
+class InteractiveScaffold extends StatefulWidget {
+  const InteractiveScaffold({super.key});
 
   @override
-  State<InteractiveScreen> createState() => _InteractiveScreenState();
+  State<InteractiveScaffold> createState() => _InteractiveScaffoldState();
 }
 
-class _InteractiveScreenState extends State<InteractiveScreen> {
+class _InteractiveScaffoldState extends State<InteractiveScaffold> {
   Segment? trackSegment;
 
   @override

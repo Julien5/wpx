@@ -12,14 +12,14 @@ import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/small.dart';
 
-class WheelScreen extends StatelessWidget {
-  const WheelScreen({super.key});
+class WheelScaffold extends StatelessWidget {
+  const WheelScaffold({super.key});
 
   void gotoSettings(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
     Navigator.push(
       ctx,
-      MaterialPageRoute(builder: (context) => SettingsProvider(model: model)),
+      MaterialPageRoute(builder: (context) => SettingsScreen(model: model)),
     );
   }
 
@@ -34,7 +34,7 @@ class WheelScreen extends StatelessWidget {
       MaterialPageRoute(
         builder:
             (context) =>
-                UserStepsProvider(model: model, multiTrackModel: viewsSwitch),
+                UserStepsScreen(model: model, multiTrackModel: viewsSwitch),
       ),
     );
   }
@@ -50,7 +50,7 @@ class WheelScreen extends StatelessWidget {
       MaterialPageRoute(
         builder:
             (context) =>
-                ControlsProvider(model: model, multiTrackModel: viewsSwitch),
+                ControlsScreen(model: model, multiTrackModel: viewsSwitch),
       ),
     );
   }
@@ -117,14 +117,14 @@ class WheelScreenProviders extends MultiProvider {
        );
 }
 
-class WheelProvider extends StatelessWidget {
-  const WheelProvider({super.key});
+class WheelScreen extends StatelessWidget {
+  const WheelScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     RootModel root = Provider.of<RootModel>(context);
     Bridge bridge = root.getBridge();
     assert(bridge.isLoaded());
-    return WheelScreenProviders(root: root, child: WheelScreen());
+    return WheelScreenProviders(root: root, child: WheelScaffold());
   }
 }

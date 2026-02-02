@@ -19,16 +19,16 @@ class RouteManager {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
 
       case segmentsView:
-        return MaterialPageRoute(builder: (_) => SegmentsScreen());
+        return MaterialPageRoute(builder: (_) => SegmentsScaffold());
 
       case exportView:
-        return MaterialPageRoute(builder: (_) => ExportScreen());
+        return MaterialPageRoute(builder: (_) => ExportScaffold());
 
       case interactiveView:
-        return MaterialPageRoute(builder: (_) => InteractiveScreen());
+        return MaterialPageRoute(builder: (_) => InteractiveScaffold());
 
       case wheelView:
-        return MaterialPageRoute(builder: (_) => WheelProvider());
+        return MaterialPageRoute(builder: (_) => WheelScreen());
 
       default:
         return MaterialPageRoute(

@@ -4,8 +4,8 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/waypoints_table_widget.dart';
 
-class UserStepsTableWidget extends StatelessWidget {
-  const UserStepsTableWidget({super.key});
+class UserStepsTableScaffold extends StatelessWidget {
+  const UserStepsTableScaffold({super.key});
 
   void setShortFormat(BuildContext ctx) {
     SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
@@ -104,7 +104,7 @@ class UserStepsTableScreen extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: model,
       builder: (innercontext, child) {
-        return UserStepsTableWidget();
+        return UserStepsTableScaffold();
       },
     );
   }

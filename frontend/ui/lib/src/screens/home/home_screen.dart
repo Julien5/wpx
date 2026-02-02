@@ -67,9 +67,7 @@ class _ChooseDataState extends State<ChooseData> {
   void gotoLoad(BuildContext ctx, UserInput userInput) {
     Navigator.push(
       ctx,
-      MaterialPageRoute(
-        builder: (context) => LoadProvider(userInput: userInput),
-      ),
+      MaterialPageRoute(builder: (context) => LoadScreen(userInput: userInput)),
     );
   }
 
