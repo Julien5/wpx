@@ -54,7 +54,7 @@ class _ControlsScaffold extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TrackGraphicsRow(kinds: control, maxHeight: 200),
+            TrackGraphicsRow(kinds: control),
             SizedBox(height: 10),
             _TextWidget(),
             SizedBox(height: 10),

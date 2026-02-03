@@ -77,17 +77,23 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
     }
     const double buttonSize = 30;
     List<Widget> children = [];
-    Widget spacer = SizedBox(height: 10);
     for (TrackData data in model.exposed) {
       children.add(
-        _SegmentGraphicsButtons(
-          selected: selected,
-          size: buttonSize,
-          trackData: data,
-          onPressed: () => onButtonPressed(data),
+        Padding(
+          padding: const EdgeInsetsGeometry.fromLTRB(
+            0,
+            buttonSize / 10,
+            0,
+            buttonSize / 10,
+          ),
+          child: _SegmentGraphicsButtons(
+            selected: selected,
+            size: buttonSize,
+            trackData: data,
+            onPressed: () => onButtonPressed(data),
+          ),
         ),
       );
-      children.add(spacer);
     }
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: buttonSize),

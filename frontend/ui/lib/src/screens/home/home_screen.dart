@@ -2,7 +2,9 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/main.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/screens/load/load_screen.dart';
 
@@ -141,7 +143,11 @@ class HomeScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    return Scaffold(appBar: AppBar(title: Text('WPX xxx ')), body: _HomeBody());
+    PackageInfo info = Provider.of<PackageModel>(ctx).packageInfo;
+    return Scaffold(
+      appBar: AppBar(title: Text('WPX ${info.version}')),
+      body: _HomeBody(),
+    );
   }
 }
 

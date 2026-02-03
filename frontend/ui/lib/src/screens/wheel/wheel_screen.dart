@@ -10,7 +10,6 @@ import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
-import 'package:ui/src/widgets/small.dart';
 
 class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
@@ -55,24 +54,30 @@ class _WheelScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Widget statisticsCard = SmallCentralWidget(
-      child: StatisticsWidget(
-        onPacingPointPressed: () => gotoUserSteps(ctx),
-        onControlsPointPressed: () => gotoControls(ctx),
-        onPagesPressed: () => gotoSettings(ctx),
-      ),
+    const double colWidth = 400;
+    Widget statisticsCard = StatisticsWidget(
+      onPacingPointPressed: () => gotoUserSteps(ctx),
+      onControlsPointPressed: () => gotoControls(ctx),
+      onPagesPressed: () => gotoSettings(ctx),
     );
 
     //ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
 
     List<Widget> children = [
-      ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 400),
-        child: TrackGraphicsRow(kinds: allkinds()),
+      Flexible(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 300),
+          child: AspectRatio(
+            aspectRatio: 2 / 1,
+            child: TrackGraphicsRow(kinds: allkinds()),
+          ),
+        ),
       ),
+
       ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 400),
+        constraints: BoxConstraints(maxHeight: 380),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             statisticsCard,
@@ -84,10 +89,17 @@ class _WheelScaffold extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: children,
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: colWidth),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: children,
+            ),
+          ),
+        ),
       ),
     );
   }
