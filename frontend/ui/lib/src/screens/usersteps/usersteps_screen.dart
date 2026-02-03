@@ -62,7 +62,7 @@ class UserStepsScaffold extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TrackGraphicsRow(kinds: usersteps, maxHeight: 200),
+            TrackGraphicsRow(kinds: usersteps),
             SizedBox(height: 10),
             TextWidget(),
             SizedBox(height: 10),

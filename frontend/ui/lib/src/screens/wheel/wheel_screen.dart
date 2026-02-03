@@ -68,7 +68,7 @@ class _WheelScaffold extends StatelessWidget {
     List<Widget> children = [
       ConstrainedBox(
         constraints: BoxConstraints(maxHeight: 400),
-        child: TrackGraphicsRow(kinds: allkinds(), maxHeight: 300),
+        child: TrackGraphicsRow(kinds: allkinds()),
       ),
       ConstrainedBox(
         constraints: BoxConstraints(maxHeight: 400),

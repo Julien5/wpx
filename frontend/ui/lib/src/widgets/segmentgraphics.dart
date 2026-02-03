@@ -176,14 +176,8 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
 
 class TrackGraphicsRow extends StatelessWidget {
   final Set<InputType> kinds;
-  final double maxHeight;
-  final double? width;
-  const TrackGraphicsRow({
-    super.key,
-    required this.kinds,
-    required this.maxHeight,
-    this.width,
-  });
+
+  const TrackGraphicsRow({super.key, required this.kinds});
 
   void onButtonPressed(BuildContext context, TrackData data) {
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
@@ -207,15 +201,12 @@ class TrackGraphicsRow extends StatelessWidget {
     );
     return Padding(
       padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(child: SegmentGraphics(kinds: kinds)),
-            buttonColumn,
-          ],
-        ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: SegmentGraphics(kinds: kinds)),
+          buttonColumn,
+        ],
       ),
     );
   }
