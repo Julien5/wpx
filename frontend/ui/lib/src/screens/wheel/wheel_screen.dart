@@ -104,13 +104,11 @@ class _WheelScaffold extends StatelessWidget {
 
       Expanded(
         flex: 2,
-        child: _Container(
-          orientation: Orientation.vertical,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             statisticsCard,
-            SmallCentralWidget(
-              child: ExportButton(text: "export zip", type: Type.zip),
-            ),
+            Center(child: ExportButton(text: "export zip", type: Type.zip)),
           ],
         ),
       ),

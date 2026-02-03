@@ -175,12 +175,12 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
 
 class TrackGraphicsRow extends StatelessWidget {
   final Set<InputType> kinds;
-  final double height;
+  final double maxHeight;
   final double? width;
   const TrackGraphicsRow({
     super.key,
     required this.kinds,
-    required this.height,
+    required this.maxHeight,
     this.width,
   });
 
@@ -207,7 +207,7 @@ class TrackGraphicsRow extends StatelessWidget {
     return Padding(
       padding: EdgeInsetsGeometry.fromLTRB(0, 0, 5, 0),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: height),
+        constraints: BoxConstraints(maxHeight: maxHeight),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

@@ -108,8 +108,6 @@ class _ExportButtonState extends State<ExportButton> {
     if (!busy) {
       callback = () => onPressed(model);
     }
-    return Row(
-      children: [ElevatedButton(onPressed: callback, child: Text(widget.text))],
-    );
+    return ElevatedButton(onPressed: callback, child: Text(widget.text));
   }
 }
