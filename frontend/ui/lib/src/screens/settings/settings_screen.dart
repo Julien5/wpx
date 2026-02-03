@@ -10,6 +10,7 @@ import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
+import 'package:ui/src/widgets/vertical_layout.dart';
 import 'package:ui/utils.dart';
 
 List<double> segmentLengthSliderValues(double trackLength) {
@@ -266,22 +267,12 @@ class _SettingsScaffoldState extends State<SettingsScaffold> {
   Widget build(BuildContext ctx) {
     return Scaffold(
       appBar: AppBar(title: const Text('PDF')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TopRow(),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 500),
-              child: SettingsWidget(
-                show: showBottomWidget,
-                onShowPressed: onShowPressed,
-              ),
-            ),
-            if (showBottomWidget) BottomRow(),
-          ],
-        ),
+      body: VerticalLayout(
+        topRow: TopRow(),
+        midChildren: [
+          SettingsWidget(show: showBottomWidget, onShowPressed: onShowPressed),
+          if (showBottomWidget) BottomRow(),
+        ],
       ),
     );
   }

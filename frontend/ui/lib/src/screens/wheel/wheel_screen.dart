@@ -10,6 +10,7 @@ import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
+import 'package:ui/src/widgets/vertical_layout.dart';
 
 class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
@@ -54,49 +55,21 @@ class _WheelScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    const double colWidth = 400;
     Widget statisticsCard = StatisticsWidget(
       onPacingPointPressed: () => gotoUserSteps(ctx),
       onControlsPointPressed: () => gotoControls(ctx),
       onPagesPressed: () => gotoSettings(ctx),
     );
-
-    //ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
-
     List<Widget> children = [
-      ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 200),
-        child: TrackGraphicsRow(kinds: allkinds()),
-      ),
-      ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 380),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            statisticsCard,
-            Center(child: ExportButton(text: "export zip", type: Type.zip)),
-          ],
-        ),
-      ),
+      statisticsCard,
+      Center(child: ExportButton(text: "export zip", type: Type.zip)),
     ];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: colWidth),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: children,
-              ),
-            ),
-          ),
-        ),
+      body: VerticalLayout(
+        topRow: TrackGraphicsRow(kinds: allkinds()),
+        midChildren: children,
       ),
     );
   }

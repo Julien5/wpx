@@ -5,6 +5,7 @@ import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_table.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
+import 'package:ui/src/widgets/vertical_layout.dart';
 
 class _ButtonWidget extends StatelessWidget {
   void gotoTable(BuildContext context) {
@@ -49,19 +50,9 @@ class _ControlsScaffold extends StatelessWidget {
     Set<InputType> control = {InputType.control};
     return Scaffold(
       appBar: AppBar(title: const Text('Control Points')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TrackGraphicsRow(kinds: control),
-            SizedBox(height: 10),
-            _TextWidget(),
-            SizedBox(height: 10),
-            Divider(),
-            _ButtonWidget(),
-          ],
-        ),
+      body: VerticalLayout(
+        topRow: TrackGraphicsRow(kinds: control),
+        midChildren: [_TextWidget(), _ButtonWidget()],
       ),
     );
   }

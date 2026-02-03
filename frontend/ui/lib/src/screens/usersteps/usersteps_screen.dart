@@ -6,6 +6,7 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/usersteps/usersteps_table.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
+import 'package:ui/src/widgets/vertical_layout.dart';
 
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget({super.key});
@@ -55,23 +56,16 @@ class UserStepsScaffold extends StatelessWidget {
   Widget build(BuildContext ctx) {
     Set<InputType> usersteps = {InputType.userStep};
 
+    List<Widget> midChilren = [
+      TextWidget(),
+      UserStepsSliderProvider(),
+      ButtonWidget(),
+    ];
     return Scaffold(
       appBar: AppBar(title: const Text('Pacing Points')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TrackGraphicsRow(kinds: usersteps),
-            SizedBox(height: 10),
-            TextWidget(),
-            SizedBox(height: 10),
-            UserStepsSliderProvider(),
-            SizedBox(height: 10),
-            Divider(height: 5),
-            ButtonWidget(),
-          ],
-        ),
+      body: VerticalLayout(
+        topRow: TrackGraphicsRow(kinds: usersteps),
+        midChildren: midChilren,
       ),
     );
   }
