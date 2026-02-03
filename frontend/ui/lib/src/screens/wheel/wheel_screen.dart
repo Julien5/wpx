@@ -1,9 +1,6 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -14,30 +11,6 @@ import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/small.dart';
-
-enum Orientation { vertical, horizontal }
-
-class _Container extends StatelessWidget {
-  final List<Widget> children;
-  final Orientation orientation;
-
-  const _Container({required this.children, required this.orientation});
-  @override
-  Widget build(BuildContext context) {
-    if (orientation == Orientation.vertical) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: children,
-      );
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: children,
-    );
-  }
-}
 
 class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
@@ -90,20 +63,15 @@ class _WheelScaffold extends StatelessWidget {
       ),
     );
 
-    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
-    Orientation orientation = Orientation.vertical;
-    if (screen.width > screen.height) {
-      orientation = Orientation.horizontal;
-    }
-    developer.log("******** orien:$orientation");
+    //ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
+
     List<Widget> children = [
-      Expanded(
-        flex: 1,
+      ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: 400),
         child: TrackGraphicsRow(kinds: allkinds(), maxHeight: 300),
       ),
-
-      Expanded(
-        flex: 2,
+      ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: 400),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -116,8 +84,10 @@ class _WheelScaffold extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
-      body: Center(
-        child: _Container(orientation: orientation, children: children),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: children,
       ),
     );
   }

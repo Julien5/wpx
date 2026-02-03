@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
@@ -78,6 +77,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
     }
     const double buttonSize = 30;
     List<Widget> children = [];
+    Widget spacer = SizedBox(height: 10);
     for (TrackData data in model.exposed) {
       children.add(
         _SegmentGraphicsButtons(
@@ -87,12 +87,13 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
           onPressed: () => onButtonPressed(data),
         ),
       );
+      children.add(spacer);
     }
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: buttonSize),
       child: Column(
-        mainAxisSize: MainAxisSize.max, // Makes Column fill available space
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: children,
       ),
     );
