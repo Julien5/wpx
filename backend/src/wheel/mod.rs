@@ -208,6 +208,8 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
     let control_thick = page.wheel_width / 3;
     let control_tick_start = page.wheel_inner_radius();
     let control_tick_end = page.wheel_outer_radius();
+    assert!(control_tick_start >= 0);
+    assert!(control_tick_end >= 0);
     let control_tick_path =
         Data::parse(format!("M 0 -{} L 0 -{}", control_tick_start, control_tick_end).as_str())
             .unwrap();

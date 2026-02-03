@@ -64,16 +64,10 @@ class _WheelScaffold extends StatelessWidget {
     //ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
 
     List<Widget> children = [
-      Flexible(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 300),
-          child: AspectRatio(
-            aspectRatio: 2 / 1,
-            child: TrackGraphicsRow(kinds: allkinds()),
-          ),
-        ),
+      ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: 200),
+        child: TrackGraphicsRow(kinds: allkinds()),
       ),
-
       ConstrainedBox(
         constraints: BoxConstraints(maxHeight: 380),
         child: Column(
@@ -89,14 +83,17 @@ class _WheelScaffold extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
-      body: Center(
+      body: Align(
+        alignment: Alignment.topCenter,
         child: Padding(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: colWidth),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: children,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: children,
+              ),
             ),
           ),
         ),

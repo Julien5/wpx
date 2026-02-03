@@ -99,7 +99,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: buttonSize),
       child: Column(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: children,
       ),
     );
