@@ -2,7 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 
-enum DisplayMode { vertical, horizontal, mid, large }
+enum DisplayMode { vertical, horizontal }
 
 class ScreenConfiguration extends ChangeNotifier {
   DisplayMode _mode = DisplayMode.vertical;
@@ -15,13 +15,7 @@ class ScreenConfiguration extends ChangeNotifier {
   double get height => _height;
 
   DisplayMode computeMode(double width, double height) {
-    if (width > 700 && height > 700) {
-      return DisplayMode.large;
-    }
-    if (width > 500 && height > 500) {
-      return DisplayMode.mid;
-    }
-    if (width > 500) {
+    if (width > height && width > 900) {
       return DisplayMode.horizontal;
     }
     return DisplayMode.vertical;

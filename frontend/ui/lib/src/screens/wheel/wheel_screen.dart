@@ -8,6 +8,7 @@ import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
+import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/vertical_layout.dart';
@@ -67,7 +68,7 @@ class _WheelScaffold extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
-      body: VerticalLayout(
+      body: AdaptiveLayout(
         topRow: TrackGraphicsRow(kinds: allkinds()),
         midChildren: children,
       ),

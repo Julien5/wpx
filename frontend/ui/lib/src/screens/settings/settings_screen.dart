@@ -8,6 +8,7 @@ import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
 import 'package:ui/src/widgets/vertical_layout.dart';
@@ -267,7 +268,7 @@ class _SettingsScaffoldState extends State<SettingsScaffold> {
   Widget build(BuildContext ctx) {
     return Scaffold(
       appBar: AppBar(title: const Text('PDF')),
-      body: VerticalLayout(
+      body: AdaptiveLayout(
         topRow: TopRow(),
         midChildren: [
           SettingsWidget(show: showBottomWidget, onShowPressed: onShowPressed),

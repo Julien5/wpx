@@ -4,6 +4,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/usersteps/usersteps_table.dart';
+import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 import 'package:ui/src/widgets/vertical_layout.dart';
@@ -63,7 +64,7 @@ class UserStepsScaffold extends StatelessWidget {
     ];
     return Scaffold(
       appBar: AppBar(title: const Text('Pacing Points')),
-      body: VerticalLayout(
+      body: AdaptiveLayout(
         topRow: TrackGraphicsRow(kinds: usersteps),
         midChildren: midChilren,
       ),
