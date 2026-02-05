@@ -6,7 +6,6 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_table.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
-import 'package:ui/src/widgets/vertical_layout.dart';
 
 class _ButtonWidget extends StatelessWidget {
   void gotoTable(BuildContext context) {

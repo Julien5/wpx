@@ -7,7 +7,6 @@ import 'package:ui/src/screens/usersteps/usersteps_table.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
-import 'package:ui/src/widgets/vertical_layout.dart';
 
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget({super.key});

@@ -121,7 +121,6 @@ pub fn make_typst_document(backend: &Backend) -> String {
     }
 
     let vector: Vec<_> = all_points.iter().map(|(_k, w)| w.clone()).collect();
-    assert!(!vector.is_empty());
     let all_waypoints = backend.export_points(&vector);
     let allkinds = inputpoint::allkinds();
 

@@ -11,7 +11,6 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
-import 'package:ui/src/widgets/vertical_layout.dart';
 import 'package:ui/utils.dart';
 
 List<double> segmentLengthSliderValues(double trackLength) {

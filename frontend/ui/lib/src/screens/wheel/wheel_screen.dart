@@ -11,7 +11,6 @@ import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
-import 'package:ui/src/widgets/vertical_layout.dart';
 
 class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
