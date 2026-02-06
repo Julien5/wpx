@@ -25,10 +25,8 @@ class ScreenConfiguration extends ChangeNotifier {
     _height = constraints.maxHeight;
     _width = constraints.maxWidth;
     final newMode = computeMode(constraints.maxWidth, constraints.maxHeight);
-    developer.log("******* $_width x $_height");
     if (_mode != newMode) {
       _mode = newMode;
-      developer.log("******* $_mode");
       notifyListeners();
     }
   }

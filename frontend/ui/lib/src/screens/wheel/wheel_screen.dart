@@ -81,7 +81,10 @@ class _WheelScreenProviders extends MultiProvider {
         providers: [
           ChangeNotifierProvider(
             create:
-                (_) => SegmentModel(root: root, segment: root.trackSegment()),
+                (_) => SegmentModel(
+                  root: root.getBridge(),
+                  segment: root.trackSegment(),
+                ),
           ),
           ChangeNotifierProvider(
             create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),

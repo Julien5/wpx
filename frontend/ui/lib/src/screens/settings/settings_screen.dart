@@ -87,15 +87,20 @@ class SliderWidget extends StatelessWidget {
   const SliderWidget({super.key});
 
   void onChanged(BuildContext context, double pages) {
-    RootModel root = Provider.of<RootModel>(context, listen: false);
-    double trackLength = root.statistics().length;
+    SegmentModel segment = Provider.of<SegmentModel>(context, listen: false);
+    double trackLength = segment.statistics().length;
     double nice = niceSegmentLength(trackLength / pages);
     double segmentOverlap = nice / 10;
     double segmentLength = nice + segmentOverlap;
-    Parameters p = root.parameters();
+    Parameters p = segment.parameters();
     ParameterChanger changer = ParameterChanger(init: p);
     changer.changeSegmentLength(segmentLength);
     changer.changeSegmentOverlap(segmentOverlap);
+    // problem: the SegmentsGraphicsRow listens on RootModel.
+    // it is not updated unless RootModel notifies.
+    // this requires urgent cleanup.
+    segment.setParameters(changer.current());
+    RootModel root = Provider.of<RootModel>(context, listen: false);
     root.setParameters(changer.current());
     developer.log("wanted:$pages pages");
     int npages = projectNumberOfPages(pages.round(), trackLength, p);
@@ -104,15 +109,14 @@ class SliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    Parameters parameters = root.parameters();
-    double trackLength = root.statistics().length;
+    SegmentModel segment = Provider.of<SegmentModel>(context);
+    Parameters parameters = segment.parameters();
+    double trackLength = segment.statistics().length;
     double segmentLength = parameters.segmentLength;
     double segmentOverlap = parameters.segmentOverlap;
     assert(segmentOverlap == (segmentLength - segmentOverlap) / 10);
     int nsegment = segmentCount(trackLength, segmentLength);
-    int bsegment = root.segments().length;
-    assert(nsegment == bsegment);
+    //assert(nsegment == segment.root.segments().length);
 
     int high = projectNumberOfPages(5, trackLength, parameters);
 
@@ -146,9 +150,9 @@ class SettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    List<Segment> segments = root.segments();
-    Parameters parameters = root.parameters();
+    SegmentModel segment = Provider.of<SegmentModel>(context);
+    List<Segment> segments = segment.root.segments();
+    Parameters parameters = segment.parameters();
     String segLength = ((parameters.segmentLength - parameters.segmentOverlap) /
             1000)
         .ceil()

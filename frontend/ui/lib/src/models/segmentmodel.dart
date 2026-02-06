@@ -2,48 +2,33 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 typedef Kinds = Set<bridge.InputType>;
 
 class SegmentModel extends ChangeNotifier {
-  late bridge.Bridge _bridge;
   final bridge.Segment segment;
-  final RootModel root;
+  final bridge.Bridge root;
 
-  SegmentModel({required this.segment, required this.root}) {
-    _bridge = root.getBridge();
-    root.addListener(_onRootChanged);
-  }
-
-  @override
-  void dispose() {
-    root.removeListener(_onRootChanged);
-    super.dispose();
-  }
-
-  void _onRootChanged() {
-    notifyListeners();
-  }
+  SegmentModel({required this.segment, required this.root});
 
   void debug() {
-    double length = _bridge.segmentStatistics(segment: segment).length / 1000;
+    double length = root.segmentStatistics(segment: segment).length / 1000;
     developer.log("segment length:$length");
   }
 
   bridge.UserStepsOptions userStepsOptions() {
-    return _bridge.getParameters().userStepsOptions;
+    return root.getParameters().userStepsOptions;
   }
 
   void setUserStepsOptions(bridge.UserStepsOptions p) {
-    _bridge.setUserStepOptions(userStepsOptions: p);
+    root.setUserStepOptions(userStepsOptions: p);
     notify();
   }
 
   FutureRenderer makeRenderer(Kinds kinds, TrackData trackData) {
     return FutureRenderer(
-      bridge: _bridge,
+      bridge: root,
       segment: segment,
       kinds: kinds,
       trackData: trackData,
@@ -55,33 +40,33 @@ class SegmentModel extends ChangeNotifier {
   }
 
   void setParameters(bridge.Parameters p) {
-    _bridge.setParameters(parameters: p);
+    root.setParameters(parameters: p);
     notify();
   }
 
   bridge.Parameters parameters() {
-    return _bridge.getParameters();
+    return root.getParameters();
   }
 
   bridge.SegmentStatistics statistics() {
-    return _bridge.segmentStatistics(segment: segment);
+    return root.segmentStatistics(segment: segment);
   }
 
   List<bridge.Waypoint> allWaypoints() {
-    return _bridge.getWaypoints(segment: segment, kinds: bridge.allkinds());
+    return root.getWaypoints(segment: segment, kinds: bridge.allkinds());
   }
 
   List<bridge.Waypoint> someWaypoints(Kinds kinds) {
-    return _bridge.getWaypoints(segment: segment, kinds: kinds);
+    return root.getWaypoints(segment: segment, kinds: kinds);
   }
 
   void setUserStepGpxNameFormat(String format) {
-    _bridge.setUserstepGpxNameFormat(format: format);
+    root.setUserstepGpxNameFormat(format: format);
     notifyListeners();
   }
 
   void setControlGpxNameFormat(String format) {
-    _bridge.setControlGpxNameFormat(format: format);
+    root.setControlGpxNameFormat(format: format);
     notifyListeners();
   }
 }
