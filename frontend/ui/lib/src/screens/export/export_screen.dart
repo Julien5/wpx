@@ -1,10 +1,7 @@
-import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 
 enum Type { pdf, gpx }
@@ -61,84 +58,4 @@ Future<List<int>> generate(RootModel root, Type type) async {
   assert(type == Type.gpx);
   var data = await root.generateGpx();
   return data;
-}
-
-class ExportButton extends StatefulWidget {
-  final Type type;
-  const ExportButton({super.key, required this.type});
-
-  @override
-  State<ExportButton> createState() => _ExportButtonState();
-}
-
-class _ExportButtonState extends State<ExportButton> {
-  int length = 0;
-
-  void onPressed(RootModel root) async {
-    if (!mounted) {
-      return;
-    }
-    setState(() {
-      length = 0;
-    });
-    var data = await generate(root, widget.type);
-    fileSave(data, widget.type);
-    setState(() {
-      developer.log("export length: ${data.length}");
-      length = data.length;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    RootModel model = Provider.of<RootModel>(context);
-    String kB = (length / 1024.0).ceil().toString();
-    return Row(
-      children: [
-        ElevatedButton(
-          onPressed: () => onPressed(model),
-          child: Text(fileExtension(widget.type)),
-        ),
-        SizedBox(width: 20),
-        Text("length: $kB kB"),
-      ],
-    );
-  }
-}
-
-class ExportWidget extends StatelessWidget {
-  const ExportWidget({super.key});
-  @override
-  Widget build(BuildContext ctx) {
-    Widget column = Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ExportButton(type: Type.pdf),
-        SizedBox(height: 20),
-        ExportButton(type: Type.gpx),
-      ],
-    );
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Expanded(child: column)],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ExportScaffold extends StatelessWidget {
-  const ExportScaffold({super.key});
-  @override
-  Widget build(BuildContext ctx) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Export')),
-      body: ExportWidget(),
-    );
-  }
 }
