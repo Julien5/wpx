@@ -3,8 +3,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/utils.dart';
 
 enum Type { pdf, gpx, zip }
 
@@ -61,17 +61,17 @@ void fileSave(List<int> data, Type type) async {
   }
 }
 
-Future<List<int>> generate(RootModel root, Type type) async {
+Future<List<int>> generate(bridge.Bridge backend, Type type) async {
   if (type == Type.pdf) {
-    var data = await root.generatePdf();
+    var data = await backend.generatePdf();
     return data;
   }
   if (type == Type.zip) {
-    var data = await root.generateZip();
+    var data = await backend.generateZip();
     return data;
   }
   assert(type == Type.gpx);
-  var data = await root.generateGpx();
+  var data = await backend.generateGpx();
   return data;
 }
 
@@ -87,14 +87,14 @@ class ExportButton extends StatefulWidget {
 class _ExportButtonState extends State<ExportButton> {
   bool busy = false;
 
-  void onPressed(RootModel root) async {
+  void onPressed(bridge.Bridge backend) async {
     if (!mounted) {
       return;
     }
     setState(() {
       busy = true;
     });
-    var data = await generate(root, widget.type);
+    var data = await generate(backend, widget.type);
     fileSave(data, widget.type);
     setState(() {
       busy = false;
@@ -103,10 +103,9 @@ class _ExportButtonState extends State<ExportButton> {
 
   @override
   Widget build(BuildContext context) {
-    RootModel model = Provider.of<RootModel>(context);
     VoidCallback? callback;
     if (!busy) {
-      callback = () => onPressed(model);
+      callback = () => onPressed(getBackend(context));
     }
     return ElevatedButton(onPressed: callback, child: Text(widget.text));
   }

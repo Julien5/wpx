@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/rust/api/bridge.dart';
@@ -193,8 +192,8 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
     });
     String controlPointsText = "${controlPoints.length}";
 
-    RootModel root = Provider.of<RootModel>(context);
-    List<Segment> segments = root.segments();
+    bridge.Bridge backend = getBackend(ctx);
+    List<Segment> segments = backend.segments();
     String pagesCountText = "${segments.length.toString().padLeft(2)} pages";
     Widget table = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},

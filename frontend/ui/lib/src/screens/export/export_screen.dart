@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ui/src/models/root.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 enum Type { pdf, gpx }
 
@@ -50,12 +50,12 @@ void fileSave(List<int> data, Type type) async {
   }
 }
 
-Future<List<int>> generate(RootModel root, Type type) async {
+Future<List<int>> generate(bridge.Bridge backend, Type type) async {
   if (type == Type.pdf) {
-    var data = await root.generatePdf();
+    var data = await backend.generatePdf();
     return data;
   }
   assert(type == Type.gpx);
-  var data = await root.generateGpx();
+  var data = await backend.generateGpx();
   return data;
 }
