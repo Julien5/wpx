@@ -1,7 +1,9 @@
 import 'dart:developer' as developer;
 import 'dart:math';
-import 'dart:ui';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 double scaleDown(Size object, Size drawArea) {
@@ -138,4 +140,9 @@ class ParameterChanger {
 
 DateTime parseDateTime(String data) {
   return DateTime.parse(data).toLocal();
+}
+
+bridge.Bridge getBackend(BuildContext context) {
+  RootModel root = Provider.of<RootModel>(context, listen: false);
+  return root.getBackend();
 }

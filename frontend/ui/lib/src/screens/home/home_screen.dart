@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/main.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/screens/load/load_screen.dart';
 
 class _ChooseData extends StatefulWidget {
@@ -77,7 +76,8 @@ class _ChooseDataState extends State<_ChooseData> {
     gotoLoad(context, userInput);
   }
 
-  Widget buildFromModel(BuildContext ctx, RootModel rootModel, Widget? child) {
+  @override
+  Widget build(BuildContext ctx) {
     return Center(
       child: Column(
         children: [
@@ -118,15 +118,6 @@ class _ChooseDataState extends State<_ChooseData> {
           ),
         ],
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext ctx) {
-    return Consumer<RootModel>(
-      builder: (context, rootModel, child) {
-        return buildFromModel(context, rootModel, child);
-      },
     );
   }
 }

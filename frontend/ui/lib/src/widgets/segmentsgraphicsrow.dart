@@ -3,10 +3,11 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bride;
+import 'package:ui/utils.dart';
 
 import 'segmentgraphics.dart';
 
@@ -87,8 +88,8 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
   ParameterModel? parameterModel;
 
   void _onParameterChanged() {
-    RootModel root = Provider.of<RootModel>(context, listen: false);
-    List<Segment> newSegments = root.segments();
+    bride.Bridge backend = getBackend(context);
+    List<Segment> newSegments = backend.segments();
     int oldLength = segments.length;
     int newLength = newSegments.length;
     developer.log("_onRootChanged: new length:$newLength");
@@ -98,10 +99,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
       return;
     }
     for (Segment segment in newSegments) {
-      SegmentModel model = SegmentModel(
-        backend: root.getBackend(),
-        segment: segment,
-      );
+      SegmentModel model = SegmentModel(backend: backend, segment: segment);
       segments.add(model);
     }
     _tabController = TabController(length: segments.length, vsync: this);

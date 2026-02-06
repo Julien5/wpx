@@ -20,12 +20,14 @@ class LoadScreenModel extends ChangeNotifier {
   final Map<Job, Object> _failed = {};
   Job? running;
 
-  final RootModel root;
+  final bridge.Bridge backend;
+  final RootModel rootModel;
   final EventModel events;
   final UserInput userInput;
   FutureJob? runningFuture;
   LoadScreenModel({
-    required this.root,
+    required this.backend,
+    required this.rootModel,
     required this.events,
     required this.userInput,
   }) {
@@ -62,17 +64,15 @@ class LoadScreenModel extends ChangeNotifier {
     Future<void>? future;
     if (job == Job.gpx) {
       if (userInput.demo) {
-        future = root.getBackend().loadDemo();
+        future = backend.loadDemo();
       } else {
         assert(userInput.bytes != null);
-        future = root.getBackend().loadContent(content: userInput.bytes!);
+        future = backend.loadContent(content: userInput.bytes!);
       }
     } else if (job == Job.osm) {
-      future = root.getBackend().loadOsm();
+      future = backend.loadOsm();
     } else if (job == Job.controls) {
-      future = root.getBackend().loadControls(
-        source: bridge.ControlSource.segments,
-      );
+      future = backend.loadControls(source: bridge.ControlSource.segments);
     } else {
       assert(false);
     }
@@ -111,10 +111,10 @@ class LoadScreenModel extends ChangeNotifier {
       return;
     }
     if (job == Job.gpx) {
-      _statistics = root.statistics();
+      _statistics = backend.statistics();
     } else if (job == Job.controls) {
-      _controls = root.getBackend().getWaypoints(
-        segment: root.backend.trackSegment(),
+      _controls = backend.getWaypoints(
+        segment: backend.trackSegment(),
         kinds: {bridge.InputType.control},
       );
     }
@@ -128,7 +128,7 @@ class LoadScreenModel extends ChangeNotifier {
         startJob(nextJob);
       });
     } else if (doneAll()) {
-      root.notify();
+      rootModel.notify();
     }
   }
 

@@ -7,6 +7,7 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/widgets/small.dart';
+import 'package:ui/utils.dart';
 
 import 'eventwidget.dart';
 import 'model.dart';
@@ -238,14 +239,14 @@ class _LoadScreenProviders extends MultiProvider {
         providers: [
           ChangeNotifierProxyProvider2<RootModel, EventModel, LoadScreenModel>(
             create: (context) {
-              RootModel root = Provider.of<RootModel>(context, listen: false);
               EventModel events = Provider.of<EventModel>(
                 context,
                 listen: false,
               );
               developer.log("make LoadScreenModel");
               return LoadScreenModel(
-                root: root,
+                backend: getBackend(context),
+                rootModel: Provider.of<RootModel>(context, listen: false),
                 events: events,
                 userInput: userInput,
               );

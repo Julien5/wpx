@@ -44,7 +44,10 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
   void readModel() {
     developer.log("read model");
-    ParameterModel parametersModel = Provider.of<ParameterModel>(context,listen: false);
+    ParameterModel parametersModel = Provider.of<ParameterModel>(
+      context,
+      listen: false,
+    );
     bridge.Parameters parameters = parametersModel.parameters();
     setState(() {
       startTime = parseDateTime(parameters.startTime);
@@ -54,7 +57,10 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
   void writeModel() {
     if (!mounted) return;
-    ParameterModel parametersModel = Provider.of<ParameterModel>(context,listen: false);
+    ParameterModel parametersModel = Provider.of<ParameterModel>(
+      context,
+      listen: false,
+    );
     bridge.Parameters oldParameters = parametersModel.parameters();
     ParameterChanger changer = ParameterChanger(init: oldParameters);
     changer.changeSpeed(speed!);
@@ -68,6 +74,9 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
+    // see here
+    // https://stackoverflow.com/questions/66023387/flutter-how-to-use-timepickerthemedata-properly
+    // to change the colors of the time picker.
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: startTime!.hour, minute: startTime!.minute),
@@ -152,7 +161,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   Widget build(BuildContext ctx) {
     SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
     ParameterModel parameterModel = Provider.of<ParameterModel>(context);
-    Parameters parameters=parameterModel.parameters();
+    Parameters parameters = parameterModel.parameters();
     bridge.SegmentStatistics statistics = segmentModel.statistics();
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
