@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -22,7 +21,6 @@ class _WheelScaffold extends StatelessWidget {
   }
 
   void gotoUserSteps(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
     TrackViewsSwitch viewsSwitch = Provider.of<TrackViewsSwitch>(
       ctx,
       listen: false,
@@ -30,15 +28,12 @@ class _WheelScaffold extends StatelessWidget {
     Navigator.push(
       ctx,
       MaterialPageRoute(
-        builder:
-            (context) =>
-                UserStepsScreen(model: model, multiTrackModel: viewsSwitch),
+        builder: (context) => UserStepsScreen(multiTrackModel: viewsSwitch),
       ),
     );
   }
 
   void gotoControls(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
     TrackViewsSwitch viewsSwitch = Provider.of<TrackViewsSwitch>(
       ctx,
       listen: false,
@@ -46,9 +41,7 @@ class _WheelScaffold extends StatelessWidget {
     Navigator.push(
       ctx,
       MaterialPageRoute(
-        builder:
-            (context) =>
-                ControlsScreen(model: model, multiTrackModel: viewsSwitch),
+        builder: (context) => ControlsScreen(switchModel: viewsSwitch),
       ),
     );
   }
@@ -76,16 +69,9 @@ class _WheelScaffold extends StatelessWidget {
 }
 
 class _WheelScreenProviders extends MultiProvider {
-  _WheelScreenProviders({required RootModel root, required Widget child})
+  _WheelScreenProviders({required Widget child})
     : super(
         providers: [
-          ChangeNotifierProvider(
-            create:
-                (_) => SegmentModel(
-                  backend: root.getBackend(),
-                  segment: root.trackSegment(),
-                ),
-          ),
           ChangeNotifierProvider(
             create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
           ),
@@ -99,9 +85,7 @@ class WheelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    Bridge bridge = root.getBackend();
-    assert(bridge.isLoaded());
-    return _WheelScreenProviders(root: root, child: _WheelScaffold());
+    context.watch<SegmentModel>();
+    return _WheelScreenProviders(child: _WheelScaffold());
   }
 }

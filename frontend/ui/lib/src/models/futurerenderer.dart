@@ -11,7 +11,7 @@ enum TrackData { profile, yaxis, map, wheel, pages }
 class FutureRenderer with ChangeNotifier {
   bridge.Segment _segment;
   final TrackData trackData;
-  final bridge.Bridge _bridge;
+  final bridge.Bridge _backend;
   Size? size;
   final Set<bridge.InputType> kinds;
 
@@ -24,12 +24,12 @@ class FutureRenderer with ChangeNotifier {
     required this.trackData,
     required this.kinds,
   }) : _segment = segment,
-       _bridge = bridge {
-    assert(_bridge.isLoaded());
+       _backend = bridge {
+    assert(_backend.isLoaded());
   }
 
   void setProfileIndication(bridge.ProfileIndication p) {
-    _bridge.setProfileIndication(p: p);
+    _backend.setProfileIndication(p: p);
     restart();
   }
 
@@ -56,26 +56,26 @@ class FutureRenderer with ChangeNotifier {
       log("[render-request:$trackData] size is not set");
       return;
     }
-    double length = _bridge.segmentStatistics(segment: _segment).length / 1000;
+    double length = _backend.segmentStatistics(segment: _segment).length / 1000;
     log("[render-request-start:$trackData] [length:$length]");
     _result = null;
     (int, int) sizeParameter = sizeAsTuple(makeFinite(getSize()));
     if (trackData == TrackData.profile) {
-      _future = _bridge.renderSegmentWhat(
+      _future = _backend.renderSegmentWhat(
         segment: _segment,
         what: "profile",
         size: sizeParameter,
         kinds: kinds,
       );
     } else if (trackData == TrackData.map) {
-      _future = _bridge.renderSegmentWhat(
+      _future = _backend.renderSegmentWhat(
         segment: _segment,
         what: "map",
         size: sizeParameter,
         kinds: kinds,
       );
     } else if (trackData == TrackData.yaxis) {
-      _future = _bridge.renderSegmentWhat(
+      _future = _backend.renderSegmentWhat(
         segment: _segment,
         what: "ylabels",
         size: sizeParameter,
@@ -83,9 +83,9 @@ class FutureRenderer with ChangeNotifier {
       );
     } else if (trackData == TrackData.wheel) {
       log("[render-request-started:A]");
-      assert(_bridge.isLoaded());
+      assert(_backend.isLoaded());
       log("[render-request-started:B]");
-      _future = _bridge.renderSegmentWhat(
+      _future = _backend.renderSegmentWhat(
         segment: _segment,
         what: "wheel",
         size: sizeParameter,
@@ -93,9 +93,9 @@ class FutureRenderer with ChangeNotifier {
       );
     } else if (trackData == TrackData.pages) {
       log("[render-request-started:A]");
-      assert(_bridge.isLoaded());
+      assert(_backend.isLoaded());
       log("[render-request-started:B]");
-      _future = _bridge.renderSegmentWhat(
+      _future = _backend.renderSegmentWhat(
         segment: _segment,
         what: "wheel/pages",
         size: sizeParameter,

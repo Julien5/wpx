@@ -114,7 +114,7 @@ class LoadScreenModel extends ChangeNotifier {
       _statistics = root.statistics();
     } else if (job == Job.controls) {
       _controls = root.getBackend().getWaypoints(
-        segment: root.trackSegment(),
+        segment: root.backend.trackSegment(),
         kinds: {bridge.InputType.control},
       );
     }
@@ -127,6 +127,8 @@ class LoadScreenModel extends ChangeNotifier {
       Future.delayed(const Duration(milliseconds: 250), () {
         startJob(nextJob);
       });
+    } else if (doneAll()) {
+      root.notify();
     }
   }
 

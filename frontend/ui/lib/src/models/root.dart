@@ -6,11 +6,12 @@ import 'package:flutter/widgets.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class EventModel extends ChangeNotifier {
+  final bridge.Bridge backend;
   late Stream<String> _stream;
   String event = "";
 
-  EventModel(bridge.Bridge bridge) {
-    _stream = bridge.setSink();
+  EventModel({required this.backend}) {
+    _stream = backend.setSink();
     _stream.listen((data) {
       developer.log("EventModel.listen:$data");
       onEvent(data);
@@ -30,8 +31,6 @@ class EventModel extends ChangeNotifier {
 
 class RootModel extends ChangeNotifier {
   final bridge.Bridge backend;
-  EventModel? _eventModel;
-  bridge.Segment? _trackSegment;
 
   RootModel({required this.backend});
 
@@ -39,20 +38,13 @@ class RootModel extends ChangeNotifier {
     return backend;
   }
 
-  EventModel eventModel() {
-    _eventModel ??= EventModel(backend);
-    return _eventModel!;
-  }
-
   Future<void> loadDemo() async {
     developer.log("load demo");
-    _trackSegment = null;
     await backend.loadDemo();
   }
 
   Future<void> loadContent(List<int> bytes) async {
     developer.log("load ${bytes.length} bytes");
-    _trackSegment = null;
     await backend.loadContent(content: bytes);
   }
 
@@ -76,8 +68,7 @@ class RootModel extends ChangeNotifier {
     return backend.segments();
   }
 
-  bridge.Segment trackSegment() {
-    _trackSegment ??= backend.trackSegment();
-    return _trackSegment!;
+  void notify() {
+    notifyListeners();
   }
 }

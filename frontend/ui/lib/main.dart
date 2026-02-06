@@ -25,7 +25,13 @@ Future<void> main() async {
   await RustLib.init();
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   developer.log("frontend loaded");
-  runApp(ApplicationProvider(packageInfo: packageInfo, backend:bridge.Bridge.make(),child: Application()));
+  runApp(
+    ApplicationProvider(
+      packageInfo: packageInfo,
+      backend: bridge.Bridge.make(),
+      child: Application(),
+    ),
+  );
 }
 
 class PackageModel extends ChangeNotifier {
@@ -33,23 +39,65 @@ class PackageModel extends ChangeNotifier {
   PackageModel({required this.packageInfo});
 }
 
+class TrackProvider extends StatelessWidget {
+  final Widget child;
+  const TrackProvider({super.key, required this.child});
+
+  SegmentModel _create(bridge.Bridge backend) {
+    developer.log("create track segment");
+    return SegmentModel(backend: backend, segment: backend.trackSegment());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    RootModel root = Provider.of<RootModel>(context);
+    bridge.Bridge backend = root.getBackend();
+    developer.log("build TrackProvider: loaded: ${backend.isLoaded()}");
+    if (backend.isLoaded()) {
+      /* we cannot simply:
+          return MultiProvider(
+            providers: [ChangeNotifierProvider(create: (_) => _create(backend))],
+            child: child,
+          );
+        because ChangeNotifierProvider's create callback is only called once when 
+        the provider is first created. 
+      */
+      return ChangeNotifierProxyProvider<RootModel, SegmentModel>(
+        create: (_) => _create(backend),
+        update: (context, rootModel, previousSegment) {
+          // This runs on every rebuild
+          return _create(rootModel.getBackend());
+        },
+        child: child,
+      );
+    }
+    return child;
+  }
+}
+
 class ApplicationProvider extends StatelessWidget {
   final Widget child;
   final PackageInfo? packageInfo;
   final bridge.Bridge backend;
-  const ApplicationProvider({super.key, required this.child, this.packageInfo, required this.backend});
+  const ApplicationProvider({
+    super.key,
+    required this.child,
+    this.packageInfo,
+    required this.backend,
+  });
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => RootModel(backend:backend)),
+        ChangeNotifierProvider(create: (_) => RootModel(backend: backend)),
         ChangeNotifierProvider(create: (_) => ScreenConfiguration()),
-        ChangeNotifierProvider(create: (_) => ParameterModel(backend:backend)),
+        ChangeNotifierProvider(create: (_) => EventModel(backend: backend)),
+        ChangeNotifierProvider(create: (_) => ParameterModel(backend: backend)),
         ChangeNotifierProvider(
           create: (_) => PackageModel(packageInfo: packageInfo!),
         ),
       ],
-      child: child,
+      child: TrackProvider(child: child),
     );
   }
 }

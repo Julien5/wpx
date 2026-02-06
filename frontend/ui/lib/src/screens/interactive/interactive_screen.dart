@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/future_rendering_widget.dart';
@@ -43,16 +44,6 @@ class InteractiveScaffold extends StatefulWidget {
 }
 
 class _InteractiveScaffoldState extends State<InteractiveScaffold> {
-  Segment? trackSegment;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    RootModel root = Provider.of<RootModel>(context, listen: false);
-    // This sets tracksSegment only if it is null.
-    trackSegment ??= root.trackSegment();
-  }
-
   AppBar? appBar(BuildContext ctx) {
     return AppBar(
       title: const Text('Map'),
@@ -79,17 +70,15 @@ class _InteractiveScaffoldState extends State<InteractiveScaffold> {
   */
   @override
   Widget build(BuildContext ctx) {
-    RootModel root = Provider.of<RootModel>(ctx);
-    if (trackSegment == null) {
-      return Text("building...");
-    }
+    SegmentModel track = Provider.of<SegmentModel>(ctx);
+    Bridge backend = Provider.of<RootModel>(ctx, listen: false).getBackend();
     return Scaffold(
       appBar: appBar(ctx),
       body: ChangeNotifierProvider<FutureRenderer>(
         create:
             (_) => FutureRenderer(
-              bridge: root.getBackend(),
-              segment: trackSegment!,
+              bridge: backend,
+              segment: track.segment,
               kinds: allkinds(),
               trackData: TrackData.map,
             ),

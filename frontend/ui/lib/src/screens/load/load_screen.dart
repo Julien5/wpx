@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/screens/home/home_screen.dart';
@@ -150,6 +151,15 @@ class _BodyWidget extends StatelessWidget {
     Navigator.of(context).pushNamed(RouteManager.wheelView);
   }
 
+  void onButtonPressed(BuildContext context) {
+    try {
+      Provider.of<SegmentModel>(context, listen: false);
+      gotoWheel(context);
+    } catch (e) {
+      developer.log("[SegmentModel not yet available]");
+    }
+  }
+
   @override
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
@@ -159,7 +169,7 @@ class _BodyWidget extends StatelessWidget {
     );
     if (model.doneAll()) {
       button = ElevatedButton(
-        onPressed: () => {gotoWheel(ctx)},
+        onPressed: () => onButtonPressed(ctx),
         child: Text("OK"),
       );
     }
@@ -202,6 +212,7 @@ class _LoadScaffoldState extends State<_LoadScaffold> {
 
   @override
   void didChangeDependencies() {
+    // this start the jobs as soon as the screen is shown.
     super.didChangeDependencies();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -222,36 +233,31 @@ class _LoadScaffoldState extends State<_LoadScaffold> {
 
 class _LoadScreenProviders extends MultiProvider {
   final UserInput userInput;
-  _LoadScreenProviders({
-    required RootModel root,
-    required this.userInput,
-    required Widget child,
-  }) : super(
-         providers: [
-           ChangeNotifierProvider.value(value: root),
-           ChangeNotifierProvider.value(value: root.eventModel()),
-           ChangeNotifierProxyProvider2<RootModel, EventModel, LoadScreenModel>(
-             create: (context) {
-               RootModel root = Provider.of<RootModel>(context, listen: false);
-               EventModel events = Provider.of<EventModel>(
-                 context,
-                 listen: false,
-               );
-               developer.log("make LoadScreenModel");
-               return LoadScreenModel(
-                 root: root,
-                 events: events,
-                 userInput: userInput,
-               );
-             },
-             update: (context, root, event, loadscreen) {
-               loadscreen!.onChanged(root, event);
-               return loadscreen;
-             },
-           ),
-         ],
-         child: child,
-       );
+  _LoadScreenProviders({required this.userInput, required Widget child})
+    : super(
+        providers: [
+          ChangeNotifierProxyProvider2<RootModel, EventModel, LoadScreenModel>(
+            create: (context) {
+              RootModel root = Provider.of<RootModel>(context, listen: false);
+              EventModel events = Provider.of<EventModel>(
+                context,
+                listen: false,
+              );
+              developer.log("make LoadScreenModel");
+              return LoadScreenModel(
+                root: root,
+                events: events,
+                userInput: userInput,
+              );
+            },
+            update: (context, root, event, loadscreen) {
+              loadscreen!.onChanged(root, event);
+              return loadscreen;
+            },
+          ),
+        ],
+        child: child,
+      );
 }
 
 class LoadScreen extends StatelessWidget {
@@ -260,11 +266,6 @@ class LoadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    return _LoadScreenProviders(
-      root: root,
-      userInput: userInput,
-      child: _LoadScaffold(),
-    );
+    return _LoadScreenProviders(userInput: userInput, child: _LoadScaffold());
   }
 }

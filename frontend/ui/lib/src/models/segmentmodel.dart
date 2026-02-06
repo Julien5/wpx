@@ -43,10 +43,6 @@ class SegmentModel extends ChangeNotifier {
   }
 }
 
-class TrackModel extends SegmentModel {
-  TrackModel({required super.backend}) : super(segment: backend.trackSegment());
-}
-
 class ParameterModel extends ChangeNotifier {
   final bridge.Bridge backend;
 

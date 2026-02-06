@@ -61,32 +61,22 @@ class _ControlsScaffold extends StatelessWidget {
 class ControlsScreenProviders extends MultiProvider {
   ControlsScreenProviders({
     super.key,
-    required SegmentModel segmentModel,
     required TrackViewsSwitch multiTrackModel,
     required Widget child,
   }) : super(
-         providers: [
-           ChangeNotifierProvider.value(value: segmentModel),
-           ChangeNotifierProvider.value(value: multiTrackModel),
-         ],
+         providers: [ChangeNotifierProvider.value(value: multiTrackModel)],
          child: child,
        );
 }
 
 class ControlsScreen extends StatelessWidget {
-  final SegmentModel model;
-  final TrackViewsSwitch multiTrackModel;
-  const ControlsScreen({
-    super.key,
-    required this.model,
-    required this.multiTrackModel,
-  });
+  final TrackViewsSwitch switchModel;
+  const ControlsScreen({super.key, required this.switchModel});
 
   @override
   Widget build(BuildContext context) {
     return ControlsScreenProviders(
-      segmentModel: model,
-      multiTrackModel: multiTrackModel,
+      multiTrackModel: switchModel,
       child: _ControlsScaffold(),
     );
   }
