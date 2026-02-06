@@ -9,7 +9,7 @@ import 'package:ui/utils.dart';
 enum SelectedParameter { distance, elevation, none }
 
 class UserStepsModel extends ChangeNotifier {
-  final SegmentModel segmentModel;
+  final ParameterModel parameterModel;
   UserStepsOptions? currentOptions;
 
   final Map<SelectedParameter, List<double>> _sliderValues = {};
@@ -37,7 +37,7 @@ class UserStepsModel extends ChangeNotifier {
     return options.stepElevationGain;
   }
 
-  UserStepsModel({required this.segmentModel}) {
+  UserStepsModel({required this.parameterModel}) {
     _sliderValues[SelectedParameter.distance] = fromKm([5, 10, 15, 20, 25]);
     _sliderValues[SelectedParameter.elevation] = [
       10,
@@ -57,7 +57,7 @@ class UserStepsModel extends ChangeNotifier {
     _selectedValue[SelectedParameter.elevation] =
         _sliderValues[SelectedParameter.elevation]![1];
 
-    currentOptions = segmentModel.userStepsOptions();
+    currentOptions = parameterModel.userStepsOptions();
     assert(currentOptions != null);
     var v = value(currentOptions!);
     if (v != null) {
@@ -103,7 +103,7 @@ class UserStepsModel extends ChangeNotifier {
    */
   void _sendParameterToBackend() {
     notifyListeners();
-    segmentModel.setUserStepsOptions(currentOptions!);
+    parameterModel.setUserStepsOptions(currentOptions!);
   }
 
   void _updateOptions(SelectedParameter parameter, double? value) {
@@ -310,9 +310,9 @@ class UserStepsSliderProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SegmentModel model = Provider.of<SegmentModel>(context);
+    ParameterModel model = Provider.of<ParameterModel>(context);
     return ChangeNotifierProvider(
-      create: (ctx) => UserStepsModel(segmentModel: model),
+      create: (ctx) => UserStepsModel(parameterModel: model),
       builder: (context, child) {
         return UserStepsSliderWidget();
       },

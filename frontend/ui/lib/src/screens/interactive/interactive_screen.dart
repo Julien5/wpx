@@ -88,7 +88,7 @@ class _InteractiveScaffoldState extends State<InteractiveScaffold> {
       body: ChangeNotifierProvider<FutureRenderer>(
         create:
             (_) => FutureRenderer(
-              bridge: root.getBridge(),
+              bridge: root.getBackend(),
               segment: trackSegment!,
               kinds: allkinds(),
               trackData: TrackData.map,

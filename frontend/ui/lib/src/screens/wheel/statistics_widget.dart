@@ -44,11 +44,8 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
   void readModel() {
     developer.log("read model");
-    SegmentModel segmentModel = Provider.of<SegmentModel>(
-      context,
-      listen: false,
-    );
-    bridge.Parameters parameters = segmentModel.parameters();
+    ParameterModel parametersModel = Provider.of<ParameterModel>(context,listen: false);
+    bridge.Parameters parameters = parametersModel.parameters();
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
@@ -57,16 +54,13 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
 
   void writeModel() {
     if (!mounted) return;
-    SegmentModel segmentModel = Provider.of<SegmentModel>(
-      context,
-      listen: false,
-    );
-    bridge.Parameters oldParameters = segmentModel.parameters();
+    ParameterModel parametersModel = Provider.of<ParameterModel>(context,listen: false);
+    bridge.Parameters oldParameters = parametersModel.parameters();
     ParameterChanger changer = ParameterChanger(init: oldParameters);
     changer.changeSpeed(speed!);
     changer.changeStartTime(startTime!);
     bridge.Parameters parameters = changer.current();
-    segmentModel.setParameters(parameters);
+    parametersModel.setParameters(parameters);
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
@@ -157,11 +151,12 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
   @override
   Widget build(BuildContext ctx) {
     SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
-    bridge.Parameters parameters = segmentModel.parameters();
+    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
+    Parameters parameters=parameterModel.parameters();
     bridge.SegmentStatistics statistics = segmentModel.statistics();
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
-    double kmh = segmentModel.parameters().speed * 3600 / 1000;
+    double kmh = parameterModel.parameters().speed * 3600 / 1000;
     String startTimeText = "?";
     String endTimeText = "?";
     if (startTime != null) {

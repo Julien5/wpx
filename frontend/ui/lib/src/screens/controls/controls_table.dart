@@ -8,17 +8,17 @@ class ControlsTableWidget extends StatelessWidget {
   const ControlsTableWidget({super.key});
 
   void setShortFormat(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
     model.setControlGpxNameFormat("NAME[3]-TIME[%H:%M]");
   }
 
   void setMediumFormat(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
     model.setControlGpxNameFormat("NAME[3]-TIME[%H:%M]-SLOPE[4.1%]");
   }
 
   void setLongFormat(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
+    ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
     model.setControlGpxNameFormat("NAME[*]-TIME[%H:%M]-SLOPE[4.1%]");
   }
 

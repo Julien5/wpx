@@ -62,15 +62,15 @@ class LoadScreenModel extends ChangeNotifier {
     Future<void>? future;
     if (job == Job.gpx) {
       if (userInput.demo) {
-        future = root.loadDemo();
+        future = root.getBackend().loadDemo();
       } else {
         assert(userInput.bytes != null);
-        future = root.loadContent(userInput.bytes!);
+        future = root.getBackend().loadContent(content: userInput.bytes!);
       }
     } else if (job == Job.osm) {
-      future = root.getBridge().loadOsm();
+      future = root.getBackend().loadOsm();
     } else if (job == Job.controls) {
-      future = root.getBridge().loadControls(
+      future = root.getBackend().loadControls(
         source: bridge.ControlSource.segments,
       );
     } else {
@@ -113,7 +113,7 @@ class LoadScreenModel extends ChangeNotifier {
     if (job == Job.gpx) {
       _statistics = root.statistics();
     } else if (job == Job.controls) {
-      _controls = root.getBridge().getWaypoints(
+      _controls = root.getBackend().getWaypoints(
         segment: root.trackSegment(),
         kinds: {bridge.InputType.control},
       );

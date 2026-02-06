@@ -154,7 +154,6 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
     double margin = 8;
     TrackData currentModelData = model.currentData();
-
     // I would like to have `visible = widgets[currentModelData]`
     // but then the widget states are disposed.
     // AI says: In Flutter, when you swap a widget out of the build tree,

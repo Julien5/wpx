@@ -82,7 +82,7 @@ class _WheelScreenProviders extends MultiProvider {
           ChangeNotifierProvider(
             create:
                 (_) => SegmentModel(
-                  root: root.getBridge(),
+                  backend: root.getBackend(),
                   segment: root.trackSegment(),
                 ),
           ),
@@ -100,7 +100,7 @@ class WheelScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RootModel root = Provider.of<RootModel>(context);
-    Bridge bridge = root.getBridge();
+    Bridge bridge = root.getBackend();
     assert(bridge.isLoaded());
     return _WheelScreenProviders(root: root, child: _WheelScaffold());
   }

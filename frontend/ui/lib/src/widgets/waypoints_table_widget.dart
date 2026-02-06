@@ -64,15 +64,13 @@ class WaypointsTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SegmentModel>(
-      builder: (context, model, child) {
-        Set<InputType> kinds = {kind};
-        var waypoints = model.someWaypoints(kinds);
-        return SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: buildData(waypoints),
-        );
-      },
+    SegmentModel model = Provider.of<SegmentModel>(context);
+    context.watch<ParameterModel>();
+    Set<InputType> kinds = {kind};
+    var waypoints = model.someWaypoints(kinds);
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: buildData(waypoints),
     );
   }
 }

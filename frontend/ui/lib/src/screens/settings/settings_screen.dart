@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -87,21 +86,25 @@ class SliderWidget extends StatelessWidget {
   const SliderWidget({super.key});
 
   void onChanged(BuildContext context, double pages) {
-    SegmentModel segment = Provider.of<SegmentModel>(context, listen: false);
-    double trackLength = segment.statistics().length;
+    ParameterModel parameters = Provider.of<ParameterModel>(
+      context,
+      listen: false,
+    );
+    SegmentModel track = Provider.of<SegmentModel>(context, listen: false);
+    double trackLength = track.statistics().length;
     double nice = niceSegmentLength(trackLength / pages);
     double segmentOverlap = nice / 10;
     double segmentLength = nice + segmentOverlap;
-    Parameters p = segment.parameters();
+    Parameters p = parameters.parameters();
     ParameterChanger changer = ParameterChanger(init: p);
     changer.changeSegmentLength(segmentLength);
     changer.changeSegmentOverlap(segmentOverlap);
-    // problem: the SegmentsGraphicsRow listens on RootModel.
-    // it is not updated unless RootModel notifies.
-    // this requires urgent cleanup.
-    segment.setParameters(changer.current());
-    RootModel root = Provider.of<RootModel>(context, listen: false);
-    root.setParameters(changer.current());
+    parameters.setParameters(changer.current());
+    ParameterModel parametersModel = Provider.of<ParameterModel>(
+      context,
+      listen: false,
+    );
+    parametersModel.setParameters(changer.current());
     developer.log("wanted:$pages pages");
     int npages = projectNumberOfPages(pages.round(), trackLength, p);
     developer.log("length:${nice / 1000} km => $npages pages");
@@ -110,7 +113,11 @@ class SliderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SegmentModel segment = Provider.of<SegmentModel>(context);
-    Parameters parameters = segment.parameters();
+    ParameterModel parameterModel = Provider.of<ParameterModel>(
+      context,
+      listen: false,
+    );
+    Parameters parameters = parameterModel.parameters();
     double trackLength = segment.statistics().length;
     double segmentLength = parameters.segmentLength;
     double segmentOverlap = parameters.segmentOverlap;
@@ -151,8 +158,9 @@ class SettingsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SegmentModel segment = Provider.of<SegmentModel>(context);
-    List<Segment> segments = segment.root.segments();
-    Parameters parameters = segment.parameters();
+    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
+    List<Segment> segments = segment.backend.segments();
+    Parameters parameters = parameterModel.parameters();
     String segLength = ((parameters.segmentLength - parameters.segmentOverlap) /
             1000)
         .ceil()
@@ -224,6 +232,7 @@ class TopRow extends StatelessWidget {
   const TopRow({super.key});
   @override
   Widget build(BuildContext context) {
+    context.watch<ParameterModel>();
     return ChangeNotifierProvider(
       create: (_) => TrackViewsSwitch(exposed: [TrackData.pages]),
       child: TrackGraphicsRow(kinds: allkinds()),

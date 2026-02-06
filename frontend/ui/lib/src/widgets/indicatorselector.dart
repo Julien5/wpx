@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
 class ElevationIndicatorGroup extends StatefulWidget {
@@ -24,8 +24,8 @@ class _ElevationIndicatorGroupState extends State<ElevationIndicatorGroup> {
   }
 
   void readModel() {
-    RootModel rootModel = Provider.of<RootModel>(context, listen: false);
-    Parameters p = rootModel.parameters();
+    ParameterModel parameterModel = Provider.of<ParameterModel>(context, listen: false);
+    Parameters p = parameterModel.parameters();
     for (var indicator in p.profileOptions.elevationIndicators) {
       if (indicator == ProfileIndication.numericSlope) {
         selectedValue = percent;
@@ -40,13 +40,13 @@ class _ElevationIndicatorGroupState extends State<ElevationIndicatorGroup> {
   }
 
   void updateModel() {
-    RootModel root = Provider.of<RootModel>(context, listen: false);
+    ParameterModel parameters = Provider.of<ParameterModel>(context, listen: false);
     if (selectedValue == none) {
-      root.setProfileIndication(ProfileIndication.none);
+      parameters.setProfileIndication(ProfileIndication.none);
     } else if (selectedValue == percent) {
-      root.setProfileIndication(ProfileIndication.numericSlope);
+      parameters.setProfileIndication(ProfileIndication.numericSlope);
     } else if (selectedValue == ticks) {
-      root.setProfileIndication(ProfileIndication.gainTicks);
+      parameters.setProfileIndication(ProfileIndication.gainTicks);
     }
   }
 

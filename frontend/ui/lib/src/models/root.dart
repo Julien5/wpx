@@ -29,71 +29,55 @@ class EventModel extends ChangeNotifier {
 }
 
 class RootModel extends ChangeNotifier {
-  late bridge.Bridge _bridge;
+  final bridge.Bridge backend;
   EventModel? _eventModel;
   bridge.Segment? _trackSegment;
 
-  RootModel() {
-    _bridge = bridge.Bridge.make();
-  }
+  RootModel({required this.backend});
 
-  bridge.Bridge getBridge() {
-    return _bridge;
+  bridge.Bridge getBackend() {
+    return backend;
   }
 
   EventModel eventModel() {
-    _eventModel ??= EventModel(_bridge);
+    _eventModel ??= EventModel(backend);
     return _eventModel!;
   }
 
   Future<void> loadDemo() async {
     developer.log("load demo");
     _trackSegment = null;
-    await _bridge.loadDemo();
+    await backend.loadDemo();
   }
 
   Future<void> loadContent(List<int> bytes) async {
     developer.log("load ${bytes.length} bytes");
     _trackSegment = null;
-    await _bridge.loadContent(content: bytes);
-  }
-
-  bridge.Parameters parameters() {
-    return _bridge.getParameters();
-  }
-
-  void setParameters(bridge.Parameters p) {
-    _bridge.setParameters(parameters: p);
-    notifyListeners();
-  }
-
-  void setProfileIndication(bridge.ProfileIndication p) {
-    _bridge.setProfileIndication(p: p);
-    notifyListeners();
+    await backend.loadContent(content: bytes);
   }
 
   Future<List<int>> generateGpx() {
-    return _bridge.generateGpx();
+    return backend.generateGpx();
   }
 
   Future<List<int>> generatePdf() {
-    return _bridge.generatePdf();
+    return backend.generatePdf();
   }
 
   Future<List<int>> generateZip() {
-    return _bridge.generateZip();
+    return backend.generateZip();
   }
 
   bridge.SegmentStatistics statistics() {
-    return _bridge.statistics();
+    return backend.statistics();
   }
 
   List<bridge.Segment> segments() {
-    return _bridge.segments();
+    return backend.segments();
   }
 
   bridge.Segment trackSegment() {
-    _trackSegment ??= _bridge.trackSegment();
+    _trackSegment ??= backend.trackSegment();
     return _trackSegment!;
   }
 }

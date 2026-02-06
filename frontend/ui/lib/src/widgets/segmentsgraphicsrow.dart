@@ -84,9 +84,9 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     with TickerProviderStateMixin {
   TabController? _tabController;
   List<SegmentModel> segments = [];
-  RootModel? root;
+  ParameterModel? parameterModel;
 
-  void _onRootChanged() {
+  void _onParameterChanged() {
     RootModel root = Provider.of<RootModel>(context, listen: false);
     List<Segment> newSegments = root.segments();
     int oldLength = segments.length;
@@ -99,7 +99,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     }
     for (Segment segment in newSegments) {
       SegmentModel model = SegmentModel(
-        root: root.getBridge(),
+        backend: root.getBackend(),
         segment: segment,
       );
       segments.add(model);
@@ -111,11 +111,11 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (root == null) {
-      root = Provider.of<RootModel>(context, listen: false);
-      root!.addListener(_onRootChanged);
+    if (parameterModel == null) {
+      parameterModel = Provider.of<ParameterModel>(context, listen: false);
+      parameterModel!.addListener(_onParameterChanged);
     }
-    _onRootChanged();
+    _onParameterChanged();
   }
 
   @override
@@ -123,8 +123,8 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     if (_tabController != null) {
       _tabController!.dispose();
     }
-    if (root != null) {
-      root!.removeListener(_onRootChanged);
+    if (parameterModel != null) {
+      parameterModel!.removeListener(_onParameterChanged);
     }
     super.dispose();
   }

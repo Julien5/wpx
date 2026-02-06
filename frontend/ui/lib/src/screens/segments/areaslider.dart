@@ -2,7 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
@@ -12,14 +12,14 @@ class AreaParameters {
 }
 
 class AreaSliderModel extends ChangeNotifier {
-  final RootModel rootModel;
+  final ParameterModel parameterModel;
   late AreaParameters areaParameters = AreaParameters();
-  AreaSliderModel({required this.rootModel}) {
+  AreaSliderModel({required this.parameterModel}) {
     areaParameters = current();
   }
 
   Parameters parameters() {
-    return rootModel.parameters();
+    return parameterModel.parameters();
   }
 
   AreaParameters current() {
@@ -41,11 +41,11 @@ class AreaSliderModel extends ChangeNotifier {
 
   void updateBackend() {
     Parameters? p = makeParametersForBackend();
-    rootModel.setParameters(p);
+    parameterModel.setParameters(p);
   }
 
   Parameters makeParametersForBackend() {
-    Parameters oldParameters = rootModel.parameters();
+    Parameters oldParameters = parameterModel.parameters();
     return bridge.Parameters(
       speed: oldParameters.speed,
       startTime: oldParameters.startTime,
@@ -133,9 +133,9 @@ class AreaSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
+    ParameterModel root = Provider.of<ParameterModel>(context);
     return ChangeNotifierProvider(
-      create: (ctx) => AreaSliderModel(rootModel: root),
+      create: (ctx) => AreaSliderModel(parameterModel: root),
       builder: (context, child) {
         return AreaSliderConsumer();
       },

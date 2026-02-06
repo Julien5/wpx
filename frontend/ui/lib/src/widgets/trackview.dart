@@ -124,10 +124,16 @@ class _TrackViewState extends State<TrackView> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: segmentModel),
-        ChangeNotifierProxyProvider<SegmentModel, FutureRenderer>(
+        ChangeNotifierProxyProvider2<
+          SegmentModel,
+          ParameterModel,
+          FutureRenderer
+        >(
           create: _createRenderer,
-          update: (context, segment, futureRenderer) {
-            developer.log("[update => _onSegmentModelChanged]");
+          update: (context, segment, parameter, futureRenderer) {
+            developer.log(
+              "[update => segment:${segment.segment.id()} ${futureRenderer!.kinds} ${futureRenderer.trackData}]",
+            );
             segment.debug();
             return _onSegmentModelChanged(segment, futureRenderer);
           },

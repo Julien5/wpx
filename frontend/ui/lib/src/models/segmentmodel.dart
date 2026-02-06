@@ -8,31 +8,59 @@ typedef Kinds = Set<bridge.InputType>;
 
 class SegmentModel extends ChangeNotifier {
   final bridge.Segment segment;
-  final bridge.Bridge root;
+  final bridge.Bridge backend;
 
-  SegmentModel({required this.segment, required this.root});
+  SegmentModel({required this.segment, required this.backend});
 
   void debug() {
-    double length = root.segmentStatistics(segment: segment).length / 1000;
+    double length = backend.segmentStatistics(segment: segment).length / 1000;
     developer.log("segment length:$length");
   }
 
   bridge.UserStepsOptions userStepsOptions() {
-    return root.getParameters().userStepsOptions;
-  }
-
-  void setUserStepsOptions(bridge.UserStepsOptions p) {
-    root.setUserStepOptions(userStepsOptions: p);
-    notify();
+    return backend.getParameters().userStepsOptions;
   }
 
   FutureRenderer makeRenderer(Kinds kinds, TrackData trackData) {
     return FutureRenderer(
-      bridge: root,
+      bridge: backend,
       segment: segment,
       kinds: kinds,
       trackData: trackData,
     );
+  }
+
+  bridge.SegmentStatistics statistics() {
+    return backend.segmentStatistics(segment: segment);
+  }
+
+  List<bridge.Waypoint> allWaypoints() {
+    return backend.getWaypoints(segment: segment, kinds: bridge.allkinds());
+  }
+
+  List<bridge.Waypoint> someWaypoints(Kinds kinds) {
+    return backend.getWaypoints(segment: segment, kinds: kinds);
+  }
+}
+
+class TrackModel extends SegmentModel {
+  TrackModel({required super.backend}) : super(segment: backend.trackSegment());
+}
+
+class ParameterModel extends ChangeNotifier {
+  final bridge.Bridge backend;
+
+  ParameterModel({required this.backend});
+
+  void debug() {}
+
+  bridge.UserStepsOptions userStepsOptions() {
+    return backend.getParameters().userStepsOptions;
+  }
+
+  void setUserStepsOptions(bridge.UserStepsOptions p) {
+    backend.setUserStepOptions(userStepsOptions: p);
+    notify();
   }
 
   void notify() {
@@ -40,33 +68,26 @@ class SegmentModel extends ChangeNotifier {
   }
 
   void setParameters(bridge.Parameters p) {
-    root.setParameters(parameters: p);
+    backend.setParameters(parameters: p);
     notify();
   }
 
   bridge.Parameters parameters() {
-    return root.getParameters();
-  }
-
-  bridge.SegmentStatistics statistics() {
-    return root.segmentStatistics(segment: segment);
-  }
-
-  List<bridge.Waypoint> allWaypoints() {
-    return root.getWaypoints(segment: segment, kinds: bridge.allkinds());
-  }
-
-  List<bridge.Waypoint> someWaypoints(Kinds kinds) {
-    return root.getWaypoints(segment: segment, kinds: kinds);
+    return backend.getParameters();
   }
 
   void setUserStepGpxNameFormat(String format) {
-    root.setUserstepGpxNameFormat(format: format);
+    backend.setUserstepGpxNameFormat(format: format);
     notifyListeners();
   }
 
   void setControlGpxNameFormat(String format) {
-    root.setControlGpxNameFormat(format: format);
+    backend.setControlGpxNameFormat(format: format);
+    notifyListeners();
+  }
+
+  void setProfileIndication(bridge.ProfileIndication p) {
+    backend.setProfileIndication(p: p);
     notifyListeners();
   }
 }
