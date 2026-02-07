@@ -2,34 +2,18 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/main.dart';
-import 'package:ui/src/screens/load/load_screen.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/routes.dart';
 
 class _ChooseData extends StatefulWidget {
   const _ChooseData();
 
   @override
   State<_ChooseData> createState() => _ChooseDataState();
-}
-
-class UserInput {
-  List<int>? bytes;
-  String? filename;
-  bool demo = false;
-
-  static UserInput makeFromBytes(List<int> bytes) {
-    var ret = UserInput();
-    ret.bytes = bytes;
-    return ret;
-  }
-
-  static UserInput makeDemo() {
-    var ret = UserInput();
-    ret.demo = true;
-    return ret;
-  }
 }
 
 class _ChooseDataState extends State<_ChooseData> {
@@ -65,15 +49,16 @@ class _ChooseDataState extends State<_ChooseData> {
     onDone(UserInput.makeDemo());
   }
 
-  void gotoLoad(BuildContext ctx, UserInput userInput) {
-    Navigator.push(
-      ctx,
-      MaterialPageRoute(builder: (context) => LoadScreen(userInput: userInput)),
-    );
+  void gotoLoad(BuildContext ctx) {
+    final location = GoRouterState.of(context).matchedLocation;
+    debugPrint('Current location: $location');
+    ctx.go(Routes.load);
   }
 
   void onDone(UserInput userInput) async {
-    gotoLoad(context, userInput);
+    RootModel root = Provider.of<RootModel>(context, listen: false);
+    root.setUserInput(userInput);
+    gotoLoad(context);
   }
 
   @override

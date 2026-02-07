@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/screens/home/home_screen.dart';
 
 enum Job { gpx, osm, controls, none }
 
@@ -129,6 +128,7 @@ class LoadScreenModel extends ChangeNotifier {
       });
     } else if (doneAll()) {
       rootModel.notify();
+      // go to overview.
     }
   }
 

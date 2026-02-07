@@ -1,29 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/screens/home/home_screen.dart';
-import 'package:ui/src/screens/wheel/wheel_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/screens/screen_shell.dart';
 
-class RouteManager {
+class Routes {
   static const String home = '/';
-  static const String wheelView = '/wheel';
-  static const String settingsView = '/settings';
+  static const String load = '/load';
+  static const String overview = '/overview';
+  static const String usersteps = 'usersteps';
+}
 
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+GoRouter getRouter() {
+  debugPrint("CREATE ROUTER");
+  return GoRouter(
+    initialLocation: "/",
+    routes: [
+      GoRoute(
+        path: Routes.home,
+        builder: (context, state) {
+          return ScreenShell(focii: Focii.fromRoute(state.matchedLocation));
+        },
+      ),
+      GoRoute(
+        path: Routes.load,
+        builder: (context, state) {
+          debugPrint("load:${state.matchedLocation}");
+          return ScreenShell(focii: Focii.fromRoute(state.matchedLocation));
+        },
+      ),
 
-      case wheelView:
-        return MaterialPageRoute(builder: (_) => WheelScreen());
-
-      default:
-        return MaterialPageRoute(
-          builder:
-              (_) => Scaffold(
-                body: Center(
-                  child: Text('No route defined for ${settings.name}'),
-                ),
-              ),
-        );
-    }
-  }
+      GoRoute(
+        path: Routes.overview,
+        builder: (context, state) {
+          return ScreenShell(focii: Focii.fromRoute(state.matchedLocation));
+        },
+        routes: [
+          GoRoute(
+            path: Routes.usersteps,
+            builder: (context, state) {
+              return ScreenShell(focii: Focii.fromRoute(state.matchedLocation));
+            },
+          ),
+        ],
+      ),
+    ],
+  );
 }

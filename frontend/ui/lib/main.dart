@@ -1,14 +1,15 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/frb_generated.dart';
+import 'package:ui/utils.dart';
 
 import 'package:window_size/window_size.dart';
 import 'dart:io';
@@ -50,8 +51,8 @@ class TrackProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of<RootModel>(context);
-    bridge.Bridge backend = root.getBackend();
+    bridge.Bridge backend = getBackend(context);
+    Provider.of<RootModel>(context);
     developer.log("build TrackProvider: loaded: ${backend.isLoaded()}");
     if (backend.isLoaded()) {
       /* we cannot simply:
@@ -66,7 +67,7 @@ class TrackProvider extends StatelessWidget {
         create: (_) => _create(backend),
         update: (context, rootModel, previousSegment) {
           // This runs on every rebuild
-          return _create(rootModel.getBackend());
+          return _create(getBackend(context));
         },
         child: child,
       );
@@ -102,30 +103,16 @@ class ApplicationProvider extends StatelessWidget {
   }
 }
 
+final GoRouter router = getRouter();
+
 class Application extends StatelessWidget {
   const Application({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       title: "WPX",
-      onGenerateRoute: RouteManager.generateRoute,
-      initialRoute: RouteManager.home,
-      home: HomeScreen(),
-      // 2. The builder wraps the 'home' widget
-      builder: (context, child) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            Future.microtask(() {
-              if (!context.mounted) return;
-              context.read<ScreenConfiguration>().updateConstraints(
-                constraints,
-              );
-            });
-            return child!;
-          },
-        );
-      },
       theme: ThemeData(
         pageTransitionsTheme: PageTransitionsTheme(
           builders: {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/future_rendering_widget.dart';
 import 'package:ui/utils.dart';
@@ -51,7 +50,7 @@ class _InteractiveScaffoldState extends State<InteractiveScaffold> {
         ElevatedButton(
           child: const Text('Settings'),
           onPressed: () {
-            Navigator.of(ctx).pushNamed(RouteManager.settingsView);
+            //Navigator.of(ctx).pushNamed(RouteManager.settingsView);
           },
         ),
       ],

@@ -1,11 +1,11 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/widgets/small.dart';
 import 'package:ui/utils.dart';
 
@@ -149,7 +149,7 @@ String _title(LoadScreenModel model) {
 
 class _BodyWidget extends StatelessWidget {
   void gotoWheel(BuildContext context) {
-    Navigator.of(context).pushNamed(RouteManager.wheelView);
+    context.go(Routes.overview);
   }
 
   void onButtonPressed(BuildContext context) {
