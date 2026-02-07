@@ -89,16 +89,25 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   void start() {
+    if (_isDisposed) {
+      return;
+    }
     startJob(Job.gpx);
   }
 
   void retry(Job job) {
+    if (_isDisposed) {
+      return;
+    }
     done.remove(job);
     _failed.remove(job);
     startJob(job);
   }
 
   void startJob(Job job) {
+    if (_isDisposed) {
+      return;
+    }
     makeFuture(job);
     developer.log("future created");
     notifyListeners();
