@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/screens/home/home_screen.dart';
+import 'package:ui/src/screens/load/load_screen.dart';
+import 'package:ui/src/screens/wheel/wheel_screen.dart';
+
+class _MobileScreenProviders extends MultiProvider {
+  _MobileScreenProviders({required Widget child})
+    : super(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
+          ),
+        ],
+        child: child,
+      );
+}
+
+class MobileShell extends StatelessWidget {
+  const MobileShell({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return _MobileScreenProviders(child: MobileScreen());
+  }
+}
+
+class MobileScreen extends StatelessWidget {
+  const MobileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    FociModel foci = Provider.of<FociModel>(context);
+    debugPrint("mobile focus on: ${foci.foci}");
+    if (foci.contains(ScreenFocus.overview)) {
+      return WheelScreen();
+    }
+    RootModel root = Provider.of<RootModel>(context);
+    if (foci.contains(ScreenFocus.load)) {
+      return LoadScreen(userInput: root.userInput!);
+    }
+
+    return HomeScreen();
+  }
+}

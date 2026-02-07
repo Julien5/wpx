@@ -5,7 +5,6 @@ import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
-import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/export.dart';
@@ -21,16 +20,7 @@ class _WheelScaffold extends StatelessWidget {
   }
 
   void gotoUserSteps(BuildContext ctx) {
-    TrackViewsSwitch viewsSwitch = Provider.of<TrackViewsSwitch>(
-      ctx,
-      listen: false,
-    );
-    Navigator.push(
-      ctx,
-      MaterialPageRoute(
-        builder: (context) => UserStepsScreen(multiTrackModel: viewsSwitch),
-      ),
-    );
+    // TODO: context.go to pacing
   }
 
   void gotoControls(BuildContext ctx) {

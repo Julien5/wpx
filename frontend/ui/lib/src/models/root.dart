@@ -70,12 +70,12 @@ class RootModel extends ChangeNotifier {
 
 enum ScreenFocus { home, load, overview, usersteps, controls, pdf }
 
-class Focii {
-  final Set<ScreenFocus> focii;
+class FociModel extends ChangeNotifier {
+  Set<ScreenFocus> foci = {ScreenFocus.home};
 
-  Focii({required this.focii});
+  FociModel();
 
-  static Focii fromRoute(String path) {
+  void load(String path) {
     List<String> parts = path.split('/').where((s) => s.isNotEmpty).toList();
     debugPrint("parts:$parts");
     if (parts.isNotEmpty) {
@@ -107,11 +107,10 @@ class Focii {
     if (result.isEmpty) {
       result.add(ScreenFocus.home);
     }
-
-    return Focii(focii: result);
+    foci = result;
   }
 
   bool contains(ScreenFocus f) {
-    return focii.contains(f);
+    return foci.contains(f);
   }
 }

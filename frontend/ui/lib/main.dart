@@ -93,6 +93,7 @@ class ApplicationProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RootModel(backend: backend)),
         ChangeNotifierProvider(create: (_) => ScreenConfiguration()),
         ChangeNotifierProvider(create: (_) => EventModel(backend: backend)),
+        ChangeNotifierProvider(create: (_) => FociModel()),
         ChangeNotifierProvider(create: (_) => ParameterModel(backend: backend)),
         ChangeNotifierProvider(
           create: (_) => PackageModel(packageInfo: packageInfo!),
