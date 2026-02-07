@@ -11,15 +11,15 @@ import 'package:ui/src/widgets/segmentgraphics.dart';
 
 class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
-    goto(ctx, Routes.settings);
+    pushto(ctx, Routes.settings);
   }
 
   void gotoUserSteps(BuildContext ctx) {
-    goto(ctx, Routes.usersteps);
+    pushto(ctx, Routes.usersteps);
   }
 
   void gotoControls(BuildContext ctx) {
-    goto(ctx, Routes.controls);
+    pushto(ctx, Routes.controls);
   }
 
   @override

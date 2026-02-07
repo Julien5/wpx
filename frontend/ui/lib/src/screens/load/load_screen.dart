@@ -148,7 +148,7 @@ String _title(LoadScreenModel model) {
 
 class _BodyWidget extends StatelessWidget {
   void gotoWheel(BuildContext context) {
-    goto(context, Routes.overview);
+    pushto(context, Routes.overview);
   }
 
   void onButtonPressed(BuildContext context) {

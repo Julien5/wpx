@@ -2,17 +2,15 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/screens/shell/screen_shell.dart';
 
 class Routes {
   static const String home = "/home";
   static const String load = "/load";
   static const String overview = "/overview";
-  static const String usersteps = "usersteps";
-  static const String controls = "controls";
-  static const String settings = "settings";
+  static const String usersteps = "/usersteps";
+  static const String controls = "/controls";
+  static const String settings = "/settings";
 }
 
 GoRouter getRouter() {
@@ -24,8 +22,6 @@ GoRouter getRouter() {
         path: Routes.home,
         builder: (context, state) {
           debugPrint("home:${state.matchedLocation}");
-          FociModel model = Provider.of<FociModel>(context, listen: false);
-          model.load(state.matchedLocation);
           return ScreenShell();
         },
       ),
@@ -33,8 +29,6 @@ GoRouter getRouter() {
         path: Routes.load,
         builder: (context, state) {
           debugPrint("load:${state.matchedLocation}");
-          FociModel model = Provider.of<FociModel>(context, listen: false);
-          model.load(state.matchedLocation);
           return ScreenShell();
         },
       ),
@@ -42,35 +36,27 @@ GoRouter getRouter() {
         path: Routes.overview,
         builder: (context, state) {
           debugPrint("overview:${state.matchedLocation}");
-          FociModel model = Provider.of<FociModel>(context, listen: false);
-          model.load(state.matchedLocation);
           return ScreenShell();
         },
       ),
       GoRoute(
-        path: join(Routes.overview, Routes.usersteps),
+        path: Routes.usersteps,
         builder: (context, state) {
           debugPrint("usersteps:${state.matchedLocation}");
-          FociModel model = Provider.of<FociModel>(context, listen: false);
-          model.load(state.matchedLocation);
           return ScreenShell();
         },
       ),
       GoRoute(
-        path: join(Routes.overview, Routes.controls),
+        path: Routes.controls,
         builder: (context, state) {
           debugPrint("controls:${state.matchedLocation}");
-          FociModel model = Provider.of<FociModel>(context, listen: false);
-          model.load(state.matchedLocation);
           return ScreenShell();
         },
       ),
       GoRoute(
-        path: join(Routes.overview, Routes.settings),
+        path: Routes.settings,
         builder: (context, state) {
           debugPrint("settings:${state.matchedLocation}");
-          FociModel model = Provider.of<FociModel>(context, listen: false);
-          model.load(state.matchedLocation);
           return ScreenShell();
         },
       ),
@@ -78,7 +64,7 @@ GoRouter getRouter() {
   );
 }
 
-String join(String a, String b) {
+String djoin(String a, String b) {
   return "$a/$b";
 }
 
@@ -90,16 +76,16 @@ void goto(BuildContext ctx, String path) {
   }
   final currentLocation = GoRouterState.of(ctx).matchedLocation;
   final fullPath = '$currentLocation/$path';
-  ctx.go(fullPath); // '/overview/usersteps'
+  ctx.go(fullPath);
 }
 
 void pushto(BuildContext ctx, String path) {
-  developer.log("GOTO:$path");
+  developer.log("PUSH:$path");
   if (path.startsWith("/")) {
     ctx.push(path);
     return;
   }
   final currentLocation = GoRouterState.of(ctx).matchedLocation;
   final fullPath = '$currentLocation/$path';
-  ctx.push(fullPath); // '/overview/usersteps'
+  ctx.push(fullPath);
 }

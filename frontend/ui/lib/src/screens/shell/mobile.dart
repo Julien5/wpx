@@ -59,6 +59,7 @@ class MobileScreen extends StatelessWidget {
       return HomeScreen();
     }
     developer.log("!!!! [NO SCREEN FOR ${foci.foci}] !!!!");
+    assert(false);
     return HomeScreen();
   }
 }
