@@ -11,6 +11,8 @@ class Routes {
   static const String load = "/load";
   static const String overview = "/overview";
   static const String usersteps = "usersteps";
+  static const String controls = "controls";
+  static const String settings = "settings";
 }
 
 GoRouter getRouter() {
@@ -49,6 +51,24 @@ GoRouter getRouter() {
         path: join(Routes.overview, Routes.usersteps),
         builder: (context, state) {
           debugPrint("usersteps:${state.matchedLocation}");
+          FociModel model = Provider.of<FociModel>(context, listen: false);
+          model.load(state.matchedLocation);
+          return ScreenShell();
+        },
+      ),
+      GoRoute(
+        path: join(Routes.overview, Routes.controls),
+        builder: (context, state) {
+          debugPrint("controls:${state.matchedLocation}");
+          FociModel model = Provider.of<FociModel>(context, listen: false);
+          model.load(state.matchedLocation);
+          return ScreenShell();
+        },
+      ),
+      GoRoute(
+        path: join(Routes.overview, Routes.settings),
+        builder: (context, state) {
+          debugPrint("settings:${state.matchedLocation}");
           FociModel model = Provider.of<FociModel>(context, listen: false);
           model.load(state.matchedLocation);
           return ScreenShell();

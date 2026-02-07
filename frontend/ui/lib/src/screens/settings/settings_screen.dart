@@ -294,26 +294,20 @@ class _SettingsScaffoldState extends State<SettingsScaffold> {
 class SettingsScreenProviders extends MultiProvider {
   SettingsScreenProviders({
     super.key,
-    required SegmentModel segmentModel,
     required TrackViewsSwitch multiTrackModel,
     required Widget child,
   }) : super(
-         providers: [
-           ChangeNotifierProvider.value(value: segmentModel),
-           ChangeNotifierProvider.value(value: multiTrackModel),
-         ],
+         providers: [ChangeNotifierProvider.value(value: multiTrackModel)],
          child: child,
        );
 }
 
 class SettingsScreen extends StatelessWidget {
-  final SegmentModel model;
-  const SettingsScreen({super.key, required this.model});
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SettingsScreenProviders(
-      segmentModel: model,
       multiTrackModel: TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
       child: SettingsScaffold(),
     );

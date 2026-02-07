@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_table.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
@@ -58,26 +57,11 @@ class _ControlsScaffold extends StatelessWidget {
   }
 }
 
-class ControlsScreenProviders extends MultiProvider {
-  ControlsScreenProviders({
-    super.key,
-    required TrackViewsSwitch multiTrackModel,
-    required Widget child,
-  }) : super(
-         providers: [ChangeNotifierProvider.value(value: multiTrackModel)],
-         child: child,
-       );
-}
-
 class ControlsScreen extends StatelessWidget {
-  final TrackViewsSwitch switchModel;
-  const ControlsScreen({super.key, required this.switchModel});
+  const ControlsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ControlsScreenProviders(
-      multiTrackModel: switchModel,
-      child: _ControlsScaffold(),
-    );
+    return _ControlsScaffold();
   }
 }

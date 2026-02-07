@@ -1,14 +1,9 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/screens/controls/controls_screen.dart';
-import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/export.dart';
@@ -16,31 +11,15 @@ import 'package:ui/src/widgets/segmentgraphics.dart';
 
 class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
-    SegmentModel model = Provider.of<SegmentModel>(ctx, listen: false);
-    Navigator.push(
-      ctx,
-      MaterialPageRoute(builder: (context) => SettingsScreen(model: model)),
-    );
+    goto(ctx, Routes.settings);
   }
 
   void gotoUserSteps(BuildContext ctx) {
-    final state = GoRouterState.of(ctx);
-    developer.log('current: ${state.matchedLocation}');
-    developer.log("wanted:${Routes.usersteps}");
     goto(ctx, Routes.usersteps);
   }
 
   void gotoControls(BuildContext ctx) {
-    TrackViewsSwitch viewsSwitch = Provider.of<TrackViewsSwitch>(
-      ctx,
-      listen: false,
-    );
-    Navigator.push(
-      ctx,
-      MaterialPageRoute(
-        builder: (context) => ControlsScreen(switchModel: viewsSwitch),
-      ),
-    );
+    goto(ctx, Routes.controls);
   }
 
   @override

@@ -68,7 +68,7 @@ class RootModel extends ChangeNotifier {
   }
 }
 
-enum ScreenFocus { home, load, overview, usersteps, controls, pdf }
+enum ScreenFocus { home, load, overview, usersteps, controls, settings }
 
 class FociModel extends ChangeNotifier {
   List<ScreenFocus> foci = [ScreenFocus.home];
@@ -100,6 +100,12 @@ class FociModel extends ChangeNotifier {
           break;
         case Routes.usersteps:
           result.add(ScreenFocus.usersteps);
+          break;
+        case Routes.controls:
+          result.add(ScreenFocus.controls);
+          break;
+        case Routes.settings:
+          result.add(ScreenFocus.settings);
           break;
         default:
           developer.log("[!!!] what is [$seg] ?? [!!!]");

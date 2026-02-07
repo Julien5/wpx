@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/screens/load/load_screen.dart';
+import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
@@ -40,6 +42,12 @@ class MobileScreen extends StatelessWidget {
     RootModel root = Provider.of<RootModel>(context);
     if (foci.contains(ScreenFocus.load)) {
       return LoadScreen(userInput: root.userInput!);
+    }
+    if (foci.contains(ScreenFocus.settings)) {
+      return SettingsScreen();
+    }
+    if (foci.contains(ScreenFocus.controls)) {
+      return ControlsScreen();
     }
     if (foci.contains(ScreenFocus.usersteps)) {
       return UserStepsScreen();
