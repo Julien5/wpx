@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/usersteps/usersteps_table.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
@@ -71,26 +70,11 @@ class UserStepsScaffold extends StatelessWidget {
   }
 }
 
-class UserStepsScreenProviders extends MultiProvider {
-  UserStepsScreenProviders({
-    super.key,
-    required TrackViewsSwitch multiTrackModel,
-    required Widget child,
-  }) : super(
-         providers: [ChangeNotifierProvider.value(value: multiTrackModel)],
-         child: child,
-       );
-}
-
 class UserStepsScreen extends StatelessWidget {
-  final TrackViewsSwitch multiTrackModel;
-  const UserStepsScreen({super.key, required this.multiTrackModel});
+  const UserStepsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return UserStepsScreenProviders(
-      multiTrackModel: multiTrackModel,
-      child: UserStepsScaffold(),
-    );
+    return UserStepsScaffold();
   }
 }

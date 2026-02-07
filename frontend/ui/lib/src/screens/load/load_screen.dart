@@ -1,6 +1,5 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
@@ -149,7 +148,7 @@ String _title(LoadScreenModel model) {
 
 class _BodyWidget extends StatelessWidget {
   void gotoWheel(BuildContext context) {
-    context.go(Routes.overview);
+    goto(context, Routes.overview);
   }
 
   void onButtonPressed(BuildContext context) {

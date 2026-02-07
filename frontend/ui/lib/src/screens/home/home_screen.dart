@@ -52,7 +52,7 @@ class _ChooseDataState extends State<_ChooseData> {
   void gotoLoad(BuildContext ctx) {
     final location = GoRouterState.of(context).matchedLocation;
     debugPrint('Current location: $location');
-    ctx.go(Routes.load);
+    goto(context, Routes.load);
   }
 
   void onDone(UserInput userInput) async {

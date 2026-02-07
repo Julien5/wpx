@@ -1,9 +1,12 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/screens/load/load_screen.dart';
+import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
 class _MobileScreenProviders extends MultiProvider {
@@ -34,14 +37,20 @@ class MobileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     FociModel foci = Provider.of<FociModel>(context);
     debugPrint("mobile focus on: ${foci.foci}");
-    if (foci.contains(ScreenFocus.overview)) {
-      return WheelScreen();
-    }
     RootModel root = Provider.of<RootModel>(context);
     if (foci.contains(ScreenFocus.load)) {
       return LoadScreen(userInput: root.userInput!);
     }
-
+    if (foci.contains(ScreenFocus.usersteps)) {
+      return UserStepsScreen();
+    }
+    if (foci.contains(ScreenFocus.overview)) {
+      return WheelScreen();
+    }
+    if (foci.contains(ScreenFocus.home)) {
+      return HomeScreen();
+    }
+    developer.log("!!!! [NO SCREEN FOR ${foci.foci}] !!!!");
     return HomeScreen();
   }
 }

@@ -1,7 +1,11 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
@@ -20,7 +24,10 @@ class _WheelScaffold extends StatelessWidget {
   }
 
   void gotoUserSteps(BuildContext ctx) {
-    // TODO: context.go to pacing
+    final state = GoRouterState.of(ctx);
+    developer.log('current: ${state.matchedLocation}');
+    developer.log("wanted:${Routes.usersteps}");
+    goto(ctx, Routes.usersteps);
   }
 
   void gotoControls(BuildContext ctx) {

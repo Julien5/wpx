@@ -71,18 +71,21 @@ class RootModel extends ChangeNotifier {
 enum ScreenFocus { home, load, overview, usersteps, controls, pdf }
 
 class FociModel extends ChangeNotifier {
-  Set<ScreenFocus> foci = {ScreenFocus.home};
+  List<ScreenFocus> foci = [ScreenFocus.home];
 
   FociModel();
 
   void load(String path) {
     List<String> parts = path.split('/').where((s) => s.isNotEmpty).toList();
     debugPrint("parts:$parts");
+
+    // preserve the / at the first element
+    // because Routes.home = "/home";
     if (parts.isNotEmpty) {
       parts[0] = "/${parts[0]}";
     }
 
-    final Set<ScreenFocus> result = {};
+    final List<ScreenFocus> result = [];
 
     for (final seg in parts) {
       switch (seg) {
@@ -99,7 +102,7 @@ class FociModel extends ChangeNotifier {
           result.add(ScreenFocus.usersteps);
           break;
         default:
-          developer.log("what is [$seg] ?");
+          developer.log("[!!!] what is [$seg] ?? [!!!]");
           assert(false);
           break;
       }

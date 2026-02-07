@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/screen_configuration.dart';
-import 'package:ui/src/screens/home/home_screen.dart';
+import 'package:ui/src/screens/shell/desktop.dart';
 import 'package:ui/src/screens/shell/mobile.dart';
 
 class ScreenShell extends StatelessWidget {
@@ -19,7 +19,7 @@ class ScreenShell extends StatelessWidget {
         if (screen.isMobile()) {
           return MobileShell();
         }
-        return HomeScreen();
+        return DesktopShell();
       },
     );
   }
