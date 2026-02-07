@@ -20,14 +20,14 @@ class DesktopScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FociModel foci = Provider.of<FociModel>(context);
-    debugPrint("mobile focus on: ${foci.foci}");
+    debugPrint("desktop focus on: ${foci.foci}");
     RootModel root = Provider.of<RootModel>(context);
-    if (foci.contains(ScreenFocus.load)) {
+    /*if (foci.contains(ScreenFocus.load)) {
       return LoadScreen(userInput: root.userInput!);
     }
     if (foci.contains(ScreenFocus.overview)) {
       return WheelScreen();
-    }
+    }*/
     return HomeScreen();
   }
 }

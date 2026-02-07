@@ -17,6 +17,9 @@ class ScreenConfiguration extends ChangeNotifier {
   }
 
   DisplayMode computeMode(double width, double height) {
+    if (width > 900 && height > 700) {
+      return DisplayMode.desktop;
+    }
     if (width > height && width > 900) {
       return DisplayMode.horizontal;
     }

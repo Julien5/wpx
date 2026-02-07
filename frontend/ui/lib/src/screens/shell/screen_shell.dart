@@ -44,7 +44,7 @@ class ScreenShell extends StatelessWidget {
         if (screen.isMobile()) {
           return MobileShell();
         }
-        return MobileShell();
+        return DesktopShell();
       },
     );
   }
