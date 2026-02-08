@@ -34,8 +34,8 @@ class ButtonWidget extends StatelessWidget {
   }
 }
 
-class TextWidget extends StatelessWidget {
-  const TextWidget({super.key});
+class _TextWidget extends StatelessWidget {
+  const _TextWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class UserStepsScaffold extends StatelessWidget {
     Set<InputType> usersteps = {InputType.userStep};
 
     List<Widget> midChilren = [
-      TextWidget(),
+      _TextWidget(),
       UserStepsSliderProvider(),
       ButtonWidget(),
     ];

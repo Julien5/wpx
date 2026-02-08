@@ -8,6 +8,7 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/trackview.dart';
+import 'package:ui/src/widgets/userstepsslider.dart';
 
 class GraphicsPadding extends StatelessWidget {
   final Widget child;
@@ -33,29 +34,13 @@ class ProfilePadding extends StatelessWidget {
 }
 
 class _LargeScaffold extends StatelessWidget {
-  void gotoSettings(BuildContext ctx) {
-    pushto(ctx, Routes.settings);
-  }
-
-  void gotoUserSteps(BuildContext ctx) {
-    pushto(ctx, Routes.usersteps);
-  }
-
-  void gotoControls(BuildContext ctx) {
-    pushto(ctx, Routes.controls);
-  }
-
   @override
   Widget build(BuildContext ctx) {
     ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
     List<Widget> leftChildren = [
       Padding(
         padding: const EdgeInsets.all(15),
-        child: StatisticsWidget(
-          onPacingPointPressed: () => gotoUserSteps(ctx),
-          onControlsPointPressed: () => gotoControls(ctx),
-          onPagesPressed: () => gotoSettings(ctx),
-        ),
+        child: UserStepsSliderProvider(),
       ),
     ];
     Widget leftCol = ConstrainedBox(
@@ -76,7 +61,10 @@ class _LargeScaffold extends StatelessWidget {
         //Expanded(child: Container(color: Colors.blue)),
         Expanded(
           child: GraphicsPadding(
-            child: TrackView.make({InputType.osm}, TrackData.map),
+            child: TrackView.make({
+              InputType.osm,
+              InputType.userStep,
+            }, TrackData.map),
           ),
         ),
       ],
@@ -86,7 +74,10 @@ class _LargeScaffold extends StatelessWidget {
       ConstrainedBox(
         constraints: BoxConstraints(minHeight: 200, maxHeight: 200),
         child: ProfilePadding(
-          child: TrackView.make({InputType.osm}, TrackData.profile),
+          child: TrackView.make({
+            InputType.osm,
+            InputType.userStep,
+          }, TrackData.profile),
         ),
       ),
       Expanded(child: mwrow),
