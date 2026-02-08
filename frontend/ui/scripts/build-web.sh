@@ -50,7 +50,11 @@ function build() {
 	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen generate
 	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web ${RELEASE}
-	flutter build web ${RELEASE} --pwa-strategy=none --build-name=${version}
+	if [ "${RELEASE}" = "--release" ]; then
+		flutter build web ${RELEASE} --pwa-strategy=none --build-name=${version}
+	else
+		flutter build web --debug --pwa-strategy=none --build-name=${version}
+	fi
 	mkdir -p build/web/pkg/
 	cp -Rv $(find /opt/flutter/ -name "flutter.js.map") build/web/
 	cp -Rf web/pkg/* build/web/pkg/
