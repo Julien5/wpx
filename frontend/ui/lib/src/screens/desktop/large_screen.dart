@@ -26,7 +26,7 @@ class ProfilePadding extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(5, 10, 5, 10),
+      padding: EdgeInsetsGeometry.fromLTRB(5, 10, 10, 10),
       child: child,
     );
   }
@@ -79,33 +79,27 @@ class _LargeScaffold extends StatelessWidget {
             child: TrackView.make({InputType.osm}, TrackData.map),
           ),
         ),
-        Expanded(
-          child: GraphicsPadding(
-            child: TrackView.make({InputType.userStep}, TrackData.wheel),
-          ),
-        ),
       ],
     );
 
     List<Widget> rightChildren = [
-      Flexible(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: 200, maxHeight: 200),
-          child: ProfilePadding(
-            child: TrackView.make({InputType.osm}, TrackData.profile),
-          ),
+      ConstrainedBox(
+        constraints: BoxConstraints(minHeight: 200, maxHeight: 200),
+        child: ProfilePadding(
+          child: TrackView.make({InputType.osm}, TrackData.profile),
         ),
       ),
       Expanded(child: mwrow),
-      Flexible(child: SizedBox(height: 50)),
     ];
 
-    Widget rightCol = ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: screen.width - 500),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: rightChildren,
+    Widget rightCol = Expanded(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: screen.width - 500),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: rightChildren,
+        ),
       ),
     );
 
