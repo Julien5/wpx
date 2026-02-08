@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
@@ -198,7 +200,7 @@ class TrackGraphicsRow extends StatelessWidget {
     // is necessary to get rebuild on notifyListeners.
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
     TrackData currentModelData = model.currentData();
-
+    developer.log("[TrackGraphicsRow] build currentData:$currentModelData");
     Widget buttonColumn = SegmentGraphicsButtonsColumn(
       onButtonPressed: (trackData) => {onButtonPressed(context, trackData)},
       selected: currentModelData,

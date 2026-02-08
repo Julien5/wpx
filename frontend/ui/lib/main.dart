@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
+import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/frb_generated.dart';
@@ -95,6 +96,9 @@ class ApplicationProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EventModel(backend: backend)),
         ChangeNotifierProvider(create: (_) => FociModel()),
         ChangeNotifierProvider(create: (_) => ParameterModel(backend: backend)),
+        ChangeNotifierProvider(
+          create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
+        ),
         ChangeNotifierProvider(
           create: (_) => PackageModel(packageInfo: packageInfo!),
         ),

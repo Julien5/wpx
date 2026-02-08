@@ -11,24 +11,12 @@ import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
 import 'package:ui/src/screens/wheel/wheel_screen.dart';
 
-class _MobileScreenProviders extends MultiProvider {
-  _MobileScreenProviders({required Widget child})
-    : super(
-        providers: [
-          ChangeNotifierProvider(
-            create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
-          ),
-        ],
-        child: child,
-      );
-}
-
 class MobileShell extends StatelessWidget {
   const MobileShell({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return _MobileScreenProviders(child: MobileScreen());
+    return MobileScreen();
   }
 }
 

@@ -44,24 +44,12 @@ class _WheelScaffold extends StatelessWidget {
   }
 }
 
-class _WheelScreenProviders extends MultiProvider {
-  _WheelScreenProviders({required Widget child})
-    : super(
-        providers: [
-          ChangeNotifierProvider(
-            create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
-          ),
-        ],
-        child: child,
-      );
-}
-
 class WheelScreen extends StatelessWidget {
   const WheelScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     context.watch<SegmentModel>();
-    return _WheelScreenProviders(child: _WheelScaffold());
+    return _WheelScaffold();
   }
 }

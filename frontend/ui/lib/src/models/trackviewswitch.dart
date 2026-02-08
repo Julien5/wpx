@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 
@@ -15,6 +17,7 @@ class TrackViewsSwitch extends ChangeNotifier {
     if (currentIndex >= exposed.length) {
       currentIndex = 0;
     }
+    developer.log("[1]currentIndex:$currentIndex");
     notifyListeners();
   }
 
@@ -24,6 +27,7 @@ class TrackViewsSwitch extends ChangeNotifier {
 
   void changeCurrent(TrackData d) {
     currentIndex = exposed.indexOf(d);
+    developer.log("[2]currentIndex:$currentIndex");
     notifyListeners();
   }
 }
