@@ -9,6 +9,29 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/trackview.dart';
 
+class GraphicsPadding extends StatelessWidget {
+  final Widget child;
+
+  const GraphicsPadding({super.key, required this.child});
+  @override
+  Widget build(BuildContext ctx) {
+    return Padding(padding: EdgeInsetsGeometry.all(20), child: child);
+  }
+}
+
+class ProfilePadding extends StatelessWidget {
+  final Widget child;
+
+  const ProfilePadding({super.key, required this.child});
+  @override
+  Widget build(BuildContext ctx) {
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(5, 10, 5, 10),
+      child: child,
+    );
+  }
+}
+
 class _LargeScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
     pushto(ctx, Routes.settings);
@@ -48,27 +71,40 @@ class _LargeScaffold extends StatelessWidget {
     );
 
     Widget mwrow = Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(child: TrackView.make({InputType.userStep}, TrackData.map)),
-        Expanded(child: TrackView.make({InputType.userStep}, TrackData.wheel)),
+        //Expanded(child: Container(color: Colors.blue)),
+        Expanded(
+          child: GraphicsPadding(
+            child: TrackView.make({InputType.osm}, TrackData.map),
+          ),
+        ),
+        Expanded(
+          child: GraphicsPadding(
+            child: TrackView.make({InputType.userStep}, TrackData.wheel),
+          ),
+        ),
       ],
     );
 
     List<Widget> rightChildren = [
       Flexible(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 200),
-          child: TrackView.make({InputType.userStep}, TrackData.profile),
+          constraints: BoxConstraints(minHeight: 200, maxHeight: 200),
+          child: ProfilePadding(
+            child: TrackView.make({InputType.osm}, TrackData.profile),
+          ),
         ),
       ),
       Expanded(child: mwrow),
-      Expanded(child: SizedBox(height: 50)),
+      Flexible(child: SizedBox(height: 50)),
     ];
 
     Widget rightCol = ConstrainedBox(
       constraints: BoxConstraints(maxWidth: screen.width - 500),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: rightChildren,
       ),
     );
