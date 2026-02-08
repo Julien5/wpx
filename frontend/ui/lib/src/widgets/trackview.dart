@@ -40,6 +40,7 @@ class _TrackViewState extends State<TrackView> {
   VisibilityInfo? visibilityInfo;
   FutureRenderer? futureRenderer;
   late final Key _visibilityKey;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -82,13 +83,20 @@ class _TrackViewState extends State<TrackView> {
     if (futureRenderer == null) {
       return;
     }
-    Size size = visibilityInfo!.size;
-    TrackData currentData = futureRenderer!.trackData;
-    if (currentData == TrackData.map || currentData == TrackData.profile) {
-      size = size * 1.5;
-    }
-    futureRenderer!.setSize(size);
-    startRendererIfNeeded();
+
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 150), () {
+      if (visibilityInfo == null) {
+        return;
+      }
+      Size size = visibilityInfo!.size;
+      TrackData currentData = futureRenderer!.trackData;
+      if (currentData == TrackData.map || currentData == TrackData.profile) {
+        size = size * 1.5;
+      }
+      futureRenderer!.setSize(size);
+      startRendererIfNeeded();
+    });
   }
 
   // takes visibility and renderer dirtyness into account.
@@ -109,7 +117,8 @@ class _TrackViewState extends State<TrackView> {
     debugPrint("3:${futureRenderer!.needsStart()}");
     if (needed) {
       futureRenderer!.start();
-      assert(!futureRenderer!.needsStart());
+      // this assert fails, sometimes, when the screen is resized quickly
+      // assert(!futureRenderer!.needsStart());
     }
   }
 

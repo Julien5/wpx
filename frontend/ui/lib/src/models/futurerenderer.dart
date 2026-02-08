@@ -17,6 +17,7 @@ class FutureRenderer with ChangeNotifier {
 
   Future<String>? _future;
   String? _result;
+  bool _disposed = false;
 
   FutureRenderer({
     required bridge.Bridge bridge,
@@ -36,6 +37,7 @@ class FutureRenderer with ChangeNotifier {
   @override
   void dispose() {
     developer.log("[renderer dispose]");
+    _disposed = true;
     _future = null; // Clear the future reference
     super.dispose();
   }
@@ -52,6 +54,9 @@ class FutureRenderer with ChangeNotifier {
   }
 
   void start() {
+    if (_disposed) {
+      return;
+    }
     if (size == null) {
       log("[render-request:$trackData] size is not set");
       return;
@@ -121,8 +126,9 @@ class FutureRenderer with ChangeNotifier {
   }
 
   void onCompleted(String value) {
-    if (_future == null) {
-      developer.log("[renderer was disposed?]");
+    if (_disposed) {
+      developer.log("[renderer was disposed]");
+      assert(_future == null);
       return;
     }
     _result = value;
