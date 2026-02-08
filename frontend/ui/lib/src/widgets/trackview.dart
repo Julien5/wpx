@@ -29,7 +29,7 @@ class TrackView extends StatefulWidget {
       kinds: kinds,
       trackData: trackData,
     );
-    return TrackView(key: p.createKey(), parameters: p);
+    return TrackView(parameters: p);
   }
 
   @override
