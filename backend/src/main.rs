@@ -1,7 +1,10 @@
 #![allow(non_snake_case)]
 
+use std::collections::HashSet;
+
 use clap::Parser;
 use tracks::backend::Backend;
+use tracks::inputpoint::{allkinds, InputType};
 use tracks::math::IntegerSize2D;
 use tracks::parameters::ControlSource;
 use tracks::speed;
@@ -38,17 +41,24 @@ struct Cli {
     filename: std::path::PathBuf,
 }
 
-fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
+async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
     let start = std::time::Instant::now();
     let segment = backend.trackSegment();
-    backend.render_segment_what(
-        &segment,
-        &"map".to_string(),
-        &IntegerSize2D::new(1000, 1000),
-        inputpoint::allkinds(),
-    );
+    let _ = backend.load_osm().await;
+    let mut svg = String::new();
+    for _ in 1..30 {
+        svg = backend.render_segment_what(
+            &segment,
+            &"map".to_string(),
+            &IntegerSize2D::new(2000, 1000),
+            allkinds(),
+        );
+    }
+
     let duration = start.elapsed();
     log::info!("main_test took: {:.3?}", duration);
+    let tmpfilename = std::format!("/tmp/largemap.svg");
+    std::fs::write(&tmpfilename, svg.clone()).unwrap();
     Ok(())
 }
 
@@ -122,6 +132,7 @@ async fn main() -> anyhow::Result<()> {
 
     match args.step_distance {
         Some(km) => {
+            parameters.user_steps_options.step_elevation_gain = None;
             parameters.user_steps_options.step_distance = Some((1000 * km) as f64);
         }
         _ => {}
@@ -129,6 +140,7 @@ async fn main() -> anyhow::Result<()> {
 
     match args.step_elevation_gain {
         Some(m) => {
+            parameters.user_steps_options.step_distance = None;
             parameters.user_steps_options.step_elevation_gain = Some(m as f64);
         }
         _ => {}
@@ -160,7 +172,7 @@ async fn main() -> anyhow::Result<()> {
     match args.main_test {
         Some(enabled) => {
             if enabled {
-                return main_test(&mut backend);
+                return main_test(&mut backend).await;
             }
         }
         _ => {}

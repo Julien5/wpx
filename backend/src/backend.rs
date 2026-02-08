@@ -577,6 +577,34 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn svg_large_map() {
+        let _ = env_logger::try_init();
+        let mut backend = load_test_data().await;
+        let mut parameters = backend.get_parameters();
+        parameters.start_time = START_TIME.to_string();
+        parameters.user_steps_options.step_distance = Some((10_000) as f64);
+        parameters.map_options.max_area_ratio = 0.15f64;
+        backend.set_parameters(&parameters);
+
+        let segment = backend.make_segment_data(&backend.trackSegment());
+        let map_size = IntegerSize2D::new(800, 800);
+        let svg = segment.render_map(&map_size, &inputpoint::allkinds());
+        let reffilename = std::format!("data/ref/largemap.svg");
+        println!("test {}", reffilename);
+        let data = if std::fs::exists(&reffilename).unwrap() {
+            std::fs::read_to_string(&reffilename).unwrap()
+        } else {
+            String::new()
+        };
+        let tmpfilename = std::format!("/tmp/largemap.svg");
+        std::fs::write(&tmpfilename, svg.clone()).unwrap();
+        if data != svg {
+            println!("test failed: {} {}", tmpfilename, reffilename);
+            assert!(false);
+        }
+    }
+
+    #[tokio::test]
     async fn svg_map() {
         let _ = env_logger::try_init();
         let mut backend = load_test_data().await;
@@ -593,11 +621,9 @@ mod tests {
             .collect();
 
         let map_size = IntegerSize2D::new(400, 400);
-        let profile_size = IntegerSize2D::new(1420, 400);
 
         let mut ok_count = 0;
         for segment in &segments {
-            let _ = segment.render_profile(&profile_size, &inputpoint::allkinds());
             let svg = segment.render_map(&map_size, &inputpoint::allkinds());
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id());
             println!("test {}", reffilename);

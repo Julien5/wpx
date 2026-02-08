@@ -77,7 +77,7 @@ impl PlacementResult {
                 if result.placed_indices.contains_key(&kp) {
                     let bbox = result.placed_indices.get(&kp).unwrap().clone();
                     feature.place_label(&bbox);
-                    feature._make_link(obstacles);
+                    //feature._make_link(obstacles);
                     ret.push(feature.clone());
                 } else {
                     if feature.input_point.as_ref().unwrap().kind() != InputType::OSM {
