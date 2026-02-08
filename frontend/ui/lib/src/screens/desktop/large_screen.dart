@@ -7,9 +7,6 @@ import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
-import 'package:ui/src/widgets/adaptive_layout.dart';
-import 'package:ui/src/widgets/export.dart';
-import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/trackview.dart';
 
 class _LargeScaffold extends StatelessWidget {
@@ -29,10 +26,13 @@ class _LargeScaffold extends StatelessWidget {
   Widget build(BuildContext ctx) {
     ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
     List<Widget> leftChildren = [
-      StatisticsWidget(
-        onPacingPointPressed: () => gotoUserSteps(ctx),
-        onControlsPointPressed: () => gotoControls(ctx),
-        onPagesPressed: () => gotoSettings(ctx),
+      Padding(
+        padding: const EdgeInsets.all(15),
+        child: StatisticsWidget(
+          onPacingPointPressed: () => gotoUserSteps(ctx),
+          onControlsPointPressed: () => gotoControls(ctx),
+          onPagesPressed: () => gotoSettings(ctx),
+        ),
       ),
     ];
     Widget leftCol = ConstrainedBox(
@@ -42,37 +42,40 @@ class _LargeScaffold extends StatelessWidget {
         maxHeight: screen.height,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: leftChildren,
       ),
     );
 
-    List<Widget> rightChildren = [
-      Expanded(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 300),
+    Widget mwrow = Row(
+      children: [
+        Expanded(child: TrackView.make({InputType.userStep}, TrackData.map)),
+        Expanded(child: TrackView.make({InputType.userStep}, TrackData.wheel)),
+      ],
+    );
 
-          child: TrackView.make({InputType.userStep}, TrackData.profile),
-        ),
-      ),
-      Expanded(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 500),
-          child: TrackView.make({InputType.userStep}, TrackData.map),
-        ),
-      ),
+    List<Widget> rightChildren = [
+      Expanded(child: TrackView.make({InputType.userStep}, TrackData.profile)),
+      Expanded(child: mwrow),
+      Expanded(child: SizedBox(height: 50)),
     ];
 
     Widget rightCol = ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 600, maxHeight: screen.height),
+      constraints: BoxConstraints(maxWidth: 800),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: rightChildren,
       ),
     );
+
+    Widget div = VerticalDivider(
+      color: Colors.lightBlue,
+      thickness: 1,
+      width: 1, // This is the horizontal space the widget occupies
+    );
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
-      body: Row(children: [leftCol, rightCol]),
+      body: Row(children: [leftCol, div, rightCol]),
     );
   }
 }
