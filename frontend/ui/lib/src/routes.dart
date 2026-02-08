@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ui/src/screens/shell/screen_shell.dart';
 
 class Routes {
-  static const String home = "/home";
+  static const String home = "/";
   static const String load = "/load";
   static const String overview = "/overview";
   static const String usersteps = "/usersteps";

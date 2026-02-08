@@ -112,6 +112,7 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      routeInformationParser: null,
       routerConfig: router,
       title: "WPX",
       theme: ThemeData(
