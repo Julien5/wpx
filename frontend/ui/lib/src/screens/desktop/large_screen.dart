@@ -36,7 +36,11 @@ class _LargeScaffold extends StatelessWidget {
       ),
     ];
     Widget leftCol = ConstrainedBox(
-      constraints: BoxConstraints(minWidth: 400, maxWidth: 400),
+      constraints: BoxConstraints(
+        minWidth: 400,
+        maxWidth: 400,
+        maxHeight: screen.height,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: leftChildren,
@@ -44,27 +48,26 @@ class _LargeScaffold extends StatelessWidget {
     );
 
     List<Widget> rightChildren = [
-      ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 300),
-        child: Expanded(
+      Expanded(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 300),
+
           child: TrackView.make({InputType.userStep}, TrackData.profile),
         ),
       ),
-      ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 500),
-        child: Expanded(
+      Expanded(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 500),
           child: TrackView.make({InputType.userStep}, TrackData.map),
         ),
       ),
     ];
 
     Widget rightCol = ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 600),
-      child: Flexible(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: rightChildren,
-        ),
+      constraints: BoxConstraints(maxWidth: 600, maxHeight: screen.height),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: rightChildren,
       ),
     );
     return Scaffold(
