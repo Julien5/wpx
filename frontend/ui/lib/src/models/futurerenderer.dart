@@ -147,6 +147,7 @@ class FutureRenderer with ChangeNotifier {
     if (newSize == size) {
       return false;
     }
+    debugPrint("old size:$size new size:$newSize");
     size = newSize;
     _future = null;
     _result = null;
