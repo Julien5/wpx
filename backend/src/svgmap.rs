@@ -75,8 +75,10 @@ pub fn euclidean_bounding_box(
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
-    for k in range.start..range.end {
-        bbox.update(&track.euclidean[k].point2d());
+    for &idx in &track.simplified {
+        if idx >= range.start && idx < range.end {
+            bbox.update(&track.euclidean[idx].point2d());
+        }
     }
     bbox
 }
@@ -87,8 +89,10 @@ impl MapData {
         bbox.fix_aspect_ratio(size);
         let mut path = Vec::new();
         let range = segment.range();
-        for k in range.start..range.end {
-            path.push(segment.track.euclidean[k].clone());
+        for idx in &segment.track.simplified {
+            if *idx >= range.start && *idx < range.end {
+                path.push(segment.track.euclidean[*idx].clone());
+            }
         }
 
         let margin = 20i32;
@@ -111,6 +115,7 @@ impl MapData {
         set_attr(&mut document, "height", format!("{}", size.height).as_str());
 
         let generator = Box::new(MapGenerator {});
+        // this is slow.
         let packets = label_placement::prioritize::map(segment);
         let mut feature_packets = Vec::new();
         let mut counter = 0;

@@ -28,6 +28,7 @@ pub struct Track {
     pub smooth_elevation: Vec<f64>,
     pub smooth_elevation_gain: Vec<f64>,
     pub euclidean: Vec<MercatorPoint>,
+    pub simplified: Vec<usize>,
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
     pub tiles: Tiles,
@@ -247,9 +248,22 @@ impl Track {
         }
 
         let trees = ProjectionTrees::make(&euclidean);
+
+        // Compute simplified euclidean using Douglas-Peucker
+        let simplified = {
+            let coords: Vec<geo::Coord> = euclidean
+                .iter()
+                .map(|p| geo::coord!(x: p.x(), y: p.y()))
+                .collect();
+            let line = geo::LineString::new(coords);
+            let epsilon = 100.0; // 100 meter tolerance in mercator space
+            line.simplify_idx(&epsilon)
+        };
+
         let ret = Track {
             wgs84: wgs,
             euclidean,
+            simplified,
             smooth_elevation: track_smooth_elevation,
             smooth_elevation_gain,
             _distance,

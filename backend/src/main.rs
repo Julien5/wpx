@@ -51,32 +51,39 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
             &segment,
             &"map".to_string(),
             &IntegerSize2D::new(2000, 1000),
+            //HashSet::from([InputType::GPX]),
             allkinds(),
         );
     }
 
     let duration = start.elapsed();
     log::info!("main_test took: {:.3?}", duration);
-    let tmpfilename = std::format!("/tmp/largemap.svg");
+    let tmpfilename = std::format!("/tmp/maintestmap.svg");
     std::fs::write(&tmpfilename, svg.clone()).unwrap();
     Ok(())
 }
 
+fn setup_log() {
+    println!("init logger");
+    use std::io::Write;
+    let _ = env_logger::Builder::new()
+        .format(|buf, record| {
+            writeln!(
+                buf,
+                "{} [{}] - {}",
+                chrono::Local::now().format("%H:%M:%S:%f"),
+                record.level(),
+                record.args()
+            )
+        })
+        .filter_level(log::LevelFilter::Trace)
+        .try_init();
+}
+
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> anyhow::Result<()> {
-    env_logger::init();
-    /*env_logger::Builder::new()
-    .format(|buf, record| {
-        writeln!(
-            buf,
-            "{} [{}] - {}",
-            chrono::Local::now().format("%M:%S:%3f"),
-            record.level(),
-            record.args()
-        )
-    })
-    .filter(None, log::LevelFilter::Trace)
-    .init();*/
+    // env_logger::init();
+    setup_log();
 
     let args = Cli::parse();
 
