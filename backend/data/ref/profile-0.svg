@@ -104,7 +104,6 @@
 K2 (12:53)
 </text>
 </g>
-<path d="M882.61,23.00 L905.69,325.73 L882.61,332.59" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="364.8191215688331" cy="101.1687" fill="Blue" id="1/wp" r="5"/>
 </g>
@@ -114,7 +113,6 @@ K2 (12:53)
 K1 (10:04)
 </text>
 </g>
-<path d="M364.82,23.00 L364.82,99.17" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="615.5870044327199" cy="131.03175" fill="Black" id="2/wp" r="3"/>
 </g>
@@ -171,7 +169,6 @@ K1 (10:04)
 Furtwangen
 </text>
 </g>
-<path d="M365.14,120.77 L365.14,102.77" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="1327.4785186142885" cy="139.06214999999997" fill="Green" id="8/wp" r="3"/>
 </g>
@@ -210,7 +207,6 @@ Bräunlingen
 12:06
 </text>
 </g>
-<path d="M738.44,256.18 L738.44,238.18" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="983.987119825206" cy="227.46824999999998" fill="Black" id="13/wp" r="3"/>
 </g>
@@ -268,7 +264,6 @@ Walke
 Bruggen
 </text>
 </g>
-<path d="M35.41,180.46 L35.41,162.46" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="579.5583228890189" cy="71.62829999999997" fill="Gray" id="23/wp" r="2"/>
 <circle cx="579.5583228890189" cy="71.62829999999997" fill="white" id="23/wp-little-white" r="0.5"/>
@@ -289,7 +284,6 @@ Rotenberg
 Vogte
 </text>
 </g>
-<path d="M495.66,66.61 L495.66,48.61" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="687.3558073818186" cy="218.5416" fill="Gray" id="25/wp" r="2"/>
 <circle cx="687.3558073818186" cy="218.5416" fill="white" id="25/wp-little-white" r="0.5"/>

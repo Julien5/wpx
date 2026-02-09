@@ -75,7 +75,6 @@ K1 (10:04)
 Furtwangen
 </text>
 </g>
-<path d="M169.45,336.47 L155.46,331.54 L155.46,311.54 L169.45,292.47" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="188.0427184299083" cy="21.824950053254724" fill="Green" id="8/wp/circle" r="3"/>
 </g>
@@ -96,7 +95,6 @@ Freiersberg
 Haslach im Kinzigtal
 </text>
 </g>
-<path d="M110.04,61.25 L123.75,66.86 L123.75,86.86 L110.04,121.25" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="288.5315364069065" cy="379.9384102553413" fill="Black" id="10/wp/circle" r="5"/>
 <circle cx="288.5315364069065" cy="379.9384102553413" fill="white" id="10/wp/circle-little-white" r="3.5"/>
@@ -205,7 +203,6 @@ Hausach
 Fischerbach
 </text>
 </g>
-<path d="M129.73,100.91 L122.98,113.39" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="178.60729832528023" cy="72.66145908768885" fill="Black" id="24/wp/circle" r="4"/>
 <circle cx="178.60729832528023" cy="72.66145908768885" fill="white" id="24/wp/circle-little-white" r="2.5"/>
@@ -216,6 +213,5 @@ Fischerbach
 Walke
 </text>
 </g>
-<path d="M158.08,42.32 L157.48,61.25 L177.49,71.01" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 </g>
 </svg>

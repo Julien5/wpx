@@ -84,7 +84,6 @@
 K4 (00:54)
 </text>
 </g>
-<path d="M642.30,23.00 L642.30,303.85" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="377.6678199828616" cy="301.49850000000004" fill="Black" id="1/wp" r="3"/>
 </g>
@@ -154,7 +153,6 @@ Wörth am Rhein
 Hagenbach
 </text>
 </g>
-<path d="M585.11,325.19 L579.34,327.08 L579.34,307.08 L585.11,307.19" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="184.6157006946869" cy="295.55764285714287" fill="Black" id="10/wp" r="4"/>
 <circle cx="184.6157006946869" cy="295.55764285714287" fill="white" id="10/wp-little-white" r="2.5"/>
@@ -175,7 +173,6 @@ Iffezheim
 Lauterbourg
 </text>
 </g>
-<path d="M496.74,319.35 L496.74,301.35" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="516.5120993827823" cy="292.68964285714287" fill="Black" id="12/wp" r="4"/>
 <circle cx="516.5120993827823" cy="292.68964285714287" fill="white" id="12/wp-little-white" r="2.5"/>
@@ -206,7 +203,6 @@ Beinheim
 Munchhausen
 </text>
 </g>
-<path d="M389.10,320.27 L389.10,302.27" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="218.16344649043003" cy="298.8865714285714" fill="Black" id="15/wp" r="4"/>
 <circle cx="218.16344649043003" cy="298.8865714285714" fill="white" id="15/wp-little-white" r="2.5"/>
@@ -217,7 +213,6 @@ Munchhausen
 Wintersdorf
 </text>
 </g>
-<path d="M218.16,318.89 L205.99,319.40 L205.99,299.40 L218.16,300.89" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="93.0395602675776" cy="290.5898571428571" fill="Black" id="16/wp" r="4"/>
 <circle cx="93.0395602675776" cy="290.5898571428571" fill="white" id="16/wp-little-white" r="2.5"/>
@@ -228,7 +223,6 @@ Wintersdorf
 Haueneberstein
 </text>
 </g>
-<path d="M93.04,310.59 L93.04,292.59" fill="transparent" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1"/>
 <g>
 <circle cx="19.16637268256909" cy="140.89050000000003" fill="Black" id="17/wp" r="4"/>
 <circle cx="19.16637268256909" cy="140.89050000000003" fill="white" id="17/wp-little-white" r="2.5"/>
