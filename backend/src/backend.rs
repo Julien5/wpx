@@ -417,7 +417,7 @@ impl Backend {
 
         let ret = match what.as_str() {
             "profile" => data.render_profile(size, &kinds).svg,
-            "map" => data.render_map(size, &kinds),
+            "map" => data.render_map(size, &kinds).svg,
             "ylabels" => self.render_yaxis_labels_overlay(&segment, size),
             "wheel" => {
                 let time_parameters = wheel::model::TimeParameters {

@@ -15,6 +15,7 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::*;
 use crate::math::{distance2, IntegerSize2D, Point2D};
 use crate::parameters::{ProfileIndication, ProfileOptions};
+use crate::point_collection::RenderResult;
 use crate::segment::{self, SegmentData};
 use crate::track::Track;
 use elements::*;
@@ -28,7 +29,7 @@ impl ProfileModel {
     pub fn input_points(&self) -> Vec<InputPoint> {
         self.points
             .iter()
-            .map(|w| w.input_point.as_ref().unwrap().clone())
+            .map(|feature| feature.input_point.as_ref().unwrap().clone())
             .collect()
     }
 }
@@ -263,7 +264,7 @@ impl ProfileView {
         }
     }
 
-    pub fn render(&self) -> ProfileRenderResult {
+    pub fn render(&self) -> RenderResult {
         let font_size = self.font_size();
         let mut world = Group::new()
             .set("id", "world")
@@ -286,7 +287,7 @@ impl ProfileView {
             .set("width", Woutput)
             .set("height", self.H)
             .add(world);
-        ProfileRenderResult {
+        RenderResult {
             svg: document.to_string(),
             rendered: match self.model.as_ref() {
                 Some(model) => model.input_points(),
@@ -499,6 +500,9 @@ impl ProfileView {
             feature_packets.push(PointFeatures::make(feature_packet));
         }
 
+        let total_count: usize = feature_packets.iter().map(|inner| inner.points.len()).sum();
+        log::trace!("feature count:{}", total_count);
+
         let (results, obstacles) = label_placement::place_labels(
             &feature_packets,
             &*generator,
@@ -640,16 +644,11 @@ impl ProfileGenerator {
     }
 }
 
-pub struct ProfileRenderResult {
-    pub svg: String,
-    pub rendered: Vec<InputPoint>,
-}
-
 pub fn profile(
     segment: &segment::SegmentData,
     size: &IntegerSize2D,
     kinds: &Kinds,
-) -> ProfileRenderResult {
+) -> RenderResult {
     let profile_bbox =
         ProfileBoundingBox::from_track(&segment.track, &segment.start(), &segment.end());
     let mut view = ProfileView::init(&profile_bbox, size, &segment.parameters.profile_options);

@@ -7,6 +7,7 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
+use crate::point_collection::RenderResult;
 use crate::segment::SegmentData;
 use crate::track::Track;
 
@@ -170,7 +171,7 @@ impl MapData {
         }
     }
 
-    pub fn render(self) -> String {
+    pub fn render(self) -> RenderResult {
         let mut document = Document::new();
         for (k, v) in self.document {
             document = document.set(k, v);
@@ -181,6 +182,12 @@ impl MapData {
             svgpath = svgpath.set(k, v);
         }
         document = document.add(svgpath);
+
+        let rendered = self
+            .points
+            .iter()
+            .map(|feature| feature.input_point.as_ref().unwrap().clone())
+            .collect();
 
         let mut points_group = svg::node::element::Group::new();
         for point in self.points {
@@ -198,11 +205,13 @@ impl MapData {
             */
         }
         document = document.add(points_group);
-        document.to_string()
+        let svg = document.to_string();
+
+        RenderResult { svg, rendered }
     }
 }
 
-pub fn map(segment: &SegmentData, size: &IntegerSize2D, kinds: &Kinds) -> String {
+pub fn map(segment: &SegmentData, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
     let svgMap = MapData::make(segment, size, kinds);
     svgMap.render()
 }

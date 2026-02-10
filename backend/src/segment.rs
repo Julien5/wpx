@@ -2,8 +2,7 @@ use crate::bbox::BoundingBox;
 use crate::inputpoint::{InputPoint, InputType, Kinds, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
-use crate::point_collection::SharedPointCollection;
-use crate::profile::ProfileRenderResult;
+use crate::point_collection::{RenderResult, SharedPointCollection};
 use crate::tile::Tiles;
 use crate::track::SharedTrack;
 use crate::{profile, svgmap, tile};
@@ -91,7 +90,7 @@ impl SegmentData {
         svgmap::euclidean_bounding_box(&self.track, &self.range())
     }
 
-    pub fn render_profile(&self, size: &IntegerSize2D, kinds: &Kinds) -> ProfileRenderResult {
+    pub fn render_profile(&self, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
         log::info!("render profile:{}", self.id());
         let ret = profile::profile(&self, size, kinds);
         if self.parameters.debug {
@@ -101,20 +100,20 @@ impl SegmentData {
         ret
     }
 
-    pub fn render_map(&self, size: &IntegerSize2D, kinds: &Kinds) -> String {
+    pub fn render_map(&self, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
         log::info!("render map:{}", self.id());
         let ret = svgmap::map(&self, size, kinds);
         if self.parameters.debug {
             let filename = std::format!("/tmp/map-{}.svg", self.id());
-            std::fs::write(filename, &ret).expect("Unable to write file");
+            std::fs::write(filename, &ret.svg).expect("Unable to write file");
         }
         ret
     }
 
     pub fn profile_packets(&self) -> Vec<Vec<InputPoint>> {
-        self.collection.read().unwrap().profile(&self)
+        self.collection.read().unwrap().profile(&self.range())
     }
     pub fn map_packets(&self) -> Vec<Vec<InputPoint>> {
-        self.collection.read().unwrap().map(&self)
+        self.collection.read().unwrap().map(&self.range())
     }
 }

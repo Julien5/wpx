@@ -1,6 +1,5 @@
 use crate::{
     inputpoint::{InputPoint, InputPointMaps, InputType, OSMType},
-    segment::SegmentData,
     track::Track,
     track_projection::is_close_to_track,
 };
@@ -32,6 +31,11 @@ fn sort_by_distance_to_track(mountains: &mut Vec<InputPoint>) {
 
 fn sort_by_population(cities: &mut Vec<InputPoint>) {
     cities.sort_by_key(|w| std::cmp::Reverse(w.population().unwrap_or(0)));
+}
+
+pub struct RenderResult {
+    pub svg: String,
+    pub rendered: Vec<InputPoint>,
 }
 
 type Points = Vec<InputPoint>;
@@ -148,16 +152,18 @@ impl PointCollection {
         merge_flip_flop(&self.cities, &self.mountains)
     }
 
-    fn filter_for_segment(points: &mut Vec<InputPoint>, segment: &SegmentData) {
-        let range = segment.range();
-        points.retain(|point| point.is_in_range(&range));
+    fn filter_for_segment(points: &mut Vec<InputPoint>, range: &std::ops::Range<usize>) {
+        points.retain(|point| point.is_in_range(range));
         //points.truncate(10);
     }
 
-    fn filter_packets_for_segment(packets: &mut Vec<Vec<InputPoint>>, segment: &SegmentData) {
+    fn filter_packets_for_segment(
+        packets: &mut Vec<Vec<InputPoint>>,
+        range: &std::ops::Range<usize>,
+    ) {
         packets
             .iter_mut()
-            .for_each(|packet| Self::filter_for_segment(packet, segment));
+            .for_each(|packet| Self::filter_for_segment(packet, range));
     }
 
     fn export_profile(&self) -> Vec<Vec<InputPoint>> {
@@ -171,26 +177,26 @@ impl PointCollection {
         ]
     }
 
-    pub fn profile(&self, segment: &SegmentData) -> Vec<Vec<InputPoint>> {
+    pub fn profile(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
         let mut ret = self.export_profile();
-        Self::filter_packets_for_segment(&mut ret, segment);
+        Self::filter_packets_for_segment(&mut ret, range);
         ret
     }
 
-    pub fn map(&self, segment: &SegmentData) -> Vec<Vec<InputPoint>> {
+    pub fn map(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
         let mut villages = self.villages.clone();
-        Self::filter_for_segment(&mut villages, segment);
+        Self::filter_for_segment(&mut villages, range);
         let mut off = self.offtrack_cities.clone();
-        Self::filter_for_segment(&mut off, segment);
+        Self::filter_for_segment(&mut off, range);
         let villages_and_far_cities = merge_flip_flop(&off, &villages);
         let mut ret = vec![
             self.controls.clone(),
             self.gpx.clone(),
             self.cities_and_mountains().clone(),
-            //villages_and_far_cities,
-            //self.osmrest.clone(),
+            villages_and_far_cities,
+            self.osmrest.clone(),
         ];
-        Self::filter_packets_for_segment(&mut ret, segment);
+        Self::filter_packets_for_segment(&mut ret, range);
         ret
     }
 }

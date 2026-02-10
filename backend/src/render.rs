@@ -150,10 +150,16 @@ pub fn make_typst_document(backend: &Backend) -> String {
         let m = segment.render_map(&map_size, &allkinds);
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id());
-            std::fs::write(&f, &m).unwrap();
+            std::fs::write(&f, &m.svg).unwrap();
         }
         log::trace!("link segment {}", segment.id());
-        link(&templates, &rendered_profile.svg, &m, &table, &mut document);
+        link(
+            &templates,
+            &rendered_profile.svg,
+            &m.svg,
+            &table,
+            &mut document,
+        );
         if range.end == backend.d().track.len() {
             break;
         }
