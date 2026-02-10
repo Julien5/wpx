@@ -94,10 +94,7 @@ impl MapData {
             if *idx >= range.start && *idx < range.end {
                 path.push(segment.track.euclidean[*idx].clone());
             }
-        } /*
-          for idx in range.start..range.end {
-              path.push(segment.track.euclidean[idx].clone());
-          }*/
+        }
 
         let margin = 20i32;
 
@@ -133,7 +130,6 @@ impl MapData {
                 if !bbox.contains(&euclidean.point2d()) {
                     continue;
                 }
-                log::trace!("w={}", w.name());
                 let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
                 let k = counter;
                 counter += 1;
