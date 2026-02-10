@@ -80,6 +80,7 @@ pub fn euclidean_bounding_box(
             bbox.update(&track.euclidean[idx].point2d());
         }
     }
+    bbox.enlarge(100f64);
     bbox
 }
 
@@ -93,7 +94,10 @@ impl MapData {
             if *idx >= range.start && *idx < range.end {
                 path.push(segment.track.euclidean[*idx].clone());
             }
-        }
+        } /*
+          for idx in range.start..range.end {
+              path.push(segment.track.euclidean[idx].clone());
+          }*/
 
         let margin = 20i32;
 
@@ -116,7 +120,7 @@ impl MapData {
 
         let generator = Box::new(MapGenerator {});
         // this is slow.
-        let packets = label_placement::prioritize::map(segment);
+        let packets = segment.map_packets();
         let mut feature_packets = Vec::new();
         let mut counter = 0;
         for packet in packets {
@@ -129,6 +133,7 @@ impl MapData {
                 if !bbox.contains(&euclidean.point2d()) {
                     continue;
                 }
+                log::trace!("w={}", w.name());
                 let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
                 let k = counter;
                 counter += 1;

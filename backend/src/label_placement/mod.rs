@@ -3,7 +3,6 @@ pub mod drawings;
 pub mod features;
 pub mod graph;
 pub mod labelboundingbox;
-pub mod prioritize;
 
 mod stroke;
 
@@ -64,7 +63,7 @@ impl PlacementResult {
     // not clean: either packets should not immutable or we dont need a return value
     pub fn apply(
         results: &Vec<PlacementResult>,
-        obstacles: &Obstacles,
+        _obstacles: &Obstacles,
         packets: &mut Vec<PointFeatures>,
     ) -> Vec<PointFeature> {
         let mut ret = Vec::new();

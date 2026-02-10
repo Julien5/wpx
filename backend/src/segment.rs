@@ -2,6 +2,7 @@ use crate::bbox::BoundingBox;
 use crate::inputpoint::{InputPoint, InputType, Kinds, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
+use crate::point_collection::SharedPointCollection;
 use crate::profile::ProfileRenderResult;
 use crate::tile::Tiles;
 use crate::track::SharedTrack;
@@ -20,6 +21,7 @@ pub struct SegmentData {
     pub boxes: Tiles,
     _pointmaps: SharedPointMaps,
     pub parameters: Parameters,
+    pub collection: SharedPointCollection,
 }
 
 pub struct SegmentStatistics {
@@ -34,6 +36,7 @@ impl SegmentData {
         segment: &Segment,
         track: SharedTrack,
         inputpoints: SharedPointMaps,
+        collection: SharedPointCollection,
         parameters: Parameters,
     ) -> SegmentData {
         let boxes = track.subboxes(segment.start, segment.end);
@@ -41,9 +44,10 @@ impl SegmentData {
             segment: segment.clone(),
             track,
             boxes,
-            _pointmaps: inputpoints.clone(),
+            _pointmaps: inputpoints,
             //pointmaps: SharedPointMaps::new(InputPointMaps::new().into()),
-            parameters: parameters.clone(),
+            collection: collection,
+            parameters: parameters,
         }
     }
 
@@ -105,5 +109,12 @@ impl SegmentData {
             std::fs::write(filename, &ret).expect("Unable to write file");
         }
         ret
+    }
+
+    pub fn profile_packets(&self) -> Vec<Vec<InputPoint>> {
+        self.collection.read().unwrap().profile(&self)
+    }
+    pub fn map_packets(&self) -> Vec<Vec<InputPoint>> {
+        self.collection.read().unwrap().map(&self)
     }
 }

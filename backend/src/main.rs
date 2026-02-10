@@ -1,10 +1,8 @@
 #![allow(non_snake_case)]
 
-use std::collections::HashSet;
-
 use clap::Parser;
 use tracks::backend::Backend;
-use tracks::inputpoint::{allkinds, InputType};
+use tracks::inputpoint::allkinds;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::ControlSource;
 use tracks::speed;

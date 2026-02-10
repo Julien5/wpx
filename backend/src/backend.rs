@@ -18,6 +18,8 @@ use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
 use crate::parameters::UserStepsOptions;
 use crate::pdf;
+use crate::point_collection::PointCollection;
+use crate::point_collection::SharedPointCollection;
 use crate::profile;
 use crate::render;
 use crate::segment::SegmentData;
@@ -40,6 +42,7 @@ pub struct BackendData {
     pub parameters: Parameters,
     pub track: SharedTrack,
     pub inputpoints: SharedPointMaps,
+    pub point_collection: SharedPointCollection,
 }
 
 pub struct Backend {
@@ -93,10 +96,18 @@ impl Backend {
 
         self.d().track.project_map(&mut osmpoints);
 
+        self.send("sort points");
+        {
+            let mut locked = self.d().point_collection.write().unwrap();
+            locked.import_osm(&osmpoints.as_vector(), &self.d().track);
+        }
+
+        self.send("sort points..");
         {
             let mut locked = self.d().inputpoints.write().unwrap();
             locked.maps.insert(InputType::OSM, osmpoints);
         }
+
         Ok(())
     }
 
@@ -116,9 +127,11 @@ impl Backend {
             ControlSource::Waypoints => {
                 controls::make_controls_with_waypoints(&self.d().track, &waypoints_vector)
             }
-            ControlSource::OSM => {
-                controls::make_controls_with_osm(&self.d().track, self.d().inputpoints.clone())
-            }
+            ControlSource::OSM => controls::make_controls_with_osm(
+                &self.d().track,
+                self.d().inputpoints.clone(),
+                self.d().point_collection.clone(),
+            ),
         };
 
         // the case of mutiple projections for a single point is not handled correctly
@@ -133,6 +146,8 @@ impl Backend {
             let mut locked = self.d().inputpoints.write().unwrap();
             locked.maps.insert(InputType::Control, control_map);
         }
+
+        self.update_collection_other();
         Ok(controls.len())
     }
 
@@ -153,15 +168,18 @@ impl Backend {
         );
 
         let parameters = Parameters::default();
+        let point_collection = SharedPointCollection::new(PointCollection::new().into());
         self.send("compute elevation");
         let data = BackendData {
             track,
             inputpoints,
             parameters,
+            point_collection,
         };
         self.send("update waypoints");
         self.backend_data = Some(data);
 
+        // this updates the collection, too
         self.set_user_step_options(&self.get_parameters().user_steps_options);
         self.send("content loaded");
         Ok(())
@@ -196,6 +214,7 @@ impl Backend {
             segment,
             self.d().track.clone(),
             self.d().inputpoints.clone(),
+            self.d().point_collection.clone(),
             self.d().parameters.clone(),
         )
     }
@@ -299,13 +318,25 @@ impl Backend {
         zipexport::generate(&gpx, &pdf)
     }
 
+    fn update_collection_other(&self) {
+        let mapslock = self.d().inputpoints.read().unwrap();
+        let mut lock = self.d().point_collection.write().unwrap();
+        lock.import_other(&mapslock, &self.d().track);
+    }
+
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
         self.dmut().parameters.user_steps_options = options.clone();
         let new_points =
             make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-        let mut lock = self.dmut().inputpoints.write().unwrap();
-        lock.maps
-            .insert(InputType::UserStep, InputPointMap::from_vector(&new_points));
+
+        // update user steps
+        {
+            let mut mapslock = self.dmut().inputpoints.write().unwrap();
+            mapslock
+                .maps
+                .insert(InputType::UserStep, InputPointMap::from_vector(&new_points));
+        }
+        self.update_collection_other();
     }
 
     pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
@@ -383,6 +414,7 @@ impl Backend {
             size.height
         );
         let data = self.make_segment_data(segment);
+
         let ret = match what.as_str() {
             "profile" => data.render_profile(size, &kinds).svg,
             "map" => data.render_map(size, &kinds),

@@ -6,6 +6,7 @@ use crate::{
     math,
     mercator::MercatorPoint,
     parameters::Parameters,
+    point_collection::SharedPointCollection,
     segment::SegmentData,
     track::Track,
     track_projection::{is_close_to_track, TrackProjection},
@@ -204,7 +205,11 @@ pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) 
     }
 }
 
-pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) -> Vec<InputPoint> {
+pub fn make_controls_with_osm(
+    track: &Arc<Track>,
+    inputpoints: SharedPointMaps,
+    point_collection: SharedPointCollection,
+) -> Vec<InputPoint> {
     let total = track.total_distance();
     let track_distance_km = total / 1000f64;
     let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
@@ -227,6 +232,7 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
             &segment,
             track.clone(),
             inputpoints.clone(),
+            point_collection.clone(),
             Parameters::default(),
         );
         segments.push(data);
@@ -311,7 +317,13 @@ pub fn make_controls_with_osm(track: &Arc<Track>, inputpoints: SharedPointMaps) 
 
 #[cfg(test)]
 mod tests {
-    use crate::{event, gpsdata::GpxData, inputpoint::InputPoint, inputpoint::InputPointMaps, osm};
+    use crate::{
+        event,
+        gpsdata::GpxData,
+        inputpoint::{InputPoint, InputPointMaps},
+        osm,
+        point_collection::PointCollection,
+    };
 
     fn read(filename: &str) -> GpxData {
         use crate::gpsdata;
@@ -377,9 +389,15 @@ mod tests {
         let mut inputpoints = BTreeMap::new();
         let mut osmpoints = osm::download_for_track(&track, &logger).await.unwrap();
         track.project_map(&mut osmpoints);
+
+        let mut collection = PointCollection::new();
+        collection.import_osm(&osmpoints.as_vector(), &track);
+        let sharedcollection = SharedPointCollection::new(collection.into());
+
         inputpoints.insert(InputType::OSM, osmpoints);
-        let shared = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
-        make_controls_with_osm(&track, shared)
+        let sharedmaps = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
+
+        make_controls_with_osm(&track, sharedmaps, sharedcollection)
     }
 
     #[tokio::test]

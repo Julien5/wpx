@@ -83,7 +83,7 @@ fn draw_arc1(page: &Page, m: &model::Arc) -> Group {
     let mut ret = Group::new();
     let start = m.start_angle;
     let end = m.end_angle;
-    let dash_length = 5f64;
+    let _dash_length = 5f64;
 
     let zero = Point2D::new(0f64, 0f64);
     let radius = page.wheel_inner_radius() as f64 / 2.0;
@@ -131,7 +131,7 @@ fn draw_arc2(page: &Page, m: &model::Arc) -> Group {
 
     let zero = Point2D::new(0f64, 0f64);
     let radius = page.wheel_inner_radius() as f64 / 2.0;
-    let dash_length = 5f64;
+    let _dash_length = 5f64;
 
     let a1 = arc::Arc {
         center: zero,

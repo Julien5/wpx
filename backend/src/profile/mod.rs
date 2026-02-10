@@ -460,7 +460,7 @@ impl ProfileView {
             _WD: self.WD(),
             _HD: self.HD(),
         }); // make features packets
-        let packets = label_placement::prioritize::profile(&segment);
+        let packets = segment.profile_packets();
         let mut feature_packets = Vec::new();
         let mut counter = 0;
         for packet in packets {

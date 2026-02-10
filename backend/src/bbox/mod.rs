@@ -192,7 +192,7 @@ impl BoundingBox {
         }
         return true;
     }
-    pub fn enlarge(&mut self, delta: &f64) {
+    pub fn enlarge(&mut self, delta: f64) {
         self._min.x -= delta;
         self._min.y -= delta;
         self._max.x += delta;

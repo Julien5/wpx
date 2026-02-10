@@ -16,6 +16,7 @@ pub mod mercator;
 mod osm;
 pub mod parameters;
 mod pdf;
+mod point_collection;
 mod profile;
 mod tile;
 mod track_projection;

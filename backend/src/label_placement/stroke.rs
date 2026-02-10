@@ -18,7 +18,7 @@ pub fn _compute(
     let eps = 2f64;
     for bbox in &original_obstacles.bboxes {
         let mut ebbox = bbox.clone();
-        ebbox.enlarge(&eps);
+        ebbox.enlarge(eps);
         let corners = ebbox.corners();
         pointsnet.extend(corners);
     }
