@@ -256,7 +256,7 @@ impl Track {
                 .map(|p| geo::coord!(x: p.x(), y: p.y()))
                 .collect();
             let line = geo::LineString::new(coords);
-            let epsilon = 100.0; // 100 meter tolerance in mercator space
+            let epsilon = _distance.last().unwrap() * 500f64 / 1200_000f64;
             line.simplify_idx(&epsilon)
         };
 

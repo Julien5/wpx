@@ -427,11 +427,13 @@ impl ProfileView {
             start: track.index_after(bbox.get_xmin()),
             end: track.index_before(bbox.get_xmax()),
         };
-        for k in range.start..range.end {
-            //let e = track.wgs84[k].z();
-            let e = track.smooth_elevation[k];
-            let p = self.toSD(&Point2D::new(track.distance(k), e));
-            polyline_points.push(PolylinePoint(p));
+        for k in &track.simplified {
+            if range.contains(&k) {
+                //let e = track.wgs84[k].z();
+                let e = track.smooth_elevation[*k];
+                let p = self.toSD(&Point2D::new(track.distance(*k), e));
+                polyline_points.push(PolylinePoint(p));
+            }
         }
         let polyline = Polyline::new(polyline_points);
 

@@ -55,8 +55,24 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
     }
 
     let duration = start.elapsed();
-    log::info!("main_test took: {:.3?}", duration);
+    log::info!("main_test map took: {:.3?}", duration);
     let tmpfilename = std::format!("/tmp/maintestmap.svg");
+    std::fs::write(&tmpfilename, svg.clone()).unwrap();
+
+    for _ in 1..30 {
+        svg = backend.render_segment_what(
+            &segment,
+            &"profile".to_string(),
+            &IntegerSize2D::new(2000, 400),
+            //HashSet::from([InputType::GPX]),
+            allkinds(),
+        );
+    }
+
+    let duration = start.elapsed();
+    log::info!("main_test profile took: {:.3?}", duration);
+    let tmpfilename = std::format!("/tmp/maintestprofile.svg");
+
     std::fs::write(&tmpfilename, svg.clone()).unwrap();
     Ok(())
 }
@@ -104,6 +120,7 @@ async fn main() -> anyhow::Result<()> {
     log::info!("outdir   {}", outdir);
     let mut backend = Backend::make();
     backend.load_filename(gpxinput).await?;
+    let _ = backend.load_osm().await;
     backend.load_controls(ControlSource::Segments).await?;
 
     let mut parameters = backend.get_parameters();

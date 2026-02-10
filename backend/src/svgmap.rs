@@ -75,9 +75,9 @@ pub fn euclidean_bounding_box(
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
-    for &idx in &track.simplified {
-        if idx >= range.start && idx < range.end {
-            bbox.update(&track.euclidean[idx].point2d());
+    for idx in &track.simplified {
+        if range.contains(idx) {
+            bbox.update(&track.euclidean[*idx].point2d());
         }
     }
     bbox.enlarge(100f64);

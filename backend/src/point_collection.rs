@@ -151,6 +151,7 @@ impl PointCollection {
     fn filter_for_segment(points: &mut Vec<InputPoint>, segment: &SegmentData) {
         let range = segment.range();
         points.retain(|point| point.is_in_range(&range));
+        //points.truncate(10);
     }
 
     fn filter_packets_for_segment(packets: &mut Vec<Vec<InputPoint>>, segment: &SegmentData) {
@@ -184,10 +185,10 @@ impl PointCollection {
         let villages_and_far_cities = merge_flip_flop(&off, &villages);
         let mut ret = vec![
             self.controls.clone(),
-            //self.gpx.clone(),
+            self.gpx.clone(),
             self.cities_and_mountains().clone(),
-            villages_and_far_cities,
-            self.osmrest.clone(),
+            //villages_and_far_cities,
+            //self.osmrest.clone(),
         ];
         Self::filter_packets_for_segment(&mut ret, segment);
         ret
