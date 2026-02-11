@@ -79,6 +79,7 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
             let kind = w.osmkind().unwrap();
             let pop = w.population().unwrap_or(population_estimate(&kind));
             // the factor 20 was suggested by gemini
+            // (is it too large ? (Baden-Baden) with blackforest.gpx).
             let radius = 20f64 * (pop as f64).sqrt();
             return d < radius;
         }

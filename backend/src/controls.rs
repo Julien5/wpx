@@ -322,7 +322,7 @@ mod tests {
         gpsdata::GpxData,
         inputpoint::{InputPoint, InputPointMaps},
         osm,
-        point_collection::PointCollection,
+        point_collection::PacketProvider,
     };
 
     fn read(filename: &str) -> GpxData {
@@ -390,14 +390,14 @@ mod tests {
         let mut osmpoints = osm::download_for_track(&track, &logger).await.unwrap();
         track.project_map(&mut osmpoints);
 
-        let mut collection = PointCollection::new();
-        collection.import_osm(&osmpoints.as_vector(), &track);
-        let sharedcollection = SharedPointCollection::new(collection.into());
+        let mut p = PacketProvider::new();
+        p.import_osm(&osmpoints.as_vector(), &track);
+        let provider = SharedPacketProvider::new(p.into());
 
         inputpoints.insert(InputType::OSM, osmpoints);
         let sharedmaps = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
 
-        make_controls_with_osm(&track, sharedmaps, sharedcollection)
+        make_controls_with_osm(&track, sharedmaps, provider)
     }
 
     #[tokio::test]

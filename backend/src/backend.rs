@@ -632,17 +632,17 @@ mod tests {
 
         let segment = backend.make_segment_data(&backend.trackSegment());
         let map_size = IntegerSize2D::new(800, 800);
-        let svg = segment.render_map(&map_size, &inputpoint::allkinds());
+        let result = segment.render_map(&map_size, &inputpoint::allkinds());
         let reffilename = std::format!("data/ref/largemap.svg");
         println!("test {}", reffilename);
-        let data = if std::fs::exists(&reffilename).unwrap() {
+        let refdata = if std::fs::exists(&reffilename).unwrap() {
             std::fs::read_to_string(&reffilename).unwrap()
         } else {
             String::new()
         };
         let tmpfilename = std::format!("/tmp/largemap.svg");
-        std::fs::write(&tmpfilename, svg.clone()).unwrap();
-        if data != svg {
+        std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
+        if refdata != result.svg {
             println!("test failed: {} {}", tmpfilename, reffilename);
             assert!(false);
         }
@@ -668,20 +668,20 @@ mod tests {
 
         let mut ok_count = 0;
         for segment in &segments {
-            let svg = segment.render_map(&map_size, &inputpoint::allkinds());
+            let result = segment.render_map(&map_size, &inputpoint::allkinds());
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id());
             println!("test {}", reffilename);
-            let data = if std::fs::exists(&reffilename).unwrap() {
+            let refdata = if std::fs::exists(&reffilename).unwrap() {
                 std::fs::read_to_string(&reffilename).unwrap()
             } else {
                 String::new()
             };
-            if data == svg {
+            if refdata == result.svg {
                 ok_count += 1;
             }
             let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id());
-            std::fs::write(&tmpfilename, svg.clone()).unwrap();
-            if data != svg {
+            std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
+            if refdata != result.svg {
                 println!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
