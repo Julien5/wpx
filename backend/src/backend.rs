@@ -18,8 +18,8 @@ use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
 use crate::parameters::UserStepsOptions;
 use crate::pdf;
-use crate::point_collection::PointCollection;
-use crate::point_collection::SharedPointCollection;
+use crate::point_collection::PacketProvider;
+use crate::point_collection::SharedPacketProvider;
 use crate::profile;
 use crate::render;
 use crate::segment::SegmentData;
@@ -42,7 +42,7 @@ pub struct BackendData {
     pub parameters: Parameters,
     pub track: SharedTrack,
     pub inputpoints: SharedPointMaps,
-    pub point_collection: SharedPointCollection,
+    pub packet_provider: SharedPacketProvider,
 }
 
 pub struct Backend {
@@ -98,7 +98,9 @@ impl Backend {
 
         self.send("sort points");
         {
-            let mut locked = self.d().point_collection.write().unwrap();
+            // TODO: osmpoints are sorted per tile.
+            // we loose the sorting. Performance loss is okay, but this probably needs cleanup.
+            let mut locked = self.d().packet_provider.write().unwrap();
             locked.import_osm(&osmpoints.as_vector(), &self.d().track);
         }
 
@@ -130,7 +132,7 @@ impl Backend {
             ControlSource::OSM => controls::make_controls_with_osm(
                 &self.d().track,
                 self.d().inputpoints.clone(),
-                self.d().point_collection.clone(),
+                self.d().packet_provider.clone(),
             ),
         };
 
@@ -168,13 +170,13 @@ impl Backend {
         );
 
         let parameters = Parameters::default();
-        let point_collection = SharedPointCollection::new(PointCollection::new().into());
+        let point_collection = SharedPacketProvider::new(PacketProvider::new().into());
         self.send("compute elevation");
         let data = BackendData {
             track,
             inputpoints,
             parameters,
-            point_collection,
+            packet_provider: point_collection,
         };
         self.send("update waypoints");
         self.backend_data = Some(data);
@@ -214,7 +216,7 @@ impl Backend {
             segment,
             self.d().track.clone(),
             self.d().inputpoints.clone(),
-            self.d().point_collection.clone(),
+            self.d().packet_provider.clone(),
             self.d().parameters.clone(),
         )
     }
@@ -320,7 +322,7 @@ impl Backend {
 
     fn update_collection_other(&self) {
         let mapslock = self.d().inputpoints.read().unwrap();
-        let mut lock = self.d().point_collection.write().unwrap();
+        let mut lock = self.d().packet_provider.write().unwrap();
         lock.import_other(&mapslock, &self.d().track);
     }
 
@@ -416,8 +418,18 @@ impl Backend {
         let data = self.make_segment_data(segment);
 
         let ret = match what.as_str() {
-            "profile" => data.render_profile(size, &kinds).svg,
-            "map" => data.render_map(size, &kinds).svg,
+            "profile" => {
+                let result = data.render_profile(size, &kinds);
+                let mut lock = self.d().packet_provider.write().unwrap();
+                lock.register_profile_result(&data.parameters, &data.range(), size, &result);
+                result.svg
+            }
+            "map" => {
+                let result = data.render_map(size, &kinds);
+                let mut lock = self.d().packet_provider.write().unwrap();
+                lock.register_map_result(&data.parameters, &data.range(), size, &result);
+                result.svg
+            }
             "ylabels" => self.render_yaxis_labels_overlay(&segment, size),
             "wheel" => {
                 let time_parameters = wheel::model::TimeParameters {

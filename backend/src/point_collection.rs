@@ -1,5 +1,7 @@
 use crate::{
     inputpoint::{InputPoint, InputPointMaps, InputType, OSMType},
+    math::IntegerSize2D,
+    parameters::Parameters,
     track::Track,
     track_projection::is_close_to_track,
 };
@@ -33,9 +35,223 @@ fn sort_by_population(cities: &mut Vec<InputPoint>) {
     cities.sort_by_key(|w| std::cmp::Reverse(w.population().unwrap_or(0)));
 }
 
+#[derive(Clone)]
 pub struct RenderResult {
     pub svg: String,
     pub rendered: Vec<InputPoint>,
+}
+
+#[derive(Clone)]
+struct RenderInputParameters {
+    controls: Vec<InputPoint>,
+    parameters: Parameters,
+    range: std::ops::Range<usize>,
+    screen_size: IntegerSize2D,
+}
+
+impl RenderInputParameters {
+    pub fn covers(&self, other: &Self, function: &RenderFunction) -> bool {
+        if self.screen_size.width < other.screen_size.width {
+            log::trace!("missmatch: width");
+            return false;
+        }
+        if self.screen_size.height < other.screen_size.height {
+            log::trace!("missmatch: height");
+            return false;
+        }
+        match function {
+            RenderFunction::Map => {
+                if self.parameters.map_options.max_area_ratio
+                    < other.parameters.map_options.max_area_ratio
+                {
+                    log::trace!("missmatch: max_area_ratio (map)");
+                    return false;
+                }
+            }
+            RenderFunction::Profile => {
+                if self.parameters.profile_options.max_area_ratio
+                    < other.parameters.profile_options.max_area_ratio
+                {
+                    log::trace!("missmatch: max_area_ratio (profile)");
+                    return false;
+                }
+            }
+        }
+        if self.range.start > other.range.start {
+            log::trace!("missmatch: range start");
+            return false;
+        }
+        if self.range.end < other.range.end {
+            log::trace!("missmatch: range end");
+            return false;
+        }
+        if self.controls != other.controls {
+            log::trace!("missmatch: controls");
+            return false;
+        }
+        true
+    }
+}
+
+#[derive(Clone, PartialEq, Eq)]
+enum RenderFunction {
+    Map,
+    Profile,
+}
+
+#[derive(Clone)]
+struct CachedResult {
+    output: RenderResult,
+    function: RenderFunction,
+    parameters: RenderInputParameters,
+}
+
+struct CachedResults {
+    results: Vec<CachedResult>,
+}
+
+// in situations where the *same* parameters are used
+// we might directly return the svg
+
+// TODO: limit the cache size
+
+impl CachedResults {
+    pub fn new() -> Self {
+        Self {
+            results: Vec::new(),
+        }
+    }
+    pub fn push(&mut self, result: CachedResult) {
+        self.results.push(result);
+    }
+    pub fn hit(
+        &self,
+        function: &RenderFunction,
+        parameters: &RenderInputParameters,
+    ) -> Option<RenderResult> {
+        for result in &self.results {
+            if result.function != *function {
+                continue;
+            }
+            if result.parameters.covers(parameters, function) {
+                return Some(result.output.clone());
+            }
+        }
+        None
+    }
+    pub fn size(&self) -> usize {
+        self.results.len()
+    }
+}
+
+pub type SharedPacketProvider = std::sync::Arc<std::sync::RwLock<PacketProvider>>;
+
+pub struct PacketProvider {
+    collection: PointCollection,
+    results: CachedResults,
+}
+
+impl PacketProvider {
+    pub fn new() -> Self {
+        Self {
+            collection: PointCollection::new(),
+            results: CachedResults::new(),
+        }
+    }
+    pub fn register_map_result(
+        &mut self,
+        parameters: &Parameters,
+        range: &std::ops::Range<usize>,
+        size: &IntegerSize2D,
+        result: &RenderResult,
+    ) {
+        self.register_result(&RenderFunction::Map, parameters, range, size, result);
+    }
+    pub fn register_profile_result(
+        &mut self,
+        parameters: &Parameters,
+        range: &std::ops::Range<usize>,
+        size: &IntegerSize2D,
+        result: &RenderResult,
+    ) {
+        self.register_result(&RenderFunction::Profile, parameters, range, size, result);
+    }
+    fn register_result(
+        &mut self,
+        function: &RenderFunction,
+        parameters: &Parameters,
+        range: &std::ops::Range<usize>,
+        size: &IntegerSize2D,
+        result: &RenderResult,
+    ) {
+        let p = RenderInputParameters {
+            range: range.clone(),
+            screen_size: size.clone(),
+            parameters: parameters.clone(),
+            controls: self.collection.controls.clone(),
+        };
+        let result = CachedResult {
+            function: function.clone(),
+            parameters: p.clone(),
+            output: result.clone(),
+        };
+        if self.results.hit(function, &p).is_none() {
+            self.results.push(result);
+        }
+        log::trace!("cache size: {}", self.results.size());
+    }
+    pub fn import_osm(&mut self, points: &Vec<InputPoint>, _track: &Track) {
+        self.collection.import_osm(points, _track);
+    }
+    pub fn import_other(&mut self, pointmaps: &InputPointMaps, _track: &Track) {
+        self.collection.import_other(pointmaps, _track);
+    }
+    pub fn map(
+        &self,
+        range: &std::ops::Range<usize>,
+        parameters: &Parameters,
+        size: &IntegerSize2D,
+    ) -> Vec<Vec<InputPoint>> {
+        let p = RenderInputParameters {
+            range: range.clone(),
+            parameters: parameters.clone(),
+            screen_size: size.clone(),
+            controls: self.collection.controls.clone(),
+        };
+        match self.results.hit(&RenderFunction::Map, &p) {
+            Some(result) => {
+                log::trace!("packet provider map cache hit");
+                vec![result.rendered]
+            }
+            None => {
+                log::trace!("packet provider map cache miss");
+                self.collection.map(range)
+            }
+        }
+    }
+    pub fn profile(
+        &self,
+        range: &std::ops::Range<usize>,
+        parameters: &Parameters,
+        size: &IntegerSize2D,
+    ) -> Vec<Vec<InputPoint>> {
+        let p = RenderInputParameters {
+            range: range.clone(),
+            parameters: parameters.clone(),
+            screen_size: size.clone(),
+            controls: self.collection.controls.clone(),
+        };
+        match self.results.hit(&RenderFunction::Profile, &p) {
+            Some(result) => {
+                log::trace!("packet provider profile cache hit");
+                vec![result.rendered]
+            }
+            None => {
+                log::trace!("packet provider profile cache miss");
+                self.collection.profile(range)
+            }
+        }
+    }
 }
 
 type Points = Vec<InputPoint>;
@@ -51,8 +267,6 @@ pub struct PointCollection {
     pub osmrest: Points,
     pub offtrack_cities: Points,
 }
-
-pub type SharedPointCollection = std::sync::Arc<std::sync::RwLock<PointCollection>>;
 
 impl PointCollection {
     pub fn new() -> Self {

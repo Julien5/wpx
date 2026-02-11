@@ -118,7 +118,7 @@ impl MapData {
 
         let generator = Box::new(MapGenerator {});
         // this is slow.
-        let packets = segment.map_packets();
+        let packets = segment.map_packets(size);
         let mut feature_packets = Vec::new();
         let mut counter = 0;
         for packet in packets {

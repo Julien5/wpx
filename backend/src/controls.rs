@@ -6,7 +6,7 @@ use crate::{
     math,
     mercator::MercatorPoint,
     parameters::Parameters,
-    point_collection::SharedPointCollection,
+    point_collection::SharedPacketProvider,
     segment::SegmentData,
     track::Track,
     track_projection::{is_close_to_track, TrackProjection},
@@ -208,7 +208,7 @@ pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) 
 pub fn make_controls_with_osm(
     track: &Arc<Track>,
     inputpoints: SharedPointMaps,
-    point_collection: SharedPointCollection,
+    packet_provider: SharedPacketProvider,
 ) -> Vec<InputPoint> {
     let total = track.total_distance();
     let track_distance_km = total / 1000f64;
@@ -232,7 +232,7 @@ pub fn make_controls_with_osm(
             &segment,
             track.clone(),
             inputpoints.clone(),
-            point_collection.clone(),
+            packet_provider.clone(),
             Parameters::default(),
         );
         segments.push(data);

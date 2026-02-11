@@ -2,7 +2,7 @@ use crate::bbox::BoundingBox;
 use crate::inputpoint::{InputPoint, InputType, Kinds, SharedPointMaps};
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
-use crate::point_collection::{RenderResult, SharedPointCollection};
+use crate::point_collection::{RenderResult, SharedPacketProvider};
 use crate::tile::Tiles;
 use crate::track::SharedTrack;
 use crate::{profile, svgmap, tile};
@@ -20,7 +20,7 @@ pub struct SegmentData {
     pub boxes: Tiles,
     _pointmaps: SharedPointMaps,
     pub parameters: Parameters,
-    pub collection: SharedPointCollection,
+    pub packet_provider: SharedPacketProvider,
 }
 
 pub struct SegmentStatistics {
@@ -35,7 +35,7 @@ impl SegmentData {
         segment: &Segment,
         track: SharedTrack,
         inputpoints: SharedPointMaps,
-        collection: SharedPointCollection,
+        packet_provider: SharedPacketProvider,
         parameters: Parameters,
     ) -> SegmentData {
         let boxes = track.subboxes(segment.start, segment.end);
@@ -45,7 +45,7 @@ impl SegmentData {
             boxes,
             _pointmaps: inputpoints,
             //pointmaps: SharedPointMaps::new(InputPointMaps::new().into()),
-            collection: collection,
+            packet_provider: packet_provider,
             parameters: parameters,
         }
     }
@@ -110,10 +110,16 @@ impl SegmentData {
         ret
     }
 
-    pub fn profile_packets(&self) -> Vec<Vec<InputPoint>> {
-        self.collection.read().unwrap().profile(&self.range())
+    pub fn profile_packets(&self, screen_size: &IntegerSize2D) -> Vec<Vec<InputPoint>> {
+        self.packet_provider
+            .read()
+            .unwrap()
+            .profile(&self.range(), &self.parameters, &screen_size)
     }
-    pub fn map_packets(&self) -> Vec<Vec<InputPoint>> {
-        self.collection.read().unwrap().map(&self.range())
+    pub fn map_packets(&self, screen_size: &IntegerSize2D) -> Vec<Vec<InputPoint>> {
+        self.packet_provider
+            .read()
+            .unwrap()
+            .map(&self.range(), &self.parameters, &screen_size)
     }
 }
