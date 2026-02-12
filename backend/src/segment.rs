@@ -38,7 +38,7 @@ impl SegmentData {
         packet_provider: SharedPacketProvider,
         parameters: Parameters,
     ) -> SegmentData {
-        let boxes = track.subboxes(segment.start, segment.end);
+        let boxes = track.tiles(segment.start, segment.end);
         SegmentData {
             segment: segment.clone(),
             track,

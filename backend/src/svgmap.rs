@@ -76,7 +76,7 @@ pub fn euclidean_bounding_box(
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
-    for idx in &track.simplified {
+    for idx in &track.simplified.xy {
         if range.contains(idx) {
             bbox.update(&track.euclidean[*idx].point2d());
         }
@@ -91,7 +91,7 @@ impl MapData {
         bbox.fix_aspect_ratio(size);
         let mut path = Vec::new();
         let range = segment.range();
-        for idx in &segment.track.simplified {
+        for idx in &segment.track.simplified.xy {
             if *idx >= range.start && *idx < range.end {
                 path.push(segment.track.euclidean[*idx].clone());
             }

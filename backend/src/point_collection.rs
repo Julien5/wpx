@@ -368,7 +368,6 @@ impl PointCollection {
 
     fn filter_for_segment(points: &mut Vec<InputPoint>, range: &std::ops::Range<usize>) {
         points.retain(|point| point.is_in_range(range));
-        //points.truncate(10);
     }
 
     fn filter_packets_for_segment(
@@ -381,7 +380,6 @@ impl PointCollection {
     }
 
     fn export_profile(&self) -> Vec<Vec<InputPoint>> {
-        // sort (peaks and passes) by elevation
         vec![
             self.controls.clone(),
             self.gpx.clone(),

@@ -23,12 +23,47 @@ pub struct TrackPart {
     pub end: usize,
 }
 
+pub struct Simplified {
+    pub xy: Vec<usize>,
+    pub dz: Vec<usize>,
+}
+
+impl Simplified {
+    pub fn make(
+        euclidean: &Vec<MercatorPoint>,
+        distance: &Vec<f64>,
+        smooth_elevation: &Vec<f64>,
+    ) -> Self {
+        let track_distance = distance.last().unwrap_or(&0f64);
+        let xy = {
+            let coords: Vec<geo::Coord> = euclidean
+                .iter()
+                .map(|p| geo::coord!(x: p.x(), y: p.y()))
+                .collect();
+            let line = geo::LineString::new(coords);
+            let epsilon = track_distance * 500f64 / 1200_000f64;
+            line.simplify_idx(&epsilon)
+        };
+        let dz = {
+            let coords: Vec<geo::Coord> = smooth_elevation
+                .iter()
+                .enumerate()
+                .map(|(idx, elevation)| geo::coord!(x: distance[idx], y: *elevation))
+                .collect();
+            let line = geo::LineString::new(coords);
+            let epsilon = 2f64;
+            line.simplify_idx(&epsilon)
+        };
+        Self { xy, dz }
+    }
+}
+
 pub struct Track {
     pub wgs84: Vec<WGS84Point>,
     pub smooth_elevation: Vec<f64>,
     pub smooth_elevation_gain: Vec<f64>,
     pub euclidean: Vec<MercatorPoint>,
-    pub simplified: Vec<usize>,
+    pub simplified: Simplified,
     _distance: Vec<f64>,
     pub parts: Vec<TrackPart>,
     pub tiles: Tiles,
@@ -45,7 +80,7 @@ impl Track {
         self.wgs84.len()
     }
 
-    pub fn subboxes(&self, start: f64, end: f64) -> Tiles {
+    pub fn tiles(&self, start: f64, end: f64) -> Tiles {
         let range = self.subrange(start, end);
         let mut boxes = BTreeSet::new();
         for k in range.start..range.end {
@@ -250,15 +285,7 @@ impl Track {
         let trees = ProjectionTrees::make(&euclidean);
 
         // Compute simplified euclidean using Douglas-Peucker
-        let simplified = {
-            let coords: Vec<geo::Coord> = euclidean
-                .iter()
-                .map(|p| geo::coord!(x: p.x(), y: p.y()))
-                .collect();
-            let line = geo::LineString::new(coords);
-            let epsilon = _distance.last().unwrap() * 500f64 / 1200_000f64;
-            line.simplify_idx(&epsilon)
-        };
+        let simplified = Simplified::make(&euclidean, &_distance, &track_smooth_elevation);
 
         let ret = Track {
             wgs84: wgs,

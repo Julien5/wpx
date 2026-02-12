@@ -428,7 +428,7 @@ impl ProfileView {
             start: track.index_after(bbox.get_xmin()),
             end: track.index_before(bbox.get_xmax()),
         };
-        for k in &track.simplified {
+        for k in &track.simplified.dz {
             if range.contains(&k) {
                 //let e = track.wgs84[k].z();
                 let e = track.smooth_elevation[*k];
