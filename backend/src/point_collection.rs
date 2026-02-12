@@ -190,10 +190,12 @@ impl PacketProvider {
             parameters: parameters.clone(),
             controls: self.collection.controls.clone(),
         };
+        let mut output = result.clone();
+        output.rendered.retain(|w| w.kind() != InputType::UserStep);
         let result = CachedResult {
             function: function.clone(),
             parameters: p.clone(),
-            output: result.clone(),
+            output,
         };
         if self.results.hit(function, &p).is_none() {
             self.results.push(result);
@@ -221,7 +223,9 @@ impl PacketProvider {
         match self.results.hit(&RenderFunction::Map, &p) {
             Some(result) => {
                 log::trace!("packet provider map cache hit");
-                vec![result.rendered]
+                // HACK: the user steps are "updated in the cache".
+                // TODO: Fix this later.
+                vec![self.collection.user.clone(), result.rendered]
             }
             None => {
                 log::trace!("packet provider map cache miss");
@@ -244,7 +248,9 @@ impl PacketProvider {
         match self.results.hit(&RenderFunction::Profile, &p) {
             Some(result) => {
                 log::trace!("packet provider profile cache hit");
-                vec![result.rendered]
+                // HACK: the user steps are "updated in the cache".
+                // TODO: Fix this later.
+                vec![self.collection.user.clone(), result.rendered]
             }
             None => {
                 log::trace!("packet provider profile cache miss");
@@ -257,8 +263,7 @@ impl PacketProvider {
 type Points = Vec<InputPoint>;
 
 pub struct PointCollection {
-    pub user1: Points,
-    pub user2: Points,
+    pub user: Points,
     pub cities: Points,
     pub controls: Points,
     pub gpx: Points,
@@ -272,8 +277,7 @@ impl PointCollection {
     pub fn new() -> Self {
         let empty = Points::new();
         PointCollection {
-            user1: empty.clone(),
-            user2: empty.clone(),
+            user: empty.clone(),
             cities: empty.clone(),
             controls: empty.clone(),
             gpx: empty.clone(),
@@ -285,11 +289,11 @@ impl PointCollection {
     }
 
     pub fn import_osm(&mut self, osmpoints: &Vec<InputPoint>, track: &Track) {
-        debug_assert!(self.offtrack_cities.is_empty());
-        debug_assert!(self.cities.is_empty());
-        debug_assert!(self.mountains.is_empty());
-        debug_assert!(self.villages.is_empty());
-        debug_assert!(self.osmrest.is_empty());
+        self.offtrack_cities.clear();
+        self.cities.clear();
+        self.mountains.clear();
+        self.villages.clear();
+        self.osmrest.clear();
         for k in 0..osmpoints.len() {
             let wi = osmpoints[k].clone();
             if !is_close_to_track(&wi) {
@@ -339,8 +343,7 @@ impl PointCollection {
         }
 
         {
-            self.user1.clear();
-            self.user2.clear();
+            self.user.clear();
             let points = pointmaps
                 .maps
                 .get(&InputType::UserStep)
@@ -353,11 +356,7 @@ impl PointCollection {
                 let d = wi.distance_to_track();
                 assert_eq!(wi.kind(), InputType::UserStep);
                 assert_eq!(d, 0f64);
-                if self.user1.len() < self.user2.len() {
-                    self.user1.push(wi);
-                } else {
-                    self.user2.push(wi);
-                }
+                self.user.push(wi);
             }
         }
     }
@@ -381,6 +380,7 @@ impl PointCollection {
 
     fn export_profile(&self) -> Vec<Vec<InputPoint>> {
         vec![
+            self.user.clone(),
             self.controls.clone(),
             self.gpx.clone(),
             self.cities_and_mountains(),
@@ -402,6 +402,7 @@ impl PointCollection {
         Self::filter_for_segment(&mut off, range);
         let villages_and_far_cities = merge_flip_flop(&off, &villages);
         let mut ret = vec![
+            self.user.clone(),
             self.controls.clone(),
             self.gpx.clone(),
             self.cities_and_mountains().clone(),

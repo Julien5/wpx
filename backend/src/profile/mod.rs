@@ -468,6 +468,7 @@ impl ProfileView {
             self.H.floor() as i32,
         ));
         let mut feature_packets = Vec::new();
+        let mut feature_unlabeled = Vec::new();
         let mut counter = 0;
         for packet in packets {
             let mut feature_packet = Vec::new();
@@ -488,16 +489,27 @@ impl ProfileView {
                     let circle = draw_for_profile(&g, id.as_str(), &w);
                     let mut label = label_placement::features::Label::new();
                     //assert!(label.unplaced());
-                    label.set_text(&drawings::make_label_text(&w, proj, segment));
-                    label.id = format!("{}/wp/text", k);
-                    //assert!(label.unplaced());
-                    feature_packet.push(PointFeature {
-                        circle,
-                        label,
-                        input_point: Some(w.clone()),
-                        link: None,
-                        xmlid: k,
-                    });
+                    let text = drawings::make_label_text(&w, proj, segment);
+                    if !text.is_empty() {
+                        label.set_text(&text);
+                        label.id = format!("{}/wp/text", k);
+                        //assert!(label.unplaced());
+                        feature_packet.push(PointFeature {
+                            circle,
+                            label,
+                            input_point: Some(w.clone()),
+                            link: None,
+                            xmlid: k,
+                        });
+                    } else {
+                        feature_unlabeled.push(PointFeature {
+                            circle,
+                            label,
+                            input_point: Some(w.clone()),
+                            link: None,
+                            xmlid: k,
+                        });
+                    }
                 }
             }
             feature_packets.push(PointFeatures::make(feature_packet));
@@ -516,7 +528,8 @@ impl ProfileView {
             &polyline,
             &self.options.max_area_ratio,
         );
-        let features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
+        let mut features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
+        features.extend_from_slice(&feature_unlabeled);
         self.model = Some(ProfileModel {
             polylines: vec![polyline], // , polyline_dp
             points: features,

@@ -120,6 +120,7 @@ impl MapData {
         // this is slow.
         let packets = segment.map_packets(size);
         let mut feature_packets = Vec::new();
+        let mut feature_unlabeled = Vec::new();
         let mut counter = 0;
         for packet in packets {
             let mut feature_packet = Vec::new();
@@ -140,15 +141,26 @@ impl MapData {
                 // on the map, all projections are equivalent
                 assert!(w.track_projections.first().is_some());
                 let proj = w.track_projections.first().unwrap();
-                label.set_text(&drawings::make_label_text(&w, &proj, &segment));
-                label.id = format!("{}/wp/text", k);
-                feature_packet.push(PointFeature {
-                    circle,
-                    label,
-                    input_point: Some(w.clone()),
-                    link: None,
-                    xmlid: k,
-                });
+                let text = drawings::make_label_text(&w, &proj, &segment);
+                if !text.is_empty() {
+                    label.set_text(&text);
+                    label.id = format!("{}/wp/text", k);
+                    feature_packet.push(PointFeature {
+                        circle,
+                        label,
+                        input_point: Some(w.clone()),
+                        link: None,
+                        xmlid: k,
+                    });
+                } else {
+                    feature_unlabeled.push(PointFeature {
+                        circle,
+                        label,
+                        input_point: Some(w.clone()),
+                        link: None,
+                        xmlid: k,
+                    });
+                }
             }
             feature_packets.push(PointFeatures::make(feature_packet));
         }
@@ -163,7 +175,8 @@ impl MapData {
             &polyline,
             &segment.parameters.map_options.max_area_ratio,
         );
-        let features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
+        let mut features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
+        features.extend_from_slice(&feature_unlabeled);
         MapData {
             polyline,
             points: features,

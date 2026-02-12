@@ -22,7 +22,8 @@ pub fn make_label_text(w: &InputPoint, proj: &TrackProjection, segment: &Segment
             return w.name().clone().trim().to_string();
         }
         InputType::UserStep => {
-            return format!("{}", timestr(proj, &segment.parameters));
+            //return format!("{}", timestr(proj, &segment.parameters));
+            return String::new();
         }
 
         InputType::Control => {
