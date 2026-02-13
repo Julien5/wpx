@@ -143,7 +143,9 @@ impl Backend {
             let mut locked = self.d().packet_provider.write().unwrap();
             let track = &self.d().track;
             log::trace!("import controls len()={}", len);
-            locked.collection.import_other(controls, track);
+            locked
+                .collection
+                .import_other(&Kind::Controls, controls, track);
         }
 
         Ok(len)
@@ -161,11 +163,11 @@ impl Backend {
 
         let parameters = Parameters::default();
         let point_collection = SharedPacketProvider::new(PacketProvider::new().into());
-        point_collection
-            .write()
-            .unwrap()
-            .collection
-            .import_other(gpxdata.waypoints, &track);
+        point_collection.write().unwrap().collection.import_other(
+            &Kind::GPXWaypoints,
+            gpxdata.waypoints,
+            &track,
+        );
 
         let o = point_collection
             .read()
@@ -236,9 +238,11 @@ impl Backend {
         {
             let mut locked = self.d().packet_provider.write().unwrap();
             let track = &self.d().track;
-            let points =
+            let usersteps =
                 make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-            locked.collection.import_other(points, track);
+            locked
+                .collection
+                .import_other(&Kind::UserStep, usersteps, track);
         }
     }
 
@@ -314,9 +318,11 @@ impl Backend {
         {
             let mut locked = self.d().packet_provider.write().unwrap();
             let track = &self.d().track;
-            let points =
+            let usersteps =
                 make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-            locked.collection.import_other(points, track);
+            locked
+                .collection
+                .import_other(&Kind::UserStep, usersteps, track);
         }
     }
 
@@ -481,10 +487,9 @@ impl Backend {
 mod tests {
     use crate::{
         backend::Backend,
-        inputpoint,
         math::IntegerSize2D,
         parameters::{self, ControlSource, ProfileIndication},
-        point_collection::Kind,
+        point_collection::{self, Kind},
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
@@ -538,8 +543,10 @@ mod tests {
         let mut ok_count = 0;
         for k in 0..segments.len() {
             let segment = &segments[k];
-            let rendered_profile =
-                segment.render_profile(&IntegerSize2D::new(1420, 400), &inputpoint::allkinds());
+            let rendered_profile = segment.render_profile(
+                &IntegerSize2D::new(1420, 400),
+                &point_collection::allkinds(),
+            );
             let reffilename = std::format!("data/ref/profile-{}.svg", segment.id());
             println!("test {}", reffilename);
             let reference_svg = if std::fs::exists(&reffilename).unwrap() {
@@ -585,7 +592,7 @@ mod tests {
         };
         let mut model = wheel::model::WheelModel::new(&time_parameters);
         model.add_pages(&segments);
-        model.add_points(&sgdata, inputpoint::allkinds());
+        model.add_points(&sgdata, point_collection::allkinds());
         let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
 
         let tmpfilename = std::format!("/tmp/segment-wheel.svg");
@@ -625,7 +632,7 @@ mod tests {
 
         let segment = backend.make_segment_data(&backend.trackSegment());
         let map_size = IntegerSize2D::new(800, 800);
-        let result = segment.render_map(&map_size, &inputpoint::allkinds());
+        let result = segment.render_map(&map_size, &point_collection::allkinds());
         let reffilename = std::format!("data/ref/largemap.svg");
         println!("test {}", reffilename);
         let refdata = if std::fs::exists(&reffilename).unwrap() {
@@ -661,7 +668,7 @@ mod tests {
 
         let mut ok_count = 0;
         for segment in &segments {
-            let result = segment.render_map(&map_size, &inputpoint::allkinds());
+            let result = segment.render_map(&map_size, &point_collection::allkinds());
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id());
             println!("test {}", reffilename);
             let refdata = if std::fs::exists(&reffilename).unwrap() {

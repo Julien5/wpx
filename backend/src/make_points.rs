@@ -68,5 +68,6 @@ pub fn user_points(track: &Track, options: &UserStepsOptions) -> Vec<InputPoint>
             ret.extend_from_slice(&loc);
         }
     }
+    log::trace!("made {} user steps", ret.len());
     ret
 }

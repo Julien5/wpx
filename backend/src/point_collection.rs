@@ -201,7 +201,8 @@ impl PacketProvider {
                 log::trace!("packet provider map cache hit");
                 // HACK: the user steps are "updated in the cache".
                 // TODO: Fix this later.
-                vec![self.collection.get_vector(&Kind::UserStep), result.rendered]
+                let usersteps = self.collection.get_vector(&Kind::UserStep);
+                vec![usersteps, result.rendered]
             }
             None => {
                 log::trace!("packet provider map cache miss");
@@ -226,7 +227,8 @@ impl PacketProvider {
                 log::trace!("packet provider profile cache hit");
                 // HACK: the user steps are "updated in the cache".
                 // TODO: Fix this later.
-                vec![self.collection.get_vector(&Kind::Controls), result.rendered]
+                let usersteps = self.collection.get_vector(&Kind::UserStep);
+                vec![usersteps, result.rendered]
             }
             None => {
                 log::trace!("packet provider profile cache miss");
@@ -351,7 +353,11 @@ impl PointCollection {
         log::trace!("{} hamlets", hamlets.len());
     }
 
-    pub fn import_other(&mut self, points: Vec<InputPoint>, _track: &Track) {
+    pub fn import_other(&mut self, kind: &Kind, points: Vec<InputPoint>, _track: &Track) {
+        self.map.insert(kind.clone(), Vec::new());
+        if !points.is_empty() {
+            assert!(points.first().unwrap().kind() == *kind);
+        }
         self.set_vector(points);
     }
 
