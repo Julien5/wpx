@@ -1,10 +1,9 @@
-use std::collections::HashSet;
-
 use crate::{
     backend::Segment,
     controls,
-    inputpoint::{InputPoint, InputType},
+    inputpoint::{InputPoint, Kinds},
     mercator::DateTime,
+    point_collection::OutputType,
     segment::SegmentData,
     track::Track,
     wheel::time_points,
@@ -112,11 +111,11 @@ fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
 }
 
 fn get_control_points(segment: &SegmentData) -> Vec<InputPoint> {
-    segment.points(&InputType::Control)
+    segment.controls()
 }
 
 fn get_mid_points(segment: &SegmentData) -> Vec<InputPoint> {
-    segment.points(&InputType::UserStep)
+    segment.usersteps()
 }
 
 fn control_name(w: &InputPoint) -> String {
@@ -135,8 +134,8 @@ impl WheelModel {
             outer_arcs: Vec::new(),
         }
     }
-    pub fn add_points(&mut self, segment: &SegmentData, kinds: HashSet<InputType>) {
-        if kinds.contains(&InputType::Control) {
+    pub fn add_points(&mut self, segment: &SegmentData, kinds: Kinds) {
+        if kinds.contains(&OutputType::Controls) {
             let controls = get_control_points(segment);
             (self.has_start_control, self.has_end_control) =
                 controls::has_startend_controls(&segment.track, &controls);
@@ -151,7 +150,7 @@ impl WheelModel {
             }
             self.control_points.sort_by_key(|p| p.angle.floor() as i32);
         }
-        if kinds.contains(&InputType::UserStep) {
+        if kinds.contains(&OutputType::UserStep) {
             for c in get_mid_points(segment) {
                 for a in angles(&c, &segment.track) {
                     let cp = CirclePoint {

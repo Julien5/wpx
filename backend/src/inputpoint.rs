@@ -9,6 +9,7 @@ use serde_json::json;
 
 use crate::{
     mercator::{EuclideanBoundingBox, MercatorPoint},
+    point_collection::OutputType,
     tile::{self, Tile},
     track::Track,
     track_projection::{TrackProjection, TrackProjections},
@@ -28,20 +29,21 @@ pub enum OSMType {
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Clone, Hash)]
-pub enum InputType {
+pub enum _InputType {
     GPX,
     OSM,
     UserStep,
     Control,
 }
 
-pub type Kinds = HashSet<InputType>;
+pub type Kinds = HashSet<OutputType>;
 pub fn allkinds() -> Kinds {
     HashSet::from([
-        InputType::UserStep,
-        InputType::GPX,
-        InputType::OSM,
-        InputType::Control,
+        OutputType::UserStep,
+        OutputType::GPXWaypoints,
+        OutputType::Cities,
+        OutputType::Villages,
+        OutputType::Controls,
     ])
 }
 
@@ -69,7 +71,7 @@ impl InputPoint {
     pub fn create_user_step_on_track(track: &Track, index: usize, name: &String) -> InputPoint {
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidean[index].clone();
-        let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::UserStep);
+        let mut p = InputPoint::from_wgs84(&wgs, &euc, OutputType::UserStep);
         p.tags.insert("name".to_string(), name.clone());
         p.track_projections = BTreeSet::from([TrackProjection {
             track_floating_index: index as f64,
@@ -92,7 +94,7 @@ impl InputPoint {
         let index = proj.track_index;
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidean[index].clone();
-        let mut p = InputPoint::from_wgs84(&wgs, &euc, InputType::Control);
+        let mut p = InputPoint::from_wgs84(&wgs, &euc, OutputType::Controls);
         p.tags
             .insert("name".to_string(), String::from_str(name).unwrap());
         p.tags.insert(
@@ -107,7 +109,7 @@ impl InputPoint {
     pub fn from_wgs84(
         wgs84: &WGS84Point,
         euclidean: &MercatorPoint,
-        kind: InputType,
+        kind: OutputType,
     ) -> InputPoint {
         InputPoint {
             wgs84: wgs84.clone(),
@@ -122,7 +124,7 @@ impl InputPoint {
         name: &Option<String>,
         description: &Option<String>,
     ) -> InputPoint {
-        let mut tags = Self::tags_for_type(InputType::GPX);
+        let mut tags = Self::tags_for_type(OutputType::GPXWaypoints);
         if name.is_some() {
             tags.insert("name".to_string(), name.as_ref().unwrap().clone());
         }
@@ -196,40 +198,41 @@ impl InputPoint {
         }
         None
     }
-    pub fn tags_for_type(kind: InputType) -> Tags {
+    pub fn tags_for_type(kind: OutputType) -> Tags {
         let mut tags = Tags::new();
         let value = match kind {
-            InputType::GPX => "GPX",
-            InputType::OSM => "OSM",
-            InputType::UserStep => "UserStep",
-            InputType::Control => "Control",
+            OutputType::GPXWaypoints => "GPX",
+            OutputType::Villages => "village",
+            OutputType::Hamlets => "hamlet",
+            OutputType::Cities => "city",
+            OutputType::Mountains => "mountains",
+            OutputType::UserStep => "UserStep",
+            OutputType::Controls => "Control",
         };
         tags.insert("wpxtype".to_string(), value.to_string());
         tags
     }
 
-    pub fn osmkind(&self) -> Option<OSMType> {
-        match self.tags.get("place") {
-            Some(place) => {
-                if place == "city" {
-                    return Some(OSMType::City);
+    pub fn kind(&self) -> OutputType {
+        match self.tags.get("wpxtype") {
+            Some(t) => match t.as_str() {
+                "GPX" => {
+                    return OutputType::GPXWaypoints;
                 }
-                if place == "town" {
-                    return Some(OSMType::City);
+                "UserStep" => {
+                    return OutputType::UserStep;
                 }
-                if place == "village" {
-                    return Some(OSMType::Village);
+                "Control" => {
+                    return OutputType::Controls;
                 }
-                if place == "hamlet" {
-                    return Some(OSMType::Hamlet);
-                }
-            }
+                _ => {}
+            },
             _ => {}
         }
         match self.tags.get("mountain_pass") {
             Some(pass) => {
                 if pass == "yes" {
-                    return Some(OSMType::MountainPass);
+                    return OutputType::Mountains;
                 }
             }
             _ => {}
@@ -237,33 +240,30 @@ impl InputPoint {
         match self.tags.get("natural") {
             Some(natural) => {
                 if natural == "peak" {
-                    return Some(OSMType::Peak);
+                    return OutputType::Mountains;
                 }
             }
             _ => {}
         }
-        None
-    }
-
-    pub fn kind(&self) -> InputType {
-        match self.tags.get("wpxtype") {
-            Some(t) => {
-                match t.as_str() {
-                    "GPX" => {
-                        return InputType::GPX;
-                    }
-                    "UserStep" => {
-                        return InputType::UserStep;
-                    }
-                    "Control" => {
-                        return InputType::Control;
-                    }
-                    _ => {}
-                };
+        match self.tags.get("place") {
+            Some(place) => {
+                if place == "city" {
+                    return OutputType::Cities;
+                }
+                if place == "town" {
+                    return OutputType::Cities;
+                }
+                if place == "village" {
+                    return OutputType::Villages;
+                }
+                if place == "hamlet" {
+                    return OutputType::Hamlets;
+                }
             }
             _ => {}
         }
-        return InputType::OSM;
+        assert!(false);
+        return OutputType::Mountains;
     }
 
     pub fn flatten_projections(points: &[InputPoint]) -> Vec<(usize, TrackProjection)> {
@@ -412,7 +412,7 @@ impl<'a> IntoIterator for &'a mut InputPointMap {
 }
 
 pub struct InputPointMaps {
-    pub maps: BTreeMap<InputType, InputPointMap>,
+    pub maps: BTreeMap<OutputType, InputPointMap>,
 }
 
 pub type SharedPointMaps = std::sync::Arc<std::sync::RwLock<InputPointMaps>>;

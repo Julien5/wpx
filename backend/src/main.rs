@@ -49,7 +49,7 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
             &segment,
             &"map".to_string(),
             &IntegerSize2D::new(2000, 1000),
-            //HashSet::from([InputType::GPX]),
+            //HashSet::from([OutputType::GPX]),
             allkinds(),
         );
     }
@@ -64,7 +64,7 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
             &segment,
             &"profile".to_string(),
             &IntegerSize2D::new(2000, 400),
-            //HashSet::from([InputType::GPX]),
+            //HashSet::from([OutputType::GPX]),
             allkinds(),
         );
     }

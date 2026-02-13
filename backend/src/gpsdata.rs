@@ -1,6 +1,6 @@
 use crate::bbox::BoundingBox;
 use crate::error::TrackError;
-use crate::inputpoint::{InputPoint, InputPointMap};
+use crate::inputpoint::InputPoint;
 use crate::math::Point2D;
 use crate::wgs84point::WGS84Point;
 use crate::{mercator, track};
@@ -105,7 +105,7 @@ fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
 }
 
 pub struct GpxData {
-    pub waypoints: InputPointMap,
+    pub waypoints: Vec<InputPoint>,
     pub tracks: Vec<gpx::Track>,
 }
 
@@ -150,15 +150,16 @@ impl ProfileBoundingBox {
     }
 }
 
-pub fn read_waypoints(gpx: &gpx::Gpx) -> InputPointMap {
-    let mut ret = InputPointMap::new();
+pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<InputPoint> {
+    let mut ret = Vec::new();
     let projection = mercator::WebMercatorProjection::make();
+    log::trace!("read {} waypoints", gpx.waypoints.len());
     for w in &gpx.waypoints {
         let (lon, lat) = w.point().x_y();
         let wgs = WGS84Point::new(&lon, &lat, &0f64);
         let euc = projection.project(&wgs);
         let p = InputPoint::from_gpx(&wgs, &euc, &w.name, &w.description);
-        ret.insert_point(&p);
+        ret.push(p);
     }
     ret
 }

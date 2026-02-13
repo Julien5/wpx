@@ -1,5 +1,6 @@
+use crate::parameters::Parameters;
+use crate::point_collection::OutputType;
 use crate::speed;
-use crate::{inputpoint::InputType, parameters::Parameters};
 
 // a bit messy, mostly AI generated
 #[allow(dead_code)]
@@ -11,7 +12,7 @@ pub struct WaypointInfoData {
     pub inter_slope: f64,
     pub name: String,
     pub description: String,
-    pub origin: InputType,
+    pub origin: OutputType,
 }
 
 fn format_slope(slope_ratio: f64, specifier: &str) -> String {
@@ -52,8 +53,8 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
     let format_regex: Regex =
         Regex::new(r"(TIME|SLOPE|NAME|DESCRIPTION)(?:\[([^\]]+)\])?").unwrap();
     let format = match data.origin {
-        InputType::UserStep => parameters.user_steps_options.gpx_name_format.clone(),
-        InputType::Control => parameters.control_gpx_name_format.clone(),
+        OutputType::UserStep => parameters.user_steps_options.gpx_name_format.clone(),
+        OutputType::Controls => parameters.control_gpx_name_format.clone(),
         _ => String::new(),
     };
     if format.is_empty() {
@@ -122,7 +123,7 @@ mod tests {
             inter_elevation_gain: 50.0,
             name: "P2".to_string(),
             description: "description".to_string(),
-            origin: InputType::UserStep,
+            origin: OutputType::UserStep,
         }
     }
 

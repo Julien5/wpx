@@ -1,11 +1,11 @@
 use crate::bbox::BoundingBox;
-use crate::inputpoint::{InputPoint, InputType, Kinds, SharedPointMaps};
+use crate::inputpoint::{InputPoint, Kinds};
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
-use crate::point_collection::{RenderResult, SharedPacketProvider};
+use crate::point_collection::{OutputType, RenderResult, SharedPacketProvider};
 use crate::tile::Tiles;
 use crate::track::SharedTrack;
-use crate::{profile, svgmap, tile};
+use crate::{profile, svgmap};
 
 #[derive(Clone)]
 pub struct Segment {
@@ -18,7 +18,6 @@ pub struct SegmentData {
     pub segment: Segment,
     pub track: SharedTrack,
     pub boxes: Tiles,
-    _pointmaps: SharedPointMaps,
     pub parameters: Parameters,
     pub packet_provider: SharedPacketProvider,
 }
@@ -34,7 +33,6 @@ impl SegmentData {
     pub fn new(
         segment: &Segment,
         track: SharedTrack,
-        inputpoints: SharedPointMaps,
         packet_provider: SharedPacketProvider,
         parameters: Parameters,
     ) -> SegmentData {
@@ -43,7 +41,6 @@ impl SegmentData {
             segment: segment.clone(),
             track,
             boxes,
-            _pointmaps: inputpoints,
             //pointmaps: SharedPointMaps::new(InputPointMaps::new().into()),
             packet_provider: packet_provider,
             parameters: parameters,
@@ -62,24 +59,25 @@ impl SegmentData {
         self.segment.end
     }
 
-    pub fn points(&self, kind: &InputType) -> Vec<InputPoint> {
-        let bbox = tile::bounding_box(&self.boxes);
-        let range = self.range();
-        let lock = self._pointmaps.read().unwrap();
-        let map = lock.maps.get(kind);
-        if map.is_none() {
-            return Vec::new();
-        }
-        // todo: we need a bounding box in the input parameters
-        map.unwrap()
-            .points_in(&bbox)
-            .filter(|w| w.track_projections.is_empty() || w.is_in_range(&range))
-            .map(|w| w.clone())
-            .collect()
+    pub fn controls(&self) -> Vec<InputPoint> {
+        let lock = self.packet_provider.read();
+        let mut clone = lock.unwrap().collection.clone();
+        clone.range_cut(&self.range());
+        clone.get_vector(&OutputType::Controls)
     }
 
-    pub fn osmpoints(&self) -> Vec<InputPoint> {
-        self.points(&InputType::OSM)
+    pub fn usersteps(&self) -> Vec<InputPoint> {
+        let lock = self.packet_provider.read();
+        let mut clone = lock.unwrap().collection.clone();
+        clone.range_cut(&self.range());
+        clone.get_vector(&OutputType::UserStep)
+    }
+
+    pub fn potential_controls(&self) -> Vec<InputPoint> {
+        let lock = self.packet_provider.read();
+        let mut clone = lock.unwrap().collection.clone();
+        clone.range_cut(&self.range());
+        clone.potential_controls()
     }
 
     pub fn range(&self) -> std::ops::Range<usize> {

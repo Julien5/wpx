@@ -7,7 +7,7 @@ use svg::Node;
 use crate::bbox::BoundingBox;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
-use crate::inputpoint::{InputPoint, InputType, Kinds};
+use crate::inputpoint::{InputPoint, Kinds};
 use crate::label_placement;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
@@ -15,7 +15,7 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::*;
 use crate::math::{distance2, IntegerSize2D, Point2D};
 use crate::parameters::{ProfileIndication, ProfileOptions};
-use crate::point_collection::RenderResult;
+use crate::point_collection::{is_osm, OutputType, RenderResult};
 use crate::segment::{self, SegmentData};
 use crate::track::Track;
 use elements::*;
@@ -544,12 +544,16 @@ struct ProfileGenerator {
 
 impl CandidatesGenerator for ProfileGenerator {
     fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
-        match feature.input_point.as_ref().unwrap().kind() {
-            InputType::OSM => self.cardinal(feature),
-            InputType::UserStep => self.extended_cardinal(feature),
-            //InputType::UserStep => self.generate_column(feature),
-            //InputType::UserStep => self.generate_header(feature, vec![25f64, self.HD - 20f64]),
-            InputType::GPX | InputType::Control => self.header(feature, vec![5f64]),
+        let kind = feature.input_point.as_ref().unwrap().kind();
+        match kind {
+            OutputType::UserStep => self.extended_cardinal(feature),
+            //OutputType::UserStep => self.generate_column(feature),
+            //OutputType::UserStep => self.generate_header(feature, vec![25f64, self.HD - 20f64]),
+            OutputType::GPXWaypoints | OutputType::Controls => self.header(feature, vec![5f64]),
+            _ => {
+                assert!(is_osm(&kind));
+                self.cardinal(feature)
+            }
         }
     }
 }

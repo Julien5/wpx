@@ -1,5 +1,6 @@
 use crate::math::Point2D;
 use crate::mercator::MercatorPoint;
+use crate::point_collection::OutputType;
 use crate::track_projection::TrackProjection;
 use crate::{inputpoint::*, math, mercator};
 use geo::LineLocatePoint;
@@ -147,7 +148,7 @@ pub fn compute_track_projection(
     point: &InputPoint,
 ) -> TrackProjection {
     // user steps projection on track is unique...
-    if point.kind() == InputType::UserStep {
+    if point.kind() == OutputType::UserStep {
         assert!(!point.track_projections.is_empty());
         return point.track_projections.first().unwrap().clone();
     }

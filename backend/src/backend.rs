@@ -1,7 +1,5 @@
 #![allow(non_snake_case)]
 
-use std::collections::BTreeMap;
-
 use crate::controls;
 use crate::error;
 use crate::error::TrackError;
@@ -18,6 +16,7 @@ use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
 use crate::parameters::UserStepsOptions;
 use crate::pdf;
+use crate::point_collection::OutputType;
 use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
 use crate::profile;
@@ -41,7 +40,6 @@ pub type SenderHandlerLock = crate::event::SenderHandlerLock;
 pub struct BackendData {
     pub parameters: Parameters,
     pub track: SharedTrack,
-    pub inputpoints: SharedPointMaps,
     pub packet_provider: SharedPacketProvider,
 }
 
@@ -101,39 +99,34 @@ impl Backend {
             // TODO: osmpoints are sorted per tile.
             // we loose the sorting. Performance loss is okay, but this probably needs cleanup.
             let mut locked = self.d().packet_provider.write().unwrap();
-            locked.import_osm(&osmpoints.as_vector(), &self.d().track);
-        }
-
-        self.send("sort points..");
-        {
-            let mut locked = self.d().inputpoints.write().unwrap();
-            locked.maps.insert(InputType::OSM, osmpoints);
+            locked
+                .collection
+                .import_osm(&osmpoints.as_vector(), &self.d().track);
         }
 
         Ok(())
     }
 
     pub async fn load_controls(&self, source: ControlSource) -> Result<usize, TrackError> {
-        let inputpoints = self.d().inputpoints.read();
-        let waypoints_vector = inputpoints
+        let waypoints = self
+            .d()
+            .packet_provider
+            .read()
             .unwrap()
-            .maps
-            .get(&InputType::GPX)
-            .unwrap()
-            .as_vector();
-
+            .collection
+            .get_vector(&OutputType::GPXWaypoints);
+        log::trace!("read {} waypoints", waypoints.len());
         let mut controls = match source {
             ControlSource::Segments => {
-                controls::infer_controls_from_gpx_segments(&self.d().track, &waypoints_vector)
+                controls::infer_controls_from_gpx_segments(&self.d().track, &waypoints)
             }
             ControlSource::Waypoints => {
-                controls::make_controls_with_waypoints(&self.d().track, &waypoints_vector)
+                controls::make_controls_with_waypoints(&self.d().track, &waypoints)
             }
-            ControlSource::OSM => controls::make_controls_with_osm(
-                &self.d().track,
-                self.d().inputpoints.clone(),
-                self.d().packet_provider.clone(),
-            ),
+            ControlSource::OSM => {
+                assert!(false);
+                controls::make_controls_with_osm(&self.d().track, self.d().packet_provider.clone())
+            }
         };
 
         // the case of mutiple projections for a single point is not handled correctly
@@ -141,40 +134,48 @@ impl Backend {
         for c in &mut controls {
             self.d().track.project_point(c);
         }
-        // controls::insert_start_end_controls(&self.d().track, &mut controls);
-        let control_map = InputPointMap::from_vector(&controls);
 
+        let len = controls.len();
+
+        // update provider
         {
-            let mut locked = self.d().inputpoints.write().unwrap();
-            locked.maps.insert(InputType::Control, control_map);
+            let mut locked = self.d().packet_provider.write().unwrap();
+            let track = &self.d().track;
+            log::trace!("import controls len()={}", len);
+            locked.collection.import_other(controls, track);
         }
 
-        self.update_collection_other();
-        Ok(controls.len())
+        Ok(len)
     }
 
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
         self.send("read gpx");
         let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
+        log::trace!("read {} waypoints", gpxdata.waypoints.len());
         let track = std::sync::Arc::new(track_data);
-        let mut inputpoints_map = BTreeMap::new();
-        track.project_map(&mut gpxdata.waypoints);
-        inputpoints_map.insert(InputType::GPX, gpxdata.waypoints);
-
-        let inputpoints = SharedPointMaps::new(
-            InputPointMaps {
-                maps: inputpoints_map,
-            }
-            .into(),
-        );
+        for p in &mut gpxdata.waypoints {
+            track.project_point(p);
+        }
 
         let parameters = Parameters::default();
         let point_collection = SharedPacketProvider::new(PacketProvider::new().into());
+        point_collection
+            .write()
+            .unwrap()
+            .collection
+            .import_other(gpxdata.waypoints, &track);
+
+        let o = point_collection
+            .read()
+            .unwrap()
+            .collection
+            .get_vector(&OutputType::GPXWaypoints);
+        log::trace!("read {} waypoints", o.len());
+
         self.send("compute elevation");
         let data = BackendData {
             track,
-            inputpoints,
             parameters,
             packet_provider: point_collection,
         };
@@ -215,7 +216,6 @@ impl Backend {
         SegmentData::new(
             segment,
             self.d().track.clone(),
-            self.d().inputpoints.clone(),
             self.d().packet_provider.clone(),
             self.d().parameters.clone(),
         )
@@ -233,24 +233,11 @@ impl Backend {
 
         // update user steps
         {
-            let mut locked = self.d().inputpoints.write().unwrap();
-            locked
-                .maps
-                .insert(InputType::UserStep, InputPointMap::new());
-
-            // update user points
-            match locked.maps.get_mut(&InputType::UserStep) {
-                Some(user_steps_map) => {
-                    user_steps_map.clear();
-                    user_steps_map.sort_and_insert(&make_points::user_points(
-                        &self.d().track,
-                        &self.d().parameters.user_steps_options,
-                    ));
-                }
-                _ => {
-                    assert!(false);
-                }
-            }
+            let mut locked = self.d().packet_provider.write().unwrap();
+            let track = &self.d().track;
+            let points =
+                make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
+            locked.collection.import_other(points, track);
         }
     }
 
@@ -258,18 +245,19 @@ impl Backend {
         let mut points = Vec::new();
         let range = self.d().track.subrange(segment.start, segment.end);
         for kind in &kinds {
-            match self.d().inputpoints.read().unwrap().maps.get(kind) {
-                Some(kpoints) => {
-                    let mut copy = kpoints.as_vector();
-                    copy.retain(|w| {
-                        assert!(kinds.contains(&w.kind()));
-                        assert!(is_close_to_track(&w));
-                        range.contains(&w.track_projections.first().unwrap().track_index)
-                    });
-                    points.extend_from_slice(&copy);
-                }
-                None => {}
-            }
+            let kpoints = self
+                .d()
+                .packet_provider
+                .read()
+                .unwrap()
+                .collection
+                .get_vector(kind);
+            let mut copy = kpoints.clone();
+            copy.retain(|w| {
+                assert!(is_close_to_track(&w));
+                range.contains(&w.track_projections.first().unwrap().track_index)
+            });
+            points.extend_from_slice(&copy);
         }
         log::info!("segment: {} export {} waypoints", segment.id, points.len());
         points
@@ -299,18 +287,17 @@ impl Backend {
     }
     pub fn generateGpx(&self) -> Vec<u8> {
         let mut gpxpoints = Vec::new();
-        for kind in [InputType::UserStep] {
-            match self.d().inputpoints.read().unwrap().maps.get(&kind) {
-                Some(p) => {
-                    let v = p.as_vector();
-                    v.iter().for_each(|p| {
-                        assert!(!p.track_projections.is_empty());
-                    });
-                    gpxpoints.extend_from_slice(&v);
-                }
-                _ => {}
-            }
-        }
+        let v = self
+            .d()
+            .packet_provider
+            .read()
+            .unwrap()
+            .collection
+            .get_vector(&OutputType::UserStep);
+        v.iter().for_each(|p| {
+            assert!(!p.track_projections.is_empty());
+        });
+        gpxpoints.extend_from_slice(&v);
         let waypoints = self.export_points(&gpxpoints);
         gpxexport::generate(&self.d().track, &waypoints)
     }
@@ -320,25 +307,16 @@ impl Backend {
         zipexport::generate(&gpx, &pdf)
     }
 
-    fn update_collection_other(&self) {
-        let mapslock = self.d().inputpoints.read().unwrap();
-        let mut lock = self.d().packet_provider.write().unwrap();
-        lock.import_other(&mapslock, &self.d().track);
-    }
-
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
         self.dmut().parameters.user_steps_options = options.clone();
-        let new_points =
-            make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-
         // update user steps
         {
-            let mut mapslock = self.dmut().inputpoints.write().unwrap();
-            mapslock
-                .maps
-                .insert(InputType::UserStep, InputPointMap::from_vector(&new_points));
+            let mut locked = self.d().packet_provider.write().unwrap();
+            let track = &self.d().track;
+            let points =
+                make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
+            locked.collection.import_other(points, track);
         }
-        self.update_collection_other();
     }
 
     pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
@@ -501,13 +479,22 @@ impl Backend {
 #[cfg(test)]
 mod tests {
     use crate::{
-        backend::Backend,
-        inputpoint::{self, InputType},
+        backend::{Backend, BackendData},
+        inputpoint::{self},
         math::IntegerSize2D,
         parameters::{self, ControlSource, ProfileIndication},
+        point_collection::OutputType,
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
+
+    fn check(backend: &Backend) {
+        let coll = &backend.d().packet_provider.read().unwrap().collection;
+        let w = coll.get_vector(&OutputType::GPXWaypoints);
+        let c = coll.get_vector(&OutputType::Controls);
+        log::trace!("c={}", c.len());
+        log::trace!("w={}", w.len());
+    }
 
     async fn load_test_data() -> Backend {
         let mut backend = Backend::make();
@@ -515,11 +502,16 @@ mod tests {
             .load_filename("data/blackforest.gpx")
             .await
             .expect("fail");
+        check(&backend);
+        log::trace!("<load osm>");
         backend.load_osm().await.unwrap();
+        log::trace!("<load osm done>");
+        check(&backend);
         backend
             .load_controls(ControlSource::Waypoints)
             .await
             .unwrap();
+        check(&backend);
         backend
     }
 
@@ -609,10 +601,10 @@ mod tests {
         let backend = load_test_data().await;
         let fseg = backend.trackSegment();
         let seg = backend.make_segment_data(&fseg);
-        let controls = seg.points(&InputType::Control);
+        let controls = seg.controls();
         let len = controls.len();
         assert!(len > 0);
-        let kinds = std::collections::HashSet::from([InputType::Control]);
+        let kinds = std::collections::HashSet::from([OutputType::Controls]);
         let waypoints = backend.get_waypoints(&fseg, kinds);
         assert!(!waypoints.is_empty());
         for waypoint in waypoints {

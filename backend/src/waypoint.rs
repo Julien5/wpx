@@ -1,7 +1,8 @@
 use crate::parameters;
+use crate::point_collection::OutputType;
 use crate::{
-    elevation, inputpoint::InputType, mercator::MercatorPoint, parameters::Parameters, speed,
-    track, wgs84point::WGS84Point,
+    elevation, mercator::MercatorPoint, parameters::Parameters, speed, track,
+    wgs84point::WGS84Point,
 };
 
 #[derive(Clone)]
@@ -13,7 +14,7 @@ pub struct WaypointInfo {
     pub inter_elevation_gain: f64,
     pub inter_slope: f64,
     pub name: String,
-    pub origin: InputType,
+    pub origin: OutputType,
     pub time: String,
     pub track_index: Option<usize>,
     pub description: String,
@@ -39,7 +40,7 @@ pub struct Waypoint {
     pub wgs84: WGS84Point,
     pub euclidean: MercatorPoint,
     pub track_index: Option<usize>,
-    pub origin: InputType,
+    pub origin: OutputType,
     pub name: String,
     pub description: String,
     pub info: Option<WaypointInfo>,
@@ -48,7 +49,7 @@ pub struct Waypoint {
 pub type Waypoints = Vec<Waypoint>;
 
 impl Waypoint {
-    pub fn create(wgs: WGS84Point, euc: &MercatorPoint, indx: usize, kind: InputType) -> Waypoint {
+    pub fn create(wgs: WGS84Point, euc: &MercatorPoint, indx: usize, kind: OutputType) -> Waypoint {
         Waypoint {
             wgs84: wgs.clone(),
             euclidean: euc.clone(),

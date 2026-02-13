@@ -8,10 +8,10 @@ mod stroke;
 
 use super::label_placement::features::*;
 use crate::bbox::BoundingBox;
-use crate::inputpoint::InputType;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::math::distance2;
 use crate::math::Point2D;
+use crate::point_collection::is_osm;
 
 use candidate::Candidate;
 use candidate::Candidates;
@@ -79,7 +79,7 @@ impl PlacementResult {
                     //feature._make_link(obstacles);
                     ret.push(feature.clone());
                 } else {
-                    if feature.input_point.as_ref().unwrap().kind() != InputType::OSM {
+                    if !is_osm(&feature.input_point.as_ref().unwrap().kind()) {
                         ret.push(feature.clone());
                     }
                 }

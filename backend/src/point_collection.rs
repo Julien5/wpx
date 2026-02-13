@@ -1,27 +1,9 @@
+use std::collections::BTreeMap;
+
 use crate::{
-    inputpoint::{InputPoint, InputPointMaps, InputType, OSMType},
-    math::IntegerSize2D,
-    parameters::Parameters,
-    track::Track,
+    inputpoint::InputPoint, math::IntegerSize2D, parameters::Parameters, track::Track,
     track_projection::is_close_to_track,
 };
-
-fn merge_flip_flop<T: Clone>(a: &[T], b: &[T]) -> Vec<T> {
-    // gemini
-    let mut result = Vec::with_capacity(a.len() + b.len());
-    let max_len = std::cmp::max(a.len(), b.len());
-
-    for i in 0..max_len {
-        if let Some(val_a) = a.get(i) {
-            result.push(val_a.clone());
-        }
-        if let Some(val_b) = b.get(i) {
-            result.push(val_b.clone());
-        }
-    }
-
-    result
-}
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
     mountains.sort_by_key(|w| std::cmp::Reverse(w.ele().unwrap_or(0f64).floor() as i32));
@@ -147,7 +129,7 @@ impl CachedResults {
 pub type SharedPacketProvider = std::sync::Arc<std::sync::RwLock<PacketProvider>>;
 
 pub struct PacketProvider {
-    collection: PointCollection,
+    pub collection: PointCollection,
     results: CachedResults,
 }
 
@@ -188,10 +170,10 @@ impl PacketProvider {
             range: range.clone(),
             screen_size: size.clone(),
             parameters: parameters.clone(),
-            controls: self.collection.controls.clone(),
+            controls: self.collection.get_vector(&OutputType::Controls),
         };
         let mut output = result.clone();
-        output.rendered.retain(|w| w.kind() != InputType::UserStep);
+        output.rendered.retain(|w| w.kind() != OutputType::UserStep);
         let result = CachedResult {
             function: function.clone(),
             parameters: p.clone(),
@@ -201,12 +183,6 @@ impl PacketProvider {
             self.results.push(result);
         }
         log::trace!("cache size: {}", self.results.size());
-    }
-    pub fn import_osm(&mut self, points: &Vec<InputPoint>, _track: &Track) {
-        self.collection.import_osm(points, _track);
-    }
-    pub fn import_other(&mut self, pointmaps: &InputPointMaps, _track: &Track) {
-        self.collection.import_other(pointmaps, _track);
     }
     pub fn map(
         &self,
@@ -218,14 +194,17 @@ impl PacketProvider {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
-            controls: self.collection.controls.clone(),
+            controls: self.collection.get_vector(&OutputType::Controls),
         };
         match self.results.hit(&RenderFunction::Map, &p) {
             Some(result) => {
                 log::trace!("packet provider map cache hit");
                 // HACK: the user steps are "updated in the cache".
                 // TODO: Fix this later.
-                vec![self.collection.user.clone(), result.rendered]
+                vec![
+                    self.collection.get_vector(&OutputType::UserStep),
+                    result.rendered,
+                ]
             }
             None => {
                 log::trace!("packet provider map cache miss");
@@ -243,14 +222,17 @@ impl PacketProvider {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
-            controls: self.collection.controls.clone(),
+            controls: self.collection.get_vector(&OutputType::Controls),
         };
         match self.results.hit(&RenderFunction::Profile, &p) {
             Some(result) => {
                 log::trace!("packet provider profile cache hit");
                 // HACK: the user steps are "updated in the cache".
                 // TODO: Fix this later.
-                vec![self.collection.user.clone(), result.rendered]
+                vec![
+                    self.collection.get_vector(&OutputType::Controls),
+                    result.rendered,
+                ]
             }
             None => {
                 log::trace!("packet provider profile cache miss");
@@ -260,156 +242,171 @@ impl PacketProvider {
     }
 }
 
-type Points = Vec<InputPoint>;
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+pub enum OutputType {
+    Cities,
+    Controls,
+    GPXWaypoints,
+    Hamlets,
+    Mountains,
+    Villages,
+    UserStep,
+}
 
+pub fn is_osm(kind: &OutputType) -> bool {
+    match kind {
+        OutputType::Controls | OutputType::GPXWaypoints | OutputType::UserStep => false,
+        _ => true,
+    }
+}
+
+/*pub fn output_type(point: &InputPoint) -> OutputType {
+    match point.kind() {
+        OutputType::GPX => {
+            return OutputType::GPXWaypoints;
+        }
+        OutputType::Control => {
+            return OutputType::Controls;
+        }
+        OutputType::UserStep => {
+            return OutputType::UserStep;
+        }
+        OutputType::OSM => match point.osmkind().unwrap() {
+            OSMType::City => {
+                if is_close_to_track(&point) {
+                    return OutputType::Cities;
+                }
+                return OutputType::OfftrackCities;
+            }
+            OSMType::Peak => return OutputType::Mountains,
+            OSMType::MountainPass => return OutputType::Mountains,
+            OSMType::Hamlet => return OutputType::Hamlets,
+            OSMType::Village => return OutputType::Villages,
+        },
+    }
+}*/
+
+#[derive(Clone)]
 pub struct PointCollection {
-    pub user: Points,
-    pub cities: Points,
-    pub controls: Points,
-    pub gpx: Points,
-    pub mountains: Points,
-    pub villages: Points,
-    pub osmrest: Points,
-    pub offtrack_cities: Points,
+    pub map: BTreeMap<OutputType, Vec<InputPoint>>,
 }
 
 impl PointCollection {
     pub fn new() -> Self {
-        let empty = Points::new();
         PointCollection {
-            user: empty.clone(),
-            cities: empty.clone(),
-            controls: empty.clone(),
-            gpx: empty.clone(),
-            mountains: empty.clone(),
-            villages: empty.clone(),
-            osmrest: empty.clone(),
-            offtrack_cities: empty.clone(),
+            map: BTreeMap::new(),
         }
     }
 
-    pub fn import_osm(&mut self, osmpoints: &Vec<InputPoint>, track: &Track) {
-        self.offtrack_cities.clear();
-        self.cities.clear();
-        self.mountains.clear();
-        self.villages.clear();
-        self.osmrest.clear();
-        for k in 0..osmpoints.len() {
-            let wi = osmpoints[k].clone();
-            if !is_close_to_track(&wi) {
-                match wi.osmkind().unwrap() {
-                    OSMType::City => {
-                        self.offtrack_cities.push(wi);
-                    }
-                    _ => {}
-                }
-                continue;
-            }
-            match wi.osmkind().unwrap() {
-                OSMType::City => {
-                    self.cities.push(wi);
-                }
-                OSMType::MountainPass | OSMType::Peak => {
-                    self.mountains.push(wi);
-                }
-                OSMType::Village => {
-                    self.villages.push(wi);
-                }
-                _ => {
-                    self.osmrest.push(wi);
-                }
-            }
-        }
-        sort_by_elevation(&mut self.mountains);
-        sort_by_population(&mut self.cities);
-        sort_by_population(&mut self.villages);
+    fn push(&mut self, point: InputPoint) {
+        let otype = point.kind();
+        self.map.entry(otype).or_default().push(point);
+    }
 
-        for point in &mut self.offtrack_cities {
-            if point.track_projections.is_empty() {
-                track.project_point(point);
+    fn set_vector(&mut self, points: Vec<InputPoint>) {
+        if points.is_empty() {
+            return;
+        }
+        let otype = points.first().unwrap().kind();
+        self.map.insert(otype, points);
+    }
+
+    pub fn get_vector(&self, otype: &OutputType) -> Vec<InputPoint> {
+        match self.map.get(&otype) {
+            Some(vector) => vector.clone(),
+            None => Vec::new(),
+        }
+    }
+
+    pub fn potential_controls(&self) -> Vec<InputPoint> {
+        let mut ret = Vec::new();
+        ret.extend_from_slice(&self.get_vector(&OutputType::Cities));
+        ret.extend_from_slice(&self.get_vector(&OutputType::Villages));
+        ret
+    }
+
+    pub fn import_osm(&mut self, points: &Vec<InputPoint>, _track: &Track) {
+        let empty = Vec::new();
+        self.map.insert(OutputType::Cities, empty.clone());
+        self.map.insert(OutputType::Hamlets, empty.clone());
+        self.map.insert(OutputType::Mountains, empty.clone());
+        self.map.insert(OutputType::Villages, empty.clone());
+
+        for k in 0..points.len() {
+            let wi = points[k].clone();
+            if wi.kind() == OutputType::Cities || is_close_to_track(&wi) {
+                self.push(wi);
             }
         }
-        sort_by_distance_to_track(&mut self.offtrack_cities);
+        sort_by_elevation(&mut self.map.get_mut(&OutputType::Mountains).unwrap());
+        sort_by_population(&mut self.map.get_mut(&OutputType::Cities).unwrap());
+        sort_by_population(&mut self.map.get_mut(&OutputType::Villages).unwrap());
+        sort_by_population(&mut self.map.get_mut(&OutputType::Hamlets).unwrap());
+        let hamlets = self.map.get(&OutputType::Hamlets).unwrap();
+        log::trace!("{} hamlets", hamlets.len());
     }
 
-    pub fn import_other(&mut self, pointmaps: &InputPointMaps, _track: &Track) {
-        match pointmaps.maps.get(&InputType::Control) {
-            Some(map) => self.controls = map.as_vector(),
-            _ => {}
-        }
-        match pointmaps.maps.get(&InputType::GPX) {
-            Some(map) => self.gpx = map.as_vector(),
-            _ => {}
-        }
-
-        {
-            self.user.clear();
-            let points = pointmaps
-                .maps
-                .get(&InputType::UserStep)
-                .unwrap()
-                .as_vector();
-            let indices: Vec<_> = (0..points.len()).collect();
-            for k in indices {
-                let wi = points[k].clone();
-                assert!(is_close_to_track(&wi));
-                let d = wi.distance_to_track();
-                assert_eq!(wi.kind(), InputType::UserStep);
-                assert_eq!(d, 0f64);
-                self.user.push(wi);
-            }
-        }
+    pub fn import_other(&mut self, points: Vec<InputPoint>, _track: &Track) {
+        self.set_vector(points);
     }
 
-    fn cities_and_mountains(&self) -> Vec<InputPoint> {
-        merge_flip_flop(&self.cities, &self.mountains)
+    fn ontrack_cities(&self) -> Vec<InputPoint> {
+        let mut cities = self.get_vector(&OutputType::Cities);
+        cities.retain(|w| is_close_to_track(&w));
+        sort_by_population(&mut cities);
+        cities
     }
 
-    fn filter_for_segment(points: &mut Vec<InputPoint>, range: &std::ops::Range<usize>) {
-        points.retain(|point| point.is_in_range(range));
+    fn offtrack_cities(&self) -> Vec<InputPoint> {
+        let mut cities = self.get_vector(&OutputType::Cities);
+        cities.retain(|w| !is_close_to_track(&w));
+        sort_by_distance_to_track(&mut cities);
+        //sort_by_population(&mut cities);
+        cities
     }
 
-    fn filter_packets_for_segment(
-        packets: &mut Vec<Vec<InputPoint>>,
-        range: &std::ops::Range<usize>,
-    ) {
-        packets
+    pub fn range_cut(&mut self, range: &std::ops::Range<usize>) {
+        self.map
             .iter_mut()
-            .for_each(|packet| Self::filter_for_segment(packet, range));
+            .for_each(|(_key, points)| points.retain(|point| point.is_in_range(range)));
     }
 
     fn export_profile(&self) -> Vec<Vec<InputPoint>> {
         vec![
-            self.user.clone(),
-            self.controls.clone(),
-            self.gpx.clone(),
-            self.cities_and_mountains(),
-            self.villages.clone(),
-            self.osmrest.clone(),
+            self.get_vector(&OutputType::UserStep),
+            self.get_vector(&OutputType::Controls),
+            self.get_vector(&OutputType::GPXWaypoints),
+            self.ontrack_cities(), //self.cities_and_mountains(),
+            self.get_vector(&OutputType::Villages),
+            self.get_vector(&OutputType::Mountains),
+            self.get_vector(&OutputType::Hamlets),
         ]
     }
 
     pub fn profile(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
-        let mut ret = self.export_profile();
-        Self::filter_packets_for_segment(&mut ret, range);
-        ret
+        let mut clone = self.clone();
+        clone.range_cut(range);
+        clone.export_profile()
     }
 
     pub fn map(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
-        let mut villages = self.villages.clone();
-        Self::filter_for_segment(&mut villages, range);
-        let mut off = self.offtrack_cities.clone();
-        Self::filter_for_segment(&mut off, range);
-        let villages_and_far_cities = merge_flip_flop(&off, &villages);
-        let mut ret = vec![
-            self.user.clone(),
-            self.controls.clone(),
-            self.gpx.clone(),
-            self.cities_and_mountains().clone(),
-            villages_and_far_cities,
-            self.osmrest.clone(),
-        ];
-        Self::filter_packets_for_segment(&mut ret, range);
-        ret
+        let mut clone = self.clone();
+        clone.range_cut(range);
+        let c = clone.get_vector(&OutputType::Villages);
+        log::trace!("c.len()={}", c.len());
+        for p in c {
+            log::trace!("p={}", p.name());
+        }
+
+        vec![
+            clone.get_vector(&OutputType::UserStep),
+            clone.get_vector(&OutputType::Controls),
+            clone.get_vector(&OutputType::GPXWaypoints),
+            clone.ontrack_cities(),
+            clone.get_vector(&OutputType::Villages),
+            clone.get_vector(&OutputType::Mountains),
+            clone.get_vector(&OutputType::Hamlets),
+            clone.offtrack_cities(),
+        ]
     }
 }

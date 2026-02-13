@@ -3,7 +3,8 @@
 use euclid::Size2D;
 
 use crate::backend::Backend;
-use crate::inputpoint::{self, InputType};
+use crate::inputpoint::{self};
+use crate::point_collection::OutputType;
 use crate::{track, waypoint};
 
 use std::collections::{BTreeMap, HashSet};
@@ -108,7 +109,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
         .map(|f| backend.make_segment_data(&f))
         .collect();
 
-    let controls = HashSet::from([InputType::Control]);
+    let controls = HashSet::from([OutputType::Controls]);
     let mut all_points = BTreeMap::new();
     for segment in &fsegments {
         let segment_waypoints = backend.get_points(&segment, controls.clone());

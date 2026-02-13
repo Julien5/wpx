@@ -2,9 +2,10 @@
 use std::{cmp::Ordering, collections::BTreeSet};
 
 use crate::{
-    inputpoint::{InputPoint, InputType, OSMType},
+    inputpoint::InputPoint,
     locate,
     mercator::MercatorPoint,
+    point_collection::{is_osm, OutputType},
     track::Track,
 };
 
@@ -56,11 +57,11 @@ impl Ord for TrackProjection {
     }
 }
 
-fn population_estimate(kind: &OSMType) -> i32 {
+fn population_estimate(kind: &OutputType) -> i32 {
     match kind {
-        OSMType::City => 10000,
-        OSMType::Village => 1000,
-        OSMType::Hamlet => 300,
+        OutputType::Cities => 10000,
+        OutputType::Villages => 1000,
+        OutputType::Hamlets => 300,
         _ => 0,
     }
 }
@@ -74,32 +75,25 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
     if d < dmin {
         return true;
     }
-    match w.kind() {
-        InputType::OSM => {
-            let kind = w.osmkind().unwrap();
-            let pop = w.population().unwrap_or(population_estimate(&kind));
-            // the factor 20 was suggested by gemini
-            // (is it too large ? (Baden-Baden) with blackforest.gpx).
-            let radius = 20f64 * (pop as f64).sqrt();
-            return d < radius;
-        }
-        _ => {}
+    if is_osm(&w.kind()) {
+        let kind = w.kind();
+        let pop = w.population().unwrap_or(population_estimate(&kind));
+        // the factor 20 was suggested by gemini
+        // (is it too large ? (Baden-Baden) with blackforest.gpx).
+        let radius = 20f64 * (pop as f64).sqrt();
+        return d < radius;
     }
     return d < dmin;
 }
 
-fn dmax(kind: &InputType, osmkind: &Option<OSMType>, population: &Option<i32>) -> f64 {
-    match kind {
-        InputType::OSM => {
-            let okind = osmkind.as_ref().unwrap();
-            let pop = population.unwrap_or(0);
-            if *okind == OSMType::City || pop > 1000 {
-                return 2000.0;
-            }
+fn dmax(kind: &OutputType, population: &Option<i32>) -> f64 {
+    if is_osm(kind) {
+        let pop = population.unwrap_or(0);
+        if *kind == OutputType::Cities || pop > 1000 {
+            return 2000.0;
         }
-        _ => {}
     }
-    return 300.0;
+    300.0
 }
 
 pub fn update_track_projection(
@@ -116,7 +110,7 @@ pub fn update_track_projection(
         return;
     }
 
-    let dmax = dmax(&point.kind(), &point.osmkind(), &point.population());
+    let dmax = dmax(&point.kind(), &point.population());
     let d = new_projection.track_distance;
     if d > dmax {
         return;

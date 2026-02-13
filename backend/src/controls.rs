@@ -2,11 +2,11 @@ use std::{collections::BTreeMap, sync::Arc};
 
 use crate::{
     backend::Segment,
-    inputpoint::{InputPoint, InputType, OSMType, SharedPointMaps},
+    inputpoint::InputPoint,
     math,
     mercator::MercatorPoint,
     parameters::Parameters,
-    point_collection::SharedPacketProvider,
+    point_collection::{OutputType, SharedPacketProvider},
     segment::SegmentData,
     track::Track,
     track_projection::{is_close_to_track, TrackProjection},
@@ -140,20 +140,20 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
 }
 
 fn control_point_goodness(point: &InputPoint) -> i32 {
+    let min_population = match point.kind() {
+        OutputType::Cities => 10000,
+        OutputType::Villages => 1000,
+        OutputType::Hamlets => 100,
+        _ => 0,
+    };
     match point.kind() {
-        InputType::UserStep => {
+        OutputType::UserStep => {
             return i32::MIN;
         }
-        InputType::GPX | InputType::Control => {
+        OutputType::GPXWaypoints | OutputType::Controls => {
             return i32::MAX;
         }
-        InputType::OSM => {
-            let min_population = match point.osmkind().unwrap() {
-                OSMType::City => 10000,
-                OSMType::Village => 1000,
-                OSMType::Hamlet => 100,
-                _ => 0,
-            };
+        _ => {
             let population = point.population().unwrap_or(min_population);
             if population > 0 {
                 return population;
@@ -207,7 +207,6 @@ pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) 
 
 pub fn make_controls_with_osm(
     track: &Arc<Track>,
-    inputpoints: SharedPointMaps,
     packet_provider: SharedPacketProvider,
 ) -> Vec<InputPoint> {
     let total = track.total_distance();
@@ -231,7 +230,6 @@ pub fn make_controls_with_osm(
         let data = SegmentData::new(
             &segment,
             track.clone(),
-            inputpoints.clone(),
             packet_provider.clone(),
             Parameters::default(),
         );
@@ -249,7 +247,7 @@ pub fn make_controls_with_osm(
     let mut last_control_distance = 0f64;
     for segment in &mut segments {
         // it has all the osm points, not only those from the segment!
-        let mut points = segment.osmpoints();
+        let mut points = segment.potential_controls();
         log::trace!("segment id={} before={}", segment.id(), points.len());
         points.retain(|w| {
             let total_distance = track.total_distance();
@@ -318,11 +316,7 @@ pub fn make_controls_with_osm(
 #[cfg(test)]
 mod tests {
     use crate::{
-        event,
-        gpsdata::GpxData,
-        inputpoint::{InputPoint, InputPointMaps},
-        osm,
-        point_collection::PacketProvider,
+        event, gpsdata::GpxData, inputpoint::InputPoint, osm, point_collection::PacketProvider,
     };
 
     fn read(filename: &str) -> GpxData {
@@ -341,7 +335,7 @@ mod tests {
         use crate::controls::*;
         let gpxdata = read("data/ref/karl-400.gpx");
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints.as_vector());
+        let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints);
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -360,9 +354,9 @@ mod tests {
         use crate::controls::*;
         let gpxdata = read("data/blackforest.gpx");
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints.as_vector());
+        let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints);
         assert!(controls.is_empty());
-        let mut gpxpoints = gpxdata.waypoints.as_vector();
+        let mut gpxpoints = gpxdata.waypoints;
         for p in &mut gpxpoints {
             track.project_point(p);
         }
@@ -386,18 +380,16 @@ mod tests {
 
         let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
         let logger = std::sync::RwLock::new(Some(b));
-        let mut inputpoints = BTreeMap::new();
         let mut osmpoints = osm::download_for_track(&track, &logger).await.unwrap();
         track.project_map(&mut osmpoints);
 
-        let mut p = PacketProvider::new();
-        p.import_osm(&osmpoints.as_vector(), &track);
-        let provider = SharedPacketProvider::new(p.into());
+        let mut provider = PacketProvider::new();
+        provider
+            .collection
+            .import_osm(&osmpoints.as_vector(), &track);
+        let provider = SharedPacketProvider::new(provider.into());
 
-        inputpoints.insert(InputType::OSM, osmpoints);
-        let sharedmaps = SharedPointMaps::new(InputPointMaps { maps: inputpoints }.into());
-
-        make_controls_with_osm(&track, sharedmaps, provider)
+        make_controls_with_osm(&track, provider)
     }
 
     #[tokio::test]
