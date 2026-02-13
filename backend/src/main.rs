@@ -2,11 +2,10 @@
 
 use clap::Parser;
 use tracks::backend::Backend;
-use tracks::inputpoint::allkinds;
+use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::ControlSource;
-use tracks::speed;
-use tracks::{error, inputpoint};
+use tracks::{point_collection, speed};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -50,7 +49,7 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
             &"map".to_string(),
             &IntegerSize2D::new(2000, 1000),
             //HashSet::from([OutputType::GPX]),
-            allkinds(),
+            point_collection::allkinds(),
         );
     }
 
@@ -65,7 +64,7 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
             &"profile".to_string(),
             &IntegerSize2D::new(2000, 400),
             //HashSet::from([OutputType::GPX]),
-            allkinds(),
+            point_collection::allkinds(),
         );
     }
 
@@ -209,7 +208,7 @@ async fn main() -> anyhow::Result<()> {
                     &track_segment,
                     &"wheel".to_string(),
                     &size,
-                    inputpoint::allkinds(),
+                    point_collection::allkinds(),
                 );
                 let filename = std::format!("/tmp/wheel.svg");
                 std::fs::write(&filename, svg.clone()).unwrap();

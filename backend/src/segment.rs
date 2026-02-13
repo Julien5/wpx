@@ -1,8 +1,8 @@
 use crate::bbox::BoundingBox;
-use crate::inputpoint::{InputPoint, Kinds};
+use crate::inputpoint::InputPoint;
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
-use crate::point_collection::{Kind, RenderResult, SharedPacketProvider};
+use crate::point_collection::{Kind, Kinds, RenderResult, SharedPacketProvider};
 use crate::tile::Tiles;
 use crate::track::SharedTrack;
 use crate::{profile, svgmap};

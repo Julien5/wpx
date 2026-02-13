@@ -1,13 +1,12 @@
 #![allow(non_snake_case)]
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::Kinds;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
-use crate::point_collection::RenderResult;
+use crate::point_collection::{Kinds, RenderResult};
 use crate::segment::SegmentData;
 use crate::track::Track;
 

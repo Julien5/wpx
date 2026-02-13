@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashSet};
 
 use crate::{
     inputpoint::InputPoint, math::IntegerSize2D, parameters::Parameters, track::Track,
@@ -252,6 +252,17 @@ pub fn is_osm(kind: &Kind) -> bool {
         Kind::Controls | Kind::GPXWaypoints | Kind::UserStep => false,
         _ => true,
     }
+}
+
+pub type Kinds = HashSet<Kind>;
+pub fn allkinds() -> Kinds {
+    HashSet::from([
+        Kind::UserStep,
+        Kind::GPXWaypoints,
+        Kind::Cities,
+        Kind::Villages,
+        Kind::Controls,
+    ])
 }
 
 /*pub fn output_type(point: &InputPoint) -> OutputType {

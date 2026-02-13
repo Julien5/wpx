@@ -3,8 +3,7 @@
 use euclid::Size2D;
 
 use crate::backend::Backend;
-use crate::inputpoint::{self};
-use crate::point_collection::Kind;
+use crate::point_collection::{self, Kind};
 use crate::{track, waypoint};
 
 use std::collections::{BTreeMap, HashSet};
@@ -123,7 +122,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
 
     let vector: Vec<_> = all_points.iter().map(|(_k, w)| w.clone()).collect();
     let all_waypoints = backend.export_points(&vector);
-    let allkinds = inputpoint::allkinds();
+    let allkinds = point_collection::allkinds();
 
     for segment in &segments {
         let range = segment.range();

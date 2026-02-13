@@ -1,9 +1,9 @@
 use crate::{
     backend::Segment,
     controls,
-    inputpoint::{InputPoint, Kinds},
+    inputpoint::InputPoint,
     mercator::DateTime,
-    point_collection::Kind,
+    point_collection::{Kind, Kinds},
     segment::SegmentData,
     track::Track,
     wheel::time_points,

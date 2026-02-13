@@ -78,7 +78,7 @@ pub enum _Kind {
 
 #[frb(sync)]
 pub fn allkinds() -> HashSet<Kind> {
-    tracks::inputpoint::allkinds()
+    tracks::point_collection::allkinds()
 }
 
 #[frb(mirror(ProfileIndication))]

@@ -1,6 +1,6 @@
 use core::fmt;
 use std::{
-    collections::{BTreeMap, BTreeSet, HashSet},
+    collections::{BTreeMap, BTreeSet},
     str::FromStr,
 };
 
@@ -18,17 +18,6 @@ use crate::{
 };
 
 pub type Tags = std::collections::BTreeMap<String, String>;
-
-pub type Kinds = HashSet<Kind>;
-pub fn allkinds() -> Kinds {
-    HashSet::from([
-        Kind::UserStep,
-        Kind::GPXWaypoints,
-        Kind::Cities,
-        Kind::Villages,
-        Kind::Controls,
-    ])
-}
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct InputPoint {

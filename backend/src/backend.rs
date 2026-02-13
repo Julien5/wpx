@@ -17,6 +17,7 @@ use crate::parameters::ProfileIndication;
 use crate::parameters::UserStepsOptions;
 use crate::pdf;
 use crate::point_collection::Kind;
+use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
 use crate::profile;
