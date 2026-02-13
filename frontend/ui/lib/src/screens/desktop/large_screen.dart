@@ -4,9 +4,7 @@ import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
-import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
@@ -62,8 +60,9 @@ class _LargeScaffold extends StatelessWidget {
         Expanded(
           child: GraphicsPadding(
             child: TrackView.make({
-              InputType.osm,
-              InputType.userStep,
+              Kind.cities,
+              Kind.villages,
+              Kind.userStep,
             }, TrackData.map),
           ),
         ),
@@ -75,8 +74,9 @@ class _LargeScaffold extends StatelessWidget {
         constraints: BoxConstraints(minHeight: 200, maxHeight: 200),
         child: ProfilePadding(
           child: TrackView.make({
-            InputType.osm,
-            InputType.userStep,
+            Kind.cities,
+            Kind.controls,
+            Kind.userStep,
           }, TrackData.profile),
         ),
       ),

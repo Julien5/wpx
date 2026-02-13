@@ -5,7 +5,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
 class WaypointsTableWidget extends StatelessWidget {
-  final InputType kind;
+  final Kind kind;
 
   const WaypointsTableWidget({super.key, required this.kind});
 
@@ -66,7 +66,7 @@ class WaypointsTableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     SegmentModel model = Provider.of<SegmentModel>(context);
     context.watch<ParameterModel>();
-    Set<InputType> kinds = {kind};
+    Set<Kind> kinds = {kind};
     var waypoints = model.someWaypoints(kinds);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,

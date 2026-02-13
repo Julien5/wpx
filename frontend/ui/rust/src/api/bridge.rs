@@ -8,7 +8,6 @@ pub use std::ops::Range;
 pub use tracks::backend::Segment as SegmentImplementation;
 pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::TrackError;
-pub use tracks::inputpoint::InputType;
 pub use tracks::mercator::MercatorPoint;
 pub use tracks::parameters::ControlSource;
 pub use tracks::parameters::MapOptions;
@@ -16,6 +15,7 @@ pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
 pub use tracks::parameters::ProfileOptions;
 pub use tracks::parameters::UserStepsOptions;
+pub use tracks::point_collection::Kind;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
 pub use tracks::wgs84point::WGS84Point;
@@ -65,16 +65,19 @@ impl Segment {
     }
 }
 
-#[frb(mirror(InputType))]
-pub enum _InputType {
-    GPX,
-    OSM,
+#[frb(mirror(Kind))]
+pub enum _Kind {
+    Cities,
+    Controls,
+    GPXWaypoints,
+    Hamlets,
+    Mountains,
+    Villages,
     UserStep,
-    Control,
 }
 
 #[frb(sync)]
-pub fn allkinds() -> HashSet<InputType> {
+pub fn allkinds() -> HashSet<Kind> {
     tracks::inputpoint::allkinds()
 }
 
@@ -133,7 +136,7 @@ pub struct _WaypointInfo {
     pub inter_elevation_gain: f64,
     pub inter_slope: f64,
     pub name: String,
-    pub origin: InputType,
+    pub origin: Kind,
     pub time: String,
     pub track_index: Option<usize>,
     pub description: String,
@@ -144,7 +147,7 @@ pub struct _Waypoint {
     pub wgs84: WGS84Point,
     pub euclidean: MercatorPoint,
     pub track_index: Option<usize>,
-    pub origin: InputType,
+    pub origin: Kind,
     pub name: String,
     pub description: String,
     pub info: Option<WaypointInfo>,
@@ -205,7 +208,7 @@ impl Bridge {
         self.backend.generateZip().await
     }
     #[frb(sync)]
-    pub fn get_waypoints(&self, segment: &Segment, kinds: HashSet<InputType>) -> Vec<Waypoint> {
+    pub fn get_waypoints(&self, segment: &Segment, kinds: HashSet<Kind>) -> Vec<Waypoint> {
         self.backend.get_waypoints(&segment._impl, kinds)
     }
     #[frb(sync)]
@@ -247,7 +250,7 @@ impl Bridge {
         segment: &Segment,
         what: &String,
         size: &(i32, i32),
-        kinds: HashSet<InputType>,
+        kinds: HashSet<Kind>,
     ) -> String {
         assert!(self.backend.loaded());
         self.backend.render_segment_what(
@@ -264,7 +267,7 @@ impl Bridge {
         segment: &Segment,
         what: &String,
         size: &(i32, i32),
-        kinds: HashSet<InputType>,
+        kinds: HashSet<Kind>,
     ) -> String {
         self.backend.render_segment_what(
             &segment._impl,

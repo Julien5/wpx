@@ -39,7 +39,7 @@ class _TextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Set<InputType> usersteps = {InputType.userStep};
+    Set<Kind> usersteps = {Kind.userStep};
     SegmentModel model = Provider.of<SegmentModel>(context);
     List<Waypoint> waypoints = model.someWaypoints(usersteps);
     String text =
@@ -53,7 +53,7 @@ class UserStepsScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Set<InputType> usersteps = {InputType.userStep};
+    Set<Kind> usersteps = {Kind.userStep};
 
     List<Widget> midChilren = [
       _TextWidget(),

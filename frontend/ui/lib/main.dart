@@ -12,7 +12,6 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/frb_generated.dart';
 import 'package:ui/utils.dart';
 
-import 'package:window_size/window_size.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart'; // Import kIsWeb
 

@@ -109,7 +109,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
 }
 
 class SegmentGraphics extends StatefulWidget {
-  final Set<InputType> kinds;
+  final Set<Kind> kinds;
   const SegmentGraphics({super.key, required this.kinds});
 
   @override
@@ -182,7 +182,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
 }
 
 class TrackGraphicsRow extends StatelessWidget {
-  final Set<InputType> kinds;
+  final Set<Kind> kinds;
 
   const TrackGraphicsRow({super.key, required this.kinds});
 

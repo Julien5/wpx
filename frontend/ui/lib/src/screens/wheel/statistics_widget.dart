@@ -187,9 +187,7 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
       pacingPointsText = "none";
     }
 
-    List<Waypoint> controlPoints = segmentModel.someWaypoints({
-      InputType.control,
-    });
+    List<Waypoint> controlPoints = segmentModel.someWaypoints({Kind.controls});
     String controlPointsText = "${controlPoints.length}";
 
     bridge.Bridge backend = getBackend(ctx);

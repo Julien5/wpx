@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
-typedef Kinds = Set<bridge.InputType>;
+typedef Kinds = Set<bridge.Kind>;
 
 class SegmentModel extends ChangeNotifier {
   final bridge.Segment segment;

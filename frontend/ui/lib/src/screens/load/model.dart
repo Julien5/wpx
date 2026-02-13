@@ -123,7 +123,7 @@ class LoadScreenModel extends ChangeNotifier {
     } else if (job == Job.controls) {
       _controls = backend.getWaypoints(
         segment: backend.trackSegment(),
-        kinds: {bridge.InputType.control},
+        kinds: {bridge.Kind.controls},
       );
     }
     running = null;

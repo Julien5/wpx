@@ -5,7 +5,7 @@ use crate::{
     inputpoint::InputPoint,
     locate,
     mercator::MercatorPoint,
-    point_collection::{is_osm, OutputType},
+    point_collection::{is_osm, Kind},
     track::Track,
 };
 
@@ -57,11 +57,11 @@ impl Ord for TrackProjection {
     }
 }
 
-fn population_estimate(kind: &OutputType) -> i32 {
+fn population_estimate(kind: &Kind) -> i32 {
     match kind {
-        OutputType::Cities => 10000,
-        OutputType::Villages => 1000,
-        OutputType::Hamlets => 300,
+        Kind::Cities => 10000,
+        Kind::Villages => 1000,
+        Kind::Hamlets => 300,
         _ => 0,
     }
 }
@@ -86,10 +86,10 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
     return d < dmin;
 }
 
-fn dmax(kind: &OutputType, population: &Option<i32>) -> f64 {
+fn dmax(kind: &Kind, population: &Option<i32>) -> f64 {
     if is_osm(kind) {
         let pop = population.unwrap_or(0);
-        if *kind == OutputType::Cities || pop > 1000 {
+        if *kind == Kind::Cities || pop > 1000 {
             return 2000.0;
         }
     }

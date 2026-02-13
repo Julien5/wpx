@@ -13,7 +13,7 @@ class FutureRenderer with ChangeNotifier {
   final TrackData trackData;
   final bridge.Bridge _backend;
   Size? size;
-  final Set<bridge.InputType> kinds;
+  final Set<bridge.Kind> kinds;
 
   Future<String>? _future;
   String? _result;

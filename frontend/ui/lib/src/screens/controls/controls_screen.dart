@@ -34,7 +34,7 @@ class _ButtonWidget extends StatelessWidget {
 class _TextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Set<InputType> control = {InputType.control};
+    Set<Kind> control = {Kind.controls};
     SegmentModel model = Provider.of<SegmentModel>(context);
     List<Waypoint> waypoints = model.someWaypoints(control);
     String text =
@@ -46,7 +46,7 @@ class _TextWidget extends StatelessWidget {
 class _ControlsScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    Set<InputType> control = {InputType.control};
+    Set<Kind> control = {Kind.controls};
     return Scaffold(
       appBar: AppBar(title: const Text('Control Points')),
       body: AdaptiveLayout(

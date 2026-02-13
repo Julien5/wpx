@@ -69,7 +69,7 @@ class _SegmentSelectorState extends State<SegmentSelector> {
 }
 
 class SegmentsGraphicsRow extends StatefulWidget {
-  final Set<InputType> kinds;
+  final Set<Kind> kinds;
   final double height;
   const SegmentsGraphicsRow({
     super.key,

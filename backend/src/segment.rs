@@ -2,7 +2,7 @@ use crate::bbox::BoundingBox;
 use crate::inputpoint::{InputPoint, Kinds};
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
-use crate::point_collection::{OutputType, RenderResult, SharedPacketProvider};
+use crate::point_collection::{Kind, RenderResult, SharedPacketProvider};
 use crate::tile::Tiles;
 use crate::track::SharedTrack;
 use crate::{profile, svgmap};
@@ -63,14 +63,14 @@ impl SegmentData {
         let lock = self.packet_provider.read();
         let mut clone = lock.unwrap().collection.clone();
         clone.range_cut(&self.range());
-        clone.get_vector(&OutputType::Controls)
+        clone.get_vector(&Kind::Controls)
     }
 
     pub fn usersteps(&self) -> Vec<InputPoint> {
         let lock = self.packet_provider.read();
         let mut clone = lock.unwrap().collection.clone();
         clone.range_cut(&self.range());
-        clone.get_vector(&OutputType::UserStep)
+        clone.get_vector(&Kind::UserStep)
     }
 
     pub fn potential_controls(&self) -> Vec<InputPoint> {

@@ -170,10 +170,10 @@ impl PacketProvider {
             range: range.clone(),
             screen_size: size.clone(),
             parameters: parameters.clone(),
-            controls: self.collection.get_vector(&OutputType::Controls),
+            controls: self.collection.get_vector(&Kind::Controls),
         };
         let mut output = result.clone();
-        output.rendered.retain(|w| w.kind() != OutputType::UserStep);
+        output.rendered.retain(|w| w.kind() != Kind::UserStep);
         let result = CachedResult {
             function: function.clone(),
             parameters: p.clone(),
@@ -194,17 +194,14 @@ impl PacketProvider {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
-            controls: self.collection.get_vector(&OutputType::Controls),
+            controls: self.collection.get_vector(&Kind::Controls),
         };
         match self.results.hit(&RenderFunction::Map, &p) {
             Some(result) => {
                 log::trace!("packet provider map cache hit");
                 // HACK: the user steps are "updated in the cache".
                 // TODO: Fix this later.
-                vec![
-                    self.collection.get_vector(&OutputType::UserStep),
-                    result.rendered,
-                ]
+                vec![self.collection.get_vector(&Kind::UserStep), result.rendered]
             }
             None => {
                 log::trace!("packet provider map cache miss");
@@ -222,17 +219,14 @@ impl PacketProvider {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
-            controls: self.collection.get_vector(&OutputType::Controls),
+            controls: self.collection.get_vector(&Kind::Controls),
         };
         match self.results.hit(&RenderFunction::Profile, &p) {
             Some(result) => {
                 log::trace!("packet provider profile cache hit");
                 // HACK: the user steps are "updated in the cache".
                 // TODO: Fix this later.
-                vec![
-                    self.collection.get_vector(&OutputType::Controls),
-                    result.rendered,
-                ]
+                vec![self.collection.get_vector(&Kind::Controls), result.rendered]
             }
             None => {
                 log::trace!("packet provider profile cache miss");
@@ -243,7 +237,7 @@ impl PacketProvider {
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
-pub enum OutputType {
+pub enum Kind {
     Cities,
     Controls,
     GPXWaypoints,
@@ -253,9 +247,9 @@ pub enum OutputType {
     UserStep,
 }
 
-pub fn is_osm(kind: &OutputType) -> bool {
+pub fn is_osm(kind: &Kind) -> bool {
     match kind {
-        OutputType::Controls | OutputType::GPXWaypoints | OutputType::UserStep => false,
+        Kind::Controls | Kind::GPXWaypoints | Kind::UserStep => false,
         _ => true,
     }
 }
@@ -288,7 +282,7 @@ pub fn is_osm(kind: &OutputType) -> bool {
 
 #[derive(Clone)]
 pub struct PointCollection {
-    pub map: BTreeMap<OutputType, Vec<InputPoint>>,
+    pub map: BTreeMap<Kind, Vec<InputPoint>>,
 }
 
 impl PointCollection {
@@ -311,7 +305,7 @@ impl PointCollection {
         self.map.insert(otype, points);
     }
 
-    pub fn get_vector(&self, otype: &OutputType) -> Vec<InputPoint> {
+    pub fn get_vector(&self, otype: &Kind) -> Vec<InputPoint> {
         match self.map.get(&otype) {
             Some(vector) => vector.clone(),
             None => Vec::new(),
@@ -320,29 +314,29 @@ impl PointCollection {
 
     pub fn potential_controls(&self) -> Vec<InputPoint> {
         let mut ret = Vec::new();
-        ret.extend_from_slice(&self.get_vector(&OutputType::Cities));
-        ret.extend_from_slice(&self.get_vector(&OutputType::Villages));
+        ret.extend_from_slice(&self.get_vector(&Kind::Cities));
+        ret.extend_from_slice(&self.get_vector(&Kind::Villages));
         ret
     }
 
     pub fn import_osm(&mut self, points: &Vec<InputPoint>, _track: &Track) {
         let empty = Vec::new();
-        self.map.insert(OutputType::Cities, empty.clone());
-        self.map.insert(OutputType::Hamlets, empty.clone());
-        self.map.insert(OutputType::Mountains, empty.clone());
-        self.map.insert(OutputType::Villages, empty.clone());
+        self.map.insert(Kind::Cities, empty.clone());
+        self.map.insert(Kind::Hamlets, empty.clone());
+        self.map.insert(Kind::Mountains, empty.clone());
+        self.map.insert(Kind::Villages, empty.clone());
 
         for k in 0..points.len() {
             let wi = points[k].clone();
-            if wi.kind() == OutputType::Cities || is_close_to_track(&wi) {
+            if wi.kind() == Kind::Cities || is_close_to_track(&wi) {
                 self.push(wi);
             }
         }
-        sort_by_elevation(&mut self.map.get_mut(&OutputType::Mountains).unwrap());
-        sort_by_population(&mut self.map.get_mut(&OutputType::Cities).unwrap());
-        sort_by_population(&mut self.map.get_mut(&OutputType::Villages).unwrap());
-        sort_by_population(&mut self.map.get_mut(&OutputType::Hamlets).unwrap());
-        let hamlets = self.map.get(&OutputType::Hamlets).unwrap();
+        sort_by_elevation(&mut self.map.get_mut(&Kind::Mountains).unwrap());
+        sort_by_population(&mut self.map.get_mut(&Kind::Cities).unwrap());
+        sort_by_population(&mut self.map.get_mut(&Kind::Villages).unwrap());
+        sort_by_population(&mut self.map.get_mut(&Kind::Hamlets).unwrap());
+        let hamlets = self.map.get(&Kind::Hamlets).unwrap();
         log::trace!("{} hamlets", hamlets.len());
     }
 
@@ -351,14 +345,14 @@ impl PointCollection {
     }
 
     fn ontrack_cities(&self) -> Vec<InputPoint> {
-        let mut cities = self.get_vector(&OutputType::Cities);
+        let mut cities = self.get_vector(&Kind::Cities);
         cities.retain(|w| is_close_to_track(&w));
         sort_by_population(&mut cities);
         cities
     }
 
     fn offtrack_cities(&self) -> Vec<InputPoint> {
-        let mut cities = self.get_vector(&OutputType::Cities);
+        let mut cities = self.get_vector(&Kind::Cities);
         cities.retain(|w| !is_close_to_track(&w));
         sort_by_distance_to_track(&mut cities);
         //sort_by_population(&mut cities);
@@ -373,13 +367,13 @@ impl PointCollection {
 
     fn export_profile(&self) -> Vec<Vec<InputPoint>> {
         vec![
-            self.get_vector(&OutputType::UserStep),
-            self.get_vector(&OutputType::Controls),
-            self.get_vector(&OutputType::GPXWaypoints),
+            self.get_vector(&Kind::UserStep),
+            self.get_vector(&Kind::Controls),
+            self.get_vector(&Kind::GPXWaypoints),
             self.ontrack_cities(), //self.cities_and_mountains(),
-            self.get_vector(&OutputType::Villages),
-            self.get_vector(&OutputType::Mountains),
-            self.get_vector(&OutputType::Hamlets),
+            self.get_vector(&Kind::Villages),
+            self.get_vector(&Kind::Mountains),
+            self.get_vector(&Kind::Hamlets),
         ]
     }
 
@@ -392,20 +386,20 @@ impl PointCollection {
     pub fn map(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
         let mut clone = self.clone();
         clone.range_cut(range);
-        let c = clone.get_vector(&OutputType::Villages);
+        let c = clone.get_vector(&Kind::Villages);
         log::trace!("c.len()={}", c.len());
         for p in c {
             log::trace!("p={}", p.name());
         }
 
         vec![
-            clone.get_vector(&OutputType::UserStep),
-            clone.get_vector(&OutputType::Controls),
-            clone.get_vector(&OutputType::GPXWaypoints),
+            clone.get_vector(&Kind::UserStep),
+            clone.get_vector(&Kind::Controls),
+            clone.get_vector(&Kind::GPXWaypoints),
             clone.ontrack_cities(),
-            clone.get_vector(&OutputType::Villages),
-            clone.get_vector(&OutputType::Mountains),
-            clone.get_vector(&OutputType::Hamlets),
+            clone.get_vector(&Kind::Villages),
+            clone.get_vector(&Kind::Mountains),
+            clone.get_vector(&Kind::Hamlets),
             clone.offtrack_cities(),
         ]
     }

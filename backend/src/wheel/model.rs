@@ -3,7 +3,7 @@ use crate::{
     controls,
     inputpoint::{InputPoint, Kinds},
     mercator::DateTime,
-    point_collection::OutputType,
+    point_collection::Kind,
     segment::SegmentData,
     track::Track,
     wheel::time_points,
@@ -135,7 +135,7 @@ impl WheelModel {
         }
     }
     pub fn add_points(&mut self, segment: &SegmentData, kinds: Kinds) {
-        if kinds.contains(&OutputType::Controls) {
+        if kinds.contains(&Kind::Controls) {
             let controls = get_control_points(segment);
             (self.has_start_control, self.has_end_control) =
                 controls::has_startend_controls(&segment.track, &controls);
@@ -150,7 +150,7 @@ impl WheelModel {
             }
             self.control_points.sort_by_key(|p| p.angle.floor() as i32);
         }
-        if kinds.contains(&OutputType::UserStep) {
+        if kinds.contains(&Kind::UserStep) {
             for c in get_mid_points(segment) {
                 for a in angles(&c, &segment.track) {
                     let cp = CirclePoint {

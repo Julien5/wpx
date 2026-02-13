@@ -6,7 +6,7 @@ use crate::{
     math,
     mercator::MercatorPoint,
     parameters::Parameters,
-    point_collection::{OutputType, SharedPacketProvider},
+    point_collection::{Kind, SharedPacketProvider},
     segment::SegmentData,
     track::Track,
     track_projection::{is_close_to_track, TrackProjection},
@@ -141,16 +141,16 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
 
 fn control_point_goodness(point: &InputPoint) -> i32 {
     let min_population = match point.kind() {
-        OutputType::Cities => 10000,
-        OutputType::Villages => 1000,
-        OutputType::Hamlets => 100,
+        Kind::Cities => 10000,
+        Kind::Villages => 1000,
+        Kind::Hamlets => 100,
         _ => 0,
     };
     match point.kind() {
-        OutputType::UserStep => {
+        Kind::UserStep => {
             return i32::MIN;
         }
-        OutputType::GPXWaypoints | OutputType::Controls => {
+        Kind::GPXWaypoints | Kind::Controls => {
             return i32::MAX;
         }
         _ => {

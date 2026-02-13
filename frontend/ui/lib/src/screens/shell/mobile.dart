@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/screens/controls/controls_screen.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/screens/load/load_screen.dart';

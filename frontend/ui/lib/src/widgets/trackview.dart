@@ -10,7 +10,7 @@ import 'package:ui/src/widgets/future_rendering_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class RendererParameters {
-  final Set<InputType> kinds;
+  final Set<Kind> kinds;
   final TrackData trackData;
   const RendererParameters({required this.kinds, required this.trackData});
   ValueKey createKey() {
@@ -23,7 +23,7 @@ class TrackView extends StatefulWidget {
   final RendererParameters parameters;
   const TrackView({super.key, required this.parameters});
 
-  static TrackView make(Set<InputType> kinds, TrackData trackData) {
+  static TrackView make(Set<Kind> kinds, TrackData trackData) {
     developer.log("[TrackView make] $trackData");
     RendererParameters p = RendererParameters(
       kinds: kinds,

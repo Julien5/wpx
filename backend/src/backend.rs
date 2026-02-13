@@ -16,7 +16,7 @@ use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
 use crate::parameters::UserStepsOptions;
 use crate::pdf;
-use crate::point_collection::OutputType;
+use crate::point_collection::Kind;
 use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
 use crate::profile;
@@ -114,7 +114,7 @@ impl Backend {
             .read()
             .unwrap()
             .collection
-            .get_vector(&OutputType::GPXWaypoints);
+            .get_vector(&Kind::GPXWaypoints);
         log::trace!("read {} waypoints", waypoints.len());
         let mut controls = match source {
             ControlSource::Segments => {
@@ -170,7 +170,7 @@ impl Backend {
             .read()
             .unwrap()
             .collection
-            .get_vector(&OutputType::GPXWaypoints);
+            .get_vector(&Kind::GPXWaypoints);
         log::trace!("read {} waypoints", o.len());
 
         self.send("compute elevation");
@@ -293,7 +293,7 @@ impl Backend {
             .read()
             .unwrap()
             .collection
-            .get_vector(&OutputType::UserStep);
+            .get_vector(&Kind::UserStep);
         v.iter().for_each(|p| {
             assert!(!p.track_projections.is_empty());
         });
@@ -479,19 +479,19 @@ impl Backend {
 #[cfg(test)]
 mod tests {
     use crate::{
-        backend::{Backend, BackendData},
-        inputpoint::{self},
+        backend::Backend,
+        inputpoint,
         math::IntegerSize2D,
         parameters::{self, ControlSource, ProfileIndication},
-        point_collection::OutputType,
+        point_collection::Kind,
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
 
     fn check(backend: &Backend) {
         let coll = &backend.d().packet_provider.read().unwrap().collection;
-        let w = coll.get_vector(&OutputType::GPXWaypoints);
-        let c = coll.get_vector(&OutputType::Controls);
+        let w = coll.get_vector(&Kind::GPXWaypoints);
+        let c = coll.get_vector(&Kind::Controls);
         log::trace!("c={}", c.len());
         log::trace!("w={}", w.len());
     }
@@ -604,7 +604,7 @@ mod tests {
         let controls = seg.controls();
         let len = controls.len();
         assert!(len > 0);
-        let kinds = std::collections::HashSet::from([OutputType::Controls]);
+        let kinds = std::collections::HashSet::from([Kind::Controls]);
         let waypoints = backend.get_waypoints(&fseg, kinds);
         assert!(!waypoints.is_empty());
         for waypoint in waypoints {
