@@ -601,9 +601,10 @@ mod tests {
         parameters.map_options.max_area_ratio = 0.15f64;
         backend.set_parameters(&parameters);
 
-        let segment = backend.make_segment_data(&backend.trackSegment());
+        let segment = &backend.trackSegment();
         let map_size = IntegerSize2D::new(800, 800);
-        let result = segment.render_map(&map_size, &point_collection::allkinds());
+        let result =
+            backend.render_segment_what(&segment, "map", &map_size, point_collection::allkinds());
         let reffilename = std::format!("data/ref/largemap.svg");
         println!("test {}", reffilename);
         let refdata = if std::fs::exists(&reffilename).unwrap() {
@@ -612,8 +613,8 @@ mod tests {
             String::new()
         };
         let tmpfilename = std::format!("/tmp/largemap.svg");
-        std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
-        if refdata != result.svg {
+        std::fs::write(&tmpfilename, result.clone()).unwrap();
+        if refdata != result {
             println!("test failed: {} {}", tmpfilename, reffilename);
             assert!(false);
         }
