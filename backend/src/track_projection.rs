@@ -75,7 +75,8 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
     if d < dmin {
         return true;
     }
-    if is_osm(&w.kind()) {
+    let kind = w.kind();
+    if is_osm(&kind) && kind != Kind::Mountains {
         let kind = w.kind();
         let pop = w.population().unwrap_or(population_estimate(&kind));
         // the factor 20 was suggested by gemini

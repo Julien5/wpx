@@ -469,6 +469,7 @@ impl ProfileView {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
+                log::trace!("add to profile: {}", w.name());
                 for proj in &w.track_projections {
                     let index = proj.track_index;
                     let trackpoint = &track.wgs84[index];

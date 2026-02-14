@@ -250,6 +250,8 @@ pub fn allkinds() -> Kinds {
         Kind::Cities,
         Kind::Villages,
         Kind::Controls,
+        Kind::Mountains,
+        Kind::Hamlets,
     ])
 }
 
@@ -303,6 +305,7 @@ impl PointCollection {
 
         for k in 0..points.len() {
             let wi = points[k].clone();
+            // insert also offtrack cities
             if wi.kind() == Kind::Cities || is_close_to_track(&wi) {
                 self.push(wi);
             }
@@ -353,8 +356,8 @@ impl PointCollection {
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),
-            clone.get_vector(&Kind::GPXWaypoints),
-            clone.ontrack_cities(), //clone.cities_and_mountains(),
+            //clone.get_vector(&Kind::GPXWaypoints),
+            clone.ontrack_cities(),
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),
             clone.get_vector(&Kind::Hamlets),
@@ -366,7 +369,7 @@ impl PointCollection {
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),
-            clone.get_vector(&Kind::GPXWaypoints),
+            //clone.get_vector(&Kind::GPXWaypoints),
             clone.ontrack_cities(),
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),

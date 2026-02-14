@@ -132,7 +132,7 @@ impl SegmentData {
     }
 
     pub fn render_profile(&self, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
-        log::info!("render profile:{}", self.id());
+        log::info!("render profile:{} kinds:{:?}", self.id(), kinds);
         let ret = {
             let lock = self.packet_provider.read().unwrap();
             let mut collection = lock.load(

@@ -146,7 +146,7 @@ fn place_subset(
                 ret.placed_indices.insert(k, candidate.bbox().clone());
             }
             _ => {
-                //log::trace!("failed to find any candidate for [{}]", target_text);
+                log::trace!("failed to find any candidate for [{}]", target_text);
             }
         }
     }
