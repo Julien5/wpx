@@ -25,7 +25,6 @@ pub struct RenderResult {
 
 #[derive(Clone)]
 struct RenderInputParameters {
-    controls: Vec<InputPoint>,
     parameters: Parameters,
     range: std::ops::Range<usize>,
     screen_size: IntegerSize2D,
@@ -166,7 +165,6 @@ impl PacketProvider {
             range: range.clone(),
             screen_size: size.clone(),
             parameters: parameters.clone(),
-            controls: self.collection.get_vector(&Kind::Controls),
         };
         let mut output = result.clone();
         output.rendered.retain(|w| w.kind() != Kind::UserStep);
@@ -192,7 +190,6 @@ impl PacketProvider {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
-            controls: self.collection.get_vector(&Kind::Controls),
         };
         self.results.hit(function, &p).is_some()
     }
@@ -208,7 +205,6 @@ impl PacketProvider {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
-            controls: self.collection.get_vector(&Kind::Controls),
         };
         match self.results.hit(function, &p) {
             Some(result) => {

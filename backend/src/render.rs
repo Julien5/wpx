@@ -142,24 +142,23 @@ pub fn make_typst_document(backend: &Backend) -> String {
         let table = points_table(&templates, &backend.d().track, &waypoints_table);
         let profile_size = Size2D::new(1420, 400);
         let map_size = Size2D::new(400, 400);
-        let rendered_profile = segment.render_profile(&profile_size, &allkinds);
+        let rendered_profile = backend.render_segment_what(
+            &segment.segment,
+            "profile",
+            &profile_size,
+            allkinds.clone(),
+        );
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id());
-            std::fs::write(&f, &rendered_profile.svg).unwrap();
+            std::fs::write(&f, &rendered_profile).unwrap();
         }
-        let m = segment.render_map(&map_size, &allkinds);
+        let m = backend.render_segment_what(&segment.segment, "map", &map_size, allkinds.clone());
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id());
-            std::fs::write(&f, &m.svg).unwrap();
+            std::fs::write(&f, &m).unwrap();
         }
         log::trace!("link segment {}", segment.id());
-        link(
-            &templates,
-            &rendered_profile.svg,
-            &m.svg,
-            &table,
-            &mut document,
-        );
+        link(&templates, &rendered_profile, &m, &table, &mut document);
         if range.end == backend.d().track.len() {
             break;
         }

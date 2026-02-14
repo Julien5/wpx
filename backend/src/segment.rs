@@ -1,4 +1,4 @@
-use std::collections::{self, HashSet};
+use std::collections::HashSet;
 
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;

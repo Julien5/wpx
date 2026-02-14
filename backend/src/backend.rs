@@ -375,7 +375,7 @@ impl Backend {
     }
 
     pub fn render_segment_what(
-        &mut self,
+        &self,
         segment: &Segment,
         what: &str,
         size: &IntegerSize2D,
@@ -431,7 +431,7 @@ impl Backend {
         ret
     }
 
-    fn render_yaxis_labels_overlay(&mut self, segment: &Segment, size: &IntegerSize2D) -> String {
+    fn render_yaxis_labels_overlay(&self, segment: &Segment, size: &IntegerSize2D) -> String {
         let profile_bbox =
             gpsdata::ProfileBoundingBox::from_track(&self.d().track, &segment.start, &segment.end);
         let mut profile =
