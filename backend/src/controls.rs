@@ -384,9 +384,7 @@ mod tests {
         track.project_map(&mut osmpoints);
 
         let mut provider = PacketProvider::new();
-        provider
-            .collection
-            .import_osm(&osmpoints.as_vector(), &track);
+        provider.collection.import_osm(&osmpoints.as_vector());
         let provider = SharedPacketProvider::new(provider.into());
 
         make_controls_with_osm(&track, provider)

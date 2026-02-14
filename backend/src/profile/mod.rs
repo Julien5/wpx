@@ -15,7 +15,7 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::*;
 use crate::math::{distance2, IntegerSize2D, Point2D};
 use crate::parameters::{ProfileIndication, ProfileOptions};
-use crate::point_collection::{is_osm, Kind, Kinds, RenderResult};
+use crate::point_collection::{is_osm, Kind, Packets, RenderResult};
 use crate::segment::{self, SegmentData};
 use crate::track::Track;
 use elements::*;
@@ -415,7 +415,7 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_segment(&mut self, segment: &SegmentData, kinds: &Kinds) {
+    pub fn add_segment(&mut self, segment: &SegmentData, packets: &Packets) {
         let bbox = &self.bboxview;
 
         /*if render_device != RenderDevice::PDF {
@@ -463,19 +463,12 @@ impl ProfileView {
             _WD: self.WD(),
             _HD: self.HD(),
         }); // make features packets
-        let packets = segment.profile_packets(&IntegerSize2D::new(
-            self.W.floor() as i32,
-            self.H.floor() as i32,
-        ));
         let mut feature_packets = Vec::new();
         let mut feature_unlabeled = Vec::new();
         let mut counter = 0;
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
-                if !kinds.contains(&w.kind()) {
-                    continue;
-                }
                 for proj in &w.track_projections {
                     let index = proj.track_index;
                     let trackpoint = &track.wgs84[index];
@@ -667,13 +660,13 @@ impl ProfileGenerator {
 pub fn profile(
     segment: &segment::SegmentData,
     size: &IntegerSize2D,
-    kinds: &Kinds,
+    packets: &Packets,
 ) -> RenderResult {
     let profile_bbox =
         ProfileBoundingBox::from_track(&segment.track, &segment.start(), &segment.end());
     let mut view = ProfileView::init(&profile_bbox, size, &segment.parameters.profile_options);
     view.add_canvas();
-    view.add_segment(&segment, kinds);
+    view.add_segment(&segment, packets);
     view.render_model();
     view.render()
 }

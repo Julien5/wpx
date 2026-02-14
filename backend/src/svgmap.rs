@@ -6,7 +6,7 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
-use crate::point_collection::{Kinds, RenderResult};
+use crate::point_collection::{Packets, RenderResult};
 use crate::segment::SegmentData;
 use crate::track::Track;
 
@@ -85,7 +85,7 @@ pub fn euclidean_bounding_box(
 }
 
 impl MapData {
-    pub fn make(segment: &SegmentData, size: &IntegerSize2D, kinds: &Kinds) -> MapData {
+    pub fn make(segment: &SegmentData, size: &IntegerSize2D, packets: &Packets) -> MapData {
         let mut bbox = segment.map_box().clone();
         bbox.fix_aspect_ratio(size);
         let mut path = Vec::new();
@@ -117,16 +117,13 @@ impl MapData {
 
         let generator = Box::new(MapGenerator {});
         // this is slow.
-        let packets = segment.map_packets(size);
+
         let mut feature_packets = Vec::new();
         let mut feature_unlabeled = Vec::new();
         let mut counter = 0;
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
-                if !kinds.contains(&w.kind()) {
-                    continue;
-                }
                 let euclidean = w.euclidean.clone();
                 if !bbox.contains(&euclidean.point2d()) {
                     continue;
@@ -223,8 +220,8 @@ impl MapData {
     }
 }
 
-pub fn map(segment: &SegmentData, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
-    let svgMap = MapData::make(segment, size, kinds);
+pub fn map(segment: &SegmentData, size: &IntegerSize2D, packets: &Packets) -> RenderResult {
+    let svgMap = MapData::make(segment, size, packets);
     svgMap.render()
 }
 

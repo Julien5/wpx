@@ -67,16 +67,12 @@ impl RenderInputParameters {
             log::trace!("missmatch: range end");
             return false;
         }
-        if self.controls != other.controls {
-            log::trace!("missmatch: controls");
-            return false;
-        }
         true
     }
 }
 
 #[derive(Clone, PartialEq, Eq)]
-enum RenderFunction {
+pub enum RenderFunction {
     Map,
     Profile,
 }
@@ -158,7 +154,7 @@ impl PacketProvider {
     ) {
         self.register_result(&RenderFunction::Profile, parameters, range, size, result);
     }
-    fn register_result(
+    pub fn register_result(
         &mut self,
         function: &RenderFunction,
         parameters: &Parameters,
@@ -184,55 +180,49 @@ impl PacketProvider {
         }
         log::trace!("cache size: {}", self.results.size());
     }
-    pub fn map(
+
+    pub fn hit(
         &self,
+        function: &RenderFunction,
         range: &std::ops::Range<usize>,
         parameters: &Parameters,
         size: &IntegerSize2D,
-    ) -> Vec<Vec<InputPoint>> {
+    ) -> bool {
         let p = RenderInputParameters {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
             controls: self.collection.get_vector(&Kind::Controls),
         };
-        match self.results.hit(&RenderFunction::Map, &p) {
-            Some(result) => {
-                log::trace!("packet provider map cache hit");
-                // HACK: the user steps are "updated in the cache".
-                // TODO: Fix this later.
-                let usersteps = self.collection.get_vector(&Kind::UserStep);
-                vec![usersteps, result.rendered]
-            }
-            None => {
-                log::trace!("packet provider map cache miss");
-                self.collection.map(range)
-            }
-        }
+        self.results.hit(function, &p).is_some()
     }
-    pub fn profile(
+
+    pub fn load(
         &self,
+        function: &RenderFunction,
         range: &std::ops::Range<usize>,
         parameters: &Parameters,
         size: &IntegerSize2D,
-    ) -> Vec<Vec<InputPoint>> {
+    ) -> PointCollection {
         let p = RenderInputParameters {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
             controls: self.collection.get_vector(&Kind::Controls),
         };
-        match self.results.hit(&RenderFunction::Profile, &p) {
+        match self.results.hit(function, &p) {
             Some(result) => {
                 log::trace!("packet provider profile cache hit");
-                // HACK: the user steps are "updated in the cache".
-                // TODO: Fix this later.
-                let usersteps = self.collection.get_vector(&Kind::UserStep);
-                vec![usersteps, result.rendered]
+                let mut ret = self.collection.clone();
+                // TODO: we should avoid to copy all osm points
+                ret.import_osm(&result.rendered);
+                ret.range_cut(range);
+                ret
             }
             None => {
                 log::trace!("packet provider profile cache miss");
-                self.collection.profile(range)
+                assert!(false);
+                PointCollection::new()
             }
         }
     }
@@ -272,6 +262,8 @@ pub struct PointCollection {
     pub map: BTreeMap<Kind, Vec<InputPoint>>,
 }
 
+pub type Packets = Vec<Vec<InputPoint>>;
+
 impl PointCollection {
     pub fn new() -> Self {
         PointCollection {
@@ -306,7 +298,7 @@ impl PointCollection {
         ret
     }
 
-    pub fn import_osm(&mut self, points: &Vec<InputPoint>, _track: &Track) {
+    pub fn import_osm(&mut self, points: &Vec<InputPoint>) {
         let empty = Vec::new();
         self.map.insert(Kind::Cities, empty.clone());
         self.map.insert(Kind::Hamlets, empty.clone());
@@ -354,9 +346,14 @@ impl PointCollection {
             .for_each(|(_key, points)| points.retain(|point| point.is_in_range(range)));
     }
 
-    pub fn profile(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
-        let mut clone = self.clone();
-        clone.range_cut(range);
+    pub fn kinds_cut(&mut self, kinds: &Kinds) {
+        self.map
+            .iter_mut()
+            .for_each(|(_key, points)| points.retain(|point| kinds.contains(&point.kind())));
+    }
+
+    pub fn profile(&self) -> Packets {
+        let clone = self.clone();
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),
@@ -368,9 +365,8 @@ impl PointCollection {
         ]
     }
 
-    pub fn map(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
-        let mut clone = self.clone();
-        clone.range_cut(range);
+    pub fn map(&self) -> Packets {
+        let clone = self.clone();
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),

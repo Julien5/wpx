@@ -1,8 +1,10 @@
+use std::collections::{self, HashSet};
+
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
-use crate::point_collection::{Kind, Kinds, RenderResult, SharedPacketProvider};
+use crate::point_collection::{Kind, Kinds, RenderFunction, RenderResult, SharedPacketProvider};
 use crate::track::SharedTrack;
 use crate::{profile, svgmap};
 
@@ -83,9 +85,65 @@ impl SegmentData {
         svgmap::euclidean_bounding_box(&self.track, &self.range())
     }
 
+    pub fn preload(&self, size: &IntegerSize2D) {
+        let osmkinds =
+            HashSet::from([Kind::Cities, Kind::Villages, Kind::Mountains, Kind::Hamlets]);
+        let mut parameters = Parameters::default();
+        parameters.profile_options.max_area_ratio = parameters
+            .profile_options
+            .max_area_ratio
+            .max(self.parameters.profile_options.max_area_ratio);
+        parameters.map_options.max_area_ratio = parameters
+            .map_options
+            .max_area_ratio
+            .max(self.parameters.map_options.max_area_ratio);
+        parameters.profile_options.elevation_indicators.clear();
+
+        {
+            let lock = self.packet_provider.read().unwrap();
+            if lock.hit(&RenderFunction::Map, &self.range(), &parameters, size)
+                && lock.hit(&RenderFunction::Profile, &self.range(), &parameters, size)
+            {
+                log::trace!("preload hit");
+                return;
+            }
+        }
+        log::trace!("preload build");
+
+        let collection = {
+            let lock = self.packet_provider.read().unwrap();
+            let mut coll = lock.collection.clone();
+            // remove user steps and controls, we render only osm
+            coll.import_other(&Kind::UserStep, Vec::new(), &self.track);
+            coll.import_other(&Kind::Controls, Vec::new(), &self.track);
+            coll.range_cut(&self.range());
+            coll.kinds_cut(&osmkinds);
+            coll
+        };
+
+        let mut lock = self.packet_provider.write().unwrap();
+        let profile_packets = collection.profile();
+        let result_profile = profile::profile(&self, size, &profile_packets);
+        lock.register_profile_result(&parameters, &self.range(), size, &result_profile);
+
+        let map_packets = collection.map();
+        let result_map = svgmap::map(&self, size, &map_packets);
+        lock.register_map_result(&parameters, &self.range(), size, &result_map);
+    }
+
     pub fn render_profile(&self, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
         log::info!("render profile:{}", self.id());
-        let ret = profile::profile(&self, size, kinds);
+        let ret = {
+            let lock = self.packet_provider.read().unwrap();
+            let mut collection = lock.load(
+                &RenderFunction::Profile,
+                &self.range(),
+                &self.parameters,
+                size,
+            );
+            collection.kinds_cut(kinds);
+            profile::profile(&self, size, &collection.profile())
+        };
         if self.parameters.debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id());
             std::fs::write(filename, &ret.svg).expect("Unable to write file");
@@ -95,24 +153,17 @@ impl SegmentData {
 
     pub fn render_map(&self, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
         log::info!("render map:{}", self.id());
-        let ret = svgmap::map(&self, size, kinds);
+        let ret = {
+            let lock = self.packet_provider.read().unwrap();
+            let mut collection =
+                lock.load(&RenderFunction::Map, &self.range(), &self.parameters, size);
+            collection.kinds_cut(kinds);
+            svgmap::map(&self, size, &collection.map())
+        };
         if self.parameters.debug {
             let filename = std::format!("/tmp/map-{}.svg", self.id());
             std::fs::write(filename, &ret.svg).expect("Unable to write file");
         }
         ret
-    }
-
-    pub fn profile_packets(&self, screen_size: &IntegerSize2D) -> Vec<Vec<InputPoint>> {
-        self.packet_provider
-            .read()
-            .unwrap()
-            .profile(&self.range(), &self.parameters, &screen_size)
-    }
-    pub fn map_packets(&self, screen_size: &IntegerSize2D) -> Vec<Vec<InputPoint>> {
-        self.packet_provider
-            .read()
-            .unwrap()
-            .map(&self.range(), &self.parameters, &screen_size)
     }
 }

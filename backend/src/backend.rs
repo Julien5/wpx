@@ -100,9 +100,7 @@ impl Backend {
             // TODO: osmpoints are sorted per tile.
             // we loose the sorting. Performance loss is okay, but this probably needs cleanup.
             let mut locked = self.d().packet_provider.write().unwrap();
-            locked
-                .collection
-                .import_osm(&osmpoints.as_vector(), &self.d().track);
+            locked.collection.import_osm(&osmpoints.as_vector());
         }
 
         Ok(())
@@ -379,7 +377,7 @@ impl Backend {
     pub fn render_segment_what(
         &mut self,
         segment: &Segment,
-        what: &String,
+        what: &str,
         size: &IntegerSize2D,
         kinds: Kinds,
     ) -> String {
@@ -391,18 +389,15 @@ impl Backend {
             size.height
         );
         let data = self.make_segment_data(segment);
+        data.preload(size);
 
-        let ret = match what.as_str() {
+        let ret = match what {
             "profile" => {
                 let result = data.render_profile(size, &kinds);
-                let mut lock = self.d().packet_provider.write().unwrap();
-                lock.register_profile_result(&data.parameters, &data.range(), size, &result);
                 result.svg
             }
             "map" => {
                 let result = data.render_map(size, &kinds);
-                let mut lock = self.d().packet_provider.write().unwrap();
-                lock.register_map_result(&data.parameters, &data.range(), size, &result);
                 result.svg
             }
             "ylabels" => self.render_yaxis_labels_overlay(&segment, size),
@@ -512,31 +507,30 @@ mod tests {
 
         backend.set_parameters(&parameters);
 
-        let fsegments = backend.segments();
-        let segments: Vec<_> = fsegments
-            .iter()
-            .map(|f| backend.make_segment_data(&f))
-            .collect();
+        let segments = backend.segments();
         let mut ok_count = 0;
-        for k in 0..segments.len() {
-            let segment = &segments[k];
-            let rendered_profile = segment.render_profile(
-                &IntegerSize2D::new(1420, 400),
-                &point_collection::allkinds(),
+        let profile_size = IntegerSize2D::new(1420, 400);
+        for segment in &segments {
+            let result = backend.render_segment_what(
+                &segment,
+                "profile",
+                &profile_size,
+                point_collection::allkinds(),
             );
-            let reffilename = std::format!("data/ref/profile-{}.svg", segment.id());
+
+            let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
             println!("test {}", reffilename);
             let reference_svg = if std::fs::exists(&reffilename).unwrap() {
                 std::fs::read_to_string(&reffilename).unwrap()
             } else {
                 String::new()
             };
-            if reference_svg == rendered_profile.svg {
+            if reference_svg == result {
                 ok_count += 1;
             }
-            let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id());
-            std::fs::write(&tmpfilename, rendered_profile.svg.clone()).unwrap();
-            if reference_svg != rendered_profile.svg {
+            let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id);
+            std::fs::write(&tmpfilename, result.clone()).unwrap();
+            if reference_svg != result {
                 println!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
@@ -635,30 +629,31 @@ mod tests {
         parameters.map_options.max_area_ratio = 0.15f64;
         backend.set_parameters(&parameters);
 
-        let fsegments = backend.segments();
-        let segments: Vec<_> = fsegments
-            .iter()
-            .map(|f| backend.make_segment_data(&f))
-            .collect();
-
+        let segments = backend.segments();
         let map_size = IntegerSize2D::new(400, 400);
 
         let mut ok_count = 0;
         for segment in &segments {
-            let result = segment.render_map(&map_size, &point_collection::allkinds());
-            let reffilename = std::format!("data/ref/map-{}.svg", segment.id());
+            let result = backend.render_segment_what(
+                &segment,
+                "map",
+                &map_size,
+                point_collection::allkinds(),
+            );
+
+            let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
             println!("test {}", reffilename);
             let refdata = if std::fs::exists(&reffilename).unwrap() {
                 std::fs::read_to_string(&reffilename).unwrap()
             } else {
                 String::new()
             };
-            if refdata == result.svg {
+            if refdata == result {
                 ok_count += 1;
             }
-            let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id());
-            std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
-            if refdata != result.svg {
+            let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id);
+            std::fs::write(&tmpfilename, result.clone()).unwrap();
+            if refdata != result {
                 println!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
