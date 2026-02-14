@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
-    mercator::{EuclideanBoundingBox, MercatorPoint},
+    mercator::MercatorPoint,
     point_collection::Kind,
     tile::{self, Tile},
     track::Track,
@@ -318,86 +318,31 @@ pub struct InputPointMap {
     pub map: BTreeMap<Tile, Vec<InputPoint>>,
 }
 
-use std::slice::{Iter, IterMut};
-
 impl InputPointMap {
-    // Returns an iterator over all InputPoints
+    pub fn new() -> InputPointMap {
+        InputPointMap {
+            map: BTreeMap::new(),
+        }
+    }
+
     pub fn iter(&self) -> impl Iterator<Item = &InputPoint> {
         self.map.values().flat_map(|vector| vector.iter())
     }
-    // Returns a mutable iterator over all InputPoints
+
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut InputPoint> {
         self.map.values_mut().flat_map(|vector| vector.iter_mut())
     }
 
-    pub fn points_in<'a>(
-        &'a self,
-        largebox: &'a EuclideanBoundingBox,
-    ) -> impl Iterator<Item = &'a InputPoint> {
-        self.map
-            .iter()
-            .filter(move |(tile, _)| tile.bbox().overlap(largebox))
-            .flat_map(|(_, vector)| vector.iter())
-    }
     pub fn from_string(data: &str) -> Result<InputPointMap, serde_json::Error> {
         let map: Vec<(Tile, Vec<InputPoint>)> = serde_json::from_str(data)?;
         Ok(InputPointMap {
             map: map.into_iter().collect(),
         })
     }
+
     pub fn as_string(&self) -> Result<String, serde_json::Error> {
         let entries: Vec<(&Tile, &Vec<InputPoint>)> = self.map.iter().collect();
         serde_json::to_string(&entries)
-    }
-}
-
-// Implement IntoIterator for &InputPointMap
-impl<'a> IntoIterator for &'a InputPointMap {
-    type Item = &'a InputPoint;
-    type IntoIter = std::iter::FlatMap<
-        std::collections::btree_map::Values<'a, Tile, Vec<InputPoint>>,
-        Iter<'a, InputPoint>,
-        fn(&'a Vec<InputPoint>) -> Iter<'a, InputPoint>,
-    >;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.map.values().flat_map(|v| v.iter())
-    }
-}
-
-// Implement IntoIterator for &mut InputPointMap
-impl<'a> IntoIterator for &'a mut InputPointMap {
-    type Item = &'a mut InputPoint;
-    type IntoIter = std::iter::FlatMap<
-        std::collections::btree_map::ValuesMut<'a, Tile, Vec<InputPoint>>,
-        IterMut<'a, InputPoint>,
-        fn(&'a mut Vec<InputPoint>) -> IterMut<'a, InputPoint>,
-    >;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.map.values_mut().flat_map(|vector| vector.iter_mut())
-    }
-}
-
-pub struct InputPointMaps {
-    pub maps: BTreeMap<Kind, InputPointMap>,
-}
-
-pub type SharedPointMaps = std::sync::Arc<std::sync::RwLock<InputPointMaps>>;
-
-impl InputPointMaps {
-    pub fn new() -> Self {
-        Self {
-            maps: BTreeMap::new(),
-        }
-    }
-}
-
-impl InputPointMap {
-    pub fn new() -> InputPointMap {
-        InputPointMap {
-            map: BTreeMap::new(),
-        }
     }
 
     pub fn from_vector(points: &Vec<InputPoint>) -> InputPointMap {
@@ -409,7 +354,6 @@ impl InputPointMap {
     }
 
     pub fn insert_point(&mut self, p: &InputPoint) {
-        //self.map.entry(bbox).or_default().push(p.clone());
         let tile = tile::Tile::for_point(&p.euclidean);
         match self.map.get_mut(&tile) {
             Some(v) => v.push(p.clone()),
@@ -418,6 +362,7 @@ impl InputPointMap {
             }
         }
     }
+
     pub fn insert_points(&mut self, b: &Tile, p: &Vec<InputPoint>) {
         match self.map.get_mut(&b) {
             Some(v) => v.extend_from_slice(p),
@@ -425,20 +370,6 @@ impl InputPointMap {
                 self.map.insert(b.clone(), p.clone());
             }
         }
-    }
-    pub fn sort_and_insert(&mut self, p: &Vec<InputPoint>) {
-        for w in p {
-            self.insert_point(&w);
-        }
-    }
-    pub fn extend(&mut self, other: &Self) {
-        for (bbox, points) in &other.map {
-            self.insert_points(bbox, points);
-        }
-    }
-
-    pub fn clear(&mut self) {
-        self.map.clear();
     }
 
     pub fn as_vector(&self) -> Vec<InputPoint> {
@@ -448,16 +379,13 @@ impl InputPointMap {
         }
         ret
     }
+
     pub fn get(&self, tile: &Tile) -> Option<&Vec<InputPoint>> {
         self.map.get(tile)
     }
+
     pub fn get_mut(&mut self, tile: &Tile) -> Option<&mut Vec<InputPoint>> {
         self.map.get_mut(tile)
-    }
-    pub fn retain_points(&mut self, predicate: impl Fn(&InputPoint) -> bool) {
-        for (_bbox, points) in &mut self.map {
-            points.retain(|w| predicate(w));
-        }
     }
 }
 

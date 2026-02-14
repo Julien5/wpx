@@ -116,7 +116,6 @@ impl Backend {
             .unwrap()
             .collection
             .get_vector(&Kind::GPXWaypoints);
-        log::trace!("read {} waypoints", waypoints.len());
         let mut controls = match source {
             ControlSource::Segments => {
                 controls::infer_controls_from_gpx_segments(&self.d().track, &waypoints)
@@ -142,7 +141,6 @@ impl Backend {
         {
             let mut locked = self.d().packet_provider.write().unwrap();
             let track = &self.d().track;
-            log::trace!("import controls len()={}", len);
             locked
                 .collection
                 .import_other(&Kind::Controls, controls, track);
@@ -155,7 +153,6 @@ impl Backend {
         self.send("read gpx");
         let mut gpxdata = gpsdata::read_content(content)?;
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
-        log::trace!("read {} waypoints", gpxdata.waypoints.len());
         let track = std::sync::Arc::new(track_data);
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
@@ -168,13 +165,6 @@ impl Backend {
             gpxdata.waypoints,
             &track,
         );
-
-        let o = point_collection
-            .read()
-            .unwrap()
-            .collection
-            .get_vector(&Kind::GPXWaypoints);
-        log::trace!("read {} waypoints", o.len());
 
         self.send("compute elevation");
         let data = BackendData {
@@ -494,30 +484,17 @@ mod tests {
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
 
-    fn check(backend: &Backend) {
-        let coll = &backend.d().packet_provider.read().unwrap().collection;
-        let w = coll.get_vector(&Kind::GPXWaypoints);
-        let c = coll.get_vector(&Kind::Controls);
-        log::trace!("c={}", c.len());
-        log::trace!("w={}", w.len());
-    }
-
     async fn load_test_data() -> Backend {
         let mut backend = Backend::make();
         backend
             .load_filename("data/blackforest.gpx")
             .await
             .expect("fail");
-        check(&backend);
-        log::trace!("<load osm>");
         backend.load_osm().await.unwrap();
-        log::trace!("<load osm done>");
-        check(&backend);
         backend
             .load_controls(ControlSource::Waypoints)
             .await
             .unwrap();
-        check(&backend);
         backend
     }
 

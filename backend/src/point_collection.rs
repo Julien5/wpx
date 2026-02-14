@@ -267,32 +267,6 @@ pub fn allkinds() -> Kinds {
     ])
 }
 
-/*pub fn output_type(point: &InputPoint) -> OutputType {
-    match point.kind() {
-        OutputType::GPX => {
-            return OutputType::GPXWaypoints;
-        }
-        OutputType::Control => {
-            return OutputType::Controls;
-        }
-        OutputType::UserStep => {
-            return OutputType::UserStep;
-        }
-        OutputType::OSM => match point.osmkind().unwrap() {
-            OSMType::City => {
-                if is_close_to_track(&point) {
-                    return OutputType::Cities;
-                }
-                return OutputType::OfftrackCities;
-            }
-            OSMType::Peak => return OutputType::Mountains,
-            OSMType::MountainPass => return OutputType::Mountains,
-            OSMType::Hamlet => return OutputType::Hamlets,
-            OSMType::Village => return OutputType::Villages,
-        },
-    }
-}*/
-
 #[derive(Clone)]
 pub struct PointCollection {
     pub map: BTreeMap<Kind, Vec<InputPoint>>,
@@ -349,8 +323,6 @@ impl PointCollection {
         sort_by_population(&mut self.map.get_mut(&Kind::Cities).unwrap());
         sort_by_population(&mut self.map.get_mut(&Kind::Villages).unwrap());
         sort_by_population(&mut self.map.get_mut(&Kind::Hamlets).unwrap());
-        let hamlets = self.map.get(&Kind::Hamlets).unwrap();
-        log::trace!("{} hamlets", hamlets.len());
     }
 
     pub fn import_other(&mut self, kind: &Kind, points: Vec<InputPoint>, _track: &Track) {
@@ -382,33 +354,23 @@ impl PointCollection {
             .for_each(|(_key, points)| points.retain(|point| point.is_in_range(range)));
     }
 
-    fn export_profile(&self) -> Vec<Vec<InputPoint>> {
-        vec![
-            self.get_vector(&Kind::UserStep),
-            self.get_vector(&Kind::Controls),
-            self.get_vector(&Kind::GPXWaypoints),
-            self.ontrack_cities(), //self.cities_and_mountains(),
-            self.get_vector(&Kind::Villages),
-            self.get_vector(&Kind::Mountains),
-            self.get_vector(&Kind::Hamlets),
-        ]
-    }
-
     pub fn profile(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
         let mut clone = self.clone();
         clone.range_cut(range);
-        clone.export_profile()
+        vec![
+            clone.get_vector(&Kind::UserStep),
+            clone.get_vector(&Kind::Controls),
+            clone.get_vector(&Kind::GPXWaypoints),
+            clone.ontrack_cities(), //clone.cities_and_mountains(),
+            clone.get_vector(&Kind::Villages),
+            clone.get_vector(&Kind::Mountains),
+            clone.get_vector(&Kind::Hamlets),
+        ]
     }
 
     pub fn map(&self, range: &std::ops::Range<usize>) -> Vec<Vec<InputPoint>> {
         let mut clone = self.clone();
         clone.range_cut(range);
-        let c = clone.get_vector(&Kind::Villages);
-        log::trace!("c.len()={}", c.len());
-        for p in c {
-            log::trace!("p={}", p.name());
-        }
-
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),

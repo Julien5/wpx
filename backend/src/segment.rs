@@ -3,7 +3,6 @@ use crate::inputpoint::InputPoint;
 use crate::math::IntegerSize2D;
 use crate::parameters::Parameters;
 use crate::point_collection::{Kind, Kinds, RenderResult, SharedPacketProvider};
-use crate::tile::Tiles;
 use crate::track::SharedTrack;
 use crate::{profile, svgmap};
 
@@ -17,7 +16,6 @@ pub struct Segment {
 pub struct SegmentData {
     pub segment: Segment,
     pub track: SharedTrack,
-    pub boxes: Tiles,
     pub parameters: Parameters,
     pub packet_provider: SharedPacketProvider,
 }
@@ -36,12 +34,9 @@ impl SegmentData {
         packet_provider: SharedPacketProvider,
         parameters: Parameters,
     ) -> SegmentData {
-        let boxes = track.tiles(segment.start, segment.end);
         SegmentData {
             segment: segment.clone(),
             track,
-            boxes,
-            //pointmaps: SharedPointMaps::new(InputPointMaps::new().into()),
             packet_provider: packet_provider,
             parameters: parameters,
         }
