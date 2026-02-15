@@ -85,7 +85,7 @@ impl Label {
         self.text = String::from_str(s).unwrap();
         let width = text_width(s);
         self.bbox = LabelBoundingBox::new_relative(
-            &BoundingBox::minsize(Point2D::new(0.0, -FONTSIZE), &width, &FONTSIZE),
+            &BoundingBox::minsize(Point2D::new(0.0, -FONTSIZE), width, FONTSIZE),
             &Point2D::zero(),
         );
     }
@@ -387,7 +387,6 @@ impl Obstacles {
     }
 
     pub fn available_area(&self) -> f64 {
-        self.drawingbox.bbox.area() * self.drawingbox.max_area_ratio
-            - self.bboxes.iter().map(|bbox| bbox.area()).sum::<f64>()
+        self.drawingbox.bbox.area() - self.bboxes.iter().map(|bbox| bbox.area()).sum::<f64>()
     }
 }

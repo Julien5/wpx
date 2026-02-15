@@ -9,7 +9,7 @@ fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
     mountains.sort_by_key(|w| std::cmp::Reverse(w.ele().unwrap_or(0f64).floor() as i32));
 }
 
-fn sort_by_distance_to_track(mountains: &mut Vec<InputPoint>) {
+fn _sort_by_distance_to_track(mountains: &mut Vec<InputPoint>) {
     mountains.sort_by_key(|w| w.distance_to_track().floor() as i32);
 }
 
@@ -334,8 +334,8 @@ impl PointCollection {
     fn offtrack_cities(&self) -> Vec<InputPoint> {
         let mut cities = self.get_vector(&Kind::Cities);
         cities.retain(|w| !is_close_to_track(&w));
-        sort_by_distance_to_track(&mut cities);
-        //sort_by_population(&mut cities);
+        //sort_by_distance_to_track(&mut cities);
+        sort_by_population(&mut cities);
         cities
     }
 
@@ -373,8 +373,8 @@ impl PointCollection {
             clone.ontrack_cities(),
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),
-            clone.get_vector(&Kind::Hamlets),
             clone.offtrack_cities(),
+            clone.get_vector(&Kind::Hamlets),
         ]
     }
 }

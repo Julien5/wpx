@@ -634,7 +634,7 @@ mod tests {
         let map_size = IntegerSize2D::new(400, 400);
 
         let mut ok_count = 0;
-        for segment in &segments {
+        for (_idx, segment) in segments.iter().enumerate() {
             let result = backend.render_segment_what(
                 &segment,
                 "map",

@@ -9,7 +9,11 @@ pub fn timestr(proj: &TrackProjection, parameters: &Parameters) -> String {
     format!("{}", t.format("%H:%M"))
 }
 
-pub fn make_label_text(w: &InputPoint, proj: &TrackProjection, segment: &SegmentData) -> String {
+pub fn make_label_text(
+    w: &InputPoint,
+    proj: Option<&TrackProjection>,
+    segment: &SegmentData,
+) -> String {
     match w.kind() {
         Kind::Villages | Kind::Cities | Kind::Mountains | Kind::Hamlets => {
             return w.name().clone().trim().to_string();
@@ -23,7 +27,12 @@ pub fn make_label_text(w: &InputPoint, proj: &TrackProjection, segment: &Segment
         }
 
         Kind::Controls => {
-            return format!("{} ({})", w.name(), timestr(proj, &segment.parameters));
+            let projection = proj.unwrap();
+            return format!(
+                "{} ({})",
+                w.name(),
+                timestr(&projection, &segment.parameters)
+            );
         }
     }
 }

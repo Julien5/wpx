@@ -14,10 +14,10 @@ impl BoundingBox {
             _max: max,
         }
     }
-    pub fn minsize(min: Point2D, width: &f64, height: &f64) -> BoundingBox {
+    pub fn minsize(min: Point2D, width: f64, height: f64) -> BoundingBox {
         BoundingBox {
             _min: min,
-            _max: min + Point2D::new(*width, *height),
+            _max: min + Point2D::new(width, height),
         }
     }
     pub fn get_min(&self) -> Point2D {
@@ -88,8 +88,8 @@ impl BoundingBox {
     pub fn corners(&self) -> [Point2D; 4] {
         [
             self.get_min(),
-            self.get_max(),
             Point2D::new(self.get_xmin(), self.get_ymax()),
+            self.get_max(),
             Point2D::new(self.get_xmax(), self.get_ymin()),
         ]
     }
@@ -114,6 +114,21 @@ impl BoundingBox {
             }
         }
         false
+    }
+
+    pub fn intersection(&self, other: &Self) -> Option<Self> {
+        let xmin = self.get_xmin().max(other.get_xmin());
+        let ymin = self.get_ymin().max(other.get_ymin());
+        let xmax = self.get_xmax().min(other.get_xmax());
+        let ymax = self.get_ymax().min(other.get_ymax());
+        if xmin < xmax && ymin < ymax {
+            Some(BoundingBox::minmax(
+                Point2D::new(xmin, ymin),
+                Point2D::new(xmax, ymax),
+            ))
+        } else {
+            None
+        }
     }
 
     pub fn overlap(&self, other: &Self) -> bool {

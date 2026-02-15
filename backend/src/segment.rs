@@ -167,3 +167,90 @@ impl SegmentData {
         ret
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::sync::Arc;
+
+    use crate::{
+        controls, event,
+        gpsdata::GpxData,
+        math::IntegerSize2D,
+        osm,
+        parameters::Parameters,
+        point_collection::{Kind, PacketProvider, PointCollection, SharedPacketProvider},
+        segment::{Segment, SegmentData},
+        svgmap,
+        track::Track,
+    };
+
+    fn read(filename: &str) -> GpxData {
+        use crate::gpsdata;
+        let mut f = std::fs::File::open(filename).unwrap();
+        let mut content = Vec::new();
+        // read the whole file
+        use std::io::prelude::*;
+        f.read_to_end(&mut content).unwrap();
+        gpsdata::read_content(&content).unwrap()
+    }
+
+    static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
+
+    #[tokio::test]
+    async fn svg_map_single() {
+        let _ = env_logger::try_init();
+        let filename = "data/blackforest.gpx";
+        let gpxdata = read(filename);
+        let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
+
+        let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
+        let logger = std::sync::RwLock::new(Some(b));
+        let mut osmpoints = osm::download_for_track(&track, &logger).await.unwrap();
+        track.project_map(&mut osmpoints);
+
+        let mut waypoints = gpxdata.waypoints.clone();
+        for w in &mut waypoints {
+            track.project_point(w);
+        }
+
+        let mut collection = PointCollection::new();
+        collection.import_osm(&osmpoints.as_vector());
+        let mut controls = controls::make_controls_with_waypoints(&track, &waypoints);
+        for c in &mut controls {
+            track.project_point(c);
+        }
+        collection.import_other(&Kind::GPXWaypoints, waypoints, &track);
+        collection.import_other(&Kind::Controls, controls, &track);
+
+        let fsegment = Segment {
+            id: 0,
+            start: 000_000f64,
+            end: 110_000f64,
+        };
+        let provider = SharedPacketProvider::new(PacketProvider::new().into());
+        let mut parameters = Parameters::default();
+        parameters.start_time = START_TIME.to_string();
+        parameters.map_options.max_area_ratio = 0.15f64;
+
+        let segment = SegmentData::new(&fsegment, track, provider, parameters);
+        let size = IntegerSize2D::new(400, 400);
+        //let packets = vec![collection.get_vector(&Kind::Villages)];
+        collection.range_cut(&segment.range());
+        let packets = collection.map();
+        let result_map = svgmap::map(&segment, &size, &packets);
+
+        let reffilename = std::format!("data/ref/singlemap.svg");
+        println!("test {}", reffilename);
+        let data = if std::fs::exists(&reffilename).unwrap() {
+            std::fs::read_to_string(&reffilename).unwrap()
+        } else {
+            String::new()
+        };
+        let tmpfilename = std::format!("/tmp/singlemap.svg");
+        std::fs::write(&tmpfilename, &result_map.svg).expect("Unable to write file");
+        if data != result_map.svg {
+            println!("test failed: {} {}", tmpfilename, reffilename);
+            assert!(false);
+        }
+    }
+}

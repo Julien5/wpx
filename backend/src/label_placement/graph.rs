@@ -5,8 +5,15 @@ use super::features::PointFeature;
 use super::features::PointFeatureId;
 use crate::bbox::quadtree::QuadTree;
 use crate::bbox::BoundingBox;
+
+use crate::label_placement::draw_graph::Graphic;
+use crate::label_placement::features::Obstacles;
+use crate::math::Point2D;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
+
+#[allow(unused_imports)]
+use crate::label_placement::draw_graph;
 
 // Each node is a PointFeature, represented by its id.
 // Edges are modeled with a map.
@@ -20,23 +27,34 @@ pub struct NodeData {
 }
 
 pub struct Graph {
-    pub map: Map,
-    pub ordered_nodes: Vec<Node>,
-    pub max_area: f64,
-    pub used_area: f64,
-    pub tree: QuadTree<PointFeatureId>,
-    pub nodes: Vec<NodeData>,
+    map: Map,
+    ordered_nodes: Vec<Node>,
+    tree: QuadTree<PointFeatureId>,
+    nodes: Vec<NodeData>,
+    obstacles: Obstacles,
+    obstacle_tree: QuadTree<usize>,
+    debug_graphic_dir: Option<String>,
 }
 
 impl Graph {
-    pub fn new(area: BoundingBox) -> Self {
+    fn max_density_ratio(&self) -> f64 {
+        self.obstacles.drawingbox.max_area_ratio
+    }
+    pub fn new(obstacles: Obstacles) -> Self {
+        let area = obstacles.drawingbox.bbox.clone();
+        let mut obstacles_tree = QuadTree::new(area.clone());
+        for (idx, bbox) in obstacles.bboxes.iter().enumerate() {
+            obstacles_tree.insert(bbox, idx);
+        }
         Self {
             map: Map::new(),
             ordered_nodes: Vec::new(),
-            max_area: 0f64,
-            used_area: 0f64,
-            tree: QuadTree::new(area),
+            tree: QuadTree::new(area.clone()),
             nodes: Vec::new(),
+            obstacles: obstacles,
+            obstacle_tree: obstacles_tree,
+            //debug_graphic_dir: Some(draw_graph::newdir()),
+            debug_graphic_dir: None,
         }
     }
 
@@ -71,6 +89,7 @@ impl Graph {
             self.map.insert(node1, edges);
         }
         // note: self.tree is not needed anymore.
+        self.draw_graph();
     }
 
     pub fn _print_node(&self, node: &Node) {
@@ -85,6 +104,38 @@ impl Graph {
             let bbox = candidate.bbox().relative();
             log::info!("      {:?}", bbox);
         }
+    }
+
+    fn make_graphic(&self) -> Graphic {
+        let mut graphic = Graphic::new(self.debug_graphic_dir.as_ref().unwrap().clone());
+        for bbox in &self.obstacles.bboxes {
+            graphic.add_boundingbox(bbox, "red", 3);
+        }
+        for (node, edges) in &self.map {
+            let nodedata = &self.nodes[*node];
+            let text = nodedata.feature.text();
+            let p1 = nodedata.feature.center();
+            let p = p1 + crate::math::Point2D::new(3f64, -3f64);
+            graphic.add_text(&p, &text);
+            for candidate in &nodedata.candidates {
+                graphic.add_boundingbox(&candidate.bbox().absolute(), "gray", 1i32);
+            }
+
+            graphic.add_dot(&p1);
+            for n2 in edges {
+                let p2 = self.nodes[*n2].feature.center();
+                graphic.add_stroke(&p1, &p2);
+            }
+        }
+        graphic
+    }
+
+    fn draw_graph(&self) {
+        if self.debug_graphic_dir.is_none() {
+            return;
+        }
+        let g = self.make_graphic();
+        g.save();
     }
 
     #[allow(dead_code)]
@@ -130,49 +181,29 @@ impl Graph {
         // After build_map(), this tree is not read.
     }
 
-    pub fn select(&mut self, a: &Node, selected: &Candidate) {
-        // for all b connected to a
-        /*
-            {
-                let index = self.nodes[*a]
-                .candidates
-                .iter()
-                .position(|c| c == selected)
-                .unwrap();
-                let feature = &self.nodes[*a].feature;
-                log::trace!(
-                    "selected {} with area {:.1} [candidate {}] [{}]",
-                    feature.text(),
-                    feature.area(),
-                    index,
-                    selected.bbox().absolute()
-                );
-        }
-            */
+    pub fn update_graph(&mut self, a: &Node, selected: &Candidate) {
         let neighbors = self.map.get(a).unwrap().clone();
         for b in neighbors {
-            // remove candidates of b that overlap with the
-            // selected a candidate
             let neighbors_candidates = &mut self.nodes[b].candidates;
-            /*
-                for cb in neighbors_candidates.clone() {
-                    if selected.overlap(&cb.bbox) {
-                        log::info!("remove candidate of {b} because of overlap: {}", cb.bbox);
-                    }
-            }
-                */
             assert!(!neighbors_candidates.is_empty());
             let first = neighbors_candidates.first().unwrap().clone();
+            // remove candidates that intersect with the selected candidate
             neighbors_candidates.retain(|cb| !selected.hit_other(&cb));
             if neighbors_candidates.is_empty() {
                 neighbors_candidates.push(first);
             }
         }
-        // assert!((ba - aa).abs() < 1e-11);
-        self.used_area += selected.bbox().area();
+        // Track the placed candidate for density queries
+        let placed_bbox = selected.bbox().absolute().clone();
+        let idx = self.obstacles.bboxes.len();
+        self.obstacle_tree.insert(&placed_bbox, idx);
+        self.obstacles.bboxes.push(placed_bbox);
+
         // remove a
         self.remove_node(a);
+        self.draw_graph();
     }
+
     pub fn max_node(&self) -> Node {
         // more predictable
         *self.ordered_nodes.first().unwrap()
@@ -220,12 +251,55 @@ impl Graph {
         None
     }
 
+    fn density_ratio(&self, candidate: &Candidate) -> f64 {
+        //let drawbox = &self.obstacles.drawingbox.bbox;
+        //let drawwidth = drawbox.width().min(drawbox.height());
+
+        let candidate_bbox = candidate.bbox().absolute();
+        let candidate_area = candidate_bbox.area();
+
+        assert!(candidate_area > 0.0);
+
+        let center = candidate_bbox.center();
+        let width = 200f64;
+        let search_area = BoundingBox::minsize(
+            center - Point2D::new(width * 0.5f64, width * 0.5f64),
+            width,
+            width,
+        );
+
+        let mut nearby_indices = Vec::new();
+        self.obstacle_tree.query(&search_area, &mut nearby_indices);
+
+        let mut occupied_area = 0.0;
+        for idx in nearby_indices {
+            let obstacle = &self.obstacles.bboxes[*idx];
+            let intersection = obstacle.intersection(&search_area);
+            if intersection.is_some() {
+                occupied_area += intersection.unwrap().area();
+            }
+        }
+
+        let total_occupied = occupied_area + candidate_area;
+        let search_area_size = search_area.area();
+        let ret = total_occupied / search_area_size;
+
+        if self.debug_graphic_dir.is_some() {
+            let mut graphic = self.make_graphic();
+            graphic.add_boundingbox(&search_area, "blue", 2);
+            graphic.add_text(&search_area.center(), &format!("{:.0}%", ret * 100f64,));
+            graphic.save();
+        }
+        ret
+    }
+
     pub fn solve(&mut self) -> BTreeMap<Node, Candidate> {
         let mut ret = BTreeMap::new();
         while !self.map.is_empty() {
             let m = self.max_node();
             let target = &self.nodes[m].feature;
-            /*log::trace!(
+            /*
+            log::trace!(
                 "placing:{} [#edges:{}] [{:.1} + {:.1} max {:.1}]",
                 target.text(),
                 self.map.get(&m).unwrap().len(),
@@ -233,19 +307,20 @@ impl Graph {
                 target.area(),
                 self.max_area
             );*/
-            if self.used_area + target.area() > self.max_area {
+            /*if self.used_area + target.area() > self.max_area {
                 //log::trace!("remove {} because it is too large", target.text());
                 self.remove_node(&m);
                 continue;
-            }
+            }*/
             match self.best_candidate_for_node(&m) {
                 Some(best_index) => {
                     let candidates = &self.nodes[m].candidates;
                     let best_candidate = candidates[best_index].clone();
                     ret.insert(m, best_candidate.clone());
-                    self.select(&m, &best_candidate);
+                    self.update_graph(&m, &best_candidate);
                 }
                 None => {
+                    log::trace!("remove {} (no candidate found)", target.text());
                     self.remove_node(&m);
                 }
             }
@@ -290,6 +365,12 @@ impl Graph {
                 }
                 None => {}
             }
+
+            let candidate = &candidates[index];
+            if self.density_ratio(candidate) > self.max_density_ratio() {
+                continue;
+            }
+
             /*log::trace!(
                 "[node:{node:2}] [candidate:{index:2}] it bests from #={}",
                 candidates.len()
@@ -304,7 +385,7 @@ impl Graph {
 mod tests {
     use crate::{
         bbox::BoundingBox,
-        label_placement::{Label, LabelBoundingBox, PointFeatureDrawing},
+        label_placement::{features::DrawingArea, Label, LabelBoundingBox, PointFeatureDrawing},
         math::Point2D,
     };
 
@@ -313,7 +394,7 @@ mod tests {
     fn make_candidate(x: i32, y: i32, w: i32, h: i32) -> Candidate {
         Candidate::new(
             &LabelBoundingBox::new_absolute(
-                &BoundingBox::minsize(Point2D::new(x as f64, y as f64), &(w as f64), &(h as f64)),
+                &BoundingBox::minsize(Point2D::new(x as f64, y as f64), w as f64, h as f64),
                 &Point2D::zero(),
             ),
             &0.0,
@@ -325,10 +406,15 @@ mod tests {
     fn test_graph_operations() {
         let _ = env_logger::try_init();
         // Create a new graph
-        let mut graph = Graph::new(BoundingBox::minmax(
-            Point2D::zero(),
-            Point2D::new(10f64, 10f64),
-        ));
+        let obstacles = Obstacles {
+            bboxes: Vec::new(),
+            polylines: Vec::new(),
+            drawingbox: DrawingArea {
+                bbox: BoundingBox::minmax(Point2D::zero(), Point2D::new(10f64, 10f64)),
+                max_area_ratio: 1.0,
+            },
+        };
+        let mut graph = Graph::new(obstacles);
         let mut ca = Candidates::new();
         let mut cb = Candidates::new();
         let mut cc = Candidates::new();
@@ -384,7 +470,7 @@ mod tests {
         graph.build_map();
 
         assert_eq!(graph.max_node(), 0);
-        graph.select(&2, &cc1);
+        graph.update_graph(&2, &cc1);
         assert!(!graph.map.contains_key(&2));
         assert!(graph.nodes[0].candidates.len() == 1);
         assert!(graph.nodes[0].candidates.len() == 1);

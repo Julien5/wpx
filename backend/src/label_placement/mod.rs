@@ -1,4 +1,5 @@
 pub mod candidate;
+mod draw_graph;
 pub mod drawings;
 pub mod features;
 pub mod graph;
@@ -28,7 +29,7 @@ fn build_graph(
     gen: &dyn CandidatesGenerator,
     obstacles: &Obstacles,
 ) -> Graph {
-    let mut ret = Graph::new(obstacles.drawingbox.bbox.clone());
+    let mut ret = Graph::new(obstacles.clone());
     let candidates = candidate::utils::generate(gen, features, obstacles);
     // since the graph is undirected, we could probably speed up
     // edge computation. TODO: use petgraph.
@@ -38,7 +39,6 @@ fn build_graph(
         ret.add_node(feature, candidates);
     }
     ret.build_map();
-    ret.max_area = obstacles.available_area();
     ret
 }
 
@@ -97,7 +97,7 @@ fn place_quick_best_candidates(
     let mut available = obstacles.available_area();
     for k in 0..features.points.len() {
         let feature = &features.points[k];
-        let cboxes = cardinal_boxes(&feature.center(), &feature.width(), &feature.height());
+        let cboxes = cardinal_boxes(&feature.center(), feature.width(), feature.height());
         let first = cboxes.first().unwrap();
         let candidate = Candidate::new(first, &1f64, &1f64);
         if available < candidate.bbox().area() {
@@ -189,7 +189,7 @@ fn make(bbox0: &BoundingBox, translation: &Point2D, center: &Point2D) -> LabelBo
     LabelBoundingBox::new_relative(&bbox0.make_translate(&translation), center)
 }
 
-pub fn cardinal_boxes(center: &Point2D, width: &f64, height: &f64) -> Vec<LabelBoundingBox> {
+pub fn cardinal_boxes(center: &Point2D, width: f64, height: f64) -> Vec<LabelBoundingBox> {
     let mut ret = Vec::new();
     let epsilon = 2f64;
     let dx = 2f64 * epsilon + width;
@@ -202,7 +202,8 @@ pub fn cardinal_boxes(center: &Point2D, width: &f64, height: &f64) -> Vec<LabelB
     ret.push(make(&bbox0, &Point2D::new(0.0, dy), center));
 
     let bbox_right = BoundingBox::minsize(Point2D::new(epsilon, -height / 2.0), width, height);
-    let bbox_up = BoundingBox::minsize(Point2D::new(-width / 2.0, epsilon), width, height);
+    let bbox_up =
+        BoundingBox::minsize(Point2D::new(-width / 2.0, -epsilon - height), width, height);
 
     ret.push(make(&bbox_right, &Point2D::new(0.0, 0.0), center));
     ret.push(make(&bbox_up, &Point2D::new(0.0, 0.0), center));
@@ -212,15 +213,15 @@ pub fn cardinal_boxes(center: &Point2D, width: &f64, height: &f64) -> Vec<LabelB
     ret
 }
 
-pub fn far_boxes(
+pub fn _far_boxes(
     target: &Point2D,
-    width: &f64,
-    height: &f64,
+    width: f64,
+    height: f64,
     level: usize,
 ) -> Vec<LabelBoundingBox> {
     let mut ret = Vec::new();
     let d = ((level + 2) as f64) * height;
-    let stepsize = *height;
+    let stepsize = height;
 
     let bbox0 = BoundingBox::minsize(Point2D::new(-d, -d), width, height);
 

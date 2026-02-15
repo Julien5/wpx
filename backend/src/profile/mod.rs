@@ -483,7 +483,7 @@ impl ProfileView {
                     let circle = draw_for_profile(&g, id.as_str(), &w);
                     let mut label = label_placement::features::Label::new();
                     //assert!(label.unplaced());
-                    let text = drawings::make_label_text(&w, proj, segment);
+                    let text = drawings::make_label_text(&w, Some(&proj), segment);
                     if !text.is_empty() {
                         label.set_text(&text);
                         label.id = format!("{}/wp/text", k);
@@ -562,7 +562,7 @@ impl ProfileGenerator {
         let mut ret = Vec::new();
         let mut y = little;
         loop {
-            let bbox = BoundingBox::minsize(Point2D::new(x, y), &width, &feature.height());
+            let bbox = BoundingBox::minsize(Point2D::new(x, y), width, feature.height());
             if bbox.get_ymax() > self._HD {
                 break;
             }
@@ -583,7 +583,7 @@ impl ProfileGenerator {
         for dx in [0.0, -0.5 * width, 0.5 * width] {
             let x = target.x + dx - width / 2f64;
             for y in &ys {
-                let bbox = BoundingBox::minsize(Point2D::new(x, *y), &width, &feature.height());
+                let bbox = BoundingBox::minsize(Point2D::new(x, *y), width, feature.height());
                 ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
             }
         }
@@ -596,8 +596,8 @@ impl ProfileGenerator {
 
         ret.extend_from_slice(&label_placement::cardinal_boxes(
             &feature.center(),
-            &feature.width(),
-            &feature.height(),
+            feature.width(),
+            feature.height(),
         ));
         ret
     }
@@ -608,8 +608,8 @@ impl ProfileGenerator {
 
         ret.extend_from_slice(&label_placement::cardinal_boxes(
             &feature.center(),
-            &feature.width(),
-            &feature.height(),
+            feature.width(),
+            feature.height(),
         ));
 
         let width = feature.width();
@@ -619,8 +619,8 @@ impl ProfileGenerator {
         let Btop = LabelBoundingBox::new_absolute(
             &BoundingBox::minsize(
                 Point2D::new(center.x - width / 2.0, (center.y - 20.0).max(height)),
-                &width,
-                &height,
+                width,
+                height,
             ),
             &center,
         );
@@ -630,8 +630,8 @@ impl ProfileGenerator {
         let Bbot = LabelBoundingBox::new_absolute(
             &BoundingBox::minsize(
                 Point2D::new(center.x - width / 2.0, (center.y + 20.0).max(height)),
-                &width,
-                &height,
+                width,
+                height,
             ),
             &center,
         );
@@ -642,8 +642,8 @@ impl ProfileGenerator {
             let Btop2 = LabelBoundingBox::new_absolute(
                 &BoundingBox::minsize(
                     Point2D::new(center.x - width / 2.0, (n as f64) * height),
-                    &width,
-                    &height,
+                    width,
+                    height,
                 ),
                 &center,
             );

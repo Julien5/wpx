@@ -47,15 +47,16 @@ struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
     fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
-        let mut ret =
-            label_placement::cardinal_boxes(&feature.center(), &feature.width(), &feature.height());
+        let ret =
+            label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
+        /*
         let width = feature.width();
         let height = feature.height();
         let center = feature.center();
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 0));
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 2));
         ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 4));
-        /*ret.sort_by_key(|candidate| {
+        ret.sort_by_key(|candidate| {
             let p = candidate.absolute().project_on_border(&point.center());
             (distance2(&point.center(), &p) * 100f64).floor() as i64
         });*/
@@ -135,9 +136,9 @@ impl MapData {
                 let circle = draw_for_map(&p, id.as_str(), &w);
                 let mut label = Label::new();
                 // on the map, all projections are equivalent
-                assert!(w.track_projections.first().is_some());
-                let proj = w.track_projections.first().unwrap();
-                let text = drawings::make_label_text(&w, &proj, &segment);
+                log::trace!("proj for {}", w.name());
+                let proj = w.track_projections.first();
+                let text = drawings::make_label_text(&w, proj, &segment);
                 if !text.is_empty() {
                     label.set_text(&text);
                     label.id = format!("{}/wp/text", k);
