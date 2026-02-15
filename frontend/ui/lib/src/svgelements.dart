@@ -385,15 +385,70 @@ TextAlign readTextAlign(String textAnchor) {
   }
 }
 
+FontWeight parseFontWeight(String fontWeight) {
+  switch (fontWeight.toLowerCase()) {
+    case '100':
+    case 'thin':
+      return FontWeight.w100;
+    case '200':
+    case 'extra-light':
+    case 'lighter':
+    case 'extralight':
+      return FontWeight.w200;
+    case '300':
+    case 'light':
+      return FontWeight.w300;
+    case '400':
+    case 'normal':
+      return FontWeight.w400;
+    case '500':
+    case 'medium':
+      return FontWeight.w500;
+    case '600':
+    case 'semi-bold':
+    case 'semibold':
+      return FontWeight.w600;
+    case '700':
+    case 'bold':
+      return FontWeight.w700;
+    case '800':
+    case 'extra-bold':
+    case 'extrabold':
+      return FontWeight.w800;
+    case '900':
+    case 'black':
+      return FontWeight.w900;
+    default:
+      return FontWeight.normal;
+  }
+}
+
+FontStyle parseFontStyle(String fontStyle) {
+  switch (fontStyle.toLowerCase()) {
+    case 'italic':
+      return FontStyle.italic;
+    case 'oblique':
+      return FontStyle.italic;
+    case 'normal':
+    default:
+      return FontStyle.normal;
+  }
+}
+
 class TextElement extends SvgElement {
   late String text;
   late TextAlign textAlign;
   late double fontSize;
   late double x, y;
+  late FontWeight fontWeight;
+  late FontStyle fontStyle;
+
   TextElement(super.xmlElement, super.parent) {
     text = super._xmlElement.innerText.trim();
     textAlign = TextAlign.center;
     fontSize = 32.0;
+    fontWeight = FontWeight.normal;
+    fontStyle = FontStyle.normal;
     x = y = 0;
     if (attribute("text-anchor") != null) {
       textAlign = readTextAlign(attribute("text-anchor")!);
@@ -401,6 +456,12 @@ class TextElement extends SvgElement {
     if (attribute("font-size") != null) {
       fontSize =
           (double.parse(attribute("font-size").toString())).floorToDouble();
+    }
+    if (attribute("font-weight") != null) {
+      fontWeight = parseFontWeight(attribute("font-weight")!);
+    }
+    if (attribute("font-style") != null) {
+      fontStyle = parseFontStyle(attribute("font-style")!);
     }
     if (attribute("x") != null) {
       x = double.parse(attribute("x").toString());
@@ -419,6 +480,8 @@ class TextElement extends SvgElement {
           fontFamily: "LibertinusSans",
           color: Colors.black,
           fontSize: fontSize,
+          fontWeight: fontWeight,
+          fontStyle: fontStyle,
         ),
       ),
       textDirection: TextDirection.ltr,
