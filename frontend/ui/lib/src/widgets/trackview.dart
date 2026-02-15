@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/future_rendering_widget.dart';
@@ -91,8 +92,14 @@ class _TrackViewState extends State<TrackView> {
       }
       Size size = visibilityInfo!.size;
       TrackData currentData = futureRenderer!.trackData;
-      if (currentData == TrackData.map || currentData == TrackData.profile) {
-        size = size * 1.5;
+      ScreenConfiguration screen = Provider.of<ScreenConfiguration>(
+        context,
+        listen: false,
+      );
+      if (screen.isMobile()) {
+        if (currentData == TrackData.map || currentData == TrackData.profile) {
+          size = size * 1.5;
+        }
       }
       futureRenderer!.setSize(size);
       startRendererIfNeeded();
