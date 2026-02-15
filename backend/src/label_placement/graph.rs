@@ -385,7 +385,10 @@ impl Graph {
 mod tests {
     use crate::{
         bbox::BoundingBox,
-        label_placement::{features::DrawingArea, Label, LabelBoundingBox, PointFeatureDrawing},
+        label_placement::{
+            features::{DrawingArea, FONTSIZE},
+            Label, LabelBoundingBox, PointFeatureDrawing,
+        },
         math::Point2D,
     };
 
@@ -452,6 +455,9 @@ mod tests {
                     &Point2D::zero(),
                 ),
                 text: String::new(),
+                fontsize: FONTSIZE,
+                fontweight: "normal".to_string(),
+                fontstyle: "normal".to_string(),
                 _placed: false,
             },
             input_point: None,

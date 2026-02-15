@@ -1,6 +1,6 @@
 use crate::{
     inputpoint::InputPoint,
-    label_placement::features::{Label, PointFeatureDrawing},
+    label_placement::features::{Label, PointFeatureDrawing, FONTSIZE},
     math::Point2D,
     parameters::Parameters,
     point_collection::Kind,
@@ -38,10 +38,23 @@ pub fn make_label_text(
             )
         }
     };
+    let base_font_size = FONTSIZE;
+    let normal = "normal";
+    let light = "lighter";
+    let bold = "bold";
+    let italic = "italic";
+    let (fontsize, fontweight, fontstyle) = match w.kind() {
+        Kind::Villages => (base_font_size - 1f64, normal, normal),
+        Kind::Hamlets => (base_font_size - 2f64, light, normal),
+        Kind::Mountains => (base_font_size - 1f64, normal, italic),
+        Kind::Cities => (base_font_size, bold, normal),
+        Kind::Controls => (base_font_size, bold, normal),
+        _ => (base_font_size, normal, normal),
+    };
     if text.is_empty() {
         return Label::empty();
     }
-    Label::new(&text)
+    Label::new(&text, fontsize, &fontweight, &fontstyle)
 }
 
 fn make_circle(

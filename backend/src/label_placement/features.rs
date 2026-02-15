@@ -15,7 +15,7 @@ pub fn set_attr(attr: &mut Attributes, k: &str, v: &str) {
     attr.insert(String::from_str(k).unwrap(), svg::node::Value::from(v));
 }
 
-const FONTSIZE: f64 = 16f64;
+pub const FONTSIZE: f64 = 14f64;
 
 fn check(ret: &mut f64, s: &str, c: &char, w: &f64) -> bool {
     if s.find(*c).is_some() {
@@ -45,10 +45,28 @@ fn char_width(s: &char) -> f64 {
     (ret / 0.57f64) * (FONTSIZE / 16f64) * 9f64
 }
 
-fn text_width(s: &str) -> f64 {
+fn text_width(s: &str, fontsize: f64, fontweight: &str, fontstyle: &str) -> f64 {
     let mut ret = 0f64;
     for c in s.chars() {
-        ret += char_width(&c);
+        let mut w = char_width(&c);
+        w = w * (fontsize / FONTSIZE);
+        if fontweight == "normal" {
+        } else if fontweight == "bold" {
+            w = w * 1.1;
+        } else if fontweight == "lighter" {
+            w = w / 1.1;
+        } else {
+            log::error!("unknown weight {}", fontweight);
+            assert!(false);
+        }
+        if fontstyle == "normal" {
+        } else if fontstyle == "italic" {
+            w = w / 1.1;
+        } else {
+            log::error!("unknown style {}", fontstyle);
+            assert!(false);
+        }
+        ret += w;
     }
     return ret;
 }
@@ -62,6 +80,9 @@ pub struct PointFeatureDrawing {
 #[derive(Clone)]
 pub struct Label {
     pub id: String,
+    pub fontsize: f64,
+    pub fontweight: String,
+    pub fontstyle: String,
     pub bbox: LabelBoundingBox,
     pub text: String,
     pub _placed: bool, //ugly
@@ -71,6 +92,9 @@ impl Label {
     pub fn empty() -> Self {
         Self {
             id: String::new(),
+            fontsize: FONTSIZE,
+            fontweight: String::new(),
+            fontstyle: String::new(),
             bbox: LabelBoundingBox::zero(),
             text: String::new(),
             _placed: false,
@@ -79,14 +103,17 @@ impl Label {
     pub fn is_empty(&self) -> bool {
         self.text.is_empty()
     }
-    pub fn new(text: &str) -> Self {
-        let width = text_width(text);
+    pub fn new(text: &str, fontsize: f64, fontweight: &str, fontstyle: &str) -> Self {
+        let width = text_width(text, fontsize, fontweight, fontstyle);
         let bbox = LabelBoundingBox::new_relative(
-            &BoundingBox::minsize(Point2D::new(0.0, -FONTSIZE), width, FONTSIZE),
+            &BoundingBox::minsize(Point2D::new(0.0, -fontsize), width, fontsize),
             &Point2D::zero(),
         );
         Label {
             id: String::new(),
+            fontsize,
+            fontweight: fontweight.to_string(),
+            fontstyle: fontstyle.to_string(),
             bbox,
             text: text.to_string(),
             _placed: false,
@@ -115,7 +142,21 @@ impl Label {
         set_attr(&mut ret, "text-anchor", anchor);
         let y = self.bbox.relative().get_ymax() - 2f64;
         set_attr(&mut ret, "id", self.id.as_str());
-        set_attr(&mut ret, "font-size", format!("{:.1}", FONTSIZE).as_str());
+        set_attr(
+            &mut ret,
+            "font-size",
+            format!("{:.1}", self.fontsize).as_str(),
+        );
+        set_attr(
+            &mut ret,
+            "font-weight",
+            format!("{}", self.fontweight).as_str(),
+        );
+        set_attr(
+            &mut ret,
+            "font-style",
+            format!("{}", self.fontstyle).as_str(),
+        );
         set_attr(&mut ret, "x", format!("{:.3}", x).as_str());
         set_attr(&mut ret, "y", format!("{:.3}", y).as_str());
         ret
@@ -219,6 +260,20 @@ impl PointFeature {
             whitebg = whitebg.set("fill-opacity", "0.75");
             whitebg = whitebg.set("id", "label-bg");
             subgroup.append(whitebg);
+
+            if false {
+                let mut debugrect = svg::node::element::Rectangle::new();
+                debugrect = debugrect.set("x", self.label.bbox.relative().get_xmin());
+                debugrect = debugrect.set("y", self.label.bbox.relative().get_ymin());
+                debugrect = debugrect.set("width", self.label.bbox.relative().width());
+                debugrect = debugrect.set("height", self.label.bbox.relative().height());
+                debugrect = debugrect.set("stroke", "blue");
+                debugrect = debugrect.set("fill", "none");
+                debugrect = debugrect.set("stroke-width", "2");
+                debugrect = debugrect.set("id", "label-dbg");
+                subgroup.append(debugrect);
+            }
+
             subgroup.append(label);
             sd_group.append(subgroup);
             if self.link.is_some() {
