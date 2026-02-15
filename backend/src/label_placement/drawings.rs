@@ -1,6 +1,11 @@
 use crate::{
-    inputpoint::InputPoint, label_placement::features::PointFeatureDrawing, math::Point2D,
-    parameters::Parameters, point_collection::Kind, segment::SegmentData, speed,
+    inputpoint::InputPoint,
+    label_placement::features::{Label, PointFeatureDrawing},
+    math::Point2D,
+    parameters::Parameters,
+    point_collection::Kind,
+    segment::SegmentData,
+    speed,
     track_projection::TrackProjection,
 };
 
@@ -13,28 +18,30 @@ pub fn make_label_text(
     w: &InputPoint,
     proj: Option<&TrackProjection>,
     segment: &SegmentData,
-) -> String {
-    match w.kind() {
+) -> Label {
+    let text = match w.kind() {
         Kind::Villages | Kind::Cities | Kind::Mountains | Kind::Hamlets => {
-            return w.name().clone().trim().to_string();
+            w.name().clone().trim().to_string()
         }
-        Kind::GPXWaypoints => {
-            return w.name().clone().trim().to_string();
-        }
+        Kind::GPXWaypoints => w.name().clone().trim().to_string(),
         Kind::UserStep => {
             //return format!("{}", timestr(proj, &segment.parameters));
-            return String::new();
+            String::new()
         }
 
         Kind::Controls => {
             let projection = proj.unwrap();
-            return format!(
+            format!(
                 "{} ({})",
                 w.name(),
                 timestr(&projection, &segment.parameters)
-            );
+            )
         }
+    };
+    if text.is_empty() {
+        return Label::empty();
     }
+    Label::new(&text)
 }
 
 fn make_circle(

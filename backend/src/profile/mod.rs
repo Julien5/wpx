@@ -481,28 +481,22 @@ impl ProfileView {
                     counter += 1;
                     let id = format!("{}/wp", k);
                     let circle = draw_for_profile(&g, id.as_str(), &w);
-                    let mut label = label_placement::features::Label::new();
+
                     //assert!(label.unplaced());
-                    let text = drawings::make_label_text(&w, Some(&proj), segment);
-                    if !text.is_empty() {
-                        label.set_text(&text);
-                        label.id = format!("{}/wp/text", k);
-                        //assert!(label.unplaced());
-                        feature_packet.push(PointFeature {
-                            circle,
-                            label,
-                            input_point: Some(w.clone()),
-                            link: None,
-                            xmlid: k,
-                        });
+                    let mut label = drawings::make_label_text(&w, Some(&proj), segment);
+                    label.id = format!("{}/wp/text", k);
+                    let empty = label.is_empty();
+                    let feature = PointFeature {
+                        circle,
+                        label,
+                        input_point: Some(w.clone()),
+                        link: None,
+                        xmlid: k,
+                    };
+                    if empty {
+                        feature_unlabeled.push(feature);
                     } else {
-                        feature_unlabeled.push(PointFeature {
-                            circle,
-                            label,
-                            input_point: Some(w.clone()),
-                            link: None,
-                            xmlid: k,
-                        });
+                        feature_packet.push(feature);
                     }
                 }
             }

@@ -68,26 +68,33 @@ pub struct Label {
 }
 
 impl Label {
-    pub fn new() -> Label {
-        Label {
+    pub fn empty() -> Self {
+        Self {
             id: String::new(),
             bbox: LabelBoundingBox::zero(),
             text: String::new(),
             _placed: false,
         }
     }
-
-    pub fn placed(&self) -> bool {
-        self._placed
+    pub fn is_empty(&self) -> bool {
+        self.text.is_empty()
     }
-
-    pub fn set_text(&mut self, s: &str) {
-        self.text = String::from_str(s).unwrap();
-        let width = text_width(s);
-        self.bbox = LabelBoundingBox::new_relative(
+    pub fn new(text: &str) -> Self {
+        let width = text_width(text);
+        let bbox = LabelBoundingBox::new_relative(
             &BoundingBox::minsize(Point2D::new(0.0, -FONTSIZE), width, FONTSIZE),
             &Point2D::zero(),
         );
+        Label {
+            id: String::new(),
+            bbox,
+            text: text.to_string(),
+            _placed: false,
+        }
+    }
+
+    pub fn placed(&self) -> bool {
+        self._placed
     }
 
     pub fn bounding_box(&self) -> LabelBoundingBox {

@@ -39,9 +39,9 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
+use crate::label_placement::features::PointFeature;
 use crate::label_placement::features::{set_attr, PointFeatures, PolylinePoint, PolylinePoints};
 use crate::label_placement::features::{Attributes, Polyline};
-use crate::label_placement::features::{Label, PointFeature};
 
 struct MapGenerator {}
 
@@ -134,29 +134,24 @@ impl MapData {
                 counter += 1;
                 let id = format!("{}/wp/circle", k);
                 let circle = draw_for_map(&p, id.as_str(), &w);
-                let mut label = Label::new();
+
                 // on the map, all projections are equivalent
                 log::trace!("proj for {}", w.name());
                 let proj = w.track_projections.first();
-                let text = drawings::make_label_text(&w, proj, &segment);
-                if !text.is_empty() {
-                    label.set_text(&text);
-                    label.id = format!("{}/wp/text", k);
-                    feature_packet.push(PointFeature {
-                        circle,
-                        label,
-                        input_point: Some(w.clone()),
-                        link: None,
-                        xmlid: k,
-                    });
+                let mut label = drawings::make_label_text(&w, proj, &segment);
+                label.id = format!("{}/wp/text", k);
+                let empty = label.is_empty();
+                let feature = PointFeature {
+                    circle,
+                    label,
+                    input_point: Some(w.clone()),
+                    link: None,
+                    xmlid: k,
+                };
+                if empty {
+                    feature_unlabeled.push(feature);
                 } else {
-                    feature_unlabeled.push(PointFeature {
-                        circle,
-                        label,
-                        input_point: Some(w.clone()),
-                        link: None,
-                        xmlid: k,
-                    });
+                    feature_packet.push(feature);
                 }
             }
             feature_packets.push(PointFeatures::make(feature_packet));
