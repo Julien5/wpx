@@ -142,6 +142,7 @@ impl SegmentData {
                 size,
             );
             collection.kinds_cut(kinds);
+            collection.range_cut(&self.range());
             profile::profile(&self, size, &collection.profile())
         };
         if self.parameters.debug {
@@ -158,6 +159,7 @@ impl SegmentData {
             let mut collection =
                 lock.load(&RenderFunction::Map, &self.range(), &self.parameters, size);
             collection.kinds_cut(kinds);
+            collection.range_cut(&self.range());
             svgmap::map(&self, size, &collection.map())
         };
         if self.parameters.debug {
@@ -196,10 +198,7 @@ mod tests {
 
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
 
-    #[tokio::test]
-    async fn svg_map_single() {
-        let _ = env_logger::try_init();
-        let filename = "data/ref/winni.gpx";
+    async fn load_segment(filename: &str, start: f64, parameters: Parameters) -> SegmentData {
         let gpxdata = read(filename);
         let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
 
@@ -224,17 +223,26 @@ mod tests {
 
         let fsegment = Segment {
             id: 0,
-            start: 000_000f64,
-            end: 110_000f64,
+            start: start,
+            end: start + 100_000f64,
         };
-        let provider = SharedPacketProvider::new(PacketProvider::new().into());
+        let mut pprovider = PacketProvider::new();
+        pprovider.collection = collection;
+        let provider = SharedPacketProvider::new(pprovider.into());
+
+        SegmentData::new(&fsegment, track, provider, parameters)
+    }
+
+    #[tokio::test]
+    async fn svg_map_single() {
+        let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.map_options.max_area_ratio = 0.15f64;
-
-        let segment = SegmentData::new(&fsegment, track, provider, parameters);
+        let segment = load_segment("data/ref/winni.gpx", 0f64, parameters).await;
         let size = IntegerSize2D::new(1600, 1000);
-        //let packets = vec![collection.get_vector(&Kind::Villages)];
+
+        let mut collection = segment.packet_provider.read().unwrap().collection.clone();
         collection.range_cut(&segment.range());
         let packets = collection.map();
         let result_map = svgmap::map(&segment, &size, &packets);
