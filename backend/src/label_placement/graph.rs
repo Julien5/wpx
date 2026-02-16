@@ -191,7 +191,7 @@ impl Graph {
         let nodedata = &self.nodes[*a];
         let center = nodedata.feature.center();
         let mut selected_large = selected.bbox().absolute().clone();
-        // selected_large.update(&center);
+        selected_large.update(&center);
         for b in neighbors {
             let neighbors_candidates = &mut self.nodes[b].candidates;
             assert!(!neighbors_candidates.is_empty());

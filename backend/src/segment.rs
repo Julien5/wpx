@@ -238,13 +238,21 @@ mod tests {
         SegmentData::new(&fsegment, track, provider, parameters)
     }
 
-    #[tokio::test]
-    async fn graph_winni() {
+    fn basename(path: &str) -> String {
+        use std::path::Path;
+        Path::new(path)
+            .file_name()
+            .and_then(|s| s.to_str())
+            .unwrap_or("")
+            .to_string()
+    }
+
+    async fn graph_test(src: &str, reffilename: &str, start: f64, length: f64) -> bool {
         let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.map_options.max_area_ratio = 0.15f64;
-        let segment = load_segment("data/ref/winni.gpx", 0f64, 110_000f64, parameters).await;
+        let segment = load_segment(src, start, length, parameters).await;
         let size = IntegerSize2D::new(1600, 1000);
 
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();
@@ -252,76 +260,63 @@ mod tests {
         let packets = collection.map();
         let result_map = svgmap::map(&segment, &size, &packets);
 
-        let reffilename = std::format!("data/ref/singlemap-winni.svg");
         println!("test {}", reffilename);
         let data = if std::fs::exists(&reffilename).unwrap() {
             std::fs::read_to_string(&reffilename).unwrap()
         } else {
             String::new()
         };
-        let tmpfilename = std::format!("/tmp/singlemap-winni.svg");
+        let tmpfilename = std::format!("/tmp/{}", basename(&reffilename));
         std::fs::write(&tmpfilename, &result_map.svg).expect("Unable to write file");
         if data != result_map.svg {
             println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
+            return false;
         }
+        true
+    }
+
+    #[tokio::test]
+    async fn graph_winni() {
+        let _ = env_logger::try_init();
+        let start = 0f64;
+        let length = 110_000f64;
+        let ok = graph_test(
+            "data/ref/winni.gpx",
+            "data/ref/singlemap-winni.svg",
+            start,
+            length,
+        )
+        .await;
+        assert!(ok);
     }
 
     #[tokio::test]
     async fn graph_jerome() {
         let _ = env_logger::try_init();
-        let mut parameters = Parameters::default();
-        parameters.start_time = START_TIME.to_string();
-        parameters.map_options.max_area_ratio = 0.15f64;
-        let segment = load_segment("data/jerome.gpx", 0f64, 60_000f64, parameters).await;
-        let size = IntegerSize2D::new(1600, 1000);
-
-        let mut collection = segment.packet_provider.read().unwrap().collection.clone();
-        collection.range_cut(&segment.range());
-        let packets = collection.map();
-        let result_map = svgmap::map(&segment, &size, &packets);
-
-        let reffilename = std::format!("data/ref/singlemap-jerome.svg");
-        println!("test {}", reffilename);
-        let data = if std::fs::exists(&reffilename).unwrap() {
-            std::fs::read_to_string(&reffilename).unwrap()
-        } else {
-            String::new()
-        };
-        let tmpfilename = std::format!("/tmp/singlemap-jerome.svg");
-        std::fs::write(&tmpfilename, &result_map.svg).expect("Unable to write file");
-        if data != result_map.svg {
-            println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
-        }
+        let start = 0f64;
+        let length = 60_000f64;
+        let ok = graph_test(
+            "data/jerome.gpx",
+            "data/ref/singlemap-jerome.svg",
+            start,
+            length,
+        )
+        .await;
+        assert!(ok);
     }
 
     #[tokio::test]
     async fn graph_pbp() {
         let _ = env_logger::try_init();
-        let mut parameters = Parameters::default();
-        parameters.start_time = START_TIME.to_string();
-        parameters.map_options.max_area_ratio = 0.15f64;
-        let segment = load_segment("data/ref/pbp2023.gpx", 0f64, 1200_000f64, parameters).await;
-        let size = IntegerSize2D::new(1600, 1000);
-
-        let mut collection = segment.packet_provider.read().unwrap().collection.clone();
-        collection.range_cut(&segment.range());
-        let packets = collection.map();
-        let result_map = svgmap::map(&segment, &size, &packets);
-
-        let reffilename = std::format!("data/ref/singlemap-pbp2023.svg");
-        println!("test {}", reffilename);
-        let data = if std::fs::exists(&reffilename).unwrap() {
-            std::fs::read_to_string(&reffilename).unwrap()
-        } else {
-            String::new()
-        };
-        let tmpfilename = std::format!("/tmp/singlemap-pbp2023.svg");
-        std::fs::write(&tmpfilename, &result_map.svg).expect("Unable to write file");
-        if data != result_map.svg {
-            println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
-        }
+        let start = 0f64;
+        let length = 1200_000f64;
+        let ok = graph_test(
+            "data/reb/pbp2023.gpx",
+            "data/ref/singlemap-pbp2023.svg",
+            start,
+            length,
+        )
+        .await;
+        assert!(ok);
     }
 }

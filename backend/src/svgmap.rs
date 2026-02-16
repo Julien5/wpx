@@ -6,12 +6,14 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
-use crate::point_collection::{Kind, Packets, RenderResult};
+use crate::point_collection::{Packets, RenderResult};
 use crate::segment::SegmentData;
 use crate::track::Track;
 
 #[allow(unused_imports)]
 use crate::math::distance2;
+#[allow(unused_imports)]
+use crate::point_collection::Kind;
 
 use svg::Document;
 
@@ -54,7 +56,7 @@ impl CandidatesGenerator for MapGenerator {
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
 
         return cardinals;
-        if feature.input_point.is_some() {
+        /*if feature.input_point.is_some() {
             let point = feature.input_point.as_ref().unwrap();
             if point.kind() == Kind::Villages
                 || point.kind() == Kind::Hamlets
@@ -77,7 +79,7 @@ impl CandidatesGenerator for MapGenerator {
         let mut ret = Vec::new();
         ret.extend_from_slice(&cardinals);
         ret.extend_from_slice(&aux);
-        ret
+        ret*/
     }
 }
 
