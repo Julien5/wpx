@@ -187,3 +187,22 @@ impl Sub for Point2D {
         }
     }
 }
+
+impl Point2D {
+    pub fn point_on_segment_from_end(p1: &Point2D, p2: &Point2D, d: f64) -> Point2D {
+        let total_dist = p1.distance_to(p2);
+
+        // Handle case where points are identical to avoid division by zero
+        if total_dist == 0.0 {
+            return p2.clone();
+        }
+
+        // We calculate the ratio of the requested distance 'd'
+        // relative to the total length.
+        let t = d / total_dist;
+
+        // Formula: Start at p2 and move towards p1 by the ratio t
+        // p_new = p2 + t * (p1 - p2)
+        *p2 + (*p1 - *p2) * t
+    }
+}

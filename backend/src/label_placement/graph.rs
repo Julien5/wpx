@@ -58,8 +58,8 @@ impl Graph {
             nodes: Vec::new(),
             obstacles: obstacles,
             obstacle_tree: obstacles_tree,
-            //debug_graphic_dir: Some(draw_graph::newdir()),
-            debug_graphic_dir: None,
+            debug_graphic_dir: Some(draw_graph::newdir()),
+            //debug_graphic_dir: None,
         }
     }
 
@@ -190,8 +190,10 @@ impl Graph {
         let neighbors = self.map.get(a).unwrap().clone();
         let nodedata = &self.nodes[*a];
         let center = nodedata.feature.center();
+        let bboxcenter = selected.bbox().absolute().center();
         let mut selected_large = selected.bbox().absolute().clone();
-        selected_large.update(&center);
+        let aux = Point2D::point_on_segment_from_end(&bboxcenter, &center, 5f64);
+        selected_large.update(&aux);
         for b in neighbors {
             let neighbors_candidates = &mut self.nodes[b].candidates;
             assert!(!neighbors_candidates.is_empty());
@@ -295,7 +297,14 @@ impl Graph {
         if self.debug_graphic_dir.is_some() {
             let mut graphic = self.make_graphic();
             graphic.add_boundingbox(&search_area, "blue", 2);
-            graphic.add_text(&search_area.center(), &format!("{:.0}%", ret * 100f64,));
+            graphic.add_text(
+                &search_area.center(),
+                &format!(
+                    "{:.0}%>{:.0}%",
+                    ret * 100f64,
+                    self.max_density_ratio() * 100f64
+                ),
+            );
             graphic.save();
         }
         ret

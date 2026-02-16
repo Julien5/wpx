@@ -91,21 +91,10 @@ K4 (00:54)
 <circle cx="642.3010465936509" cy="305.8517142857143" fill="black" id="7/wp-little-white" r="2.5"/>
 </g>
 <g transform="translate(642.3010465936509 305.8517142857143)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="102.95907894736843" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="106.95907894736843" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="7/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="102.95907894736843" x="-106.95907894736843" y="4"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="106.95907894736843" x="-108.95907894736843" y="2"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="7/wp/text" text-anchor="end" x="-4.000" y="14.000">
 Wörth am Rhein
-</text>
-</g>
-<g>
-<circle cx="585.114468917307" cy="305.1859285714286" fill="Black" id="8/wp" r="4"/>
-<circle cx="585.114468917307" cy="305.1859285714286" fill="white" id="8/wp-little-white" r="2.5"/>
-</g>
-<g transform="translate(585.114468917307 305.1859285714286)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.35131578947369" x="-66.35131578947369" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.35131578947369" x="-68.35131578947369" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="8/wp/text" text-anchor="end" x="-4.000" y="13.000">
-Hagenbach
 </text>
 </g>
 <g>
@@ -128,17 +117,6 @@ Iffezheim
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="71.58552631578948" x="-73.58552631578948" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="10/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Lauterbourg
-</text>
-</g>
-<g>
-<circle cx="516.5120993827823" cy="292.68964285714287" fill="Black" id="11/wp" r="4"/>
-<circle cx="516.5120993827823" cy="292.68964285714287" fill="white" id="11/wp-little-white" r="2.5"/>
-</g>
-<g transform="translate(516.5120993827823 292.68964285714287)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="65.12236842105264" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="69.12236842105264" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="11/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Berg (Pfalz)
 </text>
 </g>
 <g>

@@ -41,7 +41,7 @@ impl Default for ProfileOptions {
     fn default() -> ProfileOptions {
         ProfileOptions {
             elevation_indicators: std::collections::HashSet::default(),
-            max_area_ratio: 0.05f64,
+            max_area_ratio: 0.20f64,
         }
     }
 }
@@ -54,7 +54,7 @@ pub struct MapOptions {
 impl Default for MapOptions {
     fn default() -> MapOptions {
         MapOptions {
-            max_area_ratio: 0.07f64,
+            max_area_ratio: 0.15f64,
         }
     }
 }

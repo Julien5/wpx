@@ -133,6 +133,16 @@ Seibelseckle
 </text>
 </g>
 <g>
+<circle cx="166.7314848687529" cy="224.21821986244686" fill="Green" id="22/wp/circle" r="3"/>
+</g>
+<g transform="translate(166.7314848687529 224.21821986244686)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="49.11184210526316" x="-53.11184210526316" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="53.11184210526316" x="-55.11184210526316" y="2"/>
+<text font-size="13.0" font-style="italic" font-weight="normal" id="22/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Ruhestein
+</text>
+</g>
+<g>
 <circle cx="179.12486489928688" cy="343.09765124144906" fill="Green" id="23/wp/circle" r="3"/>
 </g>
 <g transform="translate(179.12486489928688 343.09765124144906)">

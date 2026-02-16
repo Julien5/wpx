@@ -171,6 +171,18 @@ Durmersheim
 </text>
 </g>
 <g>
+<circle cx="262.87326993234274" cy="311.654206613166" fill="Black" id="21/wp/circle" r="5"/>
+<circle cx="262.87326993234274" cy="311.654206613166" fill="white" id="21/wp/circle-little-white" r="3.5"/>
+<circle cx="262.87326993234274" cy="311.654206613166" fill="black" id="21/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(262.87326993234274 311.654206613166)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="82.53381578947369" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="86.53381578947369" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="21/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Kuppenheim
+</text>
+</g>
+<g>
 <circle cx="281.92965555626415" cy="378.84281659351836" fill="Black" id="0/wp/circle" r="3"/>
 </g>
 <g>

@@ -180,7 +180,10 @@ mod tests {
         math::IntegerSize2D,
         osm,
         parameters::Parameters,
-        point_collection::{Kind, PacketProvider, PointCollection, SharedPacketProvider},
+        point_collection::{
+            Kind, PacketProvider, PointCollection, RenderFunction, SharedPacketProvider,
+        },
+        profile,
         segment::{Segment, SegmentData},
         svgmap,
         track::Track,
@@ -250,6 +253,7 @@ mod tests {
     async fn graph_test(
         src: &str,
         reffilename: &str,
+        function: &RenderFunction,
         start: f64,
         length: f64,
         size: &IntegerSize2D,
@@ -263,7 +267,10 @@ mod tests {
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();
         collection.range_cut(&segment.range());
         let packets = collection.map();
-        let result_map = svgmap::map(&segment, &size, &packets);
+        let result = match function {
+            &RenderFunction::Profile => profile::profile(&segment, &size, &packets),
+            &RenderFunction::Map => svgmap::map(&segment, &size, &packets),
+        };
 
         println!("test {}", reffilename);
         let data = if std::fs::exists(&reffilename).unwrap() {
@@ -272,8 +279,8 @@ mod tests {
             String::new()
         };
         let tmpfilename = std::format!("/tmp/{}", basename(&reffilename));
-        std::fs::write(&tmpfilename, &result_map.svg).expect("Unable to write file");
-        if data != result_map.svg {
+        std::fs::write(&tmpfilename, &result.svg).expect("Unable to write file");
+        if data != result.svg {
             println!("test failed: {} {}", tmpfilename, reffilename);
             return false;
         }
@@ -289,6 +296,7 @@ mod tests {
         let ok = graph_test(
             "data/ref/winni.gpx",
             "data/ref/singlemap-winni.svg",
+            &RenderFunction::Map,
             start,
             length,
             &size,
@@ -306,6 +314,7 @@ mod tests {
         let ok = graph_test(
             "data/jerome.gpx",
             "data/ref/singlemap-jerome.svg",
+            &RenderFunction::Map,
             start,
             length,
             &size,
@@ -323,6 +332,25 @@ mod tests {
         let ok = graph_test(
             "data/blackforest.gpx",
             "data/ref/singlemap-black.svg",
+            &RenderFunction::Map,
+            start,
+            length,
+            &size,
+        )
+        .await;
+        assert!(ok);
+    }
+
+    #[tokio::test]
+    async fn graph_profile() {
+        let _ = env_logger::try_init();
+        let start = 0_000f64;
+        let length = 110_000f64;
+        let size = IntegerSize2D::new(1420, 400);
+        let ok = graph_test(
+            "data/blackforest.gpx",
+            "data/ref/singleprofile-black.svg",
+            &RenderFunction::Profile,
             start,
             length,
             &size,
