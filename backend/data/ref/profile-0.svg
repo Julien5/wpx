@@ -100,6 +100,7 @@
 </g>
 <g transform="translate(364.8191215688331 101.1687)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789476" x="-34.20013157894738" y="-94.1687"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789476" x="-36.20013157894738" y="-96.1687"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="10/wp/text" text-anchor="start" x="-34.200" y="-84.169">
 K1 (10:04)
 </text>
@@ -109,6 +110,7 @@ K1 (10:04)
 </g>
 <g transform="translate(882.6140096429942 334.58804999999995)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789476" x="-34.20013157894732" y="-327.58804999999995"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789476" x="-36.20013157894732" y="-329.58804999999995"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="11/wp/text" text-anchor="start" x="-34.200" y="-317.588">
 K2 (12:53)
 </text>
@@ -120,6 +122,7 @@ K2 (12:53)
 </g>
 <g transform="translate(365.13729925784315 100.77434999999997)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="76.8803947368421" x="-80.8803947368421" y="4"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="80.8803947368421" x="-82.8803947368421" y="2"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="12/wp/text" text-anchor="end" x="-4.000" y="14.000">
 Furtwangen
 </text>
@@ -131,6 +134,7 @@ Furtwangen
 </g>
 <g transform="translate(0.34258991843303466 163.44015)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="79.06881578947369" x="4" y="4"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="83.06881578947369" x="2" y="2"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="13/wp/text" text-anchor="start" x="4.000" y="14.000">
 Bräunlingen
 </text>
@@ -141,6 +145,7 @@ Bräunlingen
 </g>
 <g transform="translate(841.4073154931933 320.03294999999997)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="66.96973684210528" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="70.96973684210528" x="2" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="14/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Mühlenbach
 </text>
@@ -151,6 +156,7 @@ Mühlenbach
 </g>
 <g transform="translate(914.3506014721398 325.84065)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="66.96973684210528" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="70.96973684210528" x="2" y="2"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="15/wp/text" text-anchor="start" x="4.000" y="13.000">
 Fischerbach
 </text>
@@ -161,6 +167,7 @@ Fischerbach
 </g>
 <g transform="translate(733.2697024643112 245.93099999999998)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="72.74276315789474" x="-76.74276315789474" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="76.74276315789474" x="-78.74276315789474" y="2"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="16/wp/text" text-anchor="end" x="-4.000" y="13.000">
 Oberprechtal
 </text>
@@ -171,6 +178,7 @@ Oberprechtal
 </g>
 <g transform="translate(1170.3723048998381 300.24375)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="30.407236842105263" x="-34.40723684210526" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="34.40723684210526" x="-36.40723684210526" y="2"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="17/wp/text" text-anchor="end" x="-4.000" y="13.000">
 Walke
 </text>
@@ -180,6 +188,7 @@ Walke
 </g>
 <g transform="translate(1327.4785186142885 139.06214999999997)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="57.01913875598086" x="-61.01913875598086" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="61.01913875598086" x="-63.01913875598086" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="18/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Freiersberg
 </text>
@@ -190,6 +199,7 @@ Freiersberg
 </g>
 <g transform="translate(579.5583228890189 71.62829999999997)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="47.157894736842096" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="51.157894736842096" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="19/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Rotenberg
 </text>
@@ -200,6 +210,7 @@ Rotenberg
 </g>
 <g transform="translate(495.66301112706276 46.60500000000002)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="24.873205741626794" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="28.873205741626794" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="20/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Vogte
 </text>
@@ -210,6 +221,7 @@ Vogte
 </g>
 <g transform="translate(687.3558073818186 218.5416)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="41.3444976076555" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="45.3444976076555" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="21/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Im Grund
 </text>
@@ -220,6 +232,7 @@ Im Grund
 </g>
 <g transform="translate(815.9262077452394 297.23235)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="44.18660287081339" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="48.18660287081339" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="22/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Eichhalde
 </text>
@@ -230,6 +243,7 @@ Eichhalde
 </g>
 <g transform="translate(799.8573000954007 282.10365)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="60.916267942583715" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="64.91626794258372" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="23/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Oberbüchern
 </text>
@@ -240,6 +254,7 @@ Oberbüchern
 </g>
 <g transform="translate(945.398054741119 304.54575)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="33.85167464114832" x="-37.85167464114832" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="37.85167464114832" x="-39.85167464114832" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="24/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Mitteltal
 </text>
@@ -250,6 +265,7 @@ Mitteltal
 </g>
 <g transform="translate(260.2488804915805 92.34960000000001)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="28.42583732057416" x="-32.42583732057416" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="32.42583732057416" x="-34.42583732057416" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="25/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Linach
 </text>
@@ -260,6 +276,7 @@ Linach
 </g>
 <g transform="translate(431.5154448466094 83.42295000000001)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="36.112440191387556" x="-40.112440191387556" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="40.112440191387556" x="-42.112440191387556" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="26/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Schweiz
 </text>
@@ -270,6 +287,7 @@ Schweiz
 </g>
 <g transform="translate(1185.09881429861 295.94174999999996)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="32.624401913875595" x="4" y="4"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="36.624401913875595" x="2" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="27/wp/text" text-anchor="start" x="4.000" y="12.000">
 Obertal
 </text>
@@ -280,6 +298,7 @@ Obertal
 </g>
 <g transform="translate(181.32602634075909 138.81119999999999)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="55.55502392344496" x="4" y="4"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="59.55502392344496" x="2" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="28/wp/text" text-anchor="start" x="4.000" y="12.000">
 Bregenbach
 </text>
@@ -290,6 +309,7 @@ Bregenbach
 </g>
 <g transform="translate(1242.9732725112658 272.85434999999995)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="88.5622009569378" x="4" y="4"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="92.5622009569378" x="2" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="29/wp/text" text-anchor="start" x="4.000" y="12.000">
 Vor Wildschapbach
 </text>
@@ -300,6 +320,7 @@ Vor Wildschapbach
 </g>
 <g transform="translate(1266.9513406546616 241.19879999999998)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="68.92583732057416" x="-72.92583732057416" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="72.92583732057416" x="-74.92583732057416" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="30/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Wildschapbach
 </text>
@@ -310,6 +331,7 @@ Wildschapbach
 </g>
 <g transform="translate(111.33725930510634 149.45864999999998)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="48.70813397129185" x="-52.70813397129185" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="52.70813397129185" x="-54.70813397129185" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="31/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Zindelstein
 </text>

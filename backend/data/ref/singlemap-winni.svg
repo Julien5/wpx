@@ -7,6 +7,7 @@
 </g>
 <g transform="translate(1112.8472880716436 792.1822353772586)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="36.95" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="40.95" x="2" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="0/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Bœrsch
 </text>
@@ -17,6 +18,7 @@ Bœrsch
 </g>
 <g transform="translate(1106.7494493282138 401.69222051504767)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.197368421052644" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.19736842105264" x="2" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="2/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Rosenwiller
 </text>
@@ -26,6 +28,7 @@ Rosenwiller
 </g>
 <g transform="translate(478.09260161066777 890.1185463505681)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="55.75956937799044" x="-59.75956937799044" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="59.75956937799044" x="-61.75956937799044" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="3/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Heidenkopf
 </text>
@@ -35,6 +38,7 @@ Heidenkopf
 </g>
 <g transform="translate(174.2160683156544 524.0167693310068)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="125.31578947368416" x="-129.31578947368416" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="129.31578947368416" x="-131.31578947368416" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="4/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Rocher de Grendelbruch
 </text>
@@ -44,6 +48,7 @@ Rocher de Grendelbruch
 </g>
 <g transform="translate(264.8559824853728 521.526344911952)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="52.7505980861244" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="56.7505980861244" x="2" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="5/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Breitsteige
 </text>
@@ -53,6 +58,7 @@ Breitsteige
 </g>
 <g transform="translate(374.1188550317602 724.8702404966461)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="97.95514354066984" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="101.95514354066984" x="2" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="6/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Col du Holderbusch
 </text>
@@ -62,6 +68,7 @@ Col du Holderbusch
 </g>
 <g transform="translate(1134.8224331110105 341.8068089884473)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="41.41447368421053" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="45.41447368421053" x="2" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="7/wp/text" text-anchor="start" x="4.000" y="-4.000">
 der Berg
 </text>
@@ -71,6 +78,7 @@ der Berg
 </g>
 <g transform="translate(1072.4558757556515 248.00962097296724)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="57.36901913875598" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="61.36901913875598" x="2" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="8/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Katzenburg
 </text>
@@ -80,6 +88,7 @@ Katzenburg
 </g>
 <g transform="translate(1105.203327693016 211.6782966130413)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="53.0305023923445" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="57.0305023923445" x="2" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="9/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Drei Spitze
 </text>
@@ -90,6 +99,7 @@ Drei Spitze
 </g>
 <g transform="translate(812.4141021428368 885.4432964367443)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="50.45215311004784" x="-54.45215311004784" y="4"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="54.45215311004784" x="-56.45215311004784" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="10/wp/text" text-anchor="end" x="-4.000" y="12.000">
 Klingenthal
 </text>
@@ -100,6 +110,7 @@ Klingenthal
 </g>
 <g transform="translate(588.1280836840742 127.41740832920186)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="36.82296650717703" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="40.82296650717703" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="11/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Haumatt
 </text>

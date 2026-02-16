@@ -213,12 +213,8 @@ pub fn cardinal_boxes(center: &Point2D, width: f64, height: f64) -> Vec<LabelBou
     ret
 }
 
-pub fn _far_boxes(
-    target: &Point2D,
-    width: f64,
-    height: f64,
-    level: usize,
-) -> Vec<LabelBoundingBox> {
+#[allow(dead_code)]
+pub fn far_boxes(target: &Point2D, width: f64, height: f64, level: usize) -> Vec<LabelBoundingBox> {
     let mut ret = Vec::new();
     let d = ((level + 2) as f64) * height;
     let stepsize = height;

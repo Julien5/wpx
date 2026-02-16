@@ -10,6 +10,9 @@ use crate::point_collection::{Packets, RenderResult};
 use crate::segment::SegmentData;
 use crate::track::Track;
 
+#[allow(unused_imports)]
+use crate::math::distance2;
+
 use svg::Document;
 
 pub fn to_graphics_coordinates(
@@ -47,19 +50,19 @@ struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
     fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
-        let ret =
+        let mut ret =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
-        /*
+
         let width = feature.width();
         let height = feature.height();
         let center = feature.center();
-        ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 0));
-        ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 2));
-        ret.extend_from_slice(&label_placement::far_boxes(&center, &width, &height, 4));
+        ret.extend_from_slice(&label_placement::far_boxes(&center, width, height, 0));
+        ret.extend_from_slice(&label_placement::far_boxes(&center, width, height, 2));
+        ret.extend_from_slice(&label_placement::far_boxes(&center, width, height, 4));
         ret.sort_by_key(|candidate| {
-            let p = candidate.absolute().project_on_border(&point.center());
-            (distance2(&point.center(), &p) * 100f64).floor() as i64
-        });*/
+            let p = candidate.absolute().project_on_border(&feature.center());
+            (distance2(&feature.center(), &p) * 100f64).floor() as i64
+        });
         ret
     }
 }

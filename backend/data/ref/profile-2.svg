@@ -80,6 +80,7 @@
 </g>
 <g transform="translate(642.3010465936509 305.8517142857143)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789476" x="-34.20013157894732" y="-298.8517142857143"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789476" x="-36.20013157894732" y="-300.8517142857143"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="6/wp/text" text-anchor="start" x="-34.200" y="-288.852">
 K4 (00:54)
 </text>
@@ -91,6 +92,7 @@ K4 (00:54)
 </g>
 <g transform="translate(642.3010465936509 305.8517142857143)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="102.95907894736843" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="106.95907894736843" x="2" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="7/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Wörth am Rhein
 </text>
@@ -101,6 +103,7 @@ Wörth am Rhein
 </g>
 <g transform="translate(585.114468917307 305.1859285714286)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.35131578947369" x="-66.35131578947369" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.35131578947369" x="-68.35131578947369" y="2"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="8/wp/text" text-anchor="end" x="-4.000" y="13.000">
 Hagenbach
 </text>
@@ -111,6 +114,7 @@ Hagenbach
 </g>
 <g transform="translate(184.6157006946869 295.55764285714287)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="49.265789473684215" x="-53.265789473684215" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="53.265789473684215" x="-55.265789473684215" y="2"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="9/wp/text" text-anchor="end" x="-4.000" y="13.000">
 Iffezheim
 </text>
@@ -121,6 +125,7 @@ Iffezheim
 </g>
 <g transform="translate(496.7391625156815 299.3475)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="67.58552631578948" x="-71.58552631578948" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="71.58552631578948" x="-73.58552631578948" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="10/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Lauterbourg
 </text>
@@ -131,6 +136,7 @@ Lauterbourg
 </g>
 <g transform="translate(516.5120993827823 292.68964285714287)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="65.12236842105264" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="69.12236842105264" x="2" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="11/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Berg (Pfalz)
 </text>
@@ -141,6 +147,7 @@ Berg (Pfalz)
 </g>
 <g transform="translate(276.3968361735715 299.3987142857143)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="49.958552631578954" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="53.958552631578954" x="2" y="2"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="12/wp/text" text-anchor="start" x="4.000" y="13.000">
 Beinheim
 </text>
@@ -151,6 +158,7 @@ Beinheim
 </g>
 <g transform="translate(389.1032450693051 300.26935714285713)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="77.97697368421053" x="-81.97697368421053" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="81.97697368421053" x="-83.97697368421053" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="13/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Munchhausen
 </text>
@@ -161,6 +169,7 @@ Munchhausen
 </g>
 <g transform="translate(218.16344649043003 298.8865714285714)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="61.96644736842107" x="-30.983223684210536" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="65.96644736842107" x="-32.983223684210536" y="2"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="14/wp/text" text-anchor="start" x="-30.983" y="13.000">
 Wintersdorf
 </text>
@@ -171,6 +180,7 @@ Wintersdorf
 </g>
 <g transform="translate(93.0395602675776 290.5898571428571)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="88.29144736842105" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="92.29144736842105" x="2" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="15/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Haueneberstein
 </text>
@@ -181,6 +191,7 @@ Haueneberstein
 </g>
 <g transform="translate(19.16637268256909 140.89050000000003)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="78.28486842105262" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="82.28486842105262" x="2" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="16/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Ebersteinburg
 </text>

@@ -17,6 +17,12 @@ pub fn set_attr(attr: &mut Attributes, k: &str, v: &str) {
 
 pub const FONTSIZE: f64 = 14f64;
 
+#[cfg(test)]
+pub const DEBUG: bool = true;
+
+#[cfg(not(test))]
+pub const DEBUG: bool = false;
+
 fn check(ret: &mut f64, s: &str, c: &char, w: &f64) -> bool {
     if s.find(*c).is_some() {
         *ret += w;
@@ -261,7 +267,7 @@ impl PointFeature {
             whitebg = whitebg.set("id", "label-bg");
             subgroup.append(whitebg);
 
-            if false {
+            if DEBUG {
                 let mut debugrect = svg::node::element::Rectangle::new();
                 debugrect = debugrect.set("x", self.label.bbox.relative().get_xmin());
                 debugrect = debugrect.set("y", self.label.bbox.relative().get_ymin());

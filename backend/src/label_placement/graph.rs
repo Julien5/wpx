@@ -183,21 +183,24 @@ impl Graph {
 
     pub fn update_graph(&mut self, a: &Node, selected: &Candidate) {
         let neighbors = self.map.get(a).unwrap().clone();
+        let nodedata = &self.nodes[*a];
+        let center = nodedata.feature.center();
+        let mut selected_large = selected.bbox().absolute().clone();
+        selected_large.update(&center);
         for b in neighbors {
             let neighbors_candidates = &mut self.nodes[b].candidates;
             assert!(!neighbors_candidates.is_empty());
             let first = neighbors_candidates.first().unwrap().clone();
             // remove candidates that intersect with the selected candidate
-            neighbors_candidates.retain(|cb| !selected.hit_other(&cb));
+            neighbors_candidates.retain(|cb| !selected_large.overlap(&cb.bbox().absolute()));
             if neighbors_candidates.is_empty() {
                 neighbors_candidates.push(first);
             }
         }
         // Track the placed candidate for density queries
-        let placed_bbox = selected.bbox().absolute().clone();
         let idx = self.obstacles.bboxes.len();
-        self.obstacle_tree.insert(&placed_bbox, idx);
-        self.obstacles.bboxes.push(placed_bbox);
+        self.obstacle_tree.insert(&selected_large, idx);
+        self.obstacles.bboxes.push(selected_large);
 
         // remove a
         self.remove_node(a);
