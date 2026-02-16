@@ -261,7 +261,7 @@ impl PointFeature {
             whitebg = whitebg.set("id", "label-bg");
             subgroup.append(whitebg);
 
-            if true {
+            if false {
                 let mut debugrect = svg::node::element::Rectangle::new();
                 debugrect = debugrect.set("x", self.label.bbox.relative().get_xmin());
                 debugrect = debugrect.set("y", self.label.bbox.relative().get_ymin());
@@ -358,10 +358,28 @@ pub struct PolylinePoint(pub Point2D);
 pub type PolylinePoints = Vec<PolylinePoint>;
 
 #[derive(Clone)]
+pub struct PolylineSegment {
+    pub start: Point2D,
+    pub end: Point2D,
+}
+
+// Implement RTreeObject for PolylineSegment
+impl RTreeObject for PolylineSegment {
+    type Envelope = AABB<[f64; 2]>;
+
+    fn envelope(&self) -> Self::Envelope {
+        AABB::from_corners(
+            [self.start.x.min(self.end.x), self.start.y.min(self.end.y)],
+            [self.start.x.max(self.end.x), self.start.y.max(self.end.y)],
+        )
+    }
+}
+
+#[derive(Clone)]
 pub struct Polyline {
     id: String,
     pub points: PolylinePoints,
-    tree: RTree<PolylinePoint>,
+    tree: RTree<PolylineSegment>, // Store segments instead
 }
 
 impl RTreeObject for PolylinePoint {
@@ -382,7 +400,14 @@ impl PointDistance for PolylinePoint {
 
 impl Polyline {
     pub fn new(points: PolylinePoints) -> Polyline {
-        let tree = RTree::bulk_load(points.clone());
+        let mut segments = Vec::new();
+        for i in 0..points.len().saturating_sub(1) {
+            segments.push(PolylineSegment {
+                start: points[i].0.clone(),
+                end: points[i + 1].0.clone(),
+            });
+        }
+        let tree = RTree::bulk_load(segments);
         Polyline {
             id: "track".to_string(),
             points: points,
@@ -391,12 +416,14 @@ impl Polyline {
     }
 
     pub fn hit(&self, bbox: &BoundingBox) -> bool {
-        let bbox = AABB::from_corners(
+        let aabb = AABB::from_corners(
             [bbox.get_xmin(), bbox.get_ymin()],
             [bbox.get_xmax(), bbox.get_ymax()],
         );
-        for _p in self.tree.locate_in_envelope_intersecting(&bbox) {
-            return true;
+        for segment in self.tree.locate_in_envelope_intersecting(&aabb) {
+            if bbox.segment_intersects(&segment.start, &segment.end) {
+                return true;
+            }
         }
         false
     }

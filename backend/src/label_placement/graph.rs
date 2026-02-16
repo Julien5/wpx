@@ -53,8 +53,8 @@ impl Graph {
             nodes: Vec::new(),
             obstacles: obstacles,
             obstacle_tree: obstacles_tree,
-            debug_graphic_dir: Some(draw_graph::newdir()),
-            //debug_graphic_dir: None,
+            //debug_graphic_dir: Some(draw_graph::newdir()),
+            debug_graphic_dir: None,
         }
     }
 
