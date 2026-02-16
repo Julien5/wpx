@@ -261,7 +261,7 @@ impl PointFeature {
             whitebg = whitebg.set("id", "label-bg");
             subgroup.append(whitebg);
 
-            if false {
+            if true {
                 let mut debugrect = svg::node::element::Rectangle::new();
                 debugrect = debugrect.set("x", self.label.bbox.relative().get_xmin());
                 debugrect = debugrect.set("y", self.label.bbox.relative().get_ymin());

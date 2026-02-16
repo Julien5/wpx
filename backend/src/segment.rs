@@ -199,7 +199,7 @@ mod tests {
     #[tokio::test]
     async fn svg_map_single() {
         let _ = env_logger::try_init();
-        let filename = "data/blackforest.gpx";
+        let filename = "data/ref/winni.gpx";
         let gpxdata = read(filename);
         let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
 
@@ -233,7 +233,7 @@ mod tests {
         parameters.map_options.max_area_ratio = 0.15f64;
 
         let segment = SegmentData::new(&fsegment, track, provider, parameters);
-        let size = IntegerSize2D::new(400, 400);
+        let size = IntegerSize2D::new(1600, 1000);
         //let packets = vec![collection.get_vector(&Kind::Villages)];
         collection.range_cut(&segment.range());
         let packets = collection.map();
