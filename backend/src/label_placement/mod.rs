@@ -126,9 +126,7 @@ fn place_subset(
             let mut graph = build_graph(features, gen, &obstacles);
             // graph.print_graph();
             let result = graph.solve();
-            for bbox in result.obstacles {
-                obstacles.bboxes.push(bbox);
-            }
+            obstacles.bboxes = result.obstacles;
             result.selected
         }
         true => place_quick_best_candidates(features, obstacles),
