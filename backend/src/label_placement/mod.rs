@@ -112,7 +112,7 @@ fn place_quick_best_candidates(
 fn place_subset(
     features: &PointFeatures,
     gen: &dyn CandidatesGenerator,
-    obstacles: &Obstacles,
+    obstacles: &mut Obstacles,
 ) -> PlacementResult {
     let mut ret = PlacementResult {
         placed_indices: BTreeMap::new(),
@@ -125,7 +125,11 @@ fn place_subset(
         false => {
             let mut graph = build_graph(features, gen, &obstacles);
             // graph.print_graph();
-            graph.solve()
+            let result = graph.solve();
+            for bbox in result.obstacles {
+                obstacles.bboxes.push(bbox);
+            }
+            result.selected
         }
         true => place_quick_best_candidates(features, obstacles),
     };
@@ -175,10 +179,7 @@ pub fn place_labels(
             packet.points.len(),
             obstacles.bboxes.len()
         );*/
-        let results = place_subset(&packet, gen, &obstacles);
-        for (_k, bbox) in &results.placed_indices {
-            obstacles.bboxes.push(bbox.absolute().clone());
-        }
+        let results = place_subset(&packet, gen, &mut obstacles);
         ret.push(results);
     }
     assert_eq!(ret.len(), packets.len());

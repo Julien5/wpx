@@ -36,6 +36,11 @@ pub struct Graph {
     debug_graphic_dir: Option<String>,
 }
 
+pub struct GraphResult {
+    pub selected: BTreeMap<Node, Candidate>,
+    pub obstacles: Vec<BoundingBox>,
+}
+
 impl Graph {
     fn max_density_ratio(&self) -> f64 {
         self.obstacles.drawingbox.max_area_ratio
@@ -186,7 +191,7 @@ impl Graph {
         let nodedata = &self.nodes[*a];
         let center = nodedata.feature.center();
         let mut selected_large = selected.bbox().absolute().clone();
-        selected_large.update(&center);
+        // selected_large.update(&center);
         for b in neighbors {
             let neighbors_candidates = &mut self.nodes[b].candidates;
             assert!(!neighbors_candidates.is_empty());
@@ -296,7 +301,7 @@ impl Graph {
         ret
     }
 
-    pub fn solve(&mut self) -> BTreeMap<Node, Candidate> {
+    pub fn solve(&mut self) -> GraphResult {
         let mut ret = BTreeMap::new();
         while !self.map.is_empty() {
             let m = self.max_node();
@@ -328,7 +333,10 @@ impl Graph {
                 }
             }
         }
-        ret
+        GraphResult {
+            selected: ret,
+            obstacles: self.obstacles.bboxes.clone(),
+        }
     }
 
     pub fn _debug(&self) {

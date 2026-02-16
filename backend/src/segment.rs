@@ -239,7 +239,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn svg_map_single_winni() {
+    async fn graph_winni() {
         let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
@@ -268,7 +268,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn svg_map_single_jerome() {
+    async fn graph_jerome() {
         let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
@@ -289,6 +289,35 @@ mod tests {
             String::new()
         };
         let tmpfilename = std::format!("/tmp/singlemap-jerome.svg");
+        std::fs::write(&tmpfilename, &result_map.svg).expect("Unable to write file");
+        if data != result_map.svg {
+            println!("test failed: {} {}", tmpfilename, reffilename);
+            assert!(false);
+        }
+    }
+
+    #[tokio::test]
+    async fn graph_pbp() {
+        let _ = env_logger::try_init();
+        let mut parameters = Parameters::default();
+        parameters.start_time = START_TIME.to_string();
+        parameters.map_options.max_area_ratio = 0.15f64;
+        let segment = load_segment("data/ref/pbp2023.gpx", 0f64, 1200_000f64, parameters).await;
+        let size = IntegerSize2D::new(1600, 1000);
+
+        let mut collection = segment.packet_provider.read().unwrap().collection.clone();
+        collection.range_cut(&segment.range());
+        let packets = collection.map();
+        let result_map = svgmap::map(&segment, &size, &packets);
+
+        let reffilename = std::format!("data/ref/singlemap-pbp2023.svg");
+        println!("test {}", reffilename);
+        let data = if std::fs::exists(&reffilename).unwrap() {
+            std::fs::read_to_string(&reffilename).unwrap()
+        } else {
+            String::new()
+        };
+        let tmpfilename = std::format!("/tmp/singlemap-pbp2023.svg");
         std::fs::write(&tmpfilename, &result_map.svg).expect("Unable to write file");
         if data != result_map.svg {
             println!("test failed: {} {}", tmpfilename, reffilename);

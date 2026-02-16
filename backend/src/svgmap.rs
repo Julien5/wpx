@@ -6,7 +6,7 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
-use crate::point_collection::{Packets, RenderResult};
+use crate::point_collection::{Kind, Packets, RenderResult};
 use crate::segment::SegmentData;
 use crate::track::Track;
 
@@ -50,19 +50,33 @@ struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
     fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
-        let mut ret =
+        let cardinals =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
 
+        return cardinals;
+        if feature.input_point.is_some() {
+            let point = feature.input_point.as_ref().unwrap();
+            if point.kind() == Kind::Villages
+                || point.kind() == Kind::Hamlets
+                || point.kind() == Kind::Mountains
+            {
+                return cardinals;
+            }
+        }
         let width = feature.width();
         let height = feature.height();
         let center = feature.center();
-        ret.extend_from_slice(&label_placement::far_boxes(&center, width, height, 0));
-        ret.extend_from_slice(&label_placement::far_boxes(&center, width, height, 2));
-        ret.extend_from_slice(&label_placement::far_boxes(&center, width, height, 4));
-        ret.sort_by_key(|candidate| {
+        let mut aux = Vec::new();
+        aux.extend_from_slice(&label_placement::far_boxes(&center, width, height, 0));
+        aux.extend_from_slice(&label_placement::far_boxes(&center, width, height, 2));
+        aux.extend_from_slice(&label_placement::far_boxes(&center, width, height, 4));
+        aux.sort_by_key(|candidate| {
             let p = candidate.absolute().project_on_border(&feature.center());
             (distance2(&feature.center(), &p) * 100f64).floor() as i64
         });
+        let mut ret = Vec::new();
+        ret.extend_from_slice(&cardinals);
+        ret.extend_from_slice(&aux);
         ret
     }
 }
