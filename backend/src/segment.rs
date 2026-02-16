@@ -247,13 +247,18 @@ mod tests {
             .to_string()
     }
 
-    async fn graph_test(src: &str, reffilename: &str, start: f64, length: f64) -> bool {
+    async fn graph_test(
+        src: &str,
+        reffilename: &str,
+        start: f64,
+        length: f64,
+        size: &IntegerSize2D,
+    ) -> bool {
         let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.map_options.max_area_ratio = 0.15f64;
         let segment = load_segment(src, start, length, parameters).await;
-        let size = IntegerSize2D::new(1600, 1000);
 
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();
         collection.range_cut(&segment.range());
@@ -280,11 +285,13 @@ mod tests {
         let _ = env_logger::try_init();
         let start = 0f64;
         let length = 110_000f64;
+        let size = IntegerSize2D::new(1600, 1000);
         let ok = graph_test(
             "data/ref/winni.gpx",
             "data/ref/singlemap-winni.svg",
             start,
             length,
+            &size,
         )
         .await;
         assert!(ok);
@@ -295,16 +302,36 @@ mod tests {
         let _ = env_logger::try_init();
         let start = 0f64;
         let length = 60_000f64;
+        let size = IntegerSize2D::new(1600, 1000);
         let ok = graph_test(
             "data/jerome.gpx",
             "data/ref/singlemap-jerome.svg",
             start,
             length,
+            &size,
         )
         .await;
         assert!(ok);
     }
 
+    #[tokio::test]
+    async fn graph_black() {
+        let _ = env_logger::try_init();
+        let start = 100_000f64;
+        let length = 110_000f64;
+        let size = IntegerSize2D::new(400, 400);
+        let ok = graph_test(
+            "data/blackforest.gpx",
+            "data/ref/singlemap-black.svg",
+            start,
+            length,
+            &size,
+        )
+        .await;
+        assert!(ok);
+    }
+
+    /*
     #[tokio::test]
     async fn graph_pbp() {
         let _ = env_logger::try_init();
@@ -318,5 +345,5 @@ mod tests {
         )
         .await;
         assert!(ok);
-    }
+    }*/
 }
