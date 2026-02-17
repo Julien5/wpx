@@ -9,6 +9,7 @@ use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::label_placement;
+use crate::label_placement::candidate::utils;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
@@ -531,9 +532,9 @@ struct ProfileGenerator {
 }
 
 impl CandidatesGenerator for ProfileGenerator {
-    fn gen(&self, feature: &PointFeature, _obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
         let kind = feature.input_point.as_ref().unwrap().kind();
-        match kind {
+        let mut ret = match kind {
             Kind::UserStep => self.extended_cardinal(feature),
             //OutputType::UserStep => self.generate_column(feature),
             //OutputType::UserStep => self.generate_header(feature, vec![25f64, self.HD - 20f64]),
@@ -542,7 +543,9 @@ impl CandidatesGenerator for ProfileGenerator {
                 assert!(is_osm(&kind));
                 self.cardinal(feature)
             }
-        }
+        };
+        ret.retain(|bbox| !utils::hit(feature, &bbox.absolute(), obstacles));
+        ret
     }
 }
 

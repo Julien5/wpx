@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::bbox::BoundingBox;
+use crate::label_placement::candidate::utils;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::{self, *};
@@ -53,17 +54,17 @@ struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
     fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
-        let cardinals =
+        let mut cardinals =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
-
-        let width = 200f64;
+        cardinals.retain(|bbox| !utils::hit(feature, &bbox.absolute(), obstacles));
+        let search_width = 200f64;
         let search_area = BoundingBox::minsize(
-            feature.center() - Point2D::new(width * 0.5f64, width * 0.5f64),
-            width,
-            width,
+            feature.center() - Point2D::new(search_width * 0.5f64, search_width * 0.5f64),
+            search_width,
+            search_width,
         );
         // if the area is not empty, do not try hard placement
-        if obstacles.occupied_area(&search_area) / search_area.area() > 0f64 {
+        if obstacles.occupied_area(&search_area) / search_area.area() > 0.0f64 {
             return cardinals;
         }
         match feature.input_point() {
@@ -84,6 +85,7 @@ impl CandidatesGenerator for MapGenerator {
         let mut ret = Vec::new();
         ret.extend_from_slice(&cardinals);
         ret.extend_from_slice(&aux);
+        ret.retain(|bbox| !utils::hit(feature, &bbox.absolute(), obstacles));
         ret
     }
 }

@@ -108,24 +108,25 @@ pub mod utils {
         Candidate::new(bbox, &dtarget, &dothers)
     }
 
-    fn hit(feature: &PointFeature, candidate: &Candidate, obstacles: &Obstacles) -> bool {
+    pub fn hit(
+        feature: &PointFeature,
+        candidate_bbox: &BoundingBox,
+        obstacles: &Obstacles,
+    ) -> bool {
         if !obstacles.drawingbox.bbox.empty()
-            && !obstacles
-                .drawingbox
-                .bbox
-                .contains_other(&candidate.bbox().absolute())
+            && !obstacles.drawingbox.bbox.contains_other(candidate_bbox)
         {
             return true;
         }
-        if obstacles.hit_bbox(&candidate.bbox().absolute()) {
+        if obstacles.hit_bbox(&candidate_bbox) {
             return true;
         }
         let target = feature.center();
-        let start = candidate.bbox().absolute().project_on_border(&target);
+        let start = candidate_bbox.project_on_border(&target);
         let aux = Point2D::point_on_segment_from_end(&start, &target, 5f64);
         let is_far_candidate = start.distance_to(&target) > 10f64;
         for polyline in &obstacles.polylines {
-            if candidate.hit_polyline(&polyline) {
+            if polyline.hit(candidate_bbox) {
                 return true;
             }
             if is_far_candidate && polyline.hit_segment(&start, &aux) {
@@ -152,9 +153,6 @@ pub mod utils {
         }
         for bbox in gen.gen(target, obstacles) {
             let candidate = make_candidate(&bbox, &target, &all, obstacles);
-            if hit(&target, &candidate, obstacles) {
-                continue;
-            }
             ret.push(candidate);
         }
         return ret;
