@@ -1,9 +1,9 @@
 #![allow(non_snake_case)]
 
 use crate::bbox::BoundingBox;
-use crate::label_placement::candidate::utils;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
+use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
@@ -46,9 +46,9 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
+use crate::label_placement::features::PointFeature;
 use crate::label_placement::features::{set_attr, PointFeatures, PolylinePoint, PolylinePoints};
 use crate::label_placement::features::{Attributes, Polyline};
-use crate::label_placement::features::{Obstacles, PointFeature};
 
 struct MapGenerator {}
 
@@ -56,7 +56,7 @@ impl CandidatesGenerator for MapGenerator {
     fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
         let mut cardinals =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
-        cardinals.retain(|bbox| !utils::hit(feature, &bbox.absolute(), obstacles));
+        cardinals.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
         let search_width = 200f64;
         let search_area = BoundingBox::minsize(
             feature.center() - Point2D::new(search_width * 0.5f64, search_width * 0.5f64),
@@ -85,7 +85,7 @@ impl CandidatesGenerator for MapGenerator {
         let mut ret = Vec::new();
         ret.extend_from_slice(&cardinals);
         ret.extend_from_slice(&aux);
-        ret.retain(|bbox| !utils::hit(feature, &bbox.absolute(), obstacles));
+        ret.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
         ret
     }
 }
@@ -253,7 +253,10 @@ mod tests {
 
     use crate::{
         bbox::BoundingBox,
-        label_placement::{features::*, labelboundingbox::LabelBoundingBox, CandidatesGenerator},
+        label_placement::{
+            features::*, labelboundingbox::LabelBoundingBox, obstacle::Obstacles,
+            CandidatesGenerator,
+        },
         math::Point2D,
         svgmap::MapGenerator,
     };

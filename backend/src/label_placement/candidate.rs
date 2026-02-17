@@ -1,5 +1,3 @@
-use crate::label_placement::features::Polyline;
-
 use super::labelboundingbox::LabelBoundingBox;
 
 #[derive(Clone)]
@@ -22,10 +20,6 @@ impl Candidate {
         self._bbox.absolute().overlap(&other._bbox.absolute())
     }
 
-    pub fn hit_polyline(&self, polyline: &Polyline) -> bool {
-        let bbox = self._bbox.absolute();
-        polyline.hit(&bbox)
-    }
     pub fn bbox(&self) -> &LabelBoundingBox {
         &self._bbox
     }
@@ -70,9 +64,7 @@ pub type Candidates = Vec<Candidate>;
 
 pub mod utils {
     use crate::label_placement::{
-        features::{Obstacles, PointFeature},
-        labelboundingbox::LabelBoundingBox,
-        *,
+        features::PointFeature, labelboundingbox::LabelBoundingBox, obstacle::Obstacles, *,
     };
 
     pub fn candidates_bounding_box(candidates: &Candidates) -> BoundingBox {
@@ -106,34 +98,6 @@ pub mod utils {
             }
         }
         Candidate::new(bbox, &dtarget, &dothers)
-    }
-
-    pub fn hit(
-        feature: &PointFeature,
-        candidate_bbox: &BoundingBox,
-        obstacles: &Obstacles,
-    ) -> bool {
-        if !obstacles.drawingbox.bbox.empty()
-            && !obstacles.drawingbox.bbox.contains_other(candidate_bbox)
-        {
-            return true;
-        }
-        if obstacles.hit_bbox(&candidate_bbox) {
-            return true;
-        }
-        let target = feature.center();
-        let start = candidate_bbox.project_on_border(&target);
-        let aux = Point2D::point_on_segment_from_end(&start, &target, 5f64);
-        let is_far_candidate = start.distance_to(&target) > 10f64;
-        for polyline in &obstacles.polylines {
-            if polyline.hit(candidate_bbox) {
-                return true;
-            }
-            if is_far_candidate && polyline.hit_segment(&start, &aux) {
-                return true;
-            }
-        }
-        false
     }
 
     fn generate_all_candidates(

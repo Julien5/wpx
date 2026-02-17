@@ -4,10 +4,12 @@ pub mod drawings;
 pub mod features;
 pub mod graph;
 pub mod labelboundingbox;
+pub mod obstacle;
 
 use super::label_placement::features::*;
 use crate::bbox::BoundingBox;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
+use crate::label_placement::obstacle::Obstacles;
 use crate::math::distance2;
 use crate::math::Point2D;
 use crate::point_collection::is_osm;

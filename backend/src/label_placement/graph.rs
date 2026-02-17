@@ -7,7 +7,7 @@ use crate::bbox::quadtree::QuadTree;
 use crate::bbox::BoundingBox;
 
 use crate::label_placement::draw_graph::Graphic;
-use crate::label_placement::features::Obstacles;
+use crate::label_placement::obstacle::Obstacles;
 use crate::math::Point2D;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;

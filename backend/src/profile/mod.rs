@@ -9,10 +9,10 @@ use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::label_placement;
-use crate::label_placement::candidate::utils;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
+use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::*;
 use crate::math::{distance2, IntegerSize2D, Point2D};
 use crate::parameters::{ProfileIndication, ProfileOptions};
@@ -544,7 +544,7 @@ impl CandidatesGenerator for ProfileGenerator {
                 self.cardinal(feature)
             }
         };
-        ret.retain(|bbox| !utils::hit(feature, &bbox.absolute(), obstacles));
+        ret.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
         ret
     }
 }
