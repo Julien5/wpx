@@ -5,7 +5,7 @@ use super::BoundingBox;
 const MAX_OBJECTS: usize = 8;
 const MAX_DEPTH: usize = 4;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct QuadTree<T> {
     boundary: BoundingBox,
     objects: Vec<(BoundingBox, T)>,

@@ -531,7 +531,7 @@ struct ProfileGenerator {
 }
 
 impl CandidatesGenerator for ProfileGenerator {
-    fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn gen(&self, feature: &PointFeature, _obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
         let kind = feature.input_point.as_ref().unwrap().kind();
         match kind {
             Kind::UserStep => self.extended_cardinal(feature),

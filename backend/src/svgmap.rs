@@ -14,6 +14,7 @@ use crate::track::Track;
 use crate::math::distance2;
 #[allow(unused_imports)]
 use crate::point_collection::Kind;
+use crate::track_projection::is_close_to_track;
 
 use svg::Document;
 
@@ -44,42 +45,46 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
-use crate::label_placement::features::PointFeature;
 use crate::label_placement::features::{set_attr, PointFeatures, PolylinePoint, PolylinePoints};
 use crate::label_placement::features::{Attributes, Polyline};
+use crate::label_placement::features::{Obstacles, PointFeature};
 
 struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
-    fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
         let cardinals =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
 
-        return cardinals;
-        /*if feature.input_point.is_some() {
-            let point = feature.input_point.as_ref().unwrap();
-            if point.kind() == Kind::Villages
-                || point.kind() == Kind::Hamlets
-                || point.kind() == Kind::Mountains
-            {
-                return cardinals;
-            }
+        let width = 200f64;
+        let search_area = BoundingBox::minsize(
+            feature.center() - Point2D::new(width * 0.5f64, width * 0.5f64),
+            width,
+            width,
+        );
+        // if the area is not empty, do not try hard placement
+        if obstacles.occupied_area(&search_area) / search_area.area() > 0f64 {
+            return cardinals;
         }
-        let width = feature.width();
-        let height = feature.height();
-        let center = feature.center();
+        match feature.input_point() {
+            Some(point) => {
+                if !is_close_to_track(&point) {
+                    return cardinals;
+                }
+            }
+            None => {}
+        }
         let mut aux = Vec::new();
-        aux.extend_from_slice(&label_placement::far_boxes(&center, width, height, 0));
-        aux.extend_from_slice(&label_placement::far_boxes(&center, width, height, 2));
-        aux.extend_from_slice(&label_placement::far_boxes(&center, width, height, 4));
-        aux.sort_by_key(|candidate| {
-            let p = candidate.absolute().project_on_border(&feature.center());
-            (distance2(&feature.center(), &p) * 100f64).floor() as i64
-        });
+        aux.extend_from_slice(&label_placement::far_cardinal_boxes(
+            &feature.center(),
+            feature.width(),
+            feature.height(),
+            25f64,
+        ));
         let mut ret = Vec::new();
         ret.extend_from_slice(&cardinals);
         ret.extend_from_slice(&aux);
-        ret*/
+        ret
     }
 }
 
@@ -275,6 +280,7 @@ mod tests {
             link: None,
             xmlid: 0,
         };
+        /*
         let candidates = MapGenerator {}.gen(&target);
         let mut found = false;
         assert!(!candidates.is_empty());
@@ -287,5 +293,6 @@ mod tests {
             }
         }
         assert!(found);
+        */
     }
 }

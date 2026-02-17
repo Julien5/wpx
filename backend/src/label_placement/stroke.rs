@@ -66,7 +66,10 @@ pub fn _compute(
 
 #[cfg(test)]
 mod tests {
-    use crate::{bbox::BoundingBox, label_placement::DrawingArea};
+    use crate::{
+        bbox::{quadtree::QuadTree, BoundingBox},
+        label_placement::DrawingArea,
+    };
 
     use super::*;
 
@@ -128,13 +131,15 @@ mod tests {
         let _bbox0 = BoundingBox::minmax(Point2D::new(-3.0, 3.0), Point2D::new(0.0, 7.0));
         let bbox1 = BoundingBox::minmax(Point2D::new(3.0, 3.0), Point2D::new(7.0, 7.0));
         let _bbox2 = BoundingBox::minmax(Point2D::new(10.0, 0.0), Point2D::new(17.0, 10.0));
+        let area = BoundingBox::minmax(Point2D::new(0.0, 0.0), Point2D::new(10.0, 40.0));
         let obstables = Obstacles {
             bboxes: vec![bbox1],
             polylines: Vec::new(),
             drawingbox: DrawingArea {
-                bbox: BoundingBox::minmax(Point2D::new(0.0, 0.0), Point2D::new(10.0, 40.0)),
+                bbox: area.clone(),
                 max_area_ratio: 0.0f64,
             },
+            bboxes_tree: QuadTree::new(area),
         };
         let path = super::_compute(&from, &to, &obstables);
         for p in path {

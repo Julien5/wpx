@@ -35,6 +35,16 @@ Mayres-Savel
 </text>
 </g>
 <g>
+<circle cx="748.4360779304843" cy="592.733097052318" fill="Green" id="4/wp/circle" r="3"/>
+</g>
+<g transform="translate(748.4360779304843 592.733097052318)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="52.26076555023924" x="-79.26076555023924" y="-4.5"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="56.26076555023924" x="-81.26076555023924" y="-6.5"/>
+<text font-size="13.0" font-style="italic" font-weight="normal" id="4/wp/text" text-anchor="end" x="-27.000" y="4.500">
+Le Sénépy
+</text>
+</g>
+<g>
 <circle cx="1069.4826993614406" cy="575.3933440797264" fill="Green" id="5/wp/circle" r="3"/>
 </g>
 <g transform="translate(1069.4826993614406 575.3933440797264)">
@@ -42,6 +52,17 @@ Mayres-Savel
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="49.053229665071775" x="-51.053229665071775" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="5/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Le Cimon
+</text>
+</g>
+<g>
+<circle cx="785.0571184658329" cy="36.714700652926695" fill="Gray" id="6/wp/circle" r="2"/>
+<circle cx="785.0571184658329" cy="36.714700652926695" fill="white" id="6/wp/circle-little-white" r="0.5"/>
+</g>
+<g transform="translate(785.0571184658329 36.714700652926695)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="44.96172248803827" x="-22.480861244019135" y="27"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="48.96172248803827" x="-24.480861244019135" y="25"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="6/wp/text" text-anchor="start" x="-22.481" y="35.000">
+Le Majeuil
 </text>
 </g>
 <g>

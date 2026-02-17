@@ -111,7 +111,7 @@ pub mod utils {
         Candidate::new(bbox, &dtarget, &dothers)
     }
 
-    fn hit(candidate: &Candidate, obstacles: &Obstacles) -> bool {
+    fn hit(feature: &PointFeature, candidate: &Candidate, obstacles: &Obstacles) -> bool {
         if !obstacles.drawingbox.bbox.empty()
             && !obstacles
                 .drawingbox
@@ -125,8 +125,15 @@ pub mod utils {
                 return true;
             }
         }
+        let target = feature.center();
+        let start = candidate.bbox().absolute().project_on_border(&target);
+        let aux = Point2D::point_on_segment_from_end(&start, &target, 5f64);
+        let is_far_candidate = start.distance_to(&target) > 10f64;
         for polyline in &obstacles.polylines {
             if candidate.hit_polyline(&polyline) {
+                return true;
+            }
+            if is_far_candidate && polyline.hit_segment(&start, &aux) {
                 return true;
             }
         }
@@ -148,9 +155,9 @@ pub mod utils {
         if target.area() > available_area {
             return ret;
         }
-        for bbox in gen.gen(target) {
+        for bbox in gen.gen(target, obstacles) {
             let candidate = make_candidate(&bbox, &target, &all, obstacles);
-            if hit(&candidate, obstacles) {
+            if hit(&target, &candidate, obstacles) {
                 continue;
             }
             ret.push(candidate);

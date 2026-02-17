@@ -3,7 +3,7 @@ use std::{collections::HashMap, str::FromStr};
 use rstar::{PointDistance, RTree, RTreeObject, AABB};
 
 use crate::{
-    bbox::BoundingBox,
+    bbox::{quadtree::QuadTree, BoundingBox},
     inputpoint::InputPoint,
     label_placement::{labelboundingbox::LabelBoundingBox, stroke},
     math::{self, distance2, Point2D},
@@ -433,6 +433,22 @@ impl Polyline {
         }
         false
     }
+
+    pub fn hit_segment(&self, p1: &Point2D, p2: &Point2D) -> bool {
+        let mut bbox = BoundingBox::new();
+        bbox.update(p1);
+        bbox.update(p2);
+        let aabb = AABB::from_corners(
+            [bbox.get_xmin(), bbox.get_ymin()],
+            [bbox.get_xmax(), bbox.get_ymax()],
+        );
+        for segment in self.tree.locate_in_envelope_intersecting(&aabb) {
+            if math::segments_intersect(&segment.start, &segment.end, p1, p2) {
+                return true;
+            }
+        }
+        false
+    }
 }
 
 impl Polyline {
@@ -467,6 +483,7 @@ pub struct DrawingArea {
 #[derive(Clone)]
 pub struct Obstacles {
     pub bboxes: Vec<BoundingBox>,
+    pub bboxes_tree: QuadTree<usize>,
     pub polylines: Vec<Polyline>,
     pub drawingbox: DrawingArea,
 }
@@ -483,5 +500,20 @@ impl Obstacles {
 
     pub fn available_area(&self) -> f64 {
         self.drawingbox.bbox.area() - self.bboxes.iter().map(|bbox| bbox.area()).sum::<f64>()
+    }
+
+    pub fn occupied_area(&self, search_area: &BoundingBox) -> f64 {
+        let mut nearby_indices = Vec::new();
+        self.bboxes_tree.query(&search_area, &mut nearby_indices);
+
+        let mut ret = 0.0;
+        for idx in nearby_indices {
+            let obstacle = &self.bboxes[*idx];
+            let intersection = obstacle.intersection(&search_area);
+            if intersection.is_some() {
+                ret += intersection.unwrap().area();
+            }
+        }
+        ret
     }
 }

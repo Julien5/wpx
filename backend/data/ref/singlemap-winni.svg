@@ -13,6 +13,17 @@ Bœrsch
 </text>
 </g>
 <g>
+<circle cx="50.032625569816446" cy="573.8179781545186" fill="Black" id="1/wp/circle" r="4"/>
+<circle cx="50.032625569816446" cy="573.8179781545186" fill="white" id="1/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(50.032625569816446 573.8179781545186)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="76.20657894736843" x="-38.103289473684214" y="-36"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="80.20657894736843" x="-40.103289473684214" y="-38"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="1/wp/text" text-anchor="start" x="-38.103" y="-27.000">
+Grendelbruch
+</text>
+</g>
+<g>
 <circle cx="1106.7494493282138" cy="401.69222051504767" fill="Black" id="2/wp/circle" r="4"/>
 <circle cx="1106.7494493282138" cy="401.69222051504767" fill="white" id="2/wp/circle-little-white" r="2.5"/>
 </g>

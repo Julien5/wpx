@@ -359,19 +359,21 @@ mod tests {
         assert!(ok);
     }
 
-    /*
     #[tokio::test]
     async fn graph_pbp() {
         let _ = env_logger::try_init();
         let start = 0f64;
         let length = 1200_000f64;
+        let size = IntegerSize2D::new(1600, 1000);
         let ok = graph_test(
-            "data/reb/pbp2023.gpx",
+            "data/ref/pbp2023.gpx",
             "data/ref/singlemap-pbp2023.svg",
+            &RenderFunction::Map,
             start,
             length,
+            &size,
         )
         .await;
         assert!(ok);
-    }*/
+    }
 }

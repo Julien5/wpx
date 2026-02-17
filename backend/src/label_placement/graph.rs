@@ -32,13 +32,12 @@ pub struct Graph {
     tree: QuadTree<PointFeatureId>,
     nodes: Vec<NodeData>,
     obstacles: Obstacles,
-    obstacle_tree: QuadTree<usize>,
     debug_graphic_dir: Option<String>,
 }
 
 pub struct GraphResult {
     pub selected: BTreeMap<Node, Candidate>,
-    pub obstacles: Vec<BoundingBox>,
+    pub obstacles: Obstacles,
 }
 
 impl Graph {
@@ -47,19 +46,14 @@ impl Graph {
     }
     pub fn new(obstacles: Obstacles) -> Self {
         let area = obstacles.drawingbox.bbox.clone();
-        let mut obstacles_tree = QuadTree::new(area.clone());
-        for (idx, bbox) in obstacles.bboxes.iter().enumerate() {
-            obstacles_tree.insert(bbox, idx);
-        }
         Self {
             map: Map::new(),
             ordered_nodes: Vec::new(),
             tree: QuadTree::new(area.clone()),
             nodes: Vec::new(),
             obstacles: obstacles,
-            obstacle_tree: obstacles_tree,
-            debug_graphic_dir: Some(draw_graph::newdir()),
-            //debug_graphic_dir: None,
+            //debug_graphic_dir: Some(draw_graph::newdir()),
+            debug_graphic_dir: None,
         }
     }
 
@@ -206,7 +200,7 @@ impl Graph {
         }
         // Track the placed candidate for density queries
         let idx = self.obstacles.bboxes.len();
-        self.obstacle_tree.insert(&selected_large, idx);
+        self.obstacles.bboxes_tree.insert(&selected_large, idx);
         self.obstacles.bboxes.push(selected_large);
 
         // remove a
@@ -262,9 +256,6 @@ impl Graph {
     }
 
     fn density_ratio(&self, candidate: &Candidate) -> f64 {
-        //let drawbox = &self.obstacles.drawingbox.bbox;
-        //let drawwidth = drawbox.width().min(drawbox.height());
-
         let candidate_bbox = candidate.bbox().absolute();
         let candidate_area = candidate_bbox.area();
 
@@ -278,18 +269,7 @@ impl Graph {
             width,
         );
 
-        let mut nearby_indices = Vec::new();
-        self.obstacle_tree.query(&search_area, &mut nearby_indices);
-
-        let mut occupied_area = 0.0;
-        for idx in nearby_indices {
-            let obstacle = &self.obstacles.bboxes[*idx];
-            let intersection = obstacle.intersection(&search_area);
-            if intersection.is_some() {
-                occupied_area += intersection.unwrap().area();
-            }
-        }
-
+        let occupied_area = self.obstacles.occupied_area(&search_area);
         let total_occupied = occupied_area + candidate_area;
         let search_area_size = search_area.area();
         let ret = total_occupied / search_area_size;
@@ -344,7 +324,7 @@ impl Graph {
         }
         GraphResult {
             selected: ret,
-            obstacles: self.obstacles.bboxes.clone(),
+            obstacles: self.obstacles.clone(),
         }
     }
 
@@ -429,13 +409,15 @@ mod tests {
     fn test_graph_operations() {
         let _ = env_logger::try_init();
         // Create a new graph
+        let area = BoundingBox::minmax(Point2D::zero(), Point2D::new(10f64, 10f64));
         let obstacles = Obstacles {
             bboxes: Vec::new(),
             polylines: Vec::new(),
             drawingbox: DrawingArea {
-                bbox: BoundingBox::minmax(Point2D::zero(), Point2D::new(10f64, 10f64)),
+                bbox: area.clone(),
                 max_area_ratio: 1.0,
             },
+            bboxes_tree: QuadTree::new(area),
         };
         let mut graph = Graph::new(obstacles);
         let mut ca = Candidates::new();

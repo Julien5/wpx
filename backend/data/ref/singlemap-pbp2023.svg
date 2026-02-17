@@ -1,0 +1,541 @@
+<svg height="1000" viewBox="(0, 0, 1600, 1000)" width="1600" xmlns="http://www.w3.org/2000/svg">
+<path d="M1578.9,410.1 L1579.8,407.1 L1567.7,396.7 L1566.6,383.7 L1564.0,384.4 L1540.3,376.4 L1530.3,383.9 L1520.0,396.4 L1514.9,406.1 L1511.5,408.2 L1512.4,409.8 L1509.8,410.8 L1511.0,415.3 L1505.0,417.9 L1501.1,416.0 L1477.6,428.5 L1474.0,430.0 L1470.4,428.7 L1456.8,436.0 L1443.3,438.8 L1420.2,432.9 L1413.9,436.9 L1403.2,437.4 L1388.8,443.8 L1379.3,443.0 L1360.9,453.4 L1349.6,450.3 L1338.0,452.6 L1327.8,458.7 L1321.8,457.8 L1315.7,454.2 L1304.2,456.8 L1302.9,460.8 L1294.5,458.0 L1292.0,460.5 L1282.6,462.2 L1263.0,457.2 L1263.0,461.6 L1258.5,465.3 L1256.3,471.1 L1249.0,478.3 L1244.1,487.0 L1240.1,489.2 L1234.7,488.4 L1222.7,480.3 L1217.3,480.0 L1215.4,481.6 L1207.1,478.8 L1204.2,479.2 L1202.2,483.9 L1197.4,486.2 L1192.2,484.9 L1185.9,487.1 L1182.1,485.0 L1173.7,484.6 L1165.0,490.1 L1147.7,490.7 L1149.5,494.0 L1134.8,518.9 L1133.2,518.9 L1127.6,530.8 L1113.2,535.9 L1110.9,533.6 L1100.6,530.2 L1090.9,531.7 L1074.8,529.1 L1073.3,526.7 L1060.8,522.2 L1059.2,523.8 L1049.6,522.9 L1037.7,528.7 L1029.9,529.3 L1029.1,523.7 L1026.2,522.2 L1026.7,516.6 L1028.6,514.6 L1029.6,497.6 L1028.2,496.0 L1021.5,496.5 L1008.0,488.5 L997.7,495.1 L984.5,498.1 L975.7,502.2 L926.8,498.5 L920.3,495.8 L909.5,495.2 L902.5,496.1 L890.7,501.1 L885.0,499.6 L870.5,502.2 L865.2,504.7 L861.0,509.5 L855.8,509.0 L840.0,513.9 L838.7,518.3 L839.8,523.4 L832.1,522.1 L833.0,519.6 L831.6,518.4 L817.8,521.0 L804.3,532.9 L794.0,538.0 L783.7,552.6 L771.1,559.1 L762.1,555.8 L733.7,555.7 L721.6,551.0 L722.2,548.9 L719.1,547.2 L713.4,549.9 L705.7,547.3 L686.4,547.7 L674.8,528.5 L650.1,538.8 L642.0,544.6 L632.8,545.9 L599.4,557.4 L595.1,562.7 L591.5,564.1 L592.5,579.4 L588.8,581.2 L586.9,579.4 L581.9,580.3 L580.7,578.5 L572.6,576.1 L551.4,562.5 L542.9,564.2 L529.1,561.2 L514.1,567.6 L492.8,584.7 L477.8,582.3 L470.8,584.2 L468.5,583.0 L454.5,584.6 L453.0,583.1 L448.1,585.6 L438.6,573.7 L435.0,565.9 L437.6,561.6 L434.2,555.0 L428.7,549.7 L422.0,551.3 L421.6,547.9 L411.7,547.4 L401.7,541.9 L398.4,536.5 L387.6,534.7 L375.7,535.9 L371.3,531.6 L368.4,525.1 L364.6,524.5 L361.4,524.5 L360.7,527.7 L356.5,531.4 L346.6,533.7 L347.4,535.1 L343.0,535.4 L340.0,538.5 L332.7,539.2 L325.4,545.6 L312.4,547.2 L310.8,548.9 L295.7,549.8 L288.9,546.3 L285.0,546.7 L278.9,541.4 L267.7,542.5 L255.0,546.9 L250.6,547.2 L248.4,544.9 L244.7,547.4 L237.6,544.2 L237.0,535.3 L231.5,525.8 L224.1,522.9 L219.8,523.7 L218.2,518.1 L212.6,515.6 L207.4,516.7 L205.8,514.7 L199.5,517.7 L190.1,512.7 L186.0,513.4 L175.0,506.2 L173.2,498.9 L164.7,498.0 L154.9,501.5 L147.2,497.8 L141.8,499.2 L137.5,496.3 L123.5,501.2 L119.9,500.4 L112.4,493.0 L95.1,488.2 L94.1,482.7 L91.3,478.9 L88.2,477.8 L70.8,487.3 L62.5,485.3 L54.2,490.0 L41.1,489.4 L32.1,496.9 L20.2,500.4 L32.2,503.6 L34.9,502.8 L39.7,504.8 L42.1,508.5 L57.2,508.8 L64.6,511.5 L67.9,510.1 L71.8,516.6 L75.7,516.6 L77.0,520.2 L75.8,524.5 L77.2,527.0 L83.8,530.1 L83.5,533.6 L90.8,535.4 L93.1,539.2 L101.9,544.4 L109.3,544.1 L117.3,546.4 L121.4,552.8 L118.2,556.9 L125.1,562.2 L131.3,563.2 L134.9,561.2 L148.5,566.0 L164.8,555.5 L174.5,558.6 L182.8,555.4 L190.6,560.6 L203.7,563.0 L204.6,565.2 L211.6,568.8 L232.7,554.0 L234.3,551.1 L236.6,552.3 L239.4,549.9 L251.6,546.6 L267.8,553.8 L276.8,554.8 L277.7,562.8 L287.3,568.2 L298.3,558.1 L307.9,562.7 L309.9,560.5 L318.3,559.3 L331.0,561.1 L343.6,567.0 L341.3,578.0 L348.1,586.9 L349.6,595.7 L366.3,598.6 L366.9,601.2 L378.3,608.5 L382.1,614.3 L388.7,617.1 L393.5,623.4 L395.4,623.6 L414.1,608.3 L419.5,597.7 L423.7,596.1 L428.8,590.9 L435.4,590.3 L439.4,587.0 L446.9,584.4 L453.0,587.3 L456.6,591.6 L471.7,598.3 L473.2,602.2 L478.6,601.6 L490.6,611.8 L497.7,613.1 L499.9,615.4 L510.4,608.2 L513.4,602.6 L520.7,597.7 L524.6,598.3 L530.5,595.6 L547.2,596.8 L566.8,589.6 L582.9,579.6 L591.1,580.8 L592.6,579.5 L591.5,564.3 L595.1,562.7 L599.4,557.4 L632.7,545.9 L642.0,544.6 L650.1,538.8 L674.9,528.5 L686.4,547.7 L705.7,547.3 L713.3,549.8 L719.1,547.2 L722.2,548.9 L721.6,551.0 L733.7,555.7 L762.2,555.8 L771.1,559.1 L783.7,552.6 L794.0,537.9 L804.3,532.8 L817.7,521.1 L831.5,518.4 L833.6,520.1 L832.8,522.2 L840.0,523.6 L838.7,518.3 L840.0,513.9 L855.5,509.1 L861.0,509.5 L865.2,504.7 L870.5,502.3 L885.2,499.6 L890.7,501.1 L902.8,496.0 L920.2,495.8 L926.8,498.6 L975.7,502.2 L984.5,498.1 L997.7,495.1 L1008.0,488.6 L1021.3,496.5 L1028.2,496.0 L1029.6,497.6 L1028.6,514.7 L1026.7,516.6 L1026.2,522.2 L1029.1,523.7 L1029.9,529.4 L1037.7,528.7 L1049.6,522.9 L1056.0,523.9 L1061.5,522.7 L1073.2,526.7 L1074.8,529.1 L1090.9,531.7 L1100.5,530.3 L1111.0,533.6 L1113.3,535.9 L1127.6,530.8 L1133.2,518.9 L1134.8,518.9 L1149.5,494.1 L1151.7,494.3 L1153.3,491.1 L1156.9,489.8 L1165.0,490.1 L1173.6,484.6 L1182.1,485.0 L1185.9,487.1 L1192.0,484.9 L1197.3,486.2 L1202.2,483.9 L1204.2,479.3 L1207.1,478.8 L1215.4,481.6 L1217.2,480.0 L1222.7,480.3 L1234.6,488.4 L1240.1,489.2 L1244.2,486.9 L1249.0,478.2 L1256.2,471.3 L1258.5,465.3 L1263.0,461.6 L1263.4,457.8 L1282.6,462.2 L1292.1,460.5 L1294.5,457.9 L1302.9,460.8 L1304.2,456.8 L1313.4,454.5 L1327.8,458.7 L1338.1,452.6 L1349.5,450.3 L1360.9,453.5 L1379.1,443.0 L1386.4,443.0 L1399.3,429.5 L1403.2,427.6 L1403.0,424.7 L1407.4,418.0 L1412.2,417.4 L1418.1,414.0 L1421.6,414.4 L1425.6,407.3 L1445.7,404.2 L1447.7,393.3 L1462.0,379.9 L1466.7,381.0 L1469.2,379.9 L1475.7,382.1 L1481.7,389.0 L1487.6,391.6 L1487.6,382.7" fill="transparent" id="track" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="2"/>
+<g>
+<g>
+<circle cx="1468.0344817470075" cy="378.8391057719291" fill="Black" id="0/wp/circle" r="5"/>
+<circle cx="1468.0344817470075" cy="378.8391057719291" fill="white" id="0/wp/circle-little-white" r="3.5"/>
+<circle cx="1468.0344817470075" cy="378.8391057719291" fill="black" id="0/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1468.0344817470075 378.8391057719291)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="36.75934210526316" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="40.75934210526316" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Dreux
+</text>
+</g>
+<g>
+<circle cx="1152.0558611811332" cy="491.0218558811994" fill="Black" id="2/wp/circle" r="5"/>
+<circle cx="1152.0558611811332" cy="491.0218558811994" fill="white" id="2/wp/circle-little-white" r="3.5"/>
+<circle cx="1152.0558611811332" cy="491.0218558811994" fill="black" id="2/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1152.0558611811332 491.0218558811994)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="52.89894736842106" x="-56.89894736842106" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="56.89894736842106" x="-58.89894736842106" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="2/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Alençon
+</text>
+</g>
+<g>
+<circle cx="833.6771361934447" cy="520.6853871205112" fill="Black" id="3/wp/circle" r="5"/>
+<circle cx="833.6771361934447" cy="520.6853871205112" fill="white" id="3/wp/circle-little-white" r="3.5"/>
+<circle cx="833.6771361934447" cy="520.6853871205112" fill="black" id="3/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(833.6771361934447 520.6853871205112)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="61.1967105263158" x="-30.5983552631579" y="-37"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="65.1967105263158" x="-32.5983552631579" y="-39"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="3/wp/text" text-anchor="start" x="-30.598" y="-27.000">
+Fougères
+</text>
+</g>
+<g>
+<circle cx="40.785150508722836" cy="489.7624096349282" fill="Black" id="5/wp/circle" r="5"/>
+<circle cx="40.785150508722836" cy="489.7624096349282" fill="white" id="5/wp/circle-little-white" r="3.5"/>
+<circle cx="40.785150508722836" cy="489.7624096349282" fill="black" id="5/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(40.785150508722836 489.7624096349282)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="61.83500000000001" x="-30.917500000000004" y="-37"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="65.83500000000001" x="-32.917500000000004" y="-39"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="5/wp/text" text-anchor="start" x="-30.918" y="-27.000">
+Guipavas
+</text>
+</g>
+<g>
+<circle cx="395.38531533528146" cy="625.0569515021616" fill="Black" id="6/wp/circle" r="5"/>
+<circle cx="395.38531533528146" cy="625.0569515021616" fill="white" id="6/wp/circle-little-white" r="3.5"/>
+<circle cx="395.38531533528146" cy="625.0569515021616" fill="black" id="6/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(395.38531533528146 625.0569515021616)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="46.97197368421054" x="-50.97197368421054" y="4"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="50.97197368421054" x="-52.97197368421054" y="2"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="6/wp/text" text-anchor="end" x="-4.000" y="14.000">
+Pontivy
+</text>
+</g>
+<g>
+<circle cx="448.3265920693433" cy="584.3807490484396" fill="Black" id="8/wp/circle" r="5"/>
+<circle cx="448.3265920693433" cy="584.3807490484396" fill="white" id="8/wp/circle-little-white" r="3.5"/>
+<circle cx="448.3265920693433" cy="584.3807490484396" fill="black" id="8/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(448.3265920693433 584.3807490484396)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="55.725657894736855" x="-82.72565789473686" y="-5"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="59.725657894736855" x="-84.72565789473686" y="-7"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="8/wp/text" text-anchor="end" x="-27.000" y="5.000">
+Loudéac
+</text>
+</g>
+<g>
+<circle cx="246.0708413446083" cy="547.728010112618" fill="Black" id="9/wp/circle" r="5"/>
+<circle cx="246.0708413446083" cy="547.728010112618" fill="white" id="9/wp/circle-little-white" r="3.5"/>
+<circle cx="246.0708413446083" cy="547.728010112618" fill="black" id="9/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(246.0708413446083 547.728010112618)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="116.63671052631577" x="-58.31835526315788" y="27"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="120.63671052631577" x="-60.31835526315788" y="25"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="9/wp/text" text-anchor="start" x="-58.318" y="37.000">
+Carhaix-Plouguer
+</text>
+</g>
+<g>
+<circle cx="1265.597498647564" cy="458.20940745802363" fill="Black" id="10/wp/circle" r="5"/>
+<circle cx="1265.597498647564" cy="458.20940745802363" fill="white" id="10/wp/circle-little-white" r="3.5"/>
+<circle cx="1265.597498647564" cy="458.20940745802363" fill="black" id="10/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1265.597498647564 458.20940745802363)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="139.34157894736842" x="-143.34157894736842" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="143.34157894736842" x="-145.34157894736842" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="10/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Mortagne-au-Perche
+</text>
+</g>
+<g>
+<circle cx="587.4620455865119" cy="579.5521821693928" fill="Black" id="11/wp/circle" r="4"/>
+<circle cx="587.4620455865119" cy="579.5521821693928" fill="white" id="11/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(587.4620455865119 579.5521821693928)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="119.23486842105262" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="123.23486842105262" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="11/wp/text" text-anchor="start" x="4.000" y="13.000">
+Saint-Méen-le-Grand
+</text>
+</g>
+<g>
+<circle cx="64.14203559431826" cy="511.4658031347444" fill="Black" id="15/wp/circle" r="4"/>
+<circle cx="64.14203559431826" cy="511.4658031347444" fill="white" id="15/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(64.14203559431826 511.4658031347444)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="48.3421052631579" x="-52.3421052631579" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="52.3421052631579" x="-54.3421052631579" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="15/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Loperhet
+</text>
+</g>
+<g>
+<circle cx="675.4921711396136" cy="528.387362948235" fill="Black" id="16/wp/circle" r="4"/>
+<circle cx="675.4921711396136" cy="528.387362948235" fill="white" id="16/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(675.4921711396136 528.387362948235)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="48.650000000000006" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="52.650000000000006" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="16/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Tinténiac
+</text>
+</g>
+<g>
+<circle cx="147.68085875519546" cy="566.1611765589241" fill="Black" id="18/wp/circle" r="4"/>
+<circle cx="147.68085875519546" cy="566.1611765589241" fill="white" id="18/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(147.68085875519546 566.1611765589241)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="43.261842105263156" x="-21.630921052631578" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="47.261842105263156" x="-23.630921052631578" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="18/wp/text" text-anchor="start" x="-21.631" y="13.000">
+Pleyben
+</text>
+</g>
+<g>
+<circle cx="1384.8732384025611" cy="443.85377008947216" fill="Black" id="21/wp/circle" r="4"/>
+<circle cx="1384.8732384025611" cy="443.85377008947216" fill="white" id="21/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1384.8732384025611 443.85377008947216)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="61.58157894736843" x="-65.58157894736843" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="65.58157894736843" x="-67.58157894736843" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="21/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Senonches
+</text>
+</g>
+<g>
+<circle cx="790.8702521409174" cy="542.6497875999321" fill="Black" id="22/wp/circle" r="4"/>
+<circle cx="790.8702521409174" cy="542.6497875999321" fill="white" id="22/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(790.8702521409174 542.6497875999321)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="145.7907894736842" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="149.7907894736842" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="22/wp/text" text-anchor="start" x="4.000" y="13.000">
+Saint-Jean-sur-Couesnon
+</text>
+</g>
+<g>
+<circle cx="370.0409597358898" cy="603.3011892434042" fill="Black" id="24/wp/circle" r="4"/>
+<circle cx="370.0409597358898" cy="603.3011892434042" fill="white" id="24/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(370.0409597358898 603.3011892434042)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="55.192763157894746" x="-59.192763157894746" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="59.192763157894746" x="-61.192763157894746" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="24/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Cléguérec
+</text>
+</g>
+<g>
+<circle cx="813.9899469441341" cy="523.6821418226427" fill="Black" id="29/wp/circle" r="4"/>
+<circle cx="813.9899469441341" cy="523.6821418226427" fill="white" id="29/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(813.9899469441341 523.6821418226427)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="51.575" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="55.575" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="29/wp/text" text-anchor="start" x="4.000" y="13.000">
+Romagné
+</text>
+</g>
+<g>
+<circle cx="683.6605661030446" cy="540.6622448885719" fill="Black" id="31/wp/circle" r="4"/>
+<circle cx="683.6605661030446" cy="540.6622448885719" fill="white" id="31/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(683.6605661030446 540.6622448885719)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="26.558552631578948" x="-30.558552631578948" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="30.558552631578948" x="-32.55855263157895" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="31/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Hédé
+</text>
+</g>
+<g>
+<circle cx="1006.6532209579001" cy="488.62260484398575" fill="Black" id="32/wp/circle" r="4"/>
+<circle cx="1006.6532209579001" cy="488.62260484398575" fill="white" id="32/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1006.6532209579001 488.62260484398575)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="119.0809210526316" x="-59.5404605263158" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="123.0809210526316" x="-61.5404605263158" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="32/wp/text" text-anchor="start" x="-59.540" y="-4.000">
+Lassay-les-Châteaux
+</text>
+</g>
+<g>
+<circle cx="767.6816860667221" cy="558.8901562901392" fill="Black" id="37/wp/circle" r="4"/>
+<circle cx="767.6816860667221" cy="558.8901562901392" fill="white" id="37/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(767.6816860667221 558.8901562901392)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="34.871710526315795" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="38.871710526315795" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="37/wp/text" text-anchor="start" x="4.000" y="13.000">
+Gosné
+</text>
+</g>
+<g>
+<circle cx="754.8572814832742" cy="555.1924362500031" fill="Black" id="38/wp/circle" r="4"/>
+<circle cx="754.8572814832742" cy="555.1924362500031" fill="white" id="38/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(754.8572814832742 555.1924362500031)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="87.90657894736843" x="-91.90657894736843" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="91.90657894736843" x="-93.90657894736843" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="38/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Ercé-près-Liffré
+</text>
+</g>
+<g>
+<circle cx="618.416218537187" cy="551.0266003914403" fill="Black" id="39/wp/circle" r="4"/>
+<circle cx="618.416218537187" cy="551.0266003914403" fill="white" id="39/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(618.416218537187 551.0266003914403)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="46.80263157894737" x="-50.80263157894737" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="50.80263157894737" x="-52.80263157894737" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="39/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Médréac
+</text>
+</g>
+<g>
+<circle cx="75.8016399643966" cy="516.5705803703895" fill="Black" id="40/wp/circle" r="4"/>
+<circle cx="75.8016399643966" cy="516.5705803703895" fill="white" id="40/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(75.8016399643966 516.5705803703895)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="43.26184210526316" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="47.26184210526316" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="40/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Daoulas
+</text>
+</g>
+<g>
+<circle cx="95.22680173446724" cy="540.6733018178202" fill="Black" id="41/wp/circle" r="4"/>
+<circle cx="95.22680173446724" cy="540.6733018178202" fill="white" id="41/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(95.22680173446724 540.6733018178202)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="42.723026315789475" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="46.723026315789475" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="41/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Le Faou
+</text>
+</g>
+<g>
+<circle cx="438.0237072087017" cy="571.1311853821753" fill="Black" id="42/wp/circle" r="4"/>
+<circle cx="438.0237072087017" cy="571.1311853821753" fill="white" id="42/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(438.0237072087017 571.1311853821753)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="29.098684210526315" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="33.098684210526315" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="42/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Trévé
+</text>
+</g>
+<g>
+<circle cx="1511.566146868905" cy="409.78153812207165" fill="Black" id="52/wp/circle" r="4"/>
+<circle cx="1511.566146868905" cy="409.78153812207165" fill="white" id="52/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1511.566146868905 409.78153812207165)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="53.65328947368422" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="57.65328947368422" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="52/wp/text" text-anchor="start" x="4.000" y="13.000">
+Coulombs
+</text>
+</g>
+<g>
+<circle cx="599.5200593743733" cy="557.3904885121883" fill="Black" id="56/wp/circle" r="4"/>
+<circle cx="599.5200593743733" cy="557.3904885121883" fill="white" id="56/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(599.5200593743733 557.3904885121883)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="50.72828947368422" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="54.72828947368422" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="56/wp/text" text-anchor="start" x="4.000" y="13.000">
+Quédillac
+</text>
+</g>
+<g>
+<circle cx="123.82260368076379" cy="561.1316243849615" fill="Black" id="58/wp/circle" r="4"/>
+<circle cx="123.82260368076379" cy="561.1316243849615" fill="white" id="58/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(123.82260368076379 561.1316243849615)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="63.96776315789474" x="-67.96776315789474" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="67.96776315789474" x="-69.96776315789474" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="58/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Saint-Ségal
+</text>
+</g>
+<g>
+<circle cx="490.6085553248548" cy="611.6900509408006" fill="Black" id="62/wp/circle" r="4"/>
+<circle cx="490.6085553248548" cy="611.6900509408006" fill="white" id="62/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(490.6085553248548 611.6900509408006)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="49.18881578947369" x="-53.18881578947369" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="53.18881578947369" x="-55.18881578947369" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="62/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Plumieux
+</text>
+</g>
+<g>
+<circle cx="1133.3619866385748" cy="518.9104160755542" fill="Black" id="67/wp/circle" r="4"/>
+<circle cx="1133.3619866385748" cy="518.9104160755542" fill="white" id="67/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1133.3619866385748 518.9104160755542)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="113.46184210526316" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="117.46184210526316" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="67/wp/text" text-anchor="start" x="4.000" y="13.000">
+Gesnes-le-Gandelin
+</text>
+</g>
+<g>
+<circle cx="502.34833634336746" cy="575.9175240588065" fill="Black" id="72/wp/circle" r="4"/>
+<circle cx="502.34833634336746" cy="575.9175240588065" fill="white" id="72/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(502.34833634336746 575.9175240588065)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="51.805921052631575" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="55.805921052631575" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="72/wp/text" text-anchor="start" x="4.000" y="13.000">
+Laurenan
+</text>
+</g>
+<g>
+<circle cx="1486.103443510763" cy="391.63425394514707" fill="Black" id="81/wp/circle" r="4"/>
+<circle cx="1486.103443510763" cy="391.63425394514707" fill="white" id="81/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1486.103443510763 391.63425394514707)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="49.65065789473684" x="-24.82532894736842" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="53.65065789473684" x="-26.82532894736842" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="81/wp/text" text-anchor="start" x="-24.825" y="13.000">
+Charpont
+</text>
+</g>
+<g>
+<circle cx="575.2707668788366" cy="583.9377089086265" fill="Black" id="82/wp/circle" r="4"/>
+<circle cx="575.2707668788366" cy="583.9377089086265" fill="white" id="82/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(575.2707668788366 583.9377089086265)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="102.22368421052632" x="-51.11184210526316" y="27"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="106.22368421052632" x="-53.11184210526316" y="25"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="82/wp/text" text-anchor="start" x="-51.112" y="36.000">
+Loscouët-sur-Meu
+</text>
+</g>
+<g>
+<circle cx="1160.6402049772623" cy="490.1754184013789" fill="Black" id="84/wp/circle" r="4"/>
+<circle cx="1160.6402049772623" cy="490.1754184013789" fill="white" id="84/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1160.6402049772623 490.1754184013789)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="60.73486842105264" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="64.73486842105264" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="84/wp/text" text-anchor="start" x="4.000" y="13.000">
+Le Chevain
+</text>
+</g>
+<g>
+<circle cx="988.7589359342231" cy="496.88437360162425" fill="Black" id="85/wp/circle" r="4"/>
+<circle cx="988.7589359342231" cy="496.88437360162425" fill="white" id="85/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(988.7589359342231 496.88437360162425)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="59.81118421052632" x="-29.90559210526316" y="-36"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="63.81118421052632" x="-31.90559210526316" y="-38"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="85/wp/text" text-anchor="start" x="-29.906" y="-27.000">
+Chantrigné
+</text>
+</g>
+<g>
+<circle cx="1074.1088706682342" cy="527.3518792448576" fill="Black" id="88/wp/circle" r="4"/>
+<circle cx="1074.1088706682342" cy="527.3518792448576" fill="white" id="88/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1074.1088706682342 527.3518792448576)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="41.56842105263158" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="45.56842105263158" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="88/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Averton
+</text>
+</g>
+<g>
+<circle cx="1028.2772662740167" cy="508.8554034399731" fill="Black" id="90/wp/circle" r="4"/>
+<circle cx="1028.2772662740167" cy="508.8554034399731" fill="white" id="90/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1028.2772662740167 508.8554034399731)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="46.10986842105264" x="-50.10986842105264" y="-4.5"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="50.10986842105264" x="-52.10986842105264" y="-6.5"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="90/wp/text" text-anchor="end" x="-4.000" y="4.500">
+Le Ribay
+</text>
+</g>
+<g>
+<circle cx="412.5384178338916" cy="547.3599717248253" fill="Black" id="92/wp/circle" r="4"/>
+<circle cx="412.5384178338916" cy="547.3599717248253" fill="white" id="92/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(412.5384178338916 547.3599717248253)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="42.33815789473685" x="-46.33815789473685" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="46.33815789473685" x="-48.33815789473685" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="92/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Merléac
+</text>
+</g>
+<g>
+<circle cx="436.91689343900066" cy="560.7785885760932" fill="Black" id="93/wp/circle" r="4"/>
+<circle cx="436.91689343900066" cy="560.7785885760932" fill="white" id="93/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(436.91689343900066 560.7785885760932)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.120394736842115" x="-66.12039473684212" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.12039473684212" x="-68.12039473684212" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="93/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Grâce-Uzel
+</text>
+</g>
+<g>
+<circle cx="361.08925301805436" cy="524.9050402275534" fill="Black" id="98/wp/circle" r="4"/>
+<circle cx="361.08925301805436" cy="524.9050402275534" fill="white" id="98/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(361.08925301805436 524.9050402275534)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="46.8796052631579" x="-23.43980263157895" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="50.8796052631579" x="-25.43980263157895" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="98/wp/text" text-anchor="start" x="-23.440" y="-4.000">
+Canihuel
+</text>
+</g>
+<g>
+<circle cx="1446.5116653248722" cy="403.3407261497341" fill="Black" id="106/wp/circle" r="4"/>
+<circle cx="1446.5116653248722" cy="403.3407261497341" fill="white" id="106/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1446.5116653248722 403.3407261497341)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="71.35723684210527" x="-75.35723684210527" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="75.35723684210527" x="-77.35723684210527" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="106/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Crécy-Couvé
+</text>
+</g>
+<g>
+<circle cx="1408.569433241296" cy="417.913094029931" fill="Black" id="108/wp/circle" r="4"/>
+<circle cx="1408.569433241296" cy="417.913094029931" fill="white" id="108/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1408.569433241296 417.913094029931)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="115.92500000000001" x="-119.92500000000001" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="119.92500000000001" x="-121.92500000000001" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="108/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Dampierre-sur-Blévy
+</text>
+</g>
+<g>
+<circle cx="1422.251685907977" cy="414.1495678782994" fill="Black" id="122/wp/circle" r="4"/>
+<circle cx="1422.251685907977" cy="414.1495678782994" fill="white" id="122/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1422.251685907977 414.1495678782994)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="27.867105263157896" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="31.867105263157896" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="122/wp/text" text-anchor="start" x="4.000" y="13.000">
+Blévy
+</text>
+</g>
+<g>
+<circle cx="1458.4118738549855" cy="435.6081785773549" fill="Black" id="123/wp/circle" r="4"/>
+<circle cx="1458.4118738549855" cy="435.6081785773549" fill="white" id="123/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1458.4118738549855 435.6081785773549)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="76.36052631578949" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="80.36052631578949" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="123/wp/text" text-anchor="start" x="4.000" y="13.000">
+Chêne-Chenu
+</text>
+</g>
+<g>
+<circle cx="91.60358905844441" cy="478.26891106381845" fill="Gray" id="268/wp/circle" r="2"/>
+<circle cx="91.60358905844441" cy="478.26891106381845" fill="white" id="268/wp/circle-little-white" r="0.5"/>
+</g>
+<g transform="translate(91.60358905844441 478.26891106381845)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="41.667464114832526" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="45.667464114832526" x="2" y="-14"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="268/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Tregastel
+</text>
+</g>
+<g>
+<circle cx="213.02227919006134" cy="516.2968044672034" fill="Gray" id="332/wp/circle" r="2"/>
+<circle cx="213.02227919006134" cy="516.2968044672034" fill="white" id="332/wp/circle-little-white" r="0.5"/>
+</g>
+<g transform="translate(213.02227919006134 516.2968044672034)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="52.38995215311004" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="56.38995215311004" x="2" y="-14"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="332/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Pont Mikael
+</text>
+</g>
+<g>
+<circle cx="391.8542278794898" cy="621.9552483992029" fill="Gray" id="453/wp/circle" r="2"/>
+<circle cx="391.8542278794898" cy="621.9552483992029" fill="white" id="453/wp/circle-little-white" r="0.5"/>
+</g>
+<g transform="translate(391.8542278794898 621.9552483992029)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="25.519138755980862" x="4" y="4"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="29.519138755980862" x="2" y="2"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="453/wp/text" text-anchor="start" x="4.000" y="12.000">
+Kergo
+</text>
+</g>
+<g>
+<circle cx="1317.2489728219007" cy="454.76681288726104" fill="Gray" id="1019/wp/circle" r="2"/>
+<circle cx="1317.2489728219007" cy="454.76681288726104" fill="white" id="1019/wp/circle-little-white" r="0.5"/>
+</g>
+<g transform="translate(1317.2489728219007 454.76681288726104)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="41.79665071770334" x="-45.79665071770334" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="45.79665071770334" x="-47.79665071770334" y="-14"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="1019/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+La Roche
+</text>
+</g>
+<g>
+<circle cx="1541.9327865272892" cy="378.29885985288274" fill="Gray" id="1051/wp/circle" r="2"/>
+<circle cx="1541.9327865272892" cy="378.29885985288274" fill="white" id="1051/wp/circle-little-white" r="0.5"/>
+</g>
+<g transform="translate(1541.9327865272892 378.29885985288274)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="39.083732057416256" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="43.083732057416256" x="2" y="-14"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="1051/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Le Tabor
+</text>
+</g>
+</g>
+</svg>

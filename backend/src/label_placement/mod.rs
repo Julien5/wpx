@@ -8,6 +8,7 @@ pub mod labelboundingbox;
 mod stroke;
 
 use super::label_placement::features::*;
+use crate::bbox::quadtree::QuadTree;
 use crate::bbox::BoundingBox;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::math::distance2;
@@ -21,7 +22,7 @@ use graph::Graph;
 use std::collections::BTreeMap;
 
 pub trait CandidatesGenerator {
-    fn gen(&self, feature: &PointFeature) -> Vec<LabelBoundingBox>;
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox>;
 }
 
 fn build_graph(
@@ -126,7 +127,7 @@ fn place_subset(
             let mut graph = build_graph(features, gen, &obstacles);
             // graph.print_graph();
             let result = graph.solve();
-            obstacles.bboxes = result.obstacles;
+            *obstacles = result.obstacles;
             result.selected
         }
         true => place_quick_best_candidates(features, obstacles),
@@ -170,6 +171,7 @@ pub fn place_labels(
         },
         polylines: vec![polyline.clone()],
         bboxes: Vec::new(),
+        bboxes_tree: QuadTree::new(bbox.clone()),
     };
     for packet in packets {
         /*log::trace!(
@@ -193,16 +195,41 @@ pub fn cardinal_boxes(center: &Point2D, width: f64, height: f64) -> Vec<LabelBou
     let epsilon = 2f64;
     let dx = 2f64 * epsilon + width;
     let dy = 2f64 * epsilon + height;
-    let bbox0 = BoundingBox::minsize(Point2D::new(epsilon, -epsilon - height), width, height);
+    let topright = BoundingBox::minsize(Point2D::new(epsilon, -epsilon - height), width, height);
 
-    ret.push(make(&bbox0, &Point2D::new(0.0, 0.0), center));
-    ret.push(make(&bbox0, &Point2D::new(-dx, 0.0), center));
-    ret.push(make(&bbox0, &Point2D::new(-dx, dy), center));
-    ret.push(make(&bbox0, &Point2D::new(0.0, dy), center));
+    ret.push(make(&topright, &Point2D::new(0.0, 0.0), center));
+    ret.push(make(&topright, &Point2D::new(-dx, 0.0), center));
+    ret.push(make(&topright, &Point2D::new(-dx, dy), center));
+    ret.push(make(&topright, &Point2D::new(0.0, dy), center));
 
     let bbox_right = BoundingBox::minsize(Point2D::new(epsilon, -height / 2.0), width, height);
     let bbox_up =
         BoundingBox::minsize(Point2D::new(-width / 2.0, -epsilon - height), width, height);
+
+    ret.push(make(&bbox_right, &Point2D::new(0.0, 0.0), center));
+    ret.push(make(&bbox_up, &Point2D::new(0.0, 0.0), center));
+    ret.push(make(&bbox_right, &Point2D::new(-dx, 0.0), center));
+    ret.push(make(&bbox_up, &Point2D::new(0.0, dy), center));
+
+    ret
+}
+
+#[allow(dead_code)]
+pub fn far_cardinal_boxes(
+    center: &Point2D,
+    width: f64,
+    height: f64,
+    distance: f64,
+) -> Vec<LabelBoundingBox> {
+    let mut ret = Vec::new();
+    let dx = 2f64 * distance + width;
+    let dy = 2f64 * distance + height;
+    let bbox_right = BoundingBox::minsize(Point2D::new(distance, -height / 2.0), width, height);
+    let bbox_up = BoundingBox::minsize(
+        Point2D::new(-width / 2.0, -distance - height),
+        width,
+        height,
+    );
 
     ret.push(make(&bbox_right, &Point2D::new(0.0, 0.0), center));
     ret.push(make(&bbox_up, &Point2D::new(0.0, 0.0), center));
