@@ -1,4 +1,4 @@
-use crate::{bbox::BoundingBox, label_placement::features::Polyline};
+use crate::label_placement::features::Polyline;
 
 use super::labelboundingbox::LabelBoundingBox;
 
@@ -22,9 +22,6 @@ impl Candidate {
         self._bbox.absolute().overlap(&other._bbox.absolute())
     }
 
-    pub fn hit_bbox(&self, bbox: &BoundingBox) -> bool {
-        self._bbox.absolute().overlap(&bbox)
-    }
     pub fn hit_polyline(&self, polyline: &Polyline) -> bool {
         let bbox = self._bbox.absolute();
         polyline.hit(&bbox)
@@ -120,10 +117,8 @@ pub mod utils {
         {
             return true;
         }
-        for obstacle_box in &obstacles.bboxes {
-            if candidate.hit_bbox(obstacle_box) {
-                return true;
-            }
+        if obstacles.hit_bbox(&candidate.bbox().absolute()) {
+            return true;
         }
         let target = feature.center();
         let start = candidate.bbox().absolute().project_on_border(&target);

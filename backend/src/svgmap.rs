@@ -249,11 +249,11 @@ pub fn map(segment: &SegmentData, size: &IntegerSize2D, packets: &Packets) -> Re
 mod tests {
     use std::str::FromStr;
 
-    use super::MapGenerator;
     use crate::{
         bbox::BoundingBox,
         label_placement::{features::*, labelboundingbox::LabelBoundingBox, CandidatesGenerator},
         math::Point2D,
+        svgmap::MapGenerator,
     };
 
     #[test]
@@ -280,8 +280,9 @@ mod tests {
             link: None,
             xmlid: 0,
         };
-        /*
-        let candidates = MapGenerator {}.gen(&target);
+        let area = BoundingBox::new();
+        let obstacles = Obstacles::new(&area, 0f64);
+        let candidates = MapGenerator {}.gen(&target, &obstacles);
         let mut found = false;
         assert!(!candidates.is_empty());
         for c in candidates {
@@ -293,6 +294,5 @@ mod tests {
             }
         }
         assert!(found);
-        */
     }
 }

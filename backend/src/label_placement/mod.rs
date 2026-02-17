@@ -5,10 +5,7 @@ pub mod features;
 pub mod graph;
 pub mod labelboundingbox;
 
-mod stroke;
-
 use super::label_placement::features::*;
-use crate::bbox::quadtree::QuadTree;
 use crate::bbox::BoundingBox;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::math::distance2;
@@ -164,15 +161,8 @@ pub fn place_labels(
     max_area_ratio: &f64,
 ) -> (Vec<PlacementResult>, Obstacles) {
     let mut ret = Vec::new();
-    let mut obstacles = Obstacles {
-        drawingbox: DrawingArea {
-            bbox: bbox.clone(),
-            max_area_ratio: *max_area_ratio,
-        },
-        polylines: vec![polyline.clone()],
-        bboxes: Vec::new(),
-        bboxes_tree: QuadTree::new(bbox.clone()),
-    };
+    let mut obstacles = Obstacles::new(bbox, *max_area_ratio);
+    obstacles.polylines = vec![polyline.clone()];
     for packet in packets {
         /*log::trace!(
             "[a] features:{} obstacles:{}",

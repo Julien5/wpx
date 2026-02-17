@@ -107,7 +107,7 @@ impl Graph {
 
     fn make_graphic(&self) -> Graphic {
         let mut graphic = Graphic::new(self.debug_graphic_dir.as_ref().unwrap().clone());
-        for bbox in &self.obstacles.bboxes {
+        for bbox in &self.obstacles.bboxes() {
             graphic.add_boundingbox(bbox, "red", 3);
         }
         for (node, edges) in &self.map {
@@ -199,9 +199,7 @@ impl Graph {
             }
         }
         // Track the placed candidate for density queries
-        let idx = self.obstacles.bboxes.len();
-        self.obstacles.bboxes_tree.insert(&selected_large, idx);
-        self.obstacles.bboxes.push(selected_large);
+        self.obstacles.push_bbox(selected_large);
 
         // remove a
         self.remove_node(a);
@@ -385,10 +383,7 @@ impl Graph {
 mod tests {
     use crate::{
         bbox::BoundingBox,
-        label_placement::{
-            features::{DrawingArea, FONTSIZE},
-            Label, LabelBoundingBox, PointFeatureDrawing,
-        },
+        label_placement::{features::FONTSIZE, Label, LabelBoundingBox, PointFeatureDrawing},
         math::Point2D,
     };
 
@@ -410,15 +405,7 @@ mod tests {
         let _ = env_logger::try_init();
         // Create a new graph
         let area = BoundingBox::minmax(Point2D::zero(), Point2D::new(10f64, 10f64));
-        let obstacles = Obstacles {
-            bboxes: Vec::new(),
-            polylines: Vec::new(),
-            drawingbox: DrawingArea {
-                bbox: area.clone(),
-                max_area_ratio: 1.0,
-            },
-            bboxes_tree: QuadTree::new(area),
-        };
+        let obstacles = Obstacles::new(&area, 1.0);
         let mut graph = Graph::new(obstacles);
         let mut ca = Candidates::new();
         let mut cb = Candidates::new();

@@ -5,7 +5,7 @@ use rstar::{PointDistance, RTree, RTreeObject, AABB};
 use crate::{
     bbox::{quadtree::QuadTree, BoundingBox},
     inputpoint::InputPoint,
-    label_placement::{labelboundingbox::LabelBoundingBox, stroke},
+    label_placement::labelboundingbox::LabelBoundingBox,
     math::{self, distance2, Point2D},
 };
 
@@ -204,43 +204,6 @@ impl PointFeature {
     }
     pub fn input_point(&self) -> Option<InputPoint> {
         self.input_point.clone()
-    }
-    pub fn _make_link(&mut self, obstacles: &Obstacles) {
-        let circle = &self.circle.center;
-        let label = self.label.bbox.absolute().project_on_border(circle);
-        let to_label = *circle - label;
-        let distance = to_label.length();
-        if distance < 10f64 {
-            return;
-        }
-        assert!(distance > std::f64::EPSILON);
-        let unit = to_label * (1.0 / distance);
-        debug_assert!(!unit.x.is_nan());
-        debug_assert!(!unit.y.is_nan());
-        let epsilon = unit * 2.0f64;
-        let from = label + epsilon;
-        let to = *circle - epsilon;
-
-        let path = stroke::_compute(&from, &to, obstacles);
-        let d = path
-            .iter()
-            .enumerate()
-            .map(|(i, p)| {
-                if i == 0 {
-                    format!("M{:.2},{:.2}", p.x, p.y)
-                } else {
-                    format!("L{:.2},{:.2}", p.x, p.y)
-                }
-            })
-            .collect::<Vec<_>>();
-        let mut stroke = svg::node::element::Path::new();
-        stroke = stroke.set("id", "link");
-        stroke = stroke.set("stroke", "black");
-        stroke = stroke.set("fill", "transparent");
-        stroke = stroke.set("stroke-linejoin", "miter");
-        stroke = stroke.set("stroke-miterlimit", "1");
-        stroke = stroke.set("d", d);
-        self.link = Some(stroke);
     }
     pub fn render_in_group(&self, sd_group: &mut svg::node::element::Group) {
         use svg::Node;
@@ -482,13 +445,44 @@ pub struct DrawingArea {
 
 #[derive(Clone)]
 pub struct Obstacles {
-    pub bboxes: Vec<BoundingBox>,
-    pub bboxes_tree: QuadTree<usize>,
+    bboxes: Vec<BoundingBox>,
+    bboxes_tree: QuadTree<usize>,
     pub polylines: Vec<Polyline>,
     pub drawingbox: DrawingArea,
 }
 
 impl Obstacles {
+    pub fn new(area: &BoundingBox, ratio: f64) -> Self {
+        Self {
+            drawingbox: DrawingArea {
+                bbox: area.clone(),
+                max_area_ratio: ratio,
+            },
+            polylines: Vec::new(),
+            bboxes: Vec::new(),
+            bboxes_tree: QuadTree::new(area.clone()),
+        }
+    }
+
+    pub fn bboxes(&self) -> Vec<BoundingBox> {
+        self.bboxes.clone()
+    }
+
+    pub fn push_bbox(&mut self, bbox: BoundingBox) {
+        let idx = self.bboxes.len();
+        self.bboxes_tree.insert(&bbox, idx);
+        self.bboxes.push(bbox);
+    }
+
+    pub fn hit_bbox(&self, bbox: &BoundingBox) -> bool {
+        for obstacle_box in &self.bboxes {
+            if bbox.overlap(obstacle_box) {
+                return true;
+            }
+        }
+        false
+    }
+
     pub fn _is_clear(&self, p1: &Point2D, p2: &Point2D) -> bool {
         for bbox in &self.bboxes {
             if bbox.segment_intersects(p1, p2) {
