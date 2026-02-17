@@ -324,6 +324,24 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn graph_roland() {
+        let _ = env_logger::try_init();
+        let start = 0f64;
+        let length = 200_000f64;
+        let size = IntegerSize2D::new(1600, 1000);
+        let ok = graph_test(
+            "data/ref/roland-nowaypoints.gpx",
+            "data/ref/singlemap-roland.svg",
+            &RenderFunction::Map,
+            start,
+            length,
+            &size,
+        )
+        .await;
+        assert!(ok);
+    }
+
+    #[tokio::test]
     async fn graph_black() {
         let _ = env_logger::try_init();
         let start = 100_000f64;
