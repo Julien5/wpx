@@ -119,24 +119,82 @@ fn middle_point(a: &(f64, f64, f64), b: &(f64, f64, f64), alpha: f64) -> (f64, f
     (a.0 + alpha * ab.0, a.1 + alpha * ab.1, a.2 + alpha * ab.2)
 }
 
-fn two_closest_index(
-    euclidean: &Vec<MercatorPoint>,
-    index: &usize,
-    p: &MercatorPoint,
-) -> (usize, usize) {
-    let tracklen = euclidean.len();
-    if *index == 0 {
-        return (0, 1);
+mod projection {
+    use crate::mercator::MercatorPoint;
+
+    pub struct PartialProjection {
+        pub track_floating_index: f64,
+        pub projection: MercatorPoint,
     }
-    if *index == tracklen - 1 {
-        return (index - 1, *index);
+
+    pub fn compute(
+        track: &Vec<MercatorPoint>,
+        point: &MercatorPoint,
+        closest_index: &usize,
+    ) -> PartialProjection {
+        let idx = *closest_index;
+
+        // Define potential segments to check: (idx-1, idx) and (idx, idx+1)
+        let mut candidates = Vec::new();
+
+        if idx > 0 {
+            candidates.push(project_on_segment(idx - 1, idx, track, point));
+        }
+        if idx < track.len() - 1 {
+            candidates.push(project_on_segment(idx, idx + 1, track, point));
+        }
+
+        // Fallback if the track has only one point
+        if candidates.is_empty() {
+            return PartialProjection {
+                track_floating_index: idx as f64,
+                projection: MercatorPoint(track[idx].0, track[idx].1),
+            };
+        }
+
+        // Return the candidate with the smallest Euclidean distance to the target point
+        candidates
+            .into_iter()
+            .min_by(|a, b| {
+                let dist_a = point.d2(&a.projection);
+                let dist_b = point.d2(&b.projection);
+                dist_a
+                    .partial_cmp(&dist_b)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
+            .unwrap()
     }
-    let dbefore = p.d2(&euclidean[index - 1]);
-    let dafter = p.d2(&euclidean[index - 1]);
-    if dbefore < dafter {
-        (index - 1, *index)
-    } else {
-        (*index, *index + 1)
+
+    fn project_on_segment(
+        i0: usize,
+        i1: usize,
+        track: &[MercatorPoint],
+        p: &MercatorPoint,
+    ) -> PartialProjection {
+        let p0 = &track[i0];
+        let p1 = &track[i1];
+
+        let dx = p1.0 - p0.0;
+        let dy = p1.1 - p0.1;
+        let line_len_sq = dx * dx + dy * dy;
+
+        if line_len_sq == 0.0 {
+            return PartialProjection {
+                track_floating_index: i0 as f64,
+                projection: MercatorPoint(p0.0, p0.1),
+            };
+        }
+
+        // Scalar projection factor t
+        let t = ((p.0 - p0.0) * dx + (p.1 - p0.1) * dy) / line_len_sq;
+
+        // Clamp t to the segment [0, 1]
+        let t_clamped = t.max(0.0).min(1.0);
+
+        PartialProjection {
+            track_floating_index: i0 as f64 + t_clamped,
+            projection: MercatorPoint(p0.0 + t_clamped * dx, p0.1 + t_clamped * dy),
+        }
     }
 }
 
@@ -148,31 +206,13 @@ pub fn compute_track_projection_2d(
     // as opposed to GPX and OSM points, which may be on several segments
     let index = tracktree.nearest_neighbor(&point).unwrap();
     log::trace!("index: {}", index);
-    let (index1, index2) = two_closest_index(track, &index, point);
-    log::trace!("index1: {}", index1);
-    log::trace!("index2: {}", index2);
-    let p1 = &track[index1];
-    let p2 = &track[index2];
-    log::trace!("p1: {:?}", p1);
-    log::trace!("p2: {:?}", p2);
-    log::trace!("point: {:?}", point);
-    let linestring: geo::LineString = vec![p1.xy(), p2.xy()].into();
-    let index_floating_part = linestring
-        .line_locate_point(&geo::point!(point.xy()))
-        .unwrap();
-    log::trace!("floating part: {}", index_floating_part);
-    assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
-    let floating_index = index1 as f64 + index_floating_part;
-    let t1 = &track[index1];
-    let t2 = &track[index2];
-    let a1 = (t1.0, t1.1, 0f64);
-    let a2 = (t2.0, t2.1, 0f64);
-    let m = middle_point(&a1, &a2, index_floating_part);
+    let partial = projection::compute(track, point, &index);
+    let floating_index = partial.track_floating_index;
+    let m = partial.projection;
     log::trace!("m: {:?}", m);
 
     let middle = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
 
-    let elevation = m.2;
     let track_distance = middle.d2(&point).sqrt();
 
     let di = point.d2(&track[index]);
@@ -183,7 +223,7 @@ pub fn compute_track_projection_2d(
         track_floating_index: floating_index,
         track_index: index,
         euclidean: middle,
-        elevation,
+        elevation: 0f64,
         track_distance,
         distance_on_track_to_projection: 0f64,
     };
@@ -204,7 +244,9 @@ pub fn compute_track_projection(
     }
     // as opposed to GPX and OSM points, which may be on several segments
     let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
-    let (index1, index2) = two_closest_index(track, &index, &point.euclidean);
+    let partial = projection::compute(track, &point.euclidean, &index);
+    let index1 = partial.track_floating_index.floor() as usize;
+    let index2 = (index1 + 1).min(track.len() - 1) as usize;
     let p1 = &track[index1];
     let p2 = &track[index2];
     let linestring: geo::LineString = vec![p1.xy(), p2.xy()].into();
