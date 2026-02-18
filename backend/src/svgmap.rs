@@ -156,15 +156,14 @@ impl MapData {
                     continue;
                 }
 
-                let peuclidean = match is_close_to_track(&w) {
-                    true => {
-                        log::trace!("project: {}", w.name());
-                        segment.track.project_simplified(&euclidean).euclidean
-                    }
-                    false => euclidean.clone(),
-                };
-                let p =
-                    to_graphics_coordinates(&bbox, &peuclidean, size.width, size.height, margin);
+                let on_track = segment.track.project_simplified(&euclidean).euclidean;
+                let mut p =
+                    to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
+                let p_track =
+                    to_graphics_coordinates(&bbox, &on_track, size.width, size.height, margin);
+                if p.distance_to(&p_track) < 5f64 {
+                    p = p_track;
+                }
                 let k = counter;
                 counter += 1;
                 let id = format!("{}/wp/circle", k);
