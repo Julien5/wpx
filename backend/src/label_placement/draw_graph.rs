@@ -92,7 +92,7 @@ impl Graphic {
         svg
     }
 
-    pub fn save(&self) {
+    pub fn save(&self, marker: &str) {
         use std::fs;
         use std::io::Write;
         use std::path::Path;
@@ -104,7 +104,7 @@ impl Graphic {
         // Find the next available filename
         let mut n = 0;
         let filepath = loop {
-            let path = format!("{}/graph-{:04}.svg", self.dir, n);
+            let path = format!("{}/graph-{:04}-{}.svg", self.dir, n, marker);
             if !Path::new(&path).exists() {
                 break path;
             }

@@ -52,8 +52,8 @@ impl Graph {
             tree: QuadTree::new(area.clone()),
             nodes: Vec::new(),
             obstacles: obstacles,
-            //debug_graphic_dir: Some(draw_graph::newdir()),
-            debug_graphic_dir: None,
+            debug_graphic_dir: Some(draw_graph::newdir()),
+            //debug_graphic_dir: None,
         }
     }
 
@@ -88,7 +88,7 @@ impl Graph {
             self.map.insert(node1, edges);
         }
         // note: self.tree is not needed anymore.
-        self.draw_graph();
+        self.draw_graph(&"build");
     }
 
     pub fn _print_node(&self, node: &Node) {
@@ -129,12 +129,12 @@ impl Graph {
         graphic
     }
 
-    fn draw_graph(&self) {
+    fn draw_graph(&self, marker: &str) {
         if self.debug_graphic_dir.is_none() {
             return;
         }
         let g = self.make_graphic();
-        g.save();
+        g.save(marker);
     }
 
     #[allow(dead_code)]
@@ -191,19 +191,15 @@ impl Graph {
         for b in neighbors {
             let neighbors_candidates = &mut self.nodes[b].candidates;
             assert!(!neighbors_candidates.is_empty());
-            let first = neighbors_candidates.first().unwrap().clone();
             // remove candidates that intersect with the selected candidate
             neighbors_candidates.retain(|cb| !selected_large.overlap(&cb.bbox().absolute()));
-            if neighbors_candidates.is_empty() {
-                neighbors_candidates.push(first);
-            }
         }
         // Track the placed candidate for density queries
         self.obstacles.push_bbox(selected_large);
 
         // remove a
         self.remove_node(a);
-        self.draw_graph();
+        self.draw_graph(&"update");
     }
 
     pub fn max_node(&self) -> Node {
@@ -283,7 +279,7 @@ impl Graph {
                     self.max_density_ratio() * 100f64
                 ),
             );
-            graphic.save();
+            graphic.save(&"ratio");
         }
         ret
     }
