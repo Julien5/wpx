@@ -35,9 +35,9 @@ Rosenwiller
 </text>
 </g>
 <g>
-<circle cx="478.09260161066777" cy="890.1185463505681" fill="Green" id="3/wp/circle" r="3"/>
+<circle cx="478.3847090077761" cy="890.8100963562028" fill="Green" id="3/wp/circle" r="3"/>
 </g>
-<g transform="translate(478.09260161066777 890.1185463505681)">
+<g transform="translate(478.3847090077761 890.8100963562028)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="55.75956937799044" x="-59.75956937799044" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="59.75956937799044" x="-61.75956937799044" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="3/wp/text" text-anchor="end" x="-4.000" y="-4.000">
@@ -65,9 +65,9 @@ Breitsteige
 </text>
 </g>
 <g>
-<circle cx="374.1188550317602" cy="724.8702404966461" fill="Green" id="6/wp/circle" r="3"/>
+<circle cx="374.133874448642" cy="725.0880842310726" fill="Green" id="6/wp/circle" r="3"/>
 </g>
-<g transform="translate(374.1188550317602 724.8702404966461)">
+<g transform="translate(374.133874448642 725.0880842310726)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="97.95514354066984" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="101.95514354066984" x="2" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="6/wp/text" text-anchor="start" x="4.000" y="-4.000">

@@ -24,10 +24,10 @@ Monteynard
 </text>
 </g>
 <g>
-<circle cx="755.9445224106385" cy="874.9797390146414" fill="Black" id="3/wp/circle" r="4"/>
-<circle cx="755.9445224106385" cy="874.9797390146414" fill="white" id="3/wp/circle-little-white" r="2.5"/>
+<circle cx="755.3210580111554" cy="873.8676148206578" fill="Black" id="3/wp/circle" r="4"/>
+<circle cx="755.3210580111554" cy="873.8676148206578" fill="white" id="3/wp/circle-little-white" r="2.5"/>
 </g>
-<g transform="translate(755.9445224106385 874.9797390146414)">
+<g transform="translate(755.3210580111554 873.8676148206578)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="75.97565789473684" x="-79.97565789473684" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="79.97565789473684" x="-81.97565789473684" y="-15"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="3/wp/text" text-anchor="end" x="-4.000" y="-4.000">
@@ -35,9 +35,9 @@ Mayres-Savel
 </text>
 </g>
 <g>
-<circle cx="748.4360779304843" cy="592.733097052318" fill="Green" id="4/wp/circle" r="3"/>
+<circle cx="748.5247451043979" cy="592.5246828261297" fill="Green" id="4/wp/circle" r="3"/>
 </g>
-<g transform="translate(748.4360779304843 592.733097052318)">
+<g transform="translate(748.5247451043979 592.5246828261297)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="52.26076555023924" x="-79.26076555023924" y="-4.5"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="56.26076555023924" x="-81.26076555023924" y="-6.5"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="4/wp/text" text-anchor="end" x="-27.000" y="4.500">
@@ -55,21 +55,21 @@ Le Cimon
 </text>
 </g>
 <g>
-<circle cx="785.0571184658329" cy="36.714700652926695" fill="Gray" id="6/wp/circle" r="2"/>
-<circle cx="785.0571184658329" cy="36.714700652926695" fill="white" id="6/wp/circle-little-white" r="0.5"/>
+<circle cx="786.6913953784315" cy="32.06673487654189" fill="Gray" id="6/wp/circle" r="2"/>
+<circle cx="786.6913953784315" cy="32.06673487654189" fill="white" id="6/wp/circle-little-white" r="0.5"/>
 </g>
-<g transform="translate(785.0571184658329 36.714700652926695)">
-<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="44.96172248803827" x="-22.480861244019135" y="27"/>
-<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="48.96172248803827" x="-24.480861244019135" y="25"/>
-<text font-size="12.0" font-style="normal" font-weight="lighter" id="6/wp/text" text-anchor="start" x="-22.481" y="35.000">
+<g transform="translate(786.6913953784315 32.06673487654189)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="44.96172248803827" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="48.96172248803827" x="2" y="-14"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="6/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Le Majeuil
 </text>
 </g>
 <g>
-<circle cx="826.185993446692" cy="336.5164023283287" fill="Gray" id="7/wp/circle" r="2"/>
-<circle cx="826.185993446692" cy="336.5164023283287" fill="white" id="7/wp/circle-little-white" r="0.5"/>
+<circle cx="828.2070580359068" cy="339.3544175660354" fill="Gray" id="7/wp/circle" r="2"/>
+<circle cx="828.2070580359068" cy="339.3544175660354" fill="white" id="7/wp/circle-little-white" r="0.5"/>
 </g>
-<g transform="translate(826.185993446692 336.5164023283287)">
+<g transform="translate(828.2070580359068 339.3544175660354)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="65.82535885167462" x="-69.82535885167462" y="-12"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="69.82535885167462" x="-71.82535885167462" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="7/wp/text" text-anchor="end" x="-4.000" y="-4.000">
@@ -88,10 +88,10 @@ Les Béthoux
 </text>
 </g>
 <g>
-<circle cx="718.6838892410742" cy="190.7758918144391" fill="Gray" id="9/wp/circle" r="2"/>
-<circle cx="718.6838892410742" cy="190.7758918144391" fill="white" id="9/wp/circle-little-white" r="0.5"/>
+<circle cx="718.7319291087915" cy="188.9418016480049" fill="Gray" id="9/wp/circle" r="2"/>
+<circle cx="718.7319291087915" cy="188.9418016480049" fill="white" id="9/wp/circle-little-white" r="0.5"/>
 </g>
-<g transform="translate(718.6838892410742 190.7758918144391)">
+<g transform="translate(718.7319291087915 188.9418016480049)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="38.179425837320565" x="4" y="4"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="42.179425837320565" x="2" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="9/wp/text" text-anchor="start" x="4.000" y="12.000">
