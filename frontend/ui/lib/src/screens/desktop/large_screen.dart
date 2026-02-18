@@ -59,11 +59,7 @@ class _LargeScaffold extends StatelessWidget {
         //Expanded(child: Container(color: Colors.blue)),
         Expanded(
           child: GraphicsPadding(
-            child: TrackView.make({
-              Kind.cities,
-              Kind.villages,
-              Kind.userStep,
-            }, TrackData.map),
+            child: TrackView.make(allkinds(), TrackData.map),
           ),
         ),
       ],
@@ -73,11 +69,7 @@ class _LargeScaffold extends StatelessWidget {
       ConstrainedBox(
         constraints: BoxConstraints(minHeight: 200, maxHeight: 200),
         child: ProfilePadding(
-          child: TrackView.make({
-            Kind.cities,
-            Kind.controls,
-            Kind.userStep,
-          }, TrackData.profile),
+          child: TrackView.make(allkinds(), TrackData.profile),
         ),
       ),
       Expanded(child: mwrow),

@@ -88,7 +88,7 @@ function filter-log {
 function unit-tests() {
 	export RUST_LOG=trace
 	export RUST_BACKTRACE=1
-	cargo test $@ -- --nocapture
+	2>&1 cargo test $@ -- --nocapture
 }
 
 function main-test() {

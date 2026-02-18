@@ -266,10 +266,9 @@ mod tests {
 
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();
         collection.range_cut(&segment.range());
-        let packets = collection.map();
         let result = match function {
-            &RenderFunction::Profile => profile::profile(&segment, &size, &packets),
-            &RenderFunction::Map => svgmap::map(&segment, &size, &packets),
+            &RenderFunction::Profile => profile::profile(&segment, &size, &collection.profile()),
+            &RenderFunction::Map => svgmap::map(&segment, &size, &collection.map()),
         };
 
         println!("test {}", reffilename);
