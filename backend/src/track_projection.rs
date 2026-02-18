@@ -153,6 +153,7 @@ where
 
 pub struct ProjectionTrees {
     total_tree: locate::IndexedPointsTree,
+    simplified_tree: locate::IndexedPointsTree,
     trees: Vec<locate::IndexedPointsTree>,
 }
 
@@ -177,9 +178,13 @@ impl ProjectionTrees {
             .collect()
     }
 
-    pub fn make(euclidean: &Vec<MercatorPoint>) -> Self {
+    pub fn make(euclidean: &Vec<MercatorPoint>, simplified: &Vec<MercatorPoint>) -> Self {
         Self {
             total_tree: locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len())),
+            simplified_tree: locate::IndexedPointsTree::from_track(
+                &simplified,
+                &(0..simplified.len()),
+            ),
             trees: Self::make_appropriate_projection_trees(euclidean),
         }
     }
@@ -200,6 +205,14 @@ impl ProjectionTrees {
                 }
             }
         }
+    }
+
+    pub fn simple_project(
+        &self,
+        point: &MercatorPoint,
+        euclidean: &Vec<MercatorPoint>,
+    ) -> TrackProjection {
+        locate::compute_track_projection_2d(&euclidean, &self.simplified_tree, point)
     }
 }
 

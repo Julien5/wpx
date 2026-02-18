@@ -14,6 +14,7 @@ use crate::mercator::MercatorPoint;
 use crate::tile;
 use crate::tile::Tiles;
 use crate::track_projection::ProjectionTrees;
+use crate::track_projection::TrackProjection;
 
 use super::elevation;
 
@@ -25,6 +26,7 @@ pub struct TrackPart {
 
 pub struct Simplified {
     pub xy: Vec<usize>,
+    pub xypoints: Vec<MercatorPoint>,
     pub dz: Vec<usize>,
 }
 
@@ -44,6 +46,7 @@ impl Simplified {
             let epsilon = track_distance * 500f64 / 1200_000f64;
             line.simplify_idx(&epsilon)
         };
+        let xypoints = xy.iter().map(|idx| euclidean[*idx].clone()).collect();
         let dz = {
             let coords: Vec<geo::Coord> = smooth_elevation
                 .iter()
@@ -54,7 +57,7 @@ impl Simplified {
             let epsilon = 2f64;
             line.simplify_idx(&epsilon)
         };
-        Self { xy, dz }
+        Self { xy, xypoints, dz }
     }
 }
 
@@ -282,10 +285,10 @@ impl Track {
             }
         }
 
-        let trees = ProjectionTrees::make(&euclidean);
-
         // Compute simplified euclidean using Douglas-Peucker
         let simplified = Simplified::make(&euclidean, &_distance, &track_smooth_elevation);
+
+        let trees = ProjectionTrees::make(&euclidean, &simplified.xypoints);
 
         let ret = Track {
             wgs84: wgs,
@@ -323,6 +326,10 @@ impl Track {
             &|index| self.distance(index),
             &|index| self.elevation(index),
         );
+    }
+
+    pub fn project_simplified(&self, point: &MercatorPoint) -> TrackProjection {
+        self.trees.simple_project(point, &self.simplified.xypoints)
     }
 
     pub fn project_map(&self, map: &mut InputPointMap) {

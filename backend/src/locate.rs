@@ -80,7 +80,7 @@ fn coord(point: &MercatorPoint) -> [f64; 2] {
 }
 
 impl IndexedPointsTree {
-    fn indexed_track(
+    fn indexed_track_range(
         euclideans: &Vec<MercatorPoint>,
         range: &std::ops::Range<usize>,
     ) -> Vec<IndexedPoint> {
@@ -98,7 +98,7 @@ impl IndexedPointsTree {
         euclideans: &Vec<MercatorPoint>,
         range: &std::ops::Range<usize>,
     ) -> IndexedPointsTree {
-        let ipoints = Self::indexed_track(euclideans, range);
+        let ipoints = Self::indexed_track_range(euclideans, range);
         let tree = RTree::bulk_load(ipoints);
         IndexedPointsTree {
             tree,
@@ -122,7 +122,7 @@ fn middle_point(a: &(f64, f64, f64), b: &(f64, f64, f64), alpha: f64) -> (f64, f
 fn two_closest_index(
     euclidean: &Vec<MercatorPoint>,
     index: &usize,
-    p: &InputPoint,
+    p: &MercatorPoint,
 ) -> (usize, usize) {
     let tracklen = euclidean.len();
     if *index == 0 {
@@ -131,8 +131,8 @@ fn two_closest_index(
     if *index == tracklen - 1 {
         return (index - 1, *index);
     }
-    let dbefore = p.euclidean.d2(&euclidean[index - 1]);
-    let dafter = p.euclidean.d2(&euclidean[index - 1]);
+    let dbefore = p.d2(&euclidean[index - 1]);
+    let dafter = p.d2(&euclidean[index - 1]);
     if dbefore < dafter {
         (index - 1, *index)
     } else {
@@ -140,8 +140,58 @@ fn two_closest_index(
     }
 }
 
+pub fn compute_track_projection_2d(
+    track: &Vec<MercatorPoint>,
+    tracktree: &IndexedPointsTree,
+    point: &MercatorPoint,
+) -> TrackProjection {
+    // as opposed to GPX and OSM points, which may be on several segments
+    let index = tracktree.nearest_neighbor(&point).unwrap();
+    log::trace!("index: {}", index);
+    let (index1, index2) = two_closest_index(track, &index, point);
+    log::trace!("index1: {}", index1);
+    log::trace!("index2: {}", index2);
+    let p1 = &track[index1];
+    let p2 = &track[index2];
+    log::trace!("p1: {:?}", p1);
+    log::trace!("p2: {:?}", p2);
+    log::trace!("point: {:?}", point);
+    let linestring: geo::LineString = vec![p1.xy(), p2.xy()].into();
+    let index_floating_part = linestring
+        .line_locate_point(&geo::point!(point.xy()))
+        .unwrap();
+    log::trace!("floating part: {}", index_floating_part);
+    assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
+    let floating_index = index1 as f64 + index_floating_part;
+    let t1 = &track[index1];
+    let t2 = &track[index2];
+    let a1 = (t1.0, t1.1, 0f64);
+    let a2 = (t2.0, t2.1, 0f64);
+    let m = middle_point(&a1, &a2, index_floating_part);
+    log::trace!("m: {:?}", m);
+
+    let middle = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
+
+    let elevation = m.2;
+    let track_distance = middle.d2(&point).sqrt();
+
+    let di = point.d2(&track[index]);
+    let df = point.d2(&middle);
+    debug_assert!(df <= di);
+
+    let new_proj = TrackProjection {
+        track_floating_index: floating_index,
+        track_index: index,
+        euclidean: middle,
+        elevation,
+        track_distance,
+        distance_on_track_to_projection: 0f64,
+    };
+    new_proj
+}
+
 pub fn compute_track_projection(
-    euclidean: &Vec<MercatorPoint>,
+    track: &Vec<MercatorPoint>,
     distance: impl Fn(usize) -> f64,
     elevation: impl Fn(usize) -> f64,
     tracktree: &IndexedPointsTree,
@@ -154,17 +204,17 @@ pub fn compute_track_projection(
     }
     // as opposed to GPX and OSM points, which may be on several segments
     let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
-    let (index1, index2) = two_closest_index(euclidean, &index, point);
-    let p1 = &euclidean[index1];
-    let p2 = &euclidean[index2];
+    let (index1, index2) = two_closest_index(track, &index, &point.euclidean);
+    let p1 = &track[index1];
+    let p2 = &track[index2];
     let linestring: geo::LineString = vec![p1.xy(), p2.xy()].into();
     let index_floating_part = linestring
         .line_locate_point(&geo::point!(point.euclidean.xy()))
         .unwrap();
     assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
     let floating_index = index1 as f64 + index_floating_part;
-    let t1 = &euclidean[index1];
-    let t2 = &euclidean[index2];
+    let t1 = &track[index1];
+    let t2 = &track[index2];
     let a1 = (t1.0, t1.1, elevation(index1));
     let a2 = (t2.0, t2.1, elevation(index2));
     let m = middle_point(&a1, &a2, index_floating_part);
@@ -174,11 +224,11 @@ pub fn compute_track_projection(
     let elevation = m.2;
     let track_distance = middle.d2(&point.euclidean).sqrt();
 
-    let di = point.euclidean.d2(&euclidean[index]);
+    let di = point.euclidean.d2(&track[index]);
     let df = point.euclidean.d2(&middle);
     debug_assert!(df <= di);
 
-    let distance_on_track_to_projection = distance(index) + euclidean[index].d2(&middle).sqrt();
+    let distance_on_track_to_projection = distance(index) + track[index].d2(&middle).sqrt();
     let new_proj = TrackProjection {
         track_floating_index: floating_index,
         track_index: index,

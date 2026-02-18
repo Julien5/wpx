@@ -155,7 +155,16 @@ impl MapData {
                 if !bbox.contains(&euclidean.point2d()) {
                     continue;
                 }
-                let p = to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
+
+                let peuclidean = match is_close_to_track(&w) {
+                    true => {
+                        log::trace!("project: {}", w.name());
+                        segment.track.project_simplified(&euclidean).euclidean
+                    }
+                    false => euclidean.clone(),
+                };
+                let p =
+                    to_graphics_coordinates(&bbox, &peuclidean, size.width, size.height, margin);
                 let k = counter;
                 counter += 1;
                 let id = format!("{}/wp/circle", k);
