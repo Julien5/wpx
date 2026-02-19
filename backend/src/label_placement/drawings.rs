@@ -77,8 +77,8 @@ pub fn draw_for_profile(center: &Point2D, id: &str, w: &InputPoint) -> PointFeat
         Kind::Villages => (4f64, "Black"),
         Kind::Hamlets => (2f64, "Gray"),
         Kind::Mountains => (3f64, "Green"),
-        Kind::GPXWaypoints => (5f64, "Blue"),
-        Kind::UserStep => (3f64, "Black"),
+        Kind::GPXWaypoints => (4f64, "Blue"),
+        Kind::UserStep => (2f64, "Gray"),
         Kind::Controls => (5f64, "Blue"),
     };
 

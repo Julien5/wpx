@@ -83,18 +83,22 @@ impl ProfileView {
     fn yticks_end(&self) -> f64 {
         self.HD()
     }
+
+    fn indicator_height(indicator: &ProfileIndication) -> f64 {
+        match indicator {
+            ProfileIndication::None => 0.0,
+            ProfileIndication::Time => 15.0,
+            ProfileIndication::NumericSlope => 15.0,
+        }
+    }
+
     fn indicators_height(indicators: &Vec<ProfileIndication>) -> f64 {
         if indicators.is_empty() {
             return 0.0;
         }
         let mut ret = 0.0;
         for indicator in indicators {
-            let space = match indicator {
-                ProfileIndication::None => 0.0,
-                ProfileIndication::Time => 20.0,
-                ProfileIndication::NumericSlope => 20.0,
-            };
-            ret += space;
+            ret += Self::indicator_height(indicator);
         }
         ret
     }
@@ -201,7 +205,7 @@ impl ProfileView {
             self.SD.append(text);
         }
 
-        let ceil = bottom - 20.0;
+        let ceil = bottom - Self::indicator_height(&ProfileIndication::Time);
         assert!(pacing_points.len() > 0);
         for point in pacing_points {
             assert!(point.track_projections.len() == 1);
@@ -265,7 +269,7 @@ impl ProfileView {
             self.SD.append(text);
         }
 
-        let ceil = bottom - 20.0;
+        let ceil = bottom - Self::indicator_height(&ProfileIndication::NumericSlope);
 
         for xtick in ticks::xticks_dashed(&self.bboxview(), self.W) {
             let xd = self.toSD(&Point2D::new(xtick, 0f64)).x;
