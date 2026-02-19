@@ -97,7 +97,7 @@ pub fn yticks_dashed(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
     ret
 }
 
-pub fn yticks(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
+pub fn yticks_full(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
     let mut ret = yticks_all(bbox, H);
     let mut k = 0;
     ret.retain(|_y| {

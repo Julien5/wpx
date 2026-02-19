@@ -53,9 +53,8 @@ pub struct ProfileView {
     model: Option<ProfileModel>,
 }
 
-fn fix_margins(bbox: &ProfileBoundingBox, size: &IntegerSize2D) -> ProfileBoundingBox {
-    let H = size.height;
-    let ticks = ticks::yticks(bbox, H as f64);
+fn fix_margins(bbox: &ProfileBoundingBox, free_height: f64) -> ProfileBoundingBox {
+    let ticks = ticks::yticks_full(bbox, free_height);
     let mut ret = bbox.clone();
     ret.set_ymin(ticks.first().unwrap().clone());
     ret.set_ymax(ticks.last().unwrap().clone());
@@ -63,6 +62,9 @@ fn fix_margins(bbox: &ProfileBoundingBox, size: &IntegerSize2D) -> ProfileBoundi
 }
 
 impl ProfileView {
+    fn free_height(&self) -> f64 {
+        self.HD() - Self::indicators_height(&self.parameters.profile_options.elevation_indicators)
+    }
     fn indications(&self) -> Vec<ProfileIndication> {
         self.parameters
             .profile_options
@@ -75,8 +77,7 @@ impl ProfileView {
     fn yticks_end(&self) -> f64 {
         self.HD()
     }
-    fn eticks_height(&self) -> f64 {
-        let indicators = &self.parameters.profile_options.elevation_indicators;
+    fn indicators_height(indicators: &Vec<ProfileIndication>) -> f64 {
         if indicators.is_empty() {
             return 0.0;
         }
@@ -100,14 +101,15 @@ impl ProfileView {
         let H = size.height as f64;
         let Mleft = (W * 0.05f64).floor() as f64;
         let Mbottom = (H / 10f64).floor() as f64;
-
+        let indicators_height =
+            Self::indicators_height(&parameters.profile_options.elevation_indicators);
         ProfileView {
             W,
             H,
             Mleft,
             Mbottom,
             parameters: parameters.clone(),
-            bboxview: fix_margins(bbox, size),
+            bboxview: fix_margins(bbox, H - Mbottom - indicators_height),
             bboxdata: bbox.clone(),
             BG: Group::new().set("id", "BG"),
             SL: Group::new()
@@ -131,16 +133,16 @@ impl ProfileView {
             a * x + b
         };
         let g = |y: &f64| -> f64 {
-            let a = -self.HD() as f64 / self.bboxview.height();
+            let a = -self.free_height() as f64 / self.bboxview.height();
             let b = -self.bboxview.get_ymax() * a;
             a * y + b
         };
         Point2D::new(f(&p.x), g(&p.y))
     }
 
-    fn toSL(&self, y: &f64) -> f64 {
+    fn _toSL(&self, y: &f64) -> f64 {
         let g = |y: &f64| -> f64 {
-            let a = self.HD() as f64 / (self.bboxview.get_ymin() - self.bboxview.get_ymax());
+            let a = self.HD() as f64 / self.bboxview.height();
             let b = -self.bboxview.get_ymax() * a;
             a * y + b
         };
@@ -313,8 +315,8 @@ impl ProfileView {
 
         let _xticks = ticks::xticks(&self.bboxview, self.W);
         let _xticks_dashed = ticks::xticks_dashed(&self.bboxview, self.W);
-        let _yticks = ticks::yticks(&self.bboxdata, self.H);
-        let _yticks_dashed = ticks::yticks_dashed(&self.bboxdata, self.H);
+        let _yticks_full = ticks::yticks_full(&self.bboxdata, self.free_height());
+        let _yticks_dashed = ticks::yticks_dashed(&self.bboxdata, self.free_height());
 
         for xtick in _xticks {
             let xg = self.toSD(&Point2D::new(xtick, 0f64)).x;
@@ -341,28 +343,36 @@ impl ProfileView {
                 break;
             }
             self.SD.append(dashed(
-                Point2D::new(xd, self.eticks_height()),
+                Point2D::new(xd, 0f64),
                 Point2D::new(xd, self.yticks_end()),
             ));
         }
 
-        for ytick in &_yticks {
-            let yd = self.toSL(ytick);
+        for ytick in &_yticks_full {
+            let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
+            if yd > self.free_height() {
+                continue;
+            }
             self.SL.append(text_end(
                 format!("{}", ytick.floor() as f64).as_str(),
                 Point2D::new(self.Mleft - 5f64, yd + 5f64),
             ));
         }
 
-        // buggy
-        for ytick in &_yticks {
+        for ytick in &_yticks_full {
             let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
+            if yd > self.free_height() {
+                continue;
+            }
             self.SD
                 .append(stroke("1", Point2D::new(0f64, yd), Point2D::new(WD, yd)));
         }
 
         for ytick in &_yticks_dashed {
             let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
+            if yd > self.free_height() {
+                continue;
+            }
             self.SD
                 .append(dashed(Point2D::new(0f64, yd), Point2D::new(WD, yd)));
         }
@@ -418,7 +428,7 @@ impl ProfileView {
         let polyline_dp = Polyline::new(polyline_dp_points);
         */
 
-        let mut bottom = self.HD() - 4.0;
+        let mut bottom = self.HD() - self.frame_stroke_width;
         for indication in self.indications() {
             let ceil = self.add_profile_indication(bottom, &track, &range, &indication);
             bottom = ceil;
@@ -478,13 +488,12 @@ impl ProfileView {
 
         let total_count: usize = feature_packets.iter().map(|inner| inner.points.len()).sum();
         log::trace!("feature count:{}", total_count);
-
         let (results, obstacles) = label_placement::place_labels(
             &feature_packets,
             &*generator,
             &BoundingBox::minmax(
                 Point2D::new(0f64, 0f64),
-                Point2D::new(self.WD(), self.HD() - self.eticks_height()),
+                Point2D::new(self.WD(), self.free_height()),
             ),
             &polyline,
             &self.parameters.profile_options.max_area_ratio,
