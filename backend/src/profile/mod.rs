@@ -60,16 +60,8 @@ fn fix_margins(bbox: &ProfileBoundingBox, free_height: f64) -> ProfileBoundingBo
 }
 
 impl ProfileView {
-    fn compute_free_height(hd: f64, indicators: &Vec<ProfileIndication>, stroke_width: f64) -> f64 {
-        hd - Self::indicators_height(indicators) - indicators.len() as f64 * stroke_width
-    }
-
     fn free_height(&self) -> f64 {
-        Self::compute_free_height(
-            self.HD(),
-            &self.parameters.profile_options.elevation_indicators,
-            self.frame_stroke_width,
-        )
+        self.HD() - self.bottom_height() - self.header_height()
     }
     fn indications(&self) -> Vec<ProfileIndication> {
         self.parameters
@@ -84,12 +76,20 @@ impl ProfileView {
         self.HD()
     }
 
+    fn header_height(&self) -> f64 {
+        ProfileGenerator::header_height()
+    }
+
     fn indicator_height(indicator: &ProfileIndication) -> f64 {
         match indicator {
             ProfileIndication::None => 0.0,
-            ProfileIndication::Time => 15.0,
             ProfileIndication::NumericSlope => 15.0,
         }
+    }
+
+    fn bottom_height(&self) -> f64 {
+        let indicators = &self.parameters.profile_options.elevation_indicators;
+        Self::indicators_height(indicators) + indicators.len() as f64 * self.frame_stroke_width
     }
 
     fn indicators_height(indicators: &Vec<ProfileIndication>) -> f64 {
@@ -144,7 +144,7 @@ impl ProfileView {
         };
         let g = |y: &f64| -> f64 {
             let a = -self.free_height() as f64 / self.bboxview().height();
-            let b = -self.bboxview().get_ymax() * a;
+            let b = -self.bboxview().get_ymax() * a + self.bottom_height();
             a * y + b
         };
         Point2D::new(f(&p.x), g(&p.y))
@@ -174,7 +174,7 @@ impl ProfileView {
         }
     }
 
-    fn add_time_ticks(&mut self, bottom: f64, pacing_points: &Vec<InputPoint>) -> f64 {
+    fn add_time_ticks(&mut self, pacing_points: &Vec<InputPoint>) {
         let xstart = self.bboxview().get_xmin();
         let start = speed::time_at_distance(xstart, &self.parameters);
         let speed = self.parameters.speed;
@@ -185,7 +185,7 @@ impl ProfileView {
             total_distance,
         };
         let times = wheel::time_points::generate_times(&time_parameters);
-
+        let bottom = ProfileGenerator::header_bottom();
         for time in times {
             let duration = time - start;
             let x = xstart + duration.as_seconds_f64() * speed;
@@ -205,7 +205,7 @@ impl ProfileView {
             self.SD.append(text);
         }
 
-        let ceil = bottom - Self::indicator_height(&ProfileIndication::Time);
+        let ceil = ProfileGenerator::header_ceil();
         assert!(pacing_points.len() > 0);
         for point in pacing_points {
             assert!(point.track_projections.len() == 1);
@@ -227,12 +227,13 @@ impl ProfileView {
             self.SD.append(sk);
         }
 
-        self.SD.append(stroke(
-            &format!("{}", self.frame_stroke_width),
-            Point2D::new(0f64, ceil),
-            Point2D::new(self.WD(), ceil),
-        ));
-        ceil - self.frame_stroke_width
+        for y in [ProfileGenerator::header_bottom()] {
+            self.SD.append(stroke(
+                &format!("{}", self.frame_stroke_width),
+                Point2D::new(0f64, y),
+                Point2D::new(self.WD(), y),
+            ));
+        }
     }
 
     fn add_numeric_slope(
@@ -286,21 +287,6 @@ impl ProfileView {
             Point2D::new(self.WD(), ceil),
         ));
         ceil - self.frame_stroke_width
-    }
-
-    fn add_profile_indication(
-        &mut self,
-        bottom: f64,
-        track: &Track,
-        range: &std::ops::Range<usize>,
-        kind: &ProfileIndication,
-        pacing_points: &Vec<InputPoint>,
-    ) -> f64 {
-        match kind {
-            ProfileIndication::None => bottom,
-            ProfileIndication::Time => self.add_time_ticks(bottom, pacing_points),
-            ProfileIndication::NumericSlope => self.add_numeric_slope(bottom, track, range),
-        }
     }
 
     pub fn render(&self) -> RenderResult {
@@ -378,7 +364,7 @@ impl ProfileView {
             }
             self.SD.append(stroke(
                 "1",
-                Point2D::new(xg, 0f64),
+                Point2D::new(xg, self.header_height()),
                 Point2D::new(xg, self.yticks_end()),
             ));
             self.SB.append(text_middle(
@@ -393,7 +379,7 @@ impl ProfileView {
                 break;
             }
             self.SD.append(dashed(
-                Point2D::new(xd, 0f64),
+                Point2D::new(xd, self.header_height()),
                 Point2D::new(xd, self.free_height()),
             ));
         }
@@ -484,27 +470,19 @@ impl ProfileView {
         */
 
         let mut bottom = self.HD() - self.frame_stroke_width;
-
         for indication in self.indications() {
-            if indication == ProfileIndication::Time {
-                for packet in packets {
-                    if packet.is_empty() {
-                        continue;
-                    }
-                    if packet.first().unwrap().kind() == Kind::UserStep {
-                        let pacing_points = &packet;
-                        bottom = self.add_profile_indication(
-                            bottom,
-                            &track,
-                            &range,
-                            &indication,
-                            pacing_points,
-                        );
-                    }
-                }
-            }
             if indication == ProfileIndication::NumericSlope {
                 bottom = self.add_numeric_slope(bottom, track, &range);
+            }
+        }
+
+        for packet in packets {
+            if packet.is_empty() {
+                continue;
+            }
+            if packet.first().unwrap().kind() == Kind::UserStep {
+                let pacing_points = &packet;
+                self.add_time_ticks(pacing_points);
             }
         }
 
@@ -593,7 +571,7 @@ impl CandidatesGenerator for ProfileGenerator {
             Kind::UserStep => self.extended_cardinal(feature),
             //OutputType::UserStep => self.generate_column(feature),
             //OutputType::UserStep => self.generate_header(feature, vec![25f64, self.HD - 20f64]),
-            Kind::GPXWaypoints | Kind::Controls => self.header(feature, vec![5f64]),
+            Kind::GPXWaypoints | Kind::Controls => Self::header(feature),
             _ => {
                 assert!(is_osm(&kind));
                 self.cardinal(feature)
@@ -628,16 +606,30 @@ impl ProfileGenerator {
         ret
     }
 
-    fn header(&self, feature: &PointFeature, ys: Vec<f64>) -> Vec<LabelBoundingBox> {
+    fn header_height() -> f64 {
+        20f64
+    }
+
+    fn header_ceil() -> f64 {
+        5f64
+    }
+
+    fn header_bottom() -> f64 {
+        Self::header_height()
+    }
+
+    fn header(feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let target = feature.circle.center;
         let width = feature.width();
         let mut ret = Vec::new();
         for dx in [0.0, -0.5 * width, 0.5 * width] {
             let x = target.x + dx - width / 2f64;
-            for y in &ys {
-                let bbox = BoundingBox::minsize(Point2D::new(x, *y), width, feature.height());
-                ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
-            }
+            let bbox = BoundingBox::minsize(
+                Point2D::new(x, Self::header_ceil()),
+                width,
+                feature.height(),
+            );
+            ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
         }
         ret
     }

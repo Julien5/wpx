@@ -29,8 +29,7 @@ pub fn make_label_text(
         }
 
         Kind::Controls => {
-            let projection = proj.unwrap();
-            format!("{} ({})", w.name(), timestr(&projection, &parameters))
+            format!("{}", w.name())
         }
     };
     let base_font_size = FONTSIZE;

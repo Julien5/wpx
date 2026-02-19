@@ -3,7 +3,6 @@ use crate::{mercator::DateTime, speed};
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ProfileIndication {
     None,
-    Time,
     NumericSlope,
 }
 
@@ -40,7 +39,7 @@ pub struct ProfileOptions {
 impl Default for ProfileOptions {
     fn default() -> ProfileOptions {
         ProfileOptions {
-            elevation_indicators: vec![ProfileIndication::Time, ProfileIndication::NumericSlope],
+            elevation_indicators: vec![ProfileIndication::NumericSlope],
             max_area_ratio: 0.20f64,
         }
     }
