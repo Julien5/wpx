@@ -78,7 +78,7 @@ impl PlacementResult {
                     feature.place_label(&bbox);
                     //feature._make_link(obstacles);
                     ret.push(feature.clone());
-                } else {
+                } else if feature.input_point.is_some() {
                     if !is_osm(&feature.input_point.as_ref().unwrap().kind()) {
                         ret.push(feature.clone());
                     }

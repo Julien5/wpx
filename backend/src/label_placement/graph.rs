@@ -52,8 +52,8 @@ impl Graph {
             tree: QuadTree::new(area.clone()),
             nodes: Vec::new(),
             obstacles: obstacles,
-            //debug_graphic_dir: Some(draw_graph::newdir()),
-            debug_graphic_dir: None,
+            debug_graphic_dir: Some(draw_graph::newdir()),
+            //debug_graphic_dir: None,
         }
     }
 

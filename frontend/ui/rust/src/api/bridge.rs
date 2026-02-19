@@ -84,7 +84,6 @@ pub fn allkinds() -> HashSet<Kind> {
 #[frb(mirror(ProfileIndication))]
 pub enum _ProfileIndication {
     None,
-    Time,
     NumericSlope,
 }
 

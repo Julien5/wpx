@@ -31,6 +31,7 @@ impl ProfileModel {
     pub fn input_points(&self) -> Vec<InputPoint> {
         self.points
             .iter()
+            .filter(|feature| feature.input_point.is_some())
             .map(|feature| feature.input_point.as_ref().unwrap().clone())
             .collect()
     }
@@ -174,7 +175,7 @@ impl ProfileView {
         }
     }
 
-    fn add_time_ticks(&mut self, pacing_points: &Vec<InputPoint>) {
+    fn add_time_ticks(&mut self, pacing_points: &Vec<InputPoint>) -> Vec<PointFeature> {
         let xstart = self.bboxview().get_xmin();
         let start = speed::time_at_distance(xstart, &self.parameters);
         let speed = self.parameters.speed;
@@ -186,23 +187,27 @@ impl ProfileView {
         };
         let times = wheel::time_points::generate_times(&time_parameters);
         let bottom = ProfileGenerator::header_bottom();
-        for time in times {
-            let duration = time - start;
+        let mut ret = Vec::new();
+        for (k, time) in times.iter().enumerate() {
+            let duration = *time - start;
             let x = xstart + duration.as_seconds_f64() * speed;
             let xd = self.toSD(&Point2D::new(x, 0f64)).x;
             if xd > self.WD() {
                 break;
             }
             let time_str = wheel::time_points::format_time(&time, false);
-            let mut text = elements::text(
-                format!("{}", time_str).as_str(),
-                Point2D::new(xd - 10.0, bottom - self.frame_stroke_width),
-                "end",
-            );
-            text = text.set("id", format!("time-{:.1}", x));
-            text = text.set("id", format!("time-{:.1}", x));
-            text = text.set("font-size", (self.font_size() * 0.8).floor());
-            self.SD.append(text);
+            let label = Label::new(&time_str, FONTSIZE, &"normal", &"normal");
+            let feature = PointFeature {
+                circle: PointFeatureDrawing {
+                    group: svg::node::element::Group::new(),
+                    center: Point2D::new(xd - 10.0, bottom - self.frame_stroke_width),
+                },
+                label,
+                input_point: None,
+                link: None,
+                xmlid: k,
+            };
+            ret.push(feature);
         }
 
         let ceil = ProfileGenerator::header_ceil();
@@ -234,6 +239,8 @@ impl ProfileView {
                 Point2D::new(self.WD(), y),
             ));
         }
+
+        ret
     }
 
     fn add_numeric_slope(
@@ -476,16 +483,6 @@ impl ProfileView {
             }
         }
 
-        for packet in packets {
-            if packet.is_empty() {
-                continue;
-            }
-            if packet.first().unwrap().kind() == Kind::UserStep {
-                let pacing_points = &packet;
-                self.add_time_ticks(pacing_points);
-            }
-        }
-
         let mut document = Attributes::new();
         set_attr(
             &mut document,
@@ -538,6 +535,17 @@ impl ProfileView {
             feature_packets.push(PointFeatures::make(feature_packet));
         }
 
+        for packet in packets {
+            if packet.is_empty() {
+                continue;
+            }
+            if packet.first().unwrap().kind() == Kind::UserStep {
+                let pacing_points = &packet;
+                let time_packet = self.add_time_ticks(pacing_points);
+                feature_packets.push(PointFeatures::make(time_packet));
+            }
+        }
+
         let total_count: usize = feature_packets.iter().map(|inner| inner.points.len()).sum();
         log::trace!("feature count:{}", total_count);
         let (results, obstacles) = label_placement::place_labels(
@@ -566,6 +574,12 @@ struct ProfileGenerator {
 
 impl CandidatesGenerator for ProfileGenerator {
     fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
+        if feature.input_point.is_none() {
+            // [left mid right] => [mid]
+            let mut ret = vec![Self::header(feature)[1].clone()];
+            ret.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
+            return ret;
+        }
         let kind = feature.input_point.as_ref().unwrap().kind();
         let mut ret = match kind {
             Kind::UserStep => self.extended_cardinal(feature),
@@ -611,7 +625,7 @@ impl ProfileGenerator {
     }
 
     fn header_ceil() -> f64 {
-        5f64
+        2f64
     }
 
     fn header_bottom() -> f64 {
