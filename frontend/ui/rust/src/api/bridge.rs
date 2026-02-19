@@ -84,7 +84,7 @@ pub fn allkinds() -> HashSet<Kind> {
 #[frb(mirror(ProfileIndication))]
 pub enum _ProfileIndication {
     None,
-    GainTicks,
+    Time,
     NumericSlope,
 }
 
@@ -104,7 +104,7 @@ pub struct _UserStepsOptions {
 
 #[frb(mirror(ProfileOptions))]
 pub struct _ProfileOptions {
-    pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
+    pub elevation_indicators: Vec<ProfileIndication>,
     pub max_area_ratio: f64,
 }
 
@@ -226,8 +226,8 @@ impl Bridge {
     }
 
     #[frb(sync)]
-    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
-        self.backend.set_profile_indication(p);
+    pub fn set_profile_indications(&mut self, indications: &Vec<ProfileIndication>) {
+        self.backend.set_profile_indications(indications);
     }
 
     #[frb(sync)]

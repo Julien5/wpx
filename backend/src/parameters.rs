@@ -40,7 +40,7 @@ pub struct ProfileOptions {
 impl Default for ProfileOptions {
     fn default() -> ProfileOptions {
         ProfileOptions {
-            elevation_indicators: Vec::default(),
+            elevation_indicators: vec![ProfileIndication::Time, ProfileIndication::NumericSlope],
             max_area_ratio: 0.20f64,
         }
     }

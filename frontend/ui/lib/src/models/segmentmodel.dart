@@ -82,8 +82,8 @@ class ParameterModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setProfileIndication(bridge.ProfileIndication p) {
-    backend.setProfileIndication(p: p);
+  void setProfileIndications(List<bridge.ProfileIndication> indications) {
+    backend.setProfileIndications(indications: indications);
     notifyListeners();
   }
 }

@@ -67,7 +67,7 @@ class _LargeScaffold extends StatelessWidget {
 
     List<Widget> rightChildren = [
       ConstrainedBox(
-        constraints: BoxConstraints(minHeight: 200, maxHeight: 200),
+        constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
         child: ProfilePadding(
           child: TrackView.make(allkinds(), TrackData.profile),
         ),

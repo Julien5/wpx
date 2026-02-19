@@ -29,8 +29,8 @@ class FutureRenderer with ChangeNotifier {
     assert(_backend.isLoaded());
   }
 
-  void setProfileIndication(bridge.ProfileIndication p) {
-    _backend.setProfileIndication(p: p);
+  void setProfileIndications(List<bridge.ProfileIndication> indications) {
+    _backend.setProfileIndications(indications: indications);
     restart();
   }
 

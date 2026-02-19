@@ -304,22 +304,8 @@ impl Backend {
         }
     }
 
-    pub fn set_profile_indication(&mut self, p: &ProfileIndication) {
-        self.dmut()
-            .parameters
-            .profile_options
-            .elevation_indicators
-            .clear();
-        self.dmut()
-            .parameters
-            .profile_options
-            .elevation_indicators
-            .clear();
-        self.dmut()
-            .parameters
-            .profile_options
-            .elevation_indicators
-            .push(p.clone());
+    pub fn set_profile_indications(&mut self, indications: &Vec<ProfileIndication>) {
+        self.dmut().parameters.profile_options.elevation_indicators = indications.clone();
     }
 
     pub fn set_userstep_gpx_name_format(&mut self, format: &String) {

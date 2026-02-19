@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/indicatorselector.dart';
 import 'segmentflipbox.dart';
 
 class SegmentViewVertical extends StatelessWidget {
@@ -12,11 +11,7 @@ class SegmentViewVertical extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         // Center the content vertically
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SegmentFlipBox(),
-          SizedBox(height: 50),
-          ElevationIndicatorChooser(),
-        ],
+        children: [SegmentFlipBox(), SizedBox(height: 50)],
       ),
     );
   }

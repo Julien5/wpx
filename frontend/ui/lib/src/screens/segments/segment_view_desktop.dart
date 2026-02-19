@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ui/src/screens/segments/areaslider.dart';
-import 'package:ui/src/widgets/indicatorselector.dart';
 import 'mapview.dart';
 import 'profileview.dart';
 
@@ -10,10 +9,8 @@ class SegmentViewDesktop extends StatelessWidget {
   Widget wideView() {
     var hspace = const Expanded(child: SizedBox(width: 10));
     var vspace = const Expanded(child: SizedBox(height: 10));
-    var settings = Column(
-      children: [vspace,ElevationIndicatorChooser(),AreaSlider(),vspace],
-    );
-    
+    var settings = Column(children: [vspace, AreaSlider(), vspace]);
+
     var map = MapConsumer();
     var row = Expanded(
       child: Row(
