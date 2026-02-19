@@ -123,7 +123,13 @@ impl SegmentData {
 
         let mut lock = self.packet_provider.write().unwrap();
         let profile_packets = collection.profile();
-        let result_profile = profile::profile(&self, size, &profile_packets);
+        let result_profile = profile::profile(
+            &self.segment,
+            size,
+            &self.track,
+            &profile_packets,
+            &self.parameters,
+        );
         lock.register_profile_result(&parameters, &self.range(), size, &result_profile);
 
         let map_packets = collection.map();
@@ -143,7 +149,13 @@ impl SegmentData {
             );
             collection.kinds_cut(kinds);
             collection.range_cut(&self.range());
-            profile::profile(&self, size, &collection.profile())
+            profile::profile(
+                &self.segment,
+                size,
+                &self.track,
+                &collection.profile(),
+                &self.parameters,
+            )
         };
         if self.parameters.debug {
             let filename = std::format!("/tmp/profile-{}.svg", self.id());
@@ -269,7 +281,13 @@ mod tests {
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();
         collection.range_cut(&segment.range());
         let result = match function {
-            &RenderFunction::Profile => profile::profile(&segment, &size, &collection.profile()),
+            &RenderFunction::Profile => profile::profile(
+                &segment.segment,
+                &size,
+                &segment.track,
+                &collection.profile(),
+                &segment.parameters,
+            ),
             &RenderFunction::Map => svgmap::map(&segment, &size, &collection.map()),
         };
 

@@ -4,7 +4,6 @@ use crate::{
     math::Point2D,
     parameters::Parameters,
     point_collection::Kind,
-    segment::SegmentData,
     speed,
     track_projection::TrackProjection,
 };
@@ -17,7 +16,7 @@ pub fn timestr(proj: &TrackProjection, parameters: &Parameters) -> String {
 pub fn make_label_text(
     w: &InputPoint,
     proj: Option<&TrackProjection>,
-    segment: &SegmentData,
+    parameters: &Parameters,
 ) -> Label {
     let text = match w.kind() {
         Kind::Villages | Kind::Cities | Kind::Mountains | Kind::Hamlets => {
@@ -31,11 +30,7 @@ pub fn make_label_text(
 
         Kind::Controls => {
             let projection = proj.unwrap();
-            format!(
-                "{} ({})",
-                w.name(),
-                timestr(&projection, &segment.parameters)
-            )
+            format!("{} ({})", w.name(), timestr(&projection, &parameters))
         }
     };
     let base_font_size = FONTSIZE;

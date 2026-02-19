@@ -15,7 +15,7 @@ use crate::label_placement::*;
 use crate::math::{distance2, IntegerSize2D, Point2D};
 use crate::parameters::{Parameters, ProfileIndication};
 use crate::point_collection::{is_osm, Kind, Packets, RenderResult};
-use crate::segment::{self, SegmentData};
+use crate::segment;
 use crate::track::Track;
 use crate::wheel::model::TimeParameters;
 use crate::{gpsdata, speed};
@@ -429,13 +429,12 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_segment(&mut self, segment: &SegmentData, packets: &Packets) {
+    pub fn add_segment(&mut self, packets: &Packets, track: &Track, parameters: &Parameters) {
         let bbox = &self.bboxview();
 
         /*if render_device != RenderDevice::PDF {
                 bbox.min.0 = bbox.min.0.max(0f64);
         }*/
-        let track = &segment.track;
 
         let mut polyline_points = PolylinePoints::new();
         let range = std::ops::Range {
@@ -500,7 +499,7 @@ impl ProfileView {
                     let circle = draw_for_profile(&g, id.as_str(), &w);
 
                     //assert!(label.unplaced());
-                    let mut label = drawings::make_label_text(&w, Some(&proj), segment);
+                    let mut label = drawings::make_label_text(&w, Some(&proj), parameters);
                     label.id = format!("{}/wp/text", k);
                     let empty = label.is_empty();
                     let feature = PointFeature {
@@ -671,15 +670,16 @@ impl ProfileGenerator {
 }
 
 pub fn profile(
-    segment: &segment::SegmentData,
+    segment: &segment::Segment,
     size: &IntegerSize2D,
+    track: &Track,
     packets: &Packets,
+    parameters: &Parameters,
 ) -> RenderResult {
-    let profile_bbox =
-        ProfileBoundingBox::from_track(&segment.track, &segment.start(), &segment.end());
-    let mut view = ProfileView::init(&profile_bbox, size, &segment.parameters);
+    let profile_bbox = ProfileBoundingBox::from_track(track, &segment.start, &segment.end);
+    let mut view = ProfileView::init(&profile_bbox, size, &parameters);
     view.add_canvas();
-    view.add_segment(&segment, packets);
+    view.add_segment(packets, track, parameters);
     view.render_model();
     view.render()
 }
