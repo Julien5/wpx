@@ -83,8 +83,8 @@ impl ProfileView {
         for indicator in indicators {
             let space = match indicator {
                 ProfileIndication::None => 0.0,
-                ProfileIndication::Time => 15.0,
-                ProfileIndication::NumericSlope => 15.0,
+                ProfileIndication::Time => 20.0,
+                ProfileIndication::NumericSlope => 20.0,
             };
             ret += space;
         }
@@ -188,7 +188,7 @@ impl ProfileView {
                 self.SD.append(text);
             }
         }
-        bottom - 15.0
+        bottom - 20.0
     }
 
     fn add_numeric_slope(
@@ -224,7 +224,7 @@ impl ProfileView {
             text = text.set("font-size", (self.font_size() * 0.8).floor());
             self.SD.append(text);
         }
-        bottom - 15.0
+        bottom - 20.0
     }
 
     fn add_profile_indication(
@@ -299,11 +299,8 @@ impl ProfileView {
             Point2D::new(WD, HD),
         ));
 
-        self.SD.append(stroke(
-            "1",
-            Point2D::new(0f64, HD - self.eticks_height()),
-            Point2D::new(WD, HD - self.eticks_height()),
-        ));
+        self.SD
+            .append(stroke("1", Point2D::new(0f64, HD), Point2D::new(WD, HD)));
 
         let _xticks = ticks::xticks(&self.bboxview, self.W);
         let _xticks_dashed = ticks::xticks_dashed(&self.bboxview, self.W);
@@ -348,6 +345,7 @@ impl ProfileView {
             ));
         }
 
+        // buggy
         for ytick in &_yticks {
             let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
             self.SD
@@ -414,7 +412,7 @@ impl ProfileView {
         let mut bottom = self.HD() - 4.0;
         for indication in self.indications() {
             let ceil = self.add_profile_indication(bottom, &track, &range, &indication);
-            bottom = ceil - 4.0;
+            bottom = ceil;
         }
 
         let mut document = Attributes::new();

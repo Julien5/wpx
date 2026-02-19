@@ -262,10 +262,8 @@ mod tests {
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.map_options.max_area_ratio = 0.15f64;
-        parameters.profile_options.elevation_indicators = std::collections::HashSet::from([
-            ProfileIndication::NumericSlope,
-            ProfileIndication::Time,
-        ]);
+        parameters.profile_options.elevation_indicators =
+            vec![ProfileIndication::Time, ProfileIndication::NumericSlope];
         let segment = load_segment(src, start, length, parameters).await;
 
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();

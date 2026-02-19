@@ -323,7 +323,12 @@ impl Backend {
             .parameters
             .profile_options
             .elevation_indicators
-            .insert(p.clone());
+            .clear();
+        self.dmut()
+            .parameters
+            .profile_options
+            .elevation_indicators
+            .push(p.clone());
     }
 
     pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
@@ -486,8 +491,7 @@ mod tests {
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
         parameters.profile_options.max_area_ratio = 0.20f64;
-        parameters.profile_options.elevation_indicators =
-            std::collections::HashSet::from([ProfileIndication::NumericSlope]);
+        parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
 
         backend.set_parameters(&parameters);
 

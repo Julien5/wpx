@@ -33,14 +33,14 @@ impl Default for UserStepsOptions {
 
 #[derive(Clone)]
 pub struct ProfileOptions {
-    pub elevation_indicators: std::collections::HashSet<ProfileIndication>,
+    pub elevation_indicators: Vec<ProfileIndication>,
     pub max_area_ratio: f64,
 }
 
 impl Default for ProfileOptions {
     fn default() -> ProfileOptions {
         ProfileOptions {
-            elevation_indicators: std::collections::HashSet::default(),
+            elevation_indicators: Vec::default(),
             max_area_ratio: 0.20f64,
         }
     }
