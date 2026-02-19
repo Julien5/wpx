@@ -47,8 +47,6 @@ pub struct ProfileView {
     SB: Group, // main group, with the diagram
     pub SD: Group,
     pub bboxdata: gpsdata::ProfileBoundingBox,
-    // dz bbox for the view (contains bboxdata, with more y margin)
-    pub bboxview: gpsdata::ProfileBoundingBox,
     frame_stroke_width: f64,
     model: Option<ProfileModel>,
 }
@@ -62,8 +60,16 @@ fn fix_margins(bbox: &ProfileBoundingBox, free_height: f64) -> ProfileBoundingBo
 }
 
 impl ProfileView {
+    fn compute_free_height(hd: f64, indicators: &Vec<ProfileIndication>, stroke_width: f64) -> f64 {
+        hd - Self::indicators_height(indicators) - indicators.len() as f64 * stroke_width
+    }
+
     fn free_height(&self) -> f64 {
-        self.HD() - Self::indicators_height(&self.parameters.profile_options.elevation_indicators)
+        Self::compute_free_height(
+            self.HD(),
+            &self.parameters.profile_options.elevation_indicators,
+            self.frame_stroke_width,
+        )
     }
     fn indications(&self) -> Vec<ProfileIndication> {
         self.parameters
@@ -92,6 +98,9 @@ impl ProfileView {
         }
         ret
     }
+    pub fn bboxview(&self) -> ProfileBoundingBox {
+        fix_margins(&self.bboxdata, self.free_height())
+    }
     pub fn init(
         bbox: &gpsdata::ProfileBoundingBox,
         size: &IntegerSize2D,
@@ -101,15 +110,12 @@ impl ProfileView {
         let H = size.height as f64;
         let Mleft = (W * 0.05f64).floor() as f64;
         let Mbottom = (H / 10f64).floor() as f64;
-        let indicators_height =
-            Self::indicators_height(&parameters.profile_options.elevation_indicators);
         ProfileView {
             W,
             H,
             Mleft,
             Mbottom,
             parameters: parameters.clone(),
-            bboxview: fix_margins(bbox, H - Mbottom - indicators_height),
             bboxdata: bbox.clone(),
             BG: Group::new().set("id", "BG"),
             SL: Group::new()
@@ -128,13 +134,13 @@ impl ProfileView {
 
     fn toSD(&self, p: &Point2D) -> Point2D {
         let f = |x: &f64| -> f64 {
-            let a = self.WD() as f64 / (self.bboxview.width());
-            let b = -self.bboxview.get_xmin() * a;
+            let a = self.WD() as f64 / (self.bboxview().width());
+            let b = -self.bboxview().get_xmin() * a;
             a * x + b
         };
         let g = |y: &f64| -> f64 {
-            let a = -self.free_height() as f64 / self.bboxview.height();
-            let b = -self.bboxview.get_ymax() * a;
+            let a = -self.free_height() as f64 / self.bboxview().height();
+            let b = -self.bboxview().get_ymax() * a;
             a * y + b
         };
         Point2D::new(f(&p.x), g(&p.y))
@@ -142,8 +148,8 @@ impl ProfileView {
 
     fn _toSL(&self, y: &f64) -> f64 {
         let g = |y: &f64| -> f64 {
-            let a = self.HD() as f64 / self.bboxview.height();
-            let b = -self.bboxview.get_ymax() * a;
+            let a = self.HD() as f64 / self.bboxview().height();
+            let b = -self.bboxview().get_ymax() * a;
             a * y + b
         };
         g(y)
@@ -170,10 +176,10 @@ impl ProfileView {
         _track: &Track,
         _range: &std::ops::Range<usize>,
     ) -> f64 {
-        let xstart = self.bboxview.get_xmin();
+        let xstart = self.bboxview().get_xmin();
         let start = speed::time_at_distance(xstart, &self.parameters);
         let speed = self.parameters.speed;
-        let total_distance = self.bboxview.width();
+        let total_distance = self.bboxview().width();
         let time_parameters = TimeParameters {
             start,
             speed,
@@ -191,7 +197,7 @@ impl ProfileView {
             let time_str = wheel::time_points::format_time(&time, false);
             let mut text = elements::text(
                 format!("{}", time_str).as_str(),
-                Point2D::new(xd - 10.0, bottom),
+                Point2D::new(xd - 10.0, bottom - self.frame_stroke_width),
                 "end",
             );
             text = text.set("id", format!("time-{:.1}", x));
@@ -199,7 +205,13 @@ impl ProfileView {
             text = text.set("font-size", (self.font_size() * 0.8).floor());
             self.SD.append(text);
         }
-        bottom - 20.0
+        let ceil = bottom - 20.0;
+        self.SD.append(stroke(
+            &format!("{}", self.frame_stroke_width),
+            Point2D::new(0f64, ceil),
+            Point2D::new(self.WD(), ceil),
+        ));
+        ceil - self.frame_stroke_width
     }
 
     fn add_numeric_slope(
@@ -229,13 +241,30 @@ impl ProfileView {
             let slope_percent = 100.0 * elevation_gain / (x1 - x0);
             let mut text = elements::text(
                 format!("{:.1}%", slope_percent).as_str(),
-                Point2D::new(xg - 10.0, bottom),
+                Point2D::new(xg - 10.0, bottom - self.frame_stroke_width),
                 "end",
             );
             text = text.set("font-size", (self.font_size() * 0.8).floor());
             self.SD.append(text);
         }
-        bottom - 20.0
+
+        let ceil = bottom - 20.0;
+
+        for xtick in ticks::xticks_dashed(&self.bboxview(), self.W) {
+            let xd = self.toSD(&Point2D::new(xtick, 0f64)).x;
+            if xd > self.WD() {
+                break;
+            }
+            self.SD
+                .append(dashed(Point2D::new(xd, bottom), Point2D::new(xd, ceil)));
+        }
+
+        self.SD.append(stroke(
+            &format!("{}", self.frame_stroke_width),
+            Point2D::new(0f64, ceil),
+            Point2D::new(self.WD(), ceil),
+        ));
+        ceil - self.frame_stroke_width
     }
 
     fn add_profile_indication(
@@ -287,25 +316,24 @@ impl ProfileView {
     pub fn add_canvas(&mut self) {
         let WD = self.WD();
         let HD = self.HD();
-        let stroke_widths = format!("{}", self.frame_stroke_width);
-        let stroke_width = stroke_widths.as_str();
+        let stroke_width = format!("{}", self.frame_stroke_width);
         self.SD.append(stroke(
-            stroke_width,
+            &stroke_width,
             Point2D::new(0f64, 0f64),
             Point2D::new(WD, 0f64),
         ));
         self.SD.append(stroke(
-            stroke_width,
+            &stroke_width,
             Point2D::new(0f64, 0f64),
             Point2D::new(0f64, HD),
         ));
         self.SD.append(stroke(
-            stroke_width,
+            &stroke_width,
             Point2D::new(0f64, HD),
             Point2D::new(WD, HD),
         ));
         self.SD.append(stroke(
-            stroke_width,
+            &stroke_width,
             Point2D::new(WD, 0f64),
             Point2D::new(WD, HD),
         ));
@@ -313,8 +341,8 @@ impl ProfileView {
         self.SD
             .append(stroke("1", Point2D::new(0f64, HD), Point2D::new(WD, HD)));
 
-        let _xticks = ticks::xticks(&self.bboxview, self.W);
-        let _xticks_dashed = ticks::xticks_dashed(&self.bboxview, self.W);
+        let _xticks = ticks::xticks(&self.bboxview(), self.W);
+        let _xticks_dashed = ticks::xticks_dashed(&self.bboxview(), self.W);
         let _yticks_full = ticks::yticks_full(&self.bboxdata, self.free_height());
         let _yticks_dashed = ticks::yticks_dashed(&self.bboxdata, self.free_height());
 
@@ -344,12 +372,14 @@ impl ProfileView {
             }
             self.SD.append(dashed(
                 Point2D::new(xd, 0f64),
-                Point2D::new(xd, self.yticks_end()),
+                Point2D::new(xd, self.free_height()),
             ));
         }
 
         for ytick in &_yticks_full {
-            let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
+            let yd = self
+                .toSD(&Point2D::new(self.bboxview().get_xmin(), *ytick))
+                .y;
             if yd > self.free_height() {
                 continue;
             }
@@ -360,7 +390,9 @@ impl ProfileView {
         }
 
         for ytick in &_yticks_full {
-            let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
+            let yd = self
+                .toSD(&Point2D::new(self.bboxview().get_xmin(), *ytick))
+                .y;
             if yd > self.free_height() {
                 continue;
             }
@@ -369,7 +401,9 @@ impl ProfileView {
         }
 
         for ytick in &_yticks_dashed {
-            let yd = self.toSD(&Point2D::new(self.bboxview.get_xmin(), *ytick)).y;
+            let yd = self
+                .toSD(&Point2D::new(self.bboxview().get_xmin(), *ytick))
+                .y;
             if yd > self.free_height() {
                 continue;
             }
@@ -396,7 +430,7 @@ impl ProfileView {
     }
 
     pub fn add_segment(&mut self, segment: &SegmentData, packets: &Packets) {
-        let bbox = &self.bboxview;
+        let bbox = &self.bboxview();
 
         /*if render_device != RenderDevice::PDF {
                 bbox.min.0 = bbox.min.0.max(0f64);
