@@ -137,10 +137,7 @@ impl Backend {
         // update provider
         {
             let mut locked = self.d().packet_provider.write().unwrap();
-            let track = &self.d().track;
-            locked
-                .collection
-                .import_other(&Kind::Controls, controls, track);
+            locked.collection.import_other(&Kind::Controls, controls);
         }
 
         Ok(len)
@@ -157,11 +154,11 @@ impl Backend {
 
         let parameters = Parameters::default();
         let point_collection = SharedPacketProvider::new(PacketProvider::new().into());
-        point_collection.write().unwrap().collection.import_other(
-            &Kind::GPXWaypoints,
-            gpxdata.waypoints,
-            &track,
-        );
+        point_collection
+            .write()
+            .unwrap()
+            .collection
+            .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
         self.send("compute elevation");
         let data = BackendData {
@@ -224,12 +221,9 @@ impl Backend {
         // update user steps
         {
             let mut locked = self.d().packet_provider.write().unwrap();
-            let track = &self.d().track;
             let usersteps =
                 make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-            locked
-                .collection
-                .import_other(&Kind::UserStep, usersteps, track);
+            locked.collection.import_other(&Kind::UserStep, usersteps);
         }
     }
 
@@ -304,12 +298,9 @@ impl Backend {
         // update user steps
         {
             let mut locked = self.d().packet_provider.write().unwrap();
-            let track = &self.d().track;
             let usersteps =
                 make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-            locked
-                .collection
-                .import_other(&Kind::UserStep, usersteps, track);
+            locked.collection.import_other(&Kind::UserStep, usersteps);
         }
     }
 

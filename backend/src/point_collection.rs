@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, HashSet};
 
 use crate::{
-    inputpoint::InputPoint, math::IntegerSize2D, parameters::Parameters, track::Track,
+    inputpoint::InputPoint, math::IntegerSize2D, parameters::Parameters,
     track_projection::is_close_to_track,
 };
 
@@ -316,7 +316,7 @@ impl PointCollection {
         sort_by_population(&mut self.map.get_mut(&Kind::Hamlets).unwrap());
     }
 
-    pub fn import_other(&mut self, kind: &Kind, points: Vec<InputPoint>, _track: &Track) {
+    pub fn import_other(&mut self, kind: &Kind, points: Vec<InputPoint>) {
         self.map.insert(kind.clone(), Vec::new());
         if !points.is_empty() {
             assert!(points.first().unwrap().kind() == *kind);

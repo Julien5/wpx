@@ -114,8 +114,8 @@ impl SegmentData {
             let lock = self.packet_provider.read().unwrap();
             let mut coll = lock.collection.clone();
             // remove user steps and controls, we render only osm
-            coll.import_other(&Kind::UserStep, Vec::new(), &self.track);
-            coll.import_other(&Kind::Controls, Vec::new(), &self.track);
+            coll.import_other(&Kind::UserStep, Vec::new());
+            coll.import_other(&Kind::Controls, Vec::new());
             coll.range_cut(&self.range());
             coll.kinds_cut(&osmkinds);
             coll
@@ -189,6 +189,7 @@ mod tests {
     use crate::{
         controls, event,
         gpsdata::GpxData,
+        make_points,
         math::IntegerSize2D,
         osm,
         parameters::{Parameters, ProfileIndication},
@@ -234,12 +235,16 @@ mod tests {
 
         let mut collection = PointCollection::new();
         collection.import_osm(&osmpoints.as_vector());
+
         let mut controls = controls::make_controls_with_waypoints(&track, &waypoints);
         for c in &mut controls {
             track.project_point(c);
         }
-        collection.import_other(&Kind::GPXWaypoints, waypoints, &track);
-        collection.import_other(&Kind::Controls, controls, &track);
+        collection.import_other(&Kind::GPXWaypoints, waypoints);
+        collection.import_other(&Kind::Controls, controls);
+
+        let usersteps = make_points::user_points(&track, &parameters.user_steps_options);
+        collection.import_other(&Kind::UserStep, usersteps);
 
         let fsegment = Segment {
             id: 0,
@@ -274,6 +279,7 @@ mod tests {
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.map_options.max_area_ratio = 0.15f64;
+        parameters.user_steps_options.step_elevation_gain = Some(100f64);
         parameters.profile_options.elevation_indicators =
             vec![ProfileIndication::Time, ProfileIndication::NumericSlope];
         let segment = load_segment(src, start, length, parameters).await;

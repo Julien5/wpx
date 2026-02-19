@@ -170,12 +170,7 @@ impl ProfileView {
         }
     }
 
-    fn add_time_ticks(
-        &mut self,
-        bottom: f64,
-        _track: &Track,
-        _range: &std::ops::Range<usize>,
-    ) -> f64 {
+    fn add_time_ticks(&mut self, bottom: f64, pacing_points: &Vec<InputPoint>) -> f64 {
         let xstart = self.bboxview().get_xmin();
         let start = speed::time_at_distance(xstart, &self.parameters);
         let speed = self.parameters.speed;
@@ -205,7 +200,29 @@ impl ProfileView {
             text = text.set("font-size", (self.font_size() * 0.8).floor());
             self.SD.append(text);
         }
+
         let ceil = bottom - 20.0;
+        assert!(pacing_points.len() > 0);
+        for point in pacing_points {
+            assert!(point.track_projections.len() == 1);
+            let x = point
+                .track_projections
+                .first()
+                .unwrap()
+                .distance_on_track_to_projection;
+            let xd = self.toSD(&Point2D::new(x, 0f64)).x;
+            if xd > self.WD() {
+                break;
+            }
+            let mut sk = stroke(
+                &format!("{}", 2),
+                Point2D::new(xd, bottom - 4f64),
+                Point2D::new(xd, ceil + 4f64),
+            );
+            sk = sk.set("id", format!("pacing-{}", point.name()));
+            self.SD.append(sk);
+        }
+
         self.SD.append(stroke(
             &format!("{}", self.frame_stroke_width),
             Point2D::new(0f64, ceil),
@@ -273,10 +290,11 @@ impl ProfileView {
         track: &Track,
         range: &std::ops::Range<usize>,
         kind: &ProfileIndication,
+        pacing_points: &Vec<InputPoint>,
     ) -> f64 {
         match kind {
             ProfileIndication::None => bottom,
-            ProfileIndication::Time => self.add_time_ticks(bottom, track, range),
+            ProfileIndication::Time => self.add_time_ticks(bottom, pacing_points),
             ProfileIndication::NumericSlope => self.add_numeric_slope(bottom, track, range),
         }
     }
@@ -462,9 +480,28 @@ impl ProfileView {
         */
 
         let mut bottom = self.HD() - self.frame_stroke_width;
+
         for indication in self.indications() {
-            let ceil = self.add_profile_indication(bottom, &track, &range, &indication);
-            bottom = ceil;
+            if indication == ProfileIndication::Time {
+                for packet in packets {
+                    if packet.is_empty() {
+                        continue;
+                    }
+                    if packet.first().unwrap().kind() == Kind::UserStep {
+                        let pacing_points = &packet;
+                        bottom = self.add_profile_indication(
+                            bottom,
+                            &track,
+                            &range,
+                            &indication,
+                            pacing_points,
+                        );
+                    }
+                }
+            }
+            if indication == ProfileIndication::NumericSlope {
+                bottom = self.add_numeric_slope(bottom, track, &range);
+            }
         }
 
         let mut document = Attributes::new();
