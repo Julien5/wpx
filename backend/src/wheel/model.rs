@@ -130,7 +130,7 @@ impl WheelModel {
             mid_points: Vec::new(),
             has_start_control: false,
             has_end_control: false,
-            time_points: time_points::generate(time_parameters),
+            time_points: time_points::generate_circle_points(time_parameters),
             outer_arcs: Vec::new(),
         }
     }

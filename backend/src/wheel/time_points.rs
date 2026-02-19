@@ -138,11 +138,17 @@ fn make(times: &Vec<DateTime>, start_time: &DateTime, duration_seconds: f64) -> 
     ret
 }
 
-pub fn generate(time_parameters: &TimeParameters) -> Vec<CirclePoint> {
+pub fn generate_circle_points(time_parameters: &TimeParameters) -> Vec<CirclePoint> {
+    let duration_seconds = time_parameters.duration_seconds();
+    let start_time: DateTime = time_parameters.start;
+    let times = generate_times(time_parameters);
+    make(&times, &start_time, duration_seconds)
+}
+
+pub fn generate_times(time_parameters: &TimeParameters) -> Vec<DateTime> {
     let duration_seconds = time_parameters.duration_seconds();
     let start_time: DateTime = time_parameters.start;
     let duration = std::time::Duration::from_secs_f64(duration_seconds);
     let interval = nice_interval(duration, 12);
-    let times = generate_time_intervals(start_time, duration, interval);
-    make(&times, &start_time, duration_seconds)
+    generate_time_intervals(start_time, duration, interval)
 }

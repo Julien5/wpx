@@ -7,7 +7,6 @@ use svg::Node;
 use crate::bbox::BoundingBox;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
-use crate::label_placement;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
@@ -18,7 +17,9 @@ use crate::parameters::{Parameters, ProfileIndication};
 use crate::point_collection::{is_osm, Kind, Packets, RenderResult};
 use crate::segment::{self, SegmentData};
 use crate::track::Track;
+use crate::wheel::model::TimeParameters;
 use crate::{gpsdata, speed};
+use crate::{label_placement, wheel};
 use elements::*;
 
 pub struct ProfileModel {
@@ -167,26 +168,34 @@ impl ProfileView {
         _track: &Track,
         _range: &std::ops::Range<usize>,
     ) -> f64 {
-        let xticks = ticks::xticks_all(&self.bboxdata, self.W);
-        for x in xticks {
-            let time = speed::time_at_distance(x, &self.parameters);
+        let xstart = self.bboxview.get_xmin();
+        let start = speed::time_at_distance(xstart, &self.parameters);
+        let speed = self.parameters.speed;
+        let total_distance = self.bboxview.width();
+        let time_parameters = TimeParameters {
+            start,
+            speed,
+            total_distance,
+        };
+        let times = wheel::time_points::generate_times(&time_parameters);
+
+        for time in times {
+            let duration = time - start;
+            let x = xstart + duration.as_seconds_f64() * speed;
             let xd = self.toSD(&Point2D::new(x, 0f64)).x;
             if xd > self.WD() {
                 break;
             }
-            let width = 4;
-            if width > 0 {
-                let time_str = format!("{}", time.format("%H:%M"));
-                let mut text = elements::text(
-                    format!("{}", time_str).as_str(),
-                    Point2D::new(xd - 10.0, bottom),
-                    "end",
-                );
-                text = text.set("id", format!("time-{:.1}", x));
-                text = text.set("id", format!("time-{:.1}", x));
-                text = text.set("font-size", (self.font_size() * 0.8).floor());
-                self.SD.append(text);
-            }
+            let time_str = format!("{}", time.format("%H:%M"));
+            let mut text = elements::text(
+                format!("{}", time_str).as_str(),
+                Point2D::new(xd - 10.0, bottom),
+                "end",
+            );
+            text = text.set("id", format!("time-{:.1}", x));
+            text = text.set("id", format!("time-{:.1}", x));
+            text = text.set("font-size", (self.font_size() * 0.8).floor());
+            self.SD.append(text);
         }
         bottom - 20.0
     }

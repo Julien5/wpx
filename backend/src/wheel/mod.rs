@@ -2,7 +2,7 @@ mod arc;
 pub mod model;
 pub mod shorten;
 mod text;
-mod time_points;
+pub mod time_points;
 
 use svg::node::element::path::Data;
 use svg::node::element::Text;
