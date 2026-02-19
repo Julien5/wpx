@@ -5,10 +5,10 @@
 <circle cx="272.5427461679792" cy="20.75613380327559" fill="Blue" id="6/wp/circle" r="5"/>
 </g>
 <g transform="translate(272.5427461679792 20.75613380327559)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789474" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789474" x="2" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="2" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="6/wp/text" text-anchor="start" x="4.000" y="-4.000">
-K4 (00:54)
+K4
 </text>
 </g>
 <g>

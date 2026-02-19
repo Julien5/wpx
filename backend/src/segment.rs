@@ -279,8 +279,8 @@ mod tests {
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.map_options.max_area_ratio = 0.15f64;
-        parameters.user_steps_options.step_distance = Some(10_000f64);
-        parameters.user_steps_options.step_elevation_gain = None;
+        parameters.user_steps_options.step_distance = None;
+        parameters.user_steps_options.step_elevation_gain = Some(250f64);
         parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
         let segment = load_segment(src, start, length, parameters).await;
 

@@ -42,12 +42,15 @@ impl Obstacles {
     }
 
     pub fn hit_bbox(&self, bbox: &BoundingBox) -> bool {
-        for obstacle_box in &self.bboxes {
-            if bbox.overlap(obstacle_box) {
-                return true;
-            }
-        }
-        false
+        /*
+        for b in &self.bboxes {
+             if b.overlap(bbox) {
+                 return true;
+             }
+         }
+         false
+         */
+        self.bboxes_tree.has_overlap(&bbox)
     }
 
     pub fn _is_clear(&self, p1: &Point2D, p2: &Point2D) -> bool {

@@ -5,10 +5,10 @@
 <circle cx="202.34221931689444" cy="246.4884862459876" fill="Blue" id="10/wp/circle" r="5"/>
 </g>
 <g transform="translate(202.34221931689444 246.4884862459876)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789474" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789474" x="2" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="2" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="10/wp/text" text-anchor="start" x="4.000" y="-4.000">
-K3 (17:14)
+K3
 </text>
 </g>
 <g>
@@ -126,9 +126,9 @@ Alexanderschanze
 <circle cx="164.44148727871288" cy="196.5702994037092" fill="Green" id="21/wp/circle" r="3"/>
 </g>
 <g transform="translate(164.44148727871288 196.5702994037092)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.6872009569378" x="-66.6872009569378" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.6872009569378" x="-68.6872009569378" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="21/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.6872009569378" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.6872009569378" x="2" y="-15"/>
+<text font-size="13.0" font-style="italic" font-weight="normal" id="21/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Seibelseckle
 </text>
 </g>

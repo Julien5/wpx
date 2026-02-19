@@ -171,8 +171,7 @@ impl MapData {
 
                 // on the map, all projections are equivalent
                 log::trace!("proj for {}", w.name());
-                let proj = w.track_projections.first();
-                let mut label = drawings::make_label_text(&w, proj, &segment.parameters);
+                let mut label = drawings::make_label_text(&w);
                 label.id = format!("{}/wp/text", k);
                 let empty = label.is_empty();
                 let feature = PointFeature {

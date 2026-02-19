@@ -98,6 +98,32 @@ impl<T: Clone + Ord + Eq> QuadTree<T> {
         out.extend(set);
     }
 
+    // Check if there's any bounding box overlapping the given range
+    // Returns true as soon as one is found, without collecting all results
+    pub fn has_overlap(&self, range: &BoundingBox) -> bool {
+        self.has_overlap_internal(range)
+    }
+
+    fn has_overlap_internal(&self, range: &BoundingBox) -> bool {
+        if !self.boundary.overlap(range) {
+            return false;
+        }
+        if let Some(children) = &self.children {
+            for child in children.iter() {
+                if child.has_overlap_internal(range) {
+                    return true;
+                }
+            }
+        } else {
+            for (b, _) in &self.objects {
+                if b.overlap(range) {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
     fn query_internal<'a>(
         &'a self,
         range: &BoundingBox,

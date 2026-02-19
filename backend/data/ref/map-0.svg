@@ -5,20 +5,20 @@
 <circle cx="168.5309016092674" cy="290.4928852093726" fill="Blue" id="10/wp/circle" r="5"/>
 </g>
 <g transform="translate(168.5309016092674 290.4928852093726)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789474" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789474" x="2" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="2" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="10/wp/text" text-anchor="start" x="4.000" y="-4.000">
-K1 (10:04)
+K1
 </text>
 </g>
 <g>
 <circle cx="111.80938834498238" cy="121.33751513915558" fill="Blue" id="11/wp/circle" r="5"/>
 </g>
 <g transform="translate(111.80938834498238 121.33751513915558)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789474" x="-72.40026315789474" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789474" x="-74.40026315789474" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="-18.87513157894737" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="-20.87513157894737" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="11/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-K2 (12:53)
+K2
 </text>
 </g>
 <g>
@@ -138,10 +138,22 @@ Freiersberg
 <circle cx="328.62928533873355" cy="311.55572689059045" fill="black" id="23/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(328.62928533873355 311.55572689059045)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="89.73736842105265" x="-44.868684210526325" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="93.73736842105265" x="-46.868684210526325" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="23/wp/text" text-anchor="start" x="-44.869" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="89.73736842105265" x="-93.73736842105265" y="4"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="93.73736842105265" x="-95.73736842105265" y="2"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="23/wp/text" text-anchor="end" x="-4.000" y="14.000">
 Bad Dürrheim
+</text>
+</g>
+<g>
+<circle cx="231.43606661421973" cy="235.09253796909252" fill="Black" id="24/wp/circle" r="5"/>
+<circle cx="231.43606661421973" cy="235.09253796909252" fill="white" id="24/wp/circle-little-white" r="3.5"/>
+<circle cx="231.43606661421973" cy="235.09253796909252" fill="black" id="24/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(231.43606661421973 235.09253796909252)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="79.7982894736842" x="4" y="4"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="83.7982894736842" x="2" y="2"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="24/wp/text" text-anchor="start" x="4.000" y="14.000">
+St. Georgen
 </text>
 </g>
 <g>
@@ -212,6 +224,17 @@ Vogte
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="32.42583732057416" x="-34.42583732057416" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="30/wp/text" text-anchor="end" x="-4.000" y="12.000">
 Linach
+</text>
+</g>
+<g>
+<circle cx="156.49509837390497" cy="266.95867095234644" fill="Gray" id="31/wp/circle" r="2"/>
+<circle cx="156.49509837390497" cy="266.95867095234644" fill="white" id="31/wp/circle-little-white" r="0.5"/>
+</g>
+<g transform="translate(156.49509837390497 266.95867095234644)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="36.112440191387556" x="-40.112440191387556" y="4"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="40.112440191387556" x="-42.112440191387556" y="2"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="31/wp/text" text-anchor="end" x="-4.000" y="12.000">
+Schweiz
 </text>
 </g>
 <g>

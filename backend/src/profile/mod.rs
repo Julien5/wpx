@@ -175,7 +175,10 @@ impl ProfileView {
         }
     }
 
-    fn add_time_ticks(&mut self, pacing_points: &Vec<InputPoint>) -> Vec<PointFeature> {
+    fn add_time_ticks(
+        &mut self,
+        pacing_points: &Vec<InputPoint>,
+    ) -> (Vec<PointFeature>, Vec<BoundingBox>) {
         let xstart = self.bboxview().get_xmin();
         let start = speed::time_at_distance(xstart, &self.parameters);
         let speed = self.parameters.speed;
@@ -187,7 +190,7 @@ impl ProfileView {
         };
         let times = wheel::time_points::generate_times(&time_parameters);
         let bottom = ProfileGenerator::header_bottom();
-        let mut ret = Vec::new();
+        let mut features = Vec::new();
         for (k, time) in times.iter().enumerate() {
             let duration = *time - start;
             let x = xstart + duration.as_seconds_f64() * speed;
@@ -207,11 +210,12 @@ impl ProfileView {
                 link: None,
                 xmlid: k,
             };
-            ret.push(feature);
+            features.push(feature);
         }
 
+        let mut bboxes = Vec::new();
+
         let ceil = ProfileGenerator::header_ceil();
-        assert!(pacing_points.len() > 0);
         for point in pacing_points {
             assert!(point.track_projections.len() == 1);
             let x = point
@@ -223,24 +227,15 @@ impl ProfileView {
             if xd > self.WD() {
                 break;
             }
-            let mut sk = stroke(
-                &format!("{}", 2),
-                Point2D::new(xd, bottom - 4f64),
-                Point2D::new(xd, ceil + 4f64),
-            );
-            sk = sk.set("id", format!("pacing-{}", point.name()));
-            self.SD.append(sk);
-        }
-
-        for y in [ProfileGenerator::header_bottom()] {
-            self.SD.append(stroke(
-                &format!("{}", self.frame_stroke_width),
-                Point2D::new(0f64, y),
-                Point2D::new(self.WD(), y),
+            // give the stroke some more width to avoid rendering
+            // right at the edge of control point labels
+            bboxes.push(BoundingBox::minmax(
+                Point2D::new(xd - 2f64, ceil + 4f64),
+                Point2D::new(xd + 2f64, bottom - 4f64),
             ));
         }
 
-        ret
+        (features, bboxes)
     }
 
     fn add_numeric_slope(
@@ -425,6 +420,12 @@ impl ProfileView {
             self.SD
                 .append(dashed(Point2D::new(0f64, yd), Point2D::new(WD, yd)));
         }
+
+        self.SD.append(stroke(
+            &format!("{}", self.frame_stroke_width),
+            Point2D::new(0f64, ProfileGenerator::header_bottom()),
+            Point2D::new(self.WD(), ProfileGenerator::header_bottom()),
+        ));
     }
 
     pub fn render_model(&mut self) {
@@ -444,7 +445,7 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_segment(&mut self, packets: &Packets, track: &Track, parameters: &Parameters) {
+    pub fn add_segment(&mut self, packets: &Packets, track: &Track) {
         let bbox = &self.bboxview();
 
         /*if render_device != RenderDevice::PDF {
@@ -515,7 +516,7 @@ impl ProfileView {
                     let circle = draw_for_profile(&g, id.as_str(), &w);
 
                     //assert!(label.unplaced());
-                    let mut label = drawings::make_label_text(&w, Some(&proj), parameters);
+                    let mut label = drawings::make_label_text(&w);
                     label.id = format!("{}/wp/text", k);
                     let empty = label.is_empty();
                     let feature = PointFeature {
@@ -535,16 +536,19 @@ impl ProfileView {
             feature_packets.push(PointFeatures::make(feature_packet));
         }
 
+        let mut pacing_points = Vec::new();
+
         for packet in packets {
             if packet.is_empty() {
                 continue;
             }
             if packet.first().unwrap().kind() == Kind::UserStep {
-                let pacing_points = &packet;
-                let time_packet = self.add_time_ticks(pacing_points);
-                feature_packets.push(PointFeatures::make(time_packet));
+                pacing_points = packet.clone();
             }
         }
+
+        let (time_packet, time_boxes) = self.add_time_ticks(&pacing_points);
+        feature_packets.push(PointFeatures::make(time_packet));
 
         let total_count: usize = feature_packets.iter().map(|inner| inner.points.len()).sum();
         log::trace!("feature count:{}", total_count);
@@ -558,6 +562,19 @@ impl ProfileView {
             &polyline,
             &self.parameters.profile_options.max_area_ratio,
         );
+
+        for time_box in time_boxes {
+            if obstacles.hit_bbox(&time_box) {
+                continue;
+            }
+            let x = time_box.get_xmin() + time_box.width() / 2f64;
+            self.SD.append(stroke(
+                "1",
+                Point2D::new(x, time_box.get_ymin()),
+                Point2D::new(x, time_box.get_ymax()),
+            ));
+        }
+
         let mut features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
         features.extend_from_slice(&feature_unlabeled);
         self.model = Some(ProfileModel {
@@ -726,7 +743,7 @@ pub fn profile(
     let profile_bbox = ProfileBoundingBox::from_track(track, &segment.start, &segment.end);
     let mut view = ProfileView::init(&profile_bbox, size, &parameters);
     view.add_canvas();
-    view.add_segment(packets, track, parameters);
+    view.add_segment(packets, track);
     view.render_model();
     view.render()
 }

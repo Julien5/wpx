@@ -27,38 +27,31 @@
 <path d="M0,358.5 L1347.5,358.5" stroke="black" stroke-width="3"/>
 <path d="M1347.5,0 L1347.5,358.5" stroke="black" stroke-width="3"/>
 <path d="M0,358.5 L1347.5,358.5" stroke="black" stroke-width="1"/>
-<path d="M0,0 L0,358.5" stroke="black" stroke-width="1"/>
-<path d="M245,0 L245,358.5" stroke="black" stroke-width="1"/>
-<path d="M490,0 L490,358.5" stroke="black" stroke-width="1"/>
-<path d="M735,0 L735,358.5" stroke="black" stroke-width="1"/>
-<path d="M980,0 L980,358.5" stroke="black" stroke-width="1"/>
-<path d="M1225,0 L1225,358.5" stroke="black" stroke-width="1"/>
-<path d="M122.5,0 L122.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M367.5,0 L367.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M612.5,0 L612.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M857.5,0 L857.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M1102.5,0 L1102.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M1347.5,0 L1347.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,306.45 L1347.5,306.45" stroke="black" stroke-width="1"/>
-<path d="M0,272.4 L1347.5,272.4" stroke="black" stroke-width="1"/>
-<path d="M0,238.35 L1347.5,238.35" stroke="black" stroke-width="1"/>
-<path d="M0,204.3 L1347.5,204.3" stroke="black" stroke-width="1"/>
-<path d="M0,170.25 L1347.5,170.25" stroke="black" stroke-width="1"/>
-<path d="M0,136.2 L1347.5,136.2" stroke="black" stroke-width="1"/>
-<path d="M0,102.15 L1347.5,102.15" stroke="black" stroke-width="1"/>
-<path d="M0,68.1 L1347.5,68.1" stroke="black" stroke-width="1"/>
-<path d="M0,34.05 L1347.5,34.05" stroke="black" stroke-width="1"/>
-<path d="M0,0 L1347.5,0" stroke="black" stroke-width="1"/>
-<path d="M0,323.475 L1347.5,323.475" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,289.425 L1347.5,289.425" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,255.375 L1347.5,255.375" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,221.325 L1347.5,221.325" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,187.275 L1347.5,187.275" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,153.225 L1347.5,153.225" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,119.175 L1347.5,119.175" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,85.125 L1347.5,85.125" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,51.075 L1347.5,51.075" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,17.025 L1347.5,17.025" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,20 L0,358.5" stroke="black" stroke-width="1"/>
+<path d="M245,20 L245,358.5" stroke="black" stroke-width="1"/>
+<path d="M490,20 L490,358.5" stroke="black" stroke-width="1"/>
+<path d="M735,20 L735,358.5" stroke="black" stroke-width="1"/>
+<path d="M980,20 L980,358.5" stroke="black" stroke-width="1"/>
+<path d="M1225,20 L1225,358.5" stroke="black" stroke-width="1"/>
+<path d="M122.5,20 L122.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M367.5,20 L367.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M612.5,20 L612.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M857.5,20 L857.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M1102.5,20 L1102.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M1347.5,20 L1347.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,285.08334 L1347.5,285.08334" stroke="black" stroke-width="1"/>
+<path d="M0,231.66667 L1347.5,231.66667" stroke="black" stroke-width="1"/>
+<path d="M0,178.25 L1347.5,178.25" stroke="black" stroke-width="1"/>
+<path d="M0,124.833336 L1347.5,124.833336" stroke="black" stroke-width="1"/>
+<path d="M0,71.416664 L1347.5,71.416664" stroke="black" stroke-width="1"/>
+<path d="M0,18 L1347.5,18" stroke="black" stroke-width="1"/>
+<path d="M0,311.79166 L1347.5,311.79166" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,258.375 L1347.5,258.375" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,204.95833 L1347.5,204.95833" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,151.54167 L1347.5,151.54167" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,98.125 L1347.5,98.125" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,44.708332 L1347.5,44.708332" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,20 L1347.5,20" stroke="black" stroke-width="3"/>
 <text font-size="14" text-anchor="end" x="112.5" y="352.5">
 0.6%
 </text>
@@ -99,34 +92,43 @@
 <path d="M1102.5,355.5 L1102.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M1347.5,355.5 L1347.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M0,340.5 L1347.5,340.5" stroke="black" stroke-width="3"/>
-<path d="M0.0,155.2 L16.2,155.9 L58.5,149.9 L67.0,150.1 L70.4,147.2 L75.1,147.5 L78.1,144.3 L79.8,143.7 L91.5,145.4 L103.3,143.3 L106.9,144.9 L115.5,141.0 L120.9,142.6 L130.0,140.1 L137.9,139.8 L146.9,136.7 L154.4,135.8 L159.0,137.1 L163.4,134.0 L173.4,133.5 L175.2,130.0 L177.9,127.8 L178.9,128.0 L180.2,130.2 L183.1,130.5 L190.3,130.1 L193.1,128.3 L198.0,128.2 L201.3,121.2 L203.3,121.1 L208.7,116.6 L215.3,113.4 L216.0,110.2 L216.8,108.6 L220.9,103.0 L224.3,101.0 L235.1,98.0 L238.0,96.3 L243.0,96.4 L244.5,93.1 L251.0,92.1 L259.0,88.2 L266.5,81.6 L270.3,80.7 L278.2,75.7 L280.9,72.8 L283.2,72.1 L287.3,66.6 L293.5,65.8 L296.6,62.9 L297.2,59.3 L300.9,56.2 L303.4,50.8 L307.3,44.5 L308.4,43.8 L309.6,43.8 L313.8,55.8 L314.6,56.7 L315.3,59.8 L317.1,63.5 L320.5,67.3 L320.9,68.5 L323.3,69.9 L326.1,75.4 L326.9,75.4 L330.2,80.2 L332.2,85.1 L333.7,85.9 L334.5,87.3 L340.2,90.5 L341.5,90.5 L344.3,88.2 L347.3,91.1 L349.8,91.8 L352.6,94.3 L358.6,96.4 L362.0,97.1 L365.1,96.4 L369.2,98.5 L373.4,96.8 L376.7,98.4 L381.0,95.8 L385.3,98.4 L394.9,91.6 L401.2,89.9 L413.0,89.0 L416.5,84.2 L419.2,84.2 L425.3,80.5 L426.3,77.5 L429.8,80.0 L436.8,78.3 L440.4,73.4 L454.4,62.5 L455.7,57.0 L457.6,51.9 L462.4,50.3 L465.1,45.4 L466.6,44.0 L471.4,44.1 L473.9,41.0 L475.4,40.2 L478.1,46.1 L480.2,47.2 L482.8,50.5 L485.2,52.3 L487.7,51.7 L490.3,48.0 L493.5,46.3 L494.5,46.3 L499.4,50.7 L507.2,49.6 L508.0,50.3 L510.8,58.1 L515.1,62.5 L517.6,67.3 L523.8,71.8 L527.0,75.4 L528.3,81.2 L530.2,84.0 L530.5,85.2 L534.8,91.7 L537.4,93.6 L540.8,91.0 L547.4,80.4 L552.2,73.9 L556.1,71.9 L558.8,63.5 L559.3,60.5 L562.5,57.9 L563.5,57.6 L566.0,59.7 L571.5,60.4 L575.6,67.5 L583.8,69.5 L585.9,72.3 L586.9,74.8 L589.2,77.2 L590.7,77.5 L591.5,80.0 L593.4,80.7 L596.4,87.3 L599.5,87.9 L600.7,89.6 L601.1,89.3 L602.8,95.0 L604.4,98.4 L604.9,102.4 L607.2,110.6 L609.6,113.3 L611.0,117.8 L612.4,120.8 L614.1,123.0 L616.7,124.1 L620.6,124.0 L623.1,126.7 L625.0,132.0 L625.7,132.7 L630.7,130.7 L634.2,137.9 L637.6,140.3 L638.5,142.2 L640.3,149.2 L641.8,151.0 L645.0,158.8 L647.7,161.2 L651.7,166.7 L655.6,169.6 L657.0,172.2 L659.4,174.1 L660.8,176.2 L662.6,181.4 L663.5,182.7 L667.8,182.8 L671.0,184.9 L672.3,187.8 L673.1,192.1 L673.5,192.9 L678.0,196.9 L678.4,198.4 L682.2,202.3 L684.9,206.6 L691.7,209.9 L694.1,213.1 L696.0,213.6 L697.2,215.4 L702.6,218.7 L706.5,219.9 L709.9,223.0 L714.5,223.6 L717.7,227.4 L725.4,229.9 L730.5,233.1 L734.6,232.3 L735.7,231.1 L737.5,226.7 L740.1,222.3 L742.7,218.2 L744.0,217.3 L748.3,207.2 L749.7,205.5 L750.2,202.2 L754.5,193.6 L755.8,188.7 L756.3,188.7 L758.0,181.9 L759.3,180.4 L761.4,181.5 L762.4,183.4 L763.9,189.6 L765.2,199.0 L767.1,205.3 L769.9,209.3 L775.6,213.2 L777.2,216.1 L778.7,222.8 L779.5,224.8 L780.7,226.3 L781.5,229.1 L783.9,232.4 L785.3,236.1 L787.5,239.4 L787.9,241.2 L788.5,241.9 L792.3,253.7 L794.7,255.6 L797.5,264.0 L798.2,264.7 L798.4,265.9 L801.3,267.6 L803.9,267.0 L806.4,272.4 L807.8,273.8 L812.1,271.7 L813.0,276.7 L814.9,281.9 L818.8,282.8 L822.3,289.4 L826.3,292.4 L831.0,294.2 L836.5,300.1 L844.3,305.0 L849.6,305.4 L852.8,307.0 L857.5,306.2 L865.7,313.1 L871.9,316.0 L875.9,315.4 L885.4,318.3 L899.5,317.8 L909.0,315.8 L912.8,311.8 L915.7,307.6 L920.8,309.2 L923.4,306.3 L924.1,304.2 L924.7,303.8 L932.7,301.3 L944.6,287.6 L946.9,287.4 L948.3,283.9 L951.0,281.3 L954.6,273.3 L958.2,266.8 L958.6,264.9 L961.4,262.1 L963.2,257.3 L964.5,252.0 L971.1,242.8 L973.9,241.1 L975.1,237.8 L975.3,236.3 L977.2,232.7 L977.8,229.0 L979.1,227.9 L979.7,225.5 L982.1,223.4 L984.8,211.6 L987.0,209.8 L989.2,203.9 L990.5,198.3 L991.5,196.5 L992.2,192.1 L994.1,186.2 L994.8,183.0 L996.5,181.2 L997.1,181.6 L998.3,179.7 L998.6,178.2 L1000.8,175.7 L1002.6,170.4 L1003.8,170.0 L1004.3,167.1 L1004.9,165.6 L1006.6,156.1 L1007.8,153.2 L1009.3,153.2 L1011.0,155.0 L1012.8,160.3 L1016.6,166.0 L1020.4,177.3 L1023.1,181.4 L1025.7,192.9 L1026.0,193.7 L1030.1,193.7 L1030.9,196.2 L1032.5,197.7 L1035.2,194.0 L1035.8,190.7 L1037.3,186.1 L1039.4,178.9 L1039.6,177.4 L1041.0,173.6 L1042.0,172.9 L1042.2,170.6 L1043.2,167.8 L1045.8,156.5 L1046.9,155.5 L1048.7,150.3 L1050.0,148.8 L1054.1,136.5 L1055.4,134.4 L1057.0,131.7 L1060.5,130.0 L1061.9,127.5 L1071.5,124.4 L1075.9,121.2 L1077.3,119.1 L1085.8,119.0 L1087.0,121.9 L1087.6,124.3 L1090.5,130.6 L1092.5,132.7 L1094.7,136.7 L1098.1,139.0 L1102.6,146.5 L1104.9,148.3 L1106.1,152.5 L1106.9,152.7 L1108.4,156.2 L1109.9,162.2 L1111.5,164.4 L1112.7,164.8 L1115.5,169.3 L1116.6,174.5 L1118.0,179.4 L1118.4,179.4 L1119.4,185.0 L1119.9,185.0 L1122.7,199.4 L1123.6,202.7 L1123.9,202.7 L1125.3,206.5 L1125.8,206.5 L1126.9,210.6 L1130.8,215.7 L1131.3,217.2 L1131.7,220.0 L1133.8,227.5 L1135.2,228.9 L1135.4,230.4 L1136.2,231.1 L1137.0,234.7 L1137.8,236.1 L1138.9,240.3 L1140.0,241.8 L1140.9,244.9 L1142.6,249.0 L1143.1,249.0 L1143.8,251.5 L1145.6,254.6 L1149.8,256.8 L1151.4,261.9 L1153.2,263.6 L1157.3,275.7 L1160.1,278.4 L1164.1,278.4 L1167.0,280.7 L1168.3,283.5 L1171.1,284.8 L1178.4,281.3 L1179.8,282.0 L1182.0,280.9 L1187.5,280.7 L1190.9,277.4 L1195.9,276.1 L1205.2,269.9 L1207.6,270.2 L1211.5,267.0 L1217.3,268.0 L1221.1,267.4 L1221.6,266.3 L1226.6,264.6 L1229.1,261.1 L1233.7,261.6 L1234.4,261.0 L1236.3,256.6 L1238.1,254.9 L1238.6,254.7 L1241.2,259.1 L1243.0,258.8 L1244.0,257.5 L1244.3,255.0 L1247.3,248.9 L1250.4,247.7 L1253.7,242.8 L1254.3,240.3 L1256.7,239.2 L1260.2,233.7 L1268.2,227.6 L1268.8,225.0 L1270.8,220.8 L1274.4,218.0 L1279.6,205.9 L1282.2,201.8 L1285.0,199.1 L1287.0,195.2 L1288.0,191.8 L1290.2,189.0 L1290.9,185.9 L1295.2,181.9 L1296.5,181.8 L1299.0,177.2 L1300.0,177.2 L1302.6,173.9 L1303.9,167.5 L1305.1,165.9 L1309.4,164.6 L1310.9,162.7 L1312.4,158.2 L1314.1,155.7 L1316.7,148.6 L1319.6,146.6 L1323.1,139.2 L1323.6,139.2 L1324.6,136.6 L1326.8,133.6 L1327.8,133.7 L1330.7,138.4 L1334.6,142.1 L1335.4,144.5 L1337.8,147.7 L1339.3,151.0 L1340.4,151.5 L1343.2,160.7 L1343.6,160.7 L1344.7,163.7" fill="transparent" id="track" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="2"/>
+<path d="M122.873566,6 L122.873566,16" stroke="black" stroke-width="1"/>
+<path d="M246.2883,6 L246.2883,16" stroke="black" stroke-width="1"/>
+<path d="M491.82092,6 L491.82092,16" stroke="black" stroke-width="1"/>
+<path d="M615.587,6 L615.587,16" stroke="black" stroke-width="1"/>
+<path d="M738.4383,6 L738.4383,16" stroke="black" stroke-width="1"/>
+<path d="M860.9567,6 L860.9567,16" stroke="black" stroke-width="1"/>
+<path d="M983.9871,6 L983.9871,16" stroke="black" stroke-width="1"/>
+<path d="M1106.6381,6 L1106.6381,16" stroke="black" stroke-width="1"/>
+<path d="M1229.8823,6 L1229.8823,16" stroke="black" stroke-width="1"/>
+<path d="M0.0,179.8 L16.2,180.3 L58.5,175.6 L67.0,175.8 L70.4,173.6 L75.1,173.7 L78.1,171.3 L79.8,170.8 L91.5,172.1 L103.3,170.4 L106.9,171.7 L115.5,168.6 L120.9,169.9 L130.0,167.9 L137.9,167.7 L146.9,165.3 L154.4,164.5 L159.0,165.6 L163.4,163.2 L173.4,162.8 L175.2,160.1 L177.9,158.3 L178.9,158.5 L180.2,160.2 L183.1,160.4 L190.3,160.1 L193.1,158.7 L198.0,158.6 L201.3,153.1 L203.3,153.0 L208.7,149.5 L215.3,147.0 L216.0,144.5 L216.8,143.2 L220.9,138.9 L224.3,137.3 L235.1,134.9 L238.0,133.6 L243.0,133.7 L244.5,131.1 L251.0,130.3 L259.0,127.2 L266.5,122.1 L270.3,121.4 L278.2,117.4 L280.9,115.2 L283.2,114.6 L287.3,110.3 L293.5,109.7 L296.6,107.4 L297.2,104.6 L300.9,102.2 L303.4,97.9 L307.3,92.9 L308.4,92.4 L309.6,92.4 L313.8,101.8 L314.6,102.6 L315.3,105.0 L317.1,107.8 L320.5,110.9 L320.9,111.8 L323.3,112.9 L326.1,117.2 L326.9,117.2 L330.2,121.0 L332.2,124.8 L333.7,125.4 L334.5,126.5 L340.2,129.1 L341.5,129.1 L344.3,127.2 L347.3,129.5 L349.8,130.1 L352.6,132.0 L358.6,133.7 L362.0,134.2 L365.1,133.7 L369.2,135.3 L373.4,134.0 L376.7,135.2 L381.0,133.2 L385.3,135.2 L394.9,129.9 L401.2,128.6 L413.0,127.9 L416.5,124.1 L419.2,124.1 L425.3,121.2 L426.3,118.8 L429.8,120.8 L436.8,119.5 L440.4,115.7 L454.4,107.1 L455.7,102.7 L457.6,98.8 L462.4,97.5 L465.1,93.7 L466.6,92.6 L471.4,92.6 L473.9,90.2 L475.4,89.6 L478.1,94.2 L480.2,95.1 L482.8,97.7 L485.2,99.1 L487.7,98.7 L490.3,95.7 L493.5,94.4 L494.5,94.4 L499.4,97.8 L507.2,96.9 L508.0,97.5 L510.8,103.6 L515.1,107.1 L517.6,110.8 L523.8,114.3 L527.0,117.2 L528.3,121.7 L530.2,123.9 L530.5,124.9 L534.8,130.0 L537.4,131.5 L540.8,129.5 L547.4,121.1 L552.2,116.0 L556.1,114.5 L558.8,107.9 L559.3,105.5 L562.5,103.5 L563.5,103.2 L566.0,104.9 L571.5,105.4 L575.6,111.0 L583.8,112.6 L585.9,114.8 L586.9,116.8 L589.2,118.6 L590.7,118.9 L591.5,120.8 L593.4,121.4 L596.4,126.5 L599.5,127.0 L600.7,128.3 L601.1,128.1 L602.8,132.6 L604.4,135.2 L604.9,138.4 L607.2,144.8 L609.6,146.9 L611.0,150.5 L612.4,152.8 L614.1,154.6 L616.7,155.4 L620.6,155.4 L623.1,157.4 L625.0,161.6 L625.7,162.2 L630.7,160.6 L634.2,166.2 L637.6,168.1 L638.5,169.6 L640.3,175.1 L641.8,176.5 L645.0,182.6 L647.7,184.5 L651.7,188.8 L655.6,191.1 L657.0,193.1 L659.4,194.6 L660.8,196.3 L662.6,200.3 L663.5,201.4 L667.8,201.4 L671.0,203.1 L672.3,205.4 L673.1,208.7 L673.5,209.3 L678.0,212.5 L678.4,213.7 L682.2,216.7 L684.9,220.2 L691.7,222.7 L694.1,225.2 L696.0,225.6 L697.2,227.0 L702.6,229.6 L706.5,230.6 L709.9,232.9 L714.5,233.5 L717.7,236.5 L725.4,238.4 L730.5,240.9 L734.6,240.3 L735.7,239.3 L737.5,235.9 L740.1,232.4 L742.7,229.2 L744.0,228.5 L748.3,220.6 L749.7,219.3 L750.2,216.6 L754.5,209.9 L755.8,206.0 L756.3,206.0 L758.0,200.7 L759.3,199.5 L761.4,200.5 L762.4,201.9 L763.9,206.8 L765.2,214.1 L767.1,219.1 L769.9,222.2 L775.6,225.3 L777.2,227.6 L778.7,232.9 L779.5,234.4 L780.7,235.5 L781.5,237.8 L783.9,240.3 L785.3,243.2 L787.5,245.8 L787.9,247.3 L788.5,247.8 L792.3,257.1 L794.7,258.6 L797.5,265.1 L798.2,265.7 L798.4,266.6 L801.3,267.9 L803.9,267.5 L806.4,271.7 L807.8,272.9 L812.1,271.2 L813.0,275.1 L814.9,279.2 L818.8,279.9 L822.3,285.1 L826.3,287.4 L831.0,288.9 L836.5,293.5 L844.3,297.3 L849.6,297.7 L852.8,298.9 L857.5,298.3 L865.7,303.7 L871.9,306.0 L875.9,305.5 L885.4,307.7 L899.5,307.3 L909.0,305.8 L912.8,302.6 L915.7,299.3 L920.8,300.6 L923.4,298.3 L924.1,296.7 L924.7,296.3 L932.7,294.4 L944.6,283.7 L946.9,283.5 L948.3,280.8 L951.0,278.7 L954.6,272.4 L958.2,267.3 L958.6,265.9 L961.4,263.6 L963.2,259.9 L964.5,255.7 L971.1,248.5 L973.9,247.2 L975.1,244.6 L975.3,243.4 L977.2,240.6 L977.8,237.7 L979.1,236.8 L979.7,235.0 L982.1,233.3 L984.8,224.1 L987.0,222.7 L989.2,218.0 L990.5,213.6 L991.5,212.2 L992.2,208.7 L994.1,204.1 L994.8,201.6 L996.5,200.2 L997.1,200.5 L998.3,199.0 L998.6,197.9 L1000.8,195.9 L1002.6,191.7 L1003.8,191.4 L1004.3,189.2 L1004.9,187.9 L1006.6,180.5 L1007.8,178.2 L1009.3,178.2 L1011.0,179.6 L1012.8,183.8 L1016.6,188.3 L1020.4,197.1 L1023.1,200.3 L1025.7,209.4 L1026.0,210.0 L1030.1,210.0 L1030.9,211.9 L1032.5,213.1 L1035.2,210.2 L1035.8,207.6 L1037.3,204.1 L1039.4,198.4 L1039.6,197.2 L1041.0,194.2 L1042.0,193.7 L1042.2,191.9 L1043.2,189.6 L1045.8,180.8 L1046.9,180.0 L1048.7,176.0 L1050.0,174.8 L1054.1,165.2 L1055.4,163.4 L1057.0,161.4 L1060.5,160.0 L1061.9,158.1 L1071.5,155.7 L1075.9,153.1 L1077.3,151.4 L1085.8,151.4 L1087.0,153.7 L1087.6,155.6 L1090.5,160.5 L1092.5,162.2 L1094.7,165.3 L1098.1,167.1 L1102.6,172.9 L1104.9,174.4 L1106.1,177.7 L1106.9,177.9 L1108.4,180.6 L1109.9,185.3 L1111.5,187.1 L1112.7,187.3 L1115.5,190.9 L1116.6,194.9 L1118.0,198.8 L1118.4,198.8 L1119.4,203.2 L1119.9,203.2 L1122.7,214.4 L1123.6,217.1 L1123.9,217.1 L1125.3,220.1 L1125.8,220.1 L1126.9,223.3 L1130.8,227.3 L1131.3,228.5 L1131.7,230.6 L1133.8,236.5 L1135.2,237.6 L1135.4,238.8 L1136.2,239.3 L1137.0,242.2 L1137.8,243.3 L1138.9,246.5 L1140.0,247.7 L1140.9,250.2 L1142.6,253.4 L1143.1,253.4 L1143.8,255.3 L1145.6,257.8 L1149.8,259.5 L1151.4,263.5 L1153.2,264.8 L1157.3,274.3 L1160.1,276.5 L1164.1,276.4 L1167.0,278.2 L1168.3,280.4 L1171.1,281.5 L1178.4,278.7 L1179.8,279.3 L1182.0,278.4 L1187.5,278.2 L1190.9,275.6 L1195.9,274.6 L1205.2,269.8 L1207.6,270.0 L1211.5,267.5 L1217.3,268.3 L1221.1,267.8 L1221.6,266.9 L1226.6,265.6 L1229.1,262.8 L1233.7,263.3 L1234.4,262.8 L1236.3,259.3 L1238.1,258.0 L1238.6,257.9 L1241.2,261.3 L1243.0,261.1 L1244.0,260.1 L1244.3,258.1 L1247.3,253.3 L1250.4,252.4 L1253.7,248.5 L1254.3,246.6 L1256.7,245.7 L1260.2,241.4 L1268.2,236.6 L1268.8,234.5 L1270.8,231.2 L1274.4,229.0 L1279.6,219.6 L1282.2,216.3 L1285.0,214.3 L1287.0,211.1 L1288.0,208.5 L1290.2,206.3 L1290.9,203.9 L1295.2,200.7 L1296.5,200.6 L1299.0,197.1 L1300.0,197.1 L1302.6,194.5 L1303.9,189.5 L1305.1,188.2 L1309.4,187.1 L1310.9,185.7 L1312.4,182.2 L1314.1,180.2 L1316.7,174.6 L1319.6,173.1 L1323.1,167.2 L1323.6,167.2 L1324.6,165.2 L1326.8,162.8 L1327.8,162.9 L1330.7,166.6 L1334.6,169.5 L1335.4,171.4 L1337.8,173.9 L1339.3,176.5 L1340.4,176.9 L1343.2,184.1 L1343.6,184.1 L1344.7,186.5" fill="transparent" id="track" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="2"/>
 <g>
 <g>
-<circle cx="364.8191215688331" cy="96.08910000000003" fill="Blue" id="10/wp" r="5"/>
+<circle cx="364.8191215688331" cy="133.43341666666666" fill="Blue" id="10/wp" r="5"/>
 </g>
-<g transform="translate(364.8191215688331 96.08910000000003)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789476" x="-34.20013157894738" y="-89.08910000000003"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789476" x="-36.20013157894738" y="-91.08910000000003"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="10/wp/text" text-anchor="start" x="-34.200" y="-79.089">
-K1 (10:04)
+<g transform="translate(364.8191215688331 133.43341666666666)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.87513157894739" x="-7.437565789473695" y="-129.43341666666666"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894739" x="-9.437565789473695" y="-131.43341666666666"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="10/wp/text" text-anchor="start" x="-7.438" y="-119.433">
+K1
 </text>
 </g>
 <g>
-<circle cx="882.6140096429942" cy="317.7886500000001" fill="Blue" id="11/wp" r="5"/>
+<circle cx="882.6140096429942" cy="307.331375" fill="Blue" id="11/wp" r="5"/>
 </g>
-<g transform="translate(882.6140096429942 317.7886500000001)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.40026315789476" x="-34.20013157894732" y="-310.7886500000001"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.40026315789476" x="-36.20013157894732" y="-312.7886500000001"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="11/wp/text" text-anchor="start" x="-34.200" y="-300.789">
-K2 (12:53)
+<g transform="translate(882.6140096429942 307.331375)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.87513157894739" x="-7.437565789473638" y="-303.331375"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894739" x="-9.437565789473638" y="-305.331375"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="11/wp/text" text-anchor="start" x="-7.438" y="-293.331">
+K2
 </text>
 </g>
 <g>
-<circle cx="365.13729925784315" cy="95.71455000000003" fill="Black" id="12/wp" r="5"/>
-<circle cx="365.13729925784315" cy="95.71455000000003" fill="white" id="12/wp-little-white" r="3.5"/>
-<circle cx="365.13729925784315" cy="95.71455000000003" fill="black" id="12/wp-little-white" r="2.5"/>
+<circle cx="365.13729925784315" cy="133.139625" fill="Black" id="12/wp" r="5"/>
+<circle cx="365.13729925784315" cy="133.139625" fill="white" id="12/wp-little-white" r="3.5"/>
+<circle cx="365.13729925784315" cy="133.139625" fill="black" id="12/wp-little-white" r="2.5"/>
 </g>
-<g transform="translate(365.13729925784315 95.71455000000003)">
+<g transform="translate(365.13729925784315 133.139625)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="76.8803947368421" x="-80.8803947368421" y="4"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="80.8803947368421" x="-82.8803947368421" y="2"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="12/wp/text" text-anchor="end" x="-4.000" y="14.000">
@@ -134,55 +136,76 @@ Furtwangen
 </text>
 </g>
 <g>
-<circle cx="879.3352983867422" cy="316.01805" fill="Black" id="13/wp" r="5"/>
-<circle cx="879.3352983867422" cy="316.01805" fill="white" id="13/wp-little-white" r="3.5"/>
-<circle cx="879.3352983867422" cy="316.01805" fill="black" id="13/wp-little-white" r="2.5"/>
+<circle cx="0.34258991843303466" cy="179.82579166666665" fill="Black" id="13/wp" r="5"/>
+<circle cx="0.34258991843303466" cy="179.82579166666665" fill="white" id="13/wp-little-white" r="3.5"/>
+<circle cx="0.34258991843303466" cy="179.82579166666665" fill="black" id="13/wp-little-white" r="2.5"/>
 </g>
-<g transform="translate(879.3352983867422 316.01805)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="132.1380263157895" x="-136.1380263157895" y="4"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="136.1380263157895" x="-138.1380263157895" y="2"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="13/wp/text" text-anchor="end" x="-4.000" y="14.000">
-Haslach im Kinzigtal
-</text>
-</g>
-<g>
-<circle cx="0.34258991843303466" cy="155.23395000000002" fill="Black" id="14/wp" r="5"/>
-<circle cx="0.34258991843303466" cy="155.23395000000002" fill="white" id="14/wp-little-white" r="3.5"/>
-<circle cx="0.34258991843303466" cy="155.23395000000002" fill="black" id="14/wp-little-white" r="2.5"/>
-</g>
-<g transform="translate(0.34258991843303466 155.23395000000002)">
+<g transform="translate(0.34258991843303466 179.82579166666665)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="79.06881578947369" x="4" y="4"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="83.06881578947369" x="2" y="2"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="14/wp/text" text-anchor="start" x="4.000" y="14.000">
+<text font-size="14.0" font-style="normal" font-weight="bold" id="13/wp/text" text-anchor="start" x="4.000" y="14.000">
 Bräunlingen
 </text>
 </g>
 <g>
-<circle cx="733.2697024643112" cy="233.58300000000003" fill="Black" id="17/wp" r="4"/>
-<circle cx="733.2697024643112" cy="233.58300000000003" fill="white" id="17/wp-little-white" r="2.5"/>
+<circle cx="841.4073154931933" cy="296.4877916666666" fill="Black" id="14/wp" r="4"/>
+<circle cx="841.4073154931933" cy="296.4877916666666" fill="white" id="14/wp-little-white" r="2.5"/>
 </g>
-<g transform="translate(733.2697024643112 233.58300000000003)">
+<g transform="translate(841.4073154931933 296.4877916666666)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="66.96973684210528" x="-70.96973684210528" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="70.96973684210528" x="-72.96973684210528" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="14/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Mühlenbach
+</text>
+</g>
+<g>
+<circle cx="914.3506014721398" cy="300.8145416666666" fill="Black" id="15/wp" r="4"/>
+<circle cx="914.3506014721398" cy="300.8145416666666" fill="white" id="15/wp-little-white" r="2.5"/>
+</g>
+<g transform="translate(914.3506014721398 300.8145416666666)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="66.96973684210528" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="70.96973684210528" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="15/wp/text" text-anchor="start" x="4.000" y="13.000">
+Fischerbach
+</text>
+</g>
+<g>
+<circle cx="733.2697024643112" cy="241.28166666666664" fill="Black" id="16/wp" r="4"/>
+<circle cx="733.2697024643112" cy="241.28166666666664" fill="white" id="16/wp-little-white" r="2.5"/>
+</g>
+<g transform="translate(733.2697024643112 241.28166666666664)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="72.74276315789474" x="-76.74276315789474" y="4"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="76.74276315789474" x="-78.74276315789474" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="17/wp/text" text-anchor="end" x="-4.000" y="13.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="16/wp/text" text-anchor="end" x="-4.000" y="13.000">
 Oberprechtal
 </text>
 </g>
 <g>
-<circle cx="1170.3723048998381" cy="285.16875000000005" fill="Black" id="18/wp" r="4"/>
-<circle cx="1170.3723048998381" cy="285.16875000000005" fill="white" id="18/wp-little-white" r="2.5"/>
+<circle cx="1170.3723048998381" cy="281.74479166666663" fill="Black" id="17/wp" r="4"/>
+<circle cx="1170.3723048998381" cy="281.74479166666663" fill="white" id="17/wp-little-white" r="2.5"/>
 </g>
-<g transform="translate(1170.3723048998381 285.16875000000005)">
+<g transform="translate(1170.3723048998381 281.74479166666663)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="30.407236842105263" x="-34.40723684210526" y="4"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="34.40723684210526" x="-36.40723684210526" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="18/wp/text" text-anchor="end" x="-4.000" y="13.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="17/wp/text" text-anchor="end" x="-4.000" y="13.000">
 Walke
 </text>
 </g>
 <g>
-<circle cx="1327.4785186142885" cy="132.07995" fill="Green" id="19/wp" r="3"/>
+<circle cx="35.41361853955307" cy="177.60899999999998" fill="Black" id="18/wp" r="4"/>
+<circle cx="35.41361853955307" cy="177.60899999999998" fill="white" id="18/wp-little-white" r="2.5"/>
 </g>
-<g transform="translate(1327.4785186142885 132.07995)">
+<g transform="translate(35.41361853955307 177.60899999999998)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="45.80197368421053" x="-22.900986842105265" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="49.80197368421053" x="-24.900986842105265" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="18/wp/text" text-anchor="start" x="-22.901" y="-4.000">
+Bruggen
+</text>
+</g>
+<g>
+<circle cx="1327.4785186142885" cy="161.66412499999998" fill="Green" id="19/wp" r="3"/>
+</g>
+<g transform="translate(1327.4785186142885 161.66412499999998)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="57.01913875598086" x="-61.01913875598086" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="61.01913875598086" x="-63.01913875598086" y="-15"/>
 <text font-size="13.0" font-style="italic" font-weight="normal" id="19/wp/text" text-anchor="end" x="-4.000" y="-4.000">
@@ -190,10 +213,10 @@ Freiersberg
 </text>
 </g>
 <g>
-<circle cx="579.5583228890189" cy="68.03190000000001" fill="Gray" id="20/wp" r="2"/>
-<circle cx="579.5583228890189" cy="68.03190000000001" fill="white" id="20/wp-little-white" r="0.5"/>
+<circle cx="579.5583228890189" cy="111.42574999999997" fill="Gray" id="20/wp" r="2"/>
+<circle cx="579.5583228890189" cy="111.42574999999997" fill="white" id="20/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(579.5583228890189 68.03190000000001)">
+<g transform="translate(579.5583228890189 111.42574999999997)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="47.157894736842096" x="4" y="-12"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="51.157894736842096" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="20/wp/text" text-anchor="start" x="4.000" y="-4.000">
@@ -201,10 +224,10 @@ Rotenberg
 </text>
 </g>
 <g>
-<circle cx="495.66301112706276" cy="44.26500000000004" fill="Gray" id="21/wp" r="2"/>
-<circle cx="495.66301112706276" cy="44.26500000000004" fill="white" id="21/wp-little-white" r="0.5"/>
+<circle cx="495.66301112706276" cy="92.7833333333333" fill="Gray" id="21/wp" r="2"/>
+<circle cx="495.66301112706276" cy="92.7833333333333" fill="white" id="21/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(495.66301112706276 44.26500000000004)">
+<g transform="translate(495.66301112706276 92.7833333333333)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="24.873205741626794" x="4" y="-12"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="28.873205741626794" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="21/wp/text" text-anchor="start" x="4.000" y="-4.000">
@@ -212,10 +235,10 @@ Vogte
 </text>
 </g>
 <g>
-<circle cx="687.3558073818186" cy="207.56880000000004" fill="Gray" id="22/wp" r="2"/>
-<circle cx="687.3558073818186" cy="207.56880000000004" fill="white" id="22/wp-little-white" r="0.5"/>
+<circle cx="687.3558073818186" cy="220.8765" fill="Gray" id="22/wp" r="2"/>
+<circle cx="687.3558073818186" cy="220.8765" fill="white" id="22/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(687.3558073818186 207.56880000000004)">
+<g transform="translate(687.3558073818186 220.8765)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="41.3444976076555" x="4" y="-12"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="45.3444976076555" x="2" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="22/wp/text" text-anchor="start" x="4.000" y="-4.000">
@@ -223,10 +246,21 @@ Im Grund
 </text>
 </g>
 <g>
-<circle cx="799.8573000954007" cy="267.93945" fill="Gray" id="24/wp" r="2"/>
-<circle cx="799.8573000954007" cy="267.93945" fill="white" id="24/wp-little-white" r="0.5"/>
+<circle cx="815.9262077452394" cy="279.50129166666665" fill="Gray" id="23/wp" r="2"/>
+<circle cx="815.9262077452394" cy="279.50129166666665" fill="white" id="23/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(799.8573000954007 267.93945)">
+<g transform="translate(815.9262077452394 279.50129166666665)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="44.18660287081339" x="4" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="48.18660287081339" x="2" y="-14"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="23/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Eichhalde
+</text>
+</g>
+<g>
+<circle cx="799.8573000954007" cy="268.230375" fill="Gray" id="24/wp" r="2"/>
+<circle cx="799.8573000954007" cy="268.230375" fill="white" id="24/wp-little-white" r="0.5"/>
+</g>
+<g transform="translate(799.8573000954007 268.230375)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="60.916267942583715" x="-64.91626794258372" y="4"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="64.91626794258372" x="-66.91626794258372" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="24/wp/text" text-anchor="end" x="-4.000" y="12.000">
@@ -234,21 +268,21 @@ Oberbüchern
 </text>
 </g>
 <g>
-<circle cx="945.398054741119" cy="289.25475000000006" fill="Gray" id="25/wp" r="2"/>
-<circle cx="945.398054741119" cy="289.25475000000006" fill="white" id="25/wp-little-white" r="0.5"/>
+<circle cx="945.398054741119" cy="284.94979166666667" fill="Gray" id="25/wp" r="2"/>
+<circle cx="945.398054741119" cy="284.94979166666667" fill="white" id="25/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(945.398054741119 289.25475000000006)">
-<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="33.85167464114832" x="4" y="4"/>
-<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="37.85167464114832" x="2" y="2"/>
-<text font-size="12.0" font-style="normal" font-weight="lighter" id="25/wp/text" text-anchor="start" x="4.000" y="12.000">
+<g transform="translate(945.398054741119 284.94979166666667)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="33.85167464114832" x="-37.85167464114832" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="37.85167464114832" x="-39.85167464114832" y="-14"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="25/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Mitteltal
 </text>
 </g>
 <g>
-<circle cx="260.2488804915805" cy="87.71280000000002" fill="Gray" id="26/wp" r="2"/>
-<circle cx="260.2488804915805" cy="87.71280000000002" fill="white" id="26/wp-little-white" r="0.5"/>
+<circle cx="260.2488804915805" cy="126.86316666666664" fill="Gray" id="26/wp" r="2"/>
+<circle cx="260.2488804915805" cy="126.86316666666664" fill="white" id="26/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(260.2488804915805 87.71280000000002)">
+<g transform="translate(260.2488804915805 126.86316666666664)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="28.42583732057416" x="-32.42583732057416" y="-12"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="32.42583732057416" x="-34.42583732057416" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="26/wp/text" text-anchor="end" x="-4.000" y="-4.000">
@@ -256,21 +290,21 @@ Linach
 </text>
 </g>
 <g>
-<circle cx="431.5154448466094" cy="79.23435000000006" fill="Gray" id="27/wp" r="2"/>
-<circle cx="431.5154448466094" cy="79.23435000000006" fill="white" id="27/wp-little-white" r="0.5"/>
+<circle cx="431.5154448466094" cy="120.21279166666665" fill="Gray" id="27/wp" r="2"/>
+<circle cx="431.5154448466094" cy="120.21279166666665" fill="white" id="27/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(431.5154448466094 79.23435000000006)">
-<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="36.112440191387556" x="4" y="4"/>
-<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="40.112440191387556" x="2" y="2"/>
-<text font-size="12.0" font-style="normal" font-weight="lighter" id="27/wp/text" text-anchor="start" x="4.000" y="12.000">
+<g transform="translate(431.5154448466094 120.21279166666665)">
+<rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="36.112440191387556" x="-40.112440191387556" y="-12"/>
+<rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="40.112440191387556" x="-42.112440191387556" y="-14"/>
+<text font-size="12.0" font-style="normal" font-weight="lighter" id="27/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Schweiz
 </text>
 </g>
 <g>
-<circle cx="1185.09881429861" cy="281.08275000000003" fill="Gray" id="28/wp" r="2"/>
-<circle cx="1185.09881429861" cy="281.08275000000003" fill="white" id="28/wp-little-white" r="0.5"/>
+<circle cx="1185.09881429861" cy="278.53979166666664" fill="Gray" id="28/wp" r="2"/>
+<circle cx="1185.09881429861" cy="278.53979166666664" fill="white" id="28/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(1185.09881429861 281.08275000000003)">
+<g transform="translate(1185.09881429861 278.53979166666664)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="32.624401913875595" x="4" y="4"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="36.624401913875595" x="2" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="28/wp/text" text-anchor="start" x="4.000" y="12.000">
@@ -278,10 +312,10 @@ Obertal
 </text>
 </g>
 <g>
-<circle cx="157.13002594783515" cy="137.73225000000002" fill="Gray" id="29/wp" r="2"/>
-<circle cx="157.13002594783515" cy="137.73225000000002" fill="white" id="29/wp-little-white" r="0.5"/>
+<circle cx="157.13002594783515" cy="166.09770833333332" fill="Gray" id="29/wp" r="2"/>
+<circle cx="157.13002594783515" cy="166.09770833333332" fill="white" id="29/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(157.13002594783515 137.73225000000002)">
+<g transform="translate(157.13002594783515 166.09770833333332)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="47.157894736842096" x="-51.157894736842096" y="-12"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="51.157894736842096" x="-53.157894736842096" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="29/wp/text" text-anchor="end" x="-4.000" y="-4.000">
@@ -289,10 +323,10 @@ Fischerhof
 </text>
 </g>
 <g>
-<circle cx="181.32602634075909" cy="131.84160000000003" fill="Gray" id="30/wp" r="2"/>
-<circle cx="181.32602634075909" cy="131.84160000000003" fill="white" id="30/wp-little-white" r="0.5"/>
+<circle cx="181.32602634075909" cy="161.47716666666665" fill="Gray" id="30/wp" r="2"/>
+<circle cx="181.32602634075909" cy="161.47716666666665" fill="white" id="30/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(181.32602634075909 131.84160000000003)">
+<g transform="translate(181.32602634075909 161.47716666666665)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="55.55502392344496" x="4" y="4"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="59.55502392344496" x="2" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="30/wp/text" text-anchor="start" x="4.000" y="12.000">
@@ -300,10 +334,10 @@ Bregenbach
 </text>
 </g>
 <g>
-<circle cx="1242.9732725112658" cy="259.1545500000001" fill="Gray" id="31/wp" r="2"/>
-<circle cx="1242.9732725112658" cy="259.1545500000001" fill="white" id="31/wp-little-white" r="0.5"/>
+<circle cx="1242.9732725112658" cy="261.33962499999996" fill="Gray" id="31/wp" r="2"/>
+<circle cx="1242.9732725112658" cy="261.33962499999996" fill="white" id="31/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(1242.9732725112658 259.1545500000001)">
+<g transform="translate(1242.9732725112658 261.33962499999996)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="88.5622009569378" x="4" y="4"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="92.5622009569378" x="2" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="31/wp/text" text-anchor="start" x="4.000" y="12.000">
@@ -311,10 +345,10 @@ Vor Wildschapbach
 </text>
 </g>
 <g>
-<circle cx="1266.9513406546616" cy="229.08840000000004" fill="Gray" id="32/wp" r="2"/>
-<circle cx="1266.9513406546616" cy="229.08840000000004" fill="white" id="32/wp-little-white" r="0.5"/>
+<circle cx="1266.9513406546616" cy="237.75616666666664" fill="Gray" id="32/wp" r="2"/>
+<circle cx="1266.9513406546616" cy="237.75616666666664" fill="white" id="32/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(1266.9513406546616 229.08840000000004)">
+<g transform="translate(1266.9513406546616 237.75616666666664)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="68.92583732057416" x="-72.92583732057416" y="-12"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="72.92583732057416" x="-74.92583732057416" y="-14"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="32/wp/text" text-anchor="end" x="-4.000" y="-4.000">
@@ -322,78 +356,114 @@ Wildschapbach
 </text>
 </g>
 <g>
-<circle cx="111.33725930510634" cy="141.95445" fill="Gray" id="33/wp" r="2"/>
-<circle cx="111.33725930510634" cy="141.95445" fill="white" id="33/wp-little-white" r="0.5"/>
+<circle cx="111.33725930510634" cy="169.40954166666663" fill="Gray" id="33/wp" r="2"/>
+<circle cx="111.33725930510634" cy="169.40954166666663" fill="white" id="33/wp-little-white" r="0.5"/>
 </g>
-<g transform="translate(111.33725930510634 141.95445)">
+<g transform="translate(111.33725930510634 169.40954166666663)">
 <rect fill="white" fill-opacity="0.75" height="8" id="label-bg" width="48.70813397129185" x="4" y="4"/>
 <rect fill="none" height="12" id="label-dbg" stroke="blue" stroke-width="2" width="52.70813397129185" x="2" y="2"/>
 <text font-size="12.0" font-style="normal" font-weight="lighter" id="33/wp/text" text-anchor="start" x="4.000" y="12.000">
 Zindelstein
 </text>
 </g>
-<g>
-<circle cx="122.8735627158819" cy="143.11215" fill="Gray" id="0/wp" r="2"/>
+<g/>
+<g transform="translate(158.43750000000003 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="6.942105263157885" x="-8.942105263157885" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="10.942105263157885" x="-10.942105263157885" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-8.942" y="-3.000">
+ 9
+</text>
+</g>
+<g/>
+<g transform="translate(342.18750000000006 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="11.75" x="-13.75" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="15.75" x="-15.75" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-13.750" y="-3.000">
+10
+</text>
+</g>
+<g/>
+<g transform="translate(525.9375 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="11.75" x="-13.75" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="15.75" x="-15.75" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-13.750" y="-3.000">
+11
+</text>
+</g>
+<g/>
+<g transform="translate(709.6875000000001 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="11.75" x="-13.75" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="15.75" x="-15.75" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-13.750" y="-3.000">
+12
+</text>
+</g>
+<g/>
+<g transform="translate(1077.1875 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="11.75" x="-13.75" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="15.75" x="-15.75" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-13.750" y="-3.000">
+14
+</text>
+</g>
+<g/>
+<g transform="translate(1260.9375000000002 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="11.75" x="-13.75" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="15.75" x="-15.75" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-13.750" y="-3.000">
+15
+</text>
 </g>
 <g>
-<circle cx="246.28830695710192" cy="90.67515000000003" fill="Gray" id="1/wp" r="2"/>
+<circle cx="122.8735627158819" cy="170.31762499999996" fill="Gray" id="0/wp" r="2"/>
 </g>
 <g>
-<circle cx="369.1821002496154" cy="98.98335000000003" fill="Gray" id="2/wp" r="2"/>
+<circle cx="246.28830695710192" cy="129.18679166666664" fill="Gray" id="1/wp" r="2"/>
 </g>
 <g>
-<circle cx="491.8209316271995" cy="46.47825" fill="Gray" id="3/wp" r="2"/>
+<circle cx="369.1821002496154" cy="135.703625" fill="Gray" id="2/wp" r="2"/>
 </g>
 <g>
-<circle cx="615.5870044327199" cy="124.45275000000004" fill="Gray" id="4/wp" r="2"/>
+<circle cx="491.8209316271995" cy="94.51937499999997" fill="Gray" id="3/wp" r="2"/>
 </g>
 <g>
-<circle cx="738.4382915284873" cy="224.32140000000004" fill="Gray" id="5/wp" r="2"/>
+<circle cx="615.5870044327199" cy="155.6814583333333" fill="Gray" id="4/wp" r="2"/>
 </g>
 <g>
-<circle cx="860.9567375918853" cy="309.3783" fill="Gray" id="6/wp" r="2"/>
+<circle cx="738.4382915284873" cy="234.01699999999997" fill="Gray" id="5/wp" r="2"/>
 </g>
 <g>
-<circle cx="983.987119825206" cy="216.04725000000002" fill="Gray" id="7/wp" r="2"/>
+<circle cx="860.9567375918853" cy="300.7344166666667" fill="Gray" id="6/wp" r="2"/>
 </g>
 <g>
-<circle cx="1106.6380546468326" cy="150.39885000000004" fill="Gray" id="8/wp" r="2"/>
+<circle cx="983.987119825206" cy="227.526875" fill="Gray" id="7/wp" r="2"/>
 </g>
 <g>
-<circle cx="1229.8823459380474" cy="258.13305" fill="Gray" id="9/wp" r="2"/>
+<circle cx="1106.6380546468326" cy="176.03320833333333" fill="Gray" id="8/wp" r="2"/>
+</g>
+<g>
+<circle cx="1229.8823459380474" cy="260.538375" fill="Gray" id="9/wp" r="2"/>
 </g>
 </g>
 </g>
 <g id="SL" transform="translate(0 0)">
-<text text-anchor="end" x="66" y="311.45000000000005">
-250
+<text text-anchor="end" x="66" y="290.0833333333333">
+300
 </text>
-<text text-anchor="end" x="66" y="277.40000000000003">
-350
+<text text-anchor="end" x="66" y="236.66666666666666">
+500
 </text>
-<text text-anchor="end" x="66" y="243.35000000000002">
-450
+<text text-anchor="end" x="66" y="183.24999999999997">
+700
 </text>
-<text text-anchor="end" x="66" y="209.30000000000004">
-550
+<text text-anchor="end" x="66" y="129.83333333333331">
+900
 </text>
-<text text-anchor="end" x="66" y="175.25000000000003">
-650
+<text text-anchor="end" x="66" y="76.41666666666663">
+1100
 </text>
-<text text-anchor="end" x="66" y="141.20000000000002">
-750
-</text>
-<text text-anchor="end" x="66" y="107.15000000000003">
-850
-</text>
-<text text-anchor="end" x="66" y="73.10000000000002">
-950
-</text>
-<text text-anchor="end" x="66" y="39.05000000000001">
-1050
-</text>
-<text text-anchor="end" x="66" y="5">
-1150
+<text text-anchor="end" x="66" y="23">
+1300
 </text>
 </g>
 </g>

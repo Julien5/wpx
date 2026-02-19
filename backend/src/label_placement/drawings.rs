@@ -2,31 +2,16 @@ use crate::{
     inputpoint::InputPoint,
     label_placement::features::{Label, PointFeatureDrawing, FONTSIZE},
     math::Point2D,
-    parameters::Parameters,
     point_collection::Kind,
-    speed,
-    track_projection::TrackProjection,
 };
 
-pub fn timestr(proj: &TrackProjection, parameters: &Parameters) -> String {
-    let t = speed::time_at_distance(proj.distance_on_track_to_projection, &parameters);
-    format!("{}", t.format("%H:%M"))
-}
-
-pub fn make_label_text(
-    w: &InputPoint,
-    proj: Option<&TrackProjection>,
-    parameters: &Parameters,
-) -> Label {
+pub fn make_label_text(w: &InputPoint) -> Label {
     let text = match w.kind() {
         Kind::Villages | Kind::Cities | Kind::Mountains | Kind::Hamlets => {
             w.name().clone().trim().to_string()
         }
         Kind::GPXWaypoints => w.name().clone().trim().to_string(),
-        Kind::UserStep => {
-            //return format!("{}", timestr(proj, &segment.parameters));
-            String::new()
-        }
+        Kind::UserStep => String::new(),
 
         Kind::Controls => {
             format!("{}", w.name())
