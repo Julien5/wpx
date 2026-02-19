@@ -90,6 +90,9 @@ class _TrackViewState extends State<TrackView> {
       if (visibilityInfo == null) {
         return;
       }
+      if (!mounted) {
+        return;
+      }
       Size size = visibilityInfo!.size;
       TrackData currentData = futureRenderer!.trackData;
       ScreenConfiguration screen = Provider.of<ScreenConfiguration>(

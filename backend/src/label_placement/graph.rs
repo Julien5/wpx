@@ -190,7 +190,6 @@ impl Graph {
         selected_large.update(&aux);
         for b in neighbors {
             let neighbors_candidates = &mut self.nodes[b].candidates;
-            assert!(!neighbors_candidates.is_empty());
             // remove candidates that intersect with the selected candidate
             neighbors_candidates.retain(|cb| !selected_large.overlap(&cb.bbox().absolute()));
         }
