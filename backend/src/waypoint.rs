@@ -98,7 +98,7 @@ impl WaypointInfo {
                 (dx, dy, slope)
             }
         };
-        let time = speed::time_at_distance(&distance, parameters);
+        let time = speed::time_at_distance(distance, parameters);
         let name = w.name.clone();
         let description = w.description.clone();
         let elevation = track.elevation(w.get_track_index());

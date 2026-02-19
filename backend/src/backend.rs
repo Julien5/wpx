@@ -20,7 +20,6 @@ use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
-use crate::profile;
 use crate::render;
 use crate::segment::SegmentData;
 use crate::track::SharedTrack;
@@ -400,7 +399,6 @@ impl Backend {
                 let result = data.render_map(size, &kinds);
                 result.svg
             }
-            "ylabels" => self.render_yaxis_labels_overlay(&segment, size),
             "wheel" => {
                 let time_parameters = wheel::model::TimeParameters {
                     start: parameters::parse_time(&self.d().parameters.start_time),
@@ -428,20 +426,6 @@ impl Backend {
             }
         };
         log::info!("done - render_segment_what:{} {}", segment.id, what);
-        ret
-    }
-
-    fn render_yaxis_labels_overlay(&self, segment: &Segment, size: &IntegerSize2D) -> String {
-        let profile_bbox =
-            gpsdata::ProfileBoundingBox::from_track(&self.d().track, &segment.start, &segment.end);
-        let mut profile =
-            profile::ProfileView::init(&profile_bbox, size, &self.d().parameters.profile_options);
-        profile.add_yaxis_labels_overlay();
-        let ret = profile.render().svg;
-        if self.get_parameters().debug {
-            let filename = std::format!("/tmp/yaxis-{}.svg", segment.id);
-            std::fs::write(filename, &ret).expect("Unable to write file");
-        }
         ret
     }
 

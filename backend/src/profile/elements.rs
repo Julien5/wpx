@@ -61,11 +61,3 @@ pub fn text(label: &str, pos: Point2D, anchor: &str) -> Text {
         .set("y", pos.y);
     ret
 }
-
-pub fn texty_overlay(label: &str, pos: Point2D) -> Text {
-    let ret = Text::new(label)
-        .set("text-anchor", "end")
-        .set("transform", format!("translate({} {})", pos.x, pos.y))
-        .set("font-size", "10");
-    ret
-}

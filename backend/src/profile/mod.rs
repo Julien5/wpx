@@ -5,7 +5,6 @@ mod ticks;
 use svg::Node;
 
 use crate::bbox::BoundingBox;
-use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::label_placement;
@@ -15,10 +14,11 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::*;
 use crate::math::{distance2, IntegerSize2D, Point2D};
-use crate::parameters::{ProfileIndication, ProfileOptions};
+use crate::parameters::{Parameters, ProfileIndication};
 use crate::point_collection::{is_osm, Kind, Packets, RenderResult};
 use crate::segment::{self, SegmentData};
 use crate::track::Track;
+use crate::{gpsdata, speed};
 use elements::*;
 
 pub struct ProfileModel {
@@ -40,12 +40,13 @@ pub struct ProfileView {
     H: f64,
     Mleft: f64,
     Mbottom: f64,
-    options: ProfileOptions,
+    parameters: Parameters,
     BG: Group, // bottom
     SL: Group, // left, with the y axis, the ticks and the labels
     SB: Group, // main group, with the diagram
     pub SD: Group,
     pub bboxdata: gpsdata::ProfileBoundingBox,
+    // dz bbox for the view (contains bboxdata, with more y margin)
     pub bboxview: gpsdata::ProfileBoundingBox,
     frame_stroke_width: f64,
     model: Option<ProfileModel>,
@@ -60,46 +61,21 @@ fn fix_margins(bbox: &ProfileBoundingBox, size: &IntegerSize2D) -> ProfileBoundi
     ret
 }
 
-// -> (distance,gain as multiple from step_size)
-fn elevation_gain_ticks(
-    track: &Track,
-    step_size: f64,
-    range: &std::ops::Range<usize>,
-) -> Vec<Point2D> {
-    let mut ret = Vec::new();
-    for k in range.start + 1..range.end {
-        let m0 = track.elevation_gain(k - 1);
-        let m1 = track.elevation_gain(k);
-        let f0 = m0 / step_size;
-        let f1 = m1 / step_size;
-        let d = track.distance(k);
-        if f0.ceil() != f1.ceil() {
-            ret.push(Point2D::new(d, f1.floor() * step_size));
-        }
-    }
-    ret
-}
-
 impl ProfileView {
-    fn profile_indication(&self) -> ProfileIndication {
-        let indicators = &self.options.elevation_indicators;
-        for indicator in indicators {
-            return indicator.clone();
-        }
-        ProfileIndication::None
+    fn indications(&self) -> Vec<ProfileIndication> {
+        self.parameters
+            .profile_options
+            .elevation_indicators
+            .iter()
+            .map(|x| x.clone())
+            .collect()
     }
 
     fn yticks_end(&self) -> f64 {
-        match self.profile_indication() {
-            ProfileIndication::NumericSlope => {
-                return self.HD();
-            }
-            _ => {}
-        };
-        self.HD() - self.eticks_height()
+        self.HD()
     }
     fn eticks_height(&self) -> f64 {
-        let indicators = &self.options.elevation_indicators;
+        let indicators = &self.parameters.profile_options.elevation_indicators;
         if indicators.is_empty() {
             return 0.0;
         }
@@ -107,7 +83,7 @@ impl ProfileView {
         for indicator in indicators {
             let space = match indicator {
                 ProfileIndication::None => 0.0,
-                ProfileIndication::GainTicks => 7.0,
+                ProfileIndication::Time => 15.0,
                 ProfileIndication::NumericSlope => 15.0,
             };
             ret += space;
@@ -117,7 +93,7 @@ impl ProfileView {
     pub fn init(
         bbox: &gpsdata::ProfileBoundingBox,
         size: &IntegerSize2D,
-        options: &ProfileOptions,
+        parameters: &Parameters,
     ) -> ProfileView {
         let W = size.width as f64;
         let H = size.height as f64;
@@ -129,7 +105,7 @@ impl ProfileView {
             H,
             Mleft,
             Mbottom,
-            options: options.clone(),
+            parameters: parameters.clone(),
             bboxview: fix_margins(bbox, size),
             bboxdata: bbox.clone(),
             BG: Group::new().set("id", "BG"),
@@ -185,44 +161,42 @@ impl ProfileView {
         }
     }
 
-    fn add_gain_ticks(&mut self, track: &Track, range: &std::ops::Range<usize>) {
-        let step_size = 50f64;
-        let eticks = elevation_gain_ticks(track, step_size, range);
-        for etick in eticks {
-            let x = etick.x;
+    fn add_time_ticks(
+        &mut self,
+        bottom: f64,
+        _track: &Track,
+        _range: &std::ops::Range<usize>,
+    ) -> f64 {
+        let xticks = ticks::xticks_all(&self.bboxdata, self.W);
+        for x in xticks {
+            let time = speed::time_at_distance(x, &self.parameters);
             let xd = self.toSD(&Point2D::new(x, 0f64)).x;
             if xd > self.WD() {
                 break;
             }
-            let meter = etick.y.round() as i32;
-            let width = if meter == 0 {
-                0
-            } else if meter % 1000 == 0 {
-                6
-            } else if meter % 500 == 0 {
-                3
-            } else if meter > 0 {
-                assert!(meter % (step_size as i32) == 0);
-                1
-            } else {
-                0
-            };
+            let width = 4;
             if width > 0 {
-                let mut s = stroke(
-                    format!("{}", width).as_str(),
-                    Point2D::new(xd, self.HD()),
-                    Point2D::new(xd, self.HD() - self.eticks_height()),
+                let time_str = format!("{}", time.format("%H:%M"));
+                let mut text = elements::text(
+                    format!("{}", time_str).as_str(),
+                    Point2D::new(xd - 10.0, bottom),
+                    "end",
                 );
-                s = s.set(
-                    "id",
-                    format!("elevation-gain-{:.1}-{:.1}", etick.x, etick.y),
-                );
-                self.SD.append(s);
+                text = text.set("id", format!("time-{:.1}", x));
+                text = text.set("id", format!("time-{:.1}", x));
+                text = text.set("font-size", (self.font_size() * 0.8).floor());
+                self.SD.append(text);
             }
         }
+        bottom - 15.0
     }
 
-    fn add_numeric_slope(&mut self, track: &Track, _range: &std::ops::Range<usize>) {
+    fn add_numeric_slope(
+        &mut self,
+        bottom: f64,
+        track: &Track,
+        _range: &std::ops::Range<usize>,
+    ) -> f64 {
         let eticks = ticks::xticks_all(&self.bboxdata, self.W);
         for k in 1..eticks.len() {
             let x0 = eticks[k - 1];
@@ -244,24 +218,26 @@ impl ProfileView {
             let slope_percent = 100.0 * elevation_gain / (x1 - x0);
             let mut text = elements::text(
                 format!("{:.1}%", slope_percent).as_str(),
-                Point2D::new(xg - 10.0, self.HD() - 4.0),
+                Point2D::new(xg - 10.0, bottom),
                 "end",
             );
             text = text.set("font-size", (self.font_size() * 0.8).floor());
             self.SD.append(text);
         }
+        bottom - 15.0
     }
 
     fn add_profile_indication(
         &mut self,
+        bottom: f64,
         track: &Track,
         range: &std::ops::Range<usize>,
         kind: &ProfileIndication,
-    ) {
+    ) -> f64 {
         match kind {
-            ProfileIndication::None => {}
-            ProfileIndication::GainTicks => self.add_gain_ticks(track, range),
-            ProfileIndication::NumericSlope => self.add_numeric_slope(track, range),
+            ProfileIndication::None => bottom,
+            ProfileIndication::Time => self.add_time_ticks(bottom, track, range),
+            ProfileIndication::NumericSlope => self.add_numeric_slope(bottom, track, range),
         }
     }
 
@@ -294,20 +270,6 @@ impl ProfileView {
                 Some(model) => model.input_points(),
                 None => Vec::new(),
             },
-        }
-    }
-
-    pub fn add_yaxis_labels_overlay(&mut self) {
-        for ytick in ticks::yticks(&self.bboxdata, self.H) {
-            let pos = self.toSD(&Point2D::new(self.bboxview.get_xmin(), ytick));
-            let yd = pos.y;
-            if yd > self.HD() {
-                break;
-            }
-            self.SL.append(texty_overlay(
-                format!("{}", ytick.floor()).as_str(),
-                Point2D::new(30f64, yd + 1f64),
-            ));
         }
     }
 
@@ -449,8 +411,11 @@ impl ProfileView {
         let polyline_dp = Polyline::new(polyline_dp_points);
         */
 
-        let kind = self.profile_indication();
-        self.add_profile_indication(&track, &range, &kind);
+        let mut bottom = self.HD() - 4.0;
+        for indication in self.indications() {
+            let ceil = self.add_profile_indication(bottom, &track, &range, &indication);
+            bottom = ceil - 4.0;
+        }
 
         let mut document = Attributes::new();
         set_attr(
@@ -515,7 +480,7 @@ impl ProfileView {
                 Point2D::new(self.WD(), self.HD() - self.eticks_height()),
             ),
             &polyline,
-            &self.options.max_area_ratio,
+            &self.parameters.profile_options.max_area_ratio,
         );
         let mut features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
         features.extend_from_slice(&feature_unlabeled);
@@ -662,7 +627,7 @@ pub fn profile(
 ) -> RenderResult {
     let profile_bbox =
         ProfileBoundingBox::from_track(&segment.track, &segment.start(), &segment.end());
-    let mut view = ProfileView::init(&profile_bbox, size, &segment.parameters.profile_options);
+    let mut view = ProfileView::init(&profile_bbox, size, &segment.parameters);
     view.add_canvas();
     view.add_segment(&segment, packets);
     view.render_model();

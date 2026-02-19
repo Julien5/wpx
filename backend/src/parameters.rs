@@ -3,7 +3,7 @@ use crate::{mercator::DateTime, speed};
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ProfileIndication {
     None,
-    GainTicks,
+    Time,
     NumericSlope,
 }
 

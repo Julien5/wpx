@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub fn timestr(proj: &TrackProjection, parameters: &Parameters) -> String {
-    let t = speed::time_at_distance(&proj.distance_on_track_to_projection, &parameters);
+    let t = speed::time_at_distance(proj.distance_on_track_to_projection, &parameters);
     format!("{}", t.format("%H:%M"))
 }
 
