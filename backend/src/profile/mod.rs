@@ -186,7 +186,7 @@ impl ProfileView {
             if xd > self.WD() {
                 break;
             }
-            let time_str = format!("{}", time.format("%H:%M"));
+            let time_str = wheel::time_points::format_time(&time, false);
             let mut text = elements::text(
                 format!("{}", time_str).as_str(),
                 Point2D::new(xd - 10.0, bottom),

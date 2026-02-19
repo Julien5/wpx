@@ -95,7 +95,9 @@ fn generate_time_intervals(
     times
 }
 
-fn format_time(time: &DateTime, force: bool) -> String {
+pub fn format_time(time: &DateTime, force: bool) -> String {
+    // per default, to not make text from "12:30"
+    // unless force=true.
     if force {
         return time.format("%k:%M").to_string();
     }
