@@ -131,7 +131,6 @@ impl SegmentData {
             &self.parameters,
         );
         lock.register_profile_result(&parameters, &self.range(), size, &result_profile);
-
         let map_packets = collection.map();
         let result_map = svgmap::map(&self, size, &map_packets);
         lock.register_map_result(&parameters, &self.range(), size, &result_map);

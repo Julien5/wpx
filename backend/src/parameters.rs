@@ -13,7 +13,7 @@ pub enum ControlSource {
     OSM,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct UserStepsOptions {
     pub step_distance: Option<f64>,
     pub step_elevation_gain: Option<f64>,
@@ -30,7 +30,7 @@ impl Default for UserStepsOptions {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ProfileOptions {
     pub elevation_indicators: Vec<ProfileIndication>,
     pub max_area_ratio: f64,
@@ -45,7 +45,7 @@ impl Default for ProfileOptions {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MapOptions {
     pub max_area_ratio: f64,
 }
@@ -58,7 +58,7 @@ impl Default for MapOptions {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Parameters {
     pub control_gpx_name_format: String,
     pub debug: bool,

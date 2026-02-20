@@ -173,7 +173,6 @@ impl MapData {
                 let circle = draw_for_map(&p, id.as_str(), &w);
 
                 // on the map, all projections are equivalent
-                log::trace!("proj for {}", w.name());
                 let mut label = drawings::make_label_text(&w);
                 label.id = format!("{}/wp/text", k);
                 let empty = label.is_empty();

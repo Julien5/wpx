@@ -205,11 +205,9 @@ pub fn compute_track_projection_2d(
 ) -> TrackProjection {
     // as opposed to GPX and OSM points, which may be on several segments
     let index = tracktree.nearest_neighbor(&point).unwrap();
-    log::trace!("index: {}", index);
     let partial = projection::compute(track, point, &index);
     let floating_index = partial.track_floating_index;
     let m = partial.projection;
-    log::trace!("m: {:?}", m);
 
     let middle = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
 

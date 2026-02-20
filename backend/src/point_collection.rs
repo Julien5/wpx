@@ -17,13 +17,13 @@ fn sort_by_population(cities: &mut Vec<InputPoint>) {
     cities.sort_by_key(|w| std::cmp::Reverse(w.population().unwrap_or(0)));
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct RenderResult {
     pub svg: String,
     pub rendered: Vec<InputPoint>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 struct RenderInputParameters {
     parameters: Parameters,
     range: std::ops::Range<usize>,
@@ -31,46 +31,54 @@ struct RenderInputParameters {
 }
 
 impl RenderInputParameters {
-    pub fn covers(&self, other: &Self, function: &RenderFunction) -> bool {
+    pub fn missmatch(&self, other: &Self, function: &RenderFunction) -> String {
         if self.screen_size.width < other.screen_size.width {
-            log::trace!("missmatch: width");
-            return false;
+            return format!(
+                "screen size width ({}<{})",
+                self.screen_size.width, other.screen_size.width
+            );
         }
         if self.screen_size.height < other.screen_size.height {
-            log::trace!("missmatch: height");
-            return false;
+            return format!(
+                "screen size height ({}<{})",
+                self.screen_size.height, other.screen_size.height
+            );
         }
         match function {
             RenderFunction::Map => {
                 if self.parameters.map_options.max_area_ratio
                     < other.parameters.map_options.max_area_ratio
                 {
-                    log::trace!("missmatch: max_area_ratio (map)");
-                    return false;
+                    return format!(
+                        "map area ratio ({}<{})",
+                        self.parameters.map_options.max_area_ratio,
+                        other.parameters.map_options.max_area_ratio
+                    );
                 }
             }
             RenderFunction::Profile => {
                 if self.parameters.profile_options.max_area_ratio
                     < other.parameters.profile_options.max_area_ratio
                 {
-                    log::trace!("missmatch: max_area_ratio (profile)");
-                    return false;
+                    return format!(
+                        "profile area ratio ({}<{})",
+                        self.parameters.profile_options.max_area_ratio,
+                        other.parameters.profile_options.max_area_ratio
+                    );
                 }
             }
         }
         if self.range.start > other.range.start {
-            log::trace!("missmatch: range start");
-            return false;
+            return format!("range start ({}>{})", self.range.start, other.range.start);
         }
         if self.range.end < other.range.end {
-            log::trace!("missmatch: range end");
-            return false;
+            return format!("range end ({}<{})", self.range.end, other.range.end);
         }
-        true
+        String::new()
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub enum RenderFunction {
     Map,
     Profile,
@@ -110,8 +118,17 @@ impl CachedResults {
             if result.function != *function {
                 continue;
             }
-            if result.parameters.covers(parameters, function) {
+
+            let missmatch = result.parameters.missmatch(parameters, function);
+            if missmatch.is_empty() {
+                log::trace!("cache hit for function: {:?}", function);
                 return Some(result.output.clone());
+            } else {
+                log::trace!(
+                    "cache missmatch for function: {:?} and parameters: {}",
+                    function,
+                    missmatch
+                );
             }
         }
         None
@@ -216,7 +233,10 @@ impl PacketProvider {
                 ret
             }
             None => {
-                log::trace!("packet provider profile cache miss");
+                log::trace!(
+                    "packet provider profile cache miss for function: {:?}",
+                    function
+                );
                 assert!(false);
                 PointCollection::new()
             }

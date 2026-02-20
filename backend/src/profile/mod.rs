@@ -573,7 +573,6 @@ impl ProfileView {
         );
 
         for time_box in time_boxes {
-            let x = time_box.get_xmin() + time_box.width() / 2f64;
             let center = time_box.center() + Point2D::new(0f64, 17f64);
             let circle = {
                 let mut ret = svg::node::element::Circle::new();
