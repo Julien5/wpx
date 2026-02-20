@@ -618,7 +618,10 @@ impl CandidatesGenerator for ProfileGenerator {
             Kind::GPXWaypoints | Kind::Controls => Self::header(feature),
             _ => {
                 assert!(is_osm(&kind));
-                self.cardinal(feature)
+                let mut ret = self.cardinal(feature);
+                let aux = self.generate_column(feature);
+                ret.extend_from_slice(&aux);
+                ret
             }
         };
         ret.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
@@ -627,26 +630,27 @@ impl CandidatesGenerator for ProfileGenerator {
 }
 
 impl ProfileGenerator {
-    fn _generate_column(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn generate_column(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
         let target = feature.circle.center;
         let width = feature.width();
         let x = target.x - width / 2f64;
-        let little = 5f64;
-
+        let little = 40f64;
         let mut ret = Vec::new();
-        let mut y = little;
-        loop {
-            let bbox = BoundingBox::minsize(Point2D::new(x, y), width, feature.height());
-            if bbox.get_ymax() > self._HD {
-                break;
-            }
-            y += little;
-            ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
-        }
-        ret.sort_by_key(|bbox| {
-            let p = bbox.absolute().project_on_border(&target);
-            (distance2(&target, &p) * 100f64).floor() as i64
-        });
+
+        let bbox =
+            BoundingBox::minsize(Point2D::new(x, target.y + little), width, feature.height());
+        ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+
+        let bbox =
+            BoundingBox::minsize(Point2D::new(x, target.y - little), width, feature.height());
+        ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+
+        let bbox = BoundingBox::minsize(
+            Point2D::new(x, target.y - 2f64 * little),
+            width,
+            feature.height(),
+        );
+        ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
         ret
     }
 

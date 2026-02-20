@@ -78,6 +78,7 @@ fn yticks_all(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
         start = start.max(0f64);
         stop += delta;
     }
+    start -= delta;
 
     let mut p = start;
     while p <= stop {
