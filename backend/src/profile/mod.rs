@@ -103,6 +103,7 @@ impl ProfileView {
         }
         ret
     }
+
     pub fn bboxview(&self) -> ProfileBoundingBox {
         fix_margins(&self.bboxdata, self.free_height())
     }
@@ -198,7 +199,12 @@ impl ProfileView {
             if xd > self.WD() {
                 break;
             }
-            let time_str = wheel::time_points::format_time(&time, false);
+            let mut time_str = wheel::time_points::format_time(&time, false);
+            if time_str.trim().parse::<i32>().is_ok() {
+                time_str = format!("{}h", time_str);
+            } else {
+                log::trace!(":::: [{}] ???", time_str);
+            }
             let label = Label::new(&time_str, FONTSIZE, &"normal", &"normal");
             let feature = PointFeature {
                 circle: PointFeatureDrawing {
@@ -502,6 +508,9 @@ impl ProfileView {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
+                if w.kind() == Kind::UserStep {
+                    continue;
+                }
                 log::trace!("add to profile: {}", w.name());
                 for proj in &w.track_projections {
                     let index = proj.track_index;
@@ -564,15 +573,20 @@ impl ProfileView {
         );
 
         for time_box in time_boxes {
-            if obstacles.hit_bbox(&time_box) {
-                continue;
-            }
             let x = time_box.get_xmin() + time_box.width() / 2f64;
-            self.SD.append(stroke(
-                "1",
-                Point2D::new(x, time_box.get_ymin()),
-                Point2D::new(x, time_box.get_ymax()),
-            ));
+            let center = time_box.center() + Point2D::new(0f64, 17f64);
+            let circle = {
+                let mut ret = svg::node::element::Circle::new();
+                ret = ret.set("id", format!("{}", "pacing-circle"));
+                ret = ret.set("cx", format!("{}", center.x));
+                ret = ret.set("cy", format!("{}", center.y));
+                ret = ret.set("r", format!("{}", "2"));
+                ret = ret.set("fill", format!("{}", "Gray"));
+                ret = ret.set("stroke", format!("{}", "black"));
+                ret = ret.set("stroke-width", format!("{}", "2"));
+                ret
+            };
+            self.SD.append(circle);
         }
 
         let mut features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);

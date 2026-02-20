@@ -140,7 +140,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
             waypoints_table.len()
         );
         let table = points_table(&templates, &backend.d().track, &waypoints_table);
-        let profile_size = Size2D::new(1420, 400);
+        let profile_size = Size2D::new(1000, 300);
         let map_size = Size2D::new(400, 400);
         let rendered_profile = backend.render_segment_what(
             &segment.segment,

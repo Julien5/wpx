@@ -151,6 +151,9 @@ impl MapData {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
+                if w.kind() == Kind::UserStep {
+                    continue;
+                }
                 let euclidean = w.euclidean.clone();
                 if !bbox.contains(&euclidean.point2d()) {
                     continue;

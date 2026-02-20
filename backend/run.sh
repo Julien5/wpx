@@ -66,11 +66,11 @@ function pdf() {
 	time cargo ${cmd} ${mode} -- \
 		 --output-directory /tmp/wpx/ \
 		 --debug true \
-		 --step-elevation-gain 500 \
+		 --step-elevation-gain 50 \
 		 --segment-length $(segment-length ${file}) \
 		 --segment-overlap $(segment-overlap ${file}) \
-		 --profile-max-area-ratio 0.05 \
-		 --map-max-area-ratio 0.10 \
+		 --profile-max-area-ratio 0.90 \
+		 --map-max-area-ratio 0.15 \
 		 ${options} \
 		 "${file}"
 	${TYPST} compile /tmp/document.typst
