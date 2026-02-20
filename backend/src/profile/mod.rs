@@ -12,7 +12,7 @@ use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::*;
-use crate::math::{distance2, IntegerSize2D, Point2D};
+use crate::math::{IntegerSize2D, Point2D};
 use crate::parameters::{Parameters, ProfileIndication};
 use crate::point_collection::{is_osm, Kind, Packets, RenderResult};
 use crate::segment;
@@ -200,10 +200,9 @@ impl ProfileView {
                 break;
             }
             let mut time_str = wheel::time_points::format_time(&time, false);
+            // if it is "9", print "9h", otherwise ("09:30", "Fri") dont change.
             if time_str.trim().parse::<i32>().is_ok() {
                 time_str = format!("{}h", time_str);
-            } else {
-                log::trace!(":::: [{}] ???", time_str);
             }
             let label = Label::new(&time_str, FONTSIZE, &"normal", &"normal");
             let feature = PointFeature {
@@ -511,9 +510,11 @@ impl ProfileView {
                 if w.kind() == Kind::UserStep {
                     continue;
                 }
-                log::trace!("add to profile: {}", w.name());
                 for proj in &w.track_projections {
                     let index = proj.track_index;
+                    if !range.contains(&index) {
+                        continue;
+                    }
                     let trackpoint = &track.wgs84[index];
                     // Note: It would be better to use the middle point with the float
                     // track_index from track_projection.
@@ -559,8 +560,6 @@ impl ProfileView {
         let (time_packet, time_boxes) = self.add_time_ticks(&pacing_points);
         feature_packets.push(PointFeatures::make(time_packet));
 
-        let total_count: usize = feature_packets.iter().map(|inner| inner.points.len()).sum();
-        log::trace!("feature count:{}", total_count);
         let (results, obstacles) = label_placement::place_labels(
             &feature_packets,
             &*generator,
@@ -619,8 +618,20 @@ impl CandidatesGenerator for ProfileGenerator {
             _ => {
                 assert!(is_osm(&kind));
                 let mut ret = self.cardinal(feature);
-                let aux = self.generate_column(feature);
-                ret.extend_from_slice(&aux);
+                let search_width = 200f64;
+                let search_area = BoundingBox::minsize(
+                    feature.center() - Point2D::new(search_width * 0.5f64, search_width * 0.5f64),
+                    search_width,
+                    search_width,
+                );
+                if obstacles.occupied_area(&search_area) / search_area.area() >= 0.0f64 {
+                    let a2 = self.generate_column(feature, 30f64);
+                    let a4 = self.generate_column(feature, 55f64);
+                    let a8 = self.generate_column(feature, 80f64);
+                    ret.extend_from_slice(&a2);
+                    ret.extend_from_slice(&a4);
+                    ret.extend_from_slice(&a8);
+                }
                 ret
             }
         };
@@ -630,27 +641,26 @@ impl CandidatesGenerator for ProfileGenerator {
 }
 
 impl ProfileGenerator {
-    fn generate_column(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn generate_column(&self, feature: &PointFeature, distance: f64) -> Vec<LabelBoundingBox> {
         let target = feature.circle.center;
         let width = feature.width();
         let x = target.x - width / 2f64;
-        let little = 40f64;
         let mut ret = Vec::new();
 
-        let bbox =
-            BoundingBox::minsize(Point2D::new(x, target.y + little), width, feature.height());
-        ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
-
-        let bbox =
-            BoundingBox::minsize(Point2D::new(x, target.y - little), width, feature.height());
-        ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
-
         let bbox = BoundingBox::minsize(
-            Point2D::new(x, target.y - 2f64 * little),
+            Point2D::new(x, target.y + distance),
             width,
             feature.height(),
         );
         ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+
+        let bbox = BoundingBox::minsize(
+            Point2D::new(x, target.y - distance),
+            width,
+            feature.height(),
+        );
+        ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+
         ret
     }
 
@@ -757,6 +767,11 @@ pub fn profile(
     packets: &Packets,
     parameters: &Parameters,
 ) -> RenderResult {
+    log::info!(
+        "compute profile for size {:?} and {} features",
+        size,
+        packets.iter().map(|p| p.len()).sum::<usize>()
+    );
     let profile_bbox = ProfileBoundingBox::from_track(track, &segment.start, &segment.end);
     let mut view = ProfileView::init(&profile_bbox, size, &parameters);
     view.add_canvas();

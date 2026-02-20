@@ -131,8 +131,6 @@ fn place_subset(
         }
         true => place_quick_best_candidates(features, obstacles),
     };
-    //log::trace!("solve label graph [{}]", graph.map.len(),);
-    //log::trace!("results:");
     for k in 0..features.points.len() {
         let feature = &features.points[k];
         let target_text = feature.text();
@@ -142,14 +140,10 @@ fn place_subset(
         let best_candidate = best_candidates.get(&k);
         match best_candidate {
             Some(candidate) => {
-                //log::trace!("index:{}", k);
-                //log::trace!("text: {}", target_text);
                 //log::trace!("candidate: {}", candidate.bbox().relative());
                 ret.placed_indices.insert(k, candidate.bbox().clone());
             }
-            _ => {
-                log::trace!("failed to find any candidate for [{}]", target_text);
-            }
+            _ => { /* log::info!("failed to place [{}]", feature.label.text); */ }
         }
     }
     ret
@@ -165,12 +159,13 @@ pub fn place_labels(
     let mut ret = Vec::new();
     let mut obstacles = Obstacles::new(bbox, *max_area_ratio);
     obstacles.polylines = vec![polyline.clone()];
-    for packet in packets {
-        /*log::trace!(
-            "[a] features:{} obstacles:{}",
+    for (idx, packet) in packets.iter().enumerate() {
+        log::trace!(
+            "subset packet [{}] features:{} obstacles:{}",
+            idx,
             packet.points.len(),
-            obstacles.bboxes.len()
-        );*/
+            obstacles.bboxes().len()
+        );
         let results = place_subset(&packet, gen, &mut obstacles);
         ret.push(results);
     }

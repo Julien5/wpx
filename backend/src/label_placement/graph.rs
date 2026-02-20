@@ -192,6 +192,13 @@ impl Graph {
             let neighbors_candidates = &mut self.nodes[b].candidates;
             // remove candidates that intersect with the selected candidate
             neighbors_candidates.retain(|cb| !selected_large.overlap(&cb.bbox().absolute()));
+            if neighbors_candidates.is_empty() {
+                log::info!(
+                    "graph removed [{}] because of ovelapping with [{}] (and others)",
+                    self.nodes[b].feature.text(),
+                    self.nodes[*a].feature.text()
+                );
+            }
         }
         // Track the placed candidate for density queries
         self.obstacles.push_bbox(selected_large);
@@ -287,16 +294,17 @@ impl Graph {
         let mut ret = BTreeMap::new();
         while !self.map.is_empty() {
             let m = self.max_node();
-            let target = &self.nodes[m].feature;
+
             /*
-            log::trace!(
-                "placing:{} [#edges:{}] [{:.1} + {:.1} max {:.1}]",
-                target.text(),
-                self.map.get(&m).unwrap().len(),
-                self.used_area,
-                target.area(),
-                self.max_area
-            );*/
+            let target = &self.nodes[m].feature;
+                        log::trace!(
+                            "placing:{} [#edges:{}] [{:.1} + {:.1} max {:.1}]",
+                            target.text(),
+                            self.map.get(&m).unwrap().len(),
+                            self.used_area,
+                            target.area(),
+                            self.max_area
+                        );*/
             /*if self.used_area + target.area() > self.max_area {
                 //log::trace!("remove {} because it is too large", target.text());
                 self.remove_node(&m);
@@ -310,7 +318,6 @@ impl Graph {
                     self.update_graph(&m, &best_candidate);
                 }
                 None => {
-                    log::trace!("remove {} (no candidate found)", target.text());
                     self.remove_node(&m);
                 }
             }
@@ -348,9 +355,12 @@ impl Graph {
         }
         // note: the candidates are sorted
         //log::trace!("select one candidate");
+        let mut nblock_other = 0;
+        let mut ndensity_fail = 0;
         for index in 0..candidates.len() {
             match self.candidate_blocks_any(node, index) {
                 Some(_other_node) => {
+                    nblock_other += 1;
                     /*log::trace!(
                         "[node:{node:2}] [candidate:{index:2}] blocks [{_other_node:2}]"
                     );*/
@@ -361,6 +371,7 @@ impl Graph {
 
             let candidate = &candidates[index];
             if self.density_ratio(candidate) > self.max_density_ratio() {
+                ndensity_fail += 1;
                 continue;
             }
 
@@ -370,6 +381,12 @@ impl Graph {
             );*/
             return Some(index);
         }
+        log::info!(
+            "could not find any candidate for [{}] ({} block other, {} density fails)",
+            self.nodes[*node].feature.label.text,
+            nblock_other,
+            ndensity_fail
+        );
         return None;
     }
 }

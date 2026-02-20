@@ -107,7 +107,6 @@ pub fn infer_controls_from_gpx_segments(
         ));
     }
     ret.sort_by_key(|(index, _)| *index);
-    log::trace!("made {} controls from segments", ret.len());
     ret.iter().map(|(_, w)| w.clone()).collect()
 }
 
@@ -135,7 +134,6 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
             log::info!("point {} is too far from track", point.name());
         }
     }
-    log::trace!("made {} controls from waypoints", ret.len());
     ret
 }
 
@@ -309,7 +307,6 @@ pub fn make_controls_with_osm(
         );
         ret.push(w);
     }
-    log::trace!("made {} controls from OSM", ret.len());
     ret
 }
 

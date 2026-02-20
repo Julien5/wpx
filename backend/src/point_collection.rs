@@ -32,6 +32,10 @@ struct RenderInputParameters {
 
 impl RenderInputParameters {
     pub fn missmatch(&self, other: &Self, function: &RenderFunction) -> String {
+        // test
+        /*if self.range == other.range {
+            return String::new();
+        }*/
         if self.screen_size.width < other.screen_size.width {
             return format!(
                 "screen size width ({}<{})",
@@ -121,20 +125,17 @@ impl CachedResults {
 
             let missmatch = result.parameters.missmatch(parameters, function);
             if missmatch.is_empty() {
-                log::trace!("cache hit for function: {:?}", function);
+                //log::info!("cache hit for function: {:?}", function);
                 return Some(result.output.clone());
             } else {
-                log::trace!(
+                /*  log::info!(
                     "cache missmatch for function: {:?} and parameters: {}",
                     function,
                     missmatch
-                );
+                );*/
             }
         }
         None
-    }
-    pub fn size(&self) -> usize {
-        self.results.len()
     }
 }
 
@@ -193,7 +194,6 @@ impl PacketProvider {
         if self.results.hit(function, &p).is_none() {
             self.results.push(result);
         }
-        log::trace!("cache size: {}", self.results.size());
     }
 
     pub fn hit(
@@ -225,7 +225,6 @@ impl PacketProvider {
         };
         match self.results.hit(function, &p) {
             Some(result) => {
-                log::trace!("packet provider profile cache hit");
                 let mut ret = self.collection.clone();
                 // TODO: we should avoid to copy all osm points
                 ret.import_osm(&result.rendered);
@@ -380,7 +379,7 @@ impl PointCollection {
             clone.ontrack_cities(),
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),
-            clone.get_vector(&Kind::Hamlets),
+            //clone.get_vector(&Kind::Hamlets),
         ]
     }
 
@@ -394,7 +393,7 @@ impl PointCollection {
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),
             clone.offtrack_cities(),
-            clone.get_vector(&Kind::Hamlets),
+            //clone.get_vector(&Kind::Hamlets),
         ]
     }
 }

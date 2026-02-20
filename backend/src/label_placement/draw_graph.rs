@@ -111,7 +111,6 @@ impl Graphic {
             n += 1;
         };
 
-        log::trace!("create {}", filepath);
         // Write the content to the file
         let mut file = fs::File::create(&filepath).expect("could not create file");
         file.write_all(content.as_bytes())

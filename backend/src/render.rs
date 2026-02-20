@@ -157,7 +157,6 @@ pub fn make_typst_document(backend: &Backend) -> String {
             let f = format!("/tmp/map-{}.svg", segment.id());
             std::fs::write(&f, &m).unwrap();
         }
-        log::trace!("link segment {}", segment.id());
         link(&templates, &rendered_profile, &m, &table, &mut document);
         if range.end == backend.d().track.len() {
             break;

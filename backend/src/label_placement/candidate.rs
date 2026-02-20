@@ -115,7 +115,23 @@ pub mod utils {
         if target.area() > available_area {
             return ret;
         }
-        for bbox in gen.gen(target, obstacles) {
+        let candidates = gen.gen(target, obstacles);
+        if candidates.is_empty() {
+            let kind = {
+                if target.input_point.is_some() {
+                    let p = target.input_point.as_ref().unwrap();
+                    format!("{:?}", p.kind())
+                } else {
+                    String::new()
+                }
+            };
+            log::info!(
+                "no candidates passed the upfront obstacles test for: [{}] ({})",
+                target.label.text,
+                kind
+            );
+        }
+        for bbox in candidates {
             let candidate = make_candidate(&bbox, &target, &all, obstacles);
             ret.push(candidate);
         }
@@ -131,14 +147,6 @@ pub mod utils {
         for k in 0..features.points.len() {
             let feature = &features.points[k];
             let candidates = generate_all_candidates(gen, feature, features, obstacles);
-            if candidates.is_empty() {
-                /*log::trace!(
-                    "[0] [{}] => {} candidates",
-                    feature.text(),
-                    candidates.len()
-                );*/
-                // force one ?
-            }
             ret.push(candidates);
         }
         ret

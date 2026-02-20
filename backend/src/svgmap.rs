@@ -252,6 +252,11 @@ impl MapData {
 }
 
 pub fn map(segment: &SegmentData, size: &IntegerSize2D, packets: &Packets) -> RenderResult {
+    log::info!(
+        "compute map for size {:?} and {} features",
+        size,
+        packets.iter().map(|p| p.len()).sum::<usize>()
+    );
     let svgMap = MapData::make(segment, size, packets);
     svgMap.render()
 }

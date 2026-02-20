@@ -104,12 +104,9 @@ impl SegmentData {
             if lock.hit(&RenderFunction::Map, &self.range(), &parameters, size)
                 && lock.hit(&RenderFunction::Profile, &self.range(), &parameters, size)
             {
-                log::trace!("preload hit");
                 return;
             }
         }
-        log::trace!("preload build");
-
         let collection = {
             let lock = self.packet_provider.read().unwrap();
             let mut coll = lock.collection.clone();

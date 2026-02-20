@@ -51,7 +51,6 @@ pub fn user_points(track: &Track, options: &UserStepsOptions) -> Vec<InputPoint>
     match options.step_distance {
         None => {}
         Some(d) => {
-            log::trace!("compute user steps with distance {}", d);
             ret.extend_from_slice(&profile_points_distance_track(track, &d));
         }
     };
@@ -59,7 +58,6 @@ pub fn user_points(track: &Track, options: &UserStepsOptions) -> Vec<InputPoint>
     match options.step_elevation_gain {
         None => {}
         Some(d) => {
-            log::trace!("compute user steps with elevation gain {}", d);
             let loc = profile_points_elevation_gain_track(track, &d);
             for p in &loc {
                 let d = p.track_projections.first().unwrap().track_distance;
@@ -68,6 +66,5 @@ pub fn user_points(track: &Track, options: &UserStepsOptions) -> Vec<InputPoint>
             ret.extend_from_slice(&loc);
         }
     }
-    log::trace!("made {} user steps", ret.len());
     ret
 }
