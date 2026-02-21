@@ -1,7 +1,9 @@
 use std::collections::{BTreeMap, HashSet};
 
 use crate::{
-    inputpoint::InputPoint, math::IntegerSize2D, parameters::Parameters,
+    inputpoint::InputPoint,
+    math::IntegerSize2D,
+    parameters::{Parameters, RenderFunction},
     track_projection::is_close_to_track,
 };
 
@@ -17,7 +19,7 @@ fn sort_by_population(cities: &mut Vec<InputPoint>) {
     cities.sort_by_key(|w| std::cmp::Reverse(w.population().unwrap_or(0)));
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct RenderResult {
     pub svg: String,
     pub rendered: Vec<InputPoint>,
@@ -71,6 +73,7 @@ impl RenderInputParameters {
                     );
                 }
             }
+            RenderFunction::Wheel | RenderFunction::WheelPages => {}
         }
         if self.range.start > other.range.start {
             return format!("range start ({}>{})", self.range.start, other.range.start);
@@ -80,12 +83,6 @@ impl RenderInputParameters {
         }
         String::new()
     }
-}
-
-#[derive(Clone, PartialEq, Eq, Debug)]
-pub enum RenderFunction {
-    Map,
-    Profile,
 }
 
 #[derive(Clone)]

@@ -7,6 +7,7 @@ use std::collections::HashSet;
 pub use std::ops::Range;
 pub use tracks::backend::Segment as SegmentImplementation;
 pub use tracks::backend::SegmentStatistics;
+pub use tracks::error::RenderError;
 pub use tracks::error::TrackError;
 pub use tracks::mercator::MercatorPoint;
 pub use tracks::parameters::ControlSource;
@@ -14,13 +15,14 @@ pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
 pub use tracks::parameters::ProfileOptions;
+pub use tracks::parameters::RenderFunction;
+pub use tracks::parameters::RenderInput;
+pub use tracks::parameters::RenderOutput;
 pub use tracks::parameters::UserStepsOptions;
 pub use tracks::point_collection::Kind;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
 pub use tracks::wgs84point::WGS84Point;
-
-use tracks::math::IntegerSize2D;
 
 #[frb(opaque)]
 pub struct Bridge {
@@ -79,6 +81,32 @@ pub enum _Kind {
 #[frb(sync)]
 pub fn allkinds() -> HashSet<Kind> {
     tracks::point_collection::allkinds()
+}
+
+#[frb(mirror(RenderFunction))]
+pub enum _RenderFunction {
+    Map,
+    Profile,
+    Wheel,
+    WheelPages,
+}
+
+#[frb(mirror(RenderInput))]
+pub struct _RenderInput {
+    pub kinds: HashSet<Kind>,
+    pub function: RenderFunction,
+    pub size: (i32, i32),
+}
+
+#[frb(mirror(RenderError), unignore)]
+pub enum _RenderError {
+    Unknown,
+}
+
+#[frb(mirror(RenderOutput))]
+pub struct _RenderOutput {
+    pub svg: String,
+    pub error: Option<RenderError>,
 }
 
 #[frb(mirror(ProfileIndication))]
@@ -244,36 +272,13 @@ impl Bridge {
         self.backend.loaded()
     }
 
-    pub async fn renderSegmentWhat(
+    pub async fn renderSegment(
         &mut self,
         segment: &Segment,
-        what: &String,
-        size: &(i32, i32),
-        kinds: HashSet<Kind>,
-    ) -> String {
+        inputs: &Vec<RenderInput>,
+    ) -> Vec<RenderOutput> {
         assert!(self.backend.loaded());
-        self.backend.render_segment_what(
-            &segment._impl,
-            what,
-            &IntegerSize2D::new(size.0, size.1),
-            kinds,
-        )
-    }
-
-    #[frb(sync)]
-    pub fn renderSegmentWhatSync(
-        &mut self,
-        segment: &Segment,
-        what: &String,
-        size: &(i32, i32),
-        kinds: HashSet<Kind>,
-    ) -> String {
-        self.backend.render_segment_what(
-            &segment._impl,
-            what,
-            &IntegerSize2D::new(size.0, size.1),
-            kinds,
-        )
+        self.backend.render_segment(&segment._impl, inputs)
     }
 
     #[frb(sync)]

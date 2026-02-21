@@ -22,11 +22,12 @@ class SegmentModel extends ChangeNotifier {
   }
 
   FutureRenderer makeRenderer(Kinds kinds, TrackData trackData) {
+    developer.log("make Renderer for $trackData");
     return FutureRenderer(
       bridge: backend,
       segment: segment,
       kinds: kinds,
-      trackData: trackData,
+      trackData: [trackData],
     );
   }
 

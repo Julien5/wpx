@@ -21,7 +21,8 @@ class RendererParameters {
 }
 
 class TrackView extends StatefulWidget {
-  const TrackView({super.key});
+  final RendererParameters rendererParameters;
+  const TrackView({super.key, required this.rendererParameters});
 
   @override
   State<TrackView> createState() => _TrackViewState();
@@ -73,7 +74,8 @@ class _TrackViewState extends State<TrackView> {
         return;
       }
       Size size = visibilityInfo!.size;
-      TrackData currentData = futureRenderer.trackData;
+      TrackData currentData = widget.rendererParameters.trackData;
+      assert(futureRenderer.trackData.contains(currentData));
       ScreenConfiguration screen = Provider.of<ScreenConfiguration>(
         context,
         listen: false,
@@ -83,7 +85,8 @@ class _TrackViewState extends State<TrackView> {
           size = size * 1.5;
         }
       }
-      futureRenderer.setSize(size);
+      developer.log("set size $size for $currentData");
+      futureRenderer.setSize(currentData, size);
       startRendererIfNeeded();
     });
   }
@@ -125,7 +128,10 @@ class _TrackViewState extends State<TrackView> {
           // => we use a specific key
           key: _visibilityKey,
           onVisibilityChanged: _onVisibilityChanged,
-          child: FutureRenderingWidget(interactive: false),
+          child: FutureRenderingWidget(
+            trackData: widget.rendererParameters.trackData,
+            interactive: false,
+          ),
         );
       },
     );

@@ -1,4 +1,27 @@
-use crate::{mercator::DateTime, speed};
+use std::collections::HashSet;
+
+use crate::{error::RenderError, mercator::DateTime, point_collection::Kind, speed};
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub enum RenderFunction {
+    Map,
+    Profile,
+    Wheel,
+    WheelPages,
+}
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct RenderInput {
+    pub kinds: HashSet<Kind>,
+    pub function: RenderFunction,
+    pub size: (i32, i32),
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct RenderOutput {
+    pub svg: String,
+    pub error: Option<RenderError>,
+}
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum ProfileIndication {

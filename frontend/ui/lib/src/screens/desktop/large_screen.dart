@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
@@ -59,7 +58,7 @@ class _LargeScaffold extends StatelessWidget {
         //Expanded(child: Container(color: Colors.blue)),
         Expanded(
           child: GraphicsPadding(
-            child: SimpleTrackView.make(allkinds(), TrackData.map),
+            child: SimpleTrackView.make(allkinds(), RenderFunction.map),
           ),
         ),
       ],
@@ -69,7 +68,7 @@ class _LargeScaffold extends StatelessWidget {
       ConstrainedBox(
         constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
         child: ProfilePadding(
-          child: SimpleTrackView.make(allkinds(), TrackData.profile),
+          child: SimpleTrackView.make(allkinds(), RenderFunction.profile),
         ),
       ),
       Expanded(child: mwrow),

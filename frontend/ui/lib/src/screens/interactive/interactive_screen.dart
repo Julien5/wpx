@@ -14,8 +14,11 @@ class _InteractiveMapView extends StatelessWidget {
       builder: (context, mapRenderer, child) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            mapRenderer.setSize(constraints.biggest);
-            return FutureRenderingWidget(interactive: true);
+            mapRenderer.setSize(TrackData.map, constraints.biggest);
+            return FutureRenderingWidget(
+              trackData: TrackData.map,
+              interactive: true,
+            );
           },
         );
       },
@@ -79,7 +82,7 @@ class _InteractiveScaffoldState extends State<InteractiveScaffold> {
               bridge: backend,
               segment: track.segment,
               kinds: allkinds(),
-              trackData: TrackData.map,
+              trackData: [TrackData.map],
             ),
         child: _InteractiveConsumer(),
       ),

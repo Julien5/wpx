@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/log.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/svgelements.dart';
 import 'package:ui/src/widgets/interactive_svg_widget.dart';
 import 'package:ui/src/widgets/static_svg_widget.dart';
@@ -10,7 +11,12 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 class FutureRenderingWidget extends StatefulWidget {
   final bool interactive;
-  const FutureRenderingWidget({super.key, required this.interactive});
+  final RenderFunction trackData;
+  const FutureRenderingWidget({
+    super.key,
+    required this.trackData,
+    required this.interactive,
+  });
 
   @override
   State<FutureRenderingWidget> createState() => _FutureRenderingWidgetState();
@@ -23,7 +29,7 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
   Widget buildWorker(FutureRenderer future) {
     if (future.done()) {
       log("[render-parse-start:${future.trackData}]");
-      SvgRootElement svgRootElement = parseSvg(future.result());
+      SvgRootElement svgRootElement = parseSvg(future.result(widget.trackData));
       log("[render-parse-end:${future.trackData}]");
 
       if (!widget.interactive) {

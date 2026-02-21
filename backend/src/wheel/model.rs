@@ -134,7 +134,7 @@ impl WheelModel {
             outer_arcs: Vec::new(),
         }
     }
-    pub fn add_points(&mut self, segment: &SegmentData, kinds: Kinds) {
+    pub fn add_points(&mut self, segment: &SegmentData, kinds: &Kinds) {
         if kinds.contains(&Kind::Controls) {
             let controls = get_control_points(segment);
             (self.has_start_control, self.has_end_control) =

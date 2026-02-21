@@ -3,8 +3,8 @@ use std::collections::HashSet;
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::math::IntegerSize2D;
-use crate::parameters::Parameters;
-use crate::point_collection::{Kind, Kinds, RenderFunction, RenderResult, SharedPacketProvider};
+use crate::parameters::{Parameters, RenderFunction};
+use crate::point_collection::{Kind, Kinds, RenderResult, SharedPacketProvider};
 use crate::track::SharedTrack;
 use crate::{profile, svgmap};
 
@@ -238,9 +238,9 @@ mod tests {
         make_points,
         math::IntegerSize2D,
         osm,
-        parameters::{Parameters, ProfileIndication},
+        parameters::{Parameters, ProfileIndication, RenderFunction},
         point_collection::{
-            Kind, PacketProvider, PointCollection, RenderFunction, SharedPacketProvider,
+            Kind, PacketProvider, PointCollection, RenderResult, SharedPacketProvider,
         },
         profile,
         segment::{Segment, SegmentData},
@@ -341,6 +341,10 @@ mod tests {
                 &segment.parameters,
             ),
             &RenderFunction::Map => svgmap::map(&segment, &size, &collection.map()),
+            &RenderFunction::Wheel | &RenderFunction::WheelPages => {
+                assert!(false);
+                RenderResult::default()
+            }
         };
 
         println!("test {}", reffilename);

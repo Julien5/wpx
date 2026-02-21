@@ -4,7 +4,7 @@ use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
-use tracks::parameters::ControlSource;
+use tracks::parameters::{ControlSource, RenderFunction};
 use tracks::{point_collection, speed};
 
 /// Search for a pattern in a file and display the lines that contain it.
@@ -44,12 +44,11 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
     let _ = backend.load_osm().await;
     let mut svg = String::new();
     for _ in 1..30 {
-        svg = backend.render_segment_what(
+        svg = backend.render_segment_simple(
             &segment,
-            &"map".to_string(),
             &IntegerSize2D::new(2000, 1000),
-            //HashSet::from([OutputType::GPX]),
             point_collection::allkinds(),
+            RenderFunction::Map,
         );
     }
 
@@ -59,12 +58,11 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
     std::fs::write(&tmpfilename, svg.clone()).unwrap();
 
     for _ in 1..30 {
-        svg = backend.render_segment_what(
+        svg = backend.render_segment_simple(
             &segment,
-            &"profile".to_string(),
             &IntegerSize2D::new(2000, 400),
-            //HashSet::from([OutputType::GPX]),
             point_collection::allkinds(),
+            RenderFunction::Profile,
         );
     }
 
@@ -204,11 +202,11 @@ async fn main() -> anyhow::Result<()> {
             if enabled {
                 let track_segment = backend.trackSegment();
                 let size = IntegerSize2D::new(250, 250);
-                let svg = backend.render_segment_what(
+                let svg = backend.render_segment_simple(
                     &track_segment,
-                    &"wheel".to_string(),
                     &size,
                     point_collection::allkinds(),
+                    RenderFunction::Wheel,
                 );
                 let filename = std::format!("/tmp/wheel.svg");
                 std::fs::write(&filename, svg.clone()).unwrap();

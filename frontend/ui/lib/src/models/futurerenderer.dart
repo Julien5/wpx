@@ -6,17 +6,19 @@ import 'package:ui/src/log.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/utils.dart';
 
-enum TrackData { profile, yaxis, map, wheel, pages }
+typedef TrackData = bridge.RenderFunction;
 
 class FutureRenderer with ChangeNotifier {
   bridge.Segment _segment;
-  final TrackData trackData;
   final bridge.Bridge _backend;
-  Size? size;
+  final List<TrackData> trackData;
+
   final Set<bridge.Kind> kinds;
 
-  Future<String>? _future;
-  String? _result;
+  Future<List<bridge.RenderOutput>>? _future;
+
+  final Map<TrackData, Size?> _sizes = {};
+  final Map<TrackData, String?> _results = {};
   bool _disposed = false;
 
   FutureRenderer({
@@ -27,11 +29,6 @@ class FutureRenderer with ChangeNotifier {
   }) : _segment = segment,
        _backend = bridge {
     assert(_backend.isLoaded());
-  }
-
-  void setProfileIndications(List<bridge.ProfileIndication> indications) {
-    _backend.setProfileIndications(indications: indications);
-    restart();
   }
 
   @override
@@ -50,69 +47,35 @@ class FutureRenderer with ChangeNotifier {
     reset();
   }
 
-  Size getSize() {
+  Size getSize(TrackData d) {
     // this size is passed to the backend for rendering
-    assert(size != null);
-    return size!;
+    developer.log("wanted: $d has: ${_sizes.keys}");
+    assert(_sizes.containsKey(d));
+    assert(_sizes[d] != null);
+    return _sizes[d]!;
   }
 
   void start() {
     if (_disposed) {
       return;
     }
-    if (size == null) {
-      log("[render-request:$trackData] size is not set");
+    if (_sizes.length != trackData.length) {
+      log("[render-request] size is not set for all track data");
       return;
     }
     double length = _backend.segmentStatistics(segment: _segment).length / 1000;
     log("[render-request-start:$trackData] [length:$length]");
-    _result = null;
-    (int, int) sizeParameter = sizeAsTuple(makeFinite(getSize()));
-    if (trackData == TrackData.profile) {
-      _future = _backend.renderSegmentWhat(
-        segment: _segment,
-        what: "profile",
-        size: sizeParameter,
-        kinds: kinds,
+    _results.clear();
+
+    List<bridge.RenderInput> renderInputs = [];
+    for (TrackData d in trackData) {
+      (int, int) sizeParameter = sizeAsTuple(makeFinite(_sizes[d]!));
+      renderInputs.add(
+        bridge.RenderInput(kinds: kinds, function: d, size: sizeParameter),
       );
-    } else if (trackData == TrackData.map) {
-      _future = _backend.renderSegmentWhat(
-        segment: _segment,
-        what: "map",
-        size: sizeParameter,
-        kinds: kinds,
-      );
-    } else if (trackData == TrackData.yaxis) {
-      _future = _backend.renderSegmentWhat(
-        segment: _segment,
-        what: "ylabels",
-        size: sizeParameter,
-        kinds: kinds,
-      );
-    } else if (trackData == TrackData.wheel) {
-      log("[render-request-started:A]");
-      assert(_backend.isLoaded());
-      log("[render-request-started:B]");
-      _future = _backend.renderSegmentWhat(
-        segment: _segment,
-        what: "wheel",
-        size: sizeParameter,
-        kinds: kinds,
-      );
-    } else if (trackData == TrackData.pages) {
-      log("[render-request-started:A]");
-      assert(_backend.isLoaded());
-      log("[render-request-started:B]");
-      _future = _backend.renderSegmentWhat(
-        segment: _segment,
-        what: "wheel/pages",
-        size: sizeParameter,
-        kinds: kinds,
-      );
-      log("[render-request-started:C]");
     }
-    log("[render-request-started:$trackData]");
-    _future!.then((value) => onCompleted(value));
+    _future = _backend.renderSegment(segment: _segment, inputs: renderInputs);
+    _future!.then((values) => onCompleted(values));
   }
 
   String id() {
@@ -128,13 +91,15 @@ class FutureRenderer with ChangeNotifier {
     return !started() && !done();
   }
 
-  void onCompleted(String value) {
+  void onCompleted(List<bridge.RenderOutput> values) {
     if (_disposed) {
       developer.log("[renderer was disposed]");
       assert(_future == null);
       return;
     }
-    _result = value;
+    for (int k = 0; k < values.length; ++k) {
+      _results[trackData[k]] = values[k].svg;
+    }
     _future = null;
     log("[render-request-comleted:$trackData]");
     notifyListeners();
@@ -142,33 +107,33 @@ class FutureRenderer with ChangeNotifier {
 
   void reset() {
     _future = null;
-    _result = null;
+    _results.clear();
     notifyListeners();
   }
 
   void restart() {
     _future = null;
-    _result = null;
+    _results.clear();
     start();
   }
 
-  bool setSize(Size newSize) {
-    if (newSize == size) {
+  bool setSize(TrackData d, Size newSize) {
+    if (newSize == _sizes[d]) {
       return false;
     }
-    debugPrint("old size:$size new size:$newSize");
-    size = newSize;
+    debugPrint("old size:$_sizes new size:$newSize");
+    _sizes[d] = newSize;
     _future = null;
-    _result = null;
+    _results.clear();
     return true;
   }
 
   bool done() {
-    return _result != null;
+    return _results.length == trackData.length;
   }
 
-  String result() {
-    assert(_result != null);
-    return _result!;
+  String result(TrackData d) {
+    assert(done());
+    return _results[d]!;
   }
 }

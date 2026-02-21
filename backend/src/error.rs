@@ -24,21 +24,29 @@ pub enum TrackError {
     Unknown,
 }
 
+#[derive(Error, Debug, Clone)]
+pub enum RenderError {
+    #[error("An unknown error occurred")]
+    Unknown,
+}
+
 pub type GenericResult<T> = anyhow::Result<T>;
 
-pub fn from(e: anyhow::Error) -> TrackError {
-    if let Some(e) = e.downcast_ref::<TrackError>() {
-        return e.clone();
-    }
+impl TrackError {
+    pub fn from(e: anyhow::Error) -> TrackError {
+        if let Some(e) = e.downcast_ref::<TrackError>() {
+            return e.clone();
+        }
 
-    if let Some(_) = e.downcast_ref::<reqwest::Error>() {
-        return TrackError::OSMDownloadFailed;
-    }
+        if let Some(_) = e.downcast_ref::<reqwest::Error>() {
+            return TrackError::OSMDownloadFailed;
+        }
 
-    if let Some(_) = e.downcast_ref::<std::io::Error>() {
-        return TrackError::GPXNotFound;
-    }
+        if let Some(_) = e.downcast_ref::<std::io::Error>() {
+            return TrackError::GPXNotFound;
+        }
 
-    // 3. Fallback for everything else
-    return TrackError::Unknown;
+        // 3. Fallback for everything else
+        return TrackError::Unknown;
+    }
 }

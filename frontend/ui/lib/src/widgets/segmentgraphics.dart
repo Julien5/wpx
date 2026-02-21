@@ -9,8 +9,8 @@ import 'package:ui/src/widgets/simpletrackview.dart';
 
 class _SegmentGraphicsButtons extends StatelessWidget {
   final VoidCallback? onPressed;
-  final TrackData trackData;
-  final TrackData selected;
+  final RenderFunction trackData;
+  final RenderFunction selected;
   final double size;
   const _SegmentGraphicsButtons({
     required this.selected,
@@ -27,7 +27,7 @@ class _SegmentGraphicsButtons extends StatelessWidget {
       filename = 'assets/icons/png/profile.png';
     } else if (data == TrackData.map) {
       filename = 'assets/icons/png/map.png';
-    } else if (data == TrackData.pages) {
+    } else if (data == TrackData.wheelPages) {
       filename = 'assets/icons/png/clock.png';
     } else {
       assert(false, "no icon for $data");

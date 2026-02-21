@@ -14,6 +14,9 @@ use crate::parameters;
 use crate::parameters::ControlSource;
 use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
+use crate::parameters::RenderFunction;
+use crate::parameters::RenderInput;
+use crate::parameters::RenderOutput;
 use crate::parameters::UserStepsOptions;
 use crate::pdf;
 use crate::point_collection::Kind;
@@ -88,7 +91,7 @@ impl Backend {
             }
             Err(e) => {
                 log::error!("OSM download failed {}", e);
-                return Err(error::from(e));
+                return Err(error::TrackError::from(e));
             }
         };
 
@@ -355,59 +358,72 @@ impl Backend {
         Segment { id: 0, start, end }
     }
 
-    pub fn render_segment_what(
+    pub fn render_segment_simple(
         &self,
         segment: &Segment,
-        what: &str,
         size: &IntegerSize2D,
         kinds: Kinds,
+        function: RenderFunction,
     ) -> String {
-        log::info!(
-            "start - render_segment_what:{} {} size:{}x{}",
-            segment.id,
-            what,
-            size.width,
-            size.height
-        );
-        let data = self.make_segment_data(segment);
-        data.preload(size);
-
-        let ret = match what {
-            "profile" => {
-                let result = data.render_profile(size, &kinds);
-                result.svg
-            }
-            "map" => {
-                let result = data.render_map(size, &kinds);
-                result.svg
-            }
-            "wheel" => {
-                let time_parameters = wheel::model::TimeParameters {
-                    start: parameters::parse_time(&self.d().parameters.start_time),
-                    speed: self.d().parameters.speed,
-                    total_distance: self.d().track.total_distance(),
-                };
-                let mut model = wheel::model::WheelModel::new(&time_parameters);
-                model.add_points(&data, kinds);
-                wheel::render(size, &model)
-            }
-            "wheel/pages" => {
-                let time_parameters = wheel::model::TimeParameters {
-                    start: parameters::parse_time(&self.d().parameters.start_time),
-                    speed: self.d().parameters.speed,
-                    total_distance: self.d().track.total_distance(),
-                };
-                let mut model = wheel::model::WheelModel::new(&time_parameters);
-                model.add_points(&data, kinds);
-                model.add_pages(&self.segments());
-                wheel::render(size, &model)
-            }
-            _ => {
-                assert!(false);
-                String::new()
-            }
+        let input = RenderInput {
+            kinds,
+            function,
+            size: (size.width, size.height),
         };
-        log::info!("done - render_segment_what:{} {}", segment.id, what);
+        self.render_segment(segment, &vec![input]).remove(0).svg
+    }
+
+    pub fn render_segment(
+        &self,
+        segment: &Segment,
+        parameterlist: &Vec<RenderInput>,
+    ) -> Vec<RenderOutput> {
+        let data = self.make_segment_data(segment);
+        let mut ret = Vec::new();
+        for parameters in parameterlist {
+            let size = IntegerSize2D::new(parameters.size.0, parameters.size.1);
+            data.preload(&size);
+            let retf = match parameters.function {
+                RenderFunction::Profile => {
+                    let result = data.render_profile(&size, &parameters.kinds);
+                    result.svg
+                }
+                RenderFunction::Map => {
+                    let result = data.render_map(&size, &parameters.kinds);
+                    result.svg
+                }
+                RenderFunction::Wheel => {
+                    let time_parameters = wheel::model::TimeParameters {
+                        start: parameters::parse_time(&self.d().parameters.start_time),
+                        speed: self.d().parameters.speed,
+                        total_distance: self.d().track.total_distance(),
+                    };
+                    let mut model = wheel::model::WheelModel::new(&time_parameters);
+                    model.add_points(&data, &parameters.kinds);
+                    wheel::render(&size, &model)
+                }
+                RenderFunction::WheelPages => {
+                    let time_parameters = wheel::model::TimeParameters {
+                        start: parameters::parse_time(&self.d().parameters.start_time),
+                        speed: self.d().parameters.speed,
+                        total_distance: self.d().track.total_distance(),
+                    };
+                    let mut model = wheel::model::WheelModel::new(&time_parameters);
+                    model.add_points(&data, &parameters.kinds);
+                    model.add_pages(&self.segments());
+                    wheel::render(&size, &model)
+                }
+            };
+            log::info!(
+                "done - render_segment_what:{} {:?}",
+                segment.id,
+                parameters.function
+            );
+            ret.push(RenderOutput {
+                svg: retf,
+                error: None,
+            });
+        }
         ret
     }
 
@@ -417,7 +433,7 @@ impl Backend {
         map_size: &IntegerSize2D,
         profile_size: &IntegerSize2D,
         kinds: Kinds,
-    ) -> (String, String) {
+    ) -> Vec<String> {
         log::info!(
             "start - render_segment_profile_map:{} map_size:{}x{} profile_size:{}x{}",
             segment.id,
@@ -430,7 +446,7 @@ impl Backend {
         data.preload(map_size);
         data.preload(profile_size);
         let (result_map, result_profile) = data.render_map_profile(map_size, profile_size, &kinds);
-        (result_map.svg, result_profile.svg)
+        vec![result_map.svg, result_profile.svg]
     }
 
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
@@ -461,7 +477,7 @@ mod tests {
     use crate::{
         backend::Backend,
         math::IntegerSize2D,
-        parameters::{self, ControlSource, ProfileIndication},
+        parameters::{self, ControlSource, ProfileIndication, RenderFunction},
         point_collection::{self, Kind},
         wheel,
     };
@@ -498,11 +514,11 @@ mod tests {
         let mut ok_count = 0;
         let profile_size = IntegerSize2D::new(1420, 400);
         for segment in &segments {
-            let result = backend.render_segment_what(
+            let result = backend.render_segment_simple(
                 &segment,
-                "profile",
                 &profile_size,
                 point_collection::allkinds(),
+                RenderFunction::Profile,
             );
 
             let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
@@ -550,7 +566,7 @@ mod tests {
         };
         let mut model = wheel::model::WheelModel::new(&time_parameters);
         model.add_pages(&segments);
-        model.add_points(&sgdata, point_collection::allkinds());
+        model.add_points(&sgdata, &point_collection::allkinds());
         let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
 
         let tmpfilename = std::format!("/tmp/segment-wheel.svg");
@@ -590,8 +606,12 @@ mod tests {
 
         let segment = &backend.trackSegment();
         let map_size = IntegerSize2D::new(800, 800);
-        let result =
-            backend.render_segment_what(&segment, "map", &map_size, point_collection::allkinds());
+        let result = backend.render_segment_simple(
+            &segment,
+            &map_size,
+            point_collection::allkinds(),
+            RenderFunction::Map,
+        );
         let reffilename = std::format!("data/ref/largemap.svg");
         println!("test {}", reffilename);
         let refdata = if std::fs::exists(&reffilename).unwrap() {
@@ -622,11 +642,11 @@ mod tests {
 
         let mut ok_count = 0;
         for (_idx, segment) in segments.iter().enumerate() {
-            let result = backend.render_segment_what(
+            let result = backend.render_segment_simple(
                 &segment,
-                "map",
                 &map_size,
                 point_collection::allkinds(),
+                RenderFunction::Map,
             );
 
             let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
