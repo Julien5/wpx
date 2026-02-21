@@ -35,6 +35,8 @@ impl PartialEq for InputPoint {
     }
 }
 
+impl Eq for InputPoint {}
+
 fn read<T: FromStr>(data: Option<&String>) -> Option<T> {
     data.and_then(|text| text.parse().ok())
 }

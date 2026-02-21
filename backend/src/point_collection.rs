@@ -36,15 +36,15 @@ impl RenderInputParameters {
         /*if self.range == other.range {
             return String::new();
         }*/
-        if self.screen_size.width < other.screen_size.width {
+        if self.screen_size.width != other.screen_size.width {
             return format!(
-                "screen size width ({}<{})",
+                "screen size width ({} != {})",
                 self.screen_size.width, other.screen_size.width
             );
         }
-        if self.screen_size.height < other.screen_size.height {
+        if self.screen_size.height != other.screen_size.height {
             return format!(
-                "screen size height ({}<{})",
+                "screen size height ({} != {})",
                 self.screen_size.height, other.screen_size.height
             );
         }
@@ -341,6 +341,28 @@ impl PointCollection {
             assert!(points.first().unwrap().kind() == *kind);
         }
         self.set_vector(points);
+    }
+
+    pub fn intersect(&mut self, other: &Self) {
+        let mut map = BTreeMap::new();
+        for k in self.map.keys() {
+            if !other.map.contains_key(&k) {
+                continue;
+            }
+            let v1 = self.map.get(&k).unwrap();
+            let v2 = other.map.get(&k).unwrap();
+            let intersection: Vec<_> = v1
+                .into_iter()
+                .filter(|x| v2.contains(x))
+                .map(|v| v.clone())
+                .collect();
+            map.insert(k.clone(), intersection);
+        }
+        self.map = map;
+        sort_by_elevation(&mut self.map.get_mut(&Kind::Mountains).unwrap());
+        sort_by_population(&mut self.map.get_mut(&Kind::Cities).unwrap());
+        sort_by_population(&mut self.map.get_mut(&Kind::Villages).unwrap());
+        sort_by_population(&mut self.map.get_mut(&Kind::Hamlets).unwrap());
     }
 
     fn ontrack_cities(&self) -> Vec<InputPoint> {

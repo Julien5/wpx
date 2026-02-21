@@ -176,6 +176,56 @@ impl SegmentData {
         }
         ret
     }
+
+    pub fn render_map_profile(
+        &self,
+        map_size: &IntegerSize2D,
+        profile_size: &IntegerSize2D,
+        kinds: &Kinds,
+    ) -> (RenderResult, RenderResult) {
+        log::info!("render map_profile:{} kinds:{:?}", self.id(), kinds);
+        let (map_ret, profile_ret) = {
+            let lock = self.packet_provider.read().unwrap();
+
+            let mut map_collection = lock.load(
+                &RenderFunction::Map,
+                &self.range(),
+                &self.parameters,
+                map_size,
+            );
+            map_collection.kinds_cut(kinds);
+            map_collection.range_cut(&self.range());
+
+            let mut profile_collection = lock.load(
+                &RenderFunction::Profile,
+                &self.range(),
+                &self.parameters,
+                profile_size,
+            );
+            profile_collection.kinds_cut(kinds);
+            profile_collection.range_cut(&self.range());
+
+            let mut intersection = map_collection.clone();
+            intersection.intersect(&profile_collection);
+            (
+                svgmap::map(&self, map_size, &intersection.map()),
+                profile::profile(
+                    &self.segment,
+                    profile_size,
+                    &self.track,
+                    &intersection.profile(),
+                    &self.parameters,
+                ),
+            )
+        };
+        if self.parameters.debug {
+            let filename = std::format!("/tmp/profile-{}.svg", self.id());
+            std::fs::write(filename, &profile_ret.svg).expect("Unable to write file");
+            let filename = std::format!("/tmp/map-{}.svg", self.id());
+            std::fs::write(filename, &map_ret.svg).expect("Unable to write file");
+        }
+        (map_ret, profile_ret)
+    }
 }
 
 #[cfg(test)]

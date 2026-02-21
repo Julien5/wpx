@@ -411,6 +411,28 @@ impl Backend {
         ret
     }
 
+    pub fn render_segment_map_profile(
+        &self,
+        segment: &Segment,
+        map_size: &IntegerSize2D,
+        profile_size: &IntegerSize2D,
+        kinds: Kinds,
+    ) -> (String, String) {
+        log::info!(
+            "start - render_segment_profile_map:{} map_size:{}x{} profile_size:{}x{}",
+            segment.id,
+            map_size.width,
+            map_size.height,
+            profile_size.width,
+            profile_size.height
+        );
+        let data = self.make_segment_data(segment);
+        data.preload(map_size);
+        data.preload(profile_size);
+        let (result_map, result_profile) = data.render_map_profile(map_size, profile_size, &kinds);
+        (result_map.svg, result_profile.svg)
+    }
+
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
         let range = self.d().track.subrange(segment.start, segment.end);
         assert!(range.end > 0);
