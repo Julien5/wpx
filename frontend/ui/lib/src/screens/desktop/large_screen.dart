@@ -5,7 +5,7 @@ import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/trackview.dart';
+import 'package:ui/src/widgets/simpletrackview.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
 class GraphicsPadding extends StatelessWidget {
@@ -59,7 +59,7 @@ class _LargeScaffold extends StatelessWidget {
         //Expanded(child: Container(color: Colors.blue)),
         Expanded(
           child: GraphicsPadding(
-            child: TrackView.make(allkinds(), TrackData.map),
+            child: SimpleTrackView.make(allkinds(), TrackData.map),
           ),
         ),
       ],
@@ -69,7 +69,7 @@ class _LargeScaffold extends StatelessWidget {
       ConstrainedBox(
         constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
         child: ProfilePadding(
-          child: TrackView.make(allkinds(), TrackData.profile),
+          child: SimpleTrackView.make(allkinds(), TrackData.profile),
         ),
       ),
       Expanded(child: mwrow),

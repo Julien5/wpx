@@ -21,17 +21,7 @@ class RendererParameters {
 }
 
 class TrackView extends StatefulWidget {
-  final RendererParameters parameters;
-  const TrackView({super.key, required this.parameters});
-
-  static TrackView make(Set<Kind> kinds, TrackData trackData) {
-    developer.log("[TrackView make] $trackData");
-    RendererParameters p = RendererParameters(
-      kinds: kinds,
-      trackData: trackData,
-    );
-    return TrackView(parameters: p);
-  }
+  const TrackView({super.key});
 
   @override
   State<TrackView> createState() => _TrackViewState();
@@ -39,7 +29,6 @@ class TrackView extends StatefulWidget {
 
 class _TrackViewState extends State<TrackView> {
   VisibilityInfo? visibilityInfo;
-  FutureRenderer? futureRenderer;
   late final Key _visibilityKey;
   Timer? _debounce;
 
@@ -47,17 +36,6 @@ class _TrackViewState extends State<TrackView> {
   void initState() {
     super.initState();
     _visibilityKey = UniqueKey();
-  }
-
-  // The argument type is BuildContext, but using it yields
-  // a crash. Dont ask me why.
-  FutureRenderer _createRenderer(_) {
-    SegmentModel model = Provider.of<SegmentModel>(context);
-    futureRenderer = model.makeRenderer(
-      widget.parameters.kinds,
-      widget.parameters.trackData,
-    );
-    return futureRenderer!;
   }
 
   FutureRenderer _onSegmentModelChanged(
@@ -81,10 +59,11 @@ class _TrackViewState extends State<TrackView> {
     if (visibilityInfo!.visibleFraction == 0) {
       return;
     }
-    if (futureRenderer == null) {
-      return;
-    }
 
+    FutureRenderer futureRenderer = Provider.of<FutureRenderer>(
+      context,
+      listen: false,
+    );
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 150), () {
       if (visibilityInfo == null) {
@@ -94,7 +73,7 @@ class _TrackViewState extends State<TrackView> {
         return;
       }
       Size size = visibilityInfo!.size;
-      TrackData currentData = futureRenderer!.trackData;
+      TrackData currentData = futureRenderer.trackData;
       ScreenConfiguration screen = Provider.of<ScreenConfiguration>(
         context,
         listen: false,
@@ -104,29 +83,31 @@ class _TrackViewState extends State<TrackView> {
           size = size * 1.5;
         }
       }
-      futureRenderer!.setSize(size);
+      futureRenderer.setSize(size);
       startRendererIfNeeded();
     });
   }
 
   // takes visibility and renderer dirtyness into account.
   void startRendererIfNeeded() {
-    if (futureRenderer == null) {
-      return;
-    }
+    FutureRenderer futureRenderer = Provider.of<FutureRenderer>(
+      context,
+      listen: false,
+    );
+
     bool needed =
         visibilityInfo != null &&
         visibilityInfo!.visibleFraction > 0 &&
-        futureRenderer!.needsStart();
+        futureRenderer.needsStart();
     debugPrint("1:${visibilityInfo != null}");
     if (visibilityInfo != null) {
       debugPrint(
-        "2:${visibilityInfo!.visibleFraction > 0} and 3:${futureRenderer!.needsStart()}",
+        "2:${visibilityInfo!.visibleFraction > 0} and 3:${futureRenderer.needsStart()}",
       );
     }
-    debugPrint("3:${futureRenderer!.needsStart()}");
+    debugPrint("3:${futureRenderer.needsStart()}");
     if (needed) {
-      futureRenderer!.start();
+      futureRenderer.start();
       // this assert fails, sometimes, when the screen is resized quickly
       // assert(!futureRenderer!.needsStart());
     }
@@ -156,13 +137,16 @@ class _TrackViewState extends State<TrackView> {
           ParameterModel,
           FutureRenderer
         >(
-          create: _createRenderer,
+          create: (context) => context.read<FutureRenderer>(),
           update: (context, segment, parameter, futureRenderer) {
             developer.log(
               "[update => segment:${segment.segment.id()} ${futureRenderer!.kinds} ${futureRenderer.trackData}]",
             );
             segment.debug();
-            return _onSegmentModelChanged(segment, futureRenderer);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _onSegmentModelChanged(segment, futureRenderer);
+            });
+            return futureRenderer;
           },
         ),
       ],

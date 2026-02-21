@@ -37,8 +37,11 @@ class FutureRenderer with ChangeNotifier {
   @override
   void dispose() {
     developer.log("[renderer dispose]");
-    _disposed = true;
     _future = null; // Clear the future reference
+    if (_disposed) {
+      return;
+    }
+    _disposed = true;
     super.dispose();
   }
 

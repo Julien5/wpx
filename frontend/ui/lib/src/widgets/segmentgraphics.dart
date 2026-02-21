@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/trackview.dart';
+import 'package:ui/src/widgets/simpletrackview.dart';
 
 class _SegmentGraphicsButtons extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -121,7 +121,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
   @override
   bool get wantKeepAlive => true;
 
-  Map<TrackData, TrackView> widgets = {};
+  Map<TrackData, SimpleTrackView> widgets = {};
 
   @override
   void didChangeDependencies() {
@@ -135,7 +135,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
       listen: false,
     );
     for (TrackData data in model.exposed) {
-      widgets[data] = TrackView.make(widget.kinds, data);
+      widgets[data] = SimpleTrackView.make(widget.kinds, data);
     }
     setState(() {});
   }
