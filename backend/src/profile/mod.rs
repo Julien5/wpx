@@ -458,9 +458,11 @@ impl ProfileView {
         }*/
 
         let mut polyline_points = PolylinePoints::new();
+        // make sure to cover the whole bbounding box.
+        // => start before, end after
         let range = std::ops::Range {
-            start: track.index_after(bbox.get_xmin()),
-            end: track.index_before(bbox.get_xmax()),
+            start: track.index_before(bbox.get_xmin()),
+            end: track.index_after(bbox.get_xmax()),
         };
         for k in &track.simplified.dz {
             if range.contains(&k) {
