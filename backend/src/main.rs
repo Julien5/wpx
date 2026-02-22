@@ -34,8 +34,28 @@ struct Cli {
     render_wheel: Option<bool>,
     #[arg(long, value_name = "main-test")]
     main_test: Option<bool>,
+    #[arg(long, value_name = "render-graph")]
+    render_graph: Option<bool>,
     #[arg(value_name = "gpx")]
     filename: std::path::PathBuf,
+}
+
+async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
+    let segment = backend.trackSegment();
+    let _ = backend.load_osm().await;
+    let map_size = IntegerSize2D::new(839, 349);
+    let profile_size = IntegerSize2D::new(864, 255);
+    let ret = backend.render_segment_map_profile(
+        &segment,
+        &map_size,
+        &profile_size,
+        point_collection::allkinds(),
+    );
+    let tmpfilename = std::format!("/tmp/rendergraph-map.svg");
+    std::fs::write(&tmpfilename, ret[0].svg.clone()).unwrap();
+    let tmpfilename = std::format!("/tmp/rendergraph-profile.svg");
+    std::fs::write(&tmpfilename, ret[1].svg.clone()).unwrap();
+    Ok(())
 }
 
 async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
@@ -192,6 +212,15 @@ async fn main() -> anyhow::Result<()> {
         Some(enabled) => {
             if enabled {
                 return main_test(&mut backend).await;
+            }
+        }
+        _ => {}
+    }
+
+    match args.render_graph {
+        Some(enabled) => {
+            if enabled {
+                return render_graph(&mut backend).await;
             }
         }
         _ => {}

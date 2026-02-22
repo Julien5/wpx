@@ -99,6 +99,14 @@ function main-test() {
 	cargo flamegraph --no-inline -- --main-test true --output-directory /tmp/wpx/ --debug true --step-elevation-gain 500 --profile-max-area-ratio 0.05 --map-max-area-ratio 0.07 data/ref/pbp2023.gpx 
 }
 
+function render-graph() {
+	rm -Rf /tmp/*.svg /tmp/wpx
+	export RUST_LOG=trace
+	export RUST_BACKTRACE=1
+	cargo run -- --render-graph true --output-directory /tmp/wpx/ --debug true  data/ref/roland.gpx 
+}
+
+
 function render-wheel() {
 	export RUST_LOG=trace
 	export RUST_BACKTRACE=1
@@ -118,6 +126,10 @@ function main() {
 		elif [ $1 = "main-test" ]; then
 			shift 
 			main-test "$@"
+			return;
+		elif [ $1 = "render-graph" ]; then
+			shift 
+			render-graph "$@"
 			return;
 		elif [ $1 = "pdf" ]; then
 			shift 
