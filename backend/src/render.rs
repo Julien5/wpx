@@ -151,16 +151,16 @@ pub fn make_typst_document(backend: &Backend) -> String {
         let [rendered_map, rendered_profile]: [_; 2] = both.try_into().unwrap();
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id());
-            std::fs::write(&f, &rendered_profile).unwrap();
+            std::fs::write(&f, &rendered_profile.svg).unwrap();
         }
         if debug {
             let f = format!("/tmp/map-{}.svg", segment.id());
-            std::fs::write(&f, &rendered_map).unwrap();
+            std::fs::write(&f, &rendered_map.svg).unwrap();
         }
         link(
             &templates,
-            &rendered_profile,
-            &rendered_map,
+            &rendered_profile.svg,
+            &rendered_map.svg,
             &table,
             &mut document,
         );

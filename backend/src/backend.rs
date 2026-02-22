@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use std::collections::BTreeMap;
+
 use crate::controls;
 use crate::error;
 use crate::error::TrackError;
@@ -378,6 +380,30 @@ impl Backend {
         segment: &Segment,
         parameterlist: &Vec<RenderInput>,
     ) -> Vec<RenderOutput> {
+        if parameterlist.len() == 2 {
+            let sizes: BTreeMap<_, _> = parameterlist
+                .iter()
+                .map(|input| (input.function.clone(), input.size))
+                .collect();
+            let kinds = parameterlist.first().unwrap().kinds.clone();
+            match (
+                sizes.get(&RenderFunction::Map),
+                sizes.get(&RenderFunction::Profile),
+            ) {
+                (Some(msize), Some(psize)) => {
+                    let map_size = IntegerSize2D::new(msize.0, msize.1);
+                    let profile_size = IntegerSize2D::new(psize.0, psize.1);
+                    return self.render_segment_map_profile(
+                        segment,
+                        &map_size,
+                        &profile_size,
+                        kinds,
+                    );
+                }
+                _ => {}
+            }
+        }
+
         let data = self.make_segment_data(segment);
         let mut ret = Vec::new();
         for parameters in parameterlist {
@@ -433,7 +459,7 @@ impl Backend {
         map_size: &IntegerSize2D,
         profile_size: &IntegerSize2D,
         kinds: Kinds,
-    ) -> Vec<String> {
+    ) -> Vec<RenderOutput> {
         log::info!(
             "start - render_segment_profile_map:{} map_size:{}x{} profile_size:{}x{}",
             segment.id,
@@ -446,7 +472,15 @@ impl Backend {
         data.preload(map_size);
         data.preload(profile_size);
         let (result_map, result_profile) = data.render_map_profile(map_size, profile_size, &kinds);
-        vec![result_map.svg, result_profile.svg]
+        let mut ret = Vec::new();
+        ret.push(result_map);
+        ret.push(result_profile);
+        ret.iter()
+            .map(|result| RenderOutput {
+                svg: result.svg.clone(),
+                error: None,
+            })
+            .collect()
     }
 
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {

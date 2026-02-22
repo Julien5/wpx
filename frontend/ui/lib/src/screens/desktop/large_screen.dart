@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/simpletrackview.dart';
+import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
 class GraphicsPadding extends StatelessWidget {
@@ -58,7 +59,12 @@ class _LargeScaffold extends StatelessWidget {
         //Expanded(child: Container(color: Colors.blue)),
         Expanded(
           child: GraphicsPadding(
-            child: SimpleTrackView.make(allkinds(), RenderFunction.map),
+            child: TrackView(
+              rendererParameters: RendererParameters(
+                kinds: allkinds(),
+                trackData: TrackData.map,
+              ),
+            ),
           ),
         ),
       ],
@@ -68,7 +74,12 @@ class _LargeScaffold extends StatelessWidget {
       ConstrainedBox(
         constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
         child: ProfilePadding(
-          child: SimpleTrackView.make(allkinds(), RenderFunction.profile),
+          child: TrackView(
+            rendererParameters: RendererParameters(
+              kinds: allkinds(),
+              trackData: TrackData.profile,
+            ),
+          ),
         ),
       ),
       Expanded(child: mwrow),
@@ -98,15 +109,31 @@ class _LargeScaffold extends StatelessWidget {
 }
 
 class _LargeScreenProviders extends MultiProvider {
-  _LargeScreenProviders({required Widget child})
-    : super(
-        providers: [
-          ChangeNotifierProvider(
-            create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
-          ),
-        ],
-        child: child,
-      );
+  final SegmentModel segmentModel;
+  final List<TrackData> trackData;
+  final Kinds kinds;
+  _LargeScreenProviders({
+    required this.segmentModel,
+    required this.trackData,
+    required this.kinds,
+    required Widget child,
+  }) : super(
+         providers: [
+           ChangeNotifierProvider(
+             create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
+           ),
+           ChangeNotifierProvider(
+             create:
+                 (_) => FutureRenderer(
+                   bridge: segmentModel.backend,
+                   segment: segmentModel.segment,
+                   trackData: trackData,
+                   kinds: kinds,
+                 ),
+           ),
+         ],
+         child: child,
+       );
 }
 
 class LargeScreen extends StatelessWidget {
@@ -114,7 +141,13 @@ class LargeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SegmentModel segmentModel = Provider.of<SegmentModel>(context);
     context.watch<SegmentModel>();
-    return _LargeScreenProviders(child: _LargeScaffold());
+    return _LargeScreenProviders(
+      segmentModel: segmentModel,
+      trackData: [TrackData.map, TrackData.profile],
+      kinds: allkinds(),
+      child: _LargeScaffold(),
+    );
   }
 }

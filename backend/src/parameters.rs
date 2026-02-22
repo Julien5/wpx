@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use crate::{error::RenderError, mercator::DateTime, point_collection::Kind, speed};
 
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 pub enum RenderFunction {
     Map,
     Profile,
