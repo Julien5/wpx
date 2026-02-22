@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::math::IntegerSize2D;
@@ -86,8 +84,6 @@ impl SegmentData {
     }
 
     pub fn preload(&self, size: &IntegerSize2D) {
-        let osmkinds =
-            HashSet::from([Kind::Cities, Kind::Villages, Kind::Mountains, Kind::Hamlets]);
         let mut parameters = Parameters::default();
         parameters.profile_options.max_area_ratio = parameters
             .profile_options
@@ -110,11 +106,9 @@ impl SegmentData {
         let collection = {
             let lock = self.packet_provider.read().unwrap();
             let mut coll = lock.collection.clone();
-            // remove user steps and controls, we render only osm
-            coll.import_other(&Kind::UserStep, Vec::new());
-            coll.import_other(&Kind::Controls, Vec::new());
+            // remove user steps which do no occupy space
+            // note: removing controls create inconsisencies (map/profile joint rendering)
             coll.range_cut(&self.range());
-            coll.kinds_cut(&osmkinds);
             coll
         };
 
@@ -195,6 +189,8 @@ impl SegmentData {
             );
             map_collection.kinds_cut(kinds);
             map_collection.range_cut(&self.range());
+            log::trace!("map collection");
+            map_collection.debug();
 
             let mut profile_collection = lock.load(
                 &RenderFunction::Profile,
@@ -204,9 +200,15 @@ impl SegmentData {
             );
             profile_collection.kinds_cut(kinds);
             profile_collection.range_cut(&self.range());
+            log::trace!("profile collection");
+            profile_collection.debug();
 
             let mut intersection = map_collection.clone();
             intersection.intersect(&profile_collection);
+
+            log::trace!("intersection");
+            intersection.debug();
+
             (
                 svgmap::map(&self, map_size, &intersection.map()),
                 profile::profile(

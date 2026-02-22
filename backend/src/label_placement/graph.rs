@@ -186,8 +186,10 @@ impl Graph {
         let center = nodedata.feature.center();
         let bboxcenter = selected.bbox().absolute().center();
         let mut selected_large = selected.bbox().absolute().clone();
-        let aux = Point2D::point_on_segment_from_end(&bboxcenter, &center, 5f64);
-        selected_large.update(&aux);
+        if !selected.is_external() {
+            let aux = Point2D::point_on_segment_from_end(&bboxcenter, &center, 5f64);
+            selected_large.update(&aux);
+        }
         for b in neighbors {
             let neighbors_candidates = &mut self.nodes[b].candidates;
             // remove candidates that intersect with the selected candidate
@@ -402,14 +404,10 @@ mod tests {
     use super::*;
 
     fn make_candidate(x: i32, y: i32, w: i32, h: i32) -> Candidate {
-        Candidate::new(
-            &LabelBoundingBox::new_absolute(
-                &BoundingBox::minsize(Point2D::new(x as f64, y as f64), w as f64, h as f64),
-                &Point2D::zero(),
-            ),
-            &0.0,
-            &0.0,
-        )
+        Candidate::new(&LabelBoundingBox::new_absolute(
+            &BoundingBox::minsize(Point2D::new(x as f64, y as f64), w as f64, h as f64),
+            &Point2D::zero(),
+        ))
     }
 
     #[test]

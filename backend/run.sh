@@ -103,7 +103,8 @@ function render-graph() {
 	rm -Rf /tmp/*.svg /tmp/wpx
 	export RUST_LOG=trace
 	export RUST_BACKTRACE=1
-	cargo run -- --render-graph true --output-directory /tmp/wpx/ --debug true  data/ref/roland.gpx 
+	cargo run -- --render-graph true --output-directory /tmp/wpx/ --debug true \
+		   data/ref/roland.gpx 
 }
 
 

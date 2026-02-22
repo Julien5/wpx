@@ -30,14 +30,11 @@ struct RenderInputParameters {
     parameters: Parameters,
     range: std::ops::Range<usize>,
     screen_size: IntegerSize2D,
+    controls: Vec<InputPoint>,
 }
 
 impl RenderInputParameters {
     pub fn missmatch(&self, other: &Self, function: &RenderFunction) -> String {
-        // test
-        /*if self.range == other.range {
-            return String::new();
-        }*/
         if self.screen_size.width != other.screen_size.width {
             return format!(
                 "screen size width ({} != {})",
@@ -49,6 +46,9 @@ impl RenderInputParameters {
                 "screen size height ({} != {})",
                 self.screen_size.height, other.screen_size.height
             );
+        }
+        if self.controls != other.controls {
+            return format!("controls have changed");
         }
         match function {
             RenderFunction::Map => {
@@ -176,10 +176,13 @@ impl PacketProvider {
         size: &IntegerSize2D,
         result: &RenderResult,
     ) {
+        // note: controls are the current controls in the collection,
+        // not those rendered (result.rendered)
         let p = RenderInputParameters {
             range: range.clone(),
             screen_size: size.clone(),
             parameters: parameters.clone(),
+            controls: self.collection.get_vector(&Kind::Controls).clone(),
         };
         let mut output = result.clone();
         output.rendered.retain(|w| w.kind() != Kind::UserStep);
@@ -204,6 +207,7 @@ impl PacketProvider {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
+            controls: self.collection.get_vector(&Kind::Controls).clone(),
         };
         self.results.hit(function, &p).is_some()
     }
@@ -219,6 +223,7 @@ impl PacketProvider {
             range: range.clone(),
             parameters: parameters.clone(),
             screen_size: size.clone(),
+            controls: self.collection.get_vector(&Kind::Controls).clone(),
         };
         match self.results.hit(function, &p) {
             Some(result) => {
@@ -285,6 +290,24 @@ impl PointCollection {
         }
     }
 
+    pub fn debug(&self) {
+        let nleut = self
+            .map
+            .get(&Kind::Controls)
+            .as_ref()
+            .unwrap()
+            .iter()
+            .map(|p| {
+                if p.name().contains("K2") {
+                    1usize
+                } else {
+                    0usize
+                }
+            })
+            .sum::<usize>();
+        log::trace!("nleut={}", nleut);
+    }
+
     fn push(&mut self, point: InputPoint) {
         let otype = point.kind();
         self.map.entry(otype).or_default().push(point);
@@ -321,6 +344,9 @@ impl PointCollection {
 
         for k in 0..points.len() {
             let wi = points[k].clone();
+            if !is_osm(&wi.kind()) {
+                continue;
+            }
             // insert also offtrack cities
             if wi.kind() == Kind::Cities || is_close_to_track(&wi) {
                 self.push(wi);

@@ -21,7 +21,7 @@ use graph::Graph;
 use std::collections::BTreeMap;
 
 pub trait CandidatesGenerator {
-    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox>;
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate>;
 }
 
 fn build_graph(
@@ -99,7 +99,7 @@ fn place_quick_best_candidates(
         let feature = &features.points[k];
         let cboxes = cardinal_boxes(&feature.center(), feature.width(), feature.height());
         let first = cboxes.first().unwrap();
-        let candidate = Candidate::new(first, &1f64, &1f64);
+        let candidate = Candidate::new(first);
         if available < candidate.bbox().area() {
             break;
         }

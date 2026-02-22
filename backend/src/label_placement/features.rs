@@ -291,34 +291,11 @@ impl PointDistance for PointFeature {
 
 pub struct PointFeatures {
     pub points: Vec<PointFeature>,
-    tree: RTree<PointFeature>,
 }
 
 impl PointFeatures {
     pub fn make(points: Vec<PointFeature>) -> PointFeatures {
-        let tree = RTree::bulk_load(points.clone());
-        PointFeatures { points, tree }
-    }
-
-    /*pub fn nearest_neighbor_excluding_self<'a>(
-        &'a self,
-        target: &PointFeature,
-    ) -> Option<&'a PointFeature> {
-        self.tree
-            .nearest_neighbor_iter(&[target.center().x, target.center().y])
-            .filter(|&p| p.id != target.id)
-            .next()
-    }*/
-
-    pub fn nearest_neighbors<'a>(
-        &'a self,
-        point: &Point2D,
-        n: usize,
-    ) -> Vec<(&'a PointFeature, f64)> {
-        self.tree
-            .nearest_neighbor_iter_with_distance_2(&[point.x, point.y])
-            .take(n)
-            .collect()
+        PointFeatures { points }
     }
 }
 

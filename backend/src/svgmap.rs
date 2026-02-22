@@ -1,8 +1,8 @@
 #![allow(non_snake_case)]
 
 use crate::bbox::BoundingBox;
+use crate::label_placement::candidate::Candidate;
 use crate::label_placement::drawings::draw_for_map;
-use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
@@ -53,39 +53,46 @@ use crate::label_placement::features::{Attributes, Polyline};
 struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
-    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
-        let mut cardinals =
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate> {
+        let mut cardinal_boxes =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
-        cardinals.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
+        cardinal_boxes.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
         let search_width = 200f64;
         let search_area = BoundingBox::minsize(
             feature.center() - Point2D::new(search_width * 0.5f64, search_width * 0.5f64),
             search_width,
             search_width,
         );
+        let cardinal_candidates: Vec<_> = cardinal_boxes
+            .iter()
+            .map(|lbbox| Candidate::new(lbbox))
+            .collect();
         // if the area is not empty, do not try hard placement
         if obstacles.occupied_area(&search_area) / search_area.area() > 0.0f64 {
-            return cardinals;
+            return cardinal_candidates;
         }
         match feature.input_point() {
             Some(point) => {
                 if !is_close_to_track(&point) {
-                    return cardinals;
+                    return cardinal_candidates;
                 }
             }
             None => {}
         }
-        let mut aux = Vec::new();
-        aux.extend_from_slice(&label_placement::far_cardinal_boxes(
+        let aux_boxes = label_placement::far_cardinal_boxes(
             &feature.center(),
             feature.width(),
             feature.height(),
             25f64,
-        ));
+        );
+        let aux_candidates: Vec<_> = aux_boxes
+            .iter()
+            .map(|lbbox| Candidate::new(lbbox))
+            .collect();
         let mut ret = Vec::new();
-        ret.extend_from_slice(&cardinals);
-        ret.extend_from_slice(&aux);
-        ret.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
+        ret.extend_from_slice(&cardinal_candidates);
+        ret.extend_from_slice(&aux_candidates);
+        ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
         ret
     }
 }
@@ -306,8 +313,8 @@ mod tests {
         assert!(!candidates.is_empty());
         for c in candidates {
             let _center = target.center();
-            let good = c.absolute().get_xmin() > target.center().x
-                && c.absolute().get_ymin() > target.center().y;
+            let good = c.bbox().absolute().get_xmin() > target.center().x
+                && c.bbox().absolute().get_ymin() > target.center().y;
             if good {
                 found = true;
             }

@@ -7,6 +7,7 @@ use svg::Node;
 use crate::bbox::BoundingBox;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
+use crate::label_placement::candidate::Candidate;
 use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
@@ -604,18 +605,16 @@ struct ProfileGenerator {
 }
 
 impl CandidatesGenerator for ProfileGenerator {
-    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<LabelBoundingBox> {
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate> {
         if feature.input_point.is_none() {
             // [left mid right] => [mid]
             let mut ret = vec![Self::header(feature)[1].clone()];
-            ret.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
+            ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
             return ret;
         }
         let kind = feature.input_point.as_ref().unwrap().kind();
         let mut ret = match kind {
             Kind::UserStep => self.extended_cardinal(feature),
-            //OutputType::UserStep => self.generate_column(feature),
-            //OutputType::UserStep => self.generate_header(feature, vec![25f64, self.HD - 20f64]),
             Kind::GPXWaypoints | Kind::Controls => Self::header(feature),
             _ => {
                 assert!(is_osm(&kind));
@@ -635,15 +634,16 @@ impl CandidatesGenerator for ProfileGenerator {
                     ret.extend_from_slice(&a8);
                 }
                 ret
+                // ret.iter().map(|lbbox| Candidate::new(lbbox)).collect()
             }
         };
-        ret.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
+        ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
         ret
     }
 }
 
 impl ProfileGenerator {
-    fn generate_column(&self, feature: &PointFeature, distance: f64) -> Vec<LabelBoundingBox> {
+    fn generate_column(&self, feature: &PointFeature, distance: f64) -> Vec<Candidate> {
         let target = feature.circle.center;
         let width = feature.width();
         let x = target.x - width / 2f64;
@@ -654,14 +654,18 @@ impl ProfileGenerator {
             width,
             feature.height(),
         );
-        ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+        ret.push(Candidate::new(&LabelBoundingBox::new_absolute(
+            &bbox, &target,
+        )));
 
         let bbox = BoundingBox::minsize(
             Point2D::new(x, target.y - distance),
             width,
             feature.height(),
         );
-        ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+        ret.push(Candidate::new(&LabelBoundingBox::new_absolute(
+            &bbox, &target,
+        )));
 
         ret
     }
@@ -678,7 +682,7 @@ impl ProfileGenerator {
         Self::header_height()
     }
 
-    fn header(feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn header(feature: &PointFeature) -> Vec<Candidate> {
         let target = feature.circle.center;
         let width = feature.width();
         let mut ret = Vec::new();
@@ -689,12 +693,13 @@ impl ProfileGenerator {
                 width,
                 feature.height(),
             );
-            ret.push(LabelBoundingBox::new_absolute(&bbox, &target));
+            let lbbox = LabelBoundingBox::new_absolute(&bbox, &target);
+            ret.push(Candidate::make_external(&lbbox));
         }
         ret
     }
 
-    fn cardinal(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn cardinal(&self, feature: &PointFeature) -> Vec<Candidate> {
         let mut ret = Vec::new();
         assert!(feature.input_point().is_some());
 
@@ -703,10 +708,10 @@ impl ProfileGenerator {
             feature.width(),
             feature.height(),
         ));
-        ret
+        ret.iter().map(|lbbox| Candidate::new(lbbox)).collect()
     }
 
-    fn extended_cardinal(&self, feature: &PointFeature) -> Vec<LabelBoundingBox> {
+    fn extended_cardinal(&self, feature: &PointFeature) -> Vec<Candidate> {
         let mut ret = Vec::new();
         assert!(feature.input_point().is_some());
 
@@ -758,7 +763,7 @@ impl ProfileGenerator {
             let p = candidate.absolute().project_on_border(&point.center());
             (distance2(&point.center(), &p) * 100f64).floor() as i64
         });*/
-        ret
+        ret.iter().map(|lbbox| Candidate::new(lbbox)).collect()
     }
 }
 

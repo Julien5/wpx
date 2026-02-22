@@ -1,10 +1,13 @@
 #![allow(non_snake_case)]
 
+use std::collections::HashSet;
+
 use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::{ControlSource, RenderFunction};
+use tracks::point_collection::Kind;
 use tracks::{point_collection, speed};
 
 /// Search for a pattern in a file and display the lines that contain it.
@@ -49,7 +52,13 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
         &segment,
         &map_size,
         &profile_size,
-        point_collection::allkinds(),
+        HashSet::from([
+            Kind::Cities,
+            Kind::Villages,
+            Kind::Hamlets,
+            Kind::GPXWaypoints,
+            Kind::Controls,
+        ]),
     );
     let tmpfilename = std::format!("/tmp/rendergraph-map.svg");
     std::fs::write(&tmpfilename, ret[0].svg.clone()).unwrap();
