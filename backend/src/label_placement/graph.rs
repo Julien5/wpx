@@ -260,9 +260,6 @@ impl Graph {
         let mut ret = BTreeMap::new();
         while !self.map.is_empty() {
             let m = self.max_node();
-            let target = &self.nodes[m].feature;
-            log::trace!("placing:{} [node index:{}]", target.id(), m);
-
             match self.best_candidate_for_node(&m) {
                 Some(best_index) => {
                     let candidates = &self.nodes[m].candidates;
@@ -284,6 +281,7 @@ impl Graph {
     fn best_candidate_for_node(&self, node: &Node) -> Option<usize> {
         let candidates = &self.nodes[*node].candidates;
         if candidates.is_empty() {
+            log::info!("no candidate found for {}", self.nodes[*node].feature.id(),);
             return None;
         }
         // Note: the candidates are sorted by priority
@@ -314,8 +312,8 @@ impl Graph {
             return Some(index);
         }
 
-        log::info!(
-            "could not find any candidate for [{}] ({} block other)",
+        log::trace!(
+            "could not find any good candidate for [{}] ({} block other) => take first candidate",
             self.nodes[*node].feature.id(),
             nblock_other,
         );

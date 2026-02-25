@@ -33,10 +33,8 @@ fn build_graph(
     let candidates = candidate::utils::generate(gen, features, obstacles);
     // since the graph is undirected, we could probably speed up
     // edge computation. TODO: use petgraph.
-    for k in 0..features.points.len() {
-        let feature = &features.points[k];
-        let candidates = candidates[k].clone();
-        ret.add_node(feature, candidates);
+    for (k, feature) in features.points.iter().enumerate() {
+        ret.add_node(feature, candidates[k].clone());
     }
     ret.build_map();
     ret
@@ -118,15 +116,13 @@ fn place_subset(
     let best_candidates = match quick {
         false => {
             let mut graph = build_graph(features, gen, &obstacles, debug_graphic_dir);
-            // graph.print_graph();
             let result = graph.solve();
             *obstacles = result.obstacles;
             result.selected
         }
         true => place_quick_best_candidates(features, obstacles),
     };
-    for k in 0..features.points.len() {
-        let feature = &features.points[k];
+    for (k, feature) in features.points.iter().enumerate() {
         let target_text = feature.text();
         if target_text.is_empty() {
             continue;

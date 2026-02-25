@@ -384,7 +384,7 @@ mod tests {
                 None,
             ),
             &RenderFunction::Map => {
-                svgmap::map_background(&segment.track, &map_parameters, &collection.profile(), None)
+                svgmap::map_background(&segment.track, &map_parameters, &collection.map(), None)
             }
             _ => {
                 assert!(false);

@@ -58,14 +58,24 @@ impl RenderResult {
     }
 
     pub fn intersection(map: &Self, profile: &Self) -> (Self, Self) {
-        let r1 = map.rendered_projections();
-        let r2 = profile.rendered_projections();
+        let rmap = map.rendered_projections();
+        let rprofile = profile.rendered_projections();
         let mut good = BTreeSet::new();
-        for (id1, rendered1) in r1 {
-            if let Some(rendered2) = r2.get(&id1) {
-                if rendered1 == *rendered2 {
+        for (id1, rendered1) in &rmap {
+            if let Some(rendered2) = rprofile.get(id1) {
+                if *rendered1 == *rendered2 {
                     good.insert(id1);
                 }
+            }
+        }
+        for (id, _) in &rmap {
+            if !good.contains(id) {
+                log::trace!("intersection discarded from map:{}", id);
+            }
+        }
+        for (id, _) in &rprofile {
+            if !good.contains(id) {
+                log::trace!("intersection discarded from profile:{}", id);
             }
         }
         log::trace!("number of common input points:{}", good.len());
@@ -77,6 +87,20 @@ impl RenderResult {
             let profiles = profile.features_with_point_id(&id);
             common_features_profile.extend_from_slice(&profiles);
         }
+
+        // add the features that where not associated to input points
+        // => time labels (9h, etc. in the profile)
+        for m in &map.rendered {
+            if m.input_point.is_none() {
+                common_features_map.push(m.clone());
+            }
+        }
+        for m in &profile.rendered {
+            if m.input_point.is_none() {
+                common_features_profile.push(m.clone());
+            }
+        }
+
         let m = RenderResult {
             svg: String::new(),
             rendered: common_features_map,
@@ -180,7 +204,7 @@ impl RenderInputParameters {
         }
         if !only_usersteps_parameter_may_differ(&self.parameters, &other.parameters) {
             return format!(
-                "parameter mismatch (more than user steps) {:?} != {:?}",
+                "parameter mismatch (other than user steps) {:?} != {:?}",
                 self.parameters, other.parameters
             );
         }
@@ -213,11 +237,13 @@ impl CachedResults {
                 log::info!("cache hit: {:?}", parameters);
                 return Some(result.clone());
             } else {
-                log::info!(
-                    "cache mismatch with parameters: {:?} ({})",
-                    parameters,
-                    mismatch
+                /*
+                    log::trace!(
+                        "cache mismatch with parameters: {:?} ({})",
+                        parameters,
+                        mismatch
                 );
+                    */
             }
         }
         None
@@ -251,7 +277,7 @@ impl PacketProvider {
         match self.results.hit(&p) {
             Some(result) => result,
             None => {
-                panic!("cache miss for parameters: {:?}", p);
+                panic!("cache mismatch for parameters: {:?}", p);
             }
         }
     }
@@ -361,35 +387,6 @@ impl PointCollection {
         self.set_vector(points);
     }
 
-    pub fn intersect(&mut self, other: &Self) {
-        let mut map = BTreeMap::new();
-        for k in self.map.keys() {
-            if !other.map.contains_key(&k) {
-                continue;
-            }
-            let v1 = self.map.get(&k).unwrap();
-            let v2 = other.map.get(&k).unwrap();
-            let intersection: Vec<_> = v1
-                .into_iter()
-                .filter(|x| v2.contains(x))
-                .map(|v| v.clone())
-                .collect();
-            log::trace!(
-                "kind={:?} v1={} v2={} intersection={}",
-                k,
-                v1.len(),
-                v2.len(),
-                intersection.len()
-            );
-            map.insert(k.clone(), intersection);
-        }
-        self.map = map;
-        sort_by_elevation(&mut self.map.get_mut(&Kind::Mountains).unwrap());
-        sort_by_population(&mut self.map.get_mut(&Kind::Cities).unwrap());
-        sort_by_population(&mut self.map.get_mut(&Kind::Villages).unwrap());
-        sort_by_population(&mut self.map.get_mut(&Kind::Hamlets).unwrap());
-    }
-
     fn ontrack_cities(&self) -> Vec<InputPoint> {
         let mut cities = self.get_vector(&Kind::Cities);
         cities.retain(|w| is_close_to_track(&w));
@@ -419,7 +416,6 @@ impl PointCollection {
 
     pub fn profile(&self) -> Packets {
         let clone = self.clone();
-        assert!(!clone.get_vector(&Kind::UserStep).is_empty());
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),

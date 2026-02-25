@@ -73,10 +73,10 @@ pub mod utils {
         }
         let candidates = gen.gen(target, obstacles);
         if candidates.is_empty() {
-            /*log::info!(
+            log::info!(
                 "no candidates passed the upfront obstacles test for: [{}]",
                 target.id()
-            );*/
+            );
         }
         return candidates;
     }

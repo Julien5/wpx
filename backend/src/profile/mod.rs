@@ -218,7 +218,7 @@ impl ProfileView {
                 label,
                 input_point: None,
                 link: None,
-                xmlid: k,
+                xmlid: k, // TODO: remove this
             };
             features.push(feature);
         }
@@ -504,7 +504,7 @@ impl ProfileView {
 
     pub fn add_features(
         &mut self,
-        features: &Vec<PointFeature>,
+        background_features: &Vec<PointFeature>,
         usersteps: &Vec<InputPoint>,
         track: &Track,
     ) {
@@ -515,14 +515,14 @@ impl ProfileView {
             }
         }
         log::trace!("users steps profile features: {}", usersteps.len());
-        let (_time_packet, time_boxes) = self.add_time_ticks(usersteps);
+        let (_time_features, time_boxes) = self.add_time_ticks(usersteps);
 
         for time_box in time_boxes {
             self.SD.append(Self::userstep_dot(&time_box));
         }
 
         self.model = Some(ProfileModel {
-            points: features.clone(),
+            points: background_features.clone(),
             polylines: vec![self.make_polyline(track)],
         });
     }
@@ -579,10 +579,8 @@ impl ProfileView {
                         xmlid: k,
                     };
                     if empty {
-                        log::trace!("push unlabeled: {}", feature.id());
                         feature_unlabeled.push(feature);
                     } else {
-                        log::trace!("push labeled: {}", feature.id());
                         feature_packet.push(feature);
                     }
                 }
@@ -600,7 +598,6 @@ impl ProfileView {
                 pacing_points = packet.clone();
             }
         }
-        assert!(!pacing_points.is_empty());
 
         let (time_packet, _time_boxes) = self.add_time_ticks(&pacing_points);
         feature_packets.push(PointFeatures::make(time_packet));
