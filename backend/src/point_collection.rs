@@ -1,18 +1,15 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 
 use crate::{
     inputpoint::InputPoint,
+    label_placement::features::PointFeature,
     math::IntegerSize2D,
-    parameters::{Parameters, RenderFunction},
+    parameters::{Parameters, RenderFunction, UserStepsOptions},
     track_projection::is_close_to_track,
 };
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
     mountains.sort_by_key(|w| std::cmp::Reverse(w.ele().unwrap_or(0f64).floor() as i32));
-}
-
-fn _sort_by_distance_to_track(mountains: &mut Vec<InputPoint>) {
-    mountains.sort_by_key(|w| w.distance_to_track().floor() as i32);
 }
 
 fn sort_by_population(cities: &mut Vec<InputPoint>) {
@@ -22,7 +19,78 @@ fn sort_by_population(cities: &mut Vec<InputPoint>) {
 #[derive(Clone, Debug, Default)]
 pub struct RenderResult {
     pub svg: String,
-    pub rendered: Vec<InputPoint>,
+    pub rendered: Vec<PointFeature>,
+}
+
+impl RenderResult {
+    pub fn rendered_input_points(&self) -> Vec<InputPoint> {
+        self.rendered
+            .iter()
+            .filter(|f| f.input_point.is_some())
+            .map(|f| f.input_point().unwrap().clone())
+            .collect()
+    }
+
+    pub fn debug(&self) {
+        for p in &self.rendered {
+            log::trace!("rendered: {}", p.id());
+        }
+    }
+
+    fn features_with_point_id(&self, id: &String) -> Vec<PointFeature> {
+        self.rendered
+            .iter()
+            .filter(|f| f.input_point.is_some())
+            .filter(|f| f.input_point().unwrap().id() == *id)
+            .map(|f| f.clone())
+            .collect()
+    }
+
+    // input_point.id() -> set of rendered projections
+    fn rendered_projections(&self) -> BTreeMap<String, BTreeSet<usize>> {
+        let mut rendered_projections: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
+
+        for feature in &self.rendered {
+            if let Some(point) = &feature.input_point {
+                rendered_projections
+                    .entry(point.0.id())
+                    .or_default()
+                    .extend(&point.1);
+            }
+        }
+        rendered_projections
+    }
+
+    pub fn intersection(map: &Self, profile: &Self) -> (Self, Self) {
+        let r1 = map.rendered_projections();
+        let r2 = profile.rendered_projections();
+        let mut good = BTreeSet::new();
+        for (id1, rendered1) in r1 {
+            if let Some(rendered2) = r2.get(&id1) {
+                if rendered1 == *rendered2 {
+                    good.insert(id1);
+                }
+            }
+        }
+        log::trace!("number of common input points:{}", good.len());
+        let mut common_features_map = Vec::new();
+        let mut common_features_profile = Vec::new();
+        for id in good {
+            let maps = map.features_with_point_id(&id);
+            common_features_map.extend_from_slice(&maps);
+            let profiles = profile.features_with_point_id(&id);
+            common_features_profile.extend_from_slice(&profiles);
+        }
+        let m = RenderResult {
+            svg: String::new(),
+            rendered: common_features_map,
+        };
+        let p = RenderResult {
+            svg: String::new(),
+            rendered: common_features_profile,
+        };
+        (m, p)
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -33,8 +101,16 @@ struct RenderInputParameters {
     controls: Vec<InputPoint>,
 }
 
+fn only_usersteps_parameter_may_differ(p1: &Parameters, p2: &Parameters) -> bool {
+    let mut c1 = p1.clone();
+    let mut c2 = p2.clone();
+    c1.user_steps_options = UserStepsOptions::default();
+    c2.user_steps_options = UserStepsOptions::default();
+    return c1 == c2;
+}
+
 impl RenderInputParameters {
-    pub fn missmatch(&self, other: &Self, function: &RenderFunction) -> String {
+    pub fn mismatch(&self, other: &Self, _function: &RenderFunction) -> String {
         if self.screen_size.width != other.screen_size.width {
             return format!(
                 "screen size width ({} != {})",
@@ -50,36 +126,14 @@ impl RenderInputParameters {
         if self.controls != other.controls {
             return format!("controls have changed");
         }
-        match function {
-            RenderFunction::Map => {
-                if self.parameters.map_options.max_area_ratio
-                    < other.parameters.map_options.max_area_ratio
-                {
-                    return format!(
-                        "map area ratio ({}<{})",
-                        self.parameters.map_options.max_area_ratio,
-                        other.parameters.map_options.max_area_ratio
-                    );
-                }
-            }
-            RenderFunction::Profile => {
-                if self.parameters.profile_options.max_area_ratio
-                    < other.parameters.profile_options.max_area_ratio
-                {
-                    return format!(
-                        "profile area ratio ({}<{})",
-                        self.parameters.profile_options.max_area_ratio,
-                        other.parameters.profile_options.max_area_ratio
-                    );
-                }
-            }
-            RenderFunction::Wheel | RenderFunction::WheelPages => {}
+        if !only_usersteps_parameter_may_differ(&self.parameters, &other.parameters) {
+            return format!(
+                "parameter mismatch (more than user steps) {:?} != {:?}",
+                self.parameters, other.parameters
+            );
         }
-        if self.range.start > other.range.start {
-            return format!("range start ({}>{})", self.range.start, other.range.start);
-        }
-        if self.range.end < other.range.end {
-            return format!("range end ({}<{})", self.range.end, other.range.end);
+        if self.range != other.range {
+            return format!("range mismatch {:?} != {:?}", self.range, other.range);
         }
         String::new()
     }
@@ -120,15 +174,15 @@ impl CachedResults {
                 continue;
             }
 
-            let missmatch = result.parameters.missmatch(parameters, function);
-            if missmatch.is_empty() {
+            let mismatch = result.parameters.mismatch(parameters, function);
+            if mismatch.is_empty() {
                 //log::info!("cache hit for function: {:?}", function);
                 return Some(result.output.clone());
             } else {
                 /*  log::info!(
-                    "cache missmatch for function: {:?} and parameters: {}",
+                    "cache mismatch for function: {:?} and parameters: {}",
                     function,
-                    missmatch
+                    mismatch
                 );*/
             }
         }
@@ -184,15 +238,13 @@ impl PacketProvider {
             parameters: parameters.clone(),
             controls: self.collection.get_vector(&Kind::Controls).clone(),
         };
-        let mut output = result.clone();
-        output.rendered.retain(|w| w.kind() != Kind::UserStep);
-        let result = CachedResult {
+        let cresult = CachedResult {
             function: function.clone(),
             parameters: p.clone(),
-            output,
+            output: result.clone(),
         };
         if self.results.hit(function, &p).is_none() {
-            self.results.push(result);
+            self.results.push(cresult);
         }
     }
 
@@ -218,7 +270,7 @@ impl PacketProvider {
         range: &std::ops::Range<usize>,
         parameters: &Parameters,
         size: &IntegerSize2D,
-    ) -> PointCollection {
+    ) -> RenderResult {
         let p = RenderInputParameters {
             range: range.clone(),
             parameters: parameters.clone(),
@@ -226,20 +278,12 @@ impl PacketProvider {
             controls: self.collection.get_vector(&Kind::Controls).clone(),
         };
         match self.results.hit(function, &p) {
-            Some(result) => {
-                let mut ret = self.collection.clone();
-                // TODO: we should avoid to copy all osm points
-                ret.import_osm(&result.rendered);
-                ret.range_cut(range);
-                ret
-            }
+            Some(result) => result,
             None => {
-                log::trace!(
-                    "packet provider profile cache miss for function: {:?}",
+                panic!(
+                    "packet provider cache miss for function: {:?}. This should not happen. Bye.",
                     function
                 );
-                assert!(false);
-                PointCollection::new()
             }
         }
     }
@@ -291,21 +335,8 @@ impl PointCollection {
     }
 
     pub fn debug(&self) {
-        let nleut = self
-            .map
-            .get(&Kind::Controls)
-            .as_ref()
-            .unwrap()
-            .iter()
-            .map(|p| {
-                if p.name().contains("K2") {
-                    1usize
-                } else {
-                    0usize
-                }
-            })
-            .sum::<usize>();
-        log::trace!("nleut={}", nleut);
+        let r = self.get_vector(&Kind::UserStep);
+        log::debug!("collection contains {} usersteps", r.len());
     }
 
     fn push(&mut self, point: InputPoint) {
@@ -342,8 +373,8 @@ impl PointCollection {
         self.map.insert(Kind::Mountains, empty.clone());
         self.map.insert(Kind::Villages, empty.clone());
 
-        for k in 0..points.len() {
-            let wi = points[k].clone();
+        for index in 0..points.len() {
+            let wi = points[index].clone();
             if !is_osm(&wi.kind()) {
                 continue;
             }
@@ -379,6 +410,13 @@ impl PointCollection {
                 .filter(|x| v2.contains(x))
                 .map(|v| v.clone())
                 .collect();
+            log::trace!(
+                "kind={:?} v1={} v2={} intersection={}",
+                k,
+                v1.len(),
+                v2.len(),
+                intersection.len()
+            );
             map.insert(k.clone(), intersection);
         }
         self.map = map;
@@ -417,6 +455,7 @@ impl PointCollection {
 
     pub fn profile(&self) -> Packets {
         let clone = self.clone();
+        assert!(!clone.get_vector(&Kind::UserStep).is_empty());
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),

@@ -175,9 +175,9 @@ Schonach im Schwarzwald
 <circle cx="841.4073154931933" cy="269.7794583333333" fill="white" id="6/wp-little-white" r="2.5"/>
 </g>
 <g transform="translate(841.4073154931933 269.7794583333333)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="66.96973684210525" x="-33.484868421052624" y="32"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="70.96973684210525" x="-35.484868421052624" y="30"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="6/wp/text" text-anchor="start" x="-33.485" y="41.000">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="66.96973684210528" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="70.96973684210528" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="6/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Mühlenbach
 </text>
 </g>

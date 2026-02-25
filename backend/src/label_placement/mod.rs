@@ -12,7 +12,6 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::math::distance2;
 use crate::math::Point2D;
-use crate::point_collection::is_osm;
 
 use candidate::Candidate;
 use candidate::Candidates;
@@ -28,8 +27,9 @@ fn build_graph(
     features: &PointFeatures,
     gen: &dyn CandidatesGenerator,
     obstacles: &Obstacles,
+    debug_graphic_dir: Option<String>,
 ) -> Graph {
-    let mut ret = Graph::new(obstacles.clone());
+    let mut ret = Graph::new(obstacles.clone(), debug_graphic_dir);
     let candidates = candidate::utils::generate(gen, features, obstacles);
     // since the graph is undirected, we could probably speed up
     // edge computation. TODO: use petgraph.
@@ -68,20 +68,13 @@ impl PlacementResult {
     ) -> Vec<PointFeature> {
         let mut ret = Vec::new();
         assert_eq!(results.len(), packets.len());
-        for kr in 0..results.len() {
-            let result = &results[kr];
-            let packet = &mut packets[kr];
-            for kp in 0..packet.points.len() {
-                let feature = &mut packet.points[kp];
-                if result.placed_indices.contains_key(&kp) {
-                    let bbox = result.placed_indices.get(&kp).unwrap().clone();
+        for (result_index, result) in results.iter().enumerate() {
+            let packet = &mut packets[result_index];
+            for (feature_index, feature) in packet.points.iter_mut().enumerate() {
+                if result.placed_indices.contains_key(&feature_index) {
+                    let bbox = result.placed_indices.get(&feature_index).unwrap();
                     feature.place_label(&bbox);
-                    //feature._make_link(obstacles);
                     ret.push(feature.clone());
-                } else if feature.input_point.is_some() {
-                    if !is_osm(&feature.input_point.as_ref().unwrap().kind()) {
-                        ret.push(feature.clone());
-                    }
                 }
             }
         }
@@ -113,6 +106,7 @@ fn place_subset(
     features: &PointFeatures,
     gen: &dyn CandidatesGenerator,
     obstacles: &mut Obstacles,
+    debug_graphic_dir: Option<String>,
 ) -> PlacementResult {
     let mut ret = PlacementResult {
         placed_indices: BTreeMap::new(),
@@ -123,7 +117,7 @@ fn place_subset(
     let quick = false;
     let best_candidates = match quick {
         false => {
-            let mut graph = build_graph(features, gen, &obstacles);
+            let mut graph = build_graph(features, gen, &obstacles, debug_graphic_dir);
             // graph.print_graph();
             let result = graph.solve();
             *obstacles = result.obstacles;
@@ -155,18 +149,24 @@ pub fn place_labels(
     bbox: &BoundingBox,
     polyline: &Polyline,
     max_area_ratio: &f64,
+    debug_graphic_dir: Option<String>,
 ) -> (Vec<PlacementResult>, Obstacles) {
     let mut ret = Vec::new();
     let mut obstacles = Obstacles::new(bbox, *max_area_ratio);
     obstacles.polylines = vec![polyline.clone()];
     for (idx, packet) in packets.iter().enumerate() {
+        let kind = match packet.points.first() {
+            Some(feature) => format!("{:?}", feature.id()),
+            None => format!("unknown"),
+        };
         log::trace!(
-            "subset packet [{}] features:{} obstacles:{}",
+            "subset packet [{}] ({}) features:{} obstacles:{}",
             idx,
+            kind,
             packet.points.len(),
             obstacles.bboxes().len()
         );
-        let results = place_subset(&packet, gen, &mut obstacles);
+        let results = place_subset(&packet, gen, &mut obstacles, debug_graphic_dir.clone());
         ret.push(results);
     }
     assert_eq!(ret.len(), packets.len());

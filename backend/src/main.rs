@@ -45,9 +45,13 @@ struct Cli {
 
 async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
     let segment = backend.trackSegment();
-    let _ = backend.load_osm().await;
-    let map_size = IntegerSize2D::new(839, 349);
-    let profile_size = IntegerSize2D::new(864, 255);
+
+    //let map_size = IntegerSize2D::new(839, 349);
+    //let profile_size = IntegerSize2D::new(864, 255);
+
+    let map_size = IntegerSize2D::new(1479, 778);
+    let profile_size = IntegerSize2D::new(1504, 255);
+
     let ret = backend.render_segment_map_profile(
         &segment,
         &map_size,

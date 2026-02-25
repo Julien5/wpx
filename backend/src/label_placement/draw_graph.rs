@@ -6,14 +6,13 @@ pub struct Graphic {
     dir: String,
 }
 
-#[allow(dead_code)]
-pub fn newdir() -> String {
+pub fn newdir(d: &str) -> String {
     use std::path::Path;
     let dir = "/tmp/graphs/";
     // Find the next available filename
     let mut n = 0;
     let dir = loop {
-        let path = format!("{}/graph-{:02}", dir, n);
+        let path = format!("{}/{}/graph-{:02}", dir, d, n);
         if !Path::new(&path).exists() {
             break path;
         }
@@ -74,7 +73,7 @@ impl Graphic {
     }
 
     pub fn render(&self) -> String {
-        let width = 1000;
+        let width = 1500;
         let height = 800;
         let mut svg = format!(
             r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="{} {} {} {}" width="{}" height="{}">"#,
@@ -104,7 +103,7 @@ impl Graphic {
         // Find the next available filename
         let mut n = 0;
         let filepath = loop {
-            let path = format!("{}/graph-{:04}-{}.svg", self.dir, n, marker);
+            let path = format!("{}/graph-{}-{:04}.svg", self.dir, n, marker);
             if !Path::new(&path).exists() {
                 break path;
             }

@@ -2,6 +2,8 @@
 mod elements;
 mod ticks;
 
+use std::collections::BTreeSet;
+
 use svg::Node;
 
 use crate::bbox::BoundingBox;
@@ -29,12 +31,8 @@ pub struct ProfileModel {
 }
 
 impl ProfileModel {
-    pub fn input_points(&self) -> Vec<InputPoint> {
-        self.points
-            .iter()
-            .filter(|feature| feature.input_point.is_some())
-            .map(|feature| feature.input_point.as_ref().unwrap().clone())
-            .collect()
+    pub fn features(&self) -> Vec<PointFeature> {
+        self.points.clone()
     }
 }
 
@@ -51,6 +49,7 @@ pub struct ProfileView {
     pub bboxdata: gpsdata::ProfileBoundingBox,
     frame_stroke_width: f64,
     model: Option<ProfileModel>,
+    debug_graphic_dir: Option<String>,
 }
 
 fn fix_margins(bbox: &ProfileBoundingBox, free_height: f64) -> ProfileBoundingBox {
@@ -112,6 +111,7 @@ impl ProfileView {
         bbox: &gpsdata::ProfileBoundingBox,
         size: &IntegerSize2D,
         parameters: &Parameters,
+        debug_graphic_dir: Option<String>,
     ) -> ProfileView {
         let W = size.width as f64;
         let H = size.height as f64;
@@ -136,6 +136,7 @@ impl ProfileView {
                 .set("transform", transformSD(W, H, Mleft, Mbottom, W - Mleft)),
             frame_stroke_width: 3f64,
             model: None,
+            debug_graphic_dir,
         }
     }
 
@@ -323,7 +324,7 @@ impl ProfileView {
         RenderResult {
             svg: document.to_string(),
             rendered: match self.model.as_ref() {
-                Some(model) => model.input_points(),
+                Some(model) => model.features(),
                 None => Vec::new(),
             },
         }
@@ -452,39 +453,92 @@ impl ProfileView {
     }
 
     pub fn add_segment(&mut self, packets: &Packets, track: &Track) {
+        let features = self.make_features(packets, track);
+        let mut usersteps = Vec::new();
+        for packet in packets {
+            if packet.is_empty() {
+                continue;
+            }
+            if packet.first().unwrap().kind() == Kind::UserStep {
+                usersteps = packet.clone();
+            }
+        }
+        let (_time_packet, time_boxes) = self.add_time_ticks(&usersteps);
+        for time_box in time_boxes {
+            self.SD.append(Self::userstep_dot(&time_box));
+        }
+        self.model = Some(ProfileModel {
+            points: features.points(),
+            polylines: features.polylines,
+        });
+    }
+
+    fn range(&self, track: &Track) -> std::ops::Range<usize> {
         let bbox = &self.bboxview();
-
-        /*if render_device != RenderDevice::PDF {
-                bbox.min.0 = bbox.min.0.max(0f64);
-        }*/
-
-        let mut polyline_points = PolylinePoints::new();
-        // make sure to cover the whole bbounding box.
-        // => start before, end after
-        let range = std::ops::Range {
+        std::ops::Range {
             start: track.index_before(bbox.get_xmin()),
             end: track.index_after(bbox.get_xmax()),
-        };
+        }
+    }
+
+    fn make_polyline(&self, track: &Track) -> Polyline {
+        let range = self.range(track);
+        let mut polyline_points = PolylinePoints::new();
+        // make sure to cover the whole bounding box.
+        // => start before, end after
         for k in &track.simplified.dz {
             if range.contains(&k) {
-                //let e = track.wgs84[k].z();
                 let e = track.smooth_elevation[*k];
                 let p = self.toSD(&Point2D::new(track.distance(*k), e));
                 polyline_points.push(PolylinePoint(p));
             }
         }
-        let polyline = Polyline::new(polyline_points);
+        Polyline::new(polyline_points)
+    }
 
-        /*let mut polyline_dp_points = PolylinePoints::new();
-        for k in track.douglas_peucker(10.0, &range) {
-            let e = track.wgs84[k].z();
-            //let e = track.smooth_elevation[k];
-            let p = self.toSD(&Point2D::new(track.distance(k), e));
-            polyline_dp_points.push(PolylinePoint(p));
+    fn userstep_dot(time_box: &BoundingBox) -> svg::node::element::Circle {
+        let center = time_box.center() + Point2D::new(0f64, 17f64);
+        let mut ret = svg::node::element::Circle::new();
+        ret = ret.set("id", format!("{}", "pacing-circle"));
+        ret = ret.set("cx", format!("{}", center.x));
+        ret = ret.set("cy", format!("{}", center.y));
+        ret = ret.set("r", format!("{}", "2"));
+        ret = ret.set("fill", format!("{}", "Gray"));
+        ret = ret.set("stroke", format!("{}", "black"));
+        ret = ret.set("stroke-width", format!("{}", "2"));
+        ret
+    }
+
+    pub fn add_segment_features(
+        &mut self,
+        features: &Vec<PointFeature>,
+        usersteps: &Vec<InputPoint>,
+        track: &Track,
+    ) {
+        let mut bottom = self.HD() - self.frame_stroke_width;
+        for indication in self.indications() {
+            if indication == ProfileIndication::NumericSlope {
+                bottom = self.add_numeric_slope(bottom, track, &self.range(track));
+            }
         }
-        let polyline_dp = Polyline::new(polyline_dp_points);
-        */
 
+        let (_time_packet, time_boxes) = self.add_time_ticks(usersteps);
+
+        for time_box in time_boxes {
+            self.SD.append(Self::userstep_dot(&time_box));
+        }
+
+        self.model = Some(ProfileModel {
+            points: features.clone(),
+            polylines: vec![self.make_polyline(track)],
+        });
+    }
+
+    fn make_features(&mut self, packets: &Packets, track: &Track) -> Features {
+        // make sure to cover the whole bounding box.
+        // => start before, end after
+        let range = self.range(track);
+        let polyline = self.make_polyline(track);
         let mut bottom = self.HD() - self.frame_stroke_width;
         for indication in self.indications() {
             if indication == ProfileIndication::NumericSlope {
@@ -492,14 +546,6 @@ impl ProfileView {
             }
         }
 
-        let mut document = Attributes::new();
-        set_attr(
-            &mut document,
-            "viewBox",
-            format!("(0, 0, {}, {})", self.WD(), self.HD()).as_str(),
-        );
-        set_attr(&mut document, "width", format!("{}", self.WD()).as_str());
-        set_attr(&mut document, "height", format!("{}", self.HD()).as_str());
         let generator = Box::new(ProfileGenerator {
             _WD: self.WD(),
             _HD: self.HD(),
@@ -535,13 +581,15 @@ impl ProfileView {
                     let feature = PointFeature {
                         circle,
                         label,
-                        input_point: Some(w.clone()),
+                        input_point: Some((w.clone(), BTreeSet::from([proj.track_index]))),
                         link: None,
                         xmlid: k,
                     };
                     if empty {
+                        log::trace!("push unlabeled: {}", feature.id());
                         feature_unlabeled.push(feature);
                     } else {
+                        log::trace!("push labeled: {}", feature.id());
                         feature_packet.push(feature);
                     }
                 }
@@ -559,8 +607,9 @@ impl ProfileView {
                 pacing_points = packet.clone();
             }
         }
+        assert!(!pacing_points.is_empty());
 
-        let (time_packet, time_boxes) = self.add_time_ticks(&pacing_points);
+        let (time_packet, _time_boxes) = self.add_time_ticks(&pacing_points);
         feature_packets.push(PointFeatures::make(time_packet));
 
         let (results, obstacles) = label_placement::place_labels(
@@ -572,30 +621,15 @@ impl ProfileView {
             ),
             &polyline,
             &self.parameters.profile_options.max_area_ratio,
+            self.debug_graphic_dir.clone(),
         );
 
-        for time_box in time_boxes {
-            let center = time_box.center() + Point2D::new(0f64, 17f64);
-            let circle = {
-                let mut ret = svg::node::element::Circle::new();
-                ret = ret.set("id", format!("{}", "pacing-circle"));
-                ret = ret.set("cx", format!("{}", center.x));
-                ret = ret.set("cy", format!("{}", center.y));
-                ret = ret.set("r", format!("{}", "2"));
-                ret = ret.set("fill", format!("{}", "Gray"));
-                ret = ret.set("stroke", format!("{}", "black"));
-                ret = ret.set("stroke-width", format!("{}", "2"));
-                ret
-            };
-            self.SD.append(circle);
+        let features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
+        Features {
+            labeled: features,
+            unlabeled: feature_unlabeled,
+            polylines: vec![polyline],
         }
-
-        let mut features = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
-        features.extend_from_slice(&feature_unlabeled);
-        self.model = Some(ProfileModel {
-            polylines: vec![polyline], // , polyline_dp
-            points: features,
-        });
     }
 }
 
@@ -612,7 +646,7 @@ impl CandidatesGenerator for ProfileGenerator {
             ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
             return ret;
         }
-        let kind = feature.input_point.as_ref().unwrap().kind();
+        let kind = feature.input_point().unwrap().kind();
         let mut ret = match kind {
             Kind::UserStep => self.extended_cardinal(feature),
             Kind::GPXWaypoints | Kind::Controls => Self::header(feature),
@@ -767,22 +801,47 @@ impl ProfileGenerator {
     }
 }
 
-pub fn profile(
+pub fn profile_packets(
     segment: &segment::Segment,
     size: &IntegerSize2D,
     track: &Track,
     packets: &Packets,
     parameters: &Parameters,
+    debug_dir: Option<String>,
 ) -> RenderResult {
     log::info!(
-        "compute profile for size {:?} and {} features",
+        "compute profile for size {:?}, {} features, density={}",
         size,
-        packets.iter().map(|p| p.len()).sum::<usize>()
+        packets.iter().map(|p| p.len()).sum::<usize>(),
+        parameters.profile_options.max_area_ratio
     );
     let profile_bbox = ProfileBoundingBox::from_track(track, &segment.start, &segment.end);
-    let mut view = ProfileView::init(&profile_bbox, size, &parameters);
+    let mut view = ProfileView::init(&profile_bbox, size, &parameters, debug_dir);
     view.add_canvas();
     view.add_segment(packets, track);
+    view.render_model();
+    view.render()
+}
+
+pub fn profile_features(
+    segment: &segment::Segment,
+    size: &IntegerSize2D,
+    track: &Track,
+    features: &Vec<PointFeature>,
+    usersteps: &Vec<InputPoint>,
+    parameters: &Parameters,
+    debug_dir: Option<String>,
+) -> RenderResult {
+    log::info!(
+        "compute profile for size {:?}, {} features, density={}",
+        size,
+        features.len(),
+        parameters.profile_options.max_area_ratio
+    );
+    let profile_bbox = ProfileBoundingBox::from_track(track, &segment.start, &segment.end);
+    let mut view = ProfileView::init(&profile_bbox, size, &parameters, debug_dir);
+    view.add_canvas();
+    view.add_segment_features(features, usersteps, track);
     view.render_model();
     view.render()
 }

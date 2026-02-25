@@ -42,6 +42,15 @@ fn read<T: FromStr>(data: Option<&String>) -> Option<T> {
 }
 
 impl InputPoint {
+    pub fn id(&self) -> String {
+        format!(
+            "{}|{}|{}|{:?}",
+            self.wgs84.longitude(),
+            self.wgs84.latitude(),
+            self.name(),
+            self.kind()
+        )
+    }
     pub fn create_user_step_on_track(track: &Track, index: usize, name: &String) -> InputPoint {
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidean[index].clone();

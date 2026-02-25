@@ -1,4 +1,4 @@
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LabelBoundingBox {
     relativebbox: BoundingBox,
     target: Point2D,

@@ -1,4 +1,7 @@
-use std::{collections::HashMap, str::FromStr};
+use std::{
+    collections::{BTreeSet, HashMap},
+    str::FromStr,
+};
 
 use rstar::{PointDistance, RTree, RTreeObject, AABB};
 
@@ -77,13 +80,13 @@ fn text_width(s: &str, fontsize: f64, fontweight: &str, fontstyle: &str) -> f64 
     return ret;
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PointFeatureDrawing {
     pub group: svg::node::element::Group,
     pub center: Point2D,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Label {
     pub id: String,
     pub fontsize: f64,
@@ -91,7 +94,6 @@ pub struct Label {
     pub fontstyle: String,
     pub bbox: LabelBoundingBox,
     pub text: String,
-    pub _placed: bool, //ugly
 }
 
 impl Label {
@@ -103,7 +105,6 @@ impl Label {
             fontstyle: String::new(),
             bbox: LabelBoundingBox::zero(),
             text: String::new(),
-            _placed: false,
         }
     }
     pub fn is_empty(&self) -> bool {
@@ -112,7 +113,7 @@ impl Label {
     pub fn new(text: &str, fontsize: f64, fontweight: &str, fontstyle: &str) -> Self {
         let width = text_width(text, fontsize, fontweight, fontstyle);
         let bbox = LabelBoundingBox::new_relative(
-            &BoundingBox::minsize(Point2D::new(0.0, -fontsize), width, fontsize),
+            &BoundingBox::minsize(Point2D::new(0.0, 0.0), width, fontsize),
             &Point2D::zero(),
         );
         Label {
@@ -122,12 +123,7 @@ impl Label {
             fontstyle: fontstyle.to_string(),
             bbox,
             text: text.to_string(),
-            _placed: false,
         }
-    }
-
-    pub fn placed(&self) -> bool {
-        self._placed
     }
 
     pub fn bounding_box(&self) -> LabelBoundingBox {
@@ -170,22 +166,35 @@ impl Label {
 }
 
 pub type PointFeatureId = usize;
+pub type TrackIndex = usize;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PointFeature {
     pub circle: PointFeatureDrawing,
     pub label: Label,
-    pub input_point: Option<InputPoint>,
+    pub input_point: Option<(InputPoint, BTreeSet<TrackIndex>)>,
     pub link: Option<svg::node::element::Path>,
     pub xmlid: PointFeatureId,
 }
 
 impl PointFeature {
+    pub fn id(&self) -> String {
+        match &self.input_point {
+            Some((point, track_indices)) => {
+                let indices: String = track_indices
+                    .iter()
+                    .map(|n| format!("{}", n))
+                    .collect::<Vec<String>>()
+                    .join(".");
+                format!("{} @ {} | {:?}", point.name(), indices, point.kind())
+            }
+            _ => format!("{} @ null", self.text()),
+        }
+    }
     pub fn place_label(&mut self, bbox: &LabelBoundingBox) {
         debug_assert!(math::nearly_equal(self.label.bbox.height(), bbox.height()));
         debug_assert!(math::nearly_equal(self.label.bbox.width(), bbox.width()));
         self.label.bbox = bbox.clone();
-        self.label._placed = true;
     }
     pub fn width(&self) -> f64 {
         self.label.bbox.width()
@@ -203,51 +212,54 @@ impl PointFeature {
         self.circle.center.clone()
     }
     pub fn input_point(&self) -> Option<InputPoint> {
-        self.input_point.clone()
+        if self.input_point.is_some() {
+            return Some(self.input_point.as_ref().unwrap().0.clone());
+        }
+        None
     }
     pub fn render_in_group(&self, sd_group: &mut svg::node::element::Group) {
         use svg::Node;
         sd_group.append(self.circle.group.clone());
+        if self.label.is_empty() {
+            return;
+        }
+
         let text = format!("{}", self.text());
+        let mut subgroup = svg::node::element::Group::new();
+        let mut label = svg::node::element::Text::new(text);
+        let center = &self.circle.center;
+        subgroup = subgroup.set("transform", format!("translate({} {})", center.x, center.y));
+        for (k, v) in self.label.to_attributes() {
+            label = label.set(k, v);
+        }
+        let mut whitebg = svg::node::element::Rectangle::new();
+        let margin = 2f64;
+        whitebg = whitebg.set("x", self.label.bbox.relative().get_xmin() + margin);
+        whitebg = whitebg.set("y", self.label.bbox.relative().get_ymin() + margin);
+        whitebg = whitebg.set("width", self.label.bbox.relative().width() - 2.0 * margin);
+        whitebg = whitebg.set("height", self.label.bbox.relative().height() - 2.0 * margin);
+        whitebg = whitebg.set("fill", "white");
+        whitebg = whitebg.set("fill-opacity", "0.75");
+        whitebg = whitebg.set("id", "label-bg");
+        subgroup.append(whitebg);
 
-        if self.label.placed() {
-            let mut subgroup = svg::node::element::Group::new();
+        if DEBUG {
+            let mut debugrect = svg::node::element::Rectangle::new();
+            debugrect = debugrect.set("x", self.label.bbox.relative().get_xmin());
+            debugrect = debugrect.set("y", self.label.bbox.relative().get_ymin());
+            debugrect = debugrect.set("width", self.label.bbox.relative().width());
+            debugrect = debugrect.set("height", self.label.bbox.relative().height());
+            debugrect = debugrect.set("stroke", "blue");
+            debugrect = debugrect.set("fill", "none");
+            debugrect = debugrect.set("stroke-width", "2");
+            debugrect = debugrect.set("id", "label-dbg");
+            subgroup.append(debugrect);
+        }
 
-            let mut label = svg::node::element::Text::new(text);
-            let center = &self.circle.center;
-            subgroup = subgroup.set("transform", format!("translate({} {})", center.x, center.y));
-            for (k, v) in self.label.to_attributes() {
-                label = label.set(k, v);
-            }
-            let mut whitebg = svg::node::element::Rectangle::new();
-            let margin = 2f64;
-            whitebg = whitebg.set("x", self.label.bbox.relative().get_xmin() + margin);
-            whitebg = whitebg.set("y", self.label.bbox.relative().get_ymin() + margin);
-            whitebg = whitebg.set("width", self.label.bbox.relative().width() - 2.0 * margin);
-            whitebg = whitebg.set("height", self.label.bbox.relative().height() - 2.0 * margin);
-            whitebg = whitebg.set("fill", "white");
-            whitebg = whitebg.set("fill-opacity", "0.75");
-            whitebg = whitebg.set("id", "label-bg");
-            subgroup.append(whitebg);
-
-            if DEBUG {
-                let mut debugrect = svg::node::element::Rectangle::new();
-                debugrect = debugrect.set("x", self.label.bbox.relative().get_xmin());
-                debugrect = debugrect.set("y", self.label.bbox.relative().get_ymin());
-                debugrect = debugrect.set("width", self.label.bbox.relative().width());
-                debugrect = debugrect.set("height", self.label.bbox.relative().height());
-                debugrect = debugrect.set("stroke", "blue");
-                debugrect = debugrect.set("fill", "none");
-                debugrect = debugrect.set("stroke-width", "2");
-                debugrect = debugrect.set("id", "label-dbg");
-                subgroup.append(debugrect);
-            }
-
-            subgroup.append(label);
-            sd_group.append(subgroup);
-            if self.link.is_some() {
-                sd_group.append(self.link.as_ref().unwrap().clone());
-            }
+        subgroup.append(label);
+        sd_group.append(subgroup);
+        if self.link.is_some() {
+            sd_group.append(self.link.as_ref().unwrap().clone());
         }
     }
 }
@@ -410,6 +422,21 @@ impl Polyline {
         set_attr(&mut ret, "stroke-linejoin", "miter");
         set_attr(&mut ret, "stroke-miterlimit", "1");
         set_attr(&mut ret, "d", d.as_str());
+        ret
+    }
+}
+
+#[derive(Clone)]
+pub struct Features {
+    pub labeled: Vec<PointFeature>,
+    pub unlabeled: Vec<PointFeature>,
+    pub polylines: Vec<Polyline>,
+}
+
+impl Features {
+    pub fn points(&self) -> Vec<PointFeature> {
+        let mut ret = self.labeled.clone();
+        ret.extend_from_slice(&self.unlabeled);
         ret
     }
 }

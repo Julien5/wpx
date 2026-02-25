@@ -153,6 +153,16 @@ Freiersberg
 </text>
 </g>
 <g>
+<circle cx="227.23402847076886" cy="104.27223064159261" fill="Green" id="17/wp/circle" r="3"/>
+</g>
+<g transform="translate(227.23402847076886 104.27223064159261)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="40.92464114832536" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="44.92464114832536" x="2" y="-15"/>
+<text font-size="13.0" font-style="italic" font-weight="normal" id="17/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Hartkopf
+</text>
+</g>
+<g>
 <circle cx="120.24052075402324" cy="116.86298933307626" fill="Black" id="19/wp/circle" r="5"/>
 <circle cx="120.24052075402324" cy="116.86298933307626" fill="white" id="19/wp/circle-little-white" r="3.5"/>
 <circle cx="120.24052075402324" cy="116.86298933307626" fill="black" id="19/wp/circle-little-white" r="2.5"/>
@@ -174,6 +184,18 @@ Bühl
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="91.64013157894739" x="2" y="2"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="21/wp/text" text-anchor="start" x="4.000" y="14.000">
 Freudenstadt
+</text>
+</g>
+<g>
+<circle cx="246.75988300562676" cy="267.8913585428454" fill="Black" id="22/wp/circle" r="5"/>
+<circle cx="246.75988300562676" cy="267.8913585428454" fill="white" id="22/wp/circle-little-white" r="3.5"/>
+<circle cx="246.75988300562676" cy="267.8913585428454" fill="black" id="22/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(246.75988300562676 267.8913585428454)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="80.2542105263158" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="84.2542105263158" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="22/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Baiersbronn
 </text>
 </g>
 <g>

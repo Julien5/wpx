@@ -41,19 +41,19 @@ pub struct GraphResult {
 }
 
 impl Graph {
-    fn max_density_ratio(&self) -> f64 {
-        self.obstacles.drawingbox.max_area_ratio
-    }
-    pub fn new(obstacles: Obstacles) -> Self {
+    pub fn new(obstacles: Obstacles, debug_graphic_dir: Option<String>) -> Self {
         let area = obstacles.drawingbox.bbox.clone();
+        let dir = match debug_graphic_dir {
+            Some(d) => Some(draw_graph::newdir(&d)),
+            None => None,
+        };
         Self {
             map: Map::new(),
             ordered_nodes: Vec::new(),
             tree: QuadTree::new(area.clone()),
             nodes: Vec::new(),
             obstacles: obstacles,
-            //debug_graphic_dir: Some(draw_graph::newdir()),
-            debug_graphic_dir: None,
+            debug_graphic_dir: dir,
         }
     }
 
@@ -69,8 +69,6 @@ impl Graph {
     }
 
     pub fn build_map(&mut self) {
-        //log::trace!("building edges for {} nodes", self.ordered_nodes.len());
-        let mut _count = 0;
         for node1 in 0..self.nodes.len() {
             let cbb = &self.nodes[node1].bbox;
             let mut hits = Vec::new();
@@ -82,7 +80,6 @@ impl Graph {
                 }
                 if self.intersect(&node1, node2) {
                     edges.insert(*node2);
-                    _count += 1;
                 }
             }
             self.map.insert(node1, edges);
@@ -144,11 +141,11 @@ impl Graph {
         }
     }
 
-    pub fn add_node(&mut self, _a: &PointFeature, candidates: Candidates) {
+    pub fn add_node(&mut self, feature: &PointFeature, candidates: Candidates) {
         assert_eq!(self.ordered_nodes.len(), self.nodes.len());
 
         let data = NodeData {
-            feature: _a.clone(),
+            feature: feature.clone(),
             bbox: utils::candidates_bounding_box(&candidates),
             candidates: candidates.clone(),
         };
@@ -187,7 +184,7 @@ impl Graph {
         let bboxcenter = selected.bbox().absolute().center();
         let mut selected_large = selected.bbox().absolute().clone();
         if !selected.is_external() {
-            let aux = Point2D::point_on_segment_from_end(&bboxcenter, &center, 5f64);
+            let aux = Point2D::point_on_segment_from_end(&bboxcenter, &center, 5.0);
             selected_large.update(&aux);
         }
         for b in neighbors {
@@ -196,18 +193,20 @@ impl Graph {
             neighbors_candidates.retain(|cb| !selected_large.overlap(&cb.bbox().absolute()));
             if neighbors_candidates.is_empty() {
                 log::info!(
-                    "graph removed [{}] because of ovelapping with [{}] (and others)",
-                    self.nodes[b].feature.text(),
-                    self.nodes[*a].feature.text()
+                    "graph removed [{}] because of overlapping with [{}] (and others)",
+                    self.nodes[b].feature.id(),
+                    self.nodes[*a].feature.id()
                 );
             }
         }
+        self.draw_graph(&format!("{:03}-4-update", a));
         // Track the placed candidate for density queries
         self.obstacles.push_bbox(selected_large);
 
         // remove a
+        self.draw_graph(&format!("{:03}-5-update", a));
         self.remove_node(a);
-        self.draw_graph(&"update");
+        self.draw_graph(&format!("{:03}-6-update", a));
     }
 
     pub fn max_node(&self) -> Node {
@@ -235,8 +234,8 @@ impl Graph {
         if !other_has_label {
             return false;
         }
-        for k in 0..other_candidates.len() {
-            let other_candidate = &other_candidates[k];
+        // Check if this candidate blocks ALL candidates of the other node
+        for other_candidate in other_candidates {
             if !other_candidate.hit_other(&this_candidate) {
                 return false;
             }
@@ -257,61 +256,13 @@ impl Graph {
         None
     }
 
-    fn density_ratio(&self, candidate: &Candidate) -> f64 {
-        let candidate_bbox = candidate.bbox().absolute();
-        let candidate_area = candidate_bbox.area();
-
-        assert!(candidate_area > 0.0);
-
-        let center = candidate_bbox.center();
-        let width = 200f64;
-        let search_area = BoundingBox::minsize(
-            center - Point2D::new(width * 0.5f64, width * 0.5f64),
-            width,
-            width,
-        );
-
-        let occupied_area = self.obstacles.occupied_area(&search_area);
-        let total_occupied = occupied_area + candidate_area;
-        let search_area_size = search_area.area();
-        let ret = total_occupied / search_area_size;
-
-        if self.debug_graphic_dir.is_some() {
-            let mut graphic = self.make_graphic();
-            graphic.add_boundingbox(&search_area, "blue", 2);
-            graphic.add_text(
-                &search_area.center(),
-                &format!(
-                    "{:.0}%>{:.0}%",
-                    ret * 100f64,
-                    self.max_density_ratio() * 100f64
-                ),
-            );
-            graphic.save(&"ratio");
-        }
-        ret
-    }
-
     pub fn solve(&mut self) -> GraphResult {
         let mut ret = BTreeMap::new();
         while !self.map.is_empty() {
             let m = self.max_node();
-
-            /*
             let target = &self.nodes[m].feature;
-                        log::trace!(
-                            "placing:{} [#edges:{}] [{:.1} + {:.1} max {:.1}]",
-                            target.text(),
-                            self.map.get(&m).unwrap().len(),
-                            self.used_area,
-                            target.area(),
-                            self.max_area
-                        );*/
-            /*if self.used_area + target.area() > self.max_area {
-                //log::trace!("remove {} because it is too large", target.text());
-                self.remove_node(&m);
-                continue;
-            }*/
+            log::trace!("placing:{} [node index:{}]", target.id(), m);
+
             match self.best_candidate_for_node(&m) {
                 Some(best_index) => {
                     let candidates = &self.nodes[m].candidates;
@@ -330,66 +281,52 @@ impl Graph {
         }
     }
 
-    pub fn _debug(&self) {
-        let nodes: Vec<_> = (0..self.nodes.len()).collect();
-        for node in nodes {
-            let _candidates = &self.nodes[node].candidates;
-            let rcand = self.map.get(&node);
-            let _edged_candidates = match rcand {
-                None => 0,
-                Some(list) => list.len(),
-            };
-            /*
-                log::trace!(
-                    "[{}] => {} candidates (edges:{})",
-                    self.find_feature(&node).unwrap().text(),
-                    candidates.len(),
-                    edged_candidates
-            );
-                */
-        }
-    }
-
     fn best_candidate_for_node(&self, node: &Node) -> Option<usize> {
         let candidates = &self.nodes[*node].candidates;
         if candidates.is_empty() {
             return None;
         }
-        // note: the candidates are sorted
-        //log::trace!("select one candidate");
+        // Note: the candidates are sorted by priority
         let mut nblock_other = 0;
-        let mut ndensity_fail = 0;
         for index in 0..candidates.len() {
+            let candidate = &candidates[index];
+
+            if self.debug_graphic_dir.is_some() {
+                let mut graphic = self.make_graphic();
+                graphic.add_boundingbox(&candidate.bbox().absolute(), "black", 4);
+                graphic.save(&format!("{:03}-1-check", node));
+            }
+
             match self.candidate_blocks_any(node, index) {
                 Some(_other_node) => {
                     nblock_other += 1;
-                    /*log::trace!(
-                        "[node:{node:2}] [candidate:{index:2}] blocks [{_other_node:2}]"
-                    );*/
                     continue;
                 }
                 None => {}
             }
 
-            let candidate = &candidates[index];
-            if self.density_ratio(candidate) > self.max_density_ratio() {
-                ndensity_fail += 1;
-                continue;
+            if self.debug_graphic_dir.is_some() {
+                let mut graphic = self.make_graphic();
+                graphic.add_boundingbox(&candidate.bbox().absolute(), "black", 4);
+                graphic.save(&format!("{:03}-3-found", node));
             }
 
-            /*log::trace!(
-                "[node:{node:2}] [candidate:{index:2}] it bests from #={}",
-                candidates.len()
-            );*/
             return Some(index);
         }
+
         log::info!(
-            "could not find any candidate for [{}] ({} block other, {} density fails)",
-            self.nodes[*node].feature.label.text,
+            "could not find any candidate for [{}] ({} block other)",
+            self.nodes[*node].feature.id(),
             nblock_other,
-            ndensity_fail
         );
-        return None;
+
+        if self.debug_graphic_dir.is_some() {
+            let graphic = self.make_graphic();
+            graphic.save(&format!("{:03}-3-fail", node));
+        }
+        // Even though all candidate block some other, we must return an index.
+        // Choose the first one, assuming they are ordered by priority.
+        return Some(0);
     }
 }
 
@@ -416,7 +353,7 @@ mod tests {
         // Create a new graph
         let area = BoundingBox::minmax(Point2D::zero(), Point2D::new(10f64, 10f64));
         let obstacles = Obstacles::new(&area, 1.0);
-        let mut graph = Graph::new(obstacles);
+        let mut graph = Graph::new(obstacles, None);
         let mut ca = Candidates::new();
         let mut cb = Candidates::new();
         let mut cc = Candidates::new();
@@ -457,7 +394,6 @@ mod tests {
                 fontsize: FONTSIZE,
                 fontweight: "normal".to_string(),
                 fontstyle: "normal".to_string(),
-                _placed: false,
             },
             input_point: None,
             link: None,
@@ -477,10 +413,9 @@ mod tests {
         assert_eq!(graph.max_node(), 0);
         graph.update_graph(&2, &cc1);
         assert!(!graph.map.contains_key(&2));
-        assert!(graph.nodes[0].candidates.len() == 1);
-        assert!(graph.nodes[0].candidates.len() == 1);
-        assert!(graph.nodes[0].candidates.len() == 1);
-        assert!(graph.map.get(&0).unwrap().len() == 1);
-        assert!(graph.map.get(&1).unwrap().len() == 1);
+        assert_eq!(graph.nodes[0].candidates.len(), 1);
+        assert_eq!(graph.nodes[1].candidates.len(), 1);
+        assert_eq!(graph.map.get(&0).unwrap().len(), 1);
+        assert_eq!(graph.map.get(&1).unwrap().len(), 1);
     }
 }

@@ -23,20 +23,20 @@ pub struct RenderOutput {
     pub error: Option<RenderError>,
 }
 
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub enum ProfileIndication {
     None,
     NumericSlope,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ControlSource {
     Segments,
     Waypoints,
     OSM,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct UserStepsOptions {
     pub step_distance: Option<f64>,
     pub step_elevation_gain: Option<f64>,
@@ -53,7 +53,7 @@ impl Default for UserStepsOptions {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ProfileOptions {
     pub elevation_indicators: Vec<ProfileIndication>,
     pub max_area_ratio: f64,
@@ -68,7 +68,7 @@ impl Default for ProfileOptions {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct MapOptions {
     pub max_area_ratio: f64,
 }
@@ -81,7 +81,7 @@ impl Default for MapOptions {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Parameters {
     pub control_gpx_name_format: String,
     pub debug: bool,

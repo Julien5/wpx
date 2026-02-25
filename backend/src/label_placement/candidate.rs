@@ -73,19 +73,10 @@ pub mod utils {
         }
         let candidates = gen.gen(target, obstacles);
         if candidates.is_empty() {
-            let kind = {
-                if target.input_point.is_some() {
-                    let p = target.input_point.as_ref().unwrap();
-                    format!("{:?}", p.kind())
-                } else {
-                    String::new()
-                }
-            };
-            log::info!(
-                "no candidates passed the upfront obstacles test for: [{}] ({})",
-                target.label.text,
-                kind
-            );
+            /*log::info!(
+                "no candidates passed the upfront obstacles test for: [{}]",
+                target.id()
+            );*/
         }
         return candidates;
     }
