@@ -93,15 +93,6 @@
 <path d="M1102.5,355.5 L1102.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M1347.5,355.5 L1347.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M0,340.5 L1347.5,340.5" stroke="black" stroke-width="3"/>
-<circle cx="-1102.126437284118" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-978.7116930428981" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-855.8178997503846" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-733.1790683728004" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-609.4129955672801" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-486.5617084715127" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-364.04326240811474" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-241.01288017479396" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-118.36194535316736" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
 <circle cx="4.882345938047365" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
 <circle cx="127.4804538396877" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
 <circle cx="250.1150633410623" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>

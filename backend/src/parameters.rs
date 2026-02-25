@@ -2,12 +2,14 @@ use std::collections::HashSet;
 
 use crate::{error::RenderError, mercator::DateTime, point_collection::Kind, speed};
 
-#[derive(Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialOrd, Ord, PartialEq, Eq, Debug, Default)]
 pub enum RenderFunction {
     Map,
     Profile,
     Wheel,
     WheelPages,
+    #[default]
+    Unknown,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]

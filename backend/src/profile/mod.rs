@@ -15,10 +15,9 @@ use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::*;
-use crate::math::{IntegerSize2D, Point2D};
-use crate::parameters::{Parameters, ProfileIndication};
-use crate::point_collection::{is_osm, Kind, Packets, RenderResult};
-use crate::segment;
+use crate::math::Point2D;
+use crate::parameters::ProfileIndication;
+use crate::point_collection::{is_osm, Kind, Packets, RenderInputParameters, RenderResult};
 use crate::track::Track;
 use crate::wheel::model::TimeParameters;
 use crate::{gpsdata, speed};
@@ -41,7 +40,7 @@ pub struct ProfileView {
     H: f64,
     Mleft: f64,
     Mbottom: f64,
-    parameters: Parameters,
+    parameters: RenderInputParameters,
     BG: Group, // bottom
     SL: Group, // left, with the y axis, the ticks and the labels
     SB: Group, // main group, with the diagram
@@ -66,6 +65,7 @@ impl ProfileView {
     }
     fn indications(&self) -> Vec<ProfileIndication> {
         self.parameters
+            .parameters
             .profile_options
             .elevation_indicators
             .iter()
@@ -89,7 +89,11 @@ impl ProfileView {
     }
 
     fn bottom_height(&self) -> f64 {
-        let indicators = &self.parameters.profile_options.elevation_indicators;
+        let indicators = &self
+            .parameters
+            .parameters
+            .profile_options
+            .elevation_indicators;
         Self::indicators_height(indicators) + indicators.len() as f64 * self.frame_stroke_width
     }
 
@@ -109,12 +113,11 @@ impl ProfileView {
     }
     pub fn init(
         bbox: &gpsdata::ProfileBoundingBox,
-        size: &IntegerSize2D,
-        parameters: &Parameters,
+        parameters: &RenderInputParameters,
         debug_graphic_dir: Option<String>,
     ) -> ProfileView {
-        let W = size.width as f64;
-        let H = size.height as f64;
+        let W = parameters.screen_size.width as f64;
+        let H = parameters.screen_size.height as f64;
         let Mleft = (W * 0.05f64).floor() as f64;
         let Mbottom = (H / 10f64).floor() as f64;
         ProfileView {
@@ -183,8 +186,8 @@ impl ProfileView {
         pacing_points: &Vec<InputPoint>,
     ) -> (Vec<PointFeature>, Vec<BoundingBox>) {
         let xstart = self.bboxview().get_xmin();
-        let start = speed::time_at_distance(xstart, &self.parameters);
-        let speed = self.parameters.speed;
+        let start = speed::time_at_distance(xstart, &self.parameters.parameters);
+        let speed = self.parameters.parameters.speed;
         let total_distance = self.bboxview().width();
         let time_parameters = TimeParameters {
             start,
@@ -327,6 +330,7 @@ impl ProfileView {
                 Some(model) => model.features(),
                 None => Vec::new(),
             },
+            parameters: self.parameters.clone(),
         }
     }
 
@@ -452,21 +456,10 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_segment(&mut self, packets: &Packets, track: &Track) {
+    pub fn add_packets(&mut self, packets: &Packets, track: &Track) {
         let features = self.make_features(packets, track);
-        let mut usersteps = Vec::new();
-        for packet in packets {
-            if packet.is_empty() {
-                continue;
-            }
-            if packet.first().unwrap().kind() == Kind::UserStep {
-                usersteps = packet.clone();
-            }
-        }
-        let (_time_packet, time_boxes) = self.add_time_ticks(&usersteps);
-        for time_box in time_boxes {
-            self.SD.append(Self::userstep_dot(&time_box));
-        }
+        // the userstep-based time line and time points are rendered
+        // in the foreground => do not render them hier.
         self.model = Some(ProfileModel {
             points: features.points(),
             polylines: features.polylines,
@@ -509,7 +502,7 @@ impl ProfileView {
         ret
     }
 
-    pub fn add_segment_features(
+    pub fn add_features(
         &mut self,
         features: &Vec<PointFeature>,
         usersteps: &Vec<InputPoint>,
@@ -521,7 +514,7 @@ impl ProfileView {
                 bottom = self.add_numeric_slope(bottom, track, &self.range(track));
             }
         }
-
+        log::trace!("users steps profile features: {}", usersteps.len());
         let (_time_packet, time_boxes) = self.add_time_ticks(usersteps);
 
         for time_box in time_boxes {
@@ -620,7 +613,7 @@ impl ProfileView {
                 Point2D::new(self.WD(), self.free_height()),
             ),
             &polyline,
-            &self.parameters.profile_options.max_area_ratio,
+            &self.parameters.parameters.profile_options.max_area_ratio,
             self.debug_graphic_dir.clone(),
         );
 
@@ -801,47 +794,34 @@ impl ProfileGenerator {
     }
 }
 
-pub fn profile_packets(
-    segment: &segment::Segment,
-    size: &IntegerSize2D,
+pub fn profile_background(
     track: &Track,
+    parameters: &RenderInputParameters,
     packets: &Packets,
-    parameters: &Parameters,
     debug_dir: Option<String>,
 ) -> RenderResult {
-    log::info!(
-        "compute profile for size {:?}, {} features, density={}",
-        size,
-        packets.iter().map(|p| p.len()).sum::<usize>(),
-        parameters.profile_options.max_area_ratio
-    );
-    let profile_bbox = ProfileBoundingBox::from_track(track, &segment.start, &segment.end);
-    let mut view = ProfileView::init(&profile_bbox, size, &parameters, debug_dir);
+    log::info!("compute profile background for parameters {:?}", parameters);
+    let profile_bbox =
+        ProfileBoundingBox::from_track(track, &parameters.drange.start, &parameters.drange.end);
+    let mut view = ProfileView::init(&profile_bbox, parameters, debug_dir);
     view.add_canvas();
-    view.add_segment(packets, track);
+    view.add_packets(packets, track);
     view.render_model();
     view.render()
 }
 
-pub fn profile_features(
-    segment: &segment::Segment,
-    size: &IntegerSize2D,
+pub fn profile_foreground(
     track: &Track,
-    features: &Vec<PointFeature>,
-    usersteps: &Vec<InputPoint>,
-    parameters: &Parameters,
+    parameters: &RenderInputParameters,
+    background: &RenderResult,
     debug_dir: Option<String>,
 ) -> RenderResult {
-    log::info!(
-        "compute profile for size {:?}, {} features, density={}",
-        size,
-        features.len(),
-        parameters.profile_options.max_area_ratio
-    );
-    let profile_bbox = ProfileBoundingBox::from_track(track, &segment.start, &segment.end);
-    let mut view = ProfileView::init(&profile_bbox, size, &parameters, debug_dir);
+    log::info!("compute profile foreground for parameters {:?}", parameters);
+    let profile_bbox =
+        ProfileBoundingBox::from_track(track, &parameters.drange.start, &parameters.drange.end);
+    let mut view = ProfileView::init(&profile_bbox, parameters, debug_dir);
     view.add_canvas();
-    view.add_segment_features(features, usersteps, track);
+    view.add_features(&background.rendered, &parameters.usersteps, track);
     view.render_model();
     view.render()
 }

@@ -5,6 +5,7 @@ use crate::{
     label_placement::features::PointFeature,
     math::IntegerSize2D,
     parameters::{Parameters, RenderFunction, UserStepsOptions},
+    track::Track,
     track_projection::is_close_to_track,
 };
 
@@ -20,6 +21,7 @@ fn sort_by_population(cities: &mut Vec<InputPoint>) {
 pub struct RenderResult {
     pub svg: String,
     pub rendered: Vec<PointFeature>,
+    pub parameters: RenderInputParameters,
 }
 
 impl RenderResult {
@@ -29,12 +31,6 @@ impl RenderResult {
             .filter(|f| f.input_point.is_some())
             .map(|f| f.input_point().unwrap().clone())
             .collect()
-    }
-
-    pub fn debug(&self) {
-        for p in &self.rendered {
-            log::trace!("rendered: {}", p.id());
-        }
     }
 
     fn features_with_point_id(&self, id: &String) -> Vec<PointFeature> {
@@ -84,21 +80,38 @@ impl RenderResult {
         let m = RenderResult {
             svg: String::new(),
             rendered: common_features_map,
+            parameters: map.parameters.clone(),
         };
         let p = RenderResult {
             svg: String::new(),
             rendered: common_features_profile,
+            parameters: profile.parameters.clone(),
         };
         (m, p)
     }
 }
 
-#[derive(Clone, Debug)]
-struct RenderInputParameters {
-    parameters: Parameters,
-    range: std::ops::Range<usize>,
-    screen_size: IntegerSize2D,
-    controls: Vec<InputPoint>,
+#[derive(Clone, Default)]
+pub struct RenderInputParameters {
+    pub function: RenderFunction,
+    pub parameters: Parameters,
+    pub drange: std::ops::Range<f64>,
+    pub range: std::ops::Range<usize>,
+    pub screen_size: IntegerSize2D,
+    pub usersteps: Vec<InputPoint>,
+}
+
+impl std::fmt::Debug for RenderInputParameters {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("RenderInputParameters")
+            .field("function", &self.function)
+            .field("from", &self.drange.start)
+            .field("end", &self.drange.end)
+            .field("width", &self.screen_size.width)
+            .field("height", &self.screen_size.width)
+            .field("|usersteps|", &self.usersteps.len())
+            .finish()
+    }
 }
 
 fn only_usersteps_parameter_may_differ(p1: &Parameters, p2: &Parameters) -> bool {
@@ -110,21 +123,60 @@ fn only_usersteps_parameter_may_differ(p1: &Parameters, p2: &Parameters) -> bool
 }
 
 impl RenderInputParameters {
-    pub fn mismatch(&self, other: &Self, _function: &RenderFunction) -> String {
-        if self.screen_size.width != other.screen_size.width {
+    pub fn make_map_parameters(
+        parameters: &Parameters,
+        size: &IntegerSize2D,
+        track: &Track,
+        start: f64,
+        end: f64,
+        usersteps: &Vec<InputPoint>,
+    ) -> Self {
+        Self {
+            function: RenderFunction::Map,
+            parameters: parameters.clone(),
+            drange: std::ops::Range {
+                start: start,
+                end: end,
+            },
+            range: track.subrange(start, end),
+            screen_size: size.clone(),
+            usersteps: usersteps.clone(),
+        }
+    }
+
+    pub fn make_profile_parameters(
+        parameters: &Parameters,
+        size: &IntegerSize2D,
+        track: &Track,
+        start: f64,
+        end: f64,
+        usersteps: &Vec<InputPoint>,
+    ) -> Self {
+        Self {
+            function: RenderFunction::Profile,
+            parameters: parameters.clone(),
+            drange: std::ops::Range {
+                start: start,
+                end: end,
+            },
+            range: track.subrange(start, end),
+            screen_size: size.clone(),
+            usersteps: usersteps.clone(),
+        }
+    }
+
+    pub fn mismatch(&self, other: &Self) -> String {
+        if self.function != other.function {
             return format!(
-                "screen size width ({} != {})",
-                self.screen_size.width, other.screen_size.width
+                "function mismatch ({:?} != {:?})",
+                self.function, other.function
             );
         }
-        if self.screen_size.height != other.screen_size.height {
+        if self.screen_size != other.screen_size {
             return format!(
-                "screen size height ({} != {})",
-                self.screen_size.height, other.screen_size.height
+                "screen size width ({:?} != {:?})",
+                self.screen_size, other.screen_size
             );
-        }
-        if self.controls != other.controls {
-            return format!("controls have changed");
         }
         if !only_usersteps_parameter_may_differ(&self.parameters, &other.parameters) {
             return format!(
@@ -140,50 +192,32 @@ impl RenderInputParameters {
 }
 
 #[derive(Clone)]
-struct CachedResult {
-    output: RenderResult,
-    function: RenderFunction,
-    parameters: RenderInputParameters,
-}
-
 struct CachedResults {
-    results: Vec<CachedResult>,
+    results: Vec<RenderResult>,
 }
 
-// in situations where the *same* parameters are used
-// we might directly return the svg
-
-// TODO: limit the cache size
-
+// TODO: limit the cache size ?
 impl CachedResults {
     pub fn new() -> Self {
         Self {
             results: Vec::new(),
         }
     }
-    pub fn push(&mut self, result: CachedResult) {
+    pub fn push(&mut self, result: RenderResult) {
         self.results.push(result);
     }
-    pub fn hit(
-        &self,
-        function: &RenderFunction,
-        parameters: &RenderInputParameters,
-    ) -> Option<RenderResult> {
+    pub fn hit(&self, parameters: &RenderInputParameters) -> Option<RenderResult> {
         for result in &self.results {
-            if result.function != *function {
-                continue;
-            }
-
-            let mismatch = result.parameters.mismatch(parameters, function);
+            let mismatch = result.parameters.mismatch(parameters);
             if mismatch.is_empty() {
-                //log::info!("cache hit for function: {:?}", function);
-                return Some(result.output.clone());
+                log::info!("cache hit: {:?}", parameters);
+                return Some(result.clone());
             } else {
-                /*  log::info!(
-                    "cache mismatch for function: {:?} and parameters: {}",
-                    function,
+                log::info!(
+                    "cache mismatch with parameters: {:?} ({})",
+                    parameters,
                     mismatch
-                );*/
+                );
             }
         }
         None
@@ -204,86 +238,20 @@ impl PacketProvider {
             results: CachedResults::new(),
         }
     }
-    pub fn register_map_result(
-        &mut self,
-        parameters: &Parameters,
-        range: &std::ops::Range<usize>,
-        size: &IntegerSize2D,
-        result: &RenderResult,
-    ) {
-        self.register_result(&RenderFunction::Map, parameters, range, size, result);
-    }
-    pub fn register_profile_result(
-        &mut self,
-        parameters: &Parameters,
-        range: &std::ops::Range<usize>,
-        size: &IntegerSize2D,
-        result: &RenderResult,
-    ) {
-        self.register_result(&RenderFunction::Profile, parameters, range, size, result);
-    }
-    pub fn register_result(
-        &mut self,
-        function: &RenderFunction,
-        parameters: &Parameters,
-        range: &std::ops::Range<usize>,
-        size: &IntegerSize2D,
-        result: &RenderResult,
-    ) {
-        // note: controls are the current controls in the collection,
-        // not those rendered (result.rendered)
-        let p = RenderInputParameters {
-            range: range.clone(),
-            screen_size: size.clone(),
-            parameters: parameters.clone(),
-            controls: self.collection.get_vector(&Kind::Controls).clone(),
-        };
-        let cresult = CachedResult {
-            function: function.clone(),
-            parameters: p.clone(),
-            output: result.clone(),
-        };
-        if self.results.hit(function, &p).is_none() {
-            self.results.push(cresult);
-        }
+    pub fn register_result(&mut self, result: &RenderResult) {
+        assert!(self.results.hit(&result.parameters).is_none());
+        self.results.push(result.clone());
     }
 
-    pub fn hit(
-        &self,
-        function: &RenderFunction,
-        range: &std::ops::Range<usize>,
-        parameters: &Parameters,
-        size: &IntegerSize2D,
-    ) -> bool {
-        let p = RenderInputParameters {
-            range: range.clone(),
-            parameters: parameters.clone(),
-            screen_size: size.clone(),
-            controls: self.collection.get_vector(&Kind::Controls).clone(),
-        };
-        self.results.hit(function, &p).is_some()
+    pub fn hit(&self, p: &RenderInputParameters) -> bool {
+        self.results.hit(&p).is_some()
     }
 
-    pub fn load(
-        &self,
-        function: &RenderFunction,
-        range: &std::ops::Range<usize>,
-        parameters: &Parameters,
-        size: &IntegerSize2D,
-    ) -> RenderResult {
-        let p = RenderInputParameters {
-            range: range.clone(),
-            parameters: parameters.clone(),
-            screen_size: size.clone(),
-            controls: self.collection.get_vector(&Kind::Controls).clone(),
-        };
-        match self.results.hit(function, &p) {
+    pub fn load(&self, p: &RenderInputParameters) -> RenderResult {
+        match self.results.hit(&p) {
             Some(result) => result,
             None => {
-                panic!(
-                    "packet provider cache miss for function: {:?}. This should not happen. Bye.",
-                    function
-                );
+                panic!("cache miss for parameters: {:?}", p);
             }
         }
     }
@@ -334,11 +302,6 @@ impl PointCollection {
         }
     }
 
-    pub fn debug(&self) {
-        let r = self.get_vector(&Kind::UserStep);
-        log::debug!("collection contains {} usersteps", r.len());
-    }
-
     fn push(&mut self, point: InputPoint) {
         let otype = point.kind();
         self.map.entry(otype).or_default().push(point);
@@ -352,11 +315,12 @@ impl PointCollection {
         self.map.insert(otype, points);
     }
 
-    pub fn get_vector(&self, otype: &Kind) -> Vec<InputPoint> {
-        match self.map.get(&otype) {
+    pub fn get_vector(&self, kind: &Kind) -> Vec<InputPoint> {
+        let ret = match self.map.get(&kind) {
             Some(vector) => vector.clone(),
             None => Vec::new(),
-        }
+        };
+        ret
     }
 
     pub fn potential_controls(&self) -> Vec<InputPoint> {

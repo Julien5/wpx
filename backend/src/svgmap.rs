@@ -3,15 +3,13 @@
 use std::collections::BTreeSet;
 
 use crate::bbox::BoundingBox;
-use crate::inputpoint::InputPoint;
 use crate::label_placement::candidate::Candidate;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::{self, *};
-use crate::math::{IntegerSize2D, Point2D};
+use crate::math::Point2D;
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
-use crate::point_collection::{Packets, RenderResult};
-use crate::segment::SegmentData;
+use crate::point_collection::{Packets, RenderInputParameters, RenderResult};
 use crate::track::Track;
 
 #[allow(unused_imports)]
@@ -100,10 +98,37 @@ impl CandidatesGenerator for MapGenerator {
     }
 }
 
-struct MapData {
+struct MapView {
     polyline: Polyline,
     points: Vec<PointFeature>,
-    document: Attributes,
+    attributes: Attributes,
+}
+
+impl MapView {
+    pub fn render(&self) -> String {
+        let mut document = Document::new();
+        for (k, v) in &self.attributes {
+            document = document.set(k, v.clone());
+        }
+
+        let mut svgpath = svg::node::element::Path::new();
+        for (k, v) in self.polyline.to_attributes() {
+            svgpath = svgpath.set(k, v);
+        }
+        document = document.add(svgpath);
+
+        let mut points_group = svg::node::element::Group::new();
+        for point in &self.points {
+            point.render_in_group(&mut points_group);
+        }
+        document = document.add(points_group);
+        document.to_string()
+    }
+}
+
+struct MapMaker {
+    parameters: RenderInputParameters,
+    map_box: EuclideanBoundingBox,
 }
 
 pub fn euclidean_bounding_box(
@@ -121,42 +146,60 @@ pub fn euclidean_bounding_box(
     bbox
 }
 
-impl MapData {
+impl MapMaker {
+    pub fn init(track: &Track, parameters: &RenderInputParameters) -> Self {
+        let mut bbox = euclidean_bounding_box(track, &parameters.range);
+        bbox.fix_aspect_ratio(&parameters.screen_size);
+        Self {
+            parameters: parameters.clone(),
+            map_box: bbox,
+        }
+    }
+}
+
+impl MapMaker {
     fn margin() -> i32 {
         20
     }
-    fn make_polyline(segment: &SegmentData, size: &IntegerSize2D) -> (Polyline, BoundingBox) {
-        let mut bbox = segment.map_box().clone();
-        bbox.fix_aspect_ratio(size);
+
+    fn make_polyline(&self, track: &Track) -> Polyline {
         let mut path = Vec::new();
-        let range = segment.range();
-        for idx in &segment.track.simplified.xy {
+        let range = &self.parameters.range;
+        for idx in &track.simplified.xy {
             if *idx >= range.start && *idx < range.end {
-                path.push(segment.track.euclidean[*idx].clone());
+                path.push(track.euclidean[*idx].clone());
             }
         }
 
         let mut polyline_points = PolylinePoints::new();
         // todo: path in the bbox, which more than the path in the range.
         for p in &path {
-            let p = to_graphics_coordinates(&bbox, p, size.width, size.height, Self::margin());
+            let p = to_graphics_coordinates(
+                &self.map_box,
+                p,
+                self.parameters.screen_size.width,
+                self.parameters.screen_size.height,
+                Self::margin(),
+            );
             polyline_points.push(PolylinePoint(p));
         }
-        (Polyline::new(polyline_points), bbox)
+        Polyline::new(polyline_points)
     }
 
     fn make_features(
-        segment: &SegmentData,
-        size: &IntegerSize2D,
+        &self,
+        track: &Track,
         packets: &Packets,
         debug_graphic_dir: Option<String>,
     ) -> Features {
-        let (polyline, bbox) = Self::make_polyline(segment, size);
+        let polyline = self.make_polyline(track);
         let generator = Box::new(MapGenerator {});
         let mut feature_packets = Vec::new();
         let mut feature_unlabeled = Vec::new();
         let mut counter = 0;
         let margin = Self::margin();
+        let bbox = &self.map_box;
+        let size = &self.parameters.screen_size;
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
@@ -164,15 +207,15 @@ impl MapData {
                     continue;
                 }
                 let euclidean = w.euclidean.clone();
-                if !bbox.contains(&euclidean.point2d()) {
+                if !self.map_box.contains(&euclidean.point2d()) {
                     continue;
                 }
 
-                let on_track = segment.track.project_simplified(&euclidean).euclidean;
+                let on_track = track.project_simplified(&euclidean).euclidean;
                 let mut p =
-                    to_graphics_coordinates(&bbox, &euclidean, size.width, size.height, margin);
+                    to_graphics_coordinates(bbox, &euclidean, size.width, size.height, margin);
                 let p_track =
-                    to_graphics_coordinates(&bbox, &on_track, size.width, size.height, margin);
+                    to_graphics_coordinates(bbox, &on_track, size.width, size.height, margin);
                 if p.distance_to(&p_track) < 5f64 {
                     p = p_track;
                 }
@@ -214,7 +257,7 @@ impl MapData {
                 Point2D::new(size.width as f64, size.height as f64),
             ),
             &polyline,
-            &segment.parameters.map_options.max_area_ratio,
+            &self.parameters.parameters.map_options.max_area_ratio,
             debug_graphic_dir.clone(),
         );
 
@@ -226,14 +269,14 @@ impl MapData {
         }
     }
 
-    fn make_with_features(
-        segment: &SegmentData,
-        size: &IntegerSize2D,
+    fn make_view_features(
+        &self,
+        track: &Track,
         features: &Vec<PointFeature>,
-        _usersteps: &Vec<InputPoint>,
         _debug_graphic_dir: Option<String>,
-    ) -> MapData {
+    ) -> MapView {
         let mut document = Attributes::new();
+        let size = &self.parameters.screen_size;
         set_attr(
             &mut document,
             "viewBox",
@@ -241,22 +284,23 @@ impl MapData {
         );
         set_attr(&mut document, "width", format!("{}", size.width).as_str());
         set_attr(&mut document, "height", format!("{}", size.height).as_str());
-        let (polyline, _bbox) = Self::make_polyline(segment, size);
-        MapData {
+        let polyline = self.make_polyline(track);
+        MapView {
             points: features.clone(),
             polyline: polyline,
-            document,
+            attributes: document,
         }
     }
 
-    fn make_from_packets(
-        segment: &SegmentData,
-        size: &IntegerSize2D,
+    fn make_model_from_packets(
+        &self,
+        track: &Track,
         packets: &Packets,
         debug_graphic_dir: Option<String>,
-    ) -> MapData {
-        let mut features = Self::make_features(segment, size, packets, debug_graphic_dir);
+    ) -> MapView {
+        let mut features = self.make_features(track, packets, debug_graphic_dir);
         let mut document = Attributes::new();
+        let size = &self.parameters.screen_size;
         set_attr(
             &mut document,
             "viewBox",
@@ -264,74 +308,45 @@ impl MapData {
         );
         set_attr(&mut document, "width", format!("{}", size.width).as_str());
         set_attr(&mut document, "height", format!("{}", size.height).as_str());
-        MapData {
+        MapView {
             points: features.points(),
             polyline: features.polylines.remove(0),
-            document,
+            attributes: document,
         }
-    }
-
-    pub fn render(self) -> RenderResult {
-        let mut document = Document::new();
-        for (k, v) in self.document {
-            document = document.set(k, v);
-        }
-
-        let mut svgpath = svg::node::element::Path::new();
-        for (k, v) in self.polyline.to_attributes() {
-            svgpath = svgpath.set(k, v);
-        }
-        document = document.add(svgpath);
-
-        let rendered = self.points.clone();
-
-        let mut points_group = svg::node::element::Group::new();
-        for point in self.points {
-            point.render_in_group(&mut points_group);
-            /*let mut debug_bb = svg::node::element::Rectangle::new();
-            let bb = point.label.bounding_box();
-            debug_bb = debug_bb.set("x", bb.x_min());
-            debug_bb = debug_bb.set("y", bb.y_min());
-            debug_bb = debug_bb.set("width", bb.width());
-            debug_bb = debug_bb.set("height", bb.height());
-            debug_bb = debug_bb.set("fill", "transparent");
-            debug_bb = debug_bb.set("stroke-width", "1");
-            debug_bb = debug_bb.set("stroke", "blue");
-            points_group = points_group.append(debug_bb);
-            */
-        }
-        document = document.add(points_group);
-        let svg = document.to_string();
-
-        RenderResult { svg, rendered }
     }
 }
 
-pub fn map_packets(
-    segment: &SegmentData,
-    size: &IntegerSize2D,
+pub fn map_background(
+    track: &Track,
+    parameters: &RenderInputParameters,
     packets: &Packets,
-    debug_graphic_dir: Option<String>,
+    debug_dir: Option<String>,
 ) -> RenderResult {
-    log::info!(
-        "compute map for size {:?}, {} features, density={}",
-        size,
-        packets.iter().map(|p| p.len()).sum::<usize>(),
-        segment.parameters.profile_options.max_area_ratio
-    );
-    let svgMap = MapData::make_from_packets(segment, size, packets, debug_graphic_dir);
-    svgMap.render()
+    log::info!("compute map background for parameters {:?}", parameters);
+    let maker = MapMaker::init(track, parameters);
+    let view = maker.make_model_from_packets(track, packets, debug_dir);
+    let svg = view.render();
+    RenderResult {
+        svg,
+        rendered: view.points.clone(),
+        parameters: parameters.clone(),
+    }
 }
 
-pub fn map_features(
-    segment: &SegmentData,
-    size: &IntegerSize2D,
-    features: &Vec<PointFeature>,
-    usersteps: &Vec<InputPoint>,
-    debug_graphic_dir: Option<String>,
+pub fn map_foreground(
+    track: &Track,
+    parameters: &RenderInputParameters,
+    background: &RenderResult,
+    debug_dir: Option<String>,
 ) -> RenderResult {
-    let svgMap = MapData::make_with_features(segment, size, features, usersteps, debug_graphic_dir);
-    svgMap.render()
+    log::info!("compute map foreground for parameters {:?}", parameters);
+    let maker = MapMaker::init(track, parameters);
+    let view = maker.make_view_features(track, &background.rendered, debug_dir);
+    RenderResult {
+        svg: view.render(),
+        rendered: background.rendered.clone(),
+        parameters: parameters.clone(),
+    }
 }
 
 #[cfg(test)]

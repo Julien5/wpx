@@ -408,7 +408,7 @@ impl Backend {
         let mut ret = Vec::new();
         for parameters in parameterlist {
             let size = IntegerSize2D::new(parameters.size.0, parameters.size.1);
-            data.preload(&size);
+            data.preload(&parameters.function, &size);
             let retf = match parameters.function {
                 RenderFunction::Profile => {
                     let result = data.render_profile(&size, &parameters.kinds);
@@ -438,6 +438,9 @@ impl Backend {
                     model.add_points(&data, &parameters.kinds);
                     model.add_pages(&self.segments());
                     wheel::render(&size, &model)
+                }
+                RenderFunction::Unknown => {
+                    panic!("The render function is not set. Bye.");
                 }
             };
             log::info!(
@@ -469,8 +472,8 @@ impl Backend {
             profile_size.height
         );
         let data = self.make_segment_data(segment);
-        data.preload(map_size);
-        data.preload(profile_size);
+        data.preload(&RenderFunction::Map, map_size);
+        data.preload(&RenderFunction::Profile, profile_size);
         let (result_map, result_profile) = data.render_map_profile(map_size, profile_size, &kinds);
         let mut ret = Vec::new();
         ret.push(result_map);

@@ -2,7 +2,9 @@ use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::math::IntegerSize2D;
 use crate::parameters::{Parameters, RenderFunction};
-use crate::point_collection::{Kind, Kinds, RenderResult, SharedPacketProvider};
+use crate::point_collection::{
+    Kind, Kinds, RenderInputParameters, RenderResult, SharedPacketProvider,
+};
 use crate::track::SharedTrack;
 use crate::{profile, svgmap};
 
@@ -91,18 +93,27 @@ impl SegmentData {
         }
     }
 
-    pub fn preload(&self, size: &IntegerSize2D) {
+    pub fn preload(&self, function: &RenderFunction, size: &IntegerSize2D) {
+        match function {
+            RenderFunction::Map => {}
+            RenderFunction::Profile => {}
+            _ => {
+                return;
+            }
+        };
+        let render_parameters = match function {
+            RenderFunction::Map => self.map_render_parameters(size),
+            RenderFunction::Profile => self.profile_render_parameters(size),
+            _ => {
+                assert!(false);
+                RenderInputParameters::default()
+            }
+        };
+
+        // make background for that size for both profile and map
         {
-            // poison error
             let lock = self.packet_provider.read().unwrap();
-            if lock.hit(&RenderFunction::Map, &self.range(), &self.parameters, size)
-                && lock.hit(
-                    &RenderFunction::Profile,
-                    &self.range(),
-                    &self.parameters,
-                    size,
-                )
-            {
+            if lock.hit(&render_parameters) {
                 return;
             }
         }
@@ -114,62 +125,66 @@ impl SegmentData {
         };
 
         let mut lock = self.packet_provider.write().unwrap();
-        let profile_packets = collection.profile();
-        collection.debug();
-        let result_profile = profile::profile_packets(
-            &self.segment,
+
+        let result = match function {
+            &RenderFunction::Profile => profile::profile_background(
+                &self.track,
+                &render_parameters,
+                &collection.profile(),
+                self.debug_graphic_dir(&format!("preload-profile-{}x{}", size.width, size.height)),
+            ),
+            &RenderFunction::Map => svgmap::map_background(
+                &self.track,
+                &render_parameters,
+                &collection.map(),
+                self.debug_graphic_dir(&format!("preload-map-{}x{}", size.width, size.height)),
+            ),
+            _ => RenderResult::default(),
+        };
+
+        if self.parameters.debug {
+            let tmpfilename = format!(
+                "/tmp/preload-{:?}-{}x{}.svg",
+                function, size.width, size.height
+            );
+            std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
+        }
+
+        lock.register_result(&result);
+    }
+
+    fn profile_render_parameters(&self, size: &IntegerSize2D) -> RenderInputParameters {
+        RenderInputParameters::make_profile_parameters(
+            &self.parameters,
             size,
             &self.track,
-            &profile_packets,
+            self.start(),
+            self.end(),
+            &self.usersteps(),
+        )
+    }
+
+    fn map_render_parameters(&self, size: &IntegerSize2D) -> RenderInputParameters {
+        RenderInputParameters::make_map_parameters(
             &self.parameters,
-            self.debug_graphic_dir(&format!("preload-profile-{}x{}", size.width, size.height)),
-        );
-
-        if self.parameters.debug {
-            let tmpfilename = format!("/tmp/preload-profile-{}x{}.svg", size.width, size.height);
-            std::fs::write(&tmpfilename, result_profile.svg.clone()).unwrap();
-        }
-
-        result_profile.debug();
-        lock.register_profile_result(&self.parameters, &self.range(), size, &result_profile);
-        let map_packets = collection.map();
-        let result_map = svgmap::map_packets(
-            &self,
             size,
-            &map_packets,
-            self.debug_graphic_dir(&format!("preload-map-{}x{}", size.width, size.height)),
-        );
-        result_map.debug();
-        if self.parameters.debug {
-            let tmpfilename = format!("/tmp/preload-map-{}x{}.svg", size.width, size.height);
-            std::fs::write(&tmpfilename, result_map.svg.clone()).unwrap();
-        }
-        lock.register_map_result(&self.parameters, &self.range(), size, &result_map);
+            &self.track,
+            self.start(),
+            self.end(),
+            &self.usersteps(),
+        )
     }
 
     pub fn render_profile(&self, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
         log::info!("render profile:{} kinds:{:?}", self.id(), kinds);
         let ret = {
+            let render_parameters = self.profile_render_parameters(size);
             let lock = self.packet_provider.read().unwrap();
-            let last_result = lock.load(
-                &RenderFunction::Profile,
-                &self.range(),
-                &self.parameters,
-                size,
-            );
-            let usersteps = self
-                .packet_provider
-                .read()
-                .unwrap()
-                .collection
-                .get_vector(&Kind::UserStep);
-            profile::profile_features(
-                &self.segment,
-                size,
+            let last_result = lock.load(&render_parameters);
+            profile::profile_foreground(
                 &self.track,
-                &last_result.rendered,
-                &usersteps,
-                &self.parameters,
+                &render_parameters,
+                &last_result,
                 self.debug_graphic_dir(&format!("render-profile-{}x{}", size.width, size.height)),
             )
         };
@@ -183,20 +198,13 @@ impl SegmentData {
     pub fn render_map(&self, size: &IntegerSize2D, _kinds: &Kinds) -> RenderResult {
         log::info!("render map:{}", self.id());
         let ret = {
+            let map_parameters = self.map_render_parameters(size);
             let lock = self.packet_provider.read().unwrap();
-            let last_result =
-                lock.load(&RenderFunction::Map, &self.range(), &self.parameters, size);
-            let usersteps = self
-                .packet_provider
-                .read()
-                .unwrap()
-                .collection
-                .get_vector(&Kind::UserStep);
-            svgmap::map_features(
-                &self,
-                size,
-                &last_result.rendered,
-                &usersteps,
+            let background = lock.load(&map_parameters);
+            svgmap::map_foreground(
+                &self.track,
+                &map_parameters,
+                &background,
                 self.debug_graphic_dir(&format!("render-map-{}x{}", size.width, size.height)),
             )
         };
@@ -215,63 +223,41 @@ impl SegmentData {
     ) -> (RenderResult, RenderResult) {
         log::info!("render map_profile:{} kinds:{:?}", self.id(), kinds);
         let (map_ret, profile_ret) = {
+            let map_parameters = self.map_render_parameters(map_size);
+            let profile_parameters = self.profile_render_parameters(profile_size);
+            log::trace!(
+                "users steps profile: {}",
+                profile_parameters.usersteps.len()
+            );
+            log::trace!("users steps map: {}", map_parameters.usersteps.len());
             let lock = self.packet_provider.read().unwrap();
 
-            let map_result = lock.load(
-                &RenderFunction::Map,
-                &self.range(),
-                &self.parameters,
-                map_size,
-            );
-            map_result.debug();
-
-            let profile_result = lock.load(
-                &RenderFunction::Profile,
-                &self.range(),
-                &self.parameters,
-                profile_size,
-            );
-            profile_result.debug();
+            let map_background = lock.load(&map_parameters);
+            let profile_background = lock.load(&profile_parameters);
 
             let (map_intersection, profile_intersection) =
-                RenderResult::intersection(&map_result, &profile_result);
-
-            let usersteps = self
-                .packet_provider
-                .read()
-                .unwrap()
-                .collection
-                .get_vector(&Kind::UserStep);
+                RenderResult::intersection(&map_background, &profile_background);
 
             let (rm, rp) = (
-                svgmap::map_features(
-                    &self,
-                    map_size,
-                    &map_intersection.rendered,
-                    &usersteps,
+                svgmap::map_foreground(
+                    &self.track,
+                    &map_parameters,
+                    &map_intersection,
                     self.debug_graphic_dir(&format!(
                         "joinmap-{}x{}",
                         map_size.width, map_size.height
                     )),
                 ),
-                profile::profile_features(
-                    &self.segment,
-                    profile_size,
+                profile::profile_foreground(
                     &self.track,
-                    &profile_intersection.rendered,
-                    &usersteps,
-                    &self.parameters,
+                    &profile_parameters,
+                    &profile_intersection,
                     self.debug_graphic_dir(&format!(
                         "joinprofile-{}x{}",
                         profile_size.width, profile_size.height
                     )),
                 ),
             );
-            log::trace!("profile rendered {} features", rp.rendered.len());
-            rp.debug();
-            log::trace!("map rendered {} features", rm.rendered.len());
-            rm.debug();
-
             (rm, rp)
         };
         if self.parameters.debug {
@@ -385,20 +371,22 @@ mod tests {
         parameters.user_steps_options.step_elevation_gain = Some(250f64);
         parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
         let segment = load_segment(src, start, length, parameters).await;
+        let map_parameters = segment.map_render_parameters(size);
+        let profile_parameters = segment.profile_render_parameters(size);
 
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();
         collection.range_cut(&segment.range());
         let result = match function {
-            &RenderFunction::Profile => profile::profile_packets(
-                &segment.segment,
-                &size,
+            &RenderFunction::Profile => profile::profile_background(
                 &segment.track,
+                &profile_parameters,
                 &collection.profile(),
-                &segment.parameters,
                 None,
             ),
-            &RenderFunction::Map => svgmap::map_packets(&segment, &size, &collection.map(), None),
-            &RenderFunction::Wheel | &RenderFunction::WheelPages => {
+            &RenderFunction::Map => {
+                svgmap::map_background(&segment.track, &map_parameters, &collection.profile(), None)
+            }
+            _ => {
                 assert!(false);
                 RenderResult::default()
             }
@@ -519,96 +507,6 @@ mod tests {
             "data/ref/pbp2023.gpx",
             "data/ref/singlemap-pbp2023.svg",
             &RenderFunction::Map,
-            start,
-            length,
-            &size,
-        )
-        .await;
-        assert!(ok);
-    }
-
-    async fn graph2_test(
-        src: &str,
-        function: &RenderFunction,
-        start: f64,
-        length: f64,
-        size: &IntegerSize2D,
-    ) -> bool {
-        let _ = env_logger::try_init();
-        let mut parameters = Parameters::default();
-        parameters.start_time = START_TIME.to_string();
-        parameters.map_options.max_area_ratio = 0.15f64;
-        parameters.user_steps_options.step_distance = None;
-        parameters.user_steps_options.step_elevation_gain = Some(250f64);
-        parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
-        let segment = load_segment(src, start, length, parameters).await;
-
-        let mut collection = segment.packet_provider.read().unwrap().collection.clone();
-        collection.range_cut(&segment.range());
-
-        let start = std::time::Instant::now();
-        let result1 = match function {
-            &RenderFunction::Profile => profile::profile_packets(
-                &segment.segment,
-                &size,
-                &segment.track,
-                &collection.profile(),
-                &segment.parameters,
-                None,
-            ),
-            &RenderFunction::Map => svgmap::map_packets(&segment, &size, &collection.map(), None),
-            &RenderFunction::Wheel | &RenderFunction::WheelPages => {
-                assert!(false);
-                RenderResult::default()
-            }
-        };
-        let duration = start.elapsed();
-        log::info!(
-            "result-1 map took: {:.3?} and rendered {} features",
-            duration,
-            result1.rendered.len()
-        );
-
-        collection.import_osm(&result1.rendered_input_points());
-        let start = std::time::Instant::now();
-        let result2 = match function {
-            &RenderFunction::Profile => profile::profile_packets(
-                &segment.segment,
-                &size,
-                &segment.track,
-                &collection.profile(),
-                &segment.parameters,
-                None,
-            ),
-            &RenderFunction::Map => svgmap::map_packets(&segment, &size, &collection.map(), None),
-            &RenderFunction::Wheel | &RenderFunction::WheelPages => {
-                assert!(false);
-                RenderResult::default()
-            }
-        };
-        let duration = start.elapsed();
-        log::info!(
-            "result-2 map took: {:.3?} and rendered {} features",
-            duration,
-            result2.rendered.len()
-        );
-
-        let tmpfilename = std::format!("/tmp/{}", "result1.svg");
-        std::fs::write(&tmpfilename, &result1.svg).expect("Unable to write file");
-        let tmpfilename = std::format!("/tmp/{}", "result2.svg");
-        std::fs::write(&tmpfilename, &result2.svg).expect("Unable to write file");
-        true
-    }
-
-    #[tokio::test]
-    async fn graph2_pbp() {
-        let _ = env_logger::try_init();
-        let start = 0f64;
-        let length = 1200_000f64;
-        let size = IntegerSize2D::new(1509, 255);
-        let ok = graph2_test(
-            "data/ref/pbp2023.gpx",
-            &RenderFunction::Profile,
             start,
             length,
             &size,

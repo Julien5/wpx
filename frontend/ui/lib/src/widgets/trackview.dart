@@ -97,18 +97,10 @@ class _TrackViewState extends State<TrackView> {
       context,
       listen: false,
     );
-
     bool needed =
         visibilityInfo != null &&
         visibilityInfo!.visibleFraction > 0 &&
         futureRenderer.needsStart();
-    debugPrint("1:${visibilityInfo != null}");
-    if (visibilityInfo != null) {
-      debugPrint(
-        "2:${visibilityInfo!.visibleFraction > 0} and 3:${futureRenderer.needsStart()}",
-      );
-    }
-    debugPrint("3:${futureRenderer.needsStart()}");
     if (needed) {
       futureRenderer.start();
       // this assert fails, sometimes, when the screen is resized quickly

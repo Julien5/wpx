@@ -81,25 +81,6 @@
 <path d="M1102.5,355.5 L1102.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M1347.5,355.5 L1347.5,340.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M0,340.5 L1347.5,340.5" stroke="black" stroke-width="3"/>
-<circle cx="-2327.1264372841183" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-2203.711693042898" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-2080.8178997503846" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-1958.1790683728004" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-1834.4129955672802" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-1711.5617084715127" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-1589.0432624081147" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-1466.012880174794" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-1343.3619453531674" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-1220.1176540619526" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-1097.5195461603123" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-974.8849366589377" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-851.4027179395271" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-728.5583178596057" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-604.6540916624238" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-481.8896934226259" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-359.1072138660843" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-236.46866365103324" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
-<circle cx="-113.66240306388636" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
 <circle cx="8.97717058031958" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
 <circle cx="131.55801666819116" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
 <circle cx="254.94784286884624" cy="28" fill="Gray" id="pacing-circle" r="2" stroke="black" stroke-width="2"/>
