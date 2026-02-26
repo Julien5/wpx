@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ui/src/models/screen_configuration.dart';
 
 class SmallButton extends StatelessWidget {
   final VoidCallback? callback;
@@ -20,11 +22,7 @@ class SmallButton extends StatelessWidget {
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12),
-            ),
+            child: Text(text, textAlign: TextAlign.center),
           ),
         ],
       ),
@@ -38,13 +36,10 @@ class SmallText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ScreenConfiguration>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text(
-        text,
-        textAlign: TextAlign.left,
-        style: TextStyle(fontSize: 12),
-      ),
+      child: Text(text, textAlign: TextAlign.left),
     );
   }
 }

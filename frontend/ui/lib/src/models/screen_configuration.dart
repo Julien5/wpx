@@ -32,9 +32,9 @@ class ScreenConfiguration extends ChangeNotifier {
     final newMode = computeMode(constraints.maxWidth, constraints.maxHeight);
     if (_mode != newMode) {
       _mode = newMode;
-      // Since the ScreenShell builds a LayoutBuilder, the screen is rebuilt
-      // on screen size changes => we dont need to notifyListeners.
-      // notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 }

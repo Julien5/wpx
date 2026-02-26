@@ -20,12 +20,14 @@ class GraphicsPadding extends StatelessWidget {
 }
 
 class LeftColumn extends StatelessWidget {
-  const LeftColumn({super.key});
+  final double width;
+  const LeftColumn({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
-    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(context);
+    Widget div = Divider(color: Colors.lightBlue, thickness: 1, height: 1);
     List<Widget> leftChildren = [
+      div,
       Padding(
         padding: const EdgeInsets.all(15),
         child: OverviewWidget(
@@ -34,17 +36,15 @@ class LeftColumn extends StatelessWidget {
           onPDFPressed: null,
         ),
       ),
+      div,
       Padding(
         padding: const EdgeInsets.all(15),
-        child: UserStepsSliderProvider(),
+        child: Card(elevation: 4, child: UserStepsSliderProvider()),
       ),
+      div,
     ];
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: 400,
-        maxWidth: 400,
-        maxHeight: screen.height,
-      ),
+      constraints: BoxConstraints(minWidth: width, maxWidth: width),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: leftChildren,
@@ -53,24 +53,12 @@ class LeftColumn extends StatelessWidget {
   }
 }
 
-class ProfilePadding extends StatelessWidget {
-  final Widget child;
+class RightColumn extends StatelessWidget {
+  final double width;
+  const RightColumn({super.key, required this.width});
 
-  const ProfilePadding({super.key, required this.child});
   @override
-  Widget build(BuildContext ctx) {
-    return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(5, 10, 10, 10),
-      child: child,
-    );
-  }
-}
-
-class _LargeScaffold extends StatelessWidget {
-  @override
-  Widget build(BuildContext ctx) {
-    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
-
+  Widget build(BuildContext context) {
     Widget mwrow = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -105,7 +93,7 @@ class _LargeScaffold extends StatelessWidget {
 
     Widget rightCol = Expanded(
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: screen.width - 500),
+        constraints: BoxConstraints(maxWidth: width),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -113,7 +101,27 @@ class _LargeScaffold extends StatelessWidget {
         ),
       ),
     );
+    return rightCol;
+  }
+}
 
+class ProfilePadding extends StatelessWidget {
+  final Widget child;
+
+  const ProfilePadding({super.key, required this.child});
+  @override
+  Widget build(BuildContext ctx) {
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(5, 10, 10, 10),
+      child: child,
+    );
+  }
+}
+
+class _LargeScaffold extends StatelessWidget {
+  @override
+  Widget build(BuildContext ctx) {
+    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
     Widget div = VerticalDivider(
       color: Colors.lightBlue,
       thickness: 1,
@@ -121,7 +129,14 @@ class _LargeScaffold extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
-      body: Row(children: [LeftColumn(), div, rightCol]),
+      body: Row(
+        children: [
+          div,
+          LeftColumn(width: 450),
+          div,
+          RightColumn(width: screen.width - 500),
+        ],
+      ),
     );
   }
 }

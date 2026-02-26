@@ -1,6 +1,8 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/slidervalues.dart';
@@ -206,6 +208,8 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ScreenConfiguration>();
+    developer.log("REBUILD SLIDERS");
     UserStepsModel model = Provider.of<UserStepsModel>(context);
     selectedParameter = model.getSelectedParameter();
     developer.log("rebuild with selected $selectedParameter");
@@ -224,7 +228,6 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
       "one point every ${km.toStringAsFixed(0)} km",
       textAlign: TextAlign.start, // Added to flush text to the left
       style: TextStyle(
-        fontSize: 13,
         color:
             selectedParameter == SelectedParameter.distance
                 ? Colors.black
@@ -237,7 +240,6 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
       "one point every ${hm.toStringAsFixed(0)} m elevation gain",
       textAlign: TextAlign.start, // Added to flush text to the left
       style: TextStyle(
-        fontSize: 13,
         color:
             selectedParameter == SelectedParameter.elevation
                 ? Colors.black
@@ -255,7 +257,16 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
             title: Row(
               children: [
                 SizedBox(width: 25),
-                Text("None", textAlign: TextAlign.start),
+                Text(
+                  "None",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    color:
+                        selectedParameter == SelectedParameter.none
+                            ? Colors.black
+                            : Colors.grey,
+                  ),
+                ),
               ],
             ),
             value: SelectedParameter.none,

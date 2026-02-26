@@ -114,11 +114,19 @@ class Application extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(context);
+    double textBaseSize = screen.isMobile() ? 12.0 : 15.0;
     return MaterialApp.router(
       routeInformationParser: null,
       routerConfig: router,
       title: "WPX",
       theme: ThemeData(
+        textTheme: TextTheme(
+          // bodyMedium is the default style for the Text widget
+          bodyMedium: TextStyle(fontSize: textBaseSize),
+          // You can also map this to other styles like bodyLarge or titleMedium
+          bodyLarge: TextStyle(fontSize: textBaseSize),
+        ),
         pageTransitionsTheme: PageTransitionsTheme(
           builders: {
             TargetPlatform.android: ZoomPageTransitionsBuilder(),
