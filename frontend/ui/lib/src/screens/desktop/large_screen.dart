@@ -5,6 +5,7 @@ import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 
@@ -36,6 +37,14 @@ class _LargeScaffold extends StatelessWidget {
   Widget build(BuildContext ctx) {
     ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
     List<Widget> leftChildren = [
+      Padding(
+        padding: const EdgeInsets.all(15),
+        child: OverviewWidget(
+          onPacingPointPressed: null,
+          onControlsPointPressed: () {},
+          onPDFPressed: null,
+        ),
+      ),
       Padding(
         padding: const EdgeInsets.all(15),
         child: UserStepsSliderProvider(),

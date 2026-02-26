@@ -66,7 +66,7 @@ class _TrackViewState extends State<TrackView> {
       listen: false,
     );
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 150), () {
+    _debounce = Timer(const Duration(milliseconds: 250), () {
       if (visibilityInfo == null) {
         return;
       }

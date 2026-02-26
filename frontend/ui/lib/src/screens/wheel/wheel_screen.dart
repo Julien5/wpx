@@ -23,10 +23,10 @@ class _WheelScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Widget statisticsCard = StatisticsWidget(
+    Widget statisticsCard = OverviewWidget(
       onPacingPointPressed: () => gotoUserSteps(ctx),
       onControlsPointPressed: () => gotoControls(ctx),
-      onPagesPressed: () => gotoSettings(ctx),
+      onPDFPressed: () => gotoSettings(ctx),
     );
     List<Widget> children = [
       statisticsCard,

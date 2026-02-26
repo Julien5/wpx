@@ -10,26 +10,26 @@ import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/src/widgets/small.dart';
 import 'package:ui/utils.dart';
 
-class StatisticsWidget extends StatefulWidget {
-  final void Function() onPacingPointPressed;
+class OverviewWidget extends StatefulWidget {
+  final void Function()? onPacingPointPressed;
   final void Function() onControlsPointPressed;
-  final void Function() onPagesPressed;
-  const StatisticsWidget({
+  final void Function()? onPDFPressed;
+  const OverviewWidget({
     super.key,
     required this.onPacingPointPressed,
     required this.onControlsPointPressed,
-    required this.onPagesPressed,
+    required this.onPDFPressed,
   });
 
   @override
-  State<StatisticsWidget> createState() => _StatisticsWidgetState();
+  State<OverviewWidget> createState() => _OverviewWidgetState();
 }
 
 List<double> speedSliderValues() {
   return fromKmh([5, 10, 12.5, 13.5, 15, 18.0, 20, 25, 28]);
 }
 
-class _StatisticsWidgetState extends State<StatisticsWidget> {
+class _OverviewWidgetState extends State<OverviewWidget> {
   DateTime? startTime;
   double? speed;
   @override
@@ -235,21 +235,23 @@ class _StatisticsWidgetState extends State<StatisticsWidget> {
             SmallText(text: controlPointsText),
           ],
         ),
-        TableRow(
-          children: [
-            SmallText(text: "Pacing points"),
-            SmallButton(
-              callback: widget.onPacingPointPressed,
-              text: pacingPointsText,
-            ),
-          ],
-        ),
-        TableRow(
-          children: [
-            SmallText(text: "PDF"),
-            SmallButton(callback: widget.onPagesPressed, text: pagesCountText),
-          ],
-        ),
+        if (widget.onPacingPointPressed != null)
+          TableRow(
+            children: [
+              SmallText(text: "Pacing points"),
+              SmallButton(
+                callback: widget.onPacingPointPressed,
+                text: pacingPointsText,
+              ),
+            ],
+          ),
+        if (widget.onPDFPressed != null)
+          TableRow(
+            children: [
+              SmallText(text: "PDF"),
+              SmallButton(callback: widget.onPDFPressed, text: pagesCountText),
+            ],
+          ),
       ],
     );
     return Column(
