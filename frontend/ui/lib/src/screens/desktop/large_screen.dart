@@ -19,6 +19,40 @@ class GraphicsPadding extends StatelessWidget {
   }
 }
 
+class LeftColumn extends StatelessWidget {
+  const LeftColumn({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(context);
+    List<Widget> leftChildren = [
+      Padding(
+        padding: const EdgeInsets.all(15),
+        child: OverviewWidget(
+          onPacingPointPressed: null,
+          onControlsPointPressed: () {},
+          onPDFPressed: null,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(15),
+        child: UserStepsSliderProvider(),
+      ),
+    ];
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: 400,
+        maxWidth: 400,
+        maxHeight: screen.height,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: leftChildren,
+      ),
+    );
+  }
+}
+
 class ProfilePadding extends StatelessWidget {
   final Widget child;
 
@@ -36,31 +70,6 @@ class _LargeScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
-    List<Widget> leftChildren = [
-      Padding(
-        padding: const EdgeInsets.all(15),
-        child: OverviewWidget(
-          onPacingPointPressed: null,
-          onControlsPointPressed: () {},
-          onPDFPressed: null,
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(15),
-        child: UserStepsSliderProvider(),
-      ),
-    ];
-    Widget leftCol = ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: 400,
-        maxWidth: 400,
-        maxHeight: screen.height,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: leftChildren,
-      ),
-    );
 
     Widget mwrow = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -112,7 +121,7 @@ class _LargeScaffold extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(title: const Text('Overview')),
-      body: Row(children: [leftCol, div, rightCol]),
+      body: Row(children: [LeftColumn(), div, rightCol]),
     );
   }
 }
