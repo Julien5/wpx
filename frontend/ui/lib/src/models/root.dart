@@ -71,11 +71,27 @@ class RootModel extends ChangeNotifier {
 enum ScreenFocus { home, load, overview, usersteps, controls, settings }
 
 class FociModel extends ChangeNotifier {
-  List<ScreenFocus> foci = [ScreenFocus.home];
+  Set<ScreenFocus> foci = {ScreenFocus.home};
 
   FociModel();
 
-  void load(String path) {
+  void setFocus(ScreenFocus f) {
+    foci.clear();
+    foci.add(f);
+    notifyListeners();
+  }
+
+  void addFocus(ScreenFocus f) {
+    foci.add(f);
+    notifyListeners();
+  }
+
+  void removeFocus(ScreenFocus f) {
+    foci.remove(f);
+    notifyListeners();
+  }
+
+  void loadPath(String path) {
     List<String> parts = path.split('/').where((s) => s.isNotEmpty).toList();
     debugPrint("parts:$parts");
 
@@ -85,7 +101,7 @@ class FociModel extends ChangeNotifier {
       parts[0] = "/${parts[0]}";
     }
 
-    final List<ScreenFocus> result = [];
+    final Set<ScreenFocus> result = {};
 
     for (final seg in parts) {
       switch (seg) {
@@ -120,6 +136,7 @@ class FociModel extends ChangeNotifier {
   }
 
   bool contains(ScreenFocus f) {
+    debugPrint("foci:$foci");
     return foci.contains(f);
   }
 }

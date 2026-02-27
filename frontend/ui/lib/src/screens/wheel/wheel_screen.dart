@@ -10,15 +10,15 @@ import 'package:ui/src/widgets/segmentgraphics.dart';
 
 class _WheelScaffold extends StatelessWidget {
   void gotoSettings(BuildContext ctx) {
-    pushto(ctx, Routes.settings);
+    goto(ctx, Routes.settings);
   }
 
   void gotoUserSteps(BuildContext ctx) {
-    pushto(ctx, Routes.usersteps);
+    goto(ctx, Routes.usersteps);
   }
 
   void gotoControls(BuildContext ctx) {
-    pushto(ctx, Routes.controls);
+    goto(ctx, Routes.controls);
   }
 
   @override
@@ -34,7 +34,13 @@ class _WheelScaffold extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Overview')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.home),
+          onPressed: () => gotoHome(ctx),
+        ),
+        title: const Text('Overview'),
+      ),
       body: AdaptiveLayout(
         topRow: TrackGraphicsRow(kinds: allkinds()),
         midChildren: children,

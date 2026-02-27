@@ -146,3 +146,17 @@ bridge.Bridge getBackend(BuildContext context) {
   RootModel root = Provider.of<RootModel>(context, listen: false);
   return root.getBackend();
 }
+
+String getPacingPointText(bridge.Parameters parameters) {
+  String pacingPointsText = "none";
+  if (parameters.userStepsOptions.stepElevationGain != null) {
+    double hm = parameters.userStepsOptions.stepElevationGain!;
+    pacingPointsText = "every ${hm.toStringAsFixed(0)} m elevation gain";
+  } else if (parameters.userStepsOptions.stepDistance != null) {
+    double km = parameters.userStepsOptions.stepDistance! / 1000;
+    pacingPointsText = "every ${km.toStringAsFixed(0)} km";
+  } else {
+    pacingPointsText = "none";
+  }
+  return pacingPointsText;
+}

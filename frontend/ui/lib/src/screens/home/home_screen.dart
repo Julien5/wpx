@@ -52,12 +52,14 @@ class _ChooseDataState extends State<_ChooseData> {
   void gotoLoad(BuildContext ctx) {
     final location = GoRouterState.of(context).matchedLocation;
     debugPrint('Current location: $location');
-    pushto(context, Routes.load);
+    goto(context, Routes.load);
   }
 
   void onDone(UserInput userInput) async {
     RootModel root = Provider.of<RootModel>(context, listen: false);
     root.setUserInput(userInput);
+    FociModel fociModel = Provider.of<FociModel>(context, listen: false);
+    fociModel.setFocus(ScreenFocus.load);
     gotoLoad(context);
   }
 

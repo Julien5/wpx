@@ -2,6 +2,9 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/screens/shell/screen_shell.dart';
 
 class Routes {
@@ -14,7 +17,6 @@ class Routes {
 }
 
 GoRouter getRouter() {
-  debugPrint("CREATE ROUTER");
   return GoRouter(
     initialLocation: Routes.home,
     routes: [
@@ -64,10 +66,6 @@ GoRouter getRouter() {
   );
 }
 
-String djoin(String a, String b) {
-  return "$a/$b";
-}
-
 void goto(BuildContext ctx, String path) {
   developer.log("GOTO:$path");
   if (path.startsWith("/")) {
@@ -79,7 +77,54 @@ void goto(BuildContext ctx, String path) {
   ctx.go(fullPath);
 }
 
-void pushto(BuildContext ctx, String path) {
+void gotoOverview(BuildContext ctx) {
+  debugPrint("goto home");
+  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
+  ScreenConfiguration config = Provider.of<ScreenConfiguration>(
+    ctx,
+    listen: false,
+  );
+  fociModel.setFocus(ScreenFocus.overview);
+  if (config.isMobile()) {
+    ctx.go(Routes.overview);
+  }
+}
+
+void gotoUserSteps(BuildContext ctx) {
+  debugPrint("gotoUserSteps");
+  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
+  ScreenConfiguration config = Provider.of<ScreenConfiguration>(
+    ctx,
+    listen: false,
+  );
+  fociModel.setFocus(ScreenFocus.usersteps);
+  if (config.isMobile()) {
+    ctx.go(Routes.usersteps);
+  }
+}
+
+void gotoPDF(BuildContext ctx) {
+  debugPrint("gotoPDF");
+  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
+  ScreenConfiguration config = Provider.of<ScreenConfiguration>(
+    ctx,
+    listen: false,
+  );
+  fociModel.setFocus(ScreenFocus.settings);
+  if (config.isMobile()) {
+    ctx.go(Routes.settings);
+  }
+}
+
+void gotoHome(BuildContext ctx) {
+  debugPrint("goto home");
+  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
+  fociModel.setFocus(ScreenFocus.home);
+  ctx.go(Routes.home);
+}
+
+// ignore: unused_element
+void _pushto(BuildContext ctx, String path) {
   developer.log("PUSH:$path");
   if (path.startsWith("/")) {
     ctx.push(path);

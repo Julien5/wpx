@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/screens/shell/desktop.dart';
 import 'package:ui/src/screens/shell/mobile.dart';
@@ -22,7 +21,6 @@ class ScreenShell extends StatelessWidget {
             .matchedLocation ==
         currentLocation;
     ScreenConfiguration screen = Provider.of<ScreenConfiguration>(context);
-    FociModel model = Provider.of<FociModel>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         debugPrint(
@@ -32,7 +30,12 @@ class ScreenShell extends StatelessWidget {
         // Only update if this is the visible (top) route
         if (isTopRoute) {
           screen.updateConstraints(constraints);
-          model.load(currentLocation);
+          // Do not update the FociModel to the current location.
+          // The current location should be updated according to the FociModel.
+          // This is because i could not find a way to update the go_router route
+          // without screen rebuilt. So the desktop view updates the FociModel instead,
+          // and the route should be derived from that.
+          // model.loadPath(currentLocation);
         }
         if (screen.isMobile()) {
           return MobileShell();

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
@@ -82,8 +83,8 @@ int projectNumberOfPages(int wanted, double trackLength, Parameters p) {
   return segmentCount(trackLength, segmentLength);
 }
 
-class SliderWidget extends StatelessWidget {
-  const SliderWidget({super.key});
+class PagesSliderWidget extends StatelessWidget {
+  const PagesSliderWidget({super.key});
 
   void onChanged(BuildContext context, double pages) {
     ParameterModel parameters = Provider.of<ParameterModel>(
@@ -100,11 +101,6 @@ class SliderWidget extends StatelessWidget {
     changer.changeSegmentLength(segmentLength);
     changer.changeSegmentOverlap(segmentOverlap);
     parameters.setParameters(changer.current());
-    ParameterModel parametersModel = Provider.of<ParameterModel>(
-      context,
-      listen: false,
-    );
-    parametersModel.setParameters(changer.current());
     developer.log("wanted:$pages pages");
     int npages = projectNumberOfPages(pages.round(), trackLength, p);
     developer.log("length:${nice / 1000} km => $npages pages");
@@ -112,13 +108,10 @@ class SliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SegmentModel segment = Provider.of<SegmentModel>(context);
-    ParameterModel parameterModel = Provider.of<ParameterModel>(
-      context,
-      listen: false,
-    );
+    SegmentModel track = Provider.of<SegmentModel>(context);
+    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
     Parameters parameters = parameterModel.parameters();
-    double trackLength = segment.statistics().length;
+    double trackLength = track.statistics().length;
     double segmentLength = parameters.segmentLength;
     double segmentOverlap = parameters.segmentOverlap;
     assert(segmentOverlap == (segmentLength - segmentOverlap) / 10);
@@ -196,7 +189,7 @@ class SettingsWidget extends StatelessWidget {
               ),
               SizedBox(
                 width: 200, // or 40–56 depending on your design
-                child: SliderWidget(),
+                child: PagesSliderWidget(),
               ),
             ],
           ),
@@ -212,10 +205,7 @@ class SettingsWidget extends StatelessWidget {
                     ElevatedButton.icon(
                       onPressed: onShowPressed,
                       icon: Icon(showIcon, color: Colors.green, size: 30.0),
-                      label: Text(
-                        "$segLength km per page",
-                        style: TextStyle(fontSize: 12),
-                      ),
+                      label: Text("$segLength km per page"),
                     ),
                   ],
                 ),
@@ -279,7 +269,13 @@ class _SettingsScaffoldState extends State<SettingsScaffold> {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
-      appBar: AppBar(title: const Text('PDF')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => gotoOverview(ctx),
+        ),
+        title: const Text('PDF'),
+      ),
       body: AdaptiveLayout(
         topRow: TopRow(),
         midChildren: [

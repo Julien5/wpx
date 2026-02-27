@@ -176,16 +176,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       endTimeText = DateFormat('HH:mm').format(endTime);
     }
 
-    String pacingPointsText = "none";
-    if (parameters.userStepsOptions.stepElevationGain != null) {
-      double hm = parameters.userStepsOptions.stepElevationGain!;
-      pacingPointsText = "every ${hm.toStringAsFixed(0)} m elevation gain";
-    } else if (parameters.userStepsOptions.stepDistance != null) {
-      double km = parameters.userStepsOptions.stepDistance! / 1000;
-      pacingPointsText = "every ${km.toStringAsFixed(0)} km";
-    } else {
-      pacingPointsText = "none";
-    }
+    String pacingPointsText = getPacingPointText(parameters);
 
     List<Waypoint> controlPoints = segmentModel.someWaypoints({Kind.controls});
     String controlPointsText = "${controlPoints.length}";

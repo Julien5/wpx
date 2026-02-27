@@ -148,7 +148,9 @@ String _title(LoadScreenModel model) {
 
 class _BodyWidget extends StatelessWidget {
   void gotoWheel(BuildContext context) {
-    pushto(context, Routes.overview);
+    FociModel fociModel = Provider.of<FociModel>(context, listen: false);
+    fociModel.setFocus(ScreenFocus.overview);
+    goto(context, Routes.overview);
   }
 
   void onButtonPressed(BuildContext context) {
@@ -199,13 +201,7 @@ class _LoadScaffoldState extends State<_LoadScaffold> {
   Widget buildScaffold(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_title(model)),
-        leading:
-            model.doneAll()
-                ? BackButton()
-                : IconButton(icon: Icon(Icons.arrow_back), onPressed: null),
-      ),
+      appBar: AppBar(title: Text(_title(model))),
       body: _BodyWidget(),
     );
   }
