@@ -116,6 +116,19 @@ void gotoPDF(BuildContext ctx) {
   }
 }
 
+void gotoControls(BuildContext ctx) {
+  debugPrint("gotoControls");
+  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
+  ScreenConfiguration config = Provider.of<ScreenConfiguration>(
+    ctx,
+    listen: false,
+  );
+  fociModel.setFocus(ScreenFocus.controls);
+  if (config.isMobile()) {
+    ctx.go(Routes.controls);
+  }
+}
+
 void gotoHome(BuildContext ctx) {
   debugPrint("goto home");
   FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);

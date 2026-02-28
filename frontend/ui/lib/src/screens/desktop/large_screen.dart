@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
@@ -124,27 +125,41 @@ class _SidePanelState extends State<SidePanel> {
   final ExpansibleController _userStepsController = ExpansibleController();
   final ExpansibleController _pdfController = ExpansibleController();
 
-  void onExpansionChanged(BuildContext context, ScreenFocus f, bool expanded) {
-    debugPrint("focus:$f expanded:$expanded");
-    FociModel fociModel = Provider.of<FociModel>(context, listen: false);
-
-    if (expanded) {
-      fociModel.setFocus(f);
-      // When one tile expands, collapse the other
-      if (f == ScreenFocus.usersteps) {
-        _pdfController.collapse();
-      } else if (f == ScreenFocus.settings) {
-        _userStepsController.collapse();
+  void updateModelFromWidgets(
+    BuildContext context,
+    ScreenFocus f,
+    bool expanded,
+  ) {
+    // do not change the state during build (otherwise exception)
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      debugPrint("focus:$f expanded:$expanded");
+      FociModel fociModel = Provider.of<FociModel>(context, listen: false);
+      if (expanded) {
+        fociModel.setFocus(f);
+      } else {
+        fociModel.removeFocus(f);
       }
-    } else {
-      fociModel.removeFocus(f);
+    });
+  }
+
+  void updateWidgetsFromModel(BuildContext context, FociModel fociModel) {
+    if (fociModel.contains(ScreenFocus.usersteps)) {
+      _userStepsController.expand();
+      _pdfController.collapse();
+    }
+
+    if (fociModel.contains(ScreenFocus.settings)) {
+      _userStepsController.collapse();
+      _pdfController.expand();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    FociModel fociModel = Provider.of<FociModel>(context);
+    updateWidgetsFromModel(context, fociModel);
     Widget div = Divider(color: Colors.lightBlue, thickness: 1, height: 1);
-    List<Widget> leftChildren = [
+    List<Widget> children = [
       div,
       Padding(
         padding: const EdgeInsets.all(15),
@@ -159,7 +174,7 @@ class _SidePanelState extends State<SidePanel> {
         padding: const EdgeInsets.all(15),
         child: UserStepsCard(
           controller: _userStepsController,
-          onExpansionChanged: onExpansionChanged,
+          onExpansionChanged: updateModelFromWidgets,
         ),
       ),
       div,
@@ -167,7 +182,7 @@ class _SidePanelState extends State<SidePanel> {
         padding: const EdgeInsets.all(15),
         child: PDFCard(
           controller: _pdfController,
-          onExpansionChanged: onExpansionChanged,
+          onExpansionChanged: updateModelFromWidgets,
         ),
       ),
       div,
@@ -179,7 +194,7 @@ class _SidePanelState extends State<SidePanel> {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: leftChildren,
+        children: children,
       ),
     );
   }

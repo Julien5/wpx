@@ -9,24 +9,24 @@ import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 
 class _WheelScaffold extends StatelessWidget {
-  void gotoSettings(BuildContext ctx) {
-    goto(ctx, Routes.settings);
+  void onPDFPressed(BuildContext ctx) {
+    gotoPDF(ctx);
   }
 
-  void gotoUserSteps(BuildContext ctx) {
-    goto(ctx, Routes.usersteps);
+  void onPacingPointPressed(BuildContext ctx) {
+    gotoUserSteps(ctx);
   }
 
-  void gotoControls(BuildContext ctx) {
-    goto(ctx, Routes.controls);
+  void onControlsPointPressed(BuildContext ctx) {
+    gotoControls(ctx);
   }
 
   @override
   Widget build(BuildContext ctx) {
     Widget statisticsCard = OverviewWidget(
-      onPacingPointPressed: () => gotoUserSteps(ctx),
-      onControlsPointPressed: () => gotoControls(ctx),
-      onPDFPressed: () => gotoSettings(ctx),
+      onPacingPointPressed: () => onPacingPointPressed(ctx),
+      onControlsPointPressed: () => onControlsPointPressed(ctx),
+      onPDFPressed: () => onPDFPressed(ctx),
     );
     List<Widget> children = [
       statisticsCard,
