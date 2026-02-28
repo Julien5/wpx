@@ -2,7 +2,6 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/main.dart';
@@ -49,17 +48,9 @@ class _ChooseDataState extends State<_ChooseData> {
     onDone(UserInput.makeDemo());
   }
 
-  void gotoLoad(BuildContext ctx) {
-    final location = GoRouterState.of(context).matchedLocation;
-    debugPrint('Current location: $location');
-    goto(context, Routes.load);
-  }
-
   void onDone(UserInput userInput) async {
     RootModel root = Provider.of<RootModel>(context, listen: false);
     root.setUserInput(userInput);
-    FociModel fociModel = Provider.of<FociModel>(context, listen: false);
-    fociModel.setFocus(ScreenFocus.load);
     gotoLoad(context);
   }
 

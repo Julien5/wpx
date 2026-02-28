@@ -66,17 +66,6 @@ GoRouter getRouter() {
   );
 }
 
-void goto(BuildContext ctx, String path) {
-  developer.log("GOTO:$path");
-  if (path.startsWith("/")) {
-    ctx.go(path);
-    return;
-  }
-  final currentLocation = GoRouterState.of(ctx).matchedLocation;
-  final fullPath = '$currentLocation/$path';
-  ctx.go(fullPath);
-}
-
 void gotoOverview(BuildContext ctx) {
   debugPrint("goto home");
   FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
@@ -97,7 +86,7 @@ void gotoUserSteps(BuildContext ctx) {
     ctx,
     listen: false,
   );
-  fociModel.setFocus(ScreenFocus.usersteps);
+  fociModel.addFocus(ScreenFocus.usersteps);
   if (config.isMobile()) {
     ctx.go(Routes.usersteps);
   }
@@ -110,7 +99,7 @@ void gotoPDF(BuildContext ctx) {
     ctx,
     listen: false,
   );
-  fociModel.setFocus(ScreenFocus.settings);
+  fociModel.addFocus(ScreenFocus.settings);
   if (config.isMobile()) {
     ctx.go(Routes.settings);
   }
@@ -123,7 +112,7 @@ void gotoControls(BuildContext ctx) {
     ctx,
     listen: false,
   );
-  fociModel.setFocus(ScreenFocus.controls);
+  fociModel.addFocus(ScreenFocus.controls);
   if (config.isMobile()) {
     ctx.go(Routes.controls);
   }
@@ -134,6 +123,13 @@ void gotoHome(BuildContext ctx) {
   FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
   fociModel.setFocus(ScreenFocus.home);
   ctx.go(Routes.home);
+}
+
+void gotoLoad(BuildContext ctx) {
+  debugPrint("goto load");
+  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
+  fociModel.setFocus(ScreenFocus.load);
+  ctx.go(Routes.load);
 }
 
 // ignore: unused_element

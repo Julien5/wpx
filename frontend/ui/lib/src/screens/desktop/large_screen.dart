@@ -135,7 +135,7 @@ class _SidePanelState extends State<SidePanel> {
       debugPrint("focus:$f expanded:$expanded");
       FociModel fociModel = Provider.of<FociModel>(context, listen: false);
       if (expanded) {
-        fociModel.setFocus(f);
+        fociModel.addFocus(f);
       } else {
         fociModel.removeFocus(f);
       }

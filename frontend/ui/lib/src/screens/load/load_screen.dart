@@ -147,16 +147,10 @@ String _title(LoadScreenModel model) {
 }
 
 class _BodyWidget extends StatelessWidget {
-  void gotoWheel(BuildContext context) {
-    FociModel fociModel = Provider.of<FociModel>(context, listen: false);
-    fociModel.setFocus(ScreenFocus.overview);
-    goto(context, Routes.overview);
-  }
-
   void onButtonPressed(BuildContext context) {
     try {
       Provider.of<SegmentModel>(context, listen: false);
-      gotoWheel(context);
+      gotoOverview(context);
     } catch (e) {
       developer.log("[SegmentModel not yet available]");
     }

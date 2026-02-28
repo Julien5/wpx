@@ -26,8 +26,8 @@ class MobileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     FociModel foci = Provider.of<FociModel>(context);
     debugPrint("mobile focus on: ${foci.foci}");
-    RootModel root = Provider.of<RootModel>(context);
     if (foci.contains(ScreenFocus.load)) {
+      RootModel root = Provider.of<RootModel>(context, listen: false);
       return LoadScreen(userInput: root.userInput!);
     }
     if (foci.contains(ScreenFocus.settings)) {

@@ -88,10 +88,12 @@ class FociModel extends ChangeNotifier {
 
   void removeFocus(ScreenFocus f) {
     foci.remove(f);
+    assert(foci.isNotEmpty);
     notifyListeners();
   }
 
-  void loadPath(String path) {
+  // ignore: unused_element
+  void _loadPath(String path) {
     List<String> parts = path.split('/').where((s) => s.isNotEmpty).toList();
     debugPrint("parts:$parts");
 
