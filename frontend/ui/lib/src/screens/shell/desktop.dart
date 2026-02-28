@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
-import 'package:ui/src/screens/desktop/large_screen.dart';
+import 'package:ui/src/screens/desktop/main_screen.dart';
 import 'package:ui/src/screens/home/home_screen.dart';
 import 'package:ui/src/screens/load/load_screen.dart';
 
@@ -28,6 +28,6 @@ class DesktopScreen extends StatelessWidget {
     if (foci.contains(ScreenFocus.load)) {
       return LoadScreen(userInput: root.userInput!);
     }
-    return LargeScreen();
+    return MainScreen();
   }
 }
