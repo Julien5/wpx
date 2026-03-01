@@ -208,10 +208,10 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
   @override
   Widget build(BuildContext context) {
     context.watch<ScreenConfiguration>();
-    developer.log("REBUILD SLIDERS");
+
     UserStepsModel model = Provider.of<UserStepsModel>(context);
     selectedParameter = model.getSelectedParameter();
-    developer.log("rebuild with selected $selectedParameter");
+
     Widget distanceSlider = UserStepsSlider(
       widgetParameter: SelectedParameter.distance,
       enabled: selectedParameter == SelectedParameter.distance,

@@ -76,17 +76,32 @@ class FociModel extends ChangeNotifier {
   FociModel();
 
   void setFocus(ScreenFocus f) {
+    if (foci.length == 1 && foci.contains(f)) {
+      return;
+    }
     foci.clear();
     foci.add(f);
     notifyListeners();
   }
 
   void addFocus(ScreenFocus f) {
+    if (foci.contains(f)) {
+      return;
+    }
+    if (f == ScreenFocus.usersteps) {
+      foci.remove(ScreenFocus.settings);
+    }
+    if (f == ScreenFocus.settings) {
+      foci.remove(ScreenFocus.usersteps);
+    }
     foci.add(f);
     notifyListeners();
   }
 
   void removeFocus(ScreenFocus f) {
+    if (!foci.contains(f)) {
+      return;
+    }
     foci.remove(f);
     assert(foci.isNotEmpty);
     notifyListeners();

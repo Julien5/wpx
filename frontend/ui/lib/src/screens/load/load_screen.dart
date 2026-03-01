@@ -228,10 +228,7 @@ class _LoadScreenProviders extends MultiProvider {
         providers: [
           ChangeNotifierProxyProvider2<RootModel, EventModel, LoadScreenModel>(
             create: (context) {
-              EventModel events = Provider.of<EventModel>(
-                context,
-                listen: false,
-              );
+              EventModel events = Provider.of(context, listen: false);
               developer.log("make LoadScreenModel");
               return LoadScreenModel(
                 backend: getBackend(context),

@@ -39,12 +39,21 @@ class _TrackViewState extends State<TrackView> {
     _visibilityKey = UniqueKey();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final segment = context.watch<SegmentModel>(); // or use a listener
+    final futureRenderer = context.read<FutureRenderer>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _onSegmentModelChanged(segment, futureRenderer);
+    });
+  }
+
   FutureRenderer _onSegmentModelChanged(
     SegmentModel segment,
-    FutureRenderer? renderer,
+    FutureRenderer renderer,
   ) {
-    assert(renderer != null);
-    renderer!.updateSegment(segment.segment);
+    renderer.updateSegment(segment.segment);
     renderer.reset();
     startRendererIfNeeded();
     return renderer;
@@ -110,8 +119,6 @@ class _TrackViewState extends State<TrackView> {
 
   @override
   Widget build(BuildContext ctx) {
-    // reacts on change in the segmentmodel..
-    SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
     Widget innerWidget = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return VisibilityDetector(
@@ -127,28 +134,6 @@ class _TrackViewState extends State<TrackView> {
         );
       },
     );
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: segmentModel),
-        ChangeNotifierProxyProvider2<
-          SegmentModel,
-          ParameterModel,
-          FutureRenderer
-        >(
-          create: (context) => context.read<FutureRenderer>(),
-          update: (context, segment, parameter, futureRenderer) {
-            developer.log(
-              "[update => segment:${segment.segment.id()} ${futureRenderer!.kinds} ${futureRenderer.trackData}]",
-            );
-            segment.debug();
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _onSegmentModelChanged(segment, futureRenderer);
-            });
-            return futureRenderer;
-          },
-        ),
-      ],
-      child: innerWidget,
-    );
+    return innerWidget;
   }
 }

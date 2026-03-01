@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/desktop/central_panel.dart';
@@ -38,45 +37,53 @@ class _MainScaffold extends StatelessWidget {
   }
 }
 
-class _MainScreenProviders extends MultiProvider {
-  final SegmentModel segmentModel;
-  final List<TrackData> trackData;
-  final Kinds kinds;
-  _MainScreenProviders({
-    required this.segmentModel,
-    required this.trackData,
-    required this.kinds,
-    required Widget child,
-  }) : super(
-         providers: [
-           ChangeNotifierProvider(
-             create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
-           ),
-           ChangeNotifierProvider(
-             create:
-                 (_) => FutureRenderer(
-                   bridge: segmentModel.backend,
-                   segment: segmentModel.segment,
-                   trackData: trackData,
-                   kinds: kinds,
-                 ),
-           ),
-         ],
-         child: child,
-       );
-}
+class _MainScreenProviders extends StatelessWidget {
+  final FutureRenderer futureRenderer;
+  final Widget child;
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  const _MainScreenProviders({
+    required this.futureRenderer,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
-    SegmentModel segmentModel = Provider.of<SegmentModel>(context);
-    context.watch<SegmentModel>();
+    return MultiProvider(
+      providers: [ChangeNotifierProvider.value(value: futureRenderer)],
+      child: child,
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  FutureRenderer? futureRenderer;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (futureRenderer == null) {
+      SegmentModel segmentModel = Provider.of<SegmentModel>(context);
+      futureRenderer = FutureRenderer(
+        bridge: segmentModel.backend,
+        segment: segmentModel.segment,
+        trackData: [TrackData.map, TrackData.profile],
+        kinds: allkinds(),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    assert(futureRenderer != null);
     return _MainScreenProviders(
-      segmentModel: segmentModel,
-      trackData: [TrackData.map, TrackData.profile],
-      kinds: allkinds(),
+      futureRenderer: futureRenderer!,
       child: _MainScaffold(),
     );
   }

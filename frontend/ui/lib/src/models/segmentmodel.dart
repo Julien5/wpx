@@ -57,16 +57,13 @@ class ParameterModel extends ChangeNotifier {
 
   void setUserStepsOptions(bridge.UserStepsOptions p) {
     backend.setUserStepOptions(userStepsOptions: p);
-    notify();
-  }
-
-  void notify() {
+    debugPrint("new users steps options:$p");
     notifyListeners();
   }
 
   void setParameters(bridge.Parameters p) {
     backend.setParameters(parameters: p);
-    notify();
+    notifyListeners();
   }
 
   bridge.Parameters parameters() {

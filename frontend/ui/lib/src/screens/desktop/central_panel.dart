@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/trackview.dart';
+import 'package:provider/provider.dart';
+import 'package:ui/src/models/root.dart';
+import 'package:ui/src/screens/desktop/central_panel_overview.dart';
+import 'package:ui/src/screens/desktop/central_panel_pdf.dart';
+import 'package:ui/src/screens/desktop/central_panel_usersteps.dart';
 
 class ProfilePadding extends StatelessWidget {
   final Widget child;
@@ -26,53 +28,39 @@ class GraphicsPadding extends StatelessWidget {
   }
 }
 
-class CentralPanel extends StatelessWidget {
+class CentralPanel extends StatefulWidget {
   final double width;
   const CentralPanel({super.key, required this.width});
 
   @override
+  State<CentralPanel> createState() => _CentralPanelState();
+}
+
+class _CentralPanelState extends State<CentralPanel> {
+  @override
   Widget build(BuildContext context) {
-    Widget mwrow = Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    FociModel fociModel = Provider.of<FociModel>(context);
+    return IndexedStack(
+      index:
+          fociModel.contains(ScreenFocus.usersteps)
+              ? 0
+              : fociModel.contains(ScreenFocus.settings)
+              ? 1
+              : 2,
       children: [
-        Expanded(
-          child: GraphicsPadding(
-            child: TrackView(
-              rendererParameters: RendererParameters(
-                kinds: allkinds(),
-                trackData: TrackData.map,
-              ),
-            ),
-          ),
+        SizedBox(
+          width: widget.width,
+          child: CentralPanelUserSteps(width: widget.width),
+        ),
+        SizedBox(
+          width: widget.width,
+          child: CentralPanelPDF(width: widget.width),
+        ),
+        SizedBox(
+          width: widget.width,
+          child: CentralPanelOverview(width: widget.width),
         ),
       ],
     );
-
-    List<Widget> rightChildren = [
-      ConstrainedBox(
-        constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
-        child: ProfilePadding(
-          child: TrackView(
-            rendererParameters: RendererParameters(
-              kinds: allkinds(),
-              trackData: TrackData.profile,
-            ),
-          ),
-        ),
-      ),
-      Expanded(child: mwrow),
-    ];
-
-    Widget rightCol = Expanded(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: width),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: rightChildren,
-        ),
-      ),
-    );
-    return rightCol;
   }
 }

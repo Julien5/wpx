@@ -28,12 +28,13 @@ class FutureRenderer with ChangeNotifier {
     required this.kinds,
   }) : _segment = segment,
        _backend = bridge {
+    developer.log("[CREATE FUTURE RENDERER ($segment) ($trackData)]");
     assert(_backend.isLoaded());
   }
 
   @override
   void dispose() {
-    developer.log("[renderer dispose]");
+    debugPrint("[renderer dispose ($trackData)]");
     _future = null; // Clear the future reference
     if (_disposed) {
       return;
