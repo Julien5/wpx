@@ -128,7 +128,7 @@ class FutureRenderer with ChangeNotifier {
     if (newSize == _sizes[d]) {
       return false;
     }
-    debugPrint("old size:${_sizes[d]} new size:$newSize");
+    debugPrint("setSize($d,$newSize)");
     _sizes[d] = newSize;
     _future = null;
     _results.clear();

@@ -89,7 +89,8 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
     Provider.of<ParameterModel>(context);
     FociModel fociModel = Provider.of<FociModel>(context);
     assert(futureRenderer != null);
-    if (isVisible(fociModel) && _needsRestart || futureRenderer!.needsStart()) {
+    if (isVisible(fociModel) &&
+        (_needsRestart || futureRenderer!.needsStart())) {
       debugPrint("restart renderer in widget ${widget.screenFocus}");
       futureRenderer!.restart();
       _needsRestart = false;
@@ -118,7 +119,7 @@ class _CentralPanelState extends State<CentralPanel> {
   @override
   Widget build(BuildContext context) {
     FociModel fociModel = Provider.of<FociModel>(context);
-
+    debugPrint("Centrale panel REBUILD");
     return IndexedStack(
       index:
           fociModel.contains(ScreenFocus.usersteps)
