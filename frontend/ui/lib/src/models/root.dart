@@ -107,6 +107,13 @@ class FociModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool hasOnly(ScreenFocus f) {
+    if (foci.length != 1) {
+      return false;
+    }
+    return foci.contains(f);
+  }
+
   // ignore: unused_element
   void _loadPath(String path) {
     List<String> parts = path.split('/').where((s) => s.isNotEmpty).toList();

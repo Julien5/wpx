@@ -7,68 +7,76 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/screens/desktop/central_panel.dart';
 
-class CentralPanelUserSteps extends StatefulWidget {
+class CentralWidget extends StatelessWidget {
   final double width;
-  const CentralPanelUserSteps({super.key, required this.width});
-
-  @override
-  State<CentralPanelUserSteps> createState() => _CentralPanelUserStepsState();
-}
-
-class _CentralPanelUserStepsState extends State<CentralPanelUserSteps> {
-  FutureRenderer? futureRenderer;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (futureRenderer == null) {
-      SegmentModel segmentModel = Provider.of(context);
-      futureRenderer = FutureRenderer(
-        bridge: segmentModel.backend,
-        segment: segmentModel.segment,
-        trackData: [TrackData.wheel],
-        kinds: allkinds(),
-      );
-    }
-
-    // this panel should be shown only if the focus is on user steps
-    FociModel fociModel = Provider.of(context, listen: false);
-    bool isVisible = fociModel.contains(ScreenFocus.usersteps);
-    if (!isVisible) {
-      return;
-    }
-
-    futureRenderer!.restart();
-  }
+  const CentralWidget({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
     Provider.of<ParameterModel>(context);
-    Widget track = TrackView(
-      rendererParameters: RendererParameters(
-        kinds: allkinds(),
-        trackData: TrackData.wheel,
-      ),
+    Widget bottom = Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: GraphicsPadding(
+            child: TrackView(
+              rendererParameters: RendererParameters(
+                kinds: {Kind.userStep},
+                trackData: TrackData.map,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: GraphicsPadding(
+            child: TrackView(
+              rendererParameters: RendererParameters(
+                kinds: {Kind.userStep},
+                trackData: TrackData.wheel,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
-    return _Provider(
-      futureRenderer: futureRenderer!,
-      child: GraphicsPadding(child: track),
+
+    List<Widget> children = [
+      ConstrainedBox(
+        constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
+        child: ProfilePadding(
+          child: TrackView(
+            rendererParameters: RendererParameters(
+              kinds: {Kind.userStep},
+              trackData: TrackData.profile,
+            ),
+          ),
+        ),
+      ),
+      Expanded(child: bottom),
+    ];
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: width),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: children,
+      ),
     );
   }
 }
 
-class _Provider extends StatelessWidget {
-  final FutureRenderer futureRenderer;
-  final Widget child;
-
-  const _Provider({required this.futureRenderer, required this.child});
+class CentralPanelUserSteps extends StatelessWidget {
+  final double width;
+  const CentralPanelUserSteps({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: futureRenderer)],
-      child: child,
+    return CentralPanelContent(
+      width: width,
+      trackData: [TrackData.map, TrackData.profile, TrackData.wheel],
+      screenFocus: ScreenFocus.usersteps,
+      child: CentralWidget(width: width),
     );
   }
 }

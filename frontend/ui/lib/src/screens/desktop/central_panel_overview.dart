@@ -7,46 +7,14 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/screens/desktop/central_panel.dart';
 
-class CentralPanelOverview extends StatefulWidget {
+class CentralWidget extends StatelessWidget {
   final double width;
-  const CentralPanelOverview({super.key, required this.width});
-
-  @override
-  State<CentralPanelOverview> createState() => _CentralPanelOverviewState();
-}
-
-class _CentralPanelOverviewState extends State<CentralPanelOverview> {
-  FutureRenderer? futureRenderer;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (futureRenderer == null) {
-      debugPrint("BUILD FUTURE RENDERER OVERVIEW PANEL");
-      SegmentModel segmentModel = Provider.of(context);
-      futureRenderer = FutureRenderer(
-        bridge: segmentModel.backend,
-        segment: segmentModel.segment,
-        trackData: [TrackData.map, TrackData.profile],
-        kinds: allkinds(),
-      );
-    }
-
-    // this panel should be shown only if the focus is on pdf
-    FociModel fociModel = Provider.of(context, listen: false);
-    bool isVisible =
-        !fociModel.contains(ScreenFocus.settings) &&
-        !fociModel.contains(ScreenFocus.usersteps);
-    if (!isVisible) {
-      return;
-    }
-    futureRenderer!.restart();
-  }
+  const CentralWidget({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
     Provider.of<ParameterModel>(context);
-    Widget maprow = Row(
+    Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
@@ -55,6 +23,16 @@ class _CentralPanelOverviewState extends State<CentralPanelOverview> {
               rendererParameters: RendererParameters(
                 kinds: allkinds(),
                 trackData: TrackData.map,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: GraphicsPadding(
+            child: TrackView(
+              rendererParameters: RendererParameters(
+                kinds: allkinds(),
+                trackData: TrackData.wheel,
               ),
             ),
           ),
@@ -74,39 +52,31 @@ class _CentralPanelOverviewState extends State<CentralPanelOverview> {
           ),
         ),
       ),
-      Expanded(child: maprow),
+      Expanded(child: bottom),
     ];
 
-    Widget child = ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: widget.width),
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: width),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.end,
         children: children,
       ),
     );
-
-    return _CentralPanelOverviewProvider(
-      futureRenderer: futureRenderer!,
-      child: child,
-    );
   }
 }
 
-class _CentralPanelOverviewProvider extends StatelessWidget {
-  final FutureRenderer futureRenderer;
-  final Widget child;
-
-  const _CentralPanelOverviewProvider({
-    required this.futureRenderer,
-    required this.child,
-  });
+class CentralPanelOverview extends StatelessWidget {
+  final double width;
+  const CentralPanelOverview({super.key, required this.width});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: futureRenderer)],
-      child: child,
+    return CentralPanelContent(
+      width: width,
+      trackData: [TrackData.map, TrackData.profile, TrackData.wheel],
+      screenFocus: ScreenFocus.overview,
+      child: CentralWidget(width: width),
     );
   }
 }

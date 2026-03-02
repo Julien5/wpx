@@ -14,10 +14,6 @@ class RendererParameters {
   final Set<Kind> kinds;
   final TrackData trackData;
   const RendererParameters({required this.kinds, required this.trackData});
-  ValueKey createKey() {
-    final sortedKinds = kinds.map((k) => k.toString()).toList()..sort();
-    return ValueKey('${trackData.toString()}|${sortedKinds.join(",")}');
-  }
 }
 
 class TrackView extends StatefulWidget {
