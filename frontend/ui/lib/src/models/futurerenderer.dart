@@ -98,9 +98,12 @@ class FutureRenderer with ChangeNotifier {
       assert(_future == null);
       return;
     }
-    for (int k = 0; k < values.length; ++k) {
-      _results[trackData[k]] = values[k].svg;
+
+    for (bridge.RenderOutput value in values) {
+      TrackData d = value.renderInput.function;
+      _results[d] = value.svg;
     }
+
     _future = null;
     log("[render-request-comleted:$trackData]");
     notifyListeners();

@@ -12,7 +12,7 @@ pub enum RenderFunction {
     Unknown,
 }
 
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub struct RenderInput {
     pub kinds: HashSet<Kind>,
     pub function: RenderFunction,
@@ -22,6 +22,7 @@ pub struct RenderInput {
 #[derive(Clone, Debug, Default)]
 pub struct RenderOutput {
     pub svg: String,
+    pub render_input: RenderInput,
     pub error: Option<RenderError>,
 }
 

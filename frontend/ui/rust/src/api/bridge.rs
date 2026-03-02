@@ -106,6 +106,7 @@ pub enum _RenderError {
 #[frb(mirror(RenderOutput))]
 pub struct _RenderOutput {
     pub svg: String,
+    pub render_input: RenderInput,
     pub error: Option<RenderError>,
 }
 

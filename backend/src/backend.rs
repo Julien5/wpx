@@ -378,14 +378,14 @@ impl Backend {
     pub fn render_segment(
         &self,
         segment: &Segment,
-        parameterlist: &Vec<RenderInput>,
+        render_inputs: &Vec<RenderInput>,
     ) -> Vec<RenderOutput> {
-        if parameterlist.len() == 2 {
-            let sizes: BTreeMap<_, _> = parameterlist
+        if render_inputs.len() == 2 {
+            let sizes: BTreeMap<_, _> = render_inputs
                 .iter()
                 .map(|input| (input.function.clone(), input.size))
                 .collect();
-            let kinds = parameterlist.first().unwrap().kinds.clone();
+            let kinds = render_inputs.first().unwrap().kinds.clone();
             match (
                 sizes.get(&RenderFunction::Map),
                 sizes.get(&RenderFunction::Profile),
@@ -406,16 +406,16 @@ impl Backend {
 
         let data = self.make_segment_data(segment);
         let mut ret = Vec::new();
-        for parameters in parameterlist {
-            let size = IntegerSize2D::new(parameters.size.0, parameters.size.1);
-            data.preload(&parameters.function, &size);
-            let retf = match parameters.function {
+        for render_input in render_inputs {
+            let size = IntegerSize2D::new(render_input.size.0, render_input.size.1);
+            data.preload(&render_input.function, &size);
+            let svg = match render_input.function {
                 RenderFunction::Profile => {
-                    let result = data.render_profile(&size, &parameters.kinds);
+                    let result = data.render_profile(&size, &render_input.kinds);
                     result.svg
                 }
                 RenderFunction::Map => {
-                    let result = data.render_map(&size, &parameters.kinds);
+                    let result = data.render_map(&size, &render_input.kinds);
                     result.svg
                 }
                 RenderFunction::Wheel => {
@@ -425,7 +425,7 @@ impl Backend {
                         total_distance: self.d().track.total_distance(),
                     };
                     let mut model = wheel::model::WheelModel::new(&time_parameters);
-                    model.add_points(&data, &parameters.kinds);
+                    model.add_points(&data, &render_input.kinds);
                     wheel::render(&size, &model)
                 }
                 RenderFunction::WheelPages => {
@@ -435,7 +435,7 @@ impl Backend {
                         total_distance: self.d().track.total_distance(),
                     };
                     let mut model = wheel::model::WheelModel::new(&time_parameters);
-                    model.add_points(&data, &parameters.kinds);
+                    model.add_points(&data, &render_input.kinds);
                     model.add_pages(&self.segments());
                     wheel::render(&size, &model)
                 }
@@ -446,10 +446,11 @@ impl Backend {
             log::info!(
                 "done - render_segment_what:{} {:?}",
                 segment.id,
-                parameters.function
+                render_input.function
             );
             ret.push(RenderOutput {
-                svg: retf,
+                svg,
+                render_input: render_input.clone(),
                 error: None,
             });
         }
@@ -476,12 +477,20 @@ impl Backend {
         data.preload(&RenderFunction::Profile, profile_size);
         let (result_map, result_profile) = data.render_map_profile(map_size, profile_size, &kinds);
         let mut ret = Vec::new();
-        ret.push(result_map);
-        ret.push(result_profile);
+        ret.push((RenderFunction::Map, map_size, result_map));
+        ret.push((RenderFunction::Profile, profile_size, result_profile));
         ret.iter()
-            .map(|result| RenderOutput {
-                svg: result.svg.clone(),
-                error: None,
+            .map(|(function, size, result)| {
+                debug_assert_eq!(result.parameters.function, function.clone());
+                RenderOutput {
+                    svg: result.svg.clone(),
+                    render_input: RenderInput {
+                        kinds: kinds.clone(),
+                        function: function.clone(),
+                        size: (size.width, size.height),
+                    },
+                    error: None,
+                }
             })
             .collect()
     }
