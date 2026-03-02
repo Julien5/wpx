@@ -83,20 +83,6 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
       if (!mounted) {
         return;
       }
-      Size size = visibilityInfo!.size;
-      TrackData currentData = widget.rendererParameters.trackData;
-      assert(futureRenderer!.trackData.contains(currentData));
-      ScreenConfiguration screen = Provider.of<ScreenConfiguration>(
-        context,
-        listen: false,
-      );
-      if (screen.isMobile()) {
-        if (currentData == TrackData.map || currentData == TrackData.profile) {
-          size = size * 1.5;
-        }
-      }
-      developer.log("set size $size for $currentData");
-      futureRenderer!.setSize(currentData, size);
       startRendererIfNeeded();
     });
   }

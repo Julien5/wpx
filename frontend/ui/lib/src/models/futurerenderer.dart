@@ -103,11 +103,12 @@ class FutureRenderer with ChangeNotifier {
 
     for (bridge.RenderOutput value in values) {
       TrackData d = value.renderInput.function;
+      debugPrint("found value for $d");
       _results[d] = value.svg;
     }
 
     _future = null;
-    log("[render-request-comleted:$trackData]");
+    log("[render-request-comleted:${_results.keys}]");
     notifyListeners();
   }
 
@@ -127,7 +128,7 @@ class FutureRenderer with ChangeNotifier {
     if (newSize == _sizes[d]) {
       return false;
     }
-    debugPrint("old size:$_sizes new size:$newSize");
+    debugPrint("old size:${_sizes[d]} new size:$newSize");
     _sizes[d] = newSize;
     _future = null;
     _results.clear();
@@ -135,6 +136,7 @@ class FutureRenderer with ChangeNotifier {
   }
 
   bool done() {
+    debugPrint("results:${_results.keys} vs $trackData");
     return _results.length == trackData.length;
   }
 
