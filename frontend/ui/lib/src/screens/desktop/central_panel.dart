@@ -70,7 +70,7 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
+    context.watch<ParameterModel>();
     if (futureRenderer == null) {
       SegmentModel segmentModel = Provider.of(context);
       futureRenderer = FutureRenderer(
@@ -80,15 +80,16 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
         kinds: allkinds(),
       );
     }
+    debugPrint("central panel update");
     _needsRestart = true;
   }
 
   @override
   Widget build(BuildContext context) {
     Provider.of<ParameterModel>(context);
-    FociModel fociModel = Provider.of<FociModel>(context); 
-    assert(futureRenderer!=null);
-    if (isVisible(fociModel) && _needsRestart) {
+    FociModel fociModel = Provider.of<FociModel>(context);
+    assert(futureRenderer != null);
+    if (isVisible(fociModel) && _needsRestart || futureRenderer!.needsStart()) {
       debugPrint("restart renderer in widget ${widget.screenFocus}");
       futureRenderer!.restart();
       _needsRestart = false;

@@ -57,11 +57,13 @@ class FutureRenderer with ChangeNotifier {
   }
 
   void start() {
+    debugPrint("start renderer!");
     if (_disposed) {
+      debugPrint("attempt to start a disposed renderer!");
       return;
     }
     if (_sizes.length != trackData.length) {
-      log("[render-request] size is not set for all track data");
+      debugPrint("[render-request] size is not set for all track data");
       return;
     }
     double length = _backend.segmentStatistics(segment: _segment).length / 1000;

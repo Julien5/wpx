@@ -271,7 +271,7 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
             value: SelectedParameter.none,
             controlAffinity: side,
           ),
-          SizedBox(height: 30),
+
           RadioListTile<SelectedParameter>(
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,7 +283,6 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
             value: SelectedParameter.distance,
             controlAffinity: side,
           ),
-          SizedBox(height: 30),
           RadioListTile<SelectedParameter>(
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

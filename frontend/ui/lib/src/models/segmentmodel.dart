@@ -1,7 +1,6 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 typedef Kinds = Set<bridge.Kind>;
@@ -19,16 +18,6 @@ class SegmentModel extends ChangeNotifier {
 
   bridge.UserStepsOptions userStepsOptions() {
     return backend.getParameters().userStepsOptions;
-  }
-
-  FutureRenderer makeRenderer(Kinds kinds, TrackData trackData) {
-    developer.log("make Renderer for $trackData");
-    return FutureRenderer(
-      bridge: backend,
-      segment: segment,
-      kinds: kinds,
-      trackData: [trackData],
-    );
   }
 
   bridge.SegmentStatistics statistics() {

@@ -1,14 +1,8 @@
-import 'dart:async';
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/screen_configuration.dart';
-import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/future_rendering_widget.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class RendererParameters {
   final Set<Kind> kinds;
@@ -16,120 +10,22 @@ class RendererParameters {
   const RendererParameters({required this.kinds, required this.trackData});
 }
 
-class TrackView extends StatefulWidget {
+class TrackView extends StatelessWidget {
   final RendererParameters rendererParameters;
   const TrackView({super.key, required this.rendererParameters});
 
   @override
-  State<TrackView> createState() => _TrackViewState();
-}
-
-class _TrackViewState extends State<TrackView> {
-  VisibilityInfo? visibilityInfo;
-  late final Key _visibilityKey;
-  Timer? _debounce;
-
-  @override
-  void initState() {
-    super.initState();
-    _visibilityKey = UniqueKey();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final segment = context.watch<SegmentModel>(); // or use a listener
-    final futureRenderer = context.read<FutureRenderer>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _onSegmentModelChanged(segment, futureRenderer);
-    });
-  }
-
-  FutureRenderer _onSegmentModelChanged(
-    SegmentModel segment,
-    FutureRenderer renderer,
-  ) {
-    renderer.updateSegment(segment.segment);
-    renderer.reset();
-    startRendererIfNeeded();
-    return renderer;
-  }
-
-  void _onVisibilityChanged(VisibilityInfo info) {
-    visibilityInfo = null;
-    if (!mounted) {
-      return;
-    }
-    visibilityInfo = info;
-
-    if (visibilityInfo!.visibleFraction == 0) {
-      return;
-    }
-
-    FutureRenderer futureRenderer = Provider.of<FutureRenderer>(
-      context,
-      listen: false,
-    );
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 250), () {
-      if (visibilityInfo == null) {
-        return;
-      }
-      if (!mounted) {
-        return;
-      }
-      Size size = visibilityInfo!.size;
-      TrackData currentData = widget.rendererParameters.trackData;
-      assert(futureRenderer.trackData.contains(currentData));
-      ScreenConfiguration screen = Provider.of<ScreenConfiguration>(
-        context,
-        listen: false,
-      );
-      if (screen.isMobile()) {
-        if (currentData == TrackData.map || currentData == TrackData.profile) {
-          size = size * 1.5;
-        }
-      }
-      developer.log("set size $size for $currentData");
-      futureRenderer.setSize(currentData, size);
-      startRendererIfNeeded();
-    });
-  }
-
-  // takes visibility and renderer dirtyness into account.
-  void startRendererIfNeeded() {
-    FutureRenderer futureRenderer = Provider.of<FutureRenderer>(
-      context,
-      listen: false,
-    );
-    bool needed =
-        visibilityInfo != null &&
-        visibilityInfo!.visibleFraction > 0 &&
-        futureRenderer.needsStart();
-    if (needed) {
-      futureRenderer.start();
-      // this assert fails, sometimes, when the screen is resized quickly
-      // assert(!futureRenderer!.needsStart());
-    }
-  }
-
-  @override
-  Widget build(BuildContext ctx) {
-    Widget innerWidget = LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return VisibilityDetector(
-          // widget.key! causes an initial rendering problem in PDF
-          // UniqueKey() causes flicker when adjusting the speed in WheelScreen
-          // => we use a specific key
-          key: _visibilityKey,
-          onVisibilityChanged: _onVisibilityChanged,
-          child: FutureRenderingWidget(
-            trackData: widget.rendererParameters.trackData,
-            interactive: false,
-          ),
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        FutureRenderer renderer = Provider.of(context);
+        Size size = Size(constraints.maxWidth, constraints.maxHeight);
+        renderer.setSize(rendererParameters.trackData, size);
+        return FutureRenderingWidget(
+          trackData: rendererParameters.trackData,
+          interactive: false,
         );
       },
     );
-    return innerWidget;
   }
 }

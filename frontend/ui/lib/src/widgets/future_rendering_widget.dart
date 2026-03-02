@@ -28,9 +28,9 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
   Widget buildWorker(FutureRenderer future) {
     if (future.done()) {
-      log("[render-parse-start:${future.trackData}]");
+      log("[render-parse-start:${widget.trackData}]");
       SvgRootElement svgRootElement = parseSvg(future.result(widget.trackData));
-      log("[render-parse-end:${future.trackData}]");
+      log("[render-parse-end:${widget.trackData}]");
 
       if (!widget.interactive) {
         svgWidget = StaticSvgWidget(svgRootElement: svgRootElement);

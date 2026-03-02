@@ -13,14 +13,17 @@ import 'package:ui/src/rust/frb_generated.dart';
 import 'package:ui/utils.dart';
 
 import 'dart:io';
-import 'package:flutter/foundation.dart'; // Import kIsWeb
+import 'package:flutter/foundation.dart';
+import 'package:window_size/window_size.dart'; // Import kIsWeb
 
 Future<void> main() async {
   developer.log("START");
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      //setWindowFrame(Rect.fromLTWH(1500, 150, 400, 675));
+      // simlulate mobile screen size
+      setWindowFrame(Rect.fromLTWH(1500, 150, 400, 675));
+      // setWindowFrame(Rect.fromLTWH(150, 150, 1366, 768));
     }
   }
   await RustLib.init();
@@ -115,7 +118,7 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScreenConfiguration screen = Provider.of<ScreenConfiguration>(context);
-    double textBaseSize = screen.isMobile() ? 12.0 : 15.0;
+    double textBaseSize = screen.isMobile() ? 12.0 : 14.0;
     return MaterialApp.router(
       routeInformationParser: null,
       routerConfig: router,
