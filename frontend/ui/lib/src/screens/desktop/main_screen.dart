@@ -73,7 +73,7 @@ class _MainScreenState extends State<MainScreen> {
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
         segment: segmentModel.segment,
-        trackData: [TrackData.map, TrackData.profile],
+        clients: [TrackData.map, TrackData.profile],
         kinds: allkinds(),
       );
     }

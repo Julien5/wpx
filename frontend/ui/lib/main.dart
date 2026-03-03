@@ -22,8 +22,8 @@ Future<void> main() async {
   if (!kIsWeb) {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       // simlulate mobile screen size
-      setWindowFrame(Rect.fromLTWH(1500, 150, 400, 675));
-      // setWindowFrame(Rect.fromLTWH(150, 150, 1366, 768));
+      // setWindowFrame(Rect.fromLTWH(1500, 150, 400, 675));
+      setWindowFrame(Rect.fromLTWH(150, 150, 1366, 768));
     }
   }
   await RustLib.init();

@@ -4,7 +4,6 @@ import 'dart:developer' as developer;
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
@@ -48,7 +47,7 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
       bridge: segment.backend,
       segment: segment.segment,
       kinds: widget.rendererParameters.kinds,
-      trackData: [widget.rendererParameters.trackData],
+      clients: [widget.rendererParameters.trackData],
     );
 
     _onSegmentModelChanged(segment, futureRenderer!);

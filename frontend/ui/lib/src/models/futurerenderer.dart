@@ -11,7 +11,7 @@ typedef TrackData = bridge.RenderFunction;
 class FutureRenderer with ChangeNotifier {
   bridge.Segment _segment;
   final bridge.Bridge _backend;
-  final List<TrackData> trackData;
+  final List<TrackData> clients;
 
   final Set<bridge.Kind> kinds;
 
@@ -19,22 +19,24 @@ class FutureRenderer with ChangeNotifier {
 
   final Map<TrackData, Size?> _sizes = {};
   final Map<TrackData, String?> _results = {};
+
+  bool _visible = false;
   bool _disposed = false;
 
   FutureRenderer({
     required bridge.Bridge bridge,
     required bridge.Segment segment,
-    required this.trackData,
+    required this.clients,
     required this.kinds,
   }) : _segment = segment,
        _backend = bridge {
-    developer.log("[CREATE FUTURE RENDERER ($segment) ($trackData)]");
+    developer.log("[CREATE FUTURE RENDERER ($segment) ($clients)]");
     assert(_backend.isLoaded());
   }
 
   @override
   void dispose() {
-    debugPrint("[renderer dispose ($trackData)]");
+    debugPrint("[renderer dispose ($clients)]");
     _future = null; // Clear the future reference
     if (_disposed) {
       return;
@@ -56,22 +58,36 @@ class FutureRenderer with ChangeNotifier {
     return _sizes[d]!;
   }
 
-  void start() {
-    debugPrint("start renderer!");
-    if (_disposed) {
-      debugPrint("attempt to start a disposed renderer!");
-      return;
-    }
-    if (_sizes.length != trackData.length) {
-      debugPrint("[render-request] size is not set for all track data");
-      return;
-    }
-    double length = _backend.segmentStatistics(segment: _segment).length / 1000;
-    log("[render-request-start:$trackData] [length:$length]");
-    _results.clear();
+  bool isVisible() {
+    return _visible;
+  }
 
+  void setVisible(bool b) {
+    _visible = b;
+  }
+
+  void start() {
+    debugPrint("[render-request]");
+    if (_disposed) {
+      debugPrint("[render-request] abort: renderer disposed");
+      return;
+    }
+    if (_sizes.length != clients.length) {
+      debugPrint("[render-request] abort: size is not set for all track data");
+      return;
+    }
+    if (!needsStart()) {
+      debugPrint("[render-request] abort: renderer does not need start");
+      debugPrint(
+        "[render-request] abort: started=${started()} && done=${done()} && visible=${isVisible()};",
+      );
+      return;
+    }
+
+    log("[render-request-start:$clients]");
+    _results.clear();
     List<bridge.RenderInput> renderInputs = [];
-    for (TrackData d in trackData) {
+    for (TrackData d in clients) {
       (int, int) sizeParameter = sizeAsTuple(makeFinite(_sizes[d]!));
       renderInputs.add(
         bridge.RenderInput(kinds: kinds, function: d, size: sizeParameter),
@@ -83,7 +99,7 @@ class FutureRenderer with ChangeNotifier {
 
   String id() {
     final sortedKinds = kinds.map((k) => k.toString()).toList()..sort();
-    return "${trackData.toString()}|${sortedKinds.join(",")}|${_segment.id()}";
+    return "${clients.toString()}|${sortedKinds.join(",")}|${_segment.id()}";
   }
 
   bool started() {
@@ -91,7 +107,7 @@ class FutureRenderer with ChangeNotifier {
   }
 
   bool needsStart() {
-    return !started() && !done();
+    return !started() && !done() && isVisible();
   }
 
   void onCompleted(List<bridge.RenderOutput> values) {
@@ -108,6 +124,7 @@ class FutureRenderer with ChangeNotifier {
     }
 
     _future = null;
+
     log("[render-request-comleted:${_results.keys}]");
     notifyListeners();
   }
@@ -115,6 +132,7 @@ class FutureRenderer with ChangeNotifier {
   void reset() {
     _future = null;
     _results.clear();
+    _sizes.clear();
     notifyListeners();
   }
 
@@ -132,12 +150,12 @@ class FutureRenderer with ChangeNotifier {
     _sizes[d] = newSize;
     _future = null;
     _results.clear();
+    start();
     return true;
   }
 
   bool done() {
-    debugPrint("results:${_results.keys} vs $trackData");
-    return _results.length == trackData.length;
+    return _results.length == clients.length;
   }
 
   String result(TrackData d) {

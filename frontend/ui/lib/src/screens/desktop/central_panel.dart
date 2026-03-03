@@ -41,13 +41,13 @@ class CentralPanel extends StatefulWidget {
 
 class CentralPanelContent extends StatefulWidget {
   final double width;
-  final List<TrackData> trackData;
+  final List<TrackData> clients;
   final ScreenFocus screenFocus;
   final Widget child;
   const CentralPanelContent({
     super.key,
     required this.width,
-    required this.trackData,
+    required this.clients,
     required this.screenFocus,
     required this.child,
   });
@@ -58,7 +58,6 @@ class CentralPanelContent extends StatefulWidget {
 
 class _CentralPanelContentState extends State<CentralPanelContent> {
   FutureRenderer? futureRenderer;
-  bool _needsRestart = false;
 
   bool isVisible(FociModel fociModel) {
     if (widget.screenFocus == ScreenFocus.overview) {
@@ -70,32 +69,26 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    FociModel fociModel = context.watch<FociModel>();
     context.watch<ParameterModel>();
     if (futureRenderer == null) {
       SegmentModel segmentModel = Provider.of(context);
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
         segment: segmentModel.segment,
-        trackData: widget.trackData,
+        clients: widget.clients,
         kinds: allkinds(),
       );
     }
-    debugPrint("central panel update");
-    _needsRestart = true;
+    debugPrint("central panel: reset renderer");
+    futureRenderer!.setVisible(isVisible(fociModel));
   }
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ParameterModel>(context);
-    FociModel fociModel = Provider.of<FociModel>(context);
+    debugPrint("_CentralPanelContentState(${futureRenderer!.clients}) build()");
     assert(futureRenderer != null);
-    if (isVisible(fociModel) &&
-        (_needsRestart || futureRenderer!.needsStart())) {
-      debugPrint("restart renderer in widget ${widget.screenFocus}");
-      futureRenderer!.restart();
-      _needsRestart = false;
-    }
-
+    futureRenderer!.reset();
     return _Provider(futureRenderer: futureRenderer!, child: widget.child);
   }
 }
@@ -119,7 +112,7 @@ class _CentralPanelState extends State<CentralPanel> {
   @override
   Widget build(BuildContext context) {
     FociModel fociModel = Provider.of<FociModel>(context);
-    debugPrint("Centrale panel REBUILD");
+    debugPrint("_CentralPanelState build()");
     return IndexedStack(
       index:
           fociModel.contains(ScreenFocus.usersteps)

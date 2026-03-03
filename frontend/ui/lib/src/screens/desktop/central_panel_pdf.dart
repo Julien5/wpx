@@ -74,7 +74,7 @@ class CentralPanelPDF extends StatelessWidget {
   Widget build(BuildContext context) {
     return CentralPanelContent(
       width: width,
-      trackData: [TrackData.profile, TrackData.map, TrackData.wheelPages],
+      clients: [TrackData.wheelPages, TrackData.map, TrackData.profile],
       screenFocus: ScreenFocus.settings,
       child: CentralWidget(width: width),
     );

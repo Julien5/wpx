@@ -82,7 +82,7 @@ class _InteractiveScaffoldState extends State<InteractiveScaffold> {
               bridge: backend,
               segment: track.segment,
               kinds: allkinds(),
-              trackData: [TrackData.map],
+              clients: [TrackData.map],
             ),
         child: _InteractiveConsumer(),
       ),

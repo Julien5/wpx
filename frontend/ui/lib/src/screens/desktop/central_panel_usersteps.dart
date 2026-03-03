@@ -74,7 +74,7 @@ class CentralPanelUserSteps extends StatelessWidget {
   Widget build(BuildContext context) {
     return CentralPanelContent(
       width: width,
-      trackData: [TrackData.map, TrackData.profile, TrackData.wheel],
+      clients: [TrackData.map, TrackData.profile, TrackData.wheel],
       screenFocus: ScreenFocus.usersteps,
       child: CentralWidget(width: width),
     );

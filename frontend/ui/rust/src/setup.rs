@@ -12,7 +12,8 @@ fn setup_log() {
                 record.args()
             )
         })
-        .filter_level(log::LevelFilter::Trace)
+        // .filter_level(log::LevelFilter::Trace)
+        .filter_level(log::LevelFilter::Off)
         .try_init();
 }
 

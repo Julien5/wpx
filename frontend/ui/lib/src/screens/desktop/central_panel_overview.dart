@@ -72,11 +72,15 @@ class CentralPanelOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CentralPanelContent(
-      width: width,
-      trackData: [TrackData.map, TrackData.profile, TrackData.wheel],
-      screenFocus: ScreenFocus.overview,
-      child: CentralWidget(width: width),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return CentralPanelContent(
+          width: width,
+          clients: [TrackData.profile, TrackData.map, TrackData.wheel],
+          screenFocus: ScreenFocus.overview,
+          child: CentralWidget(width: width),
+        );
+      },
     );
   }
 }
