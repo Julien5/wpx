@@ -85,6 +85,12 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    futureRenderer!.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     debugPrint("_CentralPanelContentState(${futureRenderer!.clients}) build()");
     assert(futureRenderer != null);

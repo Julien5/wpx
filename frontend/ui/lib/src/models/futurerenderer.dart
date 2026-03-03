@@ -64,22 +64,29 @@ class FutureRenderer with ChangeNotifier {
 
   void setVisible(bool b) {
     _visible = b;
+    if (_visible) {
+      start();
+    }
   }
 
   void start() {
-    debugPrint("[render-request]");
+    debugPrint("[render-request] ($clients)");
     if (_disposed) {
-      debugPrint("[render-request] abort: renderer disposed");
+      debugPrint("[render-request] ($clients) abort: renderer disposed");
       return;
     }
     if (_sizes.length != clients.length) {
-      debugPrint("[render-request] abort: size is not set for all track data");
+      debugPrint(
+        "[render-request] ($clients) abort: size is not set for all track data",
+      );
       return;
     }
     if (!needsStart()) {
-      debugPrint("[render-request] abort: renderer does not need start");
       debugPrint(
-        "[render-request] abort: started=${started()} && done=${done()} && visible=${isVisible()};",
+        "[render-request] ($clients) abort: renderer does not need start",
+      );
+      debugPrint(
+        "[render-request] ($clients) abort: started=${started()} && done=${done()} && visible=${isVisible()};",
       );
       return;
     }

@@ -261,6 +261,7 @@ class SettingsScaffold extends StatefulWidget {
 class _SettingsScaffoldState extends State<SettingsScaffold> {
   bool showBottomWidget = false;
   void onShowPressed() {
+    debugPrint("PRESSED");
     setState(() {
       showBottomWidget = !showBottomWidget;
     });

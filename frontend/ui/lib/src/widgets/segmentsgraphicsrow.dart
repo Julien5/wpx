@@ -114,6 +114,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
       parameterModel!.addListener(_onParameterChanged);
     }
     _onParameterChanged();
+    assert(_tabController != null);
   }
 
   @override
@@ -139,9 +140,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
   Widget build(BuildContext context) {
     developer.log("[rebuild _SegmentsGraphicsRowState]");
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
-    if (_tabController == null) {
-      return Text("building tab controller");
-    }
+    assert(_tabController != null);
 
     TrackData currentModelData = model.currentData();
 
