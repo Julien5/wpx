@@ -37,54 +37,11 @@ class _MainScaffold extends StatelessWidget {
   }
 }
 
-class _MainScreenProviders extends StatelessWidget {
-  final FutureRenderer futureRenderer;
-  final Widget child;
-
-  const _MainScreenProviders({
-    required this.futureRenderer,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: futureRenderer)],
-      child: child,
-    );
-  }
-}
-
-class MainScreen extends StatefulWidget {
+class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
-
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  FutureRenderer? futureRenderer;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (futureRenderer == null) {
-      SegmentModel segmentModel = Provider.of<SegmentModel>(context);
-      futureRenderer = FutureRenderer(
-        bridge: segmentModel.backend,
-        segment: segmentModel.segment,
-        clients: [TrackData.map, TrackData.profile],
-        kinds: allkinds(),
-      );
-    }
-  }
-
+    
   @override
   Widget build(BuildContext context) {
-    assert(futureRenderer != null);
-    return _MainScreenProviders(
-      futureRenderer: futureRenderer!,
-      child: _MainScaffold(),
-    );
+    return _MainScaffold();
   }
 }
