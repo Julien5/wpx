@@ -116,11 +116,7 @@ class SegmentGraphics extends StatefulWidget {
   State<SegmentGraphics> createState() => _SegmentGraphicsState();
 }
 
-class _SegmentGraphicsState extends State<SegmentGraphics>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
+class _SegmentGraphicsState extends State<SegmentGraphics> {
   Map<TrackData, SimpleTrackView> widgets = {};
 
   @override
@@ -150,7 +146,6 @@ class _SegmentGraphicsState extends State<SegmentGraphics>
 
   @override
   Widget build(BuildContext ctx) {
-    super.build(ctx);
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
     TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
