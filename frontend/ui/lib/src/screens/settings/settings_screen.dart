@@ -237,7 +237,13 @@ class BottomRow extends StatelessWidget {
     developer.log("[LocalSegmentGraphics]");
     return ChangeNotifierProvider(
       create:
-          (_) => TrackViewsSwitch(exposed: [TrackData.profile, TrackData.map]),
+          (_) => TrackViewsSwitch(
+            exposed: [TrackData.profile, TrackData.map],
+            sizes: {
+              TrackData.profile: Size(1000, 300),
+              TrackData.map: Size(400, 400),
+            },
+          ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

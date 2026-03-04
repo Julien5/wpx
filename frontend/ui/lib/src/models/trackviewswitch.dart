@@ -6,7 +6,9 @@ import 'package:ui/src/models/futurerenderer.dart';
 class TrackViewsSwitch extends ChangeNotifier {
   int currentIndex = 0;
   final List<TrackData> exposed;
-  TrackViewsSwitch({required this.exposed});
+  final Map<TrackData, Size>? sizes;
+
+  TrackViewsSwitch({required this.exposed, this.sizes});
 
   static List<TrackData> wmp() {
     return [TrackData.wheel, TrackData.map, TrackData.profile];

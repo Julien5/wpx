@@ -63,12 +63,18 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
   @override
   Widget build(BuildContext context) {
     Provider.of<SegmentModel>(context);
+    TrackData data = widget.rendererParameters.trackData;
+    TrackViewsSwitch viewSwitch = context.watch<TrackViewsSwitch>();
+    Size? size = viewSwitch.sizes != null ? viewSwitch.sizes![data] : null;
     return ChangeNotifierProvider.value(
       value: futureRenderer!,
       builder: (context, child) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            return TrackView(trackData: widget.rendererParameters.trackData);
+            return TrackView(
+              trackData: widget.rendererParameters.trackData,
+              svgSize: size,
+            );
           },
         );
       },
