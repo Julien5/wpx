@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/screen_configuration.dart';
-import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
-import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/desktop/central_panel.dart';
 import 'package:ui/src/screens/desktop/side_panel.dart';
 
@@ -39,7 +36,7 @@ class _MainScaffold extends StatelessWidget {
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
-    
+
   @override
   Widget build(BuildContext context) {
     return _MainScaffold();

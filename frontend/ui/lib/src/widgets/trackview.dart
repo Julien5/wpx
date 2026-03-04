@@ -11,8 +11,8 @@ class RendererParameters {
 }
 
 class TrackView extends StatelessWidget {
-  final RendererParameters rendererParameters;
-  const TrackView({super.key, required this.rendererParameters});
+  final TrackData trackData;
+  const TrackView({super.key, required this.trackData});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +20,8 @@ class TrackView extends StatelessWidget {
       builder: (context, constraints) {
         FutureRenderer renderer = Provider.of(context);
         Size size = Size(constraints.maxWidth, constraints.maxHeight);
-        renderer.setSize(rendererParameters.trackData, size);
-        return FutureRenderingWidget(
-          trackData: rendererParameters.trackData,
-          interactive: false,
-        );
+        renderer.setSize(trackData, size);
+        return FutureRenderingWidget(trackData: trackData, interactive: false);
       },
     );
   }

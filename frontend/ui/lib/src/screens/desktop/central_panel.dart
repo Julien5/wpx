@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/desktop/central_panel_overview.dart';
 import 'package:ui/src/screens/desktop/central_panel_pdf.dart';
 import 'package:ui/src/screens/desktop/central_panel_usersteps.dart';

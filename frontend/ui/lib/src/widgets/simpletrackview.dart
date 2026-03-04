@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:flutter/widgets.dart';
@@ -8,7 +7,6 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 class SimpleTrackView extends StatefulWidget {
   final RendererParameters rendererParameters;
@@ -70,7 +68,7 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
       builder: (context, child) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            return TrackView(rendererParameters: widget.rendererParameters);
+            return TrackView(trackData: widget.rendererParameters.trackData);
           },
         );
       },
