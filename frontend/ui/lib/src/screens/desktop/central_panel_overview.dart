@@ -77,6 +77,7 @@ class CentralPanelOverview extends StatelessWidget {
         return CentralPanelContent(
           width: width,
           clients: [TrackData.profile, TrackData.map, TrackData.wheel],
+          kinds: allkinds(),
           screenFocus: ScreenFocus.overview,
           child: CentralWidget(width: width),
         );

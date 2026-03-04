@@ -93,7 +93,7 @@ impl SegmentData {
         }
     }
 
-    pub fn preload(&self, function: &RenderFunction, size: &IntegerSize2D) {
+    pub fn preload(&self, function: &RenderFunction, kinds: &Kinds, size: &IntegerSize2D) {
         match function {
             RenderFunction::Map => {}
             RenderFunction::Profile => {}
@@ -102,8 +102,8 @@ impl SegmentData {
             }
         };
         let render_parameters = match function {
-            RenderFunction::Map => self.map_render_parameters(size),
-            RenderFunction::Profile => self.profile_render_parameters(size),
+            RenderFunction::Map => self.map_render_parameters(kinds, size),
+            RenderFunction::Profile => self.profile_render_parameters(kinds, size),
             _ => {
                 assert!(false);
                 RenderInputParameters::default()
@@ -121,6 +121,7 @@ impl SegmentData {
             let lock = self.packet_provider.read().unwrap();
             let mut coll = lock.collection.clone();
             coll.range_cut(&self.range());
+            coll.kinds_cut(&kinds);
             coll
         };
 
@@ -153,8 +154,13 @@ impl SegmentData {
         lock.register_result(&result);
     }
 
-    fn profile_render_parameters(&self, size: &IntegerSize2D) -> RenderInputParameters {
+    fn profile_render_parameters(
+        &self,
+        kinds: &Kinds,
+        size: &IntegerSize2D,
+    ) -> RenderInputParameters {
         RenderInputParameters::make_profile_parameters(
+            kinds,
             &self.parameters,
             size,
             &self.track,
@@ -164,8 +170,9 @@ impl SegmentData {
         )
     }
 
-    fn map_render_parameters(&self, size: &IntegerSize2D) -> RenderInputParameters {
+    fn map_render_parameters(&self, kinds: &Kinds, size: &IntegerSize2D) -> RenderInputParameters {
         RenderInputParameters::make_map_parameters(
+            kinds,
             &self.parameters,
             size,
             &self.track,
@@ -178,7 +185,7 @@ impl SegmentData {
     pub fn render_profile(&self, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
         log::info!("render profile:{} kinds:{:?}", self.id(), kinds);
         let ret = {
-            let render_parameters = self.profile_render_parameters(size);
+            let render_parameters = self.profile_render_parameters(kinds, size);
             let lock = self.packet_provider.read().unwrap();
             let last_result = lock.load(&render_parameters);
             profile::profile_foreground(
@@ -195,10 +202,10 @@ impl SegmentData {
         ret
     }
 
-    pub fn render_map(&self, size: &IntegerSize2D, _kinds: &Kinds) -> RenderResult {
+    pub fn render_map(&self, size: &IntegerSize2D, kinds: &Kinds) -> RenderResult {
         log::info!("render map:{}", self.id());
         let ret = {
-            let map_parameters = self.map_render_parameters(size);
+            let map_parameters = self.map_render_parameters(kinds, size);
             let lock = self.packet_provider.read().unwrap();
             let background = lock.load(&map_parameters);
             svgmap::map_foreground(
@@ -223,8 +230,8 @@ impl SegmentData {
     ) -> (RenderResult, RenderResult) {
         log::info!("render map_profile:{} kinds:{:?}", self.id(), kinds);
         let (map_ret, profile_ret) = {
-            let map_parameters = self.map_render_parameters(map_size);
-            let profile_parameters = self.profile_render_parameters(profile_size);
+            let map_parameters = self.map_render_parameters(kinds, map_size);
+            let profile_parameters = self.profile_render_parameters(kinds, profile_size);
             log::trace!(
                 "users steps profile: {}",
                 profile_parameters.usersteps.len()
@@ -282,7 +289,8 @@ mod tests {
         osm,
         parameters::{Parameters, ProfileIndication, RenderFunction},
         point_collection::{
-            Kind, PacketProvider, PointCollection, RenderResult, SharedPacketProvider,
+            allkinds, onekind, Kind, Kinds, PacketProvider, PointCollection, RenderResult,
+            SharedPacketProvider,
         },
         profile,
         segment::{Segment, SegmentData},
@@ -371,11 +379,14 @@ mod tests {
         parameters.user_steps_options.step_elevation_gain = Some(250f64);
         parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
         let segment = load_segment(src, start, length, parameters).await;
-        let map_parameters = segment.map_render_parameters(size);
-        let profile_parameters = segment.profile_render_parameters(size);
+        //let kinds = onekind(Kind::Cities);
+        let kinds = allkinds();
+        let map_parameters = segment.map_render_parameters(&kinds, size);
+        let profile_parameters = segment.profile_render_parameters(&kinds, size);
 
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();
         collection.range_cut(&segment.range());
+        collection.kinds_cut(&kinds);
         let result = match function {
             &RenderFunction::Profile => profile::profile_background(
                 &segment.track,

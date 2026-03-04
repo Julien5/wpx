@@ -42,12 +42,14 @@ class CentralPanel extends StatefulWidget {
 class CentralPanelContent extends StatefulWidget {
   final double width;
   final List<TrackData> clients;
+  final Kinds kinds;
   final ScreenFocus screenFocus;
   final Widget child;
   const CentralPanelContent({
     super.key,
     required this.width,
     required this.clients,
+    required this.kinds,
     required this.screenFocus,
     required this.child,
   });
@@ -77,7 +79,7 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
         bridge: segmentModel.backend,
         segment: segmentModel.segment,
         clients: widget.clients,
-        kinds: allkinds(),
+        kinds: widget.kinds,
       );
     }
     debugPrint("central panel: reset renderer");
@@ -94,6 +96,12 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
   Widget build(BuildContext context) {
     debugPrint("_CentralPanelContentState(${futureRenderer!.clients}) build()");
     assert(futureRenderer != null);
+    // Rendering is done on "each frame". This works because the build() function
+    // is not called often, only when one of the dependency has changed
+    // (ParameterModel, FociModel) or the window has a new size. Which are exactly
+    // the situations where we need to recompute the graphics.
+    // However, we still need to maintain the renderer in the state, because it
+    // works asynchronously and must be kept between frames.
     futureRenderer!.reset();
     return _Provider(futureRenderer: futureRenderer!, child: widget.child);
   }

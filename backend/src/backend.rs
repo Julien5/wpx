@@ -408,7 +408,7 @@ impl Backend {
         let mut ret = Vec::new();
         for render_input in render_inputs {
             let size = IntegerSize2D::new(render_input.size.0, render_input.size.1);
-            data.preload(&render_input.function, &size);
+            data.preload(&render_input.function, &render_input.kinds, &size);
             let svg = match render_input.function {
                 RenderFunction::Profile => {
                     let result = data.render_profile(&size, &render_input.kinds);
@@ -473,8 +473,8 @@ impl Backend {
             profile_size.height
         );
         let data = self.make_segment_data(segment);
-        data.preload(&RenderFunction::Map, map_size);
-        data.preload(&RenderFunction::Profile, profile_size);
+        data.preload(&RenderFunction::Map, &kinds, map_size);
+        data.preload(&RenderFunction::Profile, &kinds, profile_size);
         let (result_map, result_profile) = data.render_map_profile(map_size, profile_size, &kinds);
         let mut ret = Vec::new();
         ret.push((RenderFunction::Map, map_size, result_map));

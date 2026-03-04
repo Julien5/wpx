@@ -118,6 +118,7 @@ impl RenderResult {
 #[derive(Clone, Default)]
 pub struct RenderInputParameters {
     pub function: RenderFunction,
+    pub kinds: Kinds,
     pub parameters: Parameters,
     pub drange: std::ops::Range<f64>,
     pub range: std::ops::Range<usize>,
@@ -129,6 +130,7 @@ impl std::fmt::Debug for RenderInputParameters {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("RenderInputParameters")
             .field("function", &self.function)
+            .field("kinds", &self.kinds)
             .field("from", &self.drange.start)
             .field("end", &self.drange.end)
             .field("width", &self.screen_size.width)
@@ -148,6 +150,7 @@ fn only_usersteps_parameter_may_differ(p1: &Parameters, p2: &Parameters) -> bool
 
 impl RenderInputParameters {
     pub fn make_map_parameters(
+        kinds: &Kinds,
         parameters: &Parameters,
         size: &IntegerSize2D,
         track: &Track,
@@ -157,6 +160,7 @@ impl RenderInputParameters {
     ) -> Self {
         Self {
             function: RenderFunction::Map,
+            kinds: kinds.clone(),
             parameters: parameters.clone(),
             drange: std::ops::Range {
                 start: start,
@@ -169,6 +173,7 @@ impl RenderInputParameters {
     }
 
     pub fn make_profile_parameters(
+        kinds: &Kinds,
         parameters: &Parameters,
         size: &IntegerSize2D,
         track: &Track,
@@ -178,6 +183,7 @@ impl RenderInputParameters {
     ) -> Self {
         Self {
             function: RenderFunction::Profile,
+            kinds: kinds.clone(),
             parameters: parameters.clone(),
             drange: std::ops::Range {
                 start: start,
@@ -190,6 +196,9 @@ impl RenderInputParameters {
     }
 
     pub fn mismatch(&self, other: &Self) -> String {
+        if self.kinds != other.kinds {
+            return format!("kinds mismatch ({:?} != {:?})", self.kinds, other.kinds);
+        }
         if self.function != other.function {
             return format!(
                 "function mismatch ({:?} != {:?})",
@@ -313,6 +322,9 @@ pub fn allkinds() -> Kinds {
         Kind::Hamlets,
     ])
 }
+pub fn onekind(kind: Kind) -> Kinds {
+    HashSet::from([kind])
+}
 
 #[derive(Clone)]
 pub struct PointCollection {
@@ -409,9 +421,7 @@ impl PointCollection {
     }
 
     pub fn kinds_cut(&mut self, kinds: &Kinds) {
-        self.map
-            .iter_mut()
-            .for_each(|(_key, points)| points.retain(|point| kinds.contains(&point.kind())));
+        self.map.retain(|kind, _points| kinds.contains(kind));
     }
 
     pub fn profile(&self) -> Packets {

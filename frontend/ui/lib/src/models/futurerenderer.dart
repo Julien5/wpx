@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ui/src/log.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/utils.dart';
 
 typedef TrackData = bridge.RenderFunction;
@@ -30,7 +31,7 @@ class FutureRenderer with ChangeNotifier {
     required this.kinds,
   }) : _segment = segment,
        _backend = bridge {
-    developer.log("[CREATE FUTURE RENDERER ($segment) ($clients)]");
+    developer.log("[CREATE FUTURE RENDERER ($segment) ($clients) ($kinds)]");
     assert(_backend.isLoaded());
   }
 
@@ -70,7 +71,7 @@ class FutureRenderer with ChangeNotifier {
   }
 
   void start() {
-    debugPrint("[render-request] ($clients)");
+    debugPrint("[render-request] ($clients) ($kinds)");
     if (_disposed) {
       debugPrint("[render-request] ($clients) abort: renderer disposed");
       return;
@@ -126,7 +127,8 @@ class FutureRenderer with ChangeNotifier {
 
     for (bridge.RenderOutput value in values) {
       TrackData d = value.renderInput.function;
-      debugPrint("found value for $d");
+      Set<Kind> k = value.renderInput.kinds;
+      debugPrint("found value for $d and $k");
       _results[d] = value.svg;
     }
 
