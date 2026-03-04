@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
+import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/desktop/central_panel_overview.dart';
 import 'package:ui/src/screens/desktop/central_panel_pdf.dart';
 import 'package:ui/src/screens/desktop/central_panel_usersteps.dart';
@@ -79,8 +80,8 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
 
   @override
   void dispose() {
+    futureRenderer?.dispose();
     super.dispose();
-    futureRenderer!.dispose();
   }
 
   @override
@@ -95,6 +96,93 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
     // works asynchronously and must be kept between frames.
     futureRenderer!.reset();
     return _Provider(futureRenderer: futureRenderer!, child: widget.child);
+  }
+}
+
+class CentralPanelTabView extends StatefulWidget {
+  final double width;
+  final List<TrackData> clients;
+  final Kinds kinds;
+  final ScreenFocus screenFocus;
+  final TabController tabController;
+  final Widget child;
+  const CentralPanelTabView({
+    super.key,
+    required this.width,
+    required this.clients,
+    required this.kinds,
+    required this.screenFocus,
+    required this.tabController,
+    required this.child,
+  });
+
+  @override
+  State<CentralPanelTabView> createState() => _CentralPanelTabViewState();
+}
+
+class _CentralPanelTabViewState extends State<CentralPanelTabView> {
+  // the list cannot be empty, so empty marks uninitialized
+  List<FutureRenderer> renderers = [];
+
+  bool isVisible(FociModel fociModel) {
+    if (widget.screenFocus == ScreenFocus.overview) {
+      return fociModel.hasOnly(ScreenFocus.overview);
+    }
+    return fociModel.contains(widget.screenFocus);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    FociModel fociModel = context.watch<FociModel>();
+    context.watch<ParameterModel>();
+    RootModel root = Provider.of(context);
+    List<Segment> segments = root.backend.segments();
+    if (renderers.length != segments.length) {
+      disposeRenderers();
+      RootModel root = Provider.of(context);
+      List<Segment> segments = root.backend.segments();
+      assert(segments.isNotEmpty);
+      for (int k = 0; k < segments.length; ++k) {
+        renderers.add(
+          FutureRenderer(
+            bridge: root.backend,
+            segment: segments[k],
+            clients: widget.clients,
+            kinds: widget.kinds,
+          ),
+        );
+      }
+    }
+    debugPrint("central panel: reset renderer");
+    for (FutureRenderer renderer in renderers) {
+      renderer.setVisible(isVisible(fociModel));
+    }
+  }
+
+  void disposeRenderers() {
+    for (FutureRenderer renderer in renderers) {
+      renderer.dispose();
+    }
+    renderers.clear();
+  }
+
+  @override
+  void dispose() {
+    disposeRenderers();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("CentralPanelTabView build()");
+    assert(renderers.isNotEmpty);
+    List<Widget> children = [];
+    for (FutureRenderer renderer in renderers) {
+      renderer.reset();
+      children.add(_Provider(futureRenderer: renderer, child: widget.child));
+    }
+    return TabBarView(controller: widget.tabController, children: children);
   }
 }
 

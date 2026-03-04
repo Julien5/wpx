@@ -47,18 +47,53 @@ class CentralWidget extends StatelessWidget {
   }
 }
 
-class CentralPanelPDF extends StatelessWidget {
+class CentralPanelPDF extends StatefulWidget {
   final double width;
   const CentralPanelPDF({super.key, required this.width});
 
   @override
+  State<CentralPanelPDF> createState() => _CentralPanelPDFState();
+}
+
+class _CentralPanelPDFState extends State<CentralPanelPDF>
+    with TickerProviderStateMixin {
+  TabController? _tabController;
+  TabBar? _tabBar;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.watch<ParameterModel>();
+    RootModel root = Provider.of(context, listen: false);
+    _tabController = TabController(
+      length: root.backend.segments().length,
+      vsync: this,
+    );
+    List<Tab> tabs = [];
+    for (int n = 0; n < _tabController!.length; ++n) {
+      tabs.add(Tab(text: "${n + 1}"));
+    }
+    _tabBar = TabBar(controller: _tabController, tabs: tabs);
+    assert(_tabController != null);
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return CentralPanelContent(
-      width: width,
+    Widget bar = _tabBar!;
+    Widget view = CentralPanelTabView(
+      tabController: _tabController!,
+      width: widget.width,
       clients: [TrackData.wheelPages, TrackData.map, TrackData.profile],
       kinds: allkinds(),
       screenFocus: ScreenFocus.settings,
-      child: CentralWidget(width: width),
+      child: CentralWidget(width: widget.width),
     );
+    return Column(children: [Expanded(child: view), bar]);
   }
 }
