@@ -18,7 +18,9 @@ class CentralWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: GraphicsPadding(child: TrackView(trackData: TrackData.map)),
+          child: GraphicsPadding(
+            child: TrackView(trackData: TrackData.map, svgSize: Size(400, 400)),
+          ),
         ),
         Expanded(
           child: GraphicsPadding(
@@ -31,7 +33,12 @@ class CentralWidget extends StatelessWidget {
     List<Widget> children = [
       ConstrainedBox(
         constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
-        child: ProfilePadding(child: TrackView(trackData: TrackData.profile)),
+        child: ProfilePadding(
+          child: TrackView(
+            trackData: TrackData.profile,
+            svgSize: Size(1000, 300),
+          ),
+        ),
       ),
       Expanded(child: bottom),
     ];

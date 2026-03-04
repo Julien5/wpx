@@ -12,14 +12,18 @@ class RendererParameters {
 
 class TrackView extends StatelessWidget {
   final TrackData trackData;
-  const TrackView({super.key, required this.trackData});
+  final Size? svgSize;
+  const TrackView({super.key, required this.trackData, this.svgSize});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         FutureRenderer renderer = Provider.of(context);
-        Size size = Size(constraints.maxWidth, constraints.maxHeight);
+        Size size =
+            svgSize != null
+                ? svgSize!
+                : Size(constraints.maxWidth, constraints.maxHeight);
         renderer.setSize(trackData, size);
         return FutureRenderingWidget(trackData: trackData, interactive: false);
       },
