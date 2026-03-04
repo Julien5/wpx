@@ -30,14 +30,6 @@ class GraphicsPadding extends StatelessWidget {
   }
 }
 
-class CentralPanel extends StatefulWidget {
-  final double width;
-  const CentralPanel({super.key, required this.width});
-
-  @override
-  State<CentralPanel> createState() => _CentralPanelState();
-}
-
 class CentralPanelContent extends StatefulWidget {
   final double width;
   final List<TrackData> clients;
@@ -119,6 +111,14 @@ class _Provider extends StatelessWidget {
       child: child,
     );
   }
+}
+
+class CentralPanel extends StatefulWidget {
+  final double width;
+  const CentralPanel({super.key, required this.width});
+
+  @override
+  State<CentralPanel> createState() => _CentralPanelState();
 }
 
 class _CentralPanelState extends State<CentralPanel> {
