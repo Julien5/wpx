@@ -26,7 +26,37 @@ pub struct RenderOutput {
     pub error: Option<RenderError>,
 }
 
-#[derive(Debug, Clone, Hash, PartialEq, Eq)]
+#[derive(Debug, Clone)]
+pub struct TrackPart {
+    pub name: String,
+    pub part_index: usize,
+    pub length: usize,
+}
+
+pub fn karl_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
+    let mut ret = parts.clone();
+    ret.sort_by_key(|part| {
+        let zero = "A".to_string();
+        let infinity = "ziel".to_string();
+        if part.name.is_empty() {
+            return zero;
+        }
+        let name = part.name.to_lowercase();
+        if name.contains("end") {
+            return infinity;
+        }
+        if name.contains("ziel") {
+            return infinity;
+        }
+        if name.contains("start") {
+            return zero;
+        }
+        return name;
+    });
+    ret
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ProfileIndication {
     None,
     NumericSlope,

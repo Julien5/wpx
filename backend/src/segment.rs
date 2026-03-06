@@ -305,7 +305,7 @@ mod tests {
         // read the whole file
         use std::io::prelude::*;
         f.read_to_end(&mut content).unwrap();
-        gpsdata::read_content(&content).unwrap()
+        gpsdata::GpxData::read_content(&content).unwrap()
     }
 
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";

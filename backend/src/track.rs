@@ -11,18 +11,13 @@ use crate::inputpoint::InputPointMap;
 use crate::mercator;
 use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
+use crate::parameters::TrackPart;
 use crate::tile;
 use crate::tile::Tiles;
 use crate::track_projection::ProjectionTrees;
 use crate::track_projection::TrackProjection;
 
 use super::elevation;
-
-pub struct TrackPart {
-    pub name: String,
-    pub begin: usize,
-    pub end: usize,
-}
 
 pub struct Simplified {
     pub xy: Vec<usize>,
@@ -221,7 +216,7 @@ impl Track {
         ret
     }
 
-    pub fn from_tracks(gpxtracks: &Vec<gpx::Track>) -> Result<Track, TrackError> {
+    pub fn from_tracks(gpxtracks: &Vec<(TrackPart, gpx::Track)>) -> Result<Track, TrackError> {
         let mut _distance = Vec::new();
         let mut wgs = Vec::new();
         let mut dacc = 0f64;
@@ -229,9 +224,8 @@ impl Track {
         let mut euclidean = Vec::new();
         let mut parts = Vec::new();
 
-        for track in gpxtracks {
+        for (part, track) in gpxtracks {
             assert_eq!(track.segments.len(), 1);
-            let begin = wgs.len();
             for segment in &track.segments {
                 for k in 0..segment.points.len() {
                     let point = &segment.points[k];
@@ -253,13 +247,7 @@ impl Track {
                     _distance.push(dacc);
                 }
             }
-            let name = track.name.as_ref().unwrap_or(&String::new()).clone();
-            let part = TrackPart {
-                name,
-                begin,
-                end: wgs.len(),
-            };
-            parts.push(part);
+            parts.push(part.clone());
         }
         assert_eq!(_distance.len(), wgs.len());
 

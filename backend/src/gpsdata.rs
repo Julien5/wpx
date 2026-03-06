@@ -2,6 +2,7 @@ use crate::bbox::BoundingBox;
 use crate::error::TrackError;
 use crate::inputpoint::InputPoint;
 use crate::math::Point2D;
+use crate::parameters::TrackPart;
 use crate::wgs84point::WGS84Point;
 use crate::{mercator, track};
 use geo::Distance;
@@ -41,24 +42,6 @@ fn make_track_from_route(route: &gpx::Route, name: String) -> gpx::Track {
 
 fn read_routes(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
     let routes = &mut gpx.routes;
-    routes.sort_by_key(|route| {
-        let zero = "A".to_string();
-        let infinity = "ziel".to_string();
-        if route.name.is_none() {
-            return zero;
-        }
-        let name = route.name.as_ref().unwrap().to_lowercase();
-        if name.contains("end") {
-            return infinity;
-        }
-        if name.contains("ziel") {
-            return infinity;
-        }
-        if name.contains("start") {
-            return zero;
-        }
-        return name;
-    });
     let mut ret: Vec<gpx::Track> = Vec::new();
     for route in routes {
         ret.push(make_track_from_route(route, "foo".to_string()));
@@ -71,24 +54,6 @@ fn read_routes(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
 
 fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
     let tracks = &mut gpx.tracks;
-    tracks.sort_by_key(|track| {
-        let zero = "A".to_string();
-        let infinity = "ziel".to_string();
-        if track.name.is_none() {
-            return zero;
-        }
-        let name = track.name.as_ref().unwrap().to_lowercase();
-        if name.contains("end") {
-            return infinity;
-        }
-        if name.contains("ziel") {
-            return infinity;
-        }
-        if name.contains("start") {
-            return zero;
-        }
-        return name;
-    });
     let mut ret: Vec<gpx::Track> = Vec::new();
     for track in tracks {
         for segment in &track.segments {
@@ -106,30 +71,90 @@ fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
 
 pub struct GpxData {
     pub waypoints: Vec<InputPoint>,
-    pub tracks: Vec<gpx::Track>,
+    pub tracks: Vec<(TrackPart, gpx::Track)>,
 }
 
-pub fn read_content(content: &Vec<u8>) -> Result<GpxData, TrackError> {
-    let mut gpx = read_gpx_content(content)?;
-    let tracks = if gpx.tracks.is_empty() {
-        match read_routes(&mut gpx) {
-            Ok(s) => s,
-            Err(e) => {
-                return Err(e);
-            }
+impl GpxData {
+    pub fn merge(data: Vec<GpxData>) -> Self {
+        let mut waypoints = Vec::new();
+        let mut tracks = Vec::new();
+        for d in data {
+            waypoints.extend_from_slice(&d.waypoints);
+            tracks.extend_from_slice(&d.tracks);
         }
-    } else {
-        match read_tracks(&mut gpx) {
-            Ok(s) => s,
-            Err(e) => {
-                return Err(e);
+        GpxData { waypoints, tracks }
+    }
+
+    pub fn read_contents(contents: &Vec<Vec<u8>>) -> Result<Self, TrackError> {
+        let mut gpxdatas = Vec::new();
+        for content in contents {
+            let result = Self::read_content(content);
+            if result.is_err() {
+                return Err(result.err().unwrap());
             }
+            gpxdatas.push(result.ok().unwrap());
         }
-    };
-    Ok(GpxData {
-        tracks,
-        waypoints: read_waypoints(&gpx),
-    })
+        Ok(Self::merge(gpxdatas))
+    }
+
+    pub fn read_content(content: &Vec<u8>) -> Result<Self, TrackError> {
+        let mut gpx = read_gpx_content(content)?;
+        let raw_tracks = if gpx.tracks.is_empty() {
+            match read_routes(&mut gpx) {
+                Ok(s) => s,
+                Err(e) => {
+                    return Err(e);
+                }
+            }
+        } else {
+            match read_tracks(&mut gpx) {
+                Ok(s) => s,
+                Err(e) => {
+                    return Err(e);
+                }
+            }
+        };
+        let named_tracks: Vec<_> = raw_tracks
+            .iter()
+            .enumerate()
+            .map(|(index, track)| (Self::track_part(&track, index), track.clone()))
+            .collect();
+        Ok(GpxData {
+            tracks: named_tracks,
+            waypoints: read_waypoints(&gpx),
+        })
+    }
+
+    fn track_part(track: &gpx::Track, id: usize) -> TrackPart {
+        assert_eq!(track.segments.len(), 1);
+        let points = &track.segments.first().as_ref().unwrap().points;
+        let name = track.name.as_ref().unwrap_or(&String::new()).clone();
+        log::trace!("id:{} name:{}", id, name);
+        TrackPart {
+            name,
+            part_index: id,
+            length: points.len(),
+        }
+    }
+
+    pub fn track_parts(&self) -> Vec<TrackPart> {
+        self.tracks
+            .iter()
+            .map(|(part, _track)| part.clone())
+            .collect()
+    }
+
+    pub fn reorder(&self, order: &Vec<usize>) -> Self {
+        // The waypoints are not affected.
+        let mut new_tracks = Vec::new();
+        for index in order {
+            new_tracks.push(self.tracks[*index].clone());
+        }
+        GpxData {
+            tracks: new_tracks,
+            waypoints: self.waypoints.clone(),
+        }
+    }
 }
 
 pub type ProfileBoundingBox = BoundingBox;

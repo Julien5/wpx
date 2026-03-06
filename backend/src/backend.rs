@@ -7,6 +7,7 @@ use crate::error;
 use crate::error::TrackError;
 use crate::event;
 use crate::gpsdata;
+use crate::gpsdata::GpxData;
 use crate::gpxexport;
 use crate::inputpoint::*;
 use crate::make_points;
@@ -19,6 +20,7 @@ use crate::parameters::ProfileIndication;
 use crate::parameters::RenderFunction;
 use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
+use crate::parameters::TrackPart;
 use crate::parameters::UserStepsOptions;
 use crate::pdf;
 use crate::point_collection::Kind;
@@ -50,6 +52,7 @@ pub struct BackendData {
 
 pub struct Backend {
     backend_data: Option<BackendData>,
+    gpxdata: std::sync::RwLock<Option<GpxData>>,
     pub sender: SenderHandlerLock,
 }
 
@@ -57,6 +60,7 @@ impl Backend {
     pub fn make() -> Backend {
         Backend {
             backend_data: None,
+            gpxdata: std::sync::RwLock::new(None),
             sender: std::sync::RwLock::new(None),
         }
     }
@@ -149,8 +153,30 @@ impl Backend {
     }
 
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
+        self.load_contents(&vec![content.clone()]).await
+    }
+
+    pub async fn load_track_parts(
+        &self,
+        contents: &Vec<Vec<u8>>,
+    ) -> Result<Vec<TrackPart>, TrackError> {
         self.send("read gpx");
-        let mut gpxdata = gpsdata::read_content(content)?;
+        let gpxdata = gpsdata::GpxData::read_contents(contents)?;
+        let parts = gpxdata.track_parts();
+        {
+            let mut locked = self.gpxdata.write().unwrap();
+            *locked = Some(gpxdata);
+        }
+        Ok(parts)
+    }
+
+    pub async fn read_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
+        assert!(self.gpxdata.read().unwrap().is_some());
+        let mut gpxdata = {
+            let mut locked = self.gpxdata.write().unwrap();
+            let indices: Vec<_> = parts.iter().map(|part| part.part_index.clone()).collect();
+            locked.as_mut().unwrap().reorder(&indices)
+        };
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
         let track = std::sync::Arc::new(track_data);
         for p in &mut gpxdata.waypoints {
@@ -180,6 +206,11 @@ impl Backend {
         Ok(())
     }
 
+    pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
+        self.send("read gpx");
+        let track_parts = self.load_track_parts(contents).await?;
+        self.read_ordered(&track_parts).await
+    }
     pub async fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
         let mut f = std::fs::File::open(filename).unwrap();
         let mut buffer = Vec::new();

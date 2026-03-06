@@ -58,17 +58,21 @@ pub fn infer_controls_from_gpx_segments(
 
     // construct candidates with the *end* of each segment.
     let mut candidates: BTreeMap<usize, Candidate> = BTreeMap::new();
+    let mut part_end_index = 0;
     for index in 0..parts.len() {
         let part = &parts[index];
-        if part.end < track.len() {
-            candidates.insert(
-                index,
-                Candidate {
-                    position: track.euclidean[part.end].clone(),
-                    segment_name: part.name.clone(),
-                },
-            );
+        part_end_index += part.length;
+        if part_end_index == track.len() {
+            break;
         }
+        assert!(part_end_index <= track.len());
+        candidates.insert(
+            index,
+            Candidate {
+                position: track.euclidean[part_end_index - 1].clone(),
+                segment_name: part.name.clone(),
+            },
+        );
     }
     assert_eq!(candidates.len(), parts.len() - 1);
     assert!(candidates.len() > 0);
@@ -91,16 +95,21 @@ pub fn infer_controls_from_gpx_segments(
                     if !neighbor.description().is_empty() {
                         description = neighbor.description();
                     }
+                    log::trace!("waypoint {} near end of {}", name, candidate.segment_name);
+                } else {
+                    log::trace!("no waypoint near end of {}", candidate.segment_name);
                 }
             }
-            None => {}
+            None => {
+                log::trace!("no waypoint near end of {}", candidate.segment_name);
+            }
         }
 
         ret.push((
-            parts[index].end,
+            index,
             InputPoint::create_control_on_track(
                 track,
-                TrackProjection::at_track_index(track, parts[index].end),
+                TrackProjection::at_track_index(track, index),
                 &name,
                 &description,
             ),
@@ -313,7 +322,8 @@ pub fn make_controls_with_osm(
 #[cfg(test)]
 mod tests {
     use crate::{
-        event, gpsdata::GpxData, inputpoint::InputPoint, osm, point_collection::PacketProvider,
+        event, gpsdata::GpxData, inputpoint::InputPoint, osm, parameters,
+        point_collection::PacketProvider,
     };
 
     fn read(filename: &str) -> GpxData {
@@ -323,7 +333,10 @@ mod tests {
         // read the whole file
         use std::io::prelude::*;
         f.read_to_end(&mut content).unwrap();
-        gpsdata::read_content(&content).unwrap()
+        let data = gpsdata::GpxData::read_content(&content).unwrap();
+        let ordered = parameters::karl_order(&data.track_parts());
+        let indices: Vec<_> = ordered.iter().map(|part| part.part_index).collect();
+        data.reorder(&indices)
     }
 
     #[tokio::test]
@@ -338,6 +351,9 @@ mod tests {
             log::info!("found:{}", control.name());
         }
         assert_eq!(controls.len(), 5);
+        for k in 0..=4 {
+            log::trace!("k={} => {}", k, controls[k].name());
+        }
         assert!(controls[0].name().contains("K1"));
         assert!(controls[1].name().contains("K2"));
         assert!(controls[2].name().contains("K3"));
