@@ -170,7 +170,7 @@ impl Backend {
         Ok(parts)
     }
 
-    pub async fn read_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
+    pub async fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
         assert!(self.gpxdata.read().unwrap().is_some());
         let mut gpxdata = {
             let mut locked = self.gpxdata.write().unwrap();
@@ -209,7 +209,7 @@ impl Backend {
     pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
         self.send("read gpx");
         let track_parts = self.load_track_parts(contents).await?;
-        self.read_ordered(&track_parts).await
+        self.load_ordered(&track_parts).await
     }
     pub async fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
         let mut f = std::fs::File::open(filename).unwrap();
@@ -218,11 +218,6 @@ impl Backend {
         use std::io::prelude::*;
         f.read_to_end(&mut buffer).unwrap();
         self.load_content(&buffer).await
-    }
-
-    pub async fn load_demo(&mut self) -> Result<(), TrackError> {
-        let content = include_bytes!("../data/ref/roland.gpx");
-        self.load_content(&content.to_vec()).await
     }
 }
 

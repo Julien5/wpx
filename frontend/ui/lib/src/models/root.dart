@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer' as developer;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -32,8 +33,6 @@ class EventModel extends ChangeNotifier {
 
 class UserInput {
   List<List<int>>? bytes;
-  String? filename;
-  bool demo = false;
 
   static UserInput makeFromBytes(List<List<int>> bytes) {
     var ret = UserInput();
@@ -41,10 +40,8 @@ class UserInput {
     return ret;
   }
 
-  static UserInput makeDemo() {
-    var ret = UserInput();
-    ret.demo = true;
-    return ret;
+  List<Uint8List> contents() {
+    return bytes!.map((chunk) => Uint8List.fromList(chunk)).toList();
   }
 }
 

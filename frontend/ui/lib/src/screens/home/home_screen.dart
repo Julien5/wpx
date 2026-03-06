@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/main.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/routes.dart';
+import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 class _ChooseData extends StatefulWidget {
   const _ChooseData();
@@ -46,7 +47,8 @@ class _ChooseDataState extends State<_ChooseData> {
   }
 
   void chooseDemo() {
-    onDone(UserInput.makeDemo());
+    List<int> bytes = bridge.demoBytes();
+    onDone(UserInput.makeFromBytes([bytes]));
   }
 
   void onDone(UserInput userInput) async {

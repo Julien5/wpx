@@ -215,6 +215,11 @@ pub enum _TrackError {
     Unknown,
 }
 
+#[frb(sync)]
+pub fn demo_bytes() -> Vec<u8> {
+    include_bytes!("../../../../../backend/data/ref/roland.gpx").to_vec()
+}
+
 use tracks::backend;
 impl Bridge {
     #[frb(sync)]
@@ -242,10 +247,6 @@ impl Bridge {
         self.backend.load_contents(contents).await
     }
 
-    pub async fn load_demo(&mut self) -> Result<(), TrackError> {
-        self.backend.load_demo().await
-    }
-
     pub async fn load_track_parts(
         &self,
         contents: &Vec<Vec<u8>>,
@@ -253,8 +254,8 @@ impl Bridge {
         self.backend.load_track_parts(contents).await
     }
 
-    pub async fn read_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
-        self.backend.read_ordered(parts).await
+    pub async fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
+        self.backend.load_ordered(parts).await
     }
 
     pub async fn generatePdf(&mut self) -> Vec<u8> {

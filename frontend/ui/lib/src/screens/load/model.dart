@@ -1,17 +1,25 @@
 import 'dart:developer' as developer;
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
-enum Job { gpx, osm, controls, none }
+enum Job { parts, gpx, osm, controls, none }
 
 class FutureJob {
-  final Future<void> future;
+  final Future<void>? future;
+  final Future<List<bridge.TrackPart>>? partsFuture;
   final Job job;
 
-  FutureJob({required this.future, required this.job});
+  FutureJob({required this.job, this.future, this.partsFuture});
+
+  static FutureJob normal(Job job, Future<void> future) {
+    return FutureJob(job: job, future: future);
+  }
+
+  static FutureJob parts(Job job, Future<List<bridge.TrackPart>> future) {
+    return FutureJob(job: job, partsFuture: future);
+  }
 }
 
 class LoadScreenModel extends ChangeNotifier {
@@ -23,6 +31,10 @@ class LoadScreenModel extends ChangeNotifier {
   final RootModel rootModel;
   final EventModel events;
   final UserInput userInput;
+  List<bridge.Waypoint>? _controls;
+  List<bridge.TrackPart>? _trackParts;
+  bridge.SegmentStatistics? _statistics;
+
   FutureJob? runningFuture;
   LoadScreenModel({
     required this.backend,
@@ -50,6 +62,9 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   static Job next(Job old) {
+    if (old == Job.parts) {
+      return Job.gpx;
+    }
     if (old == Job.gpx) {
       return Job.controls;
     }
@@ -61,15 +76,13 @@ class LoadScreenModel extends ChangeNotifier {
 
   void _makeFuture(Job job) {
     Future<void>? future;
-    if (job == Job.gpx) {
-      if (userInput.demo) {
-        future = backend.loadDemo();
-      } else {
-        assert(userInput.bytes != null);
-        final List<Uint8List> contents =
-            userInput.bytes!.map((chunk) => Uint8List.fromList(chunk)).toList();
-        future = backend.loadContents(content: contents);
-      }
+    Future<List<bridge.TrackPart>>? trackPartsFuture;
+    if (job == Job.parts) {
+      trackPartsFuture = backend.loadTrackParts(contents: userInput.contents());
+    } else if (job == Job.gpx) {
+      assert(_trackParts != null);
+      future = backend.loadOrdered(parts: _trackParts!);
+      //future = backend.loadContents(contents: userInput.contents());
     } else if (job == Job.osm) {
       future = backend.loadOsm();
     } else if (job == Job.controls) {
@@ -77,10 +90,19 @@ class LoadScreenModel extends ChangeNotifier {
     } else {
       assert(false);
     }
-    future!.then((_) => onCompleted(job)).catchError((error) {
-      onError(job, error);
-    });
-    runningFuture = FutureJob(future: future, job: job);
+    if (future != null) {
+      future.then((_) => onCompleted(job)).catchError((error) {
+        onError(job, error);
+      });
+      runningFuture = FutureJob.normal(job, future);
+    } else if (trackPartsFuture != null) {
+      trackPartsFuture.then((list) => onPartsCompleted(job, list)).catchError((
+        error,
+      ) {
+        onError(job, error);
+      });
+      runningFuture = FutureJob.parts(job, trackPartsFuture);
+    }
   }
 
   void makeFuture(Job job) {
@@ -94,7 +116,7 @@ class LoadScreenModel extends ChangeNotifier {
     if (_isDisposed) {
       return;
     }
-    startJob(Job.gpx);
+    startJob(Job.parts);
   }
 
   void retry(Job job) {
@@ -115,7 +137,15 @@ class LoadScreenModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bridge.SegmentStatistics? _statistics;
+  void onPartsCompleted(Job job, List<bridge.TrackPart> parts) {
+    if (_isDisposed) {
+      return;
+    }
+    assert(job == Job.parts);
+    _trackParts = parts;
+    onCompleted(job);
+  }
+
   void onCompleted(Job job) {
     if (_isDisposed) {
       return;
@@ -147,6 +177,10 @@ class LoadScreenModel extends ChangeNotifier {
     return _statistics!;
   }
 
+  List<bridge.TrackPart> parts() {
+    return _trackParts!;
+  }
+
   bool doneAll() {
     return done.contains(Job.gpx) &&
         done.contains(Job.controls) &&
@@ -168,7 +202,6 @@ class LoadScreenModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<bridge.Waypoint>? _controls;
   int controlsCount() {
     assert(done.contains(Job.controls));
     return _controls!.length;

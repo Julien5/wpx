@@ -117,7 +117,7 @@ impl GpxData {
         let named_tracks: Vec<_> = raw_tracks
             .iter()
             .enumerate()
-            .map(|(index, track)| (Self::track_name(&track), track.clone()))
+            .map(|(_index, track)| (Self::track_name(&track), track.clone()))
             .collect();
         Ok(GpxData {
             tracks: named_tracks,

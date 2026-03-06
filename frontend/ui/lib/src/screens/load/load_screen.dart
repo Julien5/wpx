@@ -69,6 +69,32 @@ class _GPXCard extends StatelessWidget {
   }
 }
 
+class _PartsCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext ctx) {
+    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    if (!model.hasDone(Job.parts)) {
+      return Card(elevation: 4, child: Text("loading ..."));
+    }
+    List<bridge.TrackPart> parts = model.parts();
+    List<TableRow> rows = [
+      TableRow(children: [SmallText(text: "Segments"), SmallText(text: "")]),
+    ];
+    for (bridge.TrackPart part in parts) {
+      rows.add(
+        TableRow(children: [SmallText(text: ""), SmallText(text: part.name)]),
+      );
+    }
+
+    Widget inner = Table(
+      columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
+      children: rows,
+    );
+
+    return Card(elevation: 4, child: inner);
+  }
+}
+
 class _ControlStrings {
   final LoadScreenModel screenModel;
 
@@ -173,6 +199,8 @@ class _BodyWidget extends StatelessWidget {
     return SmallCentralWidget(
       child: Column(
         children: [
+          _PartsCard(),
+          vspace,
           _GPXCard(),
           vspace,
           ControlsCard(),

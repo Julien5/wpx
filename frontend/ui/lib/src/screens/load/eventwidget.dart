@@ -17,10 +17,10 @@ class EventWidget extends StatefulWidget {
 class _EventWidgetState extends State<EventWidget> {
   @override
   Widget build(BuildContext context) {
-    LoadScreenModel screenModel = Provider.of<LoadScreenModel>(context);
     if (widget.forcedString != null) {
       return SmallText(text: widget.forcedString!);
     }
+    LoadScreenModel screenModel = Provider.of<LoadScreenModel>(context);
     return SmallText(
       text: filterEvent(screenModel.lastEvent(), widget.target, screenModel),
     );
