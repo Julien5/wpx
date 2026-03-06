@@ -31,11 +31,11 @@ class EventModel extends ChangeNotifier {
 }
 
 class UserInput {
-  List<int>? bytes;
+  List<List<int>>? bytes;
   String? filename;
   bool demo = false;
 
-  static UserInput makeFromBytes(List<int> bytes) {
+  static UserInput makeFromBytes(List<List<int>> bytes) {
     var ret = UserInput();
     ret.bytes = bytes;
     return ret;

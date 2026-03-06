@@ -59,15 +59,14 @@ pub fn infer_controls_from_gpx_segments(
     // construct candidates with the *end* of each segment.
     let mut candidates: BTreeMap<usize, Candidate> = BTreeMap::new();
     let mut part_end_index = 0;
-    for index in 0..parts.len() {
-        let part = &parts[index];
+    for part in parts {
         part_end_index += part.length;
         if part_end_index == track.len() {
             break;
         }
         assert!(part_end_index <= track.len());
         candidates.insert(
-            index,
+            part_end_index,
             Candidate {
                 position: track.euclidean[part_end_index - 1].clone(),
                 segment_name: part.name.clone(),
@@ -116,6 +115,9 @@ pub fn infer_controls_from_gpx_segments(
         ));
     }
     ret.sort_by_key(|(index, _)| *index);
+    for (index, point) in &ret {
+        log::trace!("control index {} name:{} ", index, point.name());
+    }
     ret.iter().map(|(_, w)| w.clone()).collect()
 }
 

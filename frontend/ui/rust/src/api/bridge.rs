@@ -3,6 +3,8 @@
 use flutter_rust_bridge::frb;
 
 use std::collections::HashSet;
+use tracks::parameters;
+
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
 pub use tracks::backend::Segment as SegmentImplementation;
@@ -18,6 +20,7 @@ pub use tracks::parameters::ProfileOptions;
 pub use tracks::parameters::RenderFunction;
 pub use tracks::parameters::RenderInput;
 pub use tracks::parameters::RenderOutput;
+pub use tracks::parameters::TrackPart;
 pub use tracks::parameters::UserStepsOptions;
 pub use tracks::point_collection::Kind;
 pub use tracks::waypoint::Waypoint;
@@ -108,6 +111,18 @@ pub struct _RenderOutput {
     pub svg: String,
     pub render_input: RenderInput,
     pub error: Option<RenderError>,
+}
+
+#[frb(mirror(TrackPart))]
+pub struct _TrackPart {
+    pub name: String,
+    pub part_index: usize,
+    pub length: usize,
+}
+
+#[frb(sync)]
+pub fn karl_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
+    parameters::karl_order(parts)
 }
 
 #[frb(mirror(ProfileIndication))]
@@ -214,18 +229,34 @@ impl Bridge {
         self.backend.set_sink(cell);
         Ok(())
     }
+
     pub async fn load_controls(&self, source: ControlSource) -> Result<usize, TrackError> {
         self.backend.load_controls(source).await
     }
+
     pub async fn load_osm(&self) -> Result<(), TrackError> {
         self.backend.load_osm().await
     }
-    pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
-        self.backend.load_content(content).await
+
+    pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
+        self.backend.load_contents(contents).await
     }
+
     pub async fn load_demo(&mut self) -> Result<(), TrackError> {
         self.backend.load_demo().await
     }
+
+    pub async fn load_track_parts(
+        &self,
+        contents: &Vec<Vec<u8>>,
+    ) -> Result<Vec<TrackPart>, TrackError> {
+        self.backend.load_track_parts(contents).await
+    }
+
+    pub async fn read_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
+        self.backend.read_ordered(parts).await
+    }
+
     pub async fn generatePdf(&mut self) -> Vec<u8> {
         self.backend.generatePdf().await
     }

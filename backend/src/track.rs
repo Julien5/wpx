@@ -216,7 +216,7 @@ impl Track {
         ret
     }
 
-    pub fn from_tracks(gpxtracks: &Vec<(TrackPart, gpx::Track)>) -> Result<Track, TrackError> {
+    pub fn from_tracks(gpxtracks: &Vec<(String, gpx::Track)>) -> Result<Track, TrackError> {
         let mut _distance = Vec::new();
         let mut wgs = Vec::new();
         let mut dacc = 0f64;
@@ -224,7 +224,7 @@ impl Track {
         let mut euclidean = Vec::new();
         let mut parts = Vec::new();
 
-        for (part, track) in gpxtracks {
+        for (index, (name, track)) in gpxtracks.iter().enumerate() {
             assert_eq!(track.segments.len(), 1);
             for segment in &track.segments {
                 for k in 0..segment.points.len() {
@@ -247,7 +247,11 @@ impl Track {
                     _distance.push(dacc);
                 }
             }
-            parts.push(part.clone());
+            parts.push(TrackPart {
+                name: name.clone(),
+                length: track.segments.first().unwrap().points.len(),
+                part_index: index,
+            });
         }
         assert_eq!(_distance.len(), wgs.len());
 

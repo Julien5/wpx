@@ -71,7 +71,7 @@ fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
 
 pub struct GpxData {
     pub waypoints: Vec<InputPoint>,
-    pub tracks: Vec<(TrackPart, gpx::Track)>,
+    pub tracks: Vec<(String, gpx::Track)>,
 }
 
 impl GpxData {
@@ -117,7 +117,7 @@ impl GpxData {
         let named_tracks: Vec<_> = raw_tracks
             .iter()
             .enumerate()
-            .map(|(index, track)| (Self::track_part(&track, index), track.clone()))
+            .map(|(index, track)| (Self::track_name(&track), track.clone()))
             .collect();
         Ok(GpxData {
             tracks: named_tracks,
@@ -125,10 +125,14 @@ impl GpxData {
         })
     }
 
+    fn track_name(track: &gpx::Track) -> String {
+        track.name.as_ref().unwrap_or(&String::new()).clone()
+    }
+
     fn track_part(track: &gpx::Track, id: usize) -> TrackPart {
         assert_eq!(track.segments.len(), 1);
         let points = &track.segments.first().as_ref().unwrap().points;
-        let name = track.name.as_ref().unwrap_or(&String::new()).clone();
+        let name = Self::track_name(track);
         log::trace!("id:{} name:{}", id, name);
         TrackPart {
             name,
@@ -140,7 +144,8 @@ impl GpxData {
     pub fn track_parts(&self) -> Vec<TrackPart> {
         self.tracks
             .iter()
-            .map(|(part, _track)| part.clone())
+            .enumerate()
+            .map(|(index, namedtrack)| Self::track_part(&namedtrack.1, index))
             .collect()
     }
 
@@ -148,6 +153,11 @@ impl GpxData {
         // The waypoints are not affected.
         let mut new_tracks = Vec::new();
         for index in order {
+            log::trace!(
+                "reorder: {}: {}",
+                index,
+                Self::track_name(&self.tracks[*index].1)
+            );
             new_tracks.push(self.tracks[*index].clone());
         }
         GpxData {

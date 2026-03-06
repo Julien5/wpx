@@ -1,5 +1,5 @@
 import 'dart:developer' as developer;
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:ui/src/models/root.dart';
@@ -66,7 +66,9 @@ class LoadScreenModel extends ChangeNotifier {
         future = backend.loadDemo();
       } else {
         assert(userInput.bytes != null);
-        future = backend.loadContent(content: userInput.bytes!);
+        final List<Uint8List> contents =
+            userInput.bytes!.map((chunk) => Uint8List.fromList(chunk)).toList();
+        future = backend.loadContents(content: contents);
       }
     } else if (job == Job.osm) {
       future = backend.loadOsm();

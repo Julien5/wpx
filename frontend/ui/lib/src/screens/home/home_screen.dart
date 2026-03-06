@@ -24,6 +24,7 @@ class _ChooseDataState extends State<_ChooseData> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ["gpx"],
+      allowMultiple: true,
     );
     if (result == null) {
       return;
@@ -31,17 +32,17 @@ class _ChooseDataState extends State<_ChooseData> {
     if (!mounted) {
       return;
     }
-    developer.log("result: ${result.count}");
+
+    List<List<int>> bytes = [];
     for (var file in result.files) {
-      List<int> bytes = [];
       if (file.bytes == null) {
-        bytes = await File(file.path!).readAsBytes();
+        developer.log("read: ${file.path}");
+        bytes.add(await File(file.path!).readAsBytes());
       } else {
-        bytes = file.bytes!.buffer.asInt8List().toList();
+        bytes.add(file.bytes!.buffer.asInt8List().toList());
       }
-      onDone(UserInput.makeFromBytes(bytes));
-      break;
     }
+    onDone(UserInput.makeFromBytes(bytes));
   }
 
   void chooseDemo() {
