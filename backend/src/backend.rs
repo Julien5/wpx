@@ -764,4 +764,47 @@ mod tests {
             assert!(false);
         }
     }
+
+    #[tokio::test]
+    async fn reorder() {
+        let _ = env_logger::try_init();
+        let bytes = {
+            let mut f = std::fs::File::open("data/ref/karl-400.gpx").unwrap();
+            let mut buffer = Vec::new();
+            // read the whole file
+            use std::io::prelude::*;
+            f.read_to_end(&mut buffer).unwrap();
+            buffer
+        };
+        let mut backend = Backend::make();
+        let mut track_parts = backend.load_track_parts(&vec![bytes]).await.unwrap();
+        let result = backend.load_ordered(&track_parts).await;
+        assert!(result.is_ok());
+        assert!(backend.loaded());
+        let s1 = backend.statistics();
+        log::trace!(
+            "dstart={:.1} dend={:.1} km={:.1}",
+            s1.distance_start,
+            s1.distance_end,
+            s1.length / 1000f64
+        );
+
+        track_parts.insert(0, track_parts.last().unwrap().clone());
+        track_parts.remove(track_parts.len() - 1);
+        let result = backend.load_ordered(&track_parts).await;
+        assert!(result.is_ok());
+        assert!(backend.loaded());
+        let s2 = backend.statistics();
+        log::trace!(
+            "dstart={:.1} dend={:.1} km={:.1}",
+            s2.distance_start,
+            s2.distance_end,
+            s2.length / 1000f64
+        );
+
+        let d = (s1.length - s2.length).abs();
+        log::trace!("d={}", d);
+        // the difference should be very small, less than 1 millimeter
+        assert!(d < 0.001);
+    }
 }

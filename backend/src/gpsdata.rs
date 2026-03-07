@@ -149,6 +149,34 @@ impl GpxData {
             .collect()
     }
 
+    fn to_wgs84(point: &gpx::Waypoint) -> WGS84Point {
+        let (lon, lat) = point.point().x_y();
+        let elevation = match point.elevation {
+            Some(e) => e,
+            None => 0f64,
+        };
+        WGS84Point::new(&lon, &lat, &elevation)
+    }
+
+    fn check_begin_end(&self) {
+        let mut last_end = None;
+        for (index, t) in self.tracks.iter().enumerate() {
+            let track_begin = t.1.segments.first().unwrap().points.first().unwrap();
+            let track_end = t.1.segments.first().unwrap().points.last().unwrap();
+            let name = &t.0;
+            if last_end.is_some() {
+                let p1 = Self::to_wgs84(last_end.unwrap());
+                let p2 = Self::to_wgs84(track_begin);
+                let d = distance_wgs84(&p1, &p2);
+                //log::trace!("name:{}", name);
+                //log::trace!("end:{:?}", p1);
+                //log::trace!("begin:{:?}", p2);
+                log::trace!("index:{} name:{:25} d(end,begin)={:.1}", index, name, d);
+            }
+            last_end = Some(track_end);
+        }
+    }
+
     pub fn reorder(&self, order: &Vec<usize>) -> Self {
         // The waypoints are not affected.
         let mut new_tracks = Vec::new();
@@ -160,10 +188,13 @@ impl GpxData {
             );
             new_tracks.push(self.tracks[*index].clone());
         }
-        GpxData {
+
+        let ret = GpxData {
             tracks: new_tracks,
             waypoints: self.waypoints.clone(),
-        }
+        };
+        ret.check_begin_end();
+        ret
     }
 }
 

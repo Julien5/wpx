@@ -224,8 +224,9 @@ impl Track {
         let mut euclidean = Vec::new();
         let mut parts = Vec::new();
 
+        let mut last_point = None;
         for (index, (name, track)) in gpxtracks.iter().enumerate() {
-            assert_eq!(track.segments.len(), 1);
+            debug_assert_eq!(track.segments.len(), 1);
             for segment in &track.segments {
                 for k in 0..segment.points.len() {
                     let point = &segment.points[k];
@@ -241,9 +242,14 @@ impl Track {
                     euclidean.push(projection.project(&w));
                     wgs.push(w);
 
-                    if k > 0 {
-                        dacc += distance_wgs84(&wgs[k - 1], &wgs[k]);
+                    if last_point.is_some() {
+                        let dloc = distance_wgs84(&last_point.unwrap(), &w);
+                        if dloc > 1000f64 {
+                            log::trace!("name={} k={} dloc={}", name, k, dloc);
+                        }
+                        dacc += dloc;
                     }
+                    last_point = Some(w.clone());
                     _distance.push(dacc);
                 }
             }
