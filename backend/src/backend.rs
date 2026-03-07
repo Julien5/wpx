@@ -138,7 +138,10 @@ impl Backend {
         // the case of mutiple projections for a single point is not handled correctly
         // in export_points (the waypoint creation assume a single projections).
         for c in &mut controls {
-            self.d().track.project_point(c);
+            debug_assert!(!c.track_projections.is_empty());
+            if c.track_projections.is_empty() {
+                self.d().track.project_point(c);
+            }
         }
 
         let len = controls.len();

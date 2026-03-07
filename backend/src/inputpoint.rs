@@ -71,18 +71,30 @@ impl InputPoint {
     pub fn create_control_on_track(
         track: &Track,
         proj: TrackProjection,
-        name: &str,
-        description: &str,
+        control_index: usize,
+        segment_name: &str,
+        waypoint_name: &str,
+        waypoint_description: &str,
     ) -> InputPoint {
         let index = proj.track_index;
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidean[index].clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::Controls);
         p.tags
-            .insert("name".to_string(), String::from_str(name).unwrap());
+            .insert("name".to_string(), format!("K{}", control_index));
         p.tags.insert(
-            "description".to_string(),
-            String::from_str(description).unwrap(),
+            "waypoint_name".to_string(),
+            String::from_str(waypoint_name).unwrap(),
+        );
+        p.tags
+            .insert("control_index".to_string(), format!("K{}", control_index));
+        p.tags.insert(
+            "waypoint_description".to_string(),
+            String::from_str(waypoint_description).unwrap(),
+        );
+        p.tags.insert(
+            "segment_name".to_string(),
+            String::from_str(segment_name).unwrap(),
         );
         p.track_projections = BTreeSet::from([{ proj }]);
 
