@@ -5,6 +5,7 @@ import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:ui/src/screens/load/parts_card.dart';
 import 'package:ui/src/widgets/small.dart';
 import 'package:ui/utils.dart';
 
@@ -63,32 +64,6 @@ class _GPXCard extends StatelessWidget {
           ],
         ),
       ],
-    );
-
-    return Card(elevation: 4, child: inner);
-  }
-}
-
-class _PartsCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext ctx) {
-    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
-    if (!model.hasDone(Job.parts)) {
-      return Card(elevation: 4, child: Text("loading ..."));
-    }
-    List<bridge.TrackPart> parts = model.parts();
-    List<TableRow> rows = [
-      TableRow(children: [SmallText(text: "Segments"), SmallText(text: "")]),
-    ];
-    for (bridge.TrackPart part in parts) {
-      rows.add(
-        TableRow(children: [SmallText(text: ""), SmallText(text: part.name)]),
-      );
-    }
-
-    Widget inner = Table(
-      columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
-      children: rows,
     );
 
     return Card(elevation: 4, child: inner);
@@ -199,7 +174,7 @@ class _BodyWidget extends StatelessWidget {
     return SmallCentralWidget(
       child: Column(
         children: [
-          _PartsCard(),
+          PartsCard(),
           vspace,
           _GPXCard(),
           vspace,
