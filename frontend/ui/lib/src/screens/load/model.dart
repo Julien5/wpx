@@ -132,6 +132,11 @@ class LoadScreenModel extends ChangeNotifier {
     if (_isDisposed) {
       return;
     }
+    done.remove(job);
+    if (next(job) != Job.none) {
+      done.remove(next(job));
+    }
+
     makeFuture(job);
     developer.log("future created");
     notifyListeners();
