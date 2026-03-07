@@ -181,6 +181,20 @@ class LoadScreenModel extends ChangeNotifier {
     return _trackParts!;
   }
 
+  void reorderParts(int oldIndex, int newIndex) {
+    assert(_trackParts != null);
+    debugPrint("reorder: $oldIndex => $newIndex");
+    for (bridge.TrackPart part in _trackParts!) {
+      debugPrint("before part: ${part.partIndex} ${part.name}");
+    }
+    final bridge.TrackPart element = _trackParts!.removeAt(oldIndex);
+    _trackParts!.insert(newIndex, element);
+    for (bridge.TrackPart part in _trackParts!) {
+      debugPrint("after part: ${part.partIndex} ${part.name}");
+    }
+    startJob(Job.gpx);
+  }
+
   bool doneAll() {
     return done.contains(Job.gpx) &&
         done.contains(Job.controls) &&

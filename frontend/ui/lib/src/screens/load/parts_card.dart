@@ -14,20 +14,42 @@ class PartsCard extends StatelessWidget {
       return Card(elevation: 4, child: Text("loading ..."));
     }
     List<bridge.TrackPart> parts = model.parts();
-    List<TableRow> rows = [
-      TableRow(children: [SmallText(text: "Segments"), SmallText(text: "")]),
-    ];
-    for (bridge.TrackPart part in parts) {
-      rows.add(
-        TableRow(children: [SmallText(text: ""), SmallText(text: part.name)]),
-      );
-    }
 
-    Widget inner = Table(
-      columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
-      children: rows,
+    Widget header = Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Row(children: [SmallText(text: "Segments")]),
+    );
+    Widget body = SizedBox(
+      height: 200, // Adjust this height as needed
+      child: ReorderableListView(
+        onReorder: (oldIndex, newIndex) {
+          // adjust newIndex if dragging down
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          // notify model of the reorder
+          model.reorderParts(oldIndex, newIndex);
+        },
+        children: [
+          for (int i = 0; i < parts.length; i++)
+            Padding(
+              key: ValueKey(i),
+              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Row(
+                children: [
+                  ReorderableDragStartListener(
+                    index: i,
+                    child: Icon(Icons.drag_handle),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(child: SmallText(text: parts[i].name)),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
 
-    return Card(elevation: 4, child: inner);
+    return Card(elevation: 4, child: Column(children: [header, body]));
   }
 }
