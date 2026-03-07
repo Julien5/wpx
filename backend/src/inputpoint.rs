@@ -168,6 +168,9 @@ impl InputPoint {
             .unwrap_or_default()
     }
     pub fn description(&self) -> String {
+        if self.kind() == Kind::Controls {
+            return self.control_description();
+        }
         let desc = self.tags.get("description");
         match desc {
             Some(data) => data.clone(),
@@ -287,30 +290,25 @@ impl InputPoint {
             .join(", ")
     }
 
+    fn control_description(&self) -> String {
+        let empty = String::new();
+        let segment_name = self.tags.get("segment_name").unwrap_or(&empty);
+        let waypoint_name = self.tags.get("waypoint_name").unwrap_or(&empty);
+        let waypoint_description = self.tags.get("waypoint_description").unwrap_or(&empty);
+        Self::join_non_empty(&[
+            waypoint_name,
+            waypoint_description,
+            &format!("End of {}", segment_name),
+        ])
+    }
+
     pub fn waypoint(&self, projection: &TrackProjection) -> Waypoint {
-        let (name, description) = match self.kind() {
-            Kind::Controls => {
-                let empty = String::new();
-                let segment_name = self.tags.get("segment_name").unwrap_or(&empty);
-                let waypoint_name = self.tags.get("waypoint_name").unwrap_or(&empty);
-                let waypoint_description = self.tags.get("waypoint_description").unwrap_or(&empty);
-                (
-                    self.name().clone(),
-                    Self::join_non_empty(&[
-                        waypoint_name,
-                        waypoint_description,
-                        &format!("End of {}", segment_name),
-                    ]),
-                )
-            }
-            _ => (self.name(), self.description()),
-        };
         Waypoint {
             wgs84: self.wgs84.clone(),
             euclidean: self.euclidean.clone(),
             track_index: Some(projection.track_index),
-            name: name,
-            description: description,
+            name: self.name(),
+            description: self.description(),
             info: None,
             origin: self.kind(),
         }

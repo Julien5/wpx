@@ -264,7 +264,6 @@ pub fn make_controls_with_osm(
     let margin = 10_000f64;
     let mut last_control_distance = 0f64;
     for segment in &mut segments {
-        // it has all the osm points, not only those from the segment!
         let mut points = segment.potential_controls();
         log::trace!("segment id={} before={}", segment.id(), points.len());
         points.retain(|w| {
