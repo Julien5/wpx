@@ -47,22 +47,12 @@ class _GPXCard extends StatelessWidget {
     if (model.hasDone(Job.gpx)) {
       strings.setData(model.statistics());
     }
-    Widget inner = Table(
-      columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
+    Widget inner = Column(
       children: [
-        TableRow(children: [SmallText(text: "Track"), SmallText(text: "")]),
-        TableRow(
-          children: [
-            SmallText(text: "Length"),
-            EventWidget(target: Job.gpx, forcedString: strings.km()),
-          ],
-        ),
-        TableRow(
-          children: [
-            SmallText(text: "Elevation"),
-            EventWidget(target: Job.gpx, forcedString: strings.elevation()),
-          ],
-        ),
+        SmallText(text: "Track"),
+        EventWidget(target: Job.gpx, forcedString: strings.km()),
+
+        EventWidget(target: Job.gpx, forcedString: strings.elevation()),
       ],
     );
 
@@ -90,16 +80,10 @@ class ControlsCard extends StatelessWidget {
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     _ControlStrings strings = _ControlStrings(screenModel: model);
-    Widget inner = Table(
-      columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
+    Widget inner = Column(
       children: [
-        TableRow(children: [SmallText(text: "Controls"), SmallText(text: "")]),
-        TableRow(
-          children: [
-            SmallText(text: "Number"),
-            EventWidget(target: Job.controls, forcedString: strings.count()),
-          ],
-        ),
+        SmallText(text: "Controls"),
+        EventWidget(target: Job.controls, forcedString: strings.count()),
       ],
     );
     return Card(elevation: 4, child: inner);
@@ -129,13 +113,7 @@ class _OSMCard extends StatelessWidget {
       );
     }
 
-    Widget inner = Table(
-      columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
-      children: [
-        TableRow(children: [SmallText(text: "OSM"), SmallText(text: "")]),
-        TableRow(children: [SmallText(text: "Status"), row]),
-      ],
-    );
+    Widget inner = Column(children: [SmallText(text: "OSM"), row]);
     return Card(elevation: 4, child: inner);
   }
 }
@@ -176,12 +154,17 @@ class _BodyWidget extends StatelessWidget {
         children: [
           PartsCard(),
           vspace,
-          _GPXCard(),
-          vspace,
-          ControlsCard(),
-          vspace,
-          _OSMCard(),
-          vspace,
+          SizedBox(
+            height: 120,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(child: _GPXCard()),
+                Expanded(child: ControlsCard()),
+                Expanded(child: _OSMCard()),
+              ],
+            ),
+          ),
           button,
         ],
       ),
