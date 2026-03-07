@@ -142,6 +142,10 @@ DateTime parseDateTime(String data) {
   return DateTime.parse(data).toLocal();
 }
 
+String joinNonEmpty(List<String> parts) {
+  return parts.where((s) => s.isNotEmpty).join(', ');
+}
+
 bridge.Bridge getBackend(BuildContext context) {
   RootModel root = Provider.of<RootModel>(context, listen: false);
   return root.getBackend();

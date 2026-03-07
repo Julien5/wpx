@@ -73,7 +73,7 @@ class UserStepsTableScaffold extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // Rounded corners
             ),
-            child: WaypointsTableWidget(kind: Kind.userStep),
+            child: GPXTable(kind: Kind.userStep),
           ),
         ),
         Divider(),

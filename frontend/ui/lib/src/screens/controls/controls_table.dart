@@ -73,7 +73,7 @@ class ControlsTableWidget extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // Rounded corners
             ),
-            child: WaypointsTableWidget(kind: Kind.controls),
+            child: GPXTable(kind: Kind.controls),
           ),
         ),
         Divider(),

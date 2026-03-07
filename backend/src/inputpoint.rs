@@ -278,13 +278,39 @@ impl InputPoint {
         result
     }
 
+    fn join_non_empty(parts: &[&str]) -> String {
+        parts
+            .iter()
+            .filter(|s| !s.is_empty())
+            .copied()
+            .collect::<Vec<_>>()
+            .join(", ")
+    }
+
     pub fn waypoint(&self, projection: &TrackProjection) -> Waypoint {
+        let (name, description) = match self.kind() {
+            Kind::Controls => {
+                let empty = String::new();
+                let segment_name = self.tags.get("segment_name").unwrap_or(&empty);
+                let waypoint_name = self.tags.get("waypoint_name").unwrap_or(&empty);
+                let waypoint_description = self.tags.get("waypoint_description").unwrap_or(&empty);
+                (
+                    self.name().clone(),
+                    Self::join_non_empty(&[
+                        waypoint_name,
+                        waypoint_description,
+                        &format!("End of {}", segment_name),
+                    ]),
+                )
+            }
+            _ => (self.name(), self.description()),
+        };
         Waypoint {
             wgs84: self.wgs84.clone(),
             euclidean: self.euclidean.clone(),
             track_index: Some(projection.track_index),
-            name: self.name(),
-            description: self.description(),
+            name: name,
+            description: description,
             info: None,
             origin: self.kind(),
         }

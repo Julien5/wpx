@@ -274,8 +274,8 @@ impl Backend {
                 .get_vector(kind);
             let mut copy = kpoints.clone();
             copy.retain(|w| {
-                assert!(is_close_to_track(&w));
-                range.contains(&w.track_projections.first().unwrap().track_index)
+                is_close_to_track(&w)
+                    && range.contains(&w.track_projections.first().unwrap().track_index)
             });
             points.extend_from_slice(&copy);
         }
