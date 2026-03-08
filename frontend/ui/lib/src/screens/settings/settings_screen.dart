@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:math';
 
@@ -83,10 +84,17 @@ int projectNumberOfPages(int wanted, double trackLength, Parameters p) {
   return segmentCount(trackLength, segmentLength);
 }
 
-class PagesSliderWidget extends StatelessWidget {
+class PagesSliderWidget extends StatefulWidget {
   const PagesSliderWidget({super.key});
 
-  void onChanged(BuildContext context, double pages) {
+  @override
+  State<PagesSliderWidget> createState() => _PagesSliderWidgetState();
+}
+
+class _PagesSliderWidgetState extends State<PagesSliderWidget> {
+  Timer? _debounceTimer;
+  double _pages = 1;
+  void changePageCount(BuildContext context, double pages) {
     ParameterModel parameters = Provider.of<ParameterModel>(
       context,
       listen: false,
@@ -106,28 +114,28 @@ class PagesSliderWidget extends StatelessWidget {
     developer.log("length:${nice / 1000} km => $npages pages");
   }
 
+  void onChanged(BuildContext context, double pages) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 250), () {
+      changePageCount(context, pages);
+    });
+    setState(() => _pages = pages);
+  }
+
   @override
   Widget build(BuildContext context) {
     SegmentModel track = Provider.of<SegmentModel>(context);
     ParameterModel parameterModel = Provider.of<ParameterModel>(context);
     Parameters parameters = parameterModel.parameters();
     double trackLength = track.statistics().length;
-    double segmentLength = parameters.segmentLength;
-    double segmentOverlap = parameters.segmentOverlap;
-    assert(segmentOverlap == (segmentLength - segmentOverlap) / 10);
-    int nsegment = segmentCount(trackLength, segmentLength);
-    //assert(nsegment == segment.root.segments().length);
-
     int high = projectNumberOfPages(5, trackLength, parameters);
-
     int lmin = niceSegmentLengths().reduce(min);
     int lmax = niceSegmentLengths().reduce(max);
     int pmax = min(high, segmentCount(trackLength, lmin.toDouble()));
     int pmin = segmentCount(trackLength, lmax.toDouble());
 
-    int p = nsegment.clamp(pmin, pmax);
+    int p = _pages.floor();
 
-    developer.log("$pmin $pmax $p $segmentLength");
     return Slider(
       min: pmin.toDouble(),
       max: pmax.toDouble(),
