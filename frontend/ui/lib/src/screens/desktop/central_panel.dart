@@ -124,7 +124,7 @@ class CentralPanelTabView extends StatefulWidget {
 class _CentralPanelTabViewState extends State<CentralPanelTabView> {
   // the list cannot be empty, so empty marks uninitialized
   List<FutureRenderer> renderers = [];
-  List<Segment> segments = [];
+  List<SegmentModel> segments = [];
 
   bool isVisible(FociModel fociModel) {
     if (widget.screenFocus == ScreenFocus.overview) {
@@ -139,39 +139,41 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
     FociModel fociModel = context.watch<FociModel>();
     context.watch<ParameterModel>();
     RootModel root = Provider.of(context);
-    segments = root.backend.segments();
-    if (renderers.length != segments.length) {
-      disposeRenderers();
+    List<Segment> segs = root.backend.segments();
+    if (renderers.length != segs.length) {
+      disposeModels();
       RootModel root = Provider.of(context);
-      assert(segments.isNotEmpty);
-      for (int k = 0; k < segments.length; ++k) {
+      for (int k = 0; k < segs.length; ++k) {
         renderers.add(
           FutureRenderer(
             bridge: root.backend,
-            segment: segments[k],
+            segment: segs[k],
             clients: widget.clients,
             kinds: widget.kinds,
           ),
         );
+        segments.add(SegmentModel(segment: segs[k], backend: root.backend));
       }
     }
-    debugPrint("_CentralPanelTabViewState: ${segments.length} segments");
-    debugPrint("central panel: reset renderer");
     for (FutureRenderer renderer in renderers) {
       renderer.setVisible(isVisible(fociModel));
     }
   }
 
-  void disposeRenderers() {
+  void disposeModels() {
     for (FutureRenderer renderer in renderers) {
       renderer.dispose();
     }
     renderers.clear();
+    for (SegmentModel segment in segments) {
+      segment.dispose();
+    }
+    segments.clear();
   }
 
   @override
   void dispose() {
-    disposeRenderers();
+    disposeModels();
     super.dispose();
   }
 
@@ -184,19 +186,14 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
     List<Widget> children = [];
     for (int k = 0; k < segments.length; ++k) {
       FutureRenderer renderer = renderers[k];
-      Segment segment = segments[k];
+      Segment segment = segments[k].segment;
       renderer.reset();
       SegmentStatistics stat = root.backend.segmentStatistics(segment: segment);
-      debugPrint(
-        "CREATE MODEL segment: ${segment.id()}: ${statisticsString(stat)}",
-      );
+      debugPrint("MODEL segment: ${segment.id()}: ${statisticsString(stat)}");
       MultiProvider provider = MultiProvider(
         providers: [
           ChangeNotifierProvider.value(value: renderer),
-          ChangeNotifierProvider(
-            create:
-                (_) => SegmentModel(segment: segment, backend: root.backend),
-          ),
+          ChangeNotifierProvider.value(value: segments[k]),
         ],
         child: widget.child,
       );
