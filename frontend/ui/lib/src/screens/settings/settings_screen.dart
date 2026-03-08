@@ -14,6 +14,7 @@ import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
 import 'package:ui/utils.dart';
 
+// TODO: make this code clean.
 List<double> segmentLengthSliderValues(double trackLength) {
   double trackLengthKm = trackLength / 1000;
   List<double> values = [2, 5, 10];
@@ -38,7 +39,19 @@ List<double> segmentLengthSliderValues(double trackLength) {
   return fromKm(values);
 }
 
-List<int> niceSegmentLengths() {
+int maxPageCount(double rawLength) {
+  double km = rawLength / 1000;
+  debugPrint("km=$km");
+  if (km > 1000) {
+    return (km / 100).ceil();
+  }
+  if (km > 100) {
+    return (km / 50).ceil();
+  }
+  return (km / 20).ceil();
+}
+
+List<int> niceSegmentLengths(double rawLength) {
   List<int> km = [
     10,
     15,
@@ -55,20 +68,22 @@ List<int> niceSegmentLengths() {
     200,
     250,
     300,
-    400,
-    500,
-    750,
-    1000,
   ];
-  return km.map((e) => e * 1000).toList();
+  List<int> ret = km.map((e) => e * 1000).toList();
+  double hundredk = 100000;
+  double up100 = (rawLength / hundredk).ceil() * hundredk;
+  ret.add(up100.toInt());
+  ret.sort();
+  return ret;
 }
 
-double niceSegmentLength(double value) {
-  for (int p in niceSegmentLengths()) {
-    if (p > value) {
+double niceSegmentLength(double rawLength) {
+  for (int p in niceSegmentLengths(rawLength)) {
+    if (p > rawLength) {
       return p.toDouble();
     }
   }
+  assert(false);
   return 0;
 }
 
@@ -91,10 +106,36 @@ class PagesSliderWidget extends StatefulWidget {
   State<PagesSliderWidget> createState() => _PagesSliderWidgetState();
 }
 
+class PageCountInfo {
+  int pmin = 1;
+  int pmax = 2;
+  int npages = 1;
+}
+
 class _PagesSliderWidgetState extends State<PagesSliderWidget> {
   Timer? _debounceTimer;
-  double _pages = 1;
-  void changePageCount(BuildContext context, double pages) {
+  final PageCountInfo _pages = PageCountInfo();
+
+  void updatePagesInfo(
+    double trackLength,
+    Parameters parameters,
+    int desiredPageCount,
+  ) {
+    int rawmax = maxPageCount(trackLength);
+    int high = projectNumberOfPages(rawmax, trackLength, parameters);
+    int lmin = niceSegmentLengths(trackLength).reduce(min);
+    int lmax = niceSegmentLengths(trackLength).reduce(max);
+    assert(lmin < lmax);
+    _pages.pmax = min(high, segmentCount(trackLength, lmin.toDouble()));
+    _pages.pmin = segmentCount(trackLength, lmax.toDouble());
+    _pages.npages = projectNumberOfPages(
+      desiredPageCount,
+      trackLength,
+      parameters,
+    ).clamp(_pages.pmin, _pages.pmax);
+  }
+
+  void changePageCount(BuildContext context, int pages) {
     ParameterModel parameters = Provider.of<ParameterModel>(
       context,
       listen: false,
@@ -104,44 +145,43 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
     double nice = niceSegmentLength(trackLength / pages);
     double segmentOverlap = nice / 10;
     double segmentLength = nice + segmentOverlap;
-    Parameters p = parameters.parameters();
-    ParameterChanger changer = ParameterChanger(init: p);
+    ParameterChanger changer = ParameterChanger(init: parameters.parameters());
     changer.changeSegmentLength(segmentLength);
     changer.changeSegmentOverlap(segmentOverlap);
     parameters.setParameters(changer.current());
-    developer.log("wanted:$pages pages");
-    int npages = projectNumberOfPages(pages.round(), trackLength, p);
-    developer.log("length:${nice / 1000} km => $npages pages");
+    updatePagesInfo(trackLength, parameters.parameters(), pages);
+    developer.log("length:${nice / 1000} km => ${_pages.npages} pages");
   }
 
   void onChanged(BuildContext context, double pages) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 250), () {
-      changePageCount(context, pages);
+      changePageCount(context, pages.round());
     });
-    setState(() => _pages = pages);
+    setState(
+      () => _pages.npages = pages.floor().clamp(_pages.pmin, _pages.pmax),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    SegmentModel track = Provider.of(context, listen: false);
+    ParameterModel parameterModel = Provider.of(context, listen: false);
+    double trackLength = track.statistics().length;
+    updatePagesInfo(trackLength, parameterModel.parameters(), _pages.npages);
   }
 
   @override
   Widget build(BuildContext context) {
-    SegmentModel track = Provider.of<SegmentModel>(context);
-    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
-    Parameters parameters = parameterModel.parameters();
-    double trackLength = track.statistics().length;
-    int high = projectNumberOfPages(5, trackLength, parameters);
-    int lmin = niceSegmentLengths().reduce(min);
-    int lmax = niceSegmentLengths().reduce(max);
-    int pmax = min(high, segmentCount(trackLength, lmin.toDouble()));
-    int pmin = segmentCount(trackLength, lmax.toDouble());
-
-    int p = _pages.floor();
-
+    Provider.of<SegmentModel>(context);
+    Provider.of<ParameterModel>(context);
     return Slider(
-      min: pmin.toDouble(),
-      max: pmax.toDouble(),
-      divisions: pmax - pmin,
-      value: p.toDouble(),
-      label: "$p pages",
+      min: _pages.pmin.toDouble(),
+      max: _pages.pmax.toDouble(),
+      divisions: _pages.pmax - _pages.pmin,
+      value: _pages.npages.toDouble(),
+      label: "${_pages.npages} pages",
       onChanged: (value) => {onChanged(context, value)},
     );
   }
