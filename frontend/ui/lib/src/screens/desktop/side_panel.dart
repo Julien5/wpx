@@ -6,6 +6,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
+import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/small.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
 import 'package:ui/utils.dart';
@@ -171,6 +172,8 @@ class _SidePanelState extends State<SidePanel> {
         ),
       ),
       div,
+      SizedBox(height: 20),
+      Center(child: ExportButton(text: "export zip", type: Type.zip)),
     ];
     return ConstrainedBox(
       constraints: BoxConstraints(
