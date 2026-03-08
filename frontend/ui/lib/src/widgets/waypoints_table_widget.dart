@@ -24,6 +24,8 @@ class DesktopTable extends StatelessWidget {
     if (waypoints.isEmpty) {
       return Center(child: const Text("No waypoints"));
     }
+
+    debugPrint("build table with ${waypoints.length} waypoints");
     return DataTable(
       // 1. Define the Columns
       columns: const <DataColumn>[
@@ -56,6 +58,7 @@ class DesktopTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SegmentModel model = Provider.of<SegmentModel>(context);
+    debugPrint("build table for segment ${model.segment.id()}");
     context.watch<ParameterModel>();
     var waypoints = model.someWaypoints(kinds);
     return SingleChildScrollView(

@@ -289,7 +289,13 @@ impl Backend {
             });
             points.extend_from_slice(&copy);
         }
-        log::info!("segment: {} export {} waypoints", segment.id, points.len());
+        log::info!(
+            "segment: {} [{:.1}:{:.1}] export {} waypoints",
+            segment.id,
+            segment.start / 1000f64,
+            segment.end / 1000f64,
+            points.len()
+        );
         points
     }
 
@@ -396,7 +402,7 @@ impl Backend {
     pub fn trackSegment(&self) -> Segment {
         let start = 0f64;
         let end = self.d().track.total_distance();
-        Segment { id: 0, start, end }
+        Segment { id: -1, start, end }
     }
 
     pub fn render_segment_simple(

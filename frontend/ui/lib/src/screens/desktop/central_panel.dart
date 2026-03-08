@@ -7,6 +7,7 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/desktop/central_panel_overview.dart';
 import 'package:ui/src/screens/desktop/central_panel_pdf.dart';
 import 'package:ui/src/screens/desktop/central_panel_usersteps.dart';
+import 'package:ui/utils.dart';
 
 class ProfilePadding extends StatelessWidget {
   final Widget child;
@@ -123,6 +124,7 @@ class CentralPanelTabView extends StatefulWidget {
 class _CentralPanelTabViewState extends State<CentralPanelTabView> {
   // the list cannot be empty, so empty marks uninitialized
   List<FutureRenderer> renderers = [];
+  List<Segment> segments = [];
 
   bool isVisible(FociModel fociModel) {
     if (widget.screenFocus == ScreenFocus.overview) {
@@ -137,11 +139,10 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
     FociModel fociModel = context.watch<FociModel>();
     context.watch<ParameterModel>();
     RootModel root = Provider.of(context);
-    List<Segment> segments = root.backend.segments();
+    segments = root.backend.segments();
     if (renderers.length != segments.length) {
       disposeRenderers();
       RootModel root = Provider.of(context);
-      List<Segment> segments = root.backend.segments();
       assert(segments.isNotEmpty);
       for (int k = 0; k < segments.length; ++k) {
         renderers.add(
@@ -154,6 +155,7 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
         );
       }
     }
+    debugPrint("_CentralPanelTabViewState: ${segments.length} segments");
     debugPrint("central panel: reset renderer");
     for (FutureRenderer renderer in renderers) {
       renderer.setVisible(isVisible(fociModel));
@@ -177,10 +179,29 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
   Widget build(BuildContext context) {
     debugPrint("CentralPanelTabView build()");
     assert(renderers.isNotEmpty);
+    RootModel root = Provider.of<RootModel>(context, listen: false);
+    Provider.of<ParameterModel>(context);
     List<Widget> children = [];
-    for (FutureRenderer renderer in renderers) {
+    for (int k = 0; k < segments.length; ++k) {
+      FutureRenderer renderer = renderers[k];
+      Segment segment = segments[k];
       renderer.reset();
-      children.add(_Provider(futureRenderer: renderer, child: widget.child));
+      SegmentStatistics stat = root.backend.segmentStatistics(segment: segment);
+      debugPrint(
+        "CREATE MODEL segment: ${segment.id()}: ${statisticsString(stat)}",
+      );
+      MultiProvider provider = MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: renderer),
+          ChangeNotifierProvider(
+            create:
+                (_) => SegmentModel(segment: segment, backend: root.backend),
+          ),
+        ],
+        child: widget.child,
+      );
+
+      children.add(provider);
     }
     return TabBarView(controller: widget.tabController, children: children);
   }

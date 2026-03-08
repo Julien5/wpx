@@ -164,3 +164,9 @@ String getPacingPointText(bridge.Parameters parameters) {
   }
   return pacingPointsText;
 }
+
+String statisticsString(bridge.SegmentStatistics statistics) {
+  double k1 = statistics.distanceStart / 1000;
+  double k2 = statistics.distanceEnd / 1000;
+  return "${k1.toStringAsFixed(1)} - ${k2.toStringAsFixed(1)}";
+}

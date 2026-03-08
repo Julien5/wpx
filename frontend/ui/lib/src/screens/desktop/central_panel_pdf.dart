@@ -6,6 +6,8 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/screens/desktop/central_panel.dart';
+import 'package:ui/src/widgets/waypoints_table_widget.dart';
+import 'package:ui/utils.dart';
 
 class CentralWidget extends StatelessWidget {
   final double width;
@@ -14,6 +16,12 @@ class CentralWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Provider.of<ParameterModel>(context);
+    SegmentModel segmentModel = Provider.of<SegmentModel>(context);
+    RootModel root = Provider.of<RootModel>(context);
+    Segment segment = segmentModel.segment;
+    SegmentStatistics stat = root.backend.segmentStatistics(segment: segment);
+    debugPrint("CENTRAL segment: ${segment.id()}: ${statisticsString(stat)}");
+
     Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -23,9 +31,7 @@ class CentralWidget extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: GraphicsPadding(
-            child: TrackView(trackData: TrackData.wheelPages),
-          ),
+          child: DesktopTable(kinds: {Kind.gpxWaypoints, Kind.controls}),
         ),
       ],
     );
@@ -96,7 +102,7 @@ class _CentralPanelPDFState extends State<CentralPanelPDF>
     Widget view = CentralPanelTabView(
       tabController: _tabController!,
       width: widget.width,
-      clients: [TrackData.wheelPages, TrackData.map, TrackData.profile],
+      clients: [TrackData.map, TrackData.profile],
       kinds: allkinds(),
       screenFocus: ScreenFocus.settings,
       child: CentralWidget(width: widget.width),
