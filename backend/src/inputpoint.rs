@@ -68,6 +68,13 @@ impl InputPoint {
         p
     }
 
+    pub fn control_waypoint_origin_id(&self) -> String {
+        if self.kind() != Kind::Controls {
+            return String::new();
+        }
+        self.tags.get("nearest_waypoint_id").unwrap().clone()
+    }
+
     pub fn create_control_on_track(
         track: &Track,
         proj: TrackProjection,
@@ -75,6 +82,7 @@ impl InputPoint {
         segment_name: &str,
         waypoint_name: &str,
         waypoint_description: &str,
+        nearest_waypoint_id: &str,
     ) -> InputPoint {
         let index = proj.track_index;
         let wgs = track.wgs84[index].clone();
@@ -82,19 +90,19 @@ impl InputPoint {
         let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::Controls);
         p.tags
             .insert("name".to_string(), format!("K{}", control_index));
-        p.tags.insert(
-            "waypoint_name".to_string(),
-            String::from_str(waypoint_name).unwrap(),
-        );
+        p.tags
+            .insert("waypoint_name".to_string(), waypoint_name.into());
         p.tags
             .insert("control_index".to_string(), format!("K{}", control_index));
         p.tags.insert(
             "waypoint_description".to_string(),
-            String::from_str(waypoint_description).unwrap(),
+            waypoint_description.into(),
         );
+        p.tags
+            .insert("segment_name".to_string(), segment_name.into());
         p.tags.insert(
-            "segment_name".to_string(),
-            String::from_str(segment_name).unwrap(),
+            "nearest_waypoint_id".to_string(),
+            nearest_waypoint_id.into(),
         );
         p.track_projections = BTreeSet::from([{ proj }]);
 

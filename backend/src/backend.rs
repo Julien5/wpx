@@ -274,6 +274,16 @@ impl Backend {
                 .get_vector(kind);
             let mut copy = kpoints.clone();
             copy.retain(|w| {
+                if w.kind() == Kind::Controls && kinds.contains(&Kind::GPXWaypoints) {
+                    // When a control point has been created using a GPX waypoint,
+                    // and the waypoint is also going to be in the returned list (not cleanly
+                    // done), then discard this control, show only the GPX waypoint.
+                    // Otherwise, the informations are shown twice (e.g. in tables).
+                    // TODO: ensure that this gpx waypoint is really going to the caller.
+                    if !w.control_waypoint_origin_id().is_empty() {
+                        return false;
+                    }
+                }
                 is_close_to_track(&w)
                     && range.contains(&w.track_projections.first().unwrap().track_index)
             });

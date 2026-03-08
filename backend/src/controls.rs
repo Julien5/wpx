@@ -49,6 +49,7 @@ pub fn infer_controls_from_gpx_segments(
         segment_index: usize,
         waypoint_name: String,
         waypoint_description: String,
+        nearest_waypoint_id: String,
     }
 
     // construct candidates with the *end* of each segment.
@@ -68,6 +69,7 @@ pub fn infer_controls_from_gpx_segments(
                 segment_index: _index,
                 waypoint_name: String::new(),
                 waypoint_description: String::new(),
+                nearest_waypoint_id: String::new(),
             },
         );
     }
@@ -80,12 +82,18 @@ pub fn infer_controls_from_gpx_segments(
     for (track_index, mut candidate) in candidates {
         let point = candidate.position.clone();
         let nearest = tree.nearest_neighbor(&[point.0, point.1]);
-        (candidate.waypoint_name, candidate.waypoint_description) = match nearest {
+        (
+            candidate.waypoint_name,
+            candidate.waypoint_description,
+            candidate.nearest_waypoint_id,
+        ) = match nearest {
             Some(neighbor) => {
                 let mut name = String::new();
                 let mut description = String::new();
+                let mut id = String::new();
                 if math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt() < maxdist
                 {
+                    id = neighbor.id();
                     if !neighbor.name().is_empty() {
                         name = neighbor.name();
                     }
@@ -96,11 +104,11 @@ pub fn infer_controls_from_gpx_segments(
                 } else {
                     log::trace!("no waypoint near end of {}", candidate.segment_name);
                 }
-                (name, description)
+                (name, description, id)
             }
             None => {
                 log::trace!("no waypoint near end of {}", candidate.segment_name);
-                (String::new(), String::new())
+                (String::new(), String::new(), String::new())
             }
         };
         ret.push((
@@ -112,6 +120,7 @@ pub fn infer_controls_from_gpx_segments(
                 &candidate.segment_name,
                 &candidate.waypoint_name,
                 &candidate.waypoint_description,
+                &candidate.nearest_waypoint_id,
             ),
         ));
     }
@@ -143,6 +152,7 @@ pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) 
                 &segment_name,
                 &point.name(),
                 &point.description(),
+                &point.id(),
             );
             ret.push(control);
             log::trace!("pushed {}", point.name());
@@ -207,6 +217,7 @@ pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) 
             "",
             "start",
             "start",
+            "",
         );
         controls.push(start.clone());
     }
@@ -218,6 +229,7 @@ pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) 
             "End",
             "end",
             "end",
+            "",
         );
         controls.push(end.clone());
     }
@@ -258,6 +270,7 @@ pub fn make_controls_with_osm(
     struct Control {
         index: usize,
         osm_name: String,
+        nearest_osm_id: String,
     }
 
     let mut proto = Vec::new();
@@ -305,6 +318,7 @@ pub fn make_controls_with_osm(
         proto.push(Control {
             index,
             osm_name: name,
+            nearest_osm_id: selected.id(),
         });
         last_control_distance = selected
             .track_projections
@@ -326,6 +340,7 @@ pub fn make_controls_with_osm(
             &segment_name,
             &waypoint_name,
             &waypoint_description,
+            &p.nearest_osm_id,
         );
         ret.push(w);
     }
