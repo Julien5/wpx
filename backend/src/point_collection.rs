@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, HashSet};
 
 use crate::{
     inputpoint::InputPoint,
@@ -38,87 +38,6 @@ impl RenderResult {
         let mut seen = HashSet::new();
         ret.retain(|point| seen.insert(point.id()) && is_osm(&point.kind()));
         ret
-    }
-
-    fn features_with_point_id(&self, id: &String) -> Vec<PointFeature> {
-        self.rendered
-            .iter()
-            .filter(|f| f.input_point.is_some())
-            .filter(|f| f.input_point().unwrap().id() == *id)
-            .map(|f| f.clone())
-            .collect()
-    }
-
-    // input_point.id() -> set of rendered projections
-    fn rendered_projections(&self) -> BTreeMap<String, BTreeSet<usize>> {
-        let mut rendered_projections: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
-
-        for feature in &self.rendered {
-            if let Some(point) = &feature.input_point {
-                rendered_projections
-                    .entry(point.0.id())
-                    .or_default()
-                    .extend(&point.1);
-            }
-        }
-        rendered_projections
-    }
-
-    pub fn intersection(map: &Self, profile: &Self) -> (Self, Self) {
-        let rmap = map.rendered_projections();
-        let rprofile = profile.rendered_projections();
-        let mut good = BTreeSet::new();
-        for (id1, rendered1) in &rmap {
-            if let Some(rendered2) = rprofile.get(id1) {
-                if *rendered1 == *rendered2 {
-                    good.insert(id1);
-                }
-            }
-        }
-        for (id, _) in &rmap {
-            if !good.contains(id) {
-                log::trace!("intersection discarded from map:{}", id);
-            }
-        }
-        for (id, _) in &rprofile {
-            if !good.contains(id) {
-                log::trace!("intersection discarded from profile:{}", id);
-            }
-        }
-        log::trace!("number of common input points:{}", good.len());
-        let mut common_features_map = Vec::new();
-        let mut common_features_profile = Vec::new();
-        for id in good {
-            let maps = map.features_with_point_id(&id);
-            common_features_map.extend_from_slice(&maps);
-            let profiles = profile.features_with_point_id(&id);
-            common_features_profile.extend_from_slice(&profiles);
-        }
-
-        // add the features that where not associated to input points
-        // => time labels (9h, etc. in the profile)
-        for m in &map.rendered {
-            if m.input_point.is_none() {
-                common_features_map.push(m.clone());
-            }
-        }
-        for m in &profile.rendered {
-            if m.input_point.is_none() {
-                common_features_profile.push(m.clone());
-            }
-        }
-
-        let m = RenderResult {
-            svg: String::new(),
-            rendered: common_features_map,
-            parameters: map.parameters.clone(),
-        };
-        let p = RenderResult {
-            svg: String::new(),
-            rendered: common_features_profile,
-            parameters: profile.parameters.clone(),
-        };
-        (m, p)
     }
 }
 
