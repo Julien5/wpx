@@ -4,10 +4,10 @@ use std::collections::HashSet;
 
 use clap::Parser;
 use tracks::backend::Backend;
-use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::{ControlSource, RenderFunction};
 use tracks::point_collection::Kind;
+use tracks::{error, parameters};
 use tracks::{point_collection, speed};
 
 /// Search for a pattern in a file and display the lines that contain it.
@@ -124,6 +124,15 @@ fn setup_log() {
         .try_init();
 }
 
+pub fn read_file(filename: &str) -> Vec<u8> {
+    let mut f = std::fs::File::open(filename).unwrap();
+    let mut buffer = Vec::new();
+    // read the whole file
+    use std::io::prelude::*;
+    f.read_to_end(&mut buffer).unwrap();
+    buffer
+}
+
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> anyhow::Result<()> {
     // env_logger::init();
@@ -149,7 +158,10 @@ async fn main() -> anyhow::Result<()> {
     log::info!("read gpx {}", gpxinput);
     log::info!("outdir   {}", outdir);
     let mut backend = Backend::make();
-    backend.load_filename(gpxinput).await?;
+    let gpxdata = read_file(gpxinput);
+    let parts = backend.load_track_parts(&vec![gpxdata]).await?;
+    let parts = parameters::karl_order(&parts);
+    backend.load_ordered(&parts).await?;
     let _ = backend.load_osm().await;
     backend.load_controls(ControlSource::Segments).await?;
 

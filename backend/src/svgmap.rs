@@ -165,6 +165,38 @@ impl MapMaker {
         20
     }
 
+    fn make_one_feature(&self, w: &InputPoint, track: &Track, counter: usize) -> PointFeature {
+        let euclidean = &w.euclidean;
+        let bbox = &self.map_box;
+        let size = &self.parameters.screen_size;
+        let on_track = track.project_simplified(&euclidean).euclidean;
+        let margin = Self::margin();
+        let mut p = to_graphics_coordinates(bbox, &euclidean, size.width, size.height, margin);
+        let p_track = to_graphics_coordinates(bbox, &on_track, size.width, size.height, margin);
+        if p.distance_to(&p_track) < 5f64 {
+            p = p_track;
+        }
+        let k = counter;
+        let id = format!("{}/wp/circle", k);
+        let circle = draw_for_map(&p, id.as_str(), &w);
+
+        // on the map, all projections are equivalent
+        let mut label = drawings::make_label_text(&w);
+        label.id = format!("{}/wp/text", k);
+        let track_indices: BTreeSet<_> = w
+            .track_projections
+            .iter()
+            .map(|proj| proj.track_index)
+            .collect();
+        PointFeature {
+            circle,
+            label,
+            input_point: Some((w.clone(), track_indices)),
+            link: None,
+            xmlid: k,
+        }
+    }
+
     fn make_polyline(&self, track: &Track) -> Polyline {
         let mut path = Vec::new();
         let range = &self.parameters.range;
@@ -200,8 +232,6 @@ impl MapMaker {
         let mut feature_packets = Vec::new();
         let mut feature_unlabeled = Vec::new();
         let mut counter = 0;
-        let margin = Self::margin();
-        let bbox = &self.map_box;
         let size = &self.parameters.screen_size;
         for packet in packets {
             let mut feature_packet = Vec::new();
@@ -210,36 +240,9 @@ impl MapMaker {
                 if !self.map_box.contains(&euclidean.point2d()) {
                     continue;
                 }
-
-                let on_track = track.project_simplified(&euclidean).euclidean;
-                let mut p =
-                    to_graphics_coordinates(bbox, &euclidean, size.width, size.height, margin);
-                let p_track =
-                    to_graphics_coordinates(bbox, &on_track, size.width, size.height, margin);
-                if p.distance_to(&p_track) < 5f64 {
-                    p = p_track;
-                }
-                let k = counter;
+                let feature = self.make_one_feature(w, track, counter);
+                let empty = feature.label.is_empty();
                 counter += 1;
-                let id = format!("{}/wp/circle", k);
-                let circle = draw_for_map(&p, id.as_str(), &w);
-
-                // on the map, all projections are equivalent
-                let mut label = drawings::make_label_text(&w);
-                label.id = format!("{}/wp/text", k);
-                let empty = label.is_empty();
-                let track_indices: BTreeSet<_> = w
-                    .track_projections
-                    .iter()
-                    .map(|proj| proj.track_index)
-                    .collect();
-                let feature = PointFeature {
-                    circle,
-                    label,
-                    input_point: Some((w.clone(), track_indices)),
-                    link: None,
-                    xmlid: k,
-                };
                 if empty {
                     feature_unlabeled.push(feature);
                 } else {
@@ -282,35 +285,13 @@ impl MapMaker {
             "viewBox",
             format!("(0, 0, {}, {})", size.width, size.height).as_str(),
         );
-        let bbox = &self.map_box;
-        let margin = Self::margin();
         let mut points = features.clone();
         for w in usersteps {
             let euclidean = w.euclidean.clone();
             if !self.map_box.contains(&euclidean.point2d()) {
                 continue;
             }
-            let on_track = track.project_simplified(&euclidean).euclidean;
-            let mut p = to_graphics_coordinates(bbox, &euclidean, size.width, size.height, margin);
-            let p_track = to_graphics_coordinates(bbox, &on_track, size.width, size.height, margin);
-            if p.distance_to(&p_track) < 5f64 {
-                p = p_track;
-            }
-            let id = format!("{}/wp/circle", points.len());
-            let circle = draw_for_map(&p, id.as_str(), &w);
-            let label = Label::empty();
-            let track_indices: BTreeSet<_> = w
-                .track_projections
-                .iter()
-                .map(|proj| proj.track_index)
-                .collect();
-            let feature = PointFeature {
-                circle,
-                label,
-                input_point: Some((w.clone(), track_indices)),
-                link: None,
-                xmlid: points.len(),
-            };
+            let feature = self.make_one_feature(w, track, points.len());
             points.push(feature);
         }
         set_attr(&mut document, "width", format!("{}", size.width).as_str());

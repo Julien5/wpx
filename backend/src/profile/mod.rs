@@ -485,9 +485,20 @@ impl ProfileView {
         Polyline::new(polyline_points)
     }
 
-    fn userstep_dot(box_center: &Point2D, w: &InputPoint) -> PointFeatureDrawing {
+    fn userstep_dot(box_center: &Point2D, w: &InputPoint, k: usize) -> PointFeature {
+        assert!(w.kind() == Kind::UserStep);
         let center = *box_center + Point2D::new(0f64, 8f64);
-        draw_for_profile(&center, &format!("user-step"), w)
+        let circle = draw_for_profile(&center, &format!("user-step"), w);
+        let mut label = drawings::make_label_text(&w);
+        label.id = format!("{}/user-step/text", k);
+        let proj = w.track_projections.first().unwrap().clone();
+        PointFeature {
+            circle,
+            label,
+            input_point: Some((w.clone(), BTreeSet::from([proj.track_index]))),
+            link: None,
+            xmlid: k,
+        }
     }
 
     pub fn add_features(
@@ -502,16 +513,18 @@ impl ProfileView {
                 bottom = self.add_numeric_slope(bottom, track, &self.range(track));
             }
         }
+
+        let mut points = background_features.clone();
         log::trace!("users steps profile features: {}", usersteps.len());
         let (_time_features, time_centers) = self.add_time_ticks(usersteps);
 
         for (index, center) in time_centers.iter().enumerate() {
             let w = &usersteps[index];
-            self.SD.append(Self::userstep_dot(&center, w).group);
+            points.push(Self::userstep_dot(&center, w, index));
         }
 
         self.model = Some(ProfileModel {
-            points: background_features.clone(),
+            points,
             polylines: vec![self.make_polyline(track)],
         });
     }
