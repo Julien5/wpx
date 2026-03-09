@@ -55,6 +55,18 @@ fn make_circle(
     ret
 }
 
+fn userstep_dot(center: &Point2D) -> svg::node::element::Circle {
+    let mut ret = svg::node::element::Circle::new();
+    ret = ret.set("id", format!("{}", "pacing-circle"));
+    ret = ret.set("cx", format!("{}", center.x));
+    ret = ret.set("cy", format!("{}", center.y));
+    ret = ret.set("r", format!("{}", "2"));
+    ret = ret.set("fill", format!("{}", "Gray"));
+    ret = ret.set("stroke", format!("{}", "black"));
+    ret = ret.set("stroke-width", format!("{}", "2"));
+    ret
+}
+
 pub fn draw_for_profile(center: &Point2D, id: &str, w: &InputPoint) -> PointFeatureDrawing {
     let (r, fill) = match w.kind() {
         Kind::Cities => (5f64, "Black"),
@@ -68,9 +80,14 @@ pub fn draw_for_profile(center: &Point2D, id: &str, w: &InputPoint) -> PointFeat
 
     let mut circle = make_circle(center, &format!("{}", id), fill, &0.0, "");
     circle = circle.set("r", format!("{}", r));
+    if w.kind() == Kind::UserStep {
+        circle = circle.set("stroke", format!("{}", "black"));
+        circle = circle.set("stroke-width", format!("{}", "2"));
+    }
 
     let mut group = svg::node::element::Group::new();
     group = group.add(circle);
+
     if w.kind() == Kind::Cities || w.kind() == Kind::Villages || w.kind() == Kind::Hamlets {
         let mut white = make_circle(center, &format!("{}-little-white", id), "white", &0.0, "");
         white = white.set("r", format!("{}", (r - 1.5).max(0.0)));

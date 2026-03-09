@@ -3,6 +3,7 @@
 use std::collections::BTreeSet;
 
 use crate::bbox::BoundingBox;
+use crate::inputpoint::InputPoint;
 use crate::label_placement::candidate::Candidate;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::obstacle::Obstacles;
@@ -47,7 +48,9 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
-use crate::label_placement::features::{set_attr, PointFeatures, PolylinePoint, PolylinePoints};
+use crate::label_placement::features::{
+    set_attr, Label, PointFeatures, PolylinePoint, PolylinePoints,
+};
 use crate::label_placement::features::{Attributes, Polyline};
 use crate::label_placement::features::{Features, PointFeature};
 
@@ -203,9 +206,6 @@ impl MapMaker {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
-                if w.kind() == Kind::UserStep {
-                    continue;
-                }
                 let euclidean = w.euclidean.clone();
                 if !self.map_box.contains(&euclidean.point2d()) {
                     continue;
@@ -260,7 +260,6 @@ impl MapMaker {
             &self.parameters.parameters.map_options.max_area_ratio,
             debug_graphic_dir.clone(),
         );
-
         let labeled = PlacementResult::apply(&results, &obstacles, &mut feature_packets);
         Features {
             labeled,
@@ -273,6 +272,7 @@ impl MapMaker {
         &self,
         track: &Track,
         features: &Vec<PointFeature>,
+        usersteps: &Vec<InputPoint>,
         _debug_graphic_dir: Option<String>,
     ) -> MapView {
         let mut document = Attributes::new();
@@ -282,11 +282,42 @@ impl MapMaker {
             "viewBox",
             format!("(0, 0, {}, {})", size.width, size.height).as_str(),
         );
+        let bbox = &self.map_box;
+        let margin = Self::margin();
+        let mut points = features.clone();
+        for w in usersteps {
+            let euclidean = w.euclidean.clone();
+            if !self.map_box.contains(&euclidean.point2d()) {
+                continue;
+            }
+            let on_track = track.project_simplified(&euclidean).euclidean;
+            let mut p = to_graphics_coordinates(bbox, &euclidean, size.width, size.height, margin);
+            let p_track = to_graphics_coordinates(bbox, &on_track, size.width, size.height, margin);
+            if p.distance_to(&p_track) < 5f64 {
+                p = p_track;
+            }
+            let id = format!("{}/wp/circle", points.len());
+            let circle = draw_for_map(&p, id.as_str(), &w);
+            let label = Label::empty();
+            let track_indices: BTreeSet<_> = w
+                .track_projections
+                .iter()
+                .map(|proj| proj.track_index)
+                .collect();
+            let feature = PointFeature {
+                circle,
+                label,
+                input_point: Some((w.clone(), track_indices)),
+                link: None,
+                xmlid: points.len(),
+            };
+            points.push(feature);
+        }
         set_attr(&mut document, "width", format!("{}", size.width).as_str());
         set_attr(&mut document, "height", format!("{}", size.height).as_str());
         let polyline = self.make_polyline(track);
         MapView {
-            points: features.clone(),
+            points: points,
             polyline: polyline,
             attributes: document,
         }
@@ -341,7 +372,12 @@ pub fn map_foreground(
 ) -> RenderResult {
     log::info!("compute map foreground for parameters {:?}", parameters);
     let maker = MapMaker::init(track, parameters);
-    let view = maker.make_view_features(track, &background.rendered, debug_dir);
+    let view = maker.make_view_features(
+        track,
+        &background.rendered,
+        &parameters.usersteps,
+        debug_dir,
+    );
     RenderResult {
         svg: view.render(),
         rendered: background.rendered.clone(),

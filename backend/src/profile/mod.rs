@@ -184,7 +184,7 @@ impl ProfileView {
     fn add_time_ticks(
         &mut self,
         pacing_points: &Vec<InputPoint>,
-    ) -> (Vec<PointFeature>, Vec<BoundingBox>) {
+    ) -> (Vec<PointFeature>, Vec<Point2D>) {
         let xstart = self.bboxview().get_xmin();
         let start = speed::time_at_distance(xstart, &self.parameters.parameters);
         let speed = self.parameters.parameters.speed;
@@ -223,9 +223,8 @@ impl ProfileView {
             features.push(feature);
         }
 
-        let mut bboxes = Vec::new();
+        let mut centers = Vec::new();
 
-        let ceil = ProfileGenerator::header_ceil();
         for point in pacing_points {
             assert!(point.track_projections.len() == 1);
             let x = point
@@ -239,13 +238,10 @@ impl ProfileView {
             }
             // give the stroke some more width to avoid rendering
             // right at the edge of control point labels
-            bboxes.push(BoundingBox::minmax(
-                Point2D::new(xd - 2f64, ceil + 4f64),
-                Point2D::new(xd + 2f64, bottom - 4f64),
-            ));
+            centers.push(Point2D::new(xd, bottom));
         }
 
-        (features, bboxes)
+        (features, centers)
     }
 
     fn add_numeric_slope(
@@ -489,17 +485,9 @@ impl ProfileView {
         Polyline::new(polyline_points)
     }
 
-    fn userstep_dot(time_box: &BoundingBox) -> svg::node::element::Circle {
-        let center = time_box.center() + Point2D::new(0f64, 17f64);
-        let mut ret = svg::node::element::Circle::new();
-        ret = ret.set("id", format!("{}", "pacing-circle"));
-        ret = ret.set("cx", format!("{}", center.x));
-        ret = ret.set("cy", format!("{}", center.y));
-        ret = ret.set("r", format!("{}", "2"));
-        ret = ret.set("fill", format!("{}", "Gray"));
-        ret = ret.set("stroke", format!("{}", "black"));
-        ret = ret.set("stroke-width", format!("{}", "2"));
-        ret
+    fn userstep_dot(box_center: &Point2D, w: &InputPoint) -> PointFeatureDrawing {
+        let center = *box_center + Point2D::new(0f64, 8f64);
+        draw_for_profile(&center, &format!("user-step"), w)
     }
 
     pub fn add_features(
@@ -515,10 +503,11 @@ impl ProfileView {
             }
         }
         log::trace!("users steps profile features: {}", usersteps.len());
-        let (_time_features, time_boxes) = self.add_time_ticks(usersteps);
+        let (_time_features, time_centers) = self.add_time_ticks(usersteps);
 
-        for time_box in time_boxes {
-            self.SD.append(Self::userstep_dot(&time_box));
+        for (index, center) in time_centers.iter().enumerate() {
+            let w = &usersteps[index];
+            self.SD.append(Self::userstep_dot(&center, w).group);
         }
 
         self.model = Some(ProfileModel {
