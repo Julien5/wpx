@@ -47,25 +47,15 @@ fn points_table(
     for k in 0..waypoints.len() {
         let info = &waypoints[k].get_info();
         let mut copy = template_line.clone();
-        copy = copy.replace("{name}", info.name.as_str());
-        let datetime = chrono::DateTime::parse_from_rfc3339(info.time.as_str()).unwrap();
-        let time_str = format!("{}", datetime.format("%H:%M"));
 
+        copy = copy.replace("{name}", &info.name);
+        copy = copy.replace("{description}", &info.description);
+        let datetime = chrono::DateTime::parse_from_rfc3339(&info.time).unwrap();
+        let time_str = format!("{}", datetime.format("%H:%M"));
         copy = copy.replace("{time}", &time_str);
 
-        copy = copy.replace(
-            "{distance}",
-            format!("{:4.0}", info.distance / 1000f64).as_str(),
-        );
-        let elevation = info.elevation;
-        copy = copy.replace("{elevation}", format!("{:5.0} m", elevation).as_str());
-        let hm = info.inter_elevation_gain;
-        let percent = 100f64 * info.inter_slope;
-        copy = copy.replace("{d+}", format!("{:5.0}", hm).as_str());
-        copy = copy.replace("{slope}", format!("{:2.1}%", percent).as_str());
-        copy = copy.replace("{desc}", info.description.as_str());
-        let dist = info.inter_distance / 1000f64;
-        copy = copy.replace("{dist}", format!("{:2.1}", dist).as_str());
+        let dist = info.distance / 1000f64;
+        copy = copy.replace("{distance}", format!("{:2.1}", dist).as_str());
         lines.push(copy);
     }
     let joined = lines.join("\n");
@@ -108,7 +98,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
         .map(|f| backend.make_segment_data(&f))
         .collect();
 
-    let controls = HashSet::from([Kind::Controls]);
+    let controls = HashSet::from([Kind::Controls, Kind::GPXWaypoints]);
     let mut all_points = BTreeMap::new();
     for segment in &fsegments {
         let segment_waypoints = backend.get_points(&segment, controls.clone());
