@@ -139,7 +139,7 @@ impl SegmentData {
         let map_result = svgmap::map_background(
             &self.track,
             &map_parameters_join,
-            &vec![profile_result.rendered_input_points()],
+            &vec![profile_result.rendered_input_points_for_map()],
             self.debug_graphic_dir(&format!(
                 "preload-map-profile-{}x{}",
                 map_size.width, map_size.height
