@@ -48,9 +48,7 @@ fn _readid(id: &str) -> (&str, &str) {
     id.split_once("/").unwrap()
 }
 
-use crate::label_placement::features::{
-    set_attr, Label, PointFeatures, PolylinePoint, PolylinePoints,
-};
+use crate::label_placement::features::{set_attr, PointFeatures, PolylinePoint, PolylinePoints};
 use crate::label_placement::features::{Attributes, Polyline};
 use crate::label_placement::features::{Features, PointFeature};
 

@@ -55,18 +55,6 @@ fn make_circle(
     ret
 }
 
-fn userstep_dot(center: &Point2D) -> svg::node::element::Circle {
-    let mut ret = svg::node::element::Circle::new();
-    ret = ret.set("id", format!("{}", "pacing-circle"));
-    ret = ret.set("cx", format!("{}", center.x));
-    ret = ret.set("cy", format!("{}", center.y));
-    ret = ret.set("r", format!("{}", "2"));
-    ret = ret.set("fill", format!("{}", "Gray"));
-    ret = ret.set("stroke", format!("{}", "black"));
-    ret = ret.set("stroke-width", format!("{}", "2"));
-    ret
-}
-
 pub fn draw_for_profile(center: &Point2D, id: &str, w: &InputPoint) -> PointFeatureDrawing {
     let (r, fill) = match w.kind() {
         Kind::Cities => (5f64, "Black"),
