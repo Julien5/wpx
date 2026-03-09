@@ -514,14 +514,15 @@ impl ProfileView {
             }
         }
 
-        let mut points = background_features.clone();
         log::trace!("users steps profile features: {}", usersteps.len());
         let (_time_features, time_centers) = self.add_time_ticks(usersteps);
 
+        let mut points = Vec::new();
         for (index, center) in time_centers.iter().enumerate() {
             let w = &usersteps[index];
             points.push(Self::userstep_dot(&center, w, index));
         }
+        points.extend_from_slice(&background_features);
 
         self.model = Some(ProfileModel {
             points,
