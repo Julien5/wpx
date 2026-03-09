@@ -518,8 +518,7 @@ impl Backend {
             profile_size.height
         );
         let data = self.make_segment_data(segment);
-        data.preload(&RenderFunction::Map, &kinds, map_size);
-        data.preload(&RenderFunction::Profile, &kinds, profile_size);
+        data.preload_map_profile(&kinds, map_size, profile_size);
         let (result_map, result_profile) = data.render_map_profile(map_size, profile_size, &kinds);
         let mut ret = Vec::new();
         ret.push((RenderFunction::Map, map_size, result_map));

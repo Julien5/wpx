@@ -93,12 +93,82 @@ impl SegmentData {
         }
     }
 
-    pub fn preload(&self, function: &RenderFunction, kinds: &Kinds, size: &IntegerSize2D) {
+    fn map_profile_join_parameters(
+        &self,
+        kinds: &Kinds,
+        map_size: &IntegerSize2D,
+        profile_size: &IntegerSize2D,
+    ) -> (RenderInputParameters, RenderInputParameters) {
+        let profile_parameters = self.profile_render_parameters(kinds, profile_size);
+        let map_parameters = self.map_render_parameters(kinds, map_size);
+
+        let mut profile_parameters_join = profile_parameters.clone();
+        profile_parameters_join.other_parameters_hash = Some(map_parameters.hash());
+
+        let mut map_parameters_join = map_parameters.clone();
+        map_parameters_join.other_parameters_hash = Some(profile_parameters.hash());
+        (map_parameters_join, profile_parameters_join)
+    }
+
+    pub fn preload_map_profile(
+        &self,
+        kinds: &Kinds,
+        map_size: &IntegerSize2D,
+        profile_size: &IntegerSize2D,
+    ) -> (RenderResult, RenderResult) {
+        let (map_parameters_join, profile_parameters_join) =
+            self.map_profile_join_parameters(kinds, map_size, profile_size);
+
+        // try join result in cache.
+        {
+            let lock = self.packet_provider.read().unwrap();
+            let (mapr, profiler) = (
+                lock.hit(&map_parameters_join),
+                lock.hit(&profile_parameters_join),
+            );
+            match (mapr, profiler) {
+                (Some(map), Some(profile)) => {
+                    return (map, profile);
+                }
+                _ => {}
+            }
+        }
+
+        let profile_result = self.preload(&RenderFunction::Profile, kinds, profile_size);
+
+        let map_result = svgmap::map_background(
+            &self.track,
+            &map_parameters_join,
+            &vec![profile_result.rendered_input_points()],
+            self.debug_graphic_dir(&format!(
+                "preload-map-profile-{}x{}",
+                map_size.width, map_size.height
+            )),
+        );
+
+        // TODO: intersect.
+        let mut profile_result_join = profile_result.clone();
+        profile_result_join.parameters = profile_parameters_join.clone();
+        let mut map_result_join = map_result.clone();
+        map_result_join.parameters = map_parameters_join.clone();
+
+        let mut lock = self.packet_provider.write().unwrap();
+        lock.register_result(&profile_result_join);
+        lock.register_result(&map_result_join);
+        (map_result_join, profile_result_join)
+    }
+
+    pub fn preload(
+        &self,
+        function: &RenderFunction,
+        kinds: &Kinds,
+        size: &IntegerSize2D,
+    ) -> RenderResult {
         match function {
             RenderFunction::Map => {}
             RenderFunction::Profile => {}
             _ => {
-                return;
+                return RenderResult::default();
             }
         };
         let render_parameters = match function {
@@ -113,8 +183,8 @@ impl SegmentData {
         // make background for that size for both profile and map
         {
             let lock = self.packet_provider.read().unwrap();
-            if lock.hit(&render_parameters) {
-                return;
+            if let Some(result) = lock.hit(&render_parameters) {
+                return result;
             }
         }
         let collection = {
@@ -124,8 +194,6 @@ impl SegmentData {
             coll.kinds_cut(&kinds);
             coll
         };
-
-        let mut lock = self.packet_provider.write().unwrap();
 
         let result = match function {
             &RenderFunction::Profile => profile::profile_background(
@@ -151,7 +219,10 @@ impl SegmentData {
             std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
         }
 
+        assert!(result.parameters.hash() == render_parameters.hash());
+        let mut lock = self.packet_provider.write().unwrap();
         lock.register_result(&result);
+        result
     }
 
     fn profile_render_parameters(
@@ -230,8 +301,8 @@ impl SegmentData {
     ) -> (RenderResult, RenderResult) {
         log::info!("render map_profile:{} kinds:{:?}", self.id(), kinds);
         let (map_ret, profile_ret) = {
-            let map_parameters = self.map_render_parameters(kinds, map_size);
-            let profile_parameters = self.profile_render_parameters(kinds, profile_size);
+            let (map_parameters, profile_parameters) =
+                self.map_profile_join_parameters(kinds, map_size, profile_size);
             log::trace!(
                 "users steps profile: {}",
                 profile_parameters.usersteps.len()
@@ -242,14 +313,11 @@ impl SegmentData {
             let map_background = lock.load(&map_parameters);
             let profile_background = lock.load(&profile_parameters);
 
-            let (map_intersection, profile_intersection) =
-                RenderResult::intersection(&map_background, &profile_background);
-
             let (rm, rp) = (
                 svgmap::map_foreground(
                     &self.track,
                     &map_parameters,
-                    &map_intersection,
+                    &map_background,
                     self.debug_graphic_dir(&format!(
                         "joinmap-{}x{}",
                         map_size.width, map_size.height
@@ -258,7 +326,7 @@ impl SegmentData {
                 profile::profile_foreground(
                     &self.track,
                     &profile_parameters,
-                    &profile_intersection,
+                    &profile_background,
                     self.debug_graphic_dir(&format!(
                         "joinprofile-{}x{}",
                         profile_size.width, profile_size.height

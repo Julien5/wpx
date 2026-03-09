@@ -123,7 +123,17 @@ pub struct RenderInputParameters {
     pub drange: std::ops::Range<f64>,
     pub range: std::ops::Range<usize>,
     pub screen_size: IntegerSize2D,
+    pub other_parameters_hash: Option<String>,
     pub usersteps: Vec<InputPoint>,
+}
+
+impl RenderInputParameters {
+    pub fn hash(&self) -> String {
+        format!(
+            "F={:?}-S={:?}-K={:?}-Rd={:?}-O={:?}",
+            self.function, self.screen_size, self.kinds, self.drange, self.other_parameters_hash
+        )
+    }
 }
 
 impl std::fmt::Debug for RenderInputParameters {
@@ -135,6 +145,7 @@ impl std::fmt::Debug for RenderInputParameters {
             .field("end", &self.drange.end)
             .field("width", &self.screen_size.width)
             .field("height", &self.screen_size.width)
+            .field("other", &self.other_parameters_hash)
             .field("|usersteps|", &self.usersteps.len())
             .finish()
     }
@@ -168,6 +179,7 @@ impl RenderInputParameters {
             },
             range: track.subrange(start, end),
             screen_size: size.clone(),
+            other_parameters_hash: None,
             usersteps: usersteps.clone(),
         }
     }
@@ -191,11 +203,15 @@ impl RenderInputParameters {
             },
             range: track.subrange(start, end),
             screen_size: size.clone(),
+            other_parameters_hash: None,
             usersteps: usersteps.clone(),
         }
     }
 
     pub fn mismatch(&self, other: &Self) -> String {
+        if self.hash() == other.hash() {
+            return String::new();
+        }
         if self.kinds != other.kinds {
             return format!("kinds mismatch ({:?} != {:?})", self.kinds, other.kinds);
         }
@@ -203,6 +219,12 @@ impl RenderInputParameters {
             return format!(
                 "function mismatch ({:?} != {:?})",
                 self.function, other.function
+            );
+        }
+        if self.other_parameters_hash != other.other_parameters_hash {
+            return format!(
+                "other parameter mismatch ({:?} != {:?})",
+                self.other_parameters_hash, other.other_parameters_hash
             );
         }
         if self.screen_size != other.screen_size {
@@ -274,12 +296,13 @@ impl PacketProvider {
         }
     }
     pub fn register_result(&mut self, result: &RenderResult) {
+        log::trace!("register:{}", result.parameters.hash());
         assert!(self.results.hit(&result.parameters).is_none());
         self.results.push(result.clone());
     }
 
-    pub fn hit(&self, p: &RenderInputParameters) -> bool {
-        self.results.hit(&p).is_some()
+    pub fn hit(&self, p: &RenderInputParameters) -> Option<RenderResult> {
+        self.results.hit(&p)
     }
 
     pub fn load(&self, p: &RenderInputParameters) -> RenderResult {
