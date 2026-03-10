@@ -74,13 +74,20 @@ class _PDFCardState extends State<PDFCard> {
   @override
   Widget build(BuildContext context) {
     SegmentModel segment = Provider.of<SegmentModel>(context, listen: false);
-    Provider.of<ParameterModel>(context);
+    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
     List<Segment> segments = segment.backend.segments();
+    String segLength = (segmentLength(parameterModel.parameters()) / 1000)
+        .ceil()
+        .toString()
+        .padLeft(3);
     String pageCount = segments.length.toString().padLeft(2);
 
     Widget tile = ExpansionTile(
       title: Row(
-        children: [SmallText(text: "PDF"), SmallText(text: "$pageCount pages")],
+        children: [
+          SmallText(text: "PDF"),
+          SmallText(text: "$pageCount pages, $segLength km per page"),
+        ],
       ),
       controller: widget.controller,
       onExpansionChanged:

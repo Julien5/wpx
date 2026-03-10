@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/routes.dart';
@@ -198,12 +199,11 @@ class SettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SegmentModel segment = Provider.of<SegmentModel>(context);
+    RootModel root = Provider.of(context);
     ParameterModel parameterModel = Provider.of<ParameterModel>(context);
-    List<Segment> segments = segment.backend.segments();
+    List<Segment> segments = root.backend.segments();
     Parameters parameters = parameterModel.parameters();
-    String segLength = ((parameters.segmentLength - parameters.segmentOverlap) /
-            1000)
+    String segLength = (segmentLength(parameters) / 1000)
         .ceil()
         .toString()
         .padLeft(3);

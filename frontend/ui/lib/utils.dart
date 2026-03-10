@@ -170,3 +170,7 @@ String statisticsString(bridge.SegmentStatistics statistics) {
   double k2 = statistics.distanceEnd / 1000;
   return "${k1.toStringAsFixed(1)} - ${k2.toStringAsFixed(1)}";
 }
+
+double segmentLength(bridge.Parameters parameter) {
+  return parameter.segmentLength - parameter.segmentOverlap;
+}
