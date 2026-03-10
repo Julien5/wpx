@@ -23,49 +23,56 @@ class PartsCard extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    debugPrint("running:${model.runningJob()}");
     if (!model.hasDone(Job.parts)) {
       return Card(elevation: 4, child: _Padding(child: Text("loading ...")));
     }
     List<bridge.TrackPart> parts = model.parts();
+    bool enabled = parts.length > 1 && model.doneAll();
 
-    Widget listWidget = SmallText(text: parts[0].name);
-    if (parts.length > 1) {
-      listWidget = SizedBox(
-        height: 200, // Adjust this height as needed
-        child: ReorderableListView(
-          onReorder: (oldIndex, newIndex) {
-            // adjust newIndex if dragging down
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            // notify model of the reorder
-            model.reorderParts(oldIndex, newIndex);
-          },
-          children: [
-            for (int i = 0; i < parts.length; i++)
-              Padding(
-                key: ValueKey(i),
-                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Row(
-                  children: [
-                    ReorderableDragStartListener(
-                      index: i,
-                      child: Icon(Icons.drag_handle),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(child: SmallText(text: parts[i].name)),
-                  ],
-                ),
-              ),
-          ],
-        ),
-      );
+    void onReorder(int oldIndex, int newIndex) {
+      if (!enabled) {
+        return;
+      }
+      // adjust newIndex if dragging down
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      // notify model of the reorder
+      model.reorderParts(oldIndex, newIndex);
     }
+
+    List<Widget> children = [
+      for (int i = 0; i < parts.length; i++)
+        Padding(
+          key: ValueKey(i),
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Row(
+            children: [
+              ReorderableDragStartListener(
+                index: i,
+                child: Icon(Icons.drag_handle),
+              ),
+              SizedBox(width: 12),
+              Expanded(child: SmallText(text: parts[i].name)),
+            ],
+          ),
+        ),
+    ];
+
+    Widget listWidget =
+        enabled
+            ? ReorderableListView(
+              buildDefaultDragHandles: enabled,
+              onReorder: onReorder,
+              children: children,
+            )
+            : ListView(children: children);
 
     Widget header = _Padding(
       child: Row(children: [SmallText(text: "Segments")]),
     );
-    Widget body = listWidget;
+    Widget body = SizedBox(height: 200, child: listWidget);
 
     return Card(elevation: 4, child: Column(children: [header, body]));
   }

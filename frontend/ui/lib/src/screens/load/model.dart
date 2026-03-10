@@ -105,6 +105,14 @@ class LoadScreenModel extends ChangeNotifier {
     }
   }
 
+  Job runningJob() {
+    if (running == null) {
+      return Job.none;
+    }
+    return running!;
+    //return runningFuture!.job;
+  }
+
   void makeFuture(Job job) {
     running = job;
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -163,10 +171,13 @@ class LoadScreenModel extends ChangeNotifier {
         kinds: {bridge.Kind.controls},
       );
     }
+
     running = null;
+    runningFuture = null;
     done.add(job);
-    developer.log("notify");
+    debugPrint("running notify");
     notifyListeners();
+
     Job nextJob = next(job);
     if (nextJob != Job.none) {
       Future.delayed(const Duration(milliseconds: 250), () {
