@@ -62,6 +62,7 @@ pub mod utils {
         gen: &dyn CandidatesGenerator,
         target: &PointFeature,
         obstacles: &Obstacles,
+        hardness: usize,
     ) -> Candidates {
         if target.text().is_empty() {
             return Candidates::new();
@@ -71,7 +72,7 @@ pub mod utils {
         if target.area() > available_area {
             return Candidates::new();
         }
-        let candidates = gen.gen(target, obstacles);
+        let candidates = gen.gen(target, obstacles, hardness);
         if candidates.is_empty() {
             log::info!(
                 "no candidates passed the upfront obstacles test for: [{}]",
@@ -87,9 +88,13 @@ pub mod utils {
         obstacles: &Obstacles,
     ) -> Vec<Candidates> {
         let mut ret = Vec::new();
+        // Quite brutal but seems to give reasonable results.
+        // Packet with 1 point => hardness = 9
+        //      with 10 points => hardness = 0
+        let hardness = 10 - features.points.len().min(10);
         for k in 0..features.points.len() {
             let feature = &features.points[k];
-            let candidates = generate_all_candidates(gen, feature, obstacles);
+            let candidates = generate_all_candidates(gen, feature, obstacles, hardness);
             ret.push(candidates);
         }
         ret

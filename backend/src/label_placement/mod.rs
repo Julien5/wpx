@@ -20,7 +20,10 @@ use graph::Graph;
 use std::collections::BTreeMap;
 
 pub trait CandidatesGenerator {
-    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate>;
+    // The hardness indicates how hard the feature we should try to place this
+    // features. Number between 0 and 10.
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles, hardness: usize)
+        -> Vec<Candidate>;
 }
 
 fn build_graph(

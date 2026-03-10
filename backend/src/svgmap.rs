@@ -55,7 +55,12 @@ use crate::label_placement::features::{Features, PointFeature};
 struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
-    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate> {
+    fn gen(
+        &self,
+        feature: &PointFeature,
+        obstacles: &Obstacles,
+        _hardness: usize,
+    ) -> Vec<Candidate> {
         let mut cardinal_boxes =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
         cardinal_boxes.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
@@ -403,7 +408,7 @@ mod tests {
         };
         let area = BoundingBox::new();
         let obstacles = Obstacles::new(&area, 0f64);
-        let candidates = MapGenerator {}.gen(&target, &obstacles);
+        let candidates = MapGenerator {}.gen(&target, &obstacles, 0);
         let mut found = false;
         assert!(!candidates.is_empty());
         for c in candidates {

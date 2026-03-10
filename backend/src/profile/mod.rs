@@ -632,7 +632,12 @@ struct ProfileGenerator {
 }
 
 impl CandidatesGenerator for ProfileGenerator {
-    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate> {
+    fn gen(
+        &self,
+        feature: &PointFeature,
+        obstacles: &Obstacles,
+        hardness: usize,
+    ) -> Vec<Candidate> {
         if feature.input_point.is_none() {
             // [left mid right] => [mid]
             let mut ret = vec![Self::header(feature)[1].clone()];
@@ -640,25 +645,30 @@ impl CandidatesGenerator for ProfileGenerator {
             return ret;
         }
         let kind = feature.input_point().unwrap().kind();
+        if feature.input_point.is_some() {
+            log::trace!(
+                "name:{} hardness:{}",
+                feature.input_point.as_ref().unwrap().0.name(),
+                hardness
+            );
+        }
         let mut ret = match kind {
             Kind::UserStep => self.extended_cardinal(feature),
             Kind::GPXWaypoints | Kind::Controls => Self::header(feature),
             _ => {
                 assert!(is_osm(&kind));
                 let mut ret = self.cardinal(feature);
-                let search_width = 200f64;
-                let search_area = BoundingBox::minsize(
-                    feature.center() - Point2D::new(search_width * 0.5f64, search_width * 0.5f64),
-                    search_width,
-                    search_width,
-                );
-                if obstacles.occupied_area(&search_area) / search_area.area() >= 0.0f64 {
-                    let a2 = self.generate_column(feature, 30f64);
-                    let a4 = self.generate_column(feature, 55f64);
-                    let a8 = self.generate_column(feature, 80f64);
-                    ret.extend_from_slice(&a2);
-                    ret.extend_from_slice(&a4);
-                    ret.extend_from_slice(&a8);
+                if hardness > 2 {
+                    let a = self.generate_column(feature, 30f64);
+                    ret.extend_from_slice(&a);
+                }
+                if hardness > 4 {
+                    let a = self.generate_column(feature, 55f64);
+                    ret.extend_from_slice(&a);
+                }
+                if hardness > 6 {
+                    let a = self.generate_column(feature, 80f64);
+                    ret.extend_from_slice(&a);
                 }
                 ret
                 // ret.iter().map(|lbbox| Candidate::new(lbbox)).collect()

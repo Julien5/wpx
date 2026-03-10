@@ -357,8 +357,7 @@ mod tests {
         osm,
         parameters::{Parameters, ProfileIndication, RenderFunction},
         point_collection::{
-            allkinds, onekind, Kind, Kinds, PacketProvider, PointCollection, RenderResult,
-            SharedPacketProvider,
+            allkinds, Kind, PacketProvider, PointCollection, RenderResult, SharedPacketProvider,
         },
         profile,
         segment::{Segment, SegmentData},

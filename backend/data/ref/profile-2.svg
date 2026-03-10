@@ -139,9 +139,9 @@ Hagenbach
 <circle cx="184.6157006946869" cy="269.2319375" fill="white" id="4/wp-little-white" r="2.5"/>
 </g>
 <g transform="translate(184.6157006946869 269.2319375)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="49.265789473684215" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="53.265789473684215" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="4/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="49.265789473684215" x="-53.265789473684215" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="53.265789473684215" x="-55.265789473684215" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="4/wp/text" text-anchor="end" x="-4.000" y="13.000">
 Iffezheim
 </text>
 </g>
@@ -194,9 +194,9 @@ Munchhausen
 <circle cx="218.16344649043003" cy="271.836" fill="white" id="9/wp-little-white" r="2.5"/>
 </g>
 <g transform="translate(218.16344649043003 271.836)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="61.96644736842107" x="-65.96644736842107" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="65.96644736842107" x="-67.96644736842107" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="9/wp/text" text-anchor="end" x="-4.000" y="13.000">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="61.96644736842107" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="65.96644736842107" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="9/wp/text" text-anchor="start" x="4.000" y="13.000">
 Wintersdorf
 </text>
 </g>
@@ -205,9 +205,9 @@ Wintersdorf
 <circle cx="93.0395602675776" cy="265.345875" fill="white" id="10/wp-little-white" r="2.5"/>
 </g>
 <g transform="translate(93.0395602675776 265.345875)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="88.29144736842103" x="-44.14572368421052" y="32"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="92.29144736842103" x="-46.14572368421052" y="30"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="10/wp/text" text-anchor="start" x="-44.146" y="41.000">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="88.29144736842105" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="92.29144736842105" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="10/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Haueneberstein
 </text>
 </g>
