@@ -116,6 +116,7 @@ fn print_missing(missing: &MissingTiles) {
 
 async fn process(
     bbox: &EuclideanBoundingBox,
+    track: &Track,
     logger: &SenderHandlerLock,
 ) -> GenericResult<InputPointMap> {
     let mut found = InputPointMap::new();
@@ -124,6 +125,7 @@ async fn process(
     match read(bbox).await {
         Ok((local_found, local_missing)) => {
             found = local_found;
+            found.filter_for_track(track);
             missing = local_missing;
             log::info!(
                 "cache is valid: {} tiles found, but {} tiles missing",
@@ -148,10 +150,11 @@ async fn process(
 
     event::send_worker(logger, &format!("{}", "read from cache"));
     match read(bbox).await {
-        Ok((map, missing)) => {
+        Ok((mut map, missing)) => {
             log::info!("found: {} missing: {}", map.map.len(), missing.len());
             if missing.is_empty() {
                 log::info!("the cache is complete with {} tiles", found.map.len());
+                map.filter_for_track(track);
                 return Ok(map);
             } else {
                 log::error!("the cache has still {} missing tiles", missing.len());
@@ -173,6 +176,6 @@ pub async fn download_for_track(
 ) -> GenericResult<InputPointMap> {
     let bbox = track.euclidean_bounding_box();
     assert!(!bbox.empty());
-    let ret = process(&bbox, logger).await;
+    let ret = process(&bbox, track, logger).await;
     ret
 }

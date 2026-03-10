@@ -442,6 +442,15 @@ impl InputPointMap {
     pub fn get_mut(&mut self, tile: &Tile) -> Option<&mut Vec<InputPoint>> {
         self.map.get_mut(tile)
     }
+
+    pub fn filter_for_track(&mut self, track: &Track) {
+        if track.total_distance() > 200000f64 {
+            // discard hamlets
+            for (_tile, points) in &mut self.map {
+                points.retain(|p| p.kind() != Kind::Hamlets);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
