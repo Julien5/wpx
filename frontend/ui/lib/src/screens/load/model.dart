@@ -25,7 +25,6 @@ class FutureJob {
 class LoadScreenModel extends ChangeNotifier {
   Set<Job> done = {};
   final Map<Job, Object> _failed = {};
-  Job? running;
 
   final bridge.Bridge backend;
   final RootModel rootModel;
@@ -54,7 +53,7 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   bool needsStart() {
-    return running == null && done.isEmpty;
+    return runningFuture == null && done.isEmpty;
   }
 
   bool hasDone(Job job) {
@@ -106,15 +105,13 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   Job runningJob() {
-    if (running == null) {
+    if (runningFuture == null) {
       return Job.none;
     }
-    return running!;
-    //return runningFuture!.job;
+    return runningFuture!.job;
   }
 
   void makeFuture(Job job) {
-    running = job;
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _makeFuture(job);
     });
@@ -172,7 +169,6 @@ class LoadScreenModel extends ChangeNotifier {
       );
     }
 
-    running = null;
     runningFuture = null;
     done.add(job);
     debugPrint("running notify");

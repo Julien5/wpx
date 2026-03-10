@@ -66,7 +66,8 @@ String filterEvent(String? event, Job targetJob, LoadScreenModel screenModel) {
   if (screenModel.error(targetJob) != null) {
     return errorString(screenModel.error(targetJob)!);
   }
-  if (screenModel.running != null && screenModel.running! == targetJob) {
+  if (screenModel.runningFuture != null &&
+      screenModel.runningFuture!.job == targetJob) {
     //return "event: [${safeLast(eventModel)}]";
     return safeLast(event);
   }
