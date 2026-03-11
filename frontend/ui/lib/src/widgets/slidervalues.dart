@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class SliderValues {
@@ -82,6 +84,7 @@ class SliderValuesWidget extends StatefulWidget {
 
 class _SliderValuesWidgetState extends State<SliderValuesWidget> {
   int _currentIndex = 0;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -90,9 +93,12 @@ class _SliderValuesWidgetState extends State<SliderValuesWidget> {
   }
 
   void onSliderChanged(double sliderIndex) {
+    _debounceTimer?.cancel();
     int index = sliderIndex.round();
-    double value = widget.values[index];
-    widget.onValueChanged(value);
+    _debounceTimer = Timer(const Duration(milliseconds: 250), () {
+      double value = widget.values[index];
+      widget.onValueChanged(value);
+    });
     setState(() {
       _currentIndex = index;
     });
@@ -105,7 +111,7 @@ class _SliderValuesWidgetState extends State<SliderValuesWidget> {
     return Slider(
       min: 0,
       max: widget.values.length - 1,
-      divisions: widget.values.length - 1, // not good yet.
+      divisions: widget.values.length - 1,
       value: _currentIndex.toDouble(),
       label: label,
       onChanged: widget.enabled ? onSliderChanged : null,
