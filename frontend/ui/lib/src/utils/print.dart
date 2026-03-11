@@ -48,7 +48,7 @@ class PageCountInfo {
   double trackLength = 0;
   double segmentLengthWithOverlap = 0;
 
-  int _npages = 0;
+  int _index = 0;
 
   List<int> possiblePageCounts = [];
 
@@ -78,7 +78,8 @@ class PageCountInfo {
 
     possiblePageCounts = pageCounts.toList();
     possiblePageCounts.sort();
-    _npages = possiblePageCounts[0];
+    assert(possiblePageCounts.isNotEmpty);
+    _index = 0;
   }
 
   double getMinIndex() {
@@ -96,56 +97,50 @@ class PageCountInfo {
   void setNiceSegmentLength(double niceSegmentLength) {
     segmentLengthWithOverlap =
         niceSegmentLength + _segmentOverlap(niceSegmentLength);
-    _npages = _pageCount(
+    int count = _pageCount(
       trackLength,
       segmentLengthWithOverlap,
       _segmentOverlap(niceSegmentLength),
     );
-    assert(possiblePageCounts.contains(_npages));
+    assert(possiblePageCounts.contains(count));
+    _index = possiblePageCounts.indexWhere((c) => (c == count));
   }
 
   void setParameters(double length, double overlap) {
     debugPrint("print length=$length overlap=$overlap");
     segmentLengthWithOverlap = length;
-    _npages = _pageCount(trackLength, segmentLengthWithOverlap, overlap);
-    debugPrint("print npages=$_npages");
-    assert(possiblePageCounts.contains(_npages));
+    int count = _pageCount(trackLength, segmentLengthWithOverlap, overlap);
+    debugPrint("print npages=$count");
+    assert(possiblePageCounts.contains(count));
+    _index = possiblePageCounts.indexWhere((c) => (c == count));
   }
 
-  int setPageCount(int desired) {
-    assert(desired > 0);
-    debugPrint("print setPageCount $desired");
-    _npages = possiblePageCounts.lastWhere((p) => p <= desired);
-    assert(possiblePageCounts.contains(_npages));
+  int possiblePageIndex() {
+    assert(initialized());
+    return _index;
+  }
+
+  void setPossiblePageIndex(int index) {
+    debugPrint("print  setPossiblePageIndex $index");
+    _index = index;
+    assert(0 <= index && index < possiblePageCounts.length);
+    int count = possiblePageCounts[index];
     List<double> niceLengths = _niceSegmentLengths(trackLength);
     double minNiceLength = niceLengths.last;
     for (double niceLength in niceLengths) {
       double withOverlap = niceLength + _segmentOverlap(niceLength);
-      int count = _pageCount(
+      int localcount = _pageCount(
         trackLength,
         withOverlap,
         _segmentOverlap(niceLength),
       );
-      if (count == _npages) {
+      if (count == localcount) {
         if (minNiceLength > niceLength) {
           minNiceLength = niceLength;
         }
       }
     }
     segmentLengthWithOverlap = minNiceLength + _segmentOverlap(minNiceLength);
-    return _npages;
-  }
-
-  int possiblePageIndex() {
-    assert(initialized());
-    debugPrint("print  npages $_npages");
-    assert(possiblePageCounts.contains(_npages));
-    return possiblePageCounts.lastIndexOf(_npages);
-  }
-
-  void setPossiblePageIndex(int index) {
-    debugPrint("print  setPossiblePageIndex $index");
-    setPageCount(possiblePageCounts[index]);
   }
 
   double getSegmentLengthWithOverlap() {
@@ -157,7 +152,7 @@ class PageCountInfo {
   }
 
   int getPageCount() {
-    return _npages;
+    return possiblePageCounts[_index];
   }
 }
 
