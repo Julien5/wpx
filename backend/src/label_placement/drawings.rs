@@ -1,6 +1,7 @@
 use crate::{
     inputpoint::InputPoint,
-    label_placement::features::{Label, PointFeatureDrawing, FONTSIZE},
+    label_placement::features::{Label, PointFeatureDrawing},
+    label_placement::FONTSIZE,
     math::Point2D,
     point_collection::Kind,
 };

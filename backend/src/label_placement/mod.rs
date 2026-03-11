@@ -19,6 +19,8 @@ use graph::Graph;
 
 use std::collections::BTreeMap;
 
+pub const FONTSIZE: f64 = 14f64;
+
 pub trait CandidatesGenerator {
     // The hardness indicates how hard the feature we should try to place this
     // features. Number between 0 and 10.

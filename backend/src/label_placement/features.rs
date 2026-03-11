@@ -18,8 +18,6 @@ pub fn set_attr(attr: &mut Attributes, k: &str, v: &str) {
     attr.insert(String::from_str(k).unwrap(), svg::node::Value::from(v));
 }
 
-pub const FONTSIZE: f64 = 14f64;
-
 #[cfg(test)]
 pub const DEBUG: bool = true;
 
@@ -51,14 +49,14 @@ fn char_width(s: &char) -> f64 {
         size += 95f64;
     }
     let ret = size * 6f64 / 1000.0;
-    (ret / 0.57f64) * (FONTSIZE / 16f64) * 9f64
+    (ret / 0.57f64) * (super::FONTSIZE / 16f64) * 9f64
 }
 
 fn text_width(s: &str, fontsize: f64, fontweight: &str, fontstyle: &str) -> f64 {
     let mut ret = 0f64;
     for c in s.chars() {
         let mut w = char_width(&c);
-        w = w * (fontsize / FONTSIZE);
+        w = w * (fontsize / super::FONTSIZE);
         if fontweight == "normal" {
         } else if fontweight == "bold" {
             w = w * 1.1;
@@ -100,7 +98,7 @@ impl Label {
     pub fn empty() -> Self {
         Self {
             id: String::new(),
-            fontsize: FONTSIZE,
+            fontsize: super::FONTSIZE,
             fontweight: String::new(),
             fontstyle: String::new(),
             bbox: LabelBoundingBox::zero(),

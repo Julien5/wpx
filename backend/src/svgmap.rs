@@ -8,7 +8,7 @@ use crate::label_placement::candidate::Candidate;
 use crate::label_placement::drawings::draw_for_map;
 use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::{self, *};
-use crate::math::Point2D;
+use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::point_collection::{Packets, RenderInputParameters, RenderResult};
 use crate::track::Track;
@@ -108,6 +108,8 @@ struct MapView {
     polyline: Polyline,
     points: Vec<PointFeature>,
     attributes: Attributes,
+    size: IntegerSize2D,
+    margin: i32,
 }
 
 impl MapView {
@@ -116,6 +118,33 @@ impl MapView {
         for (k, v) in &self.attributes {
             document = document.set(k, v.clone());
         }
+
+        let mut frame_ext = svg::node::element::Rectangle::new();
+        frame_ext = frame_ext.set("x", 0);
+        frame_ext = frame_ext.set("y", 0);
+        frame_ext = frame_ext.set("fill", "none");
+        frame_ext = frame_ext.set("stroke", "black");
+        frame_ext = frame_ext.set("stroke-width", "3");
+        frame_ext = frame_ext.set("width", self.size.width);
+        frame_ext = frame_ext.set("height", self.size.height);
+        document = document.add(frame_ext);
+
+        let mut inner_frame = svg::node::element::Rectangle::new();
+        let margin = self.margin;
+        inner_frame = inner_frame.set("x", margin);
+        inner_frame = inner_frame.set("y", margin);
+        inner_frame = inner_frame.set("fill", "none");
+        inner_frame = inner_frame.set("stroke", "black");
+        inner_frame = inner_frame.set("stroke-width", "3");
+        if let Some(width) = self.attributes.get("width") {
+            let n = width.parse::<i32>().unwrap() - 2 * margin;
+            inner_frame = inner_frame.set("width", n);
+        }
+        if let Some(height) = self.attributes.get("height") {
+            let n = height.parse::<i32>().unwrap() - 2 * margin;
+            inner_frame = inner_frame.set("height", n);
+        }
+        document = document.add(inner_frame);
 
         let mut svgpath = svg::node::element::Path::new();
         for (k, v) in self.polyline.to_attributes() {
@@ -164,8 +193,23 @@ impl MapMaker {
 }
 
 impl MapMaker {
-    fn margin() -> i32 {
-        20
+    fn margin(&self) -> i32 {
+        let minimal = label_placement::FONTSIZE.floor() as i32;
+        // 5% of max (width,height)
+        let nominal = (0.05
+            * self
+                .parameters
+                .screen_size
+                .width
+                .max(self.parameters.screen_size.height) as f64)
+            .floor() as i32;
+        let maximal = 10 * minimal;
+        nominal.clamp(minimal, maximal)
+    }
+
+    fn point_is_visible(&self, point: &Point2D) -> bool {
+        let size = &self.parameters.screen_size;
+        point.x < size.width as f64 && point.y < size.height as f64
     }
 
     fn make_one_feature(&self, w: &InputPoint, track: &Track, counter: usize) -> PointFeature {
@@ -173,7 +217,7 @@ impl MapMaker {
         let bbox = &self.map_box;
         let size = &self.parameters.screen_size;
         let on_track = track.project_simplified(&euclidean).euclidean;
-        let margin = Self::margin();
+        let margin = self.margin();
         let mut p = to_graphics_coordinates(bbox, &euclidean, size.width, size.height, margin);
         let p_track = to_graphics_coordinates(bbox, &on_track, size.width, size.height, margin);
         if p.distance_to(&p_track) < 5f64 {
@@ -217,7 +261,7 @@ impl MapMaker {
                 p,
                 self.parameters.screen_size.width,
                 self.parameters.screen_size.height,
-                Self::margin(),
+                self.margin(),
             );
             polyline_points.push(PolylinePoint(p));
         }
@@ -239,11 +283,11 @@ impl MapMaker {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in packet {
-                let euclidean = w.euclidean.clone();
-                if !self.map_box.contains(&euclidean.point2d()) {
+                let feature = self.make_one_feature(w, track, counter);
+                if !self.point_is_visible(&feature.center()) {
                     continue;
                 }
-                let feature = self.make_one_feature(w, track, counter);
+
                 let empty = feature.label.is_empty();
                 counter += 1;
                 if empty {
@@ -281,29 +325,34 @@ impl MapMaker {
         usersteps: &Vec<InputPoint>,
         _debug_graphic_dir: Option<String>,
     ) -> MapView {
-        let mut document = Attributes::new();
+        let mut attributes = Attributes::new();
         let size = &self.parameters.screen_size;
         set_attr(
-            &mut document,
+            &mut attributes,
             "viewBox",
             format!("(0, 0, {}, {})", size.width, size.height).as_str(),
         );
         let mut points = features.clone();
         for w in usersteps {
-            let euclidean = w.euclidean.clone();
-            if !self.map_box.contains(&euclidean.point2d()) {
+            let feature = self.make_one_feature(w, track, points.len());
+            if !self.point_is_visible(&feature.center()) {
                 continue;
             }
-            let feature = self.make_one_feature(w, track, points.len());
             points.push(feature);
         }
-        set_attr(&mut document, "width", format!("{}", size.width).as_str());
-        set_attr(&mut document, "height", format!("{}", size.height).as_str());
+        set_attr(&mut attributes, "width", format!("{}", size.width).as_str());
+        set_attr(
+            &mut attributes,
+            "height",
+            format!("{}", size.height).as_str(),
+        );
         let polyline = self.make_polyline(track);
         MapView {
             points: points,
             polyline: polyline,
-            attributes: document,
+            attributes,
+            size: self.parameters.screen_size.clone(),
+            margin: self.margin(),
         }
     }
 
@@ -314,19 +363,25 @@ impl MapMaker {
         debug_graphic_dir: Option<String>,
     ) -> MapView {
         let mut features = self.make_features(track, packets, debug_graphic_dir);
-        let mut document = Attributes::new();
+        let mut attributes = Attributes::new();
         let size = &self.parameters.screen_size;
         set_attr(
-            &mut document,
+            &mut attributes,
             "viewBox",
             format!("(0, 0, {}, {})", size.width, size.height).as_str(),
         );
-        set_attr(&mut document, "width", format!("{}", size.width).as_str());
-        set_attr(&mut document, "height", format!("{}", size.height).as_str());
+        set_attr(&mut attributes, "width", format!("{}", size.width).as_str());
+        set_attr(
+            &mut attributes,
+            "height",
+            format!("{}", size.height).as_str(),
+        );
         MapView {
             points: features.points(),
             polyline: features.polylines.remove(0),
-            attributes: document,
+            attributes,
+            size: self.parameters.screen_size.clone(),
+            margin: self.margin(),
         }
     }
 }
