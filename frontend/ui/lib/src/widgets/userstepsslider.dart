@@ -170,9 +170,10 @@ class UserStepsSlider extends StatelessWidget {
     if (values == null) {
       return const Text('not set yet');
     }
-    return SliderValuesWidgetDeprecated(
-      values: values,
-      onChanged: (value) {
+    return SliderValuesWidget(
+      initIndex: values.index(),
+      values: values.values,
+      onValueChanged: (value) {
         return onChanged(model, value);
       },
       formatLabel: (value) {

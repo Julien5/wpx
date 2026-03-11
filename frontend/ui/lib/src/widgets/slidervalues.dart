@@ -48,45 +48,6 @@ class SliderValues {
   }
 }
 
-class SliderValuesWidgetDeprecated extends StatelessWidget {
-  final dynamic Function(double) onChanged;
-  final String Function(double) formatLabel;
-  final bool enabled;
-  final SliderValues values;
-  const SliderValuesWidgetDeprecated({
-    super.key,
-    required this.onChanged,
-    required this.values,
-    required this.formatLabel,
-    required this.enabled,
-  });
-
-  void onSliderChanged(double sliderIndex) {
-    int index = sliderIndex.round();
-    onChanged(values.getValue(index));
-  }
-
-  int currentWidgetIndex() {
-    return values.index();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (values.length() == 0) {
-      return const Text("loading...");
-    }
-    String label = formatLabel(values.current());
-    return Slider(
-      min: 0,
-      max: values.length() - 1,
-      divisions: values.length() - 1, // not good yet.
-      value: currentWidgetIndex().toDouble(),
-      label: label,
-      onChanged: enabled ? onSliderChanged : null,
-    );
-  }
-}
-
 int getClosestIndex(List<double> values, double value) {
   int closestIndex = 0;
   double smallestDifference = double.infinity;
