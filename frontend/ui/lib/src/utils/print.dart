@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
-List<double> niceSegmentLengths(double trackLength) {
+List<double> _niceSegmentLengths(double trackLength) {
   double trackLengthKm = trackLength / 1000;
   Set<double> values = {2, 5, 10};
   if (trackLengthKm > 10) {
@@ -34,19 +34,7 @@ List<double> niceSegmentLengths(double trackLength) {
   return ret;
 }
 
-int maxPageCount(double rawLength) {
-  double km = rawLength / 1000;
-  debugPrint("km=$km");
-  if (km > 1000) {
-    return (km / 100).ceil();
-  }
-  if (km > 100) {
-    return (km / 50).ceil();
-  }
-  return (km / 20).ceil();
-}
-
-int pageCount(
+int _pageCount(
   double trackLength,
   double segmentLengthWithOverlap,
   double segmentOverlap,
@@ -72,12 +60,12 @@ class PageCountInfo {
     if (trackLength <= 0) {
       return;
     }
-    List<double> niceLengths = niceSegmentLengths(trackLength);
+    List<double> niceLengths = _niceSegmentLengths(trackLength);
     // for each length, the correspong page count
     Set<int> pageCounts = {};
     for (double niceLength in niceLengths) {
       double withOverlap = niceLength + _segmentOverlap(niceLength);
-      int count = pageCount(
+      int count = _pageCount(
         trackLength,
         withOverlap,
         _segmentOverlap(niceLength),
@@ -108,7 +96,7 @@ class PageCountInfo {
   void setNiceSegmentLength(double niceSegmentLength) {
     segmentLengthWithOverlap =
         niceSegmentLength + _segmentOverlap(niceSegmentLength);
-    _npages = pageCount(
+    _npages = _pageCount(
       trackLength,
       segmentLengthWithOverlap,
       _segmentOverlap(niceSegmentLength),
@@ -119,7 +107,7 @@ class PageCountInfo {
   void setParameters(double length, double overlap) {
     debugPrint("print length=$length overlap=$overlap");
     segmentLengthWithOverlap = length;
-    _npages = pageCount(trackLength, segmentLengthWithOverlap, overlap);
+    _npages = _pageCount(trackLength, segmentLengthWithOverlap, overlap);
     debugPrint("print npages=$_npages");
     assert(possiblePageCounts.contains(_npages));
   }
@@ -129,11 +117,11 @@ class PageCountInfo {
     debugPrint("print setPageCount $desired");
     _npages = possiblePageCounts.lastWhere((p) => p <= desired);
     assert(possiblePageCounts.contains(_npages));
-    List<double> niceLengths = niceSegmentLengths(trackLength);
+    List<double> niceLengths = _niceSegmentLengths(trackLength);
     double minNiceLength = niceLengths.last;
     for (double niceLength in niceLengths) {
       double withOverlap = niceLength + _segmentOverlap(niceLength);
-      int count = pageCount(
+      int count = _pageCount(
         trackLength,
         withOverlap,
         _segmentOverlap(niceLength),
