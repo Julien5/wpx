@@ -191,7 +191,13 @@ impl SegmentData {
             let lock = self.packet_provider.read().unwrap();
             let mut coll = lock.collection.clone();
             coll.range_cut(&self.range());
-            coll.kinds_cut(&kinds);
+            let clean: Kinds = kinds
+                .clone()
+                .iter()
+                .map(|k| k.clone())
+                .filter(|k| *k != Kind::UserStep)
+                .collect();
+            coll.kinds_cut(&clean);
             coll
         };
 

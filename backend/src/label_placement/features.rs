@@ -216,7 +216,7 @@ impl PointFeature {
         None
     }
 
-    pub fn make_link(&mut self, obstacles: &Obstacles) {
+    pub fn make_link(&mut self, _obstacles: &Obstacles) {
         let circle = &self.circle.center;
         let label = self.label.bbox.absolute().project_on_border(circle);
         let to_label = *circle - label;
