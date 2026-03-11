@@ -59,25 +59,17 @@ impl CandidatesGenerator for MapGenerator {
         &self,
         feature: &PointFeature,
         obstacles: &Obstacles,
-        _hardness: usize,
+        hardness: usize,
     ) -> Vec<Candidate> {
         let mut cardinal_boxes =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
         cardinal_boxes.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
-        let search_width = 200f64;
-        let search_area = BoundingBox::minsize(
-            feature.center() - Point2D::new(search_width * 0.5f64, search_width * 0.5f64),
-            search_width,
-            search_width,
-        );
         let cardinal_candidates: Vec<_> = cardinal_boxes
             .iter()
             .map(|lbbox| Candidate::new(lbbox))
             .collect();
+
         // if the area is not empty, do not try hard placement
-        if obstacles.occupied_area(&search_area) / search_area.area() > 0.0f64 {
-            return cardinal_candidates;
-        }
         match feature.input_point() {
             Some(point) => {
                 if !is_close_to_track(&point) {
@@ -86,19 +78,22 @@ impl CandidatesGenerator for MapGenerator {
             }
             None => {}
         }
-        let aux_boxes = label_placement::far_cardinal_boxes(
-            &feature.center(),
-            feature.width(),
-            feature.height(),
-            25f64,
-        );
-        let aux_candidates: Vec<_> = aux_boxes
-            .iter()
-            .map(|lbbox| Candidate::new(lbbox))
-            .collect();
         let mut ret = Vec::new();
         ret.extend_from_slice(&cardinal_candidates);
-        ret.extend_from_slice(&aux_candidates);
+        for i in 1..=30 {
+            let aux_boxes = label_placement::far_cardinal_boxes(
+                &feature.center(),
+                feature.width(),
+                feature.height(),
+                (i * 5) as f64,
+            );
+            let aux_candidates: Vec<_> = aux_boxes
+                .iter()
+                .map(|lbbox| Candidate::new(lbbox))
+                .collect();
+
+            ret.extend_from_slice(&aux_candidates);
+        }
         ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
         ret
     }

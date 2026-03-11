@@ -210,17 +210,16 @@ pub fn far_cardinal_boxes(
     distance: f64,
 ) -> Vec<LabelBoundingBox> {
     let mut ret = Vec::new();
-    let dx = 2f64 * distance + width;
-    let dy = 2f64 * distance + height;
     let bbox_right = BoundingBox::minsize(Point2D::new(distance, -height / 2.0), width, height);
     let bbox_up = BoundingBox::minsize(
         Point2D::new(-width / 2.0, -distance - height),
         width,
         height,
     );
-
     ret.push(make(&bbox_right, &Point2D::new(0.0, 0.0), center));
     ret.push(make(&bbox_up, &Point2D::new(0.0, 0.0), center));
+    let dx = 2f64 * distance + width;
+    let dy = 2f64 * distance + height;
     ret.push(make(&bbox_right, &Point2D::new(-dx, 0.0), center));
     ret.push(make(&bbox_up, &Point2D::new(0.0, dy), center));
 
