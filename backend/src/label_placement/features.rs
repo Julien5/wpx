@@ -8,7 +8,7 @@ use rstar::{PointDistance, RTree, RTreeObject, AABB};
 use crate::{
     bbox::BoundingBox,
     inputpoint::InputPoint,
-    label_placement::labelboundingbox::LabelBoundingBox,
+    label_placement::{labelboundingbox::LabelBoundingBox, obstacle::Obstacles},
     math::{self, distance2, Point2D},
 };
 
@@ -214,6 +214,44 @@ impl PointFeature {
             return Some(self.input_point.as_ref().unwrap().0.clone());
         }
         None
+    }
+
+    pub fn make_link(&mut self, obstacles: &Obstacles) {
+        let circle = &self.circle.center;
+        let label = self.label.bbox.absolute().project_on_border(circle);
+        let to_label = *circle - label;
+        let distance = to_label.length();
+        if distance < 10f64 {
+            return;
+        }
+        assert!(distance > std::f64::EPSILON);
+        let unit = to_label * (1.0 / distance);
+        debug_assert!(!unit.x.is_nan());
+        debug_assert!(!unit.y.is_nan());
+        let epsilon = unit * 6.0f64;
+        let from = label + epsilon;
+        let to = *circle - epsilon;
+
+        let path = vec![from, to];
+        let d = path
+            .iter()
+            .enumerate()
+            .map(|(i, p)| {
+                if i == 0 {
+                    format!("M{:.2},{:.2}", p.x, p.y)
+                } else {
+                    format!("L{:.2},{:.2}", p.x, p.y)
+                }
+            })
+            .collect::<Vec<_>>();
+        let mut stroke = svg::node::element::Path::new();
+        stroke = stroke.set("id", "link");
+        stroke = stroke.set("stroke", "black");
+        stroke = stroke.set("stroke-width", "0.5");
+        stroke = stroke.set("stroke-linejoin", "miter");
+        stroke = stroke.set("stroke-miterlimit", "1");
+        stroke = stroke.set("d", d);
+        self.link = Some(stroke);
     }
     pub fn render_in_group(&self, sd_group: &mut svg::node::element::Group) {
         use svg::Node;

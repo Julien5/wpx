@@ -77,6 +77,7 @@ impl PlacementResult {
                 if result.placed_indices.contains_key(&feature_index) {
                     let bbox = result.placed_indices.get(&feature_index).unwrap();
                     feature.place_label(&bbox);
+                    feature.make_link(&_obstacles);
                     ret.push(feature.clone());
                 }
             }
