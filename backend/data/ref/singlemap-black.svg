@@ -112,6 +112,7 @@ Bermersbach
 Staufenberg
 </text>
 </g>
+<path d="M211.94,38.20 L211.94,51.20" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="243.50755455009403" cy="187.93031184741267" fill="Black" id="20/wp/circle" r="4"/>
 <circle cx="243.50755455009403" cy="187.93031184741267" fill="white" id="20/wp/circle-little-white" r="2.5"/>
@@ -173,6 +174,7 @@ Freiersberg
 Rote Lache
 </text>
 </g>
+<path d="M200.17,106.65 L213.17,106.65" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="227.23402847076886" cy="104.27223064159261" fill="Green" id="26/wp/circle" r="3"/>
 </g>
@@ -193,6 +195,7 @@ Hartkopf
 Nachtigall
 </text>
 </g>
+<path d="M228.33,74.58 L215.33,74.58" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="120.24052075402324" cy="116.86298933307626" fill="Black" id="29/wp/circle" r="5"/>
 <circle cx="120.24052075402324" cy="116.86298933307626" fill="white" id="29/wp/circle-little-white" r="3.5"/>

@@ -85,6 +85,7 @@ Landerneau
 Guipavas
 </text>
 </g>
+<path d="M99.15,472.00 L99.15,485.00" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="426.4883306876511" cy="608.1436585223983" fill="Black" id="43/wp/circle" r="5"/>
 <circle cx="426.4883306876511" cy="608.1436585223983" fill="white" id="43/wp/circle-little-white" r="3.5"/>
@@ -109,6 +110,7 @@ Pontivy
 Loudéac
 </text>
 </g>
+<path d="M455.70,574.33 L468.70,574.33" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="288.14118102489124" cy="541.039163076739" fill="Black" id="46/wp/circle" r="5"/>
 <circle cx="288.14118102489124" cy="541.039163076739" fill="white" id="46/wp/circle-little-white" r="3.5"/>
@@ -121,6 +123,7 @@ Loudéac
 Carhaix-Plouguer
 </text>
 </g>
+<path d="M288.14,560.04 L288.14,547.04" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1229.7703646520715" cy="463.4805455696569" fill="Black" id="47/wp/circle" r="5"/>
 <circle cx="1229.7703646520715" cy="463.4805455696569" fill="white" id="47/wp/circle-little-white" r="3.5"/>
@@ -144,6 +147,7 @@ Mortagne-au-Perche
 Saint-Méen-le-Grand
 </text>
 </g>
+<path d="M603.63,588.79 L603.63,575.79" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="736.404723609333" cy="547.8842659087913" fill="Black" id="49/wp/circle" r="4"/>
 <circle cx="736.404723609333" cy="547.8842659087913" fill="white" id="49/wp/circle-little-white" r="2.5"/>
@@ -155,6 +159,7 @@ Saint-Méen-le-Grand
 Saint-Aubin-d'Aubigné
 </text>
 </g>
+<path d="M736.40,566.88 L736.40,553.88" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="783.3622437199306" cy="546.7855825473471" fill="Black" id="50/wp/circle" r="4"/>
 <circle cx="783.3622437199306" cy="546.7855825473471" fill="white" id="50/wp/circle-little-white" r="2.5"/>
@@ -166,6 +171,7 @@ Saint-Aubin-d'Aubigné
 Saint-Aubin-du-Cormier
 </text>
 </g>
+<path d="M802.36,546.79 L789.36,546.79" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1455.2243968008856" cy="421.98124135619037" fill="Black" id="51/wp/circle" r="4"/>
 <circle cx="1455.2243968008856" cy="421.98124135619037" fill="white" id="51/wp/circle-little-white" r="2.5"/>
@@ -177,6 +183,7 @@ Saint-Aubin-du-Cormier
 Nogent-le-Roi
 </text>
 </g>
+<path d="M1455.22,440.98 L1455.22,427.98" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="120.78157244245222" cy="509.9425937861197" fill="Black" id="52/wp/circle" r="4"/>
 <circle cx="120.78157244245222" cy="509.9425937861197" fill="white" id="52/wp/circle-little-white" r="2.5"/>
@@ -210,6 +217,7 @@ Tinténiac
 Plémet
 </text>
 </g>
+<path d="M511.81,554.44 L511.81,567.44" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="197.98974795252502" cy="557.5502760415311" fill="Black" id="55/wp/circle" r="4"/>
 <circle cx="197.98974795252502" cy="557.5502760415311" fill="white" id="55/wp/circle-little-white" r="2.5"/>
@@ -254,6 +262,7 @@ Senonches
 Longny-au-Perche
 </text>
 </g>
+<path d="M1275.81,478.99 L1275.81,465.99" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="403.14745081054787" cy="590.3414762327666" fill="Black" id="61/wp/circle" r="4"/>
 <circle cx="403.14745081054787" cy="590.3414762327666" fill="white" id="61/wp/circle-little-white" r="2.5"/>
@@ -276,6 +285,7 @@ Cléguérec
 Villaines-la-Juhel
 </text>
 </g>
+<path d="M1040.52,538.64 L1040.52,525.64" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="960.2957921757243" cy="501.81260725949323" fill="Black" id="63/wp/circle" r="4"/>
 <circle cx="960.2957921757243" cy="501.81260725949323" fill="white" id="63/wp/circle-little-white" r="2.5"/>
@@ -287,6 +297,7 @@ Villaines-la-Juhel
 Ambrières-les-Vallées
 </text>
 </g>
+<path d="M960.30,482.81 L960.30,495.81" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1387.1403019470497" cy="444.8185031829398" fill="Black" id="64/wp/circle" r="4"/>
 <circle cx="1387.1403019470497" cy="444.8185031829398" fill="white" id="64/wp/circle-little-white" r="2.5"/>
@@ -298,6 +309,7 @@ Ambrières-les-Vallées
 Châteauneuf-en-Thymerais
 </text>
 </g>
+<path d="M1387.14,463.82 L1387.14,450.82" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="918.464253354208" cy="498.8420420190341" fill="Black" id="65/wp/circle" r="4"/>
 <circle cx="918.464253354208" cy="498.8420420190341" fill="white" id="65/wp/circle-little-white" r="2.5"/>
@@ -331,6 +343,7 @@ Romagné
 Sizun
 </text>
 </g>
+<path d="M172.68,481.45 L172.68,494.45" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="691.6049742235499" cy="536.1400060853011" fill="Black" id="68/wp/circle" r="4"/>
 <circle cx="691.6049742235499" cy="536.1400060853011" fill="white" id="68/wp/circle-little-white" r="2.5"/>
@@ -364,6 +377,7 @@ L'Hôpital-Camfrout
 Médréac
 </text>
 </g>
+<path d="M632.33,525.51 L632.33,538.51" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="131.43909772818756" cy="514.5219744728292" fill="Black" id="77/wp/circle" r="4"/>
 <circle cx="131.43909772818756" cy="514.5219744728292" fill="white" id="77/wp/circle-little-white" r="2.5"/>
@@ -386,6 +400,7 @@ Daoulas
 Le Faou
 </text>
 </g>
+<path d="M168.52,535.46 L155.52,535.46" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1424.6608756922212" cy="397.92564179529836" fill="Black" id="81/wp/circle" r="4"/>
 <circle cx="1424.6608756922212" cy="397.92564179529836" fill="white" id="81/wp/circle-little-white" r="2.5"/>
@@ -397,6 +412,7 @@ Le Faou
 Luray
 </text>
 </g>
+<path d="M1424.66,378.93 L1424.66,391.93" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="381.593190482919" cy="529.6615393687316" fill="Black" id="82/wp/circle" r="4"/>
 <circle cx="381.593190482919" cy="529.6615393687316" fill="white" id="82/wp/circle-little-white" r="2.5"/>
@@ -408,6 +424,7 @@ Luray
 Saint-Nicolas-du-Pélem
 </text>
 </g>
+<path d="M381.59,510.66 L381.59,523.66" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="542.2116944104096" cy="585.4578838371417" fill="Black" id="83/wp/circle" r="4"/>
 <circle cx="542.2116944104096" cy="585.4578838371417" fill="white" id="83/wp/circle-little-white" r="2.5"/>
@@ -419,6 +436,7 @@ Saint-Nicolas-du-Pélem
 Ménéac
 </text>
 </g>
+<path d="M542.21,604.46 L542.21,591.46" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="272.1556973736708" cy="521.4456584788713" fill="Black" id="85/wp/circle" r="4"/>
 <circle cx="272.1556973736708" cy="521.4456584788713" fill="white" id="85/wp/circle-little-white" r="2.5"/>
@@ -430,6 +448,7 @@ Ménéac
 Poullaouen
 </text>
 </g>
+<path d="M272.16,502.45 L272.16,515.45" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1483.758165997702" cy="391.9851881883642" fill="Black" id="92/wp/circle" r="4"/>
 <circle cx="1483.758165997702" cy="391.9851881883642" fill="white" id="92/wp/circle-little-white" r="2.5"/>
@@ -463,6 +482,7 @@ Quédillac
 Laignelet
 </text>
 </g>
+<path d="M841.87,491.72 L841.87,504.72" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="175.78958932481055" cy="553.5459718890306" fill="Black" id="95/wp/circle" r="4"/>
 <circle cx="175.78958932481055" cy="553.5459718890306" fill="white" id="95/wp/circle-little-white" r="2.5"/>
@@ -474,6 +494,7 @@ Laignelet
 Saint-Ségal
 </text>
 </g>
+<path d="M175.79,572.55 L175.79,559.55" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="514.3868700456507" cy="597.7517910322094" fill="Black" id="99/wp/circle" r="4"/>
 <circle cx="514.3868700456507" cy="597.7517910322094" fill="white" id="99/wp/circle-little-white" r="2.5"/>
@@ -496,6 +517,7 @@ Plumieux
 Landeleau
 </text>
 </g>
+<path d="M252.46,577.04 L252.46,564.04" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="377.5812980197061" cy="558.139614813028" fill="Black" id="101/wp/circle" r="4"/>
 <circle cx="377.5812980197061" cy="558.139614813028" fill="white" id="101/wp/circle-little-white" r="2.5"/>
@@ -529,6 +551,7 @@ Assé-le-Boisne
 Gesnes-le-Gandelin
 </text>
 </g>
+<path d="M1126.72,516.58 L1113.72,516.58" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1455.5257187622715" cy="423.0548384070571" fill="Black" id="113/wp/circle" r="4"/>
 <circle cx="1455.5257187622715" cy="423.0548384070571" fill="white" id="113/wp/circle-little-white" r="2.5"/>
@@ -551,6 +574,7 @@ Lormaye
 La Baussaine
 </text>
 </g>
+<path d="M670.95,511.24 L670.95,524.24" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="222.94240868081658" cy="505.00942737211153" fill="Black" id="116/wp/circle" r="4"/>
 <circle cx="222.94240868081658" cy="505.00942737211153" fill="white" id="116/wp/circle-little-white" r="2.5"/>
@@ -562,6 +586,7 @@ La Baussaine
 La Feuillée
 </text>
 </g>
+<path d="M222.94,486.01 L222.94,499.01" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1132.9061444201236" cy="491.22201485124606" fill="Black" id="121/wp/circle" r="4"/>
 <circle cx="1132.9061444201236" cy="491.22201485124606" fill="white" id="121/wp/circle-little-white" r="2.5"/>
@@ -584,6 +609,7 @@ Le Chevain
 Chantrigné
 </text>
 </g>
+<path d="M974.29,516.48 L974.29,503.48" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1310.4869652305788" cy="457.3379902857523" fill="Black" id="123/wp/circle" r="4"/>
 <circle cx="1310.4869652305788" cy="457.3379902857523" fill="white" id="123/wp/circle-little-white" r="2.5"/>
@@ -595,6 +621,7 @@ Chantrigné
 Neuilly-sur-Eure
 </text>
 </g>
+<path d="M1310.49,438.34 L1310.49,451.34" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1052.7353842867421" cy="524.1065228997068" fill="Black" id="125/wp/circle" r="4"/>
 <circle cx="1052.7353842867421" cy="524.1065228997068" fill="white" id="125/wp/circle-little-white" r="2.5"/>
@@ -639,6 +666,7 @@ Merléac
 Hercé
 </text>
 </g>
+<path d="M909.51,515.31 L909.51,502.31" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1396.1989359305794" cy="415.325075618317" fill="Black" id="143/wp/circle" r="4"/>
 <circle cx="1396.1989359305794" cy="415.325075618317" fill="white" id="143/wp/circle-little-white" r="2.5"/>
@@ -672,6 +700,7 @@ Roullée
 Saint-Launeuc
 </text>
 </g>
+<path d="M561.72,536.98 L561.72,549.98" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1190.5149710884143" cy="483.00241609499244" fill="Black" id="153/wp/circle" r="4"/>
 <circle cx="1190.5149710884143" cy="483.00241609499244" fill="white" id="153/wp/circle-little-white" r="2.5"/>
@@ -694,6 +723,7 @@ Vidai
 Saint-Lubin
 </text>
 </g>
+<path d="M346.66,523.92 L346.66,536.92" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="420.6729945519521" cy="602.8800409368359" fill="Black" id="157/wp/circle" r="4"/>
 <circle cx="420.6729945519521" cy="602.8800409368359" fill="white" id="157/wp/circle-little-white" r="2.5"/>
@@ -705,6 +735,7 @@ Saint-Lubin
 Stival
 </text>
 </g>
+<path d="M420.67,621.88 L420.67,608.88" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1374.016086265979" cy="424.6886332178092" fill="Black" id="159/wp/circle" r="4"/>
 <circle cx="1374.016086265979" cy="424.6886332178092" fill="white" id="159/wp/circle-little-white" r="2.5"/>

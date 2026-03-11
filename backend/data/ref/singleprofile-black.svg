@@ -105,6 +105,7 @@
 K1
 </text>
 </g>
+<path d="M364.82,22.00 L364.82,100.73" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="882.6140096429942" cy="280.62304166666667" fill="Blue" id="1/wp" r="5"/>
 </g>
@@ -115,6 +116,7 @@ K1
 K2
 </text>
 </g>
+<path d="M882.61,22.00 L882.61,274.62" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="365.13729925784315" cy="106.43129166666668" fill="Black" id="2/wp" r="5"/>
 <circle cx="365.13729925784315" cy="106.43129166666668" fill="white" id="2/wp-little-white" r="3.5"/>
@@ -162,6 +164,7 @@ Bräunlingen
 Schonach im Schwarzwald
 </text>
 </g>
+<path d="M534.64,126.96 L534.64,108.96" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="841.4073154931933" cy="269.7794583333333" fill="Black" id="6/wp" r="4"/>
 <circle cx="841.4073154931933" cy="269.7794583333333" fill="white" id="6/wp-little-white" r="2.5"/>
@@ -184,6 +187,7 @@ Mühlenbach
 Fischerbach
 </text>
 </g>
+<path d="M914.35,298.11 L914.35,280.11" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="733.2697024643112" cy="214.57333333333332" fill="Black" id="8/wp" r="4"/>
 <circle cx="733.2697024643112" cy="214.57333333333332" fill="white" id="8/wp-little-white" r="2.5"/>
@@ -228,6 +232,7 @@ Bruggen
 Wolterdingen
 </text>
 </g>
+<path d="M61.31,173.03 L61.31,155.03" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="1327.4785186142885" cy="134.95579166666667" fill="Green" id="12/wp" r="3"/>
 </g>
