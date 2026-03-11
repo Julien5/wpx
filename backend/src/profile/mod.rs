@@ -653,7 +653,10 @@ impl CandidatesGenerator for ProfileGenerator {
             );
         }
         let mut ret = match kind {
-            Kind::UserStep => self.extended_cardinal(feature),
+            Kind::UserStep => {
+                assert!(false);
+                Vec::new()
+            }
             Kind::GPXWaypoints | Kind::Controls => Self::header(feature),
             _ => {
                 assert!(is_osm(&kind));
@@ -740,7 +743,7 @@ impl ProfileGenerator {
         let mut ret = Vec::new();
         assert!(feature.input_point().is_some());
 
-        ret.extend_from_slice(&label_placement::cardinal_boxes(
+        ret.extend_from_slice(&label_placement::cardinal_boxes_profile(
             &feature.center(),
             feature.width(),
             feature.height(),
@@ -748,6 +751,7 @@ impl ProfileGenerator {
         ret.iter().map(|lbbox| Candidate::new(lbbox)).collect()
     }
 
+    #[allow(dead_code)]
     fn extended_cardinal(&self, feature: &PointFeature) -> Vec<Candidate> {
         let mut ret = Vec::new();
         assert!(feature.input_point().is_some());
