@@ -202,7 +202,7 @@ impl MapMaker {
 
 impl MapMaker {
     fn margin(&self) -> i32 {
-        let minimal = label_placement::FONTSIZE.floor() as i32;
+        let minimal = (1.5f64 * label_placement::FONTSIZE).floor() as i32;
         // 5% of max (width,height)
         let nominal = (0.05
             * self

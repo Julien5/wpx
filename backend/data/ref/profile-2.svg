@@ -113,6 +113,19 @@ K4
 </g>
 <path d="M642.30,22.00 L642.30,271.28" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
+<circle cx="13.696980236102263" cy="158.29887499999998" fill="Black" id="1/wp" r="5"/>
+<circle cx="13.696980236102263" cy="158.29887499999998" fill="white" id="1/wp-little-white" r="3.5"/>
+<circle cx="13.696980236102263" cy="158.29887499999998" fill="black" id="1/wp-little-white" r="2.5"/>
+</g>
+<g transform="translate(13.696980236102263 158.29887499999998)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="91.19631578947369" x="7" y="-28"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="95.19631578947369" x="5" y="-30"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="start" x="7.000" y="-18.000">
+Baden-Baden
+</text>
+</g>
+<path d="M16.91,148.03 L15.49,152.57" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
+<g>
 <circle cx="642.3010465936509" cy="277.2845" fill="Black" id="2/wp" r="5"/>
 <circle cx="642.3010465936509" cy="277.2845" fill="white" id="2/wp-little-white" r="3.5"/>
 <circle cx="642.3010465936509" cy="277.2845" fill="black" id="2/wp-little-white" r="2.5"/>
@@ -210,17 +223,6 @@ Wintersdorf
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="92.29144736842105" x="5" y="-18"/>
 <text font-size="13.0" font-style="normal" font-weight="normal" id="10/wp/text" text-anchor="start" x="7.000" y="-7.000">
 Haueneberstein
-</text>
-</g>
-<g>
-<circle cx="19.16637268256909" cy="148.2431875" fill="Black" id="11/wp" r="4"/>
-<circle cx="19.16637268256909" cy="148.2431875" fill="white" id="11/wp-little-white" r="2.5"/>
-</g>
-<g transform="translate(19.16637268256909 148.2431875)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="78.28486842105262" x="7" y="-16"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="82.28486842105262" x="5" y="-18"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="11/wp/text" text-anchor="start" x="7.000" y="-7.000">
-Ebersteinburg
 </text>
 </g>
 <g/>

@@ -652,6 +652,7 @@ impl CandidatesGenerator for ProfileGenerator {
                 hardness
             );
         }
+        let drawing_width = obstacles.drawingbox.bbox.width();
         let mut ret = match kind {
             Kind::UserStep => {
                 assert!(false);
@@ -662,15 +663,15 @@ impl CandidatesGenerator for ProfileGenerator {
                 assert!(is_osm(&kind));
                 let mut ret = self.cardinal(feature);
                 if hardness > 2 {
-                    let a = self.generate_column(feature, 30f64);
+                    let a = self.generate_column(feature, drawing_width, 30f64);
                     ret.extend_from_slice(&a);
                 }
                 if hardness > 4 {
-                    let a = self.generate_column(feature, 55f64);
+                    let a = self.generate_column(feature, drawing_width, 55f64);
                     ret.extend_from_slice(&a);
                 }
                 if hardness > 6 {
-                    let a = self.generate_column(feature, 80f64);
+                    let a = self.generate_column(feature, drawing_width, 80f64);
                     ret.extend_from_slice(&a);
                 }
                 ret
@@ -683,10 +684,34 @@ impl CandidatesGenerator for ProfileGenerator {
 }
 
 impl ProfileGenerator {
-    fn generate_column(&self, feature: &PointFeature, distance: f64) -> Vec<Candidate> {
+    fn generate_column(
+        &self,
+        feature: &PointFeature,
+        drawing_width: f64,
+        distance: f64,
+    ) -> Vec<Candidate> {
+        let cx = feature.circle.center.x;
+        let width = feature.label.bbox.width();
+        let delta = 0.6 * width;
+        if cx < delta {
+            return self.generate_x_column(feature, cx + 5f64, distance);
+        }
+        if (cx + delta) > drawing_width {
+            return self.generate_x_column(feature, drawing_width - width - delta, distance);
+        }
+        self.generate_middle_column(feature, distance)
+    }
+
+    fn generate_middle_column(&self, feature: &PointFeature, distance: f64) -> Vec<Candidate> {
         let target = feature.circle.center;
         let width = feature.width();
         let x = target.x - width / 2f64;
+        self.generate_x_column(feature, x, distance)
+    }
+
+    fn generate_x_column(&self, feature: &PointFeature, x: f64, distance: f64) -> Vec<Candidate> {
+        let target = feature.circle.center;
+        let width = feature.width();
         let mut ret = Vec::new();
 
         let bbox = BoundingBox::minsize(
