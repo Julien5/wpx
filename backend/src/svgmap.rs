@@ -59,7 +59,7 @@ impl CandidatesGenerator for MapGenerator {
         &self,
         feature: &PointFeature,
         obstacles: &Obstacles,
-        hardness: usize,
+        _hardness: usize,
     ) -> Vec<Candidate> {
         let mut cardinal_boxes =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
@@ -78,23 +78,32 @@ impl CandidatesGenerator for MapGenerator {
             }
             None => {}
         }
+        // OK, for the moment with "always try hard". This is because the features
+        // have already been "reduced" in the profile and we dont want the map to
+        // be picky.
         let mut ret = Vec::new();
         ret.extend_from_slice(&cardinal_candidates);
-        for i in 1..=30 {
-            let aux_boxes = label_placement::far_cardinal_boxes(
-                &feature.center(),
-                feature.width(),
-                feature.height(),
-                (i * 5) as f64,
-            );
-            let aux_candidates: Vec<_> = aux_boxes
-                .iter()
-                .map(|lbbox| Candidate::new(lbbox))
-                .collect();
+        let aux_boxes = label_placement::far_cardinal_boxes(
+            &feature.center(),
+            feature.width(),
+            feature.height(),
+            25f64,
+        );
+        let aux_candidates: Vec<_> = aux_boxes
+            .iter()
+            .map(|lbbox| Candidate::new(lbbox))
+            .collect();
 
-            ret.extend_from_slice(&aux_candidates);
-        }
+        ret.extend_from_slice(&aux_candidates);
+        let ninit = ret.len();
         ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
+        if ret.is_empty() {
+            log::info!(
+                "no candidates passed the upfront obstacles test for: [{}] (tried {})",
+                feature.id(),
+                ninit
+            );
+        }
         ret
     }
 }
@@ -114,32 +123,36 @@ impl MapView {
             document = document.set(k, v.clone());
         }
 
-        let mut frame_ext = svg::node::element::Rectangle::new();
-        frame_ext = frame_ext.set("x", 0);
-        frame_ext = frame_ext.set("y", 0);
-        frame_ext = frame_ext.set("fill", "none");
-        frame_ext = frame_ext.set("stroke", "black");
-        frame_ext = frame_ext.set("stroke-width", "3");
-        frame_ext = frame_ext.set("width", self.size.width);
-        frame_ext = frame_ext.set("height", self.size.height);
-        document = document.add(frame_ext);
+        // TODO: use the debug parameter
+        let debug = false;
+        if debug {
+            let mut frame_ext = svg::node::element::Rectangle::new();
+            frame_ext = frame_ext.set("x", 0);
+            frame_ext = frame_ext.set("y", 0);
+            frame_ext = frame_ext.set("fill", "none");
+            frame_ext = frame_ext.set("stroke", "black");
+            frame_ext = frame_ext.set("stroke-width", "3");
+            frame_ext = frame_ext.set("width", self.size.width);
+            frame_ext = frame_ext.set("height", self.size.height);
+            document = document.add(frame_ext);
 
-        let mut inner_frame = svg::node::element::Rectangle::new();
-        let margin = self.margin;
-        inner_frame = inner_frame.set("x", margin);
-        inner_frame = inner_frame.set("y", margin);
-        inner_frame = inner_frame.set("fill", "none");
-        inner_frame = inner_frame.set("stroke", "black");
-        inner_frame = inner_frame.set("stroke-width", "3");
-        if let Some(width) = self.attributes.get("width") {
-            let n = width.parse::<i32>().unwrap() - 2 * margin;
-            inner_frame = inner_frame.set("width", n);
+            let mut inner_frame = svg::node::element::Rectangle::new();
+            let margin = self.margin;
+            inner_frame = inner_frame.set("x", margin);
+            inner_frame = inner_frame.set("y", margin);
+            inner_frame = inner_frame.set("fill", "none");
+            inner_frame = inner_frame.set("stroke", "black");
+            inner_frame = inner_frame.set("stroke-width", "3");
+            if let Some(width) = self.attributes.get("width") {
+                let n = width.parse::<i32>().unwrap() - 2 * margin;
+                inner_frame = inner_frame.set("width", n);
+            }
+            if let Some(height) = self.attributes.get("height") {
+                let n = height.parse::<i32>().unwrap() - 2 * margin;
+                inner_frame = inner_frame.set("height", n);
+            }
+            document = document.add(inner_frame);
         }
-        if let Some(height) = self.attributes.get("height") {
-            let n = height.parse::<i32>().unwrap() - 2 * margin;
-            inner_frame = inner_frame.set("height", n);
-        }
-        document = document.add(inner_frame);
 
         let mut svgpath = svg::node::element::Path::new();
         for (k, v) in self.polyline.to_attributes() {
@@ -426,7 +439,7 @@ mod tests {
     use crate::{
         bbox::BoundingBox,
         label_placement::{
-            features::*, labelboundingbox::LabelBoundingBox, obstacle::Obstacles,
+            self, features::*, labelboundingbox::LabelBoundingBox, obstacle::Obstacles,
             CandidatesGenerator,
         },
         math::Point2D,
@@ -448,7 +461,7 @@ mod tests {
                     &Point2D::zero(),
                 ),
                 text: String::from_str("hi").unwrap(),
-                fontsize: FONTSIZE,
+                fontsize: label_placement::FONTSIZE,
                 fontweight: "normal".to_string(),
                 fontstyle: "normal".to_string(),
             },

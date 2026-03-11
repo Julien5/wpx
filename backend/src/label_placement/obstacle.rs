@@ -66,6 +66,7 @@ impl Obstacles {
         self.drawingbox.bbox.area() - self.bboxes.iter().map(|bbox| bbox.area()).sum::<f64>()
     }
 
+    #[allow(dead_code)]
     pub fn occupied_area(&self, search_area: &BoundingBox) -> f64 {
         let mut nearby_indices = Vec::new();
         self.bboxes_tree.query(&search_area, &mut nearby_indices);

@@ -332,7 +332,7 @@ impl Graph {
 mod tests {
     use crate::{
         bbox::BoundingBox,
-        label_placement::{features::FONTSIZE, Label, LabelBoundingBox, PointFeatureDrawing},
+        label_placement::{Label, LabelBoundingBox, PointFeatureDrawing, FONTSIZE},
         math::Point2D,
     };
 
