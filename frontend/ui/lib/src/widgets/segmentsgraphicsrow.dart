@@ -7,7 +7,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bride;
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 import 'segmentgraphics.dart';
 

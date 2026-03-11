@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/waypointsmodel.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 class WayPointsTable extends StatefulWidget {
   final int segmentid;

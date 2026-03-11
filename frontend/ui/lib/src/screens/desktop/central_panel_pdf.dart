@@ -7,7 +7,7 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/screens/desktop/central_panel.dart';
 import 'package:ui/src/widgets/waypoints_table_widget.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 class CentralWidget extends StatelessWidget {
   final double width;

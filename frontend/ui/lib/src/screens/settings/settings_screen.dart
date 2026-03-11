@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer' as developer;
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,95 +9,11 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/utils/print.dart';
 import 'package:ui/src/widgets/adaptive_layout.dart';
 import 'package:ui/src/widgets/segmentgraphics.dart';
 import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
-import 'package:ui/utils.dart';
-
-// TODO: make this code clean.
-List<double> segmentLengthSliderValues(double trackLength) {
-  double trackLengthKm = trackLength / 1000;
-  List<double> values = [2, 5, 10];
-  if (trackLengthKm > 10) {
-    values = [5, 10, 25, 50];
-  }
-  if (trackLengthKm > 50) {
-    values = [10, 25, 50, 100];
-  }
-  if (trackLengthKm > 100) {
-    values = [25, 50, 100, 150, 200];
-  }
-  if (trackLengthKm > 200) {
-    values = [50, 100, 150, 200, 400];
-  }
-  if (trackLengthKm > 400) {
-    values = [100, 150, 200, 300, 600];
-  }
-  if (trackLengthKm > 600) {
-    values = [100, 150, 200, 300, 600, 1000];
-  }
-  return fromKm(values);
-}
-
-int maxPageCount(double rawLength) {
-  double km = rawLength / 1000;
-  debugPrint("km=$km");
-  if (km > 1000) {
-    return (km / 100).ceil();
-  }
-  if (km > 100) {
-    return (km / 50).ceil();
-  }
-  return (km / 20).ceil();
-}
-
-List<int> niceSegmentLengths(double rawLength) {
-  List<int> km = [
-    10,
-    15,
-    20,
-    25,
-    30,
-    35,
-    40,
-    50,
-    60,
-    75,
-    100,
-    150,
-    200,
-    250,
-    300,
-  ];
-  List<int> ret = km.map((e) => e * 1000).toList();
-  double hundredk = 100000;
-  double up100 = (rawLength / hundredk).ceil() * hundredk;
-  ret.add(up100.toInt());
-  ret.sort();
-  return ret;
-}
-
-double niceSegmentLength(double rawLength) {
-  for (int p in niceSegmentLengths(rawLength)) {
-    if (p > rawLength) {
-      return p.toDouble();
-    }
-  }
-  assert(false);
-  return 0;
-}
-
-int segmentCount(double trackLength, double segmentLength) {
-  double segmentOverlap = ((segmentLength * 0.1 / 1.1) / 1000).round() * 1000;
-  return (trackLength / (segmentLength - segmentOverlap)).ceil();
-}
-
-int projectNumberOfPages(int wanted, double trackLength, Parameters p) {
-  double nice = niceSegmentLength(trackLength / wanted);
-  double segmentOverlap = nice / 10;
-  double segmentLength = nice + segmentOverlap;
-  return segmentCount(trackLength, segmentLength);
-}
+import 'package:ui/src/utils/utils.dart';
 
 class PagesSliderWidget extends StatefulWidget {
   const PagesSliderWidget({super.key});
@@ -107,61 +22,41 @@ class PagesSliderWidget extends StatefulWidget {
   State<PagesSliderWidget> createState() => _PagesSliderWidgetState();
 }
 
-class PageCountInfo {
-  int pmin = 1;
-  int pmax = 2;
-  int npages = 1;
-}
-
 class _PagesSliderWidgetState extends State<PagesSliderWidget> {
   Timer? _debounceTimer;
-  final PageCountInfo _pages = PageCountInfo();
+  PageCountInfo? _pages;
 
-  void updatePagesInfo(
-    double trackLength,
-    Parameters parameters,
-    int desiredPageCount,
-  ) {
-    int rawmax = maxPageCount(trackLength);
-    int high = projectNumberOfPages(rawmax, trackLength, parameters);
-    int lmin = niceSegmentLengths(trackLength).reduce(min);
-    int lmax = niceSegmentLengths(trackLength).reduce(max);
-    assert(lmin < lmax);
-    _pages.pmax = min(high, segmentCount(trackLength, lmin.toDouble()));
-    _pages.pmin = segmentCount(trackLength, lmax.toDouble());
-    _pages.npages = projectNumberOfPages(
-      desiredPageCount,
-      trackLength,
-      parameters,
-    ).clamp(_pages.pmin, _pages.pmax);
-  }
-
-  void changePageCount(BuildContext context, int pages) {
+  void changePageIndex(BuildContext context, int desiredPageIndex) {
     ParameterModel parameters = Provider.of<ParameterModel>(
       context,
       listen: false,
     );
-    SegmentModel track = Provider.of<SegmentModel>(context, listen: false);
-    double trackLength = track.statistics().length;
-    double nice = niceSegmentLength(trackLength / pages);
-    double segmentOverlap = nice / 10;
-    double segmentLength = nice + segmentOverlap;
+    _pages!.setPossiblePageIndex(desiredPageIndex);
+    debugPrint("print setPossiblePageIndex: $desiredPageIndex");
     ParameterChanger changer = ParameterChanger(init: parameters.parameters());
-    changer.changeSegmentLength(segmentLength);
-    changer.changeSegmentOverlap(segmentOverlap);
+    debugPrint("print desiredPageIndex: $desiredPageIndex");
+    double length = _pages!.getSegmentLengthWithOverlap();
+    double overlap = _pages!.getSegmentOverlap();
+    debugPrint("print input length: $length overlap:$overlap");
+    changer.changeSegmentLength(length);
+    changer.changeSegmentOverlap(overlap);
     parameters.setParameters(changer.current());
-    updatePagesInfo(trackLength, parameters.parameters(), pages);
-    developer.log("length:${nice / 1000} km => ${_pages.npages} pages");
+    Parameters output = parameters.parameters();
+    debugPrint(
+      "print output length: ${output.segmentLength} overlap:${output.segmentOverlap}",
+    );
+    _pages!.setParameters(output.segmentLength, output.segmentOverlap);
   }
 
-  void onChanged(BuildContext context, double pages) {
+  void onChanged(BuildContext context, double index) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 250), () {
-      changePageCount(context, pages.round());
+      changePageIndex(context, index.round());
     });
-    setState(
-      () => _pages.npages = pages.floor().clamp(_pages.pmin, _pages.pmax),
-    );
+
+    setState(() {
+      _pages!.setPossiblePageIndex(index.round());
+    });
   }
 
   @override
@@ -170,7 +65,12 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
     SegmentModel track = Provider.of(context, listen: false);
     ParameterModel parameterModel = Provider.of(context, listen: false);
     double trackLength = track.statistics().length;
-    updatePagesInfo(trackLength, parameterModel.parameters(), _pages.npages);
+    _pages ??= PageCountInfo(
+      trackLength,
+      parameterModel.parameters().segmentLength,
+    );
+    Parameters p = parameterModel.parameters();
+    _pages!.setParameters(p.segmentLength, p.segmentOverlap);
   }
 
   @override
@@ -178,12 +78,12 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
     Provider.of<SegmentModel>(context);
     Provider.of<ParameterModel>(context);
     return Slider(
-      min: _pages.pmin.toDouble(),
-      max: _pages.pmax.toDouble(),
-      divisions: _pages.pmax - _pages.pmin,
-      value: _pages.npages.toDouble(),
-      label: "${_pages.npages} pages",
-      onChanged: (value) => {onChanged(context, value)},
+      min: _pages!.getMinIndex(),
+      max: _pages!.getMaxIndex(),
+      divisions: _pages!.possiblePageCounts.length - 1,
+      value: _pages!.possiblePageIndex().toDouble(),
+      label: "${_pages!.getPageCount()} pages",
+      onChanged: (index) => {onChanged(context, index)},
     );
   }
 }
@@ -199,11 +99,12 @@ class SettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    RootModel root = Provider.of(context);
     ParameterModel parameterModel = Provider.of<ParameterModel>(context);
+
+    RootModel root = Provider.of(context);
     List<Segment> segments = root.backend.segments();
     Parameters parameters = parameterModel.parameters();
-    String segLength = (segmentLength(parameters) / 1000)
+    String segLength = (segmentLengthWithoutOverlap(parameters) / 1000)
         .ceil()
         .toString()
         .padLeft(3);

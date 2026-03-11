@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 class DesktopTable extends StatelessWidget {
   final Set<Kind> kinds;

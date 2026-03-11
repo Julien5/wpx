@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:ui/src/log.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 typedef TrackData = bridge.RenderFunction;
 

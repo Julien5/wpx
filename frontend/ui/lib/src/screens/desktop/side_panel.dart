@@ -6,10 +6,11 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
+import 'package:ui/src/utils/print.dart';
 import 'package:ui/src/widgets/export.dart';
 import 'package:ui/src/widgets/small.dart';
 import 'package:ui/src/widgets/userstepsslider.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 class UserStepsCard extends StatefulWidget {
   final ExpansibleController controller;
@@ -76,10 +77,11 @@ class _PDFCardState extends State<PDFCard> {
     SegmentModel segment = Provider.of<SegmentModel>(context, listen: false);
     ParameterModel parameterModel = Provider.of<ParameterModel>(context);
     List<Segment> segments = segment.backend.segments();
-    String segLength = (segmentLength(parameterModel.parameters()) / 1000)
-        .ceil()
-        .toString()
-        .padLeft(3);
+    String segLength =
+        (segmentLengthWithoutOverlap(parameterModel.parameters()) / 1000)
+            .ceil()
+            .toString()
+            .padLeft(3);
     String pageCount = segments.length.toString().padLeft(2);
 
     Widget tile = ExpansionTile(

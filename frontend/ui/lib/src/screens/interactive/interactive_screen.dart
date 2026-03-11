@@ -5,7 +5,7 @@ import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/future_rendering_widget.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 class _InteractiveMapView extends StatelessWidget {
   @override

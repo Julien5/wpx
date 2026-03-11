@@ -383,17 +383,15 @@ impl Backend {
         let mut k = 0usize;
         loop {
             let end = start + self.d().parameters.segment_length;
-            let range = self.d().track.subrange(start, end);
-            if range.is_empty() {
-                break;
-            }
             ret.push(Segment {
                 id: k as i32,
                 start,
                 end,
             });
-            start =
-                start + self.d().parameters.segment_length - self.d().parameters.segment_overlap;
+            if end > self.d().track.total_distance() {
+                break;
+            }
+            start += self.d().parameters.segment_length - self.d().parameters.segment_overlap;
             k = k + 1;
         }
         ret

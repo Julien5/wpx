@@ -4,7 +4,7 @@ import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 enum Type { pdf, gpx, zip }
 

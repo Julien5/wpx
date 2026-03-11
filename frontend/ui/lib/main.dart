@@ -10,7 +10,7 @@ import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/frb_generated.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 import 'dart:io';
 import 'package:flutter/foundation.dart';

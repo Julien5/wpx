@@ -7,7 +7,7 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/screens/desktop/central_panel_overview.dart';
 import 'package:ui/src/screens/desktop/central_panel_pdf.dart';
 import 'package:ui/src/screens/desktop/central_panel_usersteps.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 class ProfilePadding extends StatelessWidget {
   final Widget child;

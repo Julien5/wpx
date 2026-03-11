@@ -8,7 +8,7 @@ import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/src/widgets/small.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 class OverviewWidget extends StatefulWidget {
   final void Function()? onPacingPointPressed;

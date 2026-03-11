@@ -7,7 +7,7 @@ import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/screens/load/parts_card.dart';
 import 'package:ui/src/widgets/small.dart';
-import 'package:ui/utils.dart';
+import 'package:ui/src/utils/utils.dart';
 
 import 'eventwidget.dart';
 import 'model.dart';
