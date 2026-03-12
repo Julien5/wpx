@@ -136,10 +136,20 @@ impl SegmentData {
 
         let profile_result = self.preload(&RenderFunction::Profile, kinds, profile_size);
 
+        let offtrack_cities = {
+            let lock = self.packet_provider.read().unwrap();
+            let mut coll = lock.collection.clone();
+            coll.range_cut(&self.range());
+            coll.offtrack_cities()
+        };
+
         let map_result = svgmap::map_background(
             &self.track,
             &map_parameters_join,
-            &vec![profile_result.rendered_input_points_for_map()],
+            &vec![
+                profile_result.rendered_input_points_for_map(),
+                offtrack_cities,
+            ],
             self.debug_graphic_dir(&format!(
                 "preload-map-profile-{}x{}",
                 map_size.width, map_size.height

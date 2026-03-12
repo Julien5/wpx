@@ -355,7 +355,7 @@ impl PointCollection {
         cities
     }
 
-    fn offtrack_cities(&self) -> Vec<InputPoint> {
+    pub fn offtrack_cities(&self) -> Vec<InputPoint> {
         let mut cities = self.get_vector(&Kind::Cities);
         cities.retain(|w| !is_close_to_track(&w));
         //sort_by_distance_to_track(&mut cities);
