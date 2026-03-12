@@ -102,7 +102,9 @@ class _OSMCard extends StatelessWidget {
 
     Widget row = EventWidget(target: Job.osm);
     if (model.error(Job.osm) != null) {
-      row = Row(
+      row = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           EventWidget(target: Job.osm),
           ElevatedButton(
