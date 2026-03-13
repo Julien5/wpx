@@ -26,7 +26,7 @@ class SimpleTrackView extends StatefulWidget {
 }
 
 class _SimpleTrackViewState extends State<SimpleTrackView> {
-  FutureRenderer? futureRenderer;
+  FutureRenderer? internalRenderer;
 
   @override
   void initState() {
@@ -38,26 +38,33 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
     super.didChangeDependencies();
     context.watch<ParameterModel>();
     SegmentModel segment = Provider.of<SegmentModel>(context, listen: false);
-    futureRenderer ??= FutureRenderer(
-      bridge: segment.backend,
-      segment: segment.segment,
-      kinds: widget.rendererParameters.kinds,
-      clients: [widget.rendererParameters.trackData],
-    );
+    FutureRenderer? externalRenderer = context.read<FutureRenderer?>();
+    if (externalRenderer == null) {
+      internalRenderer ??= FutureRenderer(
+        bridge: segment.backend,
+        segment: segment.segment,
+        kinds: widget.rendererParameters.kinds,
+        clients: [widget.rendererParameters.trackData],
+      );
 
-    TrackViewsSwitch viewSwitch = context.watch<TrackViewsSwitch>();
+      TrackViewsSwitch viewSwitch = context.read<TrackViewsSwitch>();
 
-    bool visible = (viewSwitch.currentData() == futureRenderer!.clients.first);
-    futureRenderer!.setVisible(visible);
-    futureRenderer!.updateSegment(segment.segment);
-    futureRenderer!.reset();
-    futureRenderer!.start();
+      assert(internalRenderer != null);
+      bool visible =
+          (viewSwitch.currentData() == internalRenderer!.clients.first);
+      internalRenderer!.setVisible(visible);
+      internalRenderer!.updateSegment(segment.segment);
+      internalRenderer!.reset();
+      internalRenderer!.start();
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
-    futureRenderer!.dispose();
+    if (internalRenderer != null) {
+      internalRenderer!.dispose();
+    }
   }
 
   @override
@@ -66,13 +73,21 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
     TrackData data = widget.rendererParameters.trackData;
     TrackViewsSwitch viewSwitch = context.watch<TrackViewsSwitch>();
     Size? size = viewSwitch.sizes != null ? viewSwitch.sizes![data] : null;
+    TrackView trackView = TrackView(
+      trackData: widget.rendererParameters.trackData,
+      svgSize: size,
+    );
+    if (internalRenderer == null) {
+      return trackView;
+    }
+    // use the internal renderer
     return ChangeNotifierProvider.value(
-      value: futureRenderer!,
+      value: internalRenderer!,
       builder: (context, child) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             debugPrint(
-              "simpletrackview build ${futureRenderer!.clients} constraint:$constraints",
+              "simpletrackview build ${internalRenderer!.clients} constraint:$constraints",
             );
             return TrackView(
               trackData: widget.rendererParameters.trackData,

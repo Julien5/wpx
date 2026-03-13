@@ -6,7 +6,6 @@ import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/trackviewswitch.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/simpletrackview.dart';
-import 'package:ui/src/widgets/trackview.dart';
 
 class _SegmentGraphicsButtons extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -111,8 +110,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
 
 class SegmentGraphics extends StatefulWidget {
   final Set<Kind> kinds;
-  final bool simple;
-  const SegmentGraphics({super.key, required this.kinds, required this.simple});
+  const SegmentGraphics({super.key, required this.kinds});
 
   @override
   State<SegmentGraphics> createState() => _SegmentGraphicsState();
@@ -132,16 +130,9 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
       context,
       listen: false,
     );
+
     for (TrackData data in model.exposed) {
-      if (widget.simple) {
-        widgets[data] = SimpleTrackView.make(widget.kinds, data);
-      } else {
-        // pass the size from the TrackViewSwitch, if available
-        // (used in pdf preview)
-        TrackViewsSwitch viewSwitch = Provider.of(context, listen: false);
-        Size? size = viewSwitch.sizes != null ? viewSwitch.sizes![data] : null;
-        widgets[data] = TrackView(trackData: data, svgSize: size);
-      }
+      widgets[data] = SimpleTrackView.make(widget.kinds, data);
     }
     setState(() {});
   }
@@ -216,7 +207,7 @@ class TrackGraphicsRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: SegmentGraphics(kinds: kinds, simple: true)),
+          Expanded(child: SegmentGraphics(kinds: kinds)),
           buttonColumn,
         ],
       ),

@@ -38,6 +38,7 @@ class _LocalSegmentGraphicsState extends State<LocalSegmentGraphics> {
       clients: [TrackData.map, TrackData.profile],
     );
     futureRenderer!.setVisible(true);
+    futureRenderer!.updateSegment(widget.model.segment);
   }
 
   @override
@@ -48,15 +49,17 @@ class _LocalSegmentGraphicsState extends State<LocalSegmentGraphics> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ParameterModel>();
     developer.log("[LocalSegmentGraphics]");
     widget.model.debug();
+    debugPrint("update segment: ${widget.model.segment.id()}");
     assert(futureRenderer != null);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: widget.model),
         ChangeNotifierProvider.value(value: futureRenderer),
       ],
-      child: SegmentGraphics(kinds: widget.kinds, simple: false),
+      child: SegmentGraphics(kinds: widget.kinds),
     );
   }
 }
