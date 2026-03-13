@@ -71,6 +71,9 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
       builder: (context, child) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
+            debugPrint(
+              "simpletrackview build ${futureRenderer!.clients} constraint:$constraints",
+            );
             return TrackView(
               trackData: widget.rendererParameters.trackData,
               svgSize: size,

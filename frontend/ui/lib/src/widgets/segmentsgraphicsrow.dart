@@ -11,7 +11,7 @@ import 'package:ui/src/utils/utils.dart';
 
 import 'segmentgraphics.dart';
 
-class LocalSegmentGraphics extends StatelessWidget {
+class LocalSegmentGraphics extends StatefulWidget {
   final Kinds kinds;
   final SegmentModel model;
 
@@ -20,13 +20,43 @@ class LocalSegmentGraphics extends StatelessWidget {
     required this.kinds,
     required this.model,
   });
+
+  @override
+  State<LocalSegmentGraphics> createState() => _LocalSegmentGraphicsState();
+}
+
+class _LocalSegmentGraphicsState extends State<LocalSegmentGraphics> {
+  FutureRenderer? futureRenderer;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    futureRenderer ??= FutureRenderer(
+      bridge: widget.model.backend,
+      segment: widget.model.segment,
+      kinds: widget.kinds,
+      clients: [TrackData.map, TrackData.profile],
+    );
+    futureRenderer!.setVisible(true);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    futureRenderer!.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     developer.log("[LocalSegmentGraphics]");
-    model.debug();
-    return ChangeNotifierProvider.value(
-      value: model,
-      child: SegmentGraphics(kinds: kinds),
+    widget.model.debug();
+    assert(futureRenderer != null);
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: widget.model),
+        ChangeNotifierProvider.value(value: futureRenderer),
+      ],
+      child: SegmentGraphics(kinds: widget.kinds, simple: false),
     );
   }
 }
