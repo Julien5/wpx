@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/models/stackviewscontroller.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/frb_generated.dart';
@@ -99,7 +100,11 @@ class ApplicationProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FociModel()),
         ChangeNotifierProvider(create: (_) => ParameterModel(backend: backend)),
         ChangeNotifierProvider(
-          create: (_) => TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
+          create:
+              (_) => StackViewsController(
+                exposed: StackViewsController.wmp(),
+                scales: {TrackData.profile: 1.5, TrackData.map: 1.5},
+              ),
         ),
         ChangeNotifierProvider(
           create: (_) => PackageModel(packageInfo: packageInfo!),

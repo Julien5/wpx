@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/models/stackviewscontroller.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/simpletrackview.dart';
 
@@ -73,7 +73,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
+    StackViewsController model = Provider.of<StackViewsController>(context);
     if (model.exposed.length <= 1) {
       return SizedBox();
     }
@@ -126,7 +126,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
       return;
     }
 
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
+    StackViewsController model = Provider.of<StackViewsController>(
       context,
       listen: false,
     );
@@ -138,7 +138,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
   }
 
   void onTap() {
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
+    StackViewsController model = Provider.of<StackViewsController>(
       context,
       listen: false,
     );
@@ -149,7 +149,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
   Widget build(BuildContext ctx) {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
+    StackViewsController model = Provider.of<StackViewsController>(context);
     double margin = 8;
     TrackData currentModelData = model.currentData();
     // I would like to have `visible = widgets[currentModelData]`
@@ -183,7 +183,7 @@ class TrackGraphicsRow extends StatelessWidget {
   const TrackGraphicsRow({super.key, required this.kinds});
 
   void onButtonPressed(BuildContext context, TrackData data) {
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
+    StackViewsController model = Provider.of<StackViewsController>(
       context,
       listen: false,
     );
@@ -194,7 +194,7 @@ class TrackGraphicsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
+    StackViewsController model = Provider.of<StackViewsController>(context);
     TrackData currentModelData = model.currentData();
     developer.log("[TrackGraphicsRow] build currentData:$currentModelData");
     Widget buttonColumn = SegmentGraphicsButtonsColumn(

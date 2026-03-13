@@ -3,12 +3,13 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 
-class TrackViewsSwitch extends ChangeNotifier {
+class StackViewsController extends ChangeNotifier {
   int currentIndex = 0;
   final List<TrackData> exposed;
   final Map<TrackData, Size>? sizes;
+  final Map<TrackData, double>? scales;
 
-  TrackViewsSwitch({required this.exposed, this.sizes});
+  StackViewsController({required this.exposed, this.sizes, this.scales});
 
   static List<TrackData> wmp() {
     return [TrackData.wheel, TrackData.map, TrackData.profile];

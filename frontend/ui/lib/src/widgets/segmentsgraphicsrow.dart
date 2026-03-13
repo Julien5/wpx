@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/models/stackviewscontroller.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bride;
 import 'package:ui/src/utils/utils.dart';
@@ -162,7 +162,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
   }
 
   void onButtonPressed(BuildContext context, TrackData data) {
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(
+    StackViewsController model = Provider.of<StackViewsController>(
       context,
       listen: false,
     );
@@ -172,7 +172,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
   @override
   Widget build(BuildContext context) {
     developer.log("[rebuild _SegmentsGraphicsRowState]");
-    TrackViewsSwitch model = Provider.of<TrackViewsSwitch>(context);
+    StackViewsController model = Provider.of<StackViewsController>(context);
     assert(_tabController != null);
 
     TrackData currentModelData = model.currentData();

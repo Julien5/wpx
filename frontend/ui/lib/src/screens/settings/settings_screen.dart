@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/models/stackviewscontroller.dart';
 import 'package:ui/src/routes.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/utils/print.dart';
@@ -173,7 +173,7 @@ class TopRow extends StatelessWidget {
   Widget build(BuildContext context) {
     context.watch<ParameterModel>();
     return ChangeNotifierProvider(
-      create: (_) => TrackViewsSwitch(exposed: [TrackData.wheelPages]),
+      create: (_) => StackViewsController(exposed: [TrackData.wheelPages]),
       child: TrackGraphicsRow(kinds: allkinds()),
     );
   }
@@ -186,7 +186,7 @@ class BottomRow extends StatelessWidget {
     developer.log("[LocalSegmentGraphics]");
     return ChangeNotifierProvider(
       create:
-          (_) => TrackViewsSwitch(
+          (_) => StackViewsController(
             exposed: [TrackData.profile, TrackData.map],
             sizes: {
               TrackData.profile: Size(1000, 300),
@@ -246,7 +246,7 @@ class _SettingsScaffoldState extends State<SettingsScaffold> {
 class SettingsScreenProviders extends MultiProvider {
   SettingsScreenProviders({
     super.key,
-    required TrackViewsSwitch multiTrackModel,
+    required StackViewsController multiTrackModel,
     required Widget child,
   }) : super(
          providers: [ChangeNotifierProvider.value(value: multiTrackModel)],
@@ -260,7 +260,9 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SettingsScreenProviders(
-      multiTrackModel: TrackViewsSwitch(exposed: TrackViewsSwitch.wmp()),
+      multiTrackModel: StackViewsController(
+        exposed: StackViewsController.wmp(),
+      ),
       child: SettingsScaffold(),
     );
   }

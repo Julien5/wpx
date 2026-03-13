@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/trackviewswitch.dart';
+import 'package:ui/src/models/stackviewscontroller.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 
@@ -23,6 +23,22 @@ class SimpleTrackView extends StatefulWidget {
 
   @override
   State<SimpleTrackView> createState() => _SimpleTrackViewState();
+}
+
+class MaybeModelInserter extends StatelessWidget {
+  final Widget child;
+  final ChangeNotifier? maybe;
+
+  const MaybeModelInserter({super.key, required this.child, this.maybe});
+
+  @override
+  Widget build(BuildContext context) {
+    if (maybe == null) {
+      return child;
+    }
+    // use the internal renderer
+    return ChangeNotifierProvider.value(value: maybe!, child: child);
+  }
 }
 
 class _SimpleTrackViewState extends State<SimpleTrackView> {
@@ -47,7 +63,7 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
         clients: [widget.rendererParameters.trackData],
       );
 
-      TrackViewsSwitch viewSwitch = context.read<TrackViewsSwitch>();
+      StackViewsController viewSwitch = context.read<StackViewsController>();
 
       assert(internalRenderer != null);
       bool visible =
@@ -67,11 +83,37 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
     }
   }
 
+  Widget buildd(BuildContext context) {
+    Provider.of<SegmentModel>(context);
+    TrackData data = widget.rendererParameters.trackData;
+    StackViewsController viewSwitch = context.watch<StackViewsController>();
+
+    return MaybeModelInserter(
+      maybe: internalRenderer,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          Size maxSize = Size(constraints.maxWidth, constraints.maxHeight);
+          Size? size;
+          if (viewSwitch.sizes != null) {
+            size = viewSwitch.sizes![data];
+          }
+          if (viewSwitch.scales != null && viewSwitch.scales![data] != null) {
+            size = maxSize * viewSwitch.scales![data]!;
+          }
+          return TrackView(
+            trackData: widget.rendererParameters.trackData,
+            svgSize: size,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Provider.of<SegmentModel>(context);
     TrackData data = widget.rendererParameters.trackData;
-    TrackViewsSwitch viewSwitch = context.watch<TrackViewsSwitch>();
+    StackViewsController viewSwitch = context.watch<StackViewsController>();
     Size? size = viewSwitch.sizes != null ? viewSwitch.sizes![data] : null;
     TrackView trackView = TrackView(
       trackData: widget.rendererParameters.trackData,
@@ -89,6 +131,13 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
             debugPrint(
               "simpletrackview build ${internalRenderer!.clients} constraint:$constraints",
             );
+            Size maxSize = Size(constraints.maxWidth, constraints.maxHeight);
+            if (size == null &&
+                viewSwitch.scales != null &&
+                viewSwitch.scales![data] != null) {
+              size = maxSize * viewSwitch.scales![data]!;
+            }
+
             return TrackView(
               trackData: widget.rendererParameters.trackData,
               svgSize: size,
