@@ -80,23 +80,19 @@ impl WaypointInfo {
         smooth: &Vec<f64>,
         parameters: &Parameters,
         w: &Waypoint,
-        wprev: Option<&Waypoint>,
+        wprev: &Waypoint,
     ) -> WaypointInfo {
         assert!(w.get_track_index() < track.len());
         let distance = track.distance(w.get_track_index());
-        let (inter_distance, inter_elevation_gain, inter_slope) = match wprev {
-            None => (0f64, 0f64, 0f64),
-            Some(prev) => {
-                let dx =
-                    track.distance(w.get_track_index()) - track.distance(prev.get_track_index());
-                let dy =
-                    elevation::elevation_gain(&smooth, prev.get_track_index(), w.get_track_index());
-                let slope = match dx {
-                    0f64 => 0f64,
-                    _ => dy / dx,
-                };
-                (dx, dy, slope)
-            }
+        let (inter_distance, inter_elevation_gain, inter_slope) = {
+            let dx = track.distance(w.get_track_index()) - track.distance(wprev.get_track_index());
+            let dy =
+                elevation::elevation_gain(&smooth, wprev.get_track_index(), w.get_track_index());
+            let slope = match dx {
+                0f64 => 0f64,
+                _ => dy / dx,
+            };
+            (dx, dy, slope)
         };
         let time = speed::time_at_distance(distance, parameters);
         let name = w.name.clone();
@@ -135,11 +131,14 @@ impl WaypointInfo {
     ) {
         waypoints.sort_by_key(|w| w.get_track_index());
         let mut infos = Vec::new();
+        let wgs0 = track.wgs84.first().unwrap();
+        let euc0 = track.euclidean.first().unwrap();
+        let w0 = Waypoint::create(*wgs0, euc0, 0, Kind::UserStep);
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
             let wprev = match k {
-                0 => None,
-                _ => Some(&waypoints[k - 1]),
+                0 => &w0,
+                _ => &waypoints[k - 1],
             };
             let info =
                 Self::create_waypoint_info(track, &track.smooth_elevation, parameters, w, wprev);
