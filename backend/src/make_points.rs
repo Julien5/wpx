@@ -1,47 +1,40 @@
 use crate::{inputpoint::InputPoint, parameters::UserStepsOptions, track::Track};
 
 fn profile_points_elevation_gain_track(track: &Track, d: &f64) -> Vec<InputPoint> {
-    let mut ret = Vec::new();
-    let mut prev = 0;
-    let mut index = prev + 1;
-    let length = track.len();
-    let mut count = 1;
+    let mut ret: Vec<InputPoint> = Vec::new();
+    let max_elevation = track.smooth_elevation_gain.last().unwrap();
     loop {
-        if index >= length {
+        let start_search = match ret.last() {
+            Some(w) => w.track_projections.first().unwrap().track_index,
+            None => 0,
+        };
+        let di = (ret.len() + 1) as f64 * d;
+        if di > *max_elevation {
             break;
         }
-        let g = track.elevation_gain_on_range(&std::ops::Range {
-            start: prev,
-            end: index,
-        });
-        if g >= *d {
-            let w = InputPoint::create_user_step_on_track(&track, index, &format!("P{}", count));
-            ret.push(w);
-            count += 1;
-            prev = index;
-        }
-        index += 1;
+        let (wgs, proj) = track.point_at_elevation_gain(di, start_search);
+        let count = ret.len() + 1;
+        let w = InputPoint::create_user_step_on_track(&wgs, proj, &format!("P{}", count));
+        ret.push(w);
     }
     ret
 }
 
 fn profile_points_distance_track(track: &Track, d: &f64) -> Vec<InputPoint> {
-    let mut ret = Vec::new();
-    let mut prev = 0;
-    let mut index = prev + 1;
-    let mut count = 1;
-    let length = track.len();
+    let mut ret: Vec<InputPoint> = Vec::new();
     loop {
-        if index >= length {
+        let start_search = match ret.last() {
+            Some(w) => w.track_projections.first().unwrap().track_index,
+            None => 0,
+        };
+        let di = (ret.len() + 1) as f64 * d;
+        if di > track.total_distance() {
             break;
         }
-        if track.distance(index) - track.distance(prev) >= *d {
-            let w = InputPoint::create_user_step_on_track(&track, index, &format!("P{}", count));
-            ret.push(w);
-            count += 1;
-            prev = index;
-        }
-        index += 1;
+        let (wgs, proj) = track.point_at_distance(di, start_search);
+        let count = ret.len() + 1;
+        let w = InputPoint::create_user_step_on_track(&wgs, proj, &format!("P{}", count));
+        ret.push(w);
     }
     ret
 }

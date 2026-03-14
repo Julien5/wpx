@@ -341,4 +341,86 @@ impl Track {
             }
         }
     }
+
+    pub fn projection_at_track_floating_index(
+        &self,
+        track_floating_index: f64,
+    ) -> (WGS84Point, TrackProjection) {
+        let base = track_floating_index.floor() as usize;
+        let track_index = track_floating_index.round() as usize;
+        let t = track_floating_index - track_floating_index.floor();
+
+        assert!(t < 1.0);
+        let m_base = &self.euclidean[base].point2d();
+        let m_next = &self.euclidean[base + 1].point2d();
+        let m = *m_base + (*m_next - *m_base) * t;
+
+        let mercator = MercatorPoint::from_point2d(&m);
+
+        let w_base = &self.wgs84[base].point2d();
+        let w_next = &self.wgs84[base + 1].point2d();
+        let w = *w_base + (*w_next - *w_base) * t;
+
+        let e_base = self.wgs84[base].z();
+        let e_next = self.wgs84[base].z();
+        let e = e_base + (e_next - e_base) * t;
+
+        let d_base = self._distance[base];
+        let d_next = self._distance[base];
+        let d = d_base + (d_next - d_base) * t;
+
+        let proj = TrackProjection {
+            track_floating_index,
+            track_index,
+            euclidean: mercator,
+            elevation: e,
+            track_distance: 0f64,
+            distance_on_track_to_projection: d,
+        };
+
+        let wgs = WGS84Point::new(&w.x, &w.y, &e);
+        (wgs, proj)
+    }
+
+    fn point_at(&self, values: &Vec<f64>, d: f64, k0: usize) -> (WGS84Point, TrackProjection) {
+        assert!(!values.is_empty());
+        if d <= 0.0 {
+            return self.projection_at_track_floating_index(0f64);
+        }
+        let last = *values.last().unwrap();
+        if d >= last {
+            let ret = (values.len() - 1) as f64;
+            return self.projection_at_track_floating_index(ret);
+        }
+
+        // Binary search only in [k0..]
+        let slice = &values[k0..];
+        let k_local = slice.partition_point(|&dist| dist < d);
+        let k = k0 + k_local;
+
+        // k_local == 0 means d <= values[k0], so the point lies before k0
+        // fall back to the segment ending at k0
+        let (prev, next) = if k_local == 0 {
+            let prev = if k0 > 0 { values[k0 - 1] } else { 0.0 };
+            (prev, values[k0])
+        } else {
+            (values[k - 1], values[k])
+        };
+
+        let base = if k_local == 0 {
+            k0.saturating_sub(1)
+        } else {
+            k - 1
+        };
+        let t = (d - prev) / (next - prev);
+        let track_floating_index = base as f64 + t;
+        self.projection_at_track_floating_index(track_floating_index)
+    }
+
+    pub fn point_at_distance(&self, d: f64, k0: usize) -> (WGS84Point, TrackProjection) {
+        self.point_at(&self._distance, d, k0)
+    }
+    pub fn point_at_elevation_gain(&self, d: f64, k0: usize) -> (WGS84Point, TrackProjection) {
+        self.point_at(&self.smooth_elevation_gain, d, k0)
+    }
 }

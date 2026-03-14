@@ -51,20 +51,15 @@ impl InputPoint {
             self.kind()
         )
     }
-    pub fn create_user_step_on_track(track: &Track, index: usize, name: &String) -> InputPoint {
-        let wgs = track.wgs84[index].clone();
-        let euc = track.euclidean[index].clone();
+    pub fn create_user_step_on_track(
+        wgs: &WGS84Point,
+        proj: TrackProjection,
+        name: &String,
+    ) -> InputPoint {
+        let euc = &proj.euclidean;
         let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::UserStep);
         p.tags.insert("name".to_string(), name.clone());
-        p.track_projections = BTreeSet::from([TrackProjection {
-            track_floating_index: index as f64,
-            track_index: index,
-            track_distance: 0f64,
-            elevation: wgs.z(),
-            euclidean: euc.clone(),
-            distance_on_track_to_projection: track.distance(index),
-        }]);
-
+        p.track_projections = BTreeSet::from([proj]);
         p
     }
 
