@@ -50,10 +50,12 @@ class CentralPanelUserSteps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Set<Kind> kinds = allkinds();
+    kinds.add(Kind.userStep);
     return CentralPanelContent(
       width: width,
       clients: [TrackData.map, TrackData.profile],
-      kinds: {Kind.userStep},
+      kinds: kinds,
       screenFocus: ScreenFocus.usersteps,
       child: CentralWidget(width: width),
     );
