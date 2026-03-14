@@ -63,8 +63,8 @@ String errorString(Object o) {
 }
 
 String filterEvent(String? event, Job targetJob, LoadScreenModel screenModel) {
-  if (screenModel.error(targetJob) != null) {
-    return errorString(screenModel.error(targetJob)!);
+  if (screenModel.hasFailed(targetJob) != null) {
+    return errorString(screenModel.hasFailed(targetJob)!);
   }
   if (screenModel.runningFuture != null &&
       screenModel.runningFuture!.job == targetJob) {

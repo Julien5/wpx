@@ -218,9 +218,9 @@ class LoadScreenModel extends ChangeNotifier {
       return;
     }
 
-    if (error is bridge.TrackError) {
+    if (hasFailed is bridge.TrackError) {
       // Now you can handle your specific Rust variants
-      developer.log("onError:${error.toString()}");
+      developer.log("onError:${hasFailed.toString()}");
     }
 
     developer.log("error: $e");
@@ -245,10 +245,17 @@ class LoadScreenModel extends ChangeNotifier {
     return _lastEvent;
   }
 
-  Object? error(Job job) {
+  Object? hasFailed(Job job) {
     if (!_failed.containsKey(job)) {
       return null;
     }
     return _failed[job]!;
+  }
+
+  List<Object> failed() {
+    if (_failed.isEmpty) {
+      return [];
+    }
+    return List.from(_failed.keys);
   }
 }

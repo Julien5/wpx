@@ -72,7 +72,7 @@ class PartsCard extends StatelessWidget {
     Widget header = _Padding(
       child: Row(children: [SmallText(text: "Segments")]),
     );
-    Widget body = SizedBox(height: 200, child: listWidget);
+    Widget body = Expanded(child: listWidget);
 
     return Card(elevation: 4, child: Column(children: [header, body]));
   }

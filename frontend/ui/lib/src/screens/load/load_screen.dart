@@ -44,17 +44,26 @@ class _GPXCard extends StatelessWidget {
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     _GPXStrings strings = _GPXStrings(screenModel: model);
+    Widget inner = Column(children: [SmallText(text: "Track")]);
     if (model.hasDone(Job.gpx)) {
       strings.setData(model.statistics());
+      inner = Column(
+        children: [
+          SmallText(text: "Track"),
+          EventWidget(target: Job.gpx, forcedString: strings.km()),
+          EventWidget(target: Job.gpx, forcedString: strings.elevation()),
+        ],
+      );
     }
-    Widget inner = Column(
-      children: [
-        SmallText(text: "Track"),
-        EventWidget(target: Job.gpx, forcedString: strings.km()),
-
-        EventWidget(target: Job.gpx, forcedString: strings.elevation()),
-      ],
-    );
+    Object? error = model.hasFailed(Job.gpx);
+    if (error != null) {
+      inner = Column(
+        children: [
+          SmallText(text: "Track"),
+          SmallText(text: errorString(error)),
+        ],
+      );
+    }
 
     return Card(elevation: 4, child: inner);
   }
@@ -101,7 +110,7 @@ class _OSMCard extends StatelessWidget {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
 
     Widget row = EventWidget(target: Job.osm);
-    if (model.error(Job.osm) != null) {
+    if (model.hasFailed(Job.osm) != null) {
       row = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,13 +137,17 @@ String _title(LoadScreenModel model) {
 }
 
 class _BodyWidget extends StatelessWidget {
-  void onButtonPressed(BuildContext context) {
+  void onOKPressed(BuildContext context) {
     try {
       Provider.of<SegmentModel>(context, listen: false);
       gotoOverview(context);
     } catch (e) {
       developer.log("[SegmentModel not yet available]");
     }
+  }
+
+  void onHomePressed(BuildContext context) {
+    gotoHome(context);
   }
 
   @override
@@ -146,18 +159,24 @@ class _BodyWidget extends StatelessWidget {
     );
     if (model.doneAll()) {
       button = ElevatedButton(
-        onPressed: () => onButtonPressed(ctx),
+        onPressed: () => onOKPressed(ctx),
         child: Text("OK"),
+      );
+    }
+    if (model.failed().isNotEmpty) {
+      button = ElevatedButton(
+        onPressed: () => onHomePressed(ctx),
+        child: Text("Home"),
       );
     }
     Widget vspace = SizedBox(height: 20);
     return SmallCentralWidget(
       child: Column(
         children: [
-          PartsCard(),
+          Flexible(flex: 1, child: PartsCard()),
           vspace,
           SizedBox(
-            height: 120,
+            height: 140,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -167,6 +186,7 @@ class _BodyWidget extends StatelessWidget {
               ],
             ),
           ),
+          vspace,
           button,
         ],
       ),
