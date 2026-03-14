@@ -63,17 +63,26 @@ class PartsCard extends StatelessWidget {
     Widget listWidget =
         enabled
             ? ReorderableListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: enabled,
               onReorder: onReorder,
               children: children,
             )
-            : ListView(children: children);
+            : ListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: children,
+            );
 
     Widget header = _Padding(
       child: Row(children: [SmallText(text: "Segments")]),
     );
-    Widget body = Expanded(child: listWidget);
+    Widget body = Flexible(child: listWidget);
 
-    return Card(elevation: 4, child: Column(children: [header, body]));
+    return Card(
+      elevation: 4,
+      child: Column(mainAxisSize: MainAxisSize.min, children: [header, body]),
+    );
   }
 }
