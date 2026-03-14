@@ -4,10 +4,10 @@ use std::collections::HashSet;
 
 use clap::Parser;
 use tracks::backend::Backend;
+use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::{ControlSource, RenderFunction};
 use tracks::point_collection::Kind;
-use tracks::{error, parameters};
 use tracks::{point_collection, speed};
 
 /// Search for a pattern in a file and display the lines that contain it.
@@ -40,7 +40,7 @@ struct Cli {
     #[arg(long, value_name = "render-graph")]
     render_graph: Option<bool>,
     #[arg(value_name = "gpx")]
-    filename: std::path::PathBuf,
+    filenames: Vec<std::path::PathBuf>,
 }
 
 async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
@@ -140,27 +140,34 @@ async fn main() -> anyhow::Result<()> {
 
     let args = Cli::parse();
 
-    let gpxinput;
-    if args.filename.exists() {
-        gpxinput = args.filename.as_os_str().to_str().unwrap();
+    let gpxinputs: Vec<_>;
+    if !args.filenames.is_empty() {
+        gpxinputs = args
+            .filenames
+            .iter()
+            .map(|p| p.as_os_str().to_str().unwrap())
+            .collect();
     } else {
         let e = error::TrackError::GPXNotFound;
         return Err(e.into());
     }
+    assert!(!gpxinputs.is_empty());
 
-    let gpxpath = std::path::Path::new(gpxinput);
+    let gpxpath = std::path::Path::new(gpxinputs.first().unwrap());
     let mut outdir = gpxpath.parent().unwrap().to_str().unwrap();
     match &args.output_directory {
         Some(path) => outdir = path.to_str().unwrap(),
         _ => {}
     }
 
-    log::info!("read gpx {}", gpxinput);
-    log::info!("outdir   {}", outdir);
     let mut backend = Backend::make();
-    let gpxdata = read_file(gpxinput);
-    let parts = backend.load_track_parts(&vec![gpxdata]).await?;
-    let parts = parameters::karl_order(&parts);
+    let mut gpxdata = Vec::new();
+    for gpxinput in &gpxinputs {
+        log::info!("read gpx {}", gpxinput);
+        log::info!("outdir   {}", outdir);
+        gpxdata.push(read_file(gpxinput));
+    }
+    let parts = backend.load_track_parts(&gpxdata).await?;
     backend.load_ordered(&parts).await?;
     let _ = backend.load_osm().await;
     backend.load_controls(ControlSource::Segments).await?;

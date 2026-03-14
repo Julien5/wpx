@@ -35,9 +35,17 @@ pub struct TrackPart {
 
 pub fn karl_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
     let mut ret = parts.clone();
+    // parts name containing "start" at the begining,
+    // parts name containing "end" or "ziel" at the end,
+    // the rest in alphabetical order.
     ret.sort_by_key(|part| {
-        let zero = "A".to_string();
-        let infinity = "ziel".to_string();
+        /* The standard order of precedence is:
+           Numbers (0-9)
+           Uppercase Letters (A-Z)
+           Lowercase Letters (a-z)
+        */
+        let zero = format!(""); // the empty string comes before "0".
+        let infinity = format!("zzzz");
         if part.name.is_empty() {
             return zero;
         }

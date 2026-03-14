@@ -14,6 +14,7 @@ use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::parameters;
+use crate::parameters::karl_order;
 use crate::parameters::ControlSource;
 use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
@@ -165,7 +166,8 @@ impl Backend {
     ) -> Result<Vec<TrackPart>, TrackError> {
         self.send("read gpx");
         let gpxdata = gpsdata::GpxData::read_contents(contents)?;
-        let parts = gpxdata.track_parts();
+        let rparts = gpxdata.track_parts();
+        let parts = karl_order(&rparts);
         {
             let mut locked = self.gpxdata.write().unwrap();
             *locked = Some(gpxdata);
@@ -817,10 +819,9 @@ mod tests {
             s2.distance_end,
             s2.length / 1000f64
         );
-
         let d = (s1.length - s2.length).abs();
         log::trace!("d={}", d);
-        // the difference should be very small, less than 1 millimeter
-        assert!(d < 0.001);
+        // there is a 65m distance between the end of K4-K5 and the beginning of K5-Ziel.
+        assert!(d < 100f64);
     }
 }
