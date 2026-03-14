@@ -15,6 +15,8 @@ class CentralWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Provider.of<ParameterModel>(context);
+
+    List<Waypoint> waypoints = context.read<SegmentModel>().tableWaypoints();
     Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -22,9 +24,7 @@ class CentralWidget extends StatelessWidget {
           child: GraphicsPadding(child: TrackView(trackData: TrackData.map)),
         ),
 
-        Expanded(
-          child: DesktopTable(kinds: {Kind.gpxWaypoints, Kind.controls}),
-        ),
+        Expanded(child: DesktopTable(waypoints: waypoints)),
       ],
     );
 

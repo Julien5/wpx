@@ -31,6 +31,17 @@ class SegmentModel extends ChangeNotifier {
   List<bridge.Waypoint> someWaypoints(Kinds kinds) {
     return backend.getWaypoints(segment: segment, kinds: kinds);
   }
+
+  List<bridge.Waypoint> tableWaypoints() {
+    List<bridge.Waypoint> waypoints = someWaypoints({
+      bridge.Kind.gpxWaypoints,
+      bridge.Kind.controls,
+    });
+    if (waypoints.isEmpty) {
+      waypoints = someWaypoints({});
+    }
+    return waypoints;
+  }
 }
 
 class ParameterModel extends ChangeNotifier {

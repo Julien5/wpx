@@ -132,7 +132,13 @@ impl Backend {
             }
             ControlSource::OSM => {
                 assert!(false);
-                controls::make_controls_with_osm(&self.d().track, self.d().packet_provider.clone())
+                let segment = self.make_segment_data(&self.trackSegment());
+                controls::make_with_osm(
+                    &segment,
+                    self.d().packet_provider.clone(),
+                    70.0,
+                    &Kind::Controls,
+                )
             }
         };
 
@@ -266,6 +272,20 @@ impl Backend {
     pub fn get_points(&self, segment: &Segment, kinds: Kinds) -> Vec<InputPoint> {
         let mut points = Vec::new();
         let range = self.d().track.subrange(segment.start, segment.end);
+        if kinds.is_empty() {
+            let segment = self.make_segment_data(&segment);
+            let typical_distance = 0.2 * (segment.end() - segment.start());
+            let points = controls::make_with_osm(
+                &segment,
+                self.d().packet_provider.clone(),
+                typical_distance,
+                &Kind::GPXWaypoints,
+            );
+            log::trace!("number of points: {}", points.len());
+            assert!(!points.is_empty());
+            return points;
+        }
+
         for kind in &kinds {
             let kpoints = self
                 .d()

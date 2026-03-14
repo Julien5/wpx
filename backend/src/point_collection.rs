@@ -314,6 +314,8 @@ impl PointCollection {
         let mut ret = Vec::new();
         ret.extend_from_slice(&self.get_vector(&Kind::Cities));
         ret.extend_from_slice(&self.get_vector(&Kind::Villages));
+        ret.extend_from_slice(&self.get_vector(&Kind::Hamlets));
+        ret.extend_from_slice(&self.get_vector(&Kind::Mountains));
         ret
     }
 

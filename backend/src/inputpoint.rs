@@ -298,11 +298,13 @@ impl InputPoint {
         let segment_name = self.tags.get("segment_name").unwrap_or(&empty);
         let waypoint_name = self.tags.get("waypoint_name").unwrap_or(&empty);
         let waypoint_description = self.tags.get("waypoint_description").unwrap_or(&empty);
-        Self::join_non_empty(&[
-            waypoint_name,
-            waypoint_description,
-            &format!("End of {}", segment_name),
-        ])
+        Self::join_non_empty(&[waypoint_name, waypoint_description, &{
+            if !segment_name.is_empty() {
+                format!("End of {}", segment_name)
+            } else {
+                String::new()
+            }
+        }])
     }
 
     pub fn waypoint(&self, projection: &TrackProjection) -> Waypoint {

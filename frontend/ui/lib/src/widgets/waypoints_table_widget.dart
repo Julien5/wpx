@@ -6,9 +6,9 @@ import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/utils/utils.dart';
 
 class DesktopTable extends StatelessWidget {
-  final Set<Kind> kinds;
+  final List<Waypoint> waypoints;
 
-  const DesktopTable({super.key, required this.kinds});
+  const DesktopTable({super.key, required this.waypoints});
 
   String _formatDistance(double distance) {
     final km = distance / 1000.0;
@@ -60,7 +60,6 @@ class DesktopTable extends StatelessWidget {
     SegmentModel model = Provider.of<SegmentModel>(context);
     debugPrint("build table for segment ${model.segment.id()}");
     context.watch<ParameterModel>();
-    var waypoints = model.someWaypoints(kinds);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: buildData(waypoints),

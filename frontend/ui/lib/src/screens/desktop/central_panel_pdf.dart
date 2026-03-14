@@ -21,7 +21,7 @@ class CentralWidget extends StatelessWidget {
     Segment segment = segmentModel.segment;
     SegmentStatistics stat = root.backend.segmentStatistics(segment: segment);
     debugPrint("CENTRAL segment: ${segment.id()}: ${statisticsString(stat)}");
-
+    List<Waypoint> waypoints = segmentModel.tableWaypoints();
     Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -30,9 +30,7 @@ class CentralWidget extends StatelessWidget {
             child: TrackView(trackData: TrackData.map, svgSize: Size(400, 400)),
           ),
         ),
-        Expanded(
-          child: DesktopTable(kinds: {Kind.gpxWaypoints, Kind.controls}),
-        ),
+        Expanded(child: DesktopTable(waypoints: waypoints)),
       ],
     );
 

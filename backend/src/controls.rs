@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, sync::Arc};
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::{
     backend::Segment,
@@ -235,72 +235,92 @@ pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) 
     }
 }
 
-pub fn make_controls_with_osm(
-    track: &Arc<Track>,
-    packet_provider: SharedPacketProvider,
+pub fn select_osm_points_on_segment(
+    segment: &SegmentData,
+    start: f64,
+    end: f64,
 ) -> Vec<InputPoint> {
-    let total = track.total_distance();
-    let track_distance_km = total / 1000f64;
-    let n_controls = ((track_distance_km / 70f64).ceil() as usize).max(4);
-    let step_size = (total / n_controls as f64).ceil();
-    // no control in first 10 and the last 10 kms.
-    let mut start = 0f64;
-    let mut segments = Vec::new();
+    let mut points = segment.potential_controls();
+    log::trace!(
+        "segment id={} potential controls={}",
+        segment.id(),
+        points.len()
+    );
+    points.retain(|w| {
+        if w.track_projections.is_empty() {
+            return false;
+        }
+        assert!(!w.track_projections.is_empty());
+        for proj in &w.track_projections {
+            let distance = proj.distance_on_track_to_projection;
+            let is_far_from_last = distance > start;
+            let is_far_from_end = distance < end;
+            let good = is_close_to_track(w); // && is_far_from_last && is_far_from_end;
+            if good {
+                return true;
+            }
+        }
+        false
+    });
+    log::trace!("segment id={} filtered={}", segment.id(), points.len());
+    points.sort_by_key(|w| -control_point_goodness(&w));
+    points
+}
+
+pub fn make_with_osm(
+    bigsegment: &SegmentData,
+    packet_provider: SharedPacketProvider,
+    typical_distance_km: f64,
+    newkind: &Kind,
+) -> Vec<InputPoint> {
+    let track = &bigsegment.track;
+    let total_distance = bigsegment.end() - bigsegment.start();
+    let distance_km = total_distance / 1000f64;
+    let n_controls = ((distance_km / typical_distance_km).ceil() as usize).max(4);
+    let step_size = (total_distance / n_controls as f64).ceil();
+
+    let mut start = bigsegment.start();
+    let mut subsegments = Vec::new();
     loop {
         let end = start + step_size;
-        let range = track.subrange(start, end);
-        if range.is_empty() {
+        let range = bigsegment.track.subrange(start, end);
+        if start > bigsegment.end() || range.is_empty() {
             break;
         }
-        let segment = Segment {
-            id: segments.len() as i32,
+        let subsegment = Segment {
+            id: subsegments.len() as i32,
             start,
             end,
         };
         let data = SegmentData::new(
-            &segment,
+            &subsegment,
             track.clone(),
             packet_provider.clone(),
             Parameters::default(),
         );
-        segments.push(data);
+        subsegments.push(data);
         start = end;
     }
 
-    struct Control {
+    struct ProtoPoint {
         index: usize,
         osm_name: String,
         nearest_osm_id: String,
     }
 
+    // no control in first 10 and the last 10 kms.
     let mut proto = Vec::new();
-    let margin = 10_000f64;
+    let margin = typical_distance_km * 0f64;
     let mut last_control_distance = 0f64;
-    for segment in &mut segments {
-        let mut points = segment.potential_controls();
-        log::trace!("segment id={} before={}", segment.id(), points.len());
-        points.retain(|w| {
-            let total_distance = track.total_distance();
-            if w.track_projections.is_empty() {
-                return false;
-            }
-            assert!(!w.track_projections.is_empty());
-            for proj in &w.track_projections {
-                let distance = proj.distance_on_track_to_projection;
-                let is_far_from_last = distance > last_control_distance + margin;
-                let is_far_from_end = distance < total_distance - margin;
-                let good = is_close_to_track(w) && is_far_from_last && is_far_from_end;
-                if good {
-                    return true;
-                }
-            }
-            false
-        });
-        log::trace!("segment id={} after={}", segment.id(), points.len());
+    for subsegment in &subsegments {
+        let points = select_osm_points_on_segment(
+            &subsegment,
+            last_control_distance + margin,
+            total_distance - margin,
+        );
         if points.is_empty() {
             continue;
         }
-        points.sort_by_key(|w| -control_point_goodness(&w));
         let selected = points.first().unwrap().clone();
         // In case the selected point has several projection, take the first one on this segment.
         // Taking the first one is arbitrary.
@@ -308,14 +328,16 @@ pub fn make_controls_with_osm(
             .track_projections
             .iter()
             .map(|proj| proj.track_index)
-            .filter(|index| segment.range().contains(index))
+            .filter(|index| subsegment.range().contains(index))
             .collect();
+        assert!(!indices_on_segment.is_empty());
         if indices_on_segment.len() > 1 {
             log::warn!("{} ambiguous projections", indices_on_segment.len());
         }
         let index = *indices_on_segment.first().unwrap();
         let name = selected.name();
-        proto.push(Control {
+        log::trace!("selected: {}", name);
+        proto.push(ProtoPoint {
             index,
             osm_name: name,
             nearest_osm_id: selected.id(),
@@ -333,15 +355,25 @@ pub fn make_controls_with_osm(
         let segment_name = "";
         let waypoint_name = shorten_name(&p.osm_name);
         let waypoint_description = p.osm_name.clone();
-        let w = InputPoint::create_control_on_track(
-            &track,
-            TrackProjection::at_track_index(track, p.index),
-            ret.len() + 1,
-            &segment_name,
-            &waypoint_name,
-            &waypoint_description,
-            &p.nearest_osm_id,
-        );
+        let proj = TrackProjection::at_track_index(&track, p.index);
+        let wgs84 = &track.wgs84[proj.track_index];
+        let eucli = &track.euclidean[proj.track_index];
+        let w = match newkind {
+            &Kind::Controls => InputPoint::create_control_on_track(
+                &track,
+                proj,
+                ret.len() + 1,
+                &segment_name,
+                &waypoint_name,
+                &waypoint_description,
+                &p.nearest_osm_id,
+            ),
+            _ => {
+                let mut i = InputPoint::from_gpx(wgs84, eucli, &Some(p.osm_name.clone()), &None);
+                i.track_projections = BTreeSet::from([{ proj }]);
+                i
+            }
+        };
         ret.push(w);
     }
     ret

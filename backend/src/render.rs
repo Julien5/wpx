@@ -101,7 +101,11 @@ pub fn make_typst_document(backend: &Backend) -> String {
     let controls = HashSet::from([Kind::Controls, Kind::GPXWaypoints]);
     let mut all_points = BTreeMap::new();
     for segment in &fsegments {
-        let segment_waypoints = backend.get_points(&segment, controls.clone());
+        let mut segment_waypoints = backend.get_points(&segment, controls.clone());
+        if segment_waypoints.is_empty() {
+            segment_waypoints = backend.get_points(&segment, HashSet::new());
+        }
+        assert!(!segment_waypoints.is_empty());
         for w in segment_waypoints {
             for proj in &w.track_projections {
                 let index = proj.track_index;
@@ -110,10 +114,12 @@ pub fn make_typst_document(backend: &Backend) -> String {
         }
     }
 
+    assert!(!all_points.is_empty());
     let vector: Vec<_> = all_points.iter().map(|(_k, w)| w.clone()).collect();
+    assert!(!vector.is_empty());
     let all_waypoints = backend.export_points(&vector);
+    assert!(!all_waypoints.is_empty());
     let allkinds = point_collection::allkinds();
-
     for segment in &segments {
         let range = segment.range();
         if range.is_empty() {
@@ -127,7 +133,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
         log::trace!(
             "segment {} => {} points",
             segment.id(),
-            waypoints_table.len()
+            waypoints_table.len(),
         );
         let table = points_table(&templates, &backend.d().track, &waypoints_table);
         let profile_size = Size2D::new(1000, 300);
