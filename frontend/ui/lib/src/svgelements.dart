@@ -328,7 +328,7 @@ class CircleElement extends SvgElement {
   CircleElement(super.xmlElement, super.parent) {
     stroke = Colors.black;
     fill = Colors.white;
-    strokeWidth = 1.0;
+    strokeWidth = 0.0;
     if (attribute("stroke") != null) {
       stroke = parseColor(attribute("stroke")!);
     }
