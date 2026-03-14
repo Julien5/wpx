@@ -35,15 +35,19 @@ class _ChooseDataState extends State<_ChooseData> {
     }
 
     List<List<int>> bytes = [];
-    for (var file in result.files) {
-      if (file.bytes == null) {
-        developer.log("read: ${file.path}");
-        bytes.add(await File(file.path!).readAsBytes());
-      } else {
-        bytes.add(file.bytes!.buffer.asInt8List().toList());
+    try {
+      for (var file in result.files) {
+        if (file.bytes == null) {
+          developer.log("read: ${file.path}");
+          bytes.add(await File(file.path!).readAsBytes());
+        } else {
+          bytes.add(file.bytes!.buffer.asInt8List().toList());
+        }
       }
+      onDone(UserInput.makeFromBytes(bytes));
+    } on Exception catch (_, e) {
+      debugPrint(e.toString());
     }
-    onDone(UserInput.makeFromBytes(bytes));
   }
 
   void chooseDemo() {
