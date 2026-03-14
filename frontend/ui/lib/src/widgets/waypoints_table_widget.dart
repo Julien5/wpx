@@ -69,9 +69,9 @@ class DesktopTable extends StatelessWidget {
 }
 
 class GPXTable extends StatelessWidget {
-  final Kind kind;
+  final Set<Kind> kinds;
 
-  const GPXTable({super.key, required this.kind});
+  const GPXTable({super.key, required this.kinds});
 
   String _formatDistance(double distance) {
     final km = distance / 1000.0;
@@ -130,7 +130,6 @@ class GPXTable extends StatelessWidget {
   Widget build(BuildContext context) {
     SegmentModel model = Provider.of<SegmentModel>(context);
     context.watch<ParameterModel>();
-    Set<Kind> kinds = {kind};
     var waypoints = model.someWaypoints(kinds);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,

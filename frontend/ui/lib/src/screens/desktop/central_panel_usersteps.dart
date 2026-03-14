@@ -6,6 +6,7 @@ import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/screens/desktop/central_panel.dart';
+import 'package:ui/src/widgets/waypoints_table_widget.dart';
 
 class CentralWidget extends StatelessWidget {
   final double width;
@@ -20,9 +21,7 @@ class CentralWidget extends StatelessWidget {
         Expanded(
           child: GraphicsPadding(child: TrackView(trackData: TrackData.map)),
         ),
-        Expanded(
-          child: GraphicsPadding(child: TrackView(trackData: TrackData.wheel)),
-        ),
+        Expanded(child: GPXTable(kinds: {Kind.userStep})),
       ],
     );
 
@@ -53,7 +52,7 @@ class CentralPanelUserSteps extends StatelessWidget {
   Widget build(BuildContext context) {
     return CentralPanelContent(
       width: width,
-      clients: [TrackData.map, TrackData.profile, TrackData.wheel],
+      clients: [TrackData.map, TrackData.profile],
       kinds: {Kind.userStep},
       screenFocus: ScreenFocus.usersteps,
       child: CentralWidget(width: width),

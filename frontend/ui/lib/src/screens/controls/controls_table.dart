@@ -73,7 +73,7 @@ class ControlsTableWidget extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // Rounded corners
             ),
-            child: GPXTable(kind: Kind.controls),
+            child: GPXTable(kinds: {Kind.controls}),
           ),
         ),
         Divider(),
