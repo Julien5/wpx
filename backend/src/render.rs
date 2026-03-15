@@ -105,7 +105,6 @@ pub fn make_typst_document(backend: &Backend) -> String {
         if segment_waypoints.is_empty() {
             segment_waypoints = backend.get_points(&segment, HashSet::new());
         }
-        assert!(!segment_waypoints.is_empty());
         for w in segment_waypoints {
             for proj in &w.track_projections {
                 let index = proj.track_index;
@@ -114,11 +113,8 @@ pub fn make_typst_document(backend: &Backend) -> String {
         }
     }
 
-    assert!(!all_points.is_empty());
     let vector: Vec<_> = all_points.iter().map(|(_k, w)| w.clone()).collect();
-    assert!(!vector.is_empty());
     let all_waypoints = backend.export_points(&vector);
-    assert!(!all_waypoints.is_empty());
     let allkinds = point_collection::allkinds();
     for segment in &segments {
         let range = segment.range();

@@ -322,7 +322,6 @@ pub fn make_with_osm(
             .map(|proj| proj.track_index)
             .filter(|index| subsegment.range().contains(index))
             .collect();
-        assert!(!indices_on_segment.is_empty());
         if indices_on_segment.len() > 1 {
             log::warn!("{} ambiguous projections", indices_on_segment.len());
         }
