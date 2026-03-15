@@ -73,7 +73,9 @@ impl SegmentData {
     pub fn potential_controls(&self) -> Vec<InputPoint> {
         let lock = self.packet_provider.read();
         let mut clone = lock.unwrap().collection.clone();
-        clone.range_cut(&self.range());
+        clone.map.iter_mut().for_each(|(_key, points)| {
+            points.retain(|point| point.is_in_distance_range(self.start(), self.end()))
+        });
         clone.potential_controls()
     }
 

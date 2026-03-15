@@ -136,7 +136,7 @@ impl Backend {
                 controls::make_with_osm(
                     &segment,
                     self.d().packet_provider.clone(),
-                    70.0,
+                    70_000.0,
                     &Kind::Controls,
                 )
             }
@@ -274,13 +274,16 @@ impl Backend {
         let range = self.d().track.subrange(segment.start, segment.end);
         if kinds.is_empty() {
             let segment = self.make_segment_data(&segment);
-            let typical_distance = 0.2 * (segment.end() - segment.start());
+            let typical_distance = 0.1 * (segment.end() - segment.start());
             let points = controls::make_with_osm(
                 &segment,
                 self.d().packet_provider.clone(),
                 typical_distance,
                 &Kind::GPXWaypoints,
             );
+            for point in &points {
+                assert!(point.is_in_range(&segment.range()));
+            }
             log::trace!("number of points: {}", points.len());
             assert!(!points.is_empty());
             return points;

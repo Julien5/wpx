@@ -241,11 +241,6 @@ pub fn select_osm_points_on_segment(
     end: f64,
 ) -> Vec<InputPoint> {
     let mut points = segment.potential_controls();
-    log::trace!(
-        "segment id={} potential controls={}",
-        segment.id(),
-        points.len()
-    );
     points.retain(|w| {
         if w.track_projections.is_empty() {
             return false;
@@ -255,14 +250,13 @@ pub fn select_osm_points_on_segment(
             let distance = proj.distance_on_track_to_projection;
             let is_far_from_last = distance > start;
             let is_far_from_end = distance < end;
-            let good = is_close_to_track(w); // && is_far_from_last && is_far_from_end;
+            let good = is_close_to_track(w) && is_far_from_last && is_far_from_end;
             if good {
                 return true;
             }
         }
         false
     });
-    log::trace!("segment id={} filtered={}", segment.id(), points.len());
     points.sort_by_key(|w| -control_point_goodness(&w));
     points
 }
@@ -270,27 +264,25 @@ pub fn select_osm_points_on_segment(
 pub fn make_with_osm(
     bigsegment: &SegmentData,
     packet_provider: SharedPacketProvider,
-    typical_distance_km: f64,
+    typical_distance: f64,
     newkind: &Kind,
 ) -> Vec<InputPoint> {
     let track = &bigsegment.track;
     let total_distance = bigsegment.end() - bigsegment.start();
-    let distance_km = total_distance / 1000f64;
-    let n_controls = ((distance_km / typical_distance_km).ceil() as usize).max(4);
+    let n_controls = ((total_distance / typical_distance).ceil() as usize).max(4);
     let step_size = (total_distance / n_controls as f64).ceil();
-
     let mut start = bigsegment.start();
     let mut subsegments = Vec::new();
     loop {
         let end = start + step_size;
         let range = bigsegment.track.subrange(start, end);
-        if start > bigsegment.end() || range.is_empty() {
+        if end > bigsegment.end() || range.is_empty() {
             break;
         }
         let subsegment = Segment {
             id: subsegments.len() as i32,
             start,
-            end,
+            end: end.min(bigsegment.end()),
         };
         let data = SegmentData::new(
             &subsegment,
@@ -310,13 +302,13 @@ pub fn make_with_osm(
 
     // no control in first 10 and the last 10 kms.
     let mut proto = Vec::new();
-    let margin = typical_distance_km * 0f64;
+    let margin = typical_distance * 0.1;
     let mut last_control_distance = 0f64;
     for subsegment in &subsegments {
         let points = select_osm_points_on_segment(
             &subsegment,
             last_control_distance + margin,
-            total_distance - margin,
+            bigsegment.start() + total_distance - margin,
         );
         if points.is_empty() {
             continue;
@@ -336,7 +328,6 @@ pub fn make_with_osm(
         }
         let index = *indices_on_segment.first().unwrap();
         let name = selected.name();
-        log::trace!("selected: {}", name);
         proto.push(ProtoPoint {
             index,
             osm_name: name,
@@ -381,6 +372,8 @@ pub fn make_with_osm(
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc;
+
     use crate::{
         event, gpsdata::GpxData, inputpoint::InputPoint, osm, parameters,
         point_collection::PacketProvider,
@@ -460,21 +453,31 @@ mod tests {
         provider.collection.import_osm(&osmpoints.as_vector());
         let provider = SharedPacketProvider::new(provider.into());
 
-        make_controls_with_osm(&track, provider)
+        let segment = SegmentData::new(
+            &Segment {
+                id: -1,
+                start: 0f64,
+                end: track.total_distance(),
+            },
+            track.clone(),
+            provider.clone(),
+            Parameters::default(),
+        );
+        make_with_osm(&segment, provider, 70_000f64, &Kind::Controls)
     }
 
     #[tokio::test]
-    async fn controls_infer_sectors() {
+    async fn controls_infer_sectors_1() {
         let _ = env_logger::try_init();
         let controls = get_controls("data/blackforest.gpx").await;
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
         }
-        assert_eq!(controls.len(), 4);
         for c in &controls {
             log::info!("c={} {}", c.name(), c.description());
         }
+        assert_eq!(controls.len(), 3);
         assert!(controls[0].name().contains("K1"));
         assert!(controls[0].description().contains("Furtwangen"));
         assert!(controls[1].name().contains("K2"));
@@ -494,10 +497,12 @@ mod tests {
         for c in &controls {
             log::info!("c={} {}", c.name(), c.description());
         }
-        assert_eq!(controls.len(), 4);
+        assert_eq!(controls.len(), 3);
         assert!(controls[0].name().contains("K1"));
         assert!(controls[0].description().contains("Wangen"));
         assert!(controls[1].name().contains("K2"));
         assert!(controls[1].description().contains("Isny"));
+        assert!(controls[2].name().contains("K3"));
+        assert!(controls[2].description().contains("Bad Waldsee"));
     }
 }
