@@ -10,6 +10,7 @@ use svg::node::element::{Circle, Group, Path};
 use svg::Document;
 
 use crate::math::{IntegerSize2D, Point2D};
+use crate::point_collection::{RenderInputParameters, RenderResult};
 use crate::wheel::model::CirclePoint;
 
 mod constants {
@@ -313,7 +314,7 @@ fn features(page: &Page, model: &model::WheelModel) -> Group {
 <path d="M 180 180 L 110 35 A 160 160 0 0 1 250 35 Z"
 fill="white" stroke="white" stroke-width="3"/>
  */
-pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
+pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> RenderResult {
     // TODO: remove hardcoded values.
     // crash with height=60.
     let wheel_width = 10;
@@ -385,7 +386,13 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> String {
         .add(center_dot);
 
     document = document.add(assembled_group);
-    document.to_string()
+    let svg = document.to_string();
+
+    RenderResult {
+        svg,
+        rendered: Vec::new(),
+        parameters: RenderInputParameters::default(),
+    }
 }
 
 #[cfg(test)]
@@ -500,11 +507,11 @@ mod tests {
                 String::new()
             };
             let model = create_wheel_model(n);
-            let svg = render(&IntegerSize2D::new(400, 400), &model);
+            let result = render(&IntegerSize2D::new(400, 400), &model);
 
             let tmpfilename = std::format!("/tmp/wheel-{}.svg", n);
-            std::fs::write(&tmpfilename, svg.clone()).unwrap();
-            if data != svg {
+            std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
+            if data != result.svg {
                 println!("test failed: {} {}", tmpfilename, reffilename);
                 assert!(false);
             }

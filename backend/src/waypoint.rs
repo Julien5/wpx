@@ -1,11 +1,14 @@
+use crate::backend::Segment;
+use crate::inputpoint::InputPoint;
 use crate::parameters;
 use crate::point_collection::Kind;
+use crate::segment::SegmentData;
 use crate::{
     elevation, mercator::MercatorPoint, parameters::Parameters, speed, track,
     wgs84point::WGS84Point,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct WaypointInfo {
     pub distance: f64,
     pub elevation: f64,
@@ -35,7 +38,7 @@ impl WaypointInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Waypoint {
     pub wgs84: WGS84Point,
     pub euclidean: MercatorPoint,
@@ -75,30 +78,21 @@ impl Waypoint {
 }
 
 impl WaypointInfo {
-    fn create_waypoint_info(
+    fn create_waypoint_info_simple(
         track: &track::Track,
-        smooth: &Vec<f64>,
         parameters: &Parameters,
         w: &Waypoint,
-        wprev: &Waypoint,
     ) -> WaypointInfo {
         assert!(w.get_track_index() < track.len());
         let distance = track.distance(w.get_track_index());
-        let (inter_distance, inter_elevation_gain, inter_slope) = {
-            let dx = track.distance(w.get_track_index()) - track.distance(wprev.get_track_index());
-            let dy =
-                elevation::elevation_gain(&smooth, wprev.get_track_index(), w.get_track_index());
-            let slope = match dx {
-                0f64 => 0f64,
-                _ => dy / dx,
-            };
-            (dx, dy, slope)
-        };
         let time = speed::time_at_distance(distance, parameters);
         let name = w.name.clone();
         let description = w.description.clone();
         let elevation = track.elevation(w.get_track_index());
         let origin = w.origin.clone();
+        let inter_distance = 0f64;
+        let inter_elevation_gain = 0f64;
+        let inter_slope = 0f64;
         let data = WaypointInfoData {
             distance,
             elevation,
@@ -124,6 +118,31 @@ impl WaypointInfo {
             origin,
         }
     }
+    fn create_waypoint_info_cross(
+        track: &track::Track,
+        smooth: &Vec<f64>,
+        parameters: &Parameters,
+        w: &Waypoint,
+        wprev: &Waypoint,
+    ) -> WaypointInfo {
+        assert!(w.get_track_index() < track.len());
+        let mut ret = Self::create_waypoint_info_simple(track, parameters, w);
+        (
+            ret.inter_distance,
+            ret.inter_elevation_gain,
+            ret.inter_slope,
+        ) = {
+            let dx = track.distance(w.get_track_index()) - track.distance(wprev.get_track_index());
+            let dy =
+                elevation::elevation_gain(&smooth, wprev.get_track_index(), w.get_track_index());
+            let slope = match dx {
+                0f64 => 0f64,
+                _ => dy / dx,
+            };
+            (dx, dy, slope)
+        };
+        ret
+    }
     pub fn make_waypoint_infos(
         waypoints: &mut Waypoints,
         track: &track::Track,
@@ -140,8 +159,13 @@ impl WaypointInfo {
                 0 => &w0,
                 _ => &waypoints[k - 1],
             };
-            let info =
-                Self::create_waypoint_info(track, &track.smooth_elevation, parameters, w, wprev);
+            let info = Self::create_waypoint_info_cross(
+                track,
+                &track.smooth_elevation,
+                parameters,
+                w,
+                wprev,
+            );
             infos.push(info.clone());
         }
         for k in 0..waypoints.len() {
@@ -149,4 +173,30 @@ impl WaypointInfo {
             w.info = Some(infos[k].clone());
         }
     }
+}
+
+pub fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> Waypoints {
+    let mut waypoints = Vec::new();
+    for p in points {
+        for proj in &p.track_projections {
+            let d = proj.distance_on_track_to_projection;
+            if segment.start() <= d && d <= segment.end() {
+                let mut w = p.waypoint(&proj);
+                let info = WaypointInfo::create_waypoint_info_simple(
+                    &segment.track,
+                    &segment.parameters,
+                    &w,
+                );
+                w.info = Some(info);
+                waypoints.push(w);
+            }
+        }
+    }
+    waypoints
+}
+
+pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
+    let mut ret = waypoints.clone();
+    ret.truncate(n);
+    ret
 }

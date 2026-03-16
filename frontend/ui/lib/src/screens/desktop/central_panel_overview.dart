@@ -15,16 +15,19 @@ class CentralWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Provider.of<ParameterModel>(context);
-
-    List<Waypoint> waypoints = context.read<SegmentModel>().tableWaypoints();
+    FutureRenderer renderer = Provider.of<FutureRenderer>(context);
+    RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
+    Widget table = Text("no waypoints");
+    if (renderOutput != null) {
+      table = DesktopTable(waypoints: renderOutput.waypoints);
+    }
     Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
           child: GraphicsPadding(child: TrackView(trackData: TrackData.map)),
         ),
-
-        Expanded(child: DesktopTable(waypoints: waypoints)),
+        Expanded(child: table),
       ],
     );
 

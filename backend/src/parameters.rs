@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 
-use crate::{error::RenderError, mercator::DateTime, point_collection::Kind, speed};
+use crate::{
+    error::RenderError, mercator::DateTime, point_collection::Kind, speed, waypoint::Waypoint,
+};
 
 #[derive(Clone, PartialOrd, Ord, PartialEq, Eq, Debug, Default)]
 pub enum RenderFunction {
@@ -24,6 +26,7 @@ pub struct RenderOutput {
     pub svg: String,
     pub render_input: RenderInput,
     pub error: Option<RenderError>,
+    pub waypoints: Vec<Waypoint>,
 }
 
 #[derive(Debug, Clone)]

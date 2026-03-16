@@ -19,7 +19,7 @@ class FutureRenderer with ChangeNotifier {
   Future<List<bridge.RenderOutput>>? _future;
 
   final Map<TrackData, Size?> _sizes = {};
-  final Map<TrackData, String?> _results = {};
+  final Map<TrackData, RenderOutput> _results = {};
 
   bool _visible = false;
   bool _disposed = false;
@@ -125,11 +125,12 @@ class FutureRenderer with ChangeNotifier {
       return;
     }
 
-    for (bridge.RenderOutput value in values) {
-      TrackData d = value.renderInput.function;
-      Set<Kind> k = value.renderInput.kinds;
+    for (bridge.RenderOutput output in values) {
+      TrackData d = output.renderInput.function;
+      Set<Kind> k = output.renderInput.kinds;
+
       debugPrint("found value for $d and $k");
-      _results[d] = value.svg;
+      _results[d] = output;
     }
 
     _future = null;
@@ -169,6 +170,10 @@ class FutureRenderer with ChangeNotifier {
 
   String result(TrackData d) {
     assert(done());
-    return _results[d]!;
+    return _results[d]!.svg;
+  }
+
+  RenderOutput? renderOutput(TrackData d) {
+    return _results[d];
   }
 }

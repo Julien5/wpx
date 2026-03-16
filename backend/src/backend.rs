@@ -33,6 +33,7 @@ use crate::segment::SegmentData;
 use crate::track::SharedTrack;
 use crate::track::Track;
 use crate::track_projection::is_close_to_track;
+use crate::waypoint;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
@@ -477,15 +478,9 @@ impl Backend {
         for render_input in render_inputs {
             let size = IntegerSize2D::new(render_input.size.0, render_input.size.1);
             data.preload(&render_input.function, &render_input.kinds, &size);
-            let svg = match render_input.function {
-                RenderFunction::Profile => {
-                    let result = data.render_profile(&size, &render_input.kinds);
-                    result.svg
-                }
-                RenderFunction::Map => {
-                    let result = data.render_map(&size, &render_input.kinds);
-                    result.svg
-                }
+            let render_result = match render_input.function {
+                RenderFunction::Profile => data.render_profile(&size, &render_input.kinds),
+                RenderFunction::Map => data.render_map(&size, &render_input.kinds),
                 RenderFunction::Wheel => {
                     let time_parameters = wheel::model::TimeParameters {
                         start: parameters::parse_time(&self.d().parameters.start_time),
@@ -516,10 +511,12 @@ impl Backend {
                 segment.id,
                 render_input.function
             );
+            let points = render_result.rendered_input_points_for_map();
             ret.push(RenderOutput {
-                svg,
+                svg: render_result.svg,
                 render_input: render_input.clone(),
                 error: None,
+                waypoints: waypoint::waypoint_for_segment(&points, &data),
             });
         }
         ret
@@ -549,6 +546,7 @@ impl Backend {
         ret.iter()
             .map(|(function, size, result)| {
                 debug_assert_eq!(result.parameters.function, function.clone());
+                let points = result.rendered_input_points_for_map();
                 RenderOutput {
                     svg: result.svg.clone(),
                     render_input: RenderInput {
@@ -557,6 +555,7 @@ impl Backend {
                         size: (size.width, size.height),
                     },
                     error: None,
+                    waypoints: waypoint::waypoint_for_segment(&points, &data),
                 }
             })
             .collect()
@@ -680,11 +679,11 @@ mod tests {
         let mut model = wheel::model::WheelModel::new(&time_parameters);
         model.add_pages(&segments);
         model.add_points(&sgdata, &point_collection::allkinds());
-        let svg = wheel::render(&IntegerSize2D::new(400, 400), &model);
+        let result = wheel::render(&IntegerSize2D::new(400, 400), &model);
 
         let tmpfilename = std::format!("/tmp/segment-wheel.svg");
-        std::fs::write(&tmpfilename, svg.clone()).unwrap();
-        if data != svg {
+        std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
+        if data != result.svg {
             println!("test failed: {} {}", tmpfilename, reffilename);
             assert!(false);
         }

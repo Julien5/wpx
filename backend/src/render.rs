@@ -28,7 +28,7 @@ impl Templates {
 fn points_table(
     templates: &Templates,
     _track: &track::Track,
-    waypoints: &Vec<&waypoint::Waypoint>,
+    waypoints: &Vec<waypoint::Waypoint>,
 ) -> String {
     let table = templates.table_points.clone();
     let mut template_line_orig = String::new();
@@ -113,25 +113,13 @@ pub fn make_typst_document(backend: &Backend) -> String {
         }
     }
 
-    let vector: Vec<_> = all_points.iter().map(|(_k, w)| w.clone()).collect();
-    let all_waypoints = backend.export_points(&vector);
     let allkinds = point_collection::allkinds();
     for segment in &segments {
         let range = segment.range();
         if range.is_empty() {
             continue;
         }
-        let mut waypoints_table: Vec<_> = all_waypoints
-            .iter()
-            .filter(|w| range.contains(&w.track_index.unwrap()))
-            .collect();
-        waypoints_table.truncate(15);
-        log::trace!(
-            "segment {} => {} points",
-            segment.id(),
-            waypoints_table.len(),
-        );
-        let table = points_table(&templates, &backend.d().track, &waypoints_table);
+
         let profile_size = Size2D::new(1000, 300);
         let map_size = Size2D::new(400, 400);
         let both = backend.render_segment_map_profile(
@@ -141,6 +129,13 @@ pub fn make_typst_document(backend: &Backend) -> String {
             allkinds.clone(),
         );
         let [rendered_map, rendered_profile]: [_; 2] = both.try_into().unwrap();
+        let waypoints_table = waypoint::decimate(&segment.segment, &rendered_profile.waypoints, 15);
+        log::trace!(
+            "segment {} => {} points",
+            segment.id(),
+            waypoints_table.len(),
+        );
+        let table = points_table(&templates, &backend.d().track, &waypoints_table);
         if backend.get_parameters().debug {
             let f = format!("/tmp/segment-{}.svg", segment.id());
             std::fs::write(&f, &rendered_profile.svg).unwrap();
