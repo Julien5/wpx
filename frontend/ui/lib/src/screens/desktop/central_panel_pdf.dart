@@ -21,13 +21,17 @@ class CentralWidget extends StatelessWidget {
     Segment segment = segmentModel.segment;
     SegmentStatistics stat = root.backend.segmentStatistics(segment: segment);
     debugPrint("CENTRAL segment: ${segment.id()}: ${statisticsString(stat)}");
-    List<Waypoint> waypoints = segmentModel.tableWaypoints();
 
     FutureRenderer renderer = Provider.of<FutureRenderer>(context);
     RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
     Widget table = Text("no waypoints");
     if (renderOutput != null) {
-      table = DesktopTable(waypoints: renderOutput.waypoints);
+      List<Waypoint> waypoints = decimate(
+        segment: segment,
+        waypoints: renderOutput.waypoints,
+        n: BigInt.from(15),
+      );
+      table = DesktopTable(waypoints: waypoints);
     }
 
     Widget bottom = Row(

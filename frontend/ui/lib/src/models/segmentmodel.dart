@@ -33,14 +33,7 @@ class SegmentModel extends ChangeNotifier {
   }
 
   List<bridge.Waypoint> tableWaypoints() {
-    List<bridge.Waypoint> waypoints = someWaypoints({
-      bridge.Kind.gpxWaypoints,
-      bridge.Kind.controls,
-    });
-    if (waypoints.isEmpty) {
-      waypoints = someWaypoints({});
-    }
-    return waypoints;
+    return someWaypoints({bridge.Kind.gpxWaypoints, bridge.Kind.controls});
   }
 }
 

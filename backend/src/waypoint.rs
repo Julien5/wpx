@@ -196,7 +196,31 @@ pub fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> 
 }
 
 pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
-    let mut ret = waypoints.clone();
-    ret.truncate(n);
+    let mut remains = waypoints.clone();
+    let mut ret = Vec::new();
+    let dmin = (segment.end - segment.start) * 0.1;
+    while !remains.is_empty() {
+        let (pos, name) = {
+            let c0 = remains.first().unwrap();
+            (c0.euclidean.point2d(), c0.name.clone())
+        };
+        let mut candidates = remains.clone();
+        candidates.retain(|c| {
+            let same_position = c.euclidean.point2d() == pos;
+            let same_name = c.name == name;
+            same_position && same_name
+        });
+        assert!(candidates.len() >= 1);
+        remains.retain(|c| {
+            let d = c.euclidean.point2d().distance_to(&pos);
+            d > dmin
+        });
+        if ret.len() + candidates.len() >= n {
+            break;
+        }
+        ret.extend_from_slice(&candidates);
+    }
+    // now we can sort.
+    ret.sort_by_key(|w| w.track_index);
     ret
 }

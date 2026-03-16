@@ -51,6 +51,10 @@ class FutureRenderer with ChangeNotifier {
     reset();
   }
 
+  Segment getSegment() {
+    return _segment;
+  }
+
   Size getSize(TrackData d) {
     // this size is passed to the backend for rendering
     developer.log("wanted: $d has: ${_sizes.keys}");
