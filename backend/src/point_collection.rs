@@ -46,7 +46,7 @@ impl RenderResult {
     pub fn rendered_input_points_for_map(&self) -> Vec<InputPoint> {
         let mut ret = self.rendered_input_points();
         let mut seen = HashSet::new();
-        ret.retain(|point| seen.insert(point.id()) && is_osm(&point.kind()));
+        ret.retain(|point| seen.insert(point.id()) && point.kind() != Kind::UserStep);
         ret
     }
 

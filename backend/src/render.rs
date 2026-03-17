@@ -115,7 +115,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
 
     let allkinds = HashSet::from([
         Kind::UserStep,
-        //Kind::GPXWaypoints,
+        Kind::GPXWaypoints,
         Kind::Controls,
         Kind::Cities,
         Kind::Villages,
