@@ -7,6 +7,7 @@ use crate::{
     parameters::{Parameters, RenderFunction, UserStepsOptions},
     track::Track,
     track_projection::is_close_to_track,
+    waypoint::remove_controls_if_possible,
 };
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
@@ -15,6 +16,16 @@ fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
 
 fn sort_by_population(cities: &mut Vec<InputPoint>) {
     cities.sort_by_key(|w| std::cmp::Reverse(w.population().unwrap_or(0)));
+}
+
+#[allow(dead_code)]
+fn sort_by_distance(cities: &mut Vec<InputPoint>) {
+    cities.retain(|w| !w.track_projections.is_empty());
+    cities.sort_by(|a, b| {
+        a.distance_to_track()
+            .partial_cmp(&b.distance_to_track())
+            .unwrap()
+    });
 }
 
 #[derive(Clone, Debug, Default)]
@@ -37,6 +48,13 @@ impl RenderResult {
         let mut ret = self.rendered_input_points();
         let mut seen = HashSet::new();
         ret.retain(|point| seen.insert(point.id()) && is_osm(&point.kind()));
+        ret
+    }
+
+    pub fn rendered_input_points_for_table(&self) -> Vec<InputPoint> {
+        let mut ret = self.rendered_input_points();
+        let mut seen = HashSet::new();
+        ret.retain(|point| seen.insert(point.id()) && point.kind() != Kind::UserStep);
         ret
     }
 }
@@ -360,8 +378,9 @@ impl PointCollection {
     pub fn offtrack_cities(&self) -> Vec<InputPoint> {
         let mut cities = self.get_vector(&Kind::Cities);
         cities.retain(|w| !is_close_to_track(&w));
-        //sort_by_distance_to_track(&mut cities);
+        //sort_by_distance(&mut cities);
         sort_by_population(&mut cities);
+        cities.truncate(8);
         cities
     }
 
@@ -373,6 +392,12 @@ impl PointCollection {
 
     pub fn kinds_cut(&mut self, kinds: &Kinds) {
         self.map.retain(|kind, _points| kinds.contains(kind));
+        self.map.iter_mut().for_each(|(kind, points)| {
+            if *kind != Kind::Controls {
+                return;
+            }
+            remove_controls_if_possible(points, kinds);
+        });
     }
 
     pub fn profile(&self) -> Packets {
@@ -380,7 +405,7 @@ impl PointCollection {
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),
-            //clone.get_vector(&Kind::GPXWaypoints),
+            clone.get_vector(&Kind::GPXWaypoints),
             clone.ontrack_cities(),
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),
@@ -393,7 +418,7 @@ impl PointCollection {
         vec![
             clone.get_vector(&Kind::UserStep),
             clone.get_vector(&Kind::Controls),
-            //clone.get_vector(&Kind::GPXWaypoints),
+            clone.get_vector(&Kind::GPXWaypoints),
             clone.ontrack_cities(),
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),

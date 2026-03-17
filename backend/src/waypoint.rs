@@ -1,7 +1,7 @@
 use crate::backend::Segment;
 use crate::inputpoint::InputPoint;
 use crate::parameters;
-use crate::point_collection::Kind;
+use crate::point_collection::{is_osm, Kind, Kinds};
 use crate::segment::SegmentData;
 use crate::{
     elevation, mercator::MercatorPoint, parameters::Parameters, speed, track,
@@ -212,6 +212,15 @@ fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypo
         });
         assert!(candidates.len() >= 1);
         remains.retain(|c| {
+            let same_position = c.euclidean.point2d() == pos;
+            let same_name = c.name == name;
+            if same_position && same_name {
+                return false;
+            }
+            // remove only OSM points (no Controls and GPX waypoints)
+            if !is_osm(&c.origin) {
+                return true;
+            }
             let d = c.euclidean.point2d().distance_to(&pos);
             d > dmin
         });
@@ -226,7 +235,24 @@ fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypo
     ret
 }
 
+pub fn remove_controls_if_possible(points: &mut Vec<InputPoint>, kinds: &Kinds) {
+    points.retain(|w| {
+        if w.kind() == Kind::Controls && kinds.contains(&Kind::GPXWaypoints) {
+            // When a control point has been created using a GPX waypoint,
+            // and the waypoint is also going to be in the returned list (not cleanly
+            // done), then discard this control, show only the GPX waypoint.
+            // Otherwise, the informations are shown twice (e.g. in tables).
+            // TODO: ensure that this gpx waypoint is really going to the caller.
+            if !w.control_waypoint_origin_id().is_empty() {
+                return false;
+            }
+        }
+        true
+    });
+}
+
 pub fn table(segment: &SegmentData, points: &Vec<InputPoint>) -> Vec<Waypoint> {
     let waypoints = waypoint_for_segment(&points, segment);
     decimate(&segment.segment, &waypoints, 10)
+    //waypoints
 }

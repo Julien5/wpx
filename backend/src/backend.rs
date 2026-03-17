@@ -498,7 +498,7 @@ impl Backend {
                 segment.id,
                 render_input.function
             );
-            let points = render_result.rendered_input_points_for_map();
+            let points = render_result.rendered_input_points_for_table();
             ret.push(RenderOutput {
                 svg: render_result.svg,
                 render_input: render_input.clone(),
@@ -533,7 +533,7 @@ impl Backend {
         ret.iter()
             .map(|(function, size, result)| {
                 debug_assert_eq!(result.parameters.function, function.clone());
-                let points = result.rendered_input_points_for_map();
+                let points = result.rendered_input_points_for_table();
                 RenderOutput {
                     svg: result.svg.clone(),
                     render_input: RenderInput {
