@@ -19,10 +19,14 @@ class CentralWidget extends StatelessWidget {
     RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
     Widget table = Text("no waypoints");
     SegmentModel segmentModel = context.read();
+
     if (renderOutput != null) {
+      WaypointContainer container = WaypointContainer.create(
+        waypoints: renderOutput.waypoints,
+      );
       List<Waypoint> waypoints = decimate(
         segment: renderer.getSegment(),
-        waypoints: renderOutput.waypoints,
+        waypoints: container,
         n: BigInt.from(25),
       );
       table = DesktopTable(waypoints: waypoints);

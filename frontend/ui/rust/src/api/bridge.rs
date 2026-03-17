@@ -128,8 +128,8 @@ pub fn karl_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
 }
 
 #[frb(sync)]
-pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
-    waypoint::decimate(&segment._impl, waypoints, n)
+pub fn decimate(segment: &Segment, waypoints: &WaypointContainer, n: usize) -> Vec<Waypoint> {
+    waypoint::decimate(&segment._impl, &waypoints.waypoints, n)
 }
 
 #[frb(mirror(ProfileIndication))]
@@ -201,6 +201,20 @@ pub struct _Waypoint {
     pub name: String,
     pub description: String,
     pub info: Option<WaypointInfo>,
+}
+
+#[frb(opaque)]
+pub struct WaypointContainer {
+    pub waypoints: Vec<Waypoint>,
+}
+
+impl WaypointContainer {
+    #[frb(sync)]
+    pub fn create(waypoints: &Vec<Waypoint>) -> Self {
+        WaypointContainer {
+            waypoints: waypoints.clone(),
+        }
+    }
 }
 
 #[frb(mirror(SegmentStatistics))]
