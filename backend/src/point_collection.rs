@@ -7,7 +7,6 @@ use crate::{
     parameters::{Parameters, RenderFunction, UserStepsOptions},
     track::Track,
     track_projection::is_close_to_track,
-    waypoint::remove_controls_if_possible,
 };
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
@@ -384,6 +383,56 @@ impl PointCollection {
         cities
     }
 
+    fn controls(&self) -> Vec<InputPoint> {
+        let controls = self.get_vector(&Kind::Controls);
+        let waypoints = self.get_vector(&Kind::GPXWaypoints);
+        let mut ret = Vec::new();
+        for w in controls {
+            let origin_id = w.control_waypoint_origin_id();
+            if origin_id.is_empty() {
+                // there is no gpx waypoint with this control
+                ret.push(w.clone());
+            } else if let Some(point) = waypoints.iter().find(|ww| ww.id() == origin_id) {
+                // there is one gpx waypoint with this control
+                let mut copy = point.clone();
+                debug_assert!(copy.kind() == Kind::GPXWaypoints);
+                copy.tags
+                    .insert("wpxtype".to_string(), "Control".to_string());
+                debug_assert!(copy.kind() == Kind::Controls);
+                ret.push(copy);
+            } else {
+                // The origin of the control (a waypoint) is not in the waypoints,
+                // because waypoints are not shown at all (kinds_cut).
+                ret.push(w.clone());
+            }
+        }
+        ret
+    }
+
+    fn gpxwaypoints(&self) -> Vec<InputPoint> {
+        let controls = self.get_vector(&Kind::Controls);
+        let waypoints = self.get_vector(&Kind::GPXWaypoints);
+        let mut ret = Vec::new();
+        for w in waypoints {
+            let origin_id = w.id();
+            match controls
+                .iter()
+                .find(|c| c.control_waypoint_origin_id() == origin_id)
+            {
+                Some(_control) => {
+                    // This is a control waypoint
+                    // => show it only if the controls are not shown.
+                    // Now, if we get in this match branch, controls must be shown.
+                    // So do not include render that point as waypoint.
+                }
+                None => {
+                    ret.push(w.clone());
+                }
+            }
+        }
+        ret
+    }
+
     pub fn range_cut(&mut self, range: &std::ops::Range<usize>) {
         self.map
             .iter_mut()
@@ -392,20 +441,14 @@ impl PointCollection {
 
     pub fn kinds_cut(&mut self, kinds: &Kinds) {
         self.map.retain(|kind, _points| kinds.contains(kind));
-        self.map.iter_mut().for_each(|(kind, points)| {
-            if *kind != Kind::Controls {
-                return;
-            }
-            remove_controls_if_possible(points, kinds);
-        });
     }
 
     pub fn profile(&self) -> Packets {
         let clone = self.clone();
         vec![
             clone.get_vector(&Kind::UserStep),
-            clone.get_vector(&Kind::Controls),
-            clone.get_vector(&Kind::GPXWaypoints),
+            clone.controls(),
+            clone.gpxwaypoints(),
             clone.ontrack_cities(),
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),
@@ -417,8 +460,8 @@ impl PointCollection {
         let clone = self.clone();
         vec![
             clone.get_vector(&Kind::UserStep),
-            clone.get_vector(&Kind::Controls),
-            clone.get_vector(&Kind::GPXWaypoints),
+            clone.controls(),
+            clone.gpxwaypoints(),
             clone.ontrack_cities(),
             clone.get_vector(&Kind::Villages),
             clone.get_vector(&Kind::Mountains),

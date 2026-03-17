@@ -113,7 +113,15 @@ pub fn make_typst_document(backend: &Backend) -> String {
         }
     }
 
-    let allkinds = point_collection::allkinds();
+    let allkinds = HashSet::from([
+        Kind::UserStep,
+        //Kind::GPXWaypoints,
+        Kind::Controls,
+        Kind::Cities,
+        Kind::Villages,
+        Kind::Mountains,
+        Kind::Hamlets,
+    ]);
     for segment in &segments {
         let range = segment.range();
         if range.is_empty() {
