@@ -4,7 +4,6 @@ use flutter_rust_bridge::frb;
 
 use std::collections::HashSet;
 use tracks::parameters;
-use tracks::waypoint;
 
 // must be exported for mirroring Segment.
 pub use std::ops::Range;
@@ -127,11 +126,6 @@ pub fn karl_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
     parameters::karl_order(parts)
 }
 
-#[frb(sync)]
-pub fn decimate(segment: &Segment, waypoints: &WaypointContainer, n: usize) -> Vec<Waypoint> {
-    waypoint::decimate(&segment._impl, &waypoints.waypoints, n)
-}
-
 #[frb(mirror(ProfileIndication))]
 pub enum _ProfileIndication {
     None,
@@ -201,20 +195,6 @@ pub struct _Waypoint {
     pub name: String,
     pub description: String,
     pub info: Option<WaypointInfo>,
-}
-
-#[frb(opaque)]
-pub struct WaypointContainer {
-    pub waypoints: Vec<Waypoint>,
-}
-
-impl WaypointContainer {
-    #[frb(sync)]
-    pub fn create(waypoints: &Vec<Waypoint>) -> Self {
-        WaypointContainer {
-            waypoints: waypoints.clone(),
-        }
-    }
 }
 
 #[frb(mirror(SegmentStatistics))]

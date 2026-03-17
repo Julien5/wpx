@@ -129,9 +129,9 @@ pub fn make_typst_document(backend: &Backend) -> String {
             allkinds.clone(),
         );
         let [rendered_map, rendered_profile]: [_; 2] = both.try_into().unwrap();
-        let waypoints_table = waypoint::decimate(&segment.segment, &rendered_profile.waypoints, 15);
+        let waypoints_table = &rendered_profile.waypoints;
         log::trace!(
-            "segment {} => {} points",
+            "segment {} => {} points include",
             segment.id(),
             waypoints_table.len(),
         );

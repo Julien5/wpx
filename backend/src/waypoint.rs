@@ -175,7 +175,7 @@ impl WaypointInfo {
     }
 }
 
-pub fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> Waypoints {
+fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> Waypoints {
     let mut waypoints = Vec::new();
     for p in points {
         for proj in &p.track_projections {
@@ -195,7 +195,7 @@ pub fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> 
     waypoints
 }
 
-pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
+fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
     let mut remains = waypoints.clone();
     let mut ret = Vec::new();
     let dmin = (segment.end - segment.start) * 0.1;
@@ -215,7 +215,8 @@ pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<W
             let d = c.euclidean.point2d().distance_to(&pos);
             d > dmin
         });
-        if ret.len() + candidates.len() >= n {
+        let next_n = ret.len() + candidates.len();
+        if next_n > n {
             break;
         }
         ret.extend_from_slice(&candidates);
@@ -223,4 +224,9 @@ pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<W
     // now we can sort.
     ret.sort_by_key(|w| w.track_index);
     ret
+}
+
+pub fn table(segment: &SegmentData, points: &Vec<InputPoint>) -> Vec<Waypoint> {
+    let waypoints = waypoint_for_segment(&points, segment);
+    decimate(&segment.segment, &waypoints, 10)
 }

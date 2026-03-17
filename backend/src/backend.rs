@@ -503,7 +503,7 @@ impl Backend {
                 svg: render_result.svg,
                 render_input: render_input.clone(),
                 error: None,
-                waypoints: waypoint::waypoint_for_segment(&points, &data),
+                waypoints: waypoint::table(&data, &points),
             });
         }
         ret
@@ -542,7 +542,7 @@ impl Backend {
                         size: (size.width, size.height),
                     },
                     error: None,
-                    waypoints: waypoint::waypoint_for_segment(&points, &data),
+                    waypoints: waypoint::table(&data, &points),
                 }
             })
             .collect()
