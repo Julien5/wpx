@@ -60,7 +60,6 @@ class FutureRenderer with ChangeNotifier {
       return;
     }
     kinds.add(k);
-    restart();
   }
 
   void removeKind(Kind k) {
@@ -68,7 +67,6 @@ class FutureRenderer with ChangeNotifier {
       return;
     }
     kinds.remove(k);
-    restart();
   }
 
   Size getSize(TrackData d) {

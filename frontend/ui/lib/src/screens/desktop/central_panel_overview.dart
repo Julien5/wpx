@@ -23,6 +23,7 @@ class _KindsRowState extends State<KindsRow> {
     } else {
       renderer.addKind(Kind.controls);
     }
+    renderer.restart();
   }
 
   void onWaypointsCheck(bool? checked) {
@@ -32,6 +33,7 @@ class _KindsRowState extends State<KindsRow> {
     } else {
       renderer.addKind(Kind.gpxWaypoints);
     }
+    renderer.restart();
   }
 
   void onOSMCheck(bool? checked) {
@@ -47,6 +49,7 @@ class _KindsRowState extends State<KindsRow> {
       renderer.addKind(Kind.hamlets);
       renderer.addKind(Kind.mountains);
     }
+    renderer.restart();
   }
 
   @override
