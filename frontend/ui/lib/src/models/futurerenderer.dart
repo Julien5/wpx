@@ -55,6 +55,22 @@ class FutureRenderer with ChangeNotifier {
     return _segment;
   }
 
+  void addKind(Kind k) {
+    if (kinds.contains(k)) {
+      return;
+    }
+    kinds.add(k);
+    restart();
+  }
+
+  void removeKind(Kind k) {
+    if (!kinds.contains(k)) {
+      return;
+    }
+    kinds.remove(k);
+    restart();
+  }
+
   Size getSize(TrackData d) {
     // this size is passed to the backend for rendering
     developer.log("wanted: $d has: ${_sizes.keys}");
