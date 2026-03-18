@@ -122,6 +122,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
         Kind::Mountains,
         Kind::Hamlets,
     ]);
+    let allkinds = HashSet::from([Kind::GPXWaypoints]);
     for segment in &segments {
         let range = segment.range();
         if range.is_empty() {
