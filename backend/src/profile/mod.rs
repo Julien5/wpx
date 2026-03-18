@@ -17,7 +17,7 @@ use crate::label_placement::obstacle::Obstacles;
 use crate::label_placement::*;
 use crate::math::Point2D;
 use crate::parameters::ProfileIndication;
-use crate::point_collection::{is_osm, Kind, Packets, RenderInputParameters, RenderResult};
+use crate::point_collection::{Kind, Packets, RenderInputParameters, RenderResult};
 use crate::track::Track;
 use crate::wheel::model::TimeParameters;
 use crate::{gpsdata, speed};
@@ -515,10 +515,10 @@ impl ProfileView {
         }
 
         log::trace!("users steps profile features: {}", usersteps.len());
-        let (_time_features, time_centers) = self.add_time_ticks(usersteps);
+        let (_time_features, usersteps_centers) = self.add_time_ticks(usersteps);
 
         let mut points = Vec::new();
-        for (index, center) in time_centers.iter().enumerate() {
+        for (index, center) in usersteps_centers.iter().enumerate() {
             let w = &usersteps[index];
             points.push(Self::userstep_dot(&center, w, index));
         }
@@ -655,12 +655,12 @@ impl CandidatesGenerator for ProfileGenerator {
         let drawing_width = obstacles.drawingbox.bbox.width();
         let mut ret = match kind {
             Kind::UserStep => {
-                assert!(false);
+                debug_assert!(false);
                 Vec::new()
             }
-            Kind::GPXWaypoints | Kind::Controls => Self::header(feature),
+            Kind::Controls => Self::header(feature),
+            Kind::GPXWaypoints => Self::header_offset(feature, 25f64),
             _ => {
-                assert!(is_osm(&kind));
                 let mut ret = self.cardinal(feature);
                 if hardness > 2 {
                     let a = self.generate_column(feature, drawing_width, 30f64);
@@ -748,13 +748,17 @@ impl ProfileGenerator {
     }
 
     fn header(feature: &PointFeature) -> Vec<Candidate> {
+        Self::header_offset(feature, 0f64)
+    }
+
+    fn header_offset(feature: &PointFeature, yoffset: f64) -> Vec<Candidate> {
         let target = feature.circle.center;
         let width = feature.width();
         let mut ret = Vec::new();
         for dx in [0.0, -0.5 * width, 0.5 * width] {
             let x = target.x + dx - width / 2f64;
             let bbox = BoundingBox::minsize(
-                Point2D::new(x, Self::header_ceil()),
+                Point2D::new(x, Self::header_ceil() + yoffset),
                 width,
                 feature.height(),
             );
