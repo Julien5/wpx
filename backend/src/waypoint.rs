@@ -195,7 +195,7 @@ fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> Wayp
     waypoints
 }
 
-fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
+pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
     let mut remains = waypoints.clone();
     let mut ret = Vec::new();
     let dmin = (segment.end - segment.start) * 0.1;
@@ -237,5 +237,5 @@ fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypo
 
 pub fn table(segment: &SegmentData, points: &Vec<InputPoint>) -> Vec<Waypoint> {
     let waypoints = waypoint_for_segment(&points, segment);
-    decimate(&segment.segment, &waypoints, 15)
+    decimate(&segment.segment, &waypoints, waypoints.len())
 }

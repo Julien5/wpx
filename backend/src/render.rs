@@ -3,7 +3,8 @@
 use euclid::Size2D;
 
 use crate::backend::Backend;
-use crate::point_collection::{self, Kind};
+use crate::point_collection::Kind;
+use crate::waypoint::decimate;
 use crate::{track, waypoint};
 
 use std::collections::{BTreeMap, HashSet};
@@ -139,6 +140,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
         );
         let [rendered_map, rendered_profile]: [_; 2] = both.try_into().unwrap();
         let waypoints_table = &rendered_profile.waypoints;
+        let waypoints_table = decimate(&segment.segment, &waypoints_table, 15);
         log::trace!(
             "segment {} => {} points include",
             segment.id(),
