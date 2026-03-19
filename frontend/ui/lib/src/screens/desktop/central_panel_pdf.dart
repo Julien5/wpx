@@ -4,6 +4,7 @@ import 'package:ui/src/models/futurerenderer.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/screens/desktop/central_panel_overview.dart';
 import 'package:ui/src/widgets/trackview.dart';
 import 'package:ui/src/screens/desktop/central_panel.dart';
 import 'package:ui/src/widgets/waypoints_table_widget.dart';
@@ -26,7 +27,12 @@ class CentralWidget extends StatelessWidget {
     RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
     Widget table = Text("no waypoints");
     if (renderOutput != null) {
-      table = DesktopTable(waypoints: renderOutput.waypoints);
+      List<Waypoint> waypoints = decimate(
+        segment: segment,
+        waypoints: renderOutput.waypoints,
+        n: BigInt.from(15),
+      );
+      table = DesktopTable(waypoints: waypoints);
     }
 
     Widget bottom = Row(
@@ -37,7 +43,7 @@ class CentralWidget extends StatelessWidget {
             child: TrackView(trackData: TrackData.map, svgSize: Size(400, 400)),
           ),
         ),
-        Expanded(child: table),
+        Expanded(child: Column(children: [KindsRow(), Expanded(child: table)])),
       ],
     );
 

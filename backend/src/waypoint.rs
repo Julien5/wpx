@@ -236,6 +236,5 @@ pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<W
 }
 
 pub fn table(segment: &SegmentData, points: &Vec<InputPoint>) -> Vec<Waypoint> {
-    let waypoints = waypoint_for_segment(&points, segment);
-    decimate(&segment.segment, &waypoints, waypoints.len())
+    waypoint_for_segment(&points, segment)
 }

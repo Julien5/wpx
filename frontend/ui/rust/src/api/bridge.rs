@@ -186,6 +186,12 @@ pub struct _WaypointInfo {
     pub description: String,
 }
 
+#[frb(mirror(MercatorPoint))]
+pub struct _MercatorPoint(pub f64, pub f64);
+
+#[frb(mirror(WGS84Point))]
+pub struct _WGS84Point(pub f64, pub f64, pub f64);
+
 #[frb(mirror(Waypoint))]
 pub struct _Waypoint {
     pub wgs84: WGS84Point,
@@ -214,6 +220,11 @@ pub enum _TrackError {
     OSMDownloadFailed,
     OSMDownloadTimeout,
     Unknown,
+}
+
+#[frb(sync)]
+pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
+    tracks::waypoint::decimate(&segment._impl, waypoints, n)
 }
 
 #[frb(sync)]
