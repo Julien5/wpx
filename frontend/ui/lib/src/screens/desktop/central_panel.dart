@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/kindsmodel.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
@@ -35,14 +36,12 @@ class GraphicsPadding extends StatelessWidget {
 class CentralPanelContent extends StatefulWidget {
   final double width;
   final List<TrackData> clients;
-  final Kinds kinds;
   final ScreenFocus screenFocus;
   final Widget child;
   const CentralPanelContent({
     super.key,
     required this.width,
     required this.clients,
-    required this.kinds,
     required this.screenFocus,
     required this.child,
   });
@@ -66,16 +65,17 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
     super.didChangeDependencies();
     FociModel fociModel = context.watch<FociModel>();
     context.watch<ParameterModel>();
+    KindsModel kindsModel = Provider.of(context);
     if (futureRenderer == null) {
       SegmentModel segmentModel = Provider.of(context);
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
         segment: segmentModel.segment,
         clients: widget.clients,
-        kinds: widget.kinds,
+        kinds: kindsModel.kinds,
       );
     }
-    debugPrint("central panel: reset renderer");
+    futureRenderer!.setKinds(kindsModel.kinds);
     futureRenderer!.setVisible(isVisible(fociModel));
   }
 
@@ -155,7 +155,9 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
         segments.add(SegmentModel(segment: segs[k], backend: root.backend));
       }
     }
+    KindsModel kindsModel = Provider.of(context);
     for (FutureRenderer renderer in renderers) {
+      renderer.setKinds(kindsModel.kinds);
       renderer.setVisible(isVisible(fociModel));
     }
   }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:ui/src/models/futurerenderer.dart';
+import 'package:ui/src/models/kindsmodel.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/screen_configuration.dart';
 import 'package:ui/src/models/segmentmodel.dart';
@@ -98,6 +99,7 @@ class ApplicationProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ScreenConfiguration()),
         ChangeNotifierProvider(create: (_) => EventModel(backend: backend)),
         ChangeNotifierProvider(create: (_) => FociModel()),
+        ChangeNotifierProvider(create: (_) => KindsModel()),
         ChangeNotifierProvider(create: (_) => ParameterModel(backend: backend)),
         ChangeNotifierProvider(
           create:

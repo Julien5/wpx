@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/screens/desktop/kinds_row.dart';
 import 'package:ui/src/screens/settings/settings_screen.dart';
 import 'package:ui/src/screens/wheel/statistics_widget.dart';
 import 'package:ui/src/utils/print.dart';
@@ -158,10 +159,15 @@ class _SidePanelState extends State<SidePanel> {
       div,
       Padding(
         padding: const EdgeInsets.all(15),
-        child: OverviewWidget(
-          onPacingPointPressed: null,
-          onControlsPointPressed: () {},
-          onPDFPressed: null,
+        child: Column(
+          children: [
+            OverviewWidget(
+              onPacingPointPressed: null,
+              onControlsPointPressed: () {},
+              onPDFPressed: null,
+            ),
+            Card(elevation: 4, child: KindsRow()),
+          ],
         ),
       ),
       div,

@@ -55,18 +55,13 @@ class FutureRenderer with ChangeNotifier {
     return _segment;
   }
 
-  void addKind(Kind k) {
-    if (kinds.contains(k)) {
+  void setKinds(Set<bridge.Kind> newkinds) {
+    if (kinds == newkinds) {
       return;
     }
-    kinds.add(k);
-  }
-
-  void removeKind(Kind k) {
-    if (!kinds.contains(k)) {
-      return;
-    }
-    kinds.remove(k);
+    kinds.clear();
+    kinds.addAll(newkinds);
+    reset();
   }
 
   Size getSize(TrackData d) {

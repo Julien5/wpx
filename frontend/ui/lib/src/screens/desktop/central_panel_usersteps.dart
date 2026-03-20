@@ -55,7 +55,6 @@ class CentralPanelUserSteps extends StatelessWidget {
     return CentralPanelContent(
       width: width,
       clients: [TrackData.map, TrackData.profile],
-      kinds: kinds,
       screenFocus: ScreenFocus.usersteps,
       child: CentralWidget(width: width),
     );
