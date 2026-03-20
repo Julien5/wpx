@@ -3,6 +3,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ui/src/models/kindsmodel.dart';
+import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/utils/utils.dart';
 
@@ -61,13 +64,17 @@ void fileSave(List<int> data, Type type) async {
   }
 }
 
-Future<List<int>> generate(bridge.Bridge backend, Type type) async {
+Future<List<int>> generate(
+  bridge.Bridge backend,
+  Type type,
+  Kinds kinds,
+) async {
   if (type == Type.pdf) {
-    var data = await backend.generatePdf();
+    var data = await backend.generatePdf(kinds: kinds);
     return data;
   }
   if (type == Type.zip) {
-    var data = await backend.generateZip();
+    var data = await backend.generateZip(kinds: kinds);
     return data;
   }
   assert(type == Type.gpx);
@@ -94,7 +101,8 @@ class _ExportButtonState extends State<ExportButton> {
     setState(() {
       busy = true;
     });
-    var data = await generate(backend, widget.type);
+    KindsModel kindsModel = Provider.of(context, listen: false);
+    var data = await generate(backend, widget.type, kindsModel.kinds);
     fileSave(data, widget.type);
     setState(() {
       busy = false;

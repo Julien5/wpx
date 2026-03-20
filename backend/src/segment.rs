@@ -142,6 +142,7 @@ impl SegmentData {
             let lock = self.packet_provider.read().unwrap();
             let mut coll = lock.collection.clone();
             coll.range_cut(&self.range());
+            coll.kinds_cut(&kinds);
             coll.offtrack_cities()
         };
 

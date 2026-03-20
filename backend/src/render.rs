@@ -3,7 +3,7 @@
 use euclid::Size2D;
 
 use crate::backend::Backend;
-use crate::point_collection::Kind;
+use crate::point_collection::{Kind, Kinds};
 use crate::waypoint::decimate;
 use crate::{track, waypoint};
 
@@ -89,7 +89,7 @@ fn link(
     document.push_str(table.as_str());
 }
 
-pub fn make_typst_document(backend: &Backend) -> String {
+pub fn make_typst_document(backend: &Backend, kinds: &Kinds) -> String {
     let debug = backend.get_parameters().debug;
     let templates = Templates::new();
     let mut document = templates.header.clone();
@@ -114,16 +114,6 @@ pub fn make_typst_document(backend: &Backend) -> String {
         }
     }
 
-    let allkinds = HashSet::from([
-        Kind::UserStep,
-        Kind::GPXWaypoints,
-        Kind::Controls,
-        Kind::Cities,
-        Kind::Villages,
-        Kind::Mountains,
-        Kind::Hamlets,
-    ]);
-    // let allkinds = HashSet::from([Kind::GPXWaypoints]);
     for segment in &segments {
         let range = segment.range();
         if range.is_empty() {
@@ -136,7 +126,7 @@ pub fn make_typst_document(backend: &Backend) -> String {
             &segment.segment,
             &map_size,
             &profile_size,
-            allkinds.clone(),
+            kinds.clone(),
         );
         let [rendered_map, rendered_profile]: [_; 2] = both.try_into().unwrap();
         let waypoints_table = &rendered_profile.waypoints;

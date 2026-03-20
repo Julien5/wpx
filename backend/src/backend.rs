@@ -328,8 +328,8 @@ impl Backend {
         self.export_points(&self.get_points(&segment, kinds))
     }
 
-    pub async fn generatePdf(&self) -> Vec<u8> {
-        let typbytes = render::make_typst_document(self);
+    pub async fn generatePdf(&self, kinds: &Kinds) -> Vec<u8> {
+        let typbytes = render::make_typst_document(self, kinds);
         let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;
         log::info!("generated {} pdf bytes", ret.len());
         ret
@@ -350,9 +350,9 @@ impl Backend {
         let waypoints = self.export_points(&gpxpoints);
         gpxexport::generate(&self.d().track, &waypoints)
     }
-    pub async fn generateZip(&self) -> Vec<u8> {
+    pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
         let gpx = self.generateGpx();
-        let pdf = self.generatePdf().await;
+        let pdf = self.generatePdf(kinds).await;
         zipexport::generate(&gpx, &pdf)
     }
 

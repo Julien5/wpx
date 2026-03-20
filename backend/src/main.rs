@@ -7,7 +7,7 @@ use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::{ControlSource, RenderFunction};
-use tracks::point_collection::Kind;
+use tracks::point_collection::{allkinds, Kind};
 use tracks::{point_collection, speed};
 
 /// Search for a pattern in a file and display the lines that contain it.
@@ -281,7 +281,7 @@ async fn main() -> anyhow::Result<()> {
     log::info!("length = {:.1} km", stats.length / 1000f64);
     log::info!("elevation gain = {:.1} km", stats.elevation_gain);
 
-    let pdfbytes = backend.generatePdf().await;
+    let pdfbytes = backend.generatePdf(&allkinds()).await;
     let pdfname = format!(
         "{}/{}.pdf",
         outdir,

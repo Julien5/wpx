@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart';
 
-
 class KindsModel with ChangeNotifier {
-  Kinds kinds = {Kind.controls,Kind.gpxWaypoints,Kind.userStep,Kind.cities,Kind.hamlets,Kind.mountains,Kind.villages};
-  static final Kinds osmKinds = {Kind.cities,Kind.hamlets,Kind.mountains,Kind.villages};
+  Kinds kinds = {
+    Kind.controls,
+    Kind.gpxWaypoints,
+    Kind.userStep,
+    Kind.cities,
+    Kind.hamlets,
+    Kind.mountains,
+    Kind.villages,
+  };
+  static final Kinds osmKinds = {
+    Kind.cities,
+    Kind.hamlets,
+    Kind.mountains,
+    Kind.villages,
+  };
   KindsModel();
 
   void addKind(Kind k) {
@@ -28,7 +40,7 @@ class KindsModel with ChangeNotifier {
     if (kinds.containsAll(osmKinds)) {
       return;
     }
-    for (Kind k in {Kind.cities,Kind.hamlets,Kind.mountains,Kind.villages}) {
+    for (Kind k in {Kind.cities, Kind.hamlets, Kind.mountains, Kind.villages}) {
       kinds.add(k);
     }
     notifyListeners();
@@ -36,12 +48,11 @@ class KindsModel with ChangeNotifier {
 
   void removeOSM() {
     if (kinds.intersection(osmKinds).isEmpty) {
-        return;
+      return;
     }
     for (Kind k in osmKinds) {
       kinds.remove(k);
     }
-    notifyListeners();    
+    notifyListeners();
   }
-
 }
