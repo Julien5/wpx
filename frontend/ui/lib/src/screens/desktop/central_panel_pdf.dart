@@ -9,9 +9,16 @@ import 'package:ui/src/screens/desktop/central_panel.dart';
 import 'package:ui/src/widgets/waypoints_table_widget.dart';
 import 'package:ui/src/utils/utils.dart';
 
-class CentralWidget extends StatelessWidget {
+class CentralWidget extends StatefulWidget {
   final double width;
   const CentralWidget({super.key, required this.width});
+
+  @override
+  State<CentralWidget> createState() => _CentralWidgetState();
+}
+
+class _CentralWidgetState extends State<CentralWidget> {
+  Widget? table;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +31,7 @@ class CentralWidget extends StatelessWidget {
 
     FutureRenderer renderer = Provider.of<FutureRenderer>(context);
     RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
-    Widget table = Text("no waypoints");
+    table ??= Text("no waypoints");
     if (renderOutput != null) {
       List<Waypoint> waypoints = decimate(
         waypoints: renderOutput.waypoints,
@@ -42,7 +49,7 @@ class CentralWidget extends StatelessWidget {
             child: TrackView(trackData: TrackData.map, svgSize: Size(400, 400)),
           ),
         ),
-        Expanded(child: table),
+        Expanded(child: table!),
       ],
     );
 
@@ -60,7 +67,7 @@ class CentralWidget extends StatelessWidget {
     ];
 
     return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: width),
+      constraints: BoxConstraints(maxWidth: widget.width),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.end,
