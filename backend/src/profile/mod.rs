@@ -219,6 +219,7 @@ impl ProfileView {
                 input_point: None,
                 link: None,
                 xmlid: k, // TODO: remove this
+                hardness: 0,
             };
             features.push(feature);
         }
@@ -498,6 +499,7 @@ impl ProfileView {
             input_point: Some((w.clone(), BTreeSet::from([proj.track_index]))),
             link: None,
             xmlid: k,
+            hardness: 0,
         }
     }
 
@@ -551,7 +553,7 @@ impl ProfileView {
         let mut counter = 0;
         for packet in packets {
             let mut feature_packet = Vec::new();
-            for w in packet {
+            for w in &packet.points {
                 if w.kind() == Kind::UserStep {
                     continue;
                 }
@@ -580,6 +582,7 @@ impl ProfileView {
                         input_point: Some((w.clone(), BTreeSet::from([proj.track_index]))),
                         link: None,
                         xmlid: k,
+                        hardness: packet.hardness,
                     };
                     if empty {
                         feature_unlabeled.push(feature);
@@ -594,11 +597,11 @@ impl ProfileView {
         let mut pacing_points = Vec::new();
 
         for packet in packets {
-            if packet.is_empty() {
+            if packet.points.is_empty() {
                 continue;
             }
-            if packet.first().unwrap().kind() == Kind::UserStep {
-                pacing_points = packet.clone();
+            if packet.points.first().unwrap().kind() == Kind::UserStep {
+                pacing_points = packet.points.clone();
             }
         }
 
@@ -632,15 +635,11 @@ struct ProfileGenerator {
 }
 
 impl CandidatesGenerator for ProfileGenerator {
-    fn gen(
-        &self,
-        feature: &PointFeature,
-        obstacles: &Obstacles,
-        hardness: usize,
-    ) -> Vec<Candidate> {
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate> {
         if feature.input_point.is_none() {
             // [left mid right] => [mid]
             let mut ret = vec![Self::header(feature)[1].clone()];
+            debug_assert!(feature.hardness < 10);
             ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
             return ret;
         }
@@ -649,7 +648,7 @@ impl CandidatesGenerator for ProfileGenerator {
             log::trace!(
                 "name:{} hardness:{}",
                 feature.input_point.as_ref().unwrap().0.name(),
-                hardness
+                feature.hardness
             );
         }
         let drawing_width = obstacles.drawingbox.bbox.width();
@@ -662,15 +661,15 @@ impl CandidatesGenerator for ProfileGenerator {
             Kind::GPXWaypoints => Self::header_offset(feature, 25f64),
             _ => {
                 let mut ret = self.cardinal(feature);
-                if hardness > 2 {
+                if feature.hardness > 2 {
                     let a = self.generate_column(feature, drawing_width, 30f64);
                     ret.extend_from_slice(&a);
                 }
-                if hardness > 4 {
+                if feature.hardness > 4 {
                     let a = self.generate_column(feature, drawing_width, 55f64);
                     ret.extend_from_slice(&a);
                 }
-                if hardness > 6 {
+                if feature.hardness > 6 {
                     let a = self.generate_column(feature, drawing_width, 80f64);
                     ret.extend_from_slice(&a);
                 }
@@ -678,7 +677,12 @@ impl CandidatesGenerator for ProfileGenerator {
                 // ret.iter().map(|lbbox| Candidate::new(lbbox)).collect()
             }
         };
+        debug_assert!(!ret.is_empty());
+        let last = ret.last().unwrap().clone();
         ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
+        if feature.hardness >= 10 && ret.is_empty() {
+            ret = vec![last];
+        }
         ret
     }
 }

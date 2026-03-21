@@ -297,7 +297,11 @@ pub struct PointCollection {
     pub map: BTreeMap<Kind, Vec<InputPoint>>,
 }
 
-pub type Packets = Vec<Vec<InputPoint>>;
+pub struct Packet {
+    pub points: Vec<InputPoint>,
+    pub hardness: usize,
+}
+pub type Packets = Vec<Packet>;
 
 impl PointCollection {
     pub fn new() -> Self {
@@ -443,15 +447,32 @@ impl PointCollection {
         self.map.retain(|kind, _points| kinds.contains(kind));
     }
 
+    pub fn osm_packet(points: Vec<InputPoint>) -> Packet {
+        // Quite brutal but seems to give reasonable results.
+        // Packet with 1 point => hardness = 9
+        //      with 10 points => hardness = 0
+        let hardness = 10 - points.len().min(10);
+        Packet { hardness, points }
+    }
+
     pub fn profile(&self) -> Packets {
         let clone = self.clone();
         vec![
-            clone.get_vector(&Kind::UserStep),
-            clone.controls(),
-            clone.gpxwaypoints(),
-            clone.ontrack_cities(),
-            clone.get_vector(&Kind::Villages),
-            clone.get_vector(&Kind::Mountains),
+            Packet {
+                hardness: 10,
+                points: clone.controls(),
+            },
+            Packet {
+                hardness: 10,
+                points: clone.gpxwaypoints(),
+            },
+            Packet {
+                hardness: 0,
+                points: clone.get_vector(&Kind::UserStep),
+            },
+            Self::osm_packet(clone.ontrack_cities()),
+            Self::osm_packet(clone.get_vector(&Kind::Villages)),
+            Self::osm_packet(clone.get_vector(&Kind::Mountains)),
             //clone.get_vector(&Kind::Hamlets),
         ]
     }
@@ -459,13 +480,22 @@ impl PointCollection {
     pub fn map(&self) -> Packets {
         let clone = self.clone();
         vec![
-            clone.get_vector(&Kind::UserStep),
-            clone.controls(),
-            clone.gpxwaypoints(),
-            clone.ontrack_cities(),
-            clone.get_vector(&Kind::Villages),
-            clone.get_vector(&Kind::Mountains),
-            clone.offtrack_cities(),
+            Packet {
+                hardness: 10,
+                points: clone.controls(),
+            },
+            Packet {
+                hardness: 10,
+                points: clone.gpxwaypoints(),
+            },
+            Packet {
+                hardness: 0,
+                points: clone.get_vector(&Kind::UserStep),
+            },
+            Self::osm_packet(clone.ontrack_cities()),
+            Self::osm_packet(clone.get_vector(&Kind::Villages)),
+            Self::osm_packet(clone.get_vector(&Kind::Mountains)),
+            Self::osm_packet(clone.offtrack_cities()),
             //clone.get_vector(&Kind::Hamlets),
         ]
     }

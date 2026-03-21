@@ -3,7 +3,7 @@ use crate::inputpoint::InputPoint;
 use crate::math::IntegerSize2D;
 use crate::parameters::{Parameters, RenderFunction};
 use crate::point_collection::{
-    Kind, Kinds, RenderInputParameters, RenderResult, SharedPacketProvider,
+    Kind, Kinds, Packet, RenderInputParameters, RenderResult, SharedPacketProvider,
 };
 use crate::track::SharedTrack;
 use crate::{profile, svgmap};
@@ -150,8 +150,14 @@ impl SegmentData {
             &self.track,
             &map_parameters_join,
             &vec![
-                profile_result.rendered_input_points_for_map(),
-                offtrack_cities,
+                Packet {
+                    hardness: 10,
+                    points: profile_result.rendered_input_points_for_map(),
+                },
+                Packet {
+                    hardness: 0,
+                    points: offtrack_cities,
+                },
             ],
             self.debug_graphic_dir(&format!(
                 "preload-map-profile-{}x{}",

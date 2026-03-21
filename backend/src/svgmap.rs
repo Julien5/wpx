@@ -55,12 +55,7 @@ use crate::label_placement::features::{Features, PointFeature};
 struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
-    fn gen(
-        &self,
-        feature: &PointFeature,
-        obstacles: &Obstacles,
-        _hardness: usize,
-    ) -> Vec<Candidate> {
+    fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate> {
         let mut cardinal_boxes =
             label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
         cardinal_boxes.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
@@ -96,7 +91,12 @@ impl CandidatesGenerator for MapGenerator {
 
         ret.extend_from_slice(&aux_candidates);
         let ninit = ret.len();
+        debug_assert!(!ret.is_empty());
+        let last = ret.last().unwrap().clone();
         ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
+        if feature.hardness >= 10 && ret.is_empty() {
+            ret = vec![last];
+        }
         if ret.is_empty() {
             log::info!(
                 "no candidates passed the upfront obstacles test for: [{}] (tried {})",
@@ -220,7 +220,13 @@ impl MapMaker {
         point.x < size.width as f64 && point.y < size.height as f64
     }
 
-    fn make_one_feature(&self, w: &InputPoint, track: &Track, counter: usize) -> PointFeature {
+    fn make_one_feature(
+        &self,
+        w: &InputPoint,
+        hardness: usize,
+        track: &Track,
+        counter: usize,
+    ) -> PointFeature {
         let euclidean = &w.euclidean;
         let bbox = &self.map_box;
         let size = &self.parameters.screen_size;
@@ -249,6 +255,7 @@ impl MapMaker {
             input_point: Some((w.clone(), track_indices)),
             link: None,
             xmlid: k,
+            hardness,
         }
     }
 
@@ -290,8 +297,8 @@ impl MapMaker {
         let size = &self.parameters.screen_size;
         for packet in packets {
             let mut feature_packet = Vec::new();
-            for w in packet {
-                let feature = self.make_one_feature(w, track, counter);
+            for w in &packet.points {
+                let feature = self.make_one_feature(w, packet.hardness, track, counter);
                 if !self.point_is_visible(&feature.center()) {
                     continue;
                 }
@@ -342,7 +349,7 @@ impl MapMaker {
         );
         let mut points = features.clone();
         for w in usersteps {
-            let feature = self.make_one_feature(w, track, points.len());
+            let feature = self.make_one_feature(w, 0, track, points.len());
             if !self.point_is_visible(&feature.center()) {
                 continue;
             }
@@ -468,10 +475,11 @@ mod tests {
             input_point: None,
             link: None,
             xmlid: 0,
+            hardness: 0,
         };
         let area = BoundingBox::new();
         let obstacles = Obstacles::new(&area, 0f64);
-        let candidates = MapGenerator {}.gen(&target, &obstacles, 0);
+        let candidates = MapGenerator {}.gen(&target, &obstacles);
         let mut found = false;
         assert!(!candidates.is_empty());
         for c in candidates {

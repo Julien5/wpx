@@ -257,58 +257,34 @@ Bad Herrenalb
 </text>
 </g>
 <g>
-<circle cx="263.07277095885456" cy="396.2750905530447" fill="Black" id="27/wp/circle" r="5"/>
-<circle cx="263.07277095885456" cy="396.2750905530447" fill="white" id="27/wp/circle-little-white" r="3.5"/>
-<circle cx="263.07277095885456" cy="396.2750905530447" fill="black" id="27/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(263.07277095885456 396.2750905530447)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="68.58263157894737" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="72.58263157894737" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="27/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Alpirsbach
-</text>
+<circle cx="174.61473902115995" cy="340.5583191853948" fill="Gray" id="23/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="136.70010322263443" cy="292.91307546668395" fill="Black" id="28/wp/circle" r="5"/>
-<circle cx="136.70010322263443" cy="292.91307546668395" fill="white" id="28/wp/circle-little-white" r="3.5"/>
-<circle cx="136.70010322263443" cy="292.91307546668395" fill="black" id="28/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(136.70010322263443 292.91307546668395)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="60.284868421052636" x="-64.28486842105264" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="64.28486842105264" x="-66.28486842105264" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="28/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-Oppenau
-</text>
+<circle cx="185.11336016610858" cy="311.864723222443" fill="Gray" id="24/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="174.61473902115995" cy="340.5583191853948" fill="Gray" id="25/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="187.13649184344013" cy="268.926328166177" fill="Gray" id="25/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="185.11336016610858" cy="311.864723222443" fill="Gray" id="26/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="190.62698047228787" cy="233.63838425092763" fill="Gray" id="26/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="187.13649184344013" cy="268.926328166177" fill="Gray" id="27/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="164.34778205623934" cy="198.2370084526301" fill="Gray" id="27/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="190.62698047228787" cy="233.63838425092763" fill="Gray" id="28/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="219.72120143897791" cy="201.3015300805855" fill="Gray" id="28/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="164.34778205623934" cy="198.2370084526301" fill="Gray" id="29/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="237.74225129118076" cy="154.369706041467" fill="Gray" id="29/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="219.72120143897791" cy="201.3015300805855" fill="Gray" id="30/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="223.16471554588225" cy="109.7415118333156" fill="Gray" id="30/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="237.74225129118076" cy="154.369706041467" fill="Gray" id="31/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="206.18375871204444" cy="76.25212206094875" fill="Gray" id="31/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="223.16471554588225" cy="109.7415118333156" fill="Gray" id="32/wp/circle" r="2" stroke="black" stroke-width="2"/>
-</g>
-<g>
-<circle cx="206.18375871204444" cy="76.25212206094875" fill="Gray" id="33/wp/circle" r="2" stroke="black" stroke-width="2"/>
-</g>
-<g>
-<circle cx="200.8268119269569" cy="55.09181794494725" fill="Gray" id="34/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="200.8268119269569" cy="55.09181794494725" fill="Gray" id="32/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 </g>
 </svg>

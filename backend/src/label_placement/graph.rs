@@ -396,6 +396,7 @@ mod tests {
             input_point: None,
             link: None,
             xmlid: 0,
+            hardness: 0,
         };
         let mut features = Vec::new();
         for i in [0, 1, 2, 3] {

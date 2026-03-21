@@ -173,6 +173,7 @@ pub struct PointFeature {
     pub input_point: Option<(InputPoint, BTreeSet<TrackIndex>)>,
     pub link: Option<svg::node::element::Path>,
     pub xmlid: PointFeatureId,
+    pub hardness: usize,
 }
 
 impl PointFeature {
