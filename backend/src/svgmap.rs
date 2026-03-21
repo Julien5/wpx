@@ -56,18 +56,17 @@ struct MapGenerator {}
 
 impl CandidatesGenerator for MapGenerator {
     fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate> {
-        let mut cardinal_boxes =
-            label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height());
-        cardinal_boxes.retain(|bbox| !obstacles.hit(feature, &bbox.absolute()));
-        let cardinal_candidates: Vec<_> = cardinal_boxes
-            .iter()
-            .map(|lbbox| Candidate::new(lbbox))
-            .collect();
+        let mut cardinal_candidates: Vec<_> =
+            label_placement::cardinal_boxes(&feature.center(), feature.width(), feature.height())
+                .iter()
+                .map(|lbbox| Candidate::new(lbbox))
+                .collect();
 
-        // if the area is not empty, do not try hard placement
         match feature.input_point() {
             Some(point) => {
                 if !is_close_to_track(&point) {
+                    debug_assert!(!feature.force_rendering());
+                    cardinal_candidates.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
                     return cardinal_candidates;
                 }
             }
@@ -94,14 +93,15 @@ impl CandidatesGenerator for MapGenerator {
         debug_assert!(!ret.is_empty());
         let last = ret.last().unwrap().clone();
         ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
-        if feature.hardness >= 10 && ret.is_empty() {
+        if feature.force_rendering() && ret.is_empty() {
             ret = vec![last];
         }
         if ret.is_empty() {
             log::info!(
-                "no candidates passed the upfront obstacles test for: [{}] (tried {})",
+                "no candidates passed the upfront obstacles test for: [{}] (tried {}) (hard:{})",
                 feature.id(),
-                ninit
+                ninit,
+                feature.hardness
             );
         }
         ret

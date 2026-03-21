@@ -146,19 +146,16 @@ impl SegmentData {
             coll.offtrack_cities()
         };
 
+        let mut map_packets = profile_result.packets_for_map();
+        map_packets.push(Packet {
+            hardness: 0,
+            points: offtrack_cities,
+        });
+
         let map_result = svgmap::map_background(
             &self.track,
             &map_parameters_join,
-            &vec![
-                Packet {
-                    hardness: 10,
-                    points: profile_result.rendered_input_points_for_map(),
-                },
-                Packet {
-                    hardness: 0,
-                    points: offtrack_cities,
-                },
-            ],
+            &map_packets,
             self.debug_graphic_dir(&format!(
                 "preload-map-profile-{}x{}",
                 map_size.width, map_size.height

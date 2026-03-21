@@ -639,7 +639,7 @@ impl CandidatesGenerator for ProfileGenerator {
         if feature.input_point.is_none() {
             // [left mid right] => [mid]
             let mut ret = vec![Self::header(feature)[1].clone()];
-            debug_assert!(feature.hardness < 10);
+            debug_assert!(!feature.force_rendering());
             ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
             return ret;
         }
@@ -658,7 +658,7 @@ impl CandidatesGenerator for ProfileGenerator {
                 Vec::new()
             }
             Kind::Controls => Self::header(feature),
-            Kind::GPXWaypoints => Self::header_offset(feature, 15f64),
+            //Kind::GPXWaypoints => Self::header_offset(feature, 15f64),
             _ => {
                 let mut ret = self.cardinal(feature);
                 if feature.hardness > 2 {
@@ -680,7 +680,7 @@ impl CandidatesGenerator for ProfileGenerator {
         debug_assert!(!ret.is_empty());
         let last = ret.last().unwrap().clone();
         ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
-        if feature.hardness >= 10 && ret.is_empty() {
+        if feature.force_rendering() && ret.is_empty() {
             ret = vec![last];
         }
         ret

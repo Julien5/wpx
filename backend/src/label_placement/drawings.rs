@@ -11,7 +11,8 @@ pub fn make_label_text(w: &InputPoint) -> Label {
         Kind::Villages | Kind::Cities | Kind::Mountains | Kind::Hamlets => {
             w.name().clone().trim().to_string()
         }
-        Kind::GPXWaypoints => format!("{}", "ⓘ"),
+        //Kind::GPXWaypoints => format!("{}", "ⓘ"),
+        Kind::GPXWaypoints => w.name().clone().trim().to_string(),
         Kind::UserStep => String::new(),
         Kind::Controls => {
             format!("{}", w.name())

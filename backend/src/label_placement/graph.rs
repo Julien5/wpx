@@ -164,8 +164,8 @@ impl Graph {
     fn remove_node(&mut self, a: &Node) {
         // remove the node on the graph
         let neighbors = self.map.get(&a).unwrap().clone();
-        for b in neighbors {
-            self.map.get_mut(&b).unwrap().retain(|x| *x != *a);
+        for node in neighbors {
+            self.map.get_mut(&node).unwrap().retain(|x| *x != *a);
         }
         self.map.remove(a);
 
@@ -178,7 +178,7 @@ impl Graph {
     }
 
     pub fn update_graph(&mut self, a: &Node, selected: &Candidate) {
-        let neighbors = self.map.get(a).unwrap().clone();
+        let neighbor_nodes = self.map.get(a).unwrap().clone();
         let nodedata = &self.nodes[*a];
         let center = nodedata.feature.center();
         let bboxcenter = selected.bbox().absolute().center();
@@ -187,11 +187,23 @@ impl Graph {
             let aux = Point2D::point_on_segment_from_end(&bboxcenter, &center, 5.0);
             selected_large.update(&aux);
         }
-        for b in neighbors {
-            let neighbors_candidates = &mut self.nodes[b].candidates;
+        for b in neighbor_nodes {
+            let neighbor_is_force = self.nodes[b].feature.force_rendering();
+            let neighbor_candidates = &mut self.nodes[b].candidates;
             // remove candidates that intersect with the selected candidate
-            neighbors_candidates.retain(|cb| !selected_large.overlap(&cb.bbox().absolute()));
-            if neighbors_candidates.is_empty() {
+            if neighbor_is_force {
+                debug_assert!(!neighbor_candidates.is_empty());
+            }
+            let last_neighbor_candidate = match neighbor_candidates.last() {
+                Some(c) => Some(c.clone()),
+                _ => None,
+            };
+            neighbor_candidates.retain(|cb| !selected_large.overlap(&cb.bbox().absolute()));
+            if neighbor_is_force && neighbor_candidates.is_empty() {
+                debug_assert!(last_neighbor_candidate.is_some());
+                neighbor_candidates.push(last_neighbor_candidate.unwrap().clone());
+            }
+            if neighbor_candidates.is_empty() {
                 log::info!(
                     "graph removed [{}] because of overlapping with [{}] (and others)",
                     self.nodes[b].feature.id(),
@@ -281,6 +293,8 @@ impl Graph {
     fn best_candidate_for_node(&self, node: &Node) -> Option<usize> {
         let candidates = &self.nodes[*node].candidates;
         if candidates.is_empty() {
+            let feature = &self.nodes[*node].feature;
+            debug_assert!(!feature.force_rendering());
             log::info!("no candidate found for {}", self.nodes[*node].feature.id(),);
             return None;
         }

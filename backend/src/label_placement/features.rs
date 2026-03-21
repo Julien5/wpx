@@ -177,6 +177,9 @@ pub struct PointFeature {
 }
 
 impl PointFeature {
+    pub fn force_rendering(&self) -> bool {
+        self.hardness > 10
+    }
     pub fn id(&self) -> String {
         match &self.input_point {
             Some((point, track_indices)) => {

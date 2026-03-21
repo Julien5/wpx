@@ -43,10 +43,41 @@ impl RenderResult {
             .collect()
     }
 
-    pub fn rendered_input_points_for_map(&self) -> Vec<InputPoint> {
-        let mut ret = self.rendered_input_points();
-        let mut seen = HashSet::new();
-        ret.retain(|point| seen.insert(point.id()) && point.kind() != Kind::UserStep);
+    pub fn packets_for_map(&self) -> Packets {
+        let mut map: BTreeMap<usize, Vec<_>> = BTreeMap::new();
+        let mut n1 = 0;
+        for f in &self.rendered {
+            if f.input_point.is_none() {
+                continue;
+            }
+            map.entry(f.hardness).or_default().push(f.clone());
+            n1 += 1;
+        }
+        let mut hardnesses: Vec<_> = map.keys().collect();
+        // sort in descending order
+        hardnesses.sort_by(|a, b| b.cmp(a));
+        let mut ret = Vec::new();
+        let mut n2 = 0;
+        for hardness in hardnesses {
+            let mut packet = Packet {
+                hardness: *hardness,
+                points: map
+                    .get(&hardness)
+                    .unwrap()
+                    .into_iter()
+                    .map(|f| f.input_point().unwrap().clone())
+                    .collect(),
+            };
+            let mut seen = HashSet::new();
+            packet
+                .points
+                .retain(|point| seen.insert(point.id()) && point.kind() != Kind::UserStep);
+            n2 += packet.points.len();
+            log::trace!("hardness={} n={}", packet.hardness, packet.points.len());
+            ret.push(packet);
+        }
+        debug_assert!(n2 <= n1);
+        debug_assert!(n1 == 0 || n2 > 0);
         ret
     }
 
@@ -301,6 +332,15 @@ pub struct Packet {
     pub points: Vec<InputPoint>,
     pub hardness: usize,
 }
+
+impl Packet {
+    pub fn make_forced_packet(points: Vec<InputPoint>) -> Self {
+        Self {
+            hardness: 11,
+            points,
+        }
+    }
+}
 pub type Packets = Vec<Packet>;
 
 impl PointCollection {
@@ -458,14 +498,8 @@ impl PointCollection {
     pub fn profile(&self) -> Packets {
         let clone = self.clone();
         vec![
-            Packet {
-                hardness: 10,
-                points: clone.controls(),
-            },
-            Packet {
-                hardness: 10,
-                points: clone.gpxwaypoints(),
-            },
+            Packet::make_forced_packet(clone.controls()),
+            Packet::make_forced_packet(clone.gpxwaypoints()),
             Packet {
                 hardness: 0,
                 points: clone.get_vector(&Kind::UserStep),
@@ -480,14 +514,8 @@ impl PointCollection {
     pub fn map(&self) -> Packets {
         let clone = self.clone();
         vec![
-            Packet {
-                hardness: 10,
-                points: clone.controls(),
-            },
-            Packet {
-                hardness: 10,
-                points: clone.gpxwaypoints(),
-            },
+            Packet::make_forced_packet(clone.controls()),
+            Packet::make_forced_packet(clone.gpxwaypoints()),
             Packet {
                 hardness: 0,
                 points: clone.get_vector(&Kind::UserStep),
