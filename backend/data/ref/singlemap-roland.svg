@@ -2,439 +2,36 @@
 <path d="M540.5,576.1 L550.1,586.0 L549.1,594.1 L555.2,606.5 L562.6,610.2 L568.8,609.9 L576.2,606.2 L591.6,612.8 L596.0,610.2 L612.2,608.4 L610.0,598.5 L615.9,599.0 L625.1,595.6 L632.1,596.7 L646.2,603.7 L664.4,606.9 L668.2,613.5 L678.9,621.5 L678.8,634.5 L681.8,643.6 L687.0,642.1 L706.2,647.4 L717.5,659.9 L725.2,660.3 L732.5,652.9 L746.8,649.5 L746.3,645.7 L751.2,643.9 L760.6,646.8 L760.7,650.9 L772.0,649.9 L809.7,640.4 L824.5,639.8 L839.8,634.0 L849.4,633.8 L858.0,630.6 L868.4,630.8 L880.9,634.7 L880.8,631.3 L891.6,638.3 L892.0,641.8 L903.4,650.2 L915.7,669.6 L915.6,677.1 L929.3,675.8 L931.3,689.8 L929.5,693.3 L925.8,694.4 L925.6,703.7 L917.0,707.2 L913.8,717.3 L910.5,715.0 L898.8,718.0 L897.0,727.3 L898.5,740.8 L891.1,739.8 L889.3,744.4 L894.1,752.3 L892.4,765.3 L884.6,767.2 L871.6,775.0 L868.7,779.1 L865.3,789.2 L873.3,787.5 L877.4,789.3 L878.9,805.7 L882.9,809.6 L893.0,809.4 L897.9,816.4 L908.6,813.2 L927.5,817.7 L933.0,816.5 L939.2,818.7 L943.7,823.1 L963.0,827.7 L965.1,833.6 L963.4,839.7 L981.4,847.4 L988.6,846.3 L992.5,854.1 L997.6,853.6 L999.3,845.3 L1003.5,843.5 L1011.1,847.9 L1014.1,845.1 L1018.6,849.8 L1023.0,850.8 L1024.2,855.9 L1032.6,860.1 L1029.6,864.0 L1044.1,865.6 L1048.2,872.7 L1055.8,876.4 L1065.9,878.5 L1078.4,876.9 L1087.7,882.3 L1095.9,882.8 L1098.2,884.0 L1100.7,894.8 L1105.8,894.3 L1119.1,899.4 L1124.5,906.2 L1130.1,899.8 L1141.8,895.4 L1144.7,888.3 L1147.9,886.6 L1158.2,883.7 L1187.0,881.4 L1192.9,891.8 L1194.7,906.3 L1192.7,916.6 L1197.5,918.3 L1204.0,915.6 L1203.0,913.5 L1213.5,902.4 L1216.8,888.9 L1228.3,877.8 L1225.3,874.0 L1227.6,859.3 L1242.3,845.7 L1247.4,843.9 L1231.1,832.9 L1224.8,823.7 L1216.5,820.4 L1210.9,803.7 L1202.4,800.4 L1223.9,785.1 L1223.7,773.2 L1239.5,768.3 L1248.8,762.2 L1249.9,755.5 L1255.6,753.9 L1261.1,745.7 L1273.4,757.2 L1287.4,758.9 L1305.3,773.3 L1312.7,763.2 L1315.0,769.6 L1326.4,781.5 L1333.8,785.9 L1333.9,790.0 L1341.5,786.1 L1351.3,785.6 L1358.3,793.2 L1359.5,798.3 L1381.4,792.1 L1396.5,783.9 L1402.0,785.1 L1416.0,809.5 L1422.9,816.9 L1420.8,824.6 L1427.0,827.0 L1436.8,828.2 L1443.8,826.3 L1448.8,823.2 L1449.5,820.4 L1450.3,822.2 L1457.4,822.0 L1476.2,810.6 L1468.7,807.6 L1457.6,789.8 L1465.4,785.8 L1463.0,778.8 L1425.3,743.0 L1429.6,720.5 L1423.4,714.0 L1417.4,712.5 L1413.8,704.7 L1391.5,691.9 L1380.4,688.1 L1370.7,690.6 L1357.9,687.7 L1361.8,682.9 L1363.1,676.3 L1366.5,673.6 L1366.1,666.1 L1359.1,663.0 L1354.2,654.6 L1344.8,655.8 L1332.1,650.5 L1331.6,643.8 L1335.4,639.4 L1344.4,631.1 L1354.2,629.6 L1362.4,621.4 L1375.8,620.1 L1386.2,623.0 L1405.2,617.8 L1404.3,613.4 L1412.5,605.8 L1413.9,597.3 L1419.5,592.8 L1422.4,576.0 L1425.1,574.5 L1423.5,552.0 L1419.8,553.5 L1407.3,534.4 L1381.3,455.6 L1384.2,453.3 L1384.3,447.4 L1382.8,447.7 L1382.4,444.5 L1379.8,446.1 L1373.7,435.9 L1373.7,431.6 L1372.2,431.9 L1355.1,388.0 L1349.8,385.4 L1342.6,373.8 L1346.2,361.3 L1336.8,356.7 L1336.8,348.2 L1323.4,350.1 L1295.9,365.1 L1275.0,386.7 L1252.5,387.6 L1229.4,395.8 L1224.0,394.1 L1218.5,383.7 L1216.7,373.9 L1208.2,368.0 L1206.9,358.5 L1200.8,350.8 L1200.8,344.6 L1195.7,332.9 L1197.4,331.8 L1196.0,316.6 L1199.1,306.3 L1215.6,288.4 L1222.2,286.2 L1223.3,283.8 L1221.0,284.3 L1209.3,273.9 L1183.0,265.9 L1167.5,252.3 L1157.7,250.5 L1150.1,246.3 L1135.3,230.4 L1129.4,213.8 L1126.3,212.0 L1119.0,214.8 L1114.8,207.9 L1113.9,201.7 L1099.1,206.7 L1069.2,224.1 L1069.8,227.6 L1056.0,232.7 L1057.9,236.1 L1051.4,240.1 L1031.2,247.4 L1023.1,241.4 L1018.1,240.3 L1019.0,225.6 L991.5,226.8 L986.7,224.3 L973.3,229.2 L957.8,229.6 L953.3,227.5 L941.8,234.9 L939.4,228.0 L934.2,226.1 L930.3,227.2 L925.6,222.2 L921.5,208.0 L895.5,196.0 L875.1,199.8 L868.3,193.7 L845.3,187.0 L840.5,181.6 L822.3,185.5 L807.0,181.5 L796.0,181.5 L792.2,179.3 L774.0,196.7 L728.5,233.3 L725.8,226.6 L728.6,215.4 L724.3,208.8 L724.0,201.1 L713.9,171.9 L704.6,172.3 L698.8,176.7 L685.7,169.5 L686.6,165.5 L679.9,162.5 L676.3,157.1 L651.7,148.4 L637.2,134.9 L622.8,126.9 L603.1,111.0 L599.1,104.2 L601.7,101.8 L604.9,87.5 L594.0,81.7 L585.2,90.4 L583.5,95.4 L585.8,97.3 L581.4,107.1 L561.9,139.5 L551.8,146.3 L537.0,149.6 L524.5,154.8 L521.3,158.3 L506.2,162.2 L503.9,165.0 L477.0,151.5 L452.3,145.6 L439.6,152.1 L423.2,151.3 L408.7,148.0 L408.1,149.5 L385.9,137.6 L384.2,140.6 L374.6,139.9 L359.0,144.2 L331.8,135.7 L331.2,142.2 L313.5,164.1 L302.1,170.5 L287.4,175.1 L285.8,170.8 L269.6,171.7 L265.3,166.5 L259.8,164.6 L243.5,165.7 L221.7,159.4 L217.3,161.0 L210.9,159.6 L211.1,173.1 L208.4,183.3 L196.3,191.7 L197.0,196.9 L186.7,202.2 L182.6,208.2 L170.8,213.2 L165.8,213.2 L161.9,209.4 L145.5,208.8 L124.9,227.7 L123.8,230.4 L138.4,241.5 L135.9,251.8 L131.9,253.8 L142.1,278.3 L147.0,297.8 L146.7,304.1 L155.0,317.6 L152.6,331.6 L162.5,335.7 L169.2,335.0 L185.5,327.0 L200.2,352.9 L214.2,357.2 L235.5,376.5 L266.6,388.8 L270.6,395.3 L273.6,394.2 L283.2,396.4 L293.8,394.8 L307.9,396.9 L310.0,398.6 L308.4,412.9 L312.5,427.9 L320.6,430.5 L339.9,442.7 L348.4,442.8 L350.5,438.2 L353.2,437.6 L356.5,441.4 L369.0,443.1 L371.3,446.0 L383.2,447.3 L389.9,451.1 L398.3,450.3 L416.9,460.4 L426.7,468.5 L435.5,471.3 L446.1,468.8 L449.7,471.5 L463.4,474.4 L471.9,481.9 L493.3,482.4 L497.1,484.8 L501.4,481.5 L503.8,483.4 L503.3,492.4 L508.7,490.3 L508.5,484.4 L518.1,486.8 L519.6,495.3 L525.1,495.6 L527.0,492.3 L532.8,493.9 L543.8,491.7 L570.7,496.6 L570.6,494.4 L583.7,497.8 L599.5,497.9 L598.3,502.3 L601.0,502.8 L599.0,508.5 L591.7,509.2 L588.7,512.6 L583.1,528.7 L577.3,535.9 L574.1,552.0 L563.1,566.8 L553.9,568.9 L546.7,576.7 L542.1,573.0 L540.5,576.1" fill="transparent" id="track" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="2"/>
 <g>
 <g>
-<circle cx="540.5476910984107" cy="576.084041596594" fill="Black" id="6/wp/circle" r="5"/>
-<circle cx="540.5476910984107" cy="576.084041596594" fill="white" id="6/wp/circle-little-white" r="3.5"/>
-<circle cx="540.5476910984107" cy="576.084041596594" fill="black" id="6/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(540.5476910984107 576.084041596594)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="79.16" x="-83.16" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="83.16" x="-85.16" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="6/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-Ravensburg
-</text>
+<circle cx="1390.3506153755297" cy="691.4801810793579" fill="Green" id="41/wp/circle" r="3"/>
 </g>
 <g>
-<circle cx="829.7208524362577" cy="178.27123370835034" fill="Black" id="7/wp/circle" r="5"/>
-<circle cx="829.7208524362577" cy="178.27123370835034" fill="white" id="7/wp/circle-little-white" r="3.5"/>
-<circle cx="829.7208524362577" cy="178.27123370835034" fill="black" id="7/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(829.7208524362577 178.27123370835034)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="84.99578947368423" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="88.99578947368423" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="7/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Bad Waldsee
-</text>
+<circle cx="387.4662762347325" cy="449.7633021186484" fill="Gray" id="5/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="598.4864724626459" cy="84.09779084652837" fill="Black" id="8/wp/circle" r="5"/>
-<circle cx="598.4864724626459" cy="84.09779084652837" fill="white" id="8/wp/circle-little-white" r="3.5"/>
-<circle cx="598.4864724626459" cy="84.09779084652837" fill="black" id="8/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(598.4864724626459 84.09779084652837)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="62.9292105263158" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="66.9292105263158" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="8/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Aulendorf
-</text>
+<circle cx="345.20437353956004" cy="139.86198291866458" fill="Gray" id="4/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="600.9773706612941" cy="502.8492781259556" fill="Black" id="9/wp/circle" r="5"/>
-<circle cx="600.9773706612941" cy="502.8492781259556" fill="white" id="9/wp/circle-little-white" r="3.5"/>
-<circle cx="600.9773706612941" cy="502.8492781259556" fill="black" id="9/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(600.9773706612941 502.8492781259556)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="73.68894736842105" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="77.68894736842105" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="9/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Weingarten
-</text>
+<circle cx="1178.4631796323047" cy="261.9001677436172" fill="Gray" id="3/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="991.2253184427282" cy="851.6377496434725" fill="Black" id="10/wp/circle" r="5"/>
-<circle cx="991.2253184427282" cy="851.6377496434725" fill="white" id="10/wp/circle-little-white" r="3.5"/>
-<circle cx="991.2253184427282" cy="851.6377496434725" fill="black" id="10/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(991.2253184427282 851.6377496434725)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="117.00144736842105" x="-121.00144736842105" y="4"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="121.00144736842105" x="-123.00144736842105" y="2"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="10/wp/text" text-anchor="end" x="-4.000" y="14.000">
-Wangen im Allgäu
-</text>
+<circle cx="1419.8207439015387" cy="813.5706251395604" fill="Gray" id="2/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="1122.0348354738599" cy="213.6014078760054" fill="Black" id="11/wp/circle" r="5"/>
-<circle cx="1122.0348354738599" cy="213.6014078760054" fill="white" id="11/wp/circle-little-white" r="3.5"/>
-<circle cx="1122.0348354738599" cy="213.6014078760054" fill="black" id="11/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1122.0348354738599 213.6014078760054)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="86.18118421052634" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="90.18118421052634" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="11/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Bad Wurzach
-</text>
+<circle cx="1107.9192050296006" cy="895.10910022186" fill="Gray" id="1/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="1416.105621703151" cy="832.301790988844" fill="Black" id="12/wp/circle" r="5"/>
-<circle cx="1416.105621703151" cy="832.301790988844" fill="white" id="12/wp/circle-little-white" r="3.5"/>
-<circle cx="1416.105621703151" cy="832.301790988844" fill="black" id="12/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1416.105621703151 832.301790988844)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="90.10210526315788" x="-94.10210526315788" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="94.10210526315788" x="-96.10210526315788" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="12/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-Isny im Allgäu
-</text>
+<circle cx="713.750345126904" cy="655.7993955298298" fill="Gray" id="0/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="1382.7663068241527" cy="447.69228392487275" fill="Black" id="13/wp/circle" r="5"/>
-<circle cx="1382.7663068241527" cy="447.69228392487275" fill="white" id="13/wp/circle-little-white" r="3.5"/>
-<circle cx="1382.7663068241527" cy="447.69228392487275" fill="black" id="13/wp/circle-little-white" r="2.5"/>
+<circle cx="431.63406839733216" cy="809.7512483160244" fill="Black" id="47/wp/circle" r="5"/>
+<circle cx="431.63406839733216" cy="809.7512483160244" fill="white" id="47/wp/circle-little-white" r="3.5"/>
+<circle cx="431.63406839733216" cy="809.7512483160244" fill="black" id="47/wp/circle-little-white" r="2.5"/>
 </g>
-<g transform="translate(1382.7663068241527 447.69228392487275)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="124.93447368421053" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="128.93447368421053" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="13/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Leutkirch im Allgäu
-</text>
-</g>
-<g>
-<circle cx="153.98131688524882" cy="338.74382525205147" fill="Black" id="14/wp/circle" r="4"/>
-<circle cx="153.98131688524882" cy="338.74382525205147" fill="white" id="14/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(153.98131688524882 338.74382525205147)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="69.58684210526316" x="-73.58684210526316" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="73.58684210526316" x="-75.58684210526316" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="14/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-Wilhelmsdorf
-</text>
-</g>
-<g>
-<circle cx="385.0383856272201" cy="139.0854182306939" fill="Black" id="15/wp/circle" r="4"/>
-<circle cx="385.0383856272201" cy="139.0854182306939" fill="white" id="15/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(385.0383856272201 139.0854182306939)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="60.96578947368421" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="64.96578947368421" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="15/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Altshausen
-</text>
-</g>
-<g>
-<circle cx="503.5580425872977" cy="483.2120447123307" fill="Black" id="16/wp/circle" r="4"/>
-<circle cx="503.5580425872977" cy="483.2120447123307" fill="white" id="16/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(503.5580425872977 483.2120447123307)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="23.86447368421053" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="27.86447368421053" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="16/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Berg
-</text>
-</g>
-<g>
-<circle cx="746.3868669084914" cy="646.5133885887917" fill="Black" id="17/wp/circle" r="4"/>
-<circle cx="746.3868669084914" cy="646.5133885887917" fill="white" id="17/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(746.3868669084914 646.5133885887917)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="50.42039473684211" x="-25.210197368421056" y="-36"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="54.42039473684211" x="-27.210197368421056" y="-38"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="17/wp/text" text-anchor="start" x="-25.210" y="-27.000">
-Waldburg
-</text>
-</g>
-<path d="M746.39,627.51 L746.39,640.51" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
-<g>
-<circle cx="1196.149972034018" cy="917.7808308420645" fill="Black" id="18/wp/circle" r="4"/>
-<circle cx="1196.149972034018" cy="917.7808308420645" fill="white" id="18/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1196.149972034018 917.7808308420645)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="32.48552631578948" x="-36.48552631578948" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="36.48552631578948" x="-38.48552631578948" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="18/wp/text" text-anchor="end" x="-4.000" y="13.000">
-Eglofs
-</text>
-</g>
-<g>
-<circle cx="1247.373071167247" cy="843.9219366323669" fill="Black" id="19/wp/circle" r="4"/>
-<circle cx="1247.373071167247" cy="843.9219366323669" fill="white" id="19/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1247.373071167247 843.9219366323669)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="54.42302631578948" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="58.42302631578948" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="19/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Eisenharz
-</text>
-</g>
-<g>
-<circle cx="987.9862647084192" cy="224.95323556486983" fill="Black" id="20/wp/circle" r="4"/>
-<circle cx="987.9862647084192" cy="224.95323556486983" fill="white" id="20/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(987.9862647084192 224.95323556486983)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="44.03157894736842" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="48.03157894736842" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="20/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Haidgau
-</text>
-</g>
-<g>
-<circle cx="164.79065536095368" cy="212.19889516332478" fill="Black" id="21/wp/circle" r="4"/>
-<circle cx="164.79065536095368" cy="212.19889516332478" fill="white" id="21/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(164.79065536095368 212.19889516332478)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="65.19934210526316" x="4" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="69.19934210526316" x="2" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="21/wp/text" text-anchor="start" x="4.000" y="13.000">
-Riedhausen
-</text>
-</g>
-<g>
-<circle cx="1222.7825918434828" cy="284.90301038137113" fill="Black" id="22/wp/circle" r="4"/>
-<circle cx="1222.7825918434828" cy="284.90301038137113" fill="white" id="22/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1222.7825918434828 284.90301038137113)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="84.67368421052633" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="88.67368421052633" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="22/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Gospoldshofen
-</text>
-</g>
-<g>
-<circle cx="1225.197282584424" cy="772.7224816238304" fill="Black" id="23/wp/circle" r="4"/>
-<circle cx="1225.197282584424" cy="772.7224816238304" fill="white" id="23/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1225.197282584424 772.7224816238304)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="36.71907894736842" x="-40.71907894736842" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="40.71907894736842" x="-42.71907894736842" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="23/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-Siggen
-</text>
-</g>
-<g>
-<circle cx="313.41702425626136" cy="428.2251376528875" fill="Black" id="24/wp/circle" r="4"/>
-<circle cx="313.41702425626136" cy="428.2251376528875" fill="white" id="24/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(313.41702425626136 428.2251376528875)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="66.12302631578947" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="70.12302631578947" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="24/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Zogenweiler
-</text>
-</g>
-<g>
-<circle cx="192.43486578188822" cy="339.2356074680283" fill="Black" id="25/wp/circle" r="4"/>
-<circle cx="192.43486578188822" cy="339.2356074680283" fill="white" id="25/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(192.43486578188822 339.2356074680283)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="68.89407894736843" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="72.89407894736843" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="25/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Esenhausen
-</text>
-</g>
-<g>
-<circle cx="270.1693184100004" cy="394.55104650050635" fill="Black" id="26/wp/circle" r="4"/>
-<circle cx="270.1693184100004" cy="394.55104650050635" fill="white" id="26/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(270.1693184100004 394.55104650050635)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="77.0532894736842" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="81.0532894736842" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="26/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Danketsweiler
-</text>
-</g>
-<g>
-<circle cx="491.70024696699693" cy="158.8737439353863" fill="Black" id="27/wp/circle" r="4"/>
-<circle cx="491.70024696699693" cy="158.8737439353863" fill="white" id="27/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(491.70024696699693 158.8737439353863)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="44.185526315789474" x="-48.185526315789474" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="48.185526315789474" x="-50.185526315789474" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="27/wp/text" text-anchor="end" x="-4.000" y="13.000">
-Blönried
-</text>
-</g>
-<g>
-<circle cx="530.3682200894436" cy="152.34394125310064" fill="Black" id="28/wp/circle" r="4"/>
-<circle cx="530.3682200894436" cy="152.34394125310064" fill="white" id="28/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(530.3682200894436 152.34394125310064)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="69.04802631578947" x="4" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="73.04802631578947" x="2" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="28/wp/text" text-anchor="start" x="4.000" y="13.000">
-Steinenbach
-</text>
-</g>
-<g>
-<circle cx="668.2011749675185" cy="613.527138802252" fill="Black" id="29/wp/circle" r="4"/>
-<circle cx="668.2011749675185" cy="613.527138802252" fill="white" id="29/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(668.2011749675185 613.527138802252)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="36.10328947368422" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="40.10328947368422" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="29/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Schlier
-</text>
-</g>
-<g>
-<circle cx="704.0161383572377" cy="172.7258137028839" fill="Black" id="30/wp/circle" r="4"/>
-<circle cx="704.0161383572377" cy="172.7258137028839" fill="white" id="30/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(704.0161383572377 172.7258137028839)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="99.60657894736842" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="103.60657894736842" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="30/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Untermöllenbronn
-</text>
-</g>
-<g>
-<circle cx="611.267501262395" cy="117.56826028438809" fill="Black" id="31/wp/circle" r="4"/>
-<circle cx="611.267501262395" cy="117.56826028438809" fill="white" id="31/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(611.267501262395 117.56826028438809)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="70.51052631578948" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="74.51052631578948" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="31/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Rugetsweiler
-</text>
-</g>
-<g>
-<circle cx="1261.9651981560419" cy="746.5189967851184" fill="Black" id="32/wp/circle" r="4"/>
-<circle cx="1261.9651981560419" cy="746.5189967851184" fill="white" id="32/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1261.9651981560419 746.5189967851184)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="76.74539473684212" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="80.74539473684212" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="32/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Christazhofen
-</text>
-</g>
-<g>
-<circle cx="1223.4009016417222" cy="392.93836778690456" fill="Black" id="33/wp/circle" r="4"/>
-<circle cx="1223.4009016417222" cy="392.93836778690456" fill="white" id="33/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1223.4009016417222 392.93836778690456)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="79.20855263157895" x="-83.20855263157895" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="83.20855263157895" x="-85.20855263157895" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="33/wp/text" text-anchor="end" x="-4.000" y="13.000">
-Diepoldshofen
-</text>
-</g>
-<g>
-<circle cx="1270.5141404589813" cy="386.91781414544675" fill="Black" id="34/wp/circle" r="4"/>
-<circle cx="1270.5141404589813" cy="386.91781414544675" fill="white" id="34/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1270.5141404589813 386.91781414544675)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="76.36052631578947" x="4" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="80.36052631578947" x="2" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="34/wp/text" text-anchor="start" x="4.000" y="13.000">
-Reichenhofen
-</text>
-</g>
-<g>
-<circle cx="1402.372212390117" cy="785.6783604074444" fill="Black" id="35/wp/circle" r="4"/>
-<circle cx="1402.372212390117" cy="785.6783604074444" fill="white" id="35/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1402.372212390117 785.6783604074444)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="82.74934210526315" x="-41.37467105263158" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="86.74934210526315" x="-43.37467105263158" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="35/wp/text" text-anchor="start" x="-41.375" y="-4.000">
-Neutrauchburg
-</text>
-</g>
-<g>
-<circle cx="1359.699269453322" cy="685.5118334796716" fill="Black" id="36/wp/circle" r="4"/>
-<circle cx="1359.699269453322" cy="685.5118334796716" fill="white" id="36/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1359.699269453322 685.5118334796716)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="38.48947368421052" x="-42.48947368421052" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="42.48947368421052" x="-44.48947368421052" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="36/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-Beuren
-</text>
-</g>
-<g>
-<circle cx="1420.311045458613" cy="588.0109129618359" fill="Black" id="37/wp/circle" r="4"/>
-<circle cx="1420.311045458613" cy="588.0109129618359" fill="white" id="37/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1420.311045458613 588.0109129618359)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="26.712500000000006" x="-30.712500000000006" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="30.712500000000006" x="-32.712500000000006" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="37/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-Urlau
-</text>
-</g>
-<g>
-<circle cx="1316.5485526773737" cy="353.8376971684338" fill="Black" id="38/wp/circle" r="4"/>
-<circle cx="1316.5485526773737" cy="353.8376971684338" fill="white" id="38/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1316.5485526773737 353.8376971684338)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="75.43684210526317" x="-79.43684210526317" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="79.43684210526317" x="-81.43684210526317" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="38/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-Herbrazhofen
-</text>
-</g>
-<g>
-<circle cx="1336.8044212607674" cy="352.06202734968974" fill="Black" id="39/wp/circle" r="4"/>
-<circle cx="1336.8044212607674" cy="352.06202734968974" fill="white" id="39/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1336.8044212607674 352.06202734968974)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="47.264473684210536" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="51.264473684210536" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="39/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Unterzeil
-</text>
-</g>
-<g>
-<circle cx="1462.086372600672" cy="819.1443760398688" fill="Black" id="40/wp/circle" r="4"/>
-<circle cx="1462.086372600672" cy="819.1443760398688" fill="white" id="40/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1462.086372600672 819.1443760398688)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="70.12565789473685" x="4" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="74.12565789473685" x="2" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="40/wp/text" text-anchor="start" x="4.000" y="13.000">
-Kleinhaslach
-</text>
-</g>
-<g>
-<circle cx="931.5040360799285" cy="702.2770918237075" fill="Green" id="42/wp/circle" r="3"/>
-</g>
-<g transform="translate(931.5040360799285 702.2770918237075)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="47.22248803827751" x="4" y="-13"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="51.22248803827751" x="2" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="42/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Buchberg
-</text>
-</g>
-<g>
-<circle cx="548.5914183887435" cy="584.4201164844562" fill="Green" id="43/wp/circle" r="3"/>
-</g>
-<g transform="translate(548.5914183887435 584.4201164844562)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="45.47308612440192" x="-49.47308612440192" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="49.47308612440192" x="-51.47308612440192" y="2"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="43/wp/text" text-anchor="end" x="-4.000" y="13.000">
-Burgberg
-</text>
-</g>
-<g>
-<circle cx="737.3473412702042" cy="226.18001972397906" fill="Green" id="44/wp/circle" r="3"/>
-</g>
-<g transform="translate(737.3473412702042 226.18001972397906)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="64.85645933014354" x="4" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="68.85645933014354" x="2" y="2"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="44/wp/text" text-anchor="start" x="4.000" y="13.000">
-Grindelsberg
-</text>
-</g>
-<g>
-<circle cx="490.1967512606934" cy="890.3079595602176" fill="Black" id="45/wp/circle" r="5"/>
-<circle cx="490.1967512606934" cy="890.3079595602176" fill="white" id="45/wp/circle-little-white" r="3.5"/>
-<circle cx="490.1967512606934" cy="890.3079595602176" fill="black" id="45/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(490.1967512606934 890.3079595602176)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="57.093421052631584" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="61.093421052631584" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="45/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Tettnang
+<g transform="translate(431.63406839733216 809.7512483160244)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="98.58223684210526" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="102.58223684210526" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="47/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Meckenbeuren
 </text>
 </g>
 <g>
@@ -450,37 +47,440 @@ Markdorf
 </text>
 </g>
 <g>
-<circle cx="431.63406839733216" cy="809.7512483160244" fill="Black" id="47/wp/circle" r="5"/>
-<circle cx="431.63406839733216" cy="809.7512483160244" fill="white" id="47/wp/circle-little-white" r="3.5"/>
-<circle cx="431.63406839733216" cy="809.7512483160244" fill="black" id="47/wp/circle-little-white" r="2.5"/>
+<circle cx="490.1967512606934" cy="890.3079595602176" fill="Black" id="45/wp/circle" r="5"/>
+<circle cx="490.1967512606934" cy="890.3079595602176" fill="white" id="45/wp/circle-little-white" r="3.5"/>
+<circle cx="490.1967512606934" cy="890.3079595602176" fill="black" id="45/wp/circle-little-white" r="2.5"/>
 </g>
-<g transform="translate(431.63406839733216 809.7512483160244)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="98.58223684210526" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="102.58223684210526" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="47/wp/text" text-anchor="start" x="4.000" y="-4.000">
-Meckenbeuren
+<g transform="translate(490.1967512606934 890.3079595602176)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="57.093421052631584" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="61.093421052631584" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="45/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Tettnang
 </text>
 </g>
 <g>
-<circle cx="713.750345126904" cy="655.7993955298298" fill="Gray" id="0/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="737.3473412702042" cy="226.18001972397906" fill="Green" id="44/wp/circle" r="3"/>
+</g>
+<g transform="translate(737.3473412702042 226.18001972397906)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="64.85645933014354" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="68.85645933014354" x="2" y="2"/>
+<text font-size="13.0" font-style="italic" font-weight="normal" id="44/wp/text" text-anchor="start" x="4.000" y="13.000">
+Grindelsberg
+</text>
 </g>
 <g>
-<circle cx="1107.9192050296006" cy="895.10910022186" fill="Gray" id="1/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="548.5914183887435" cy="584.4201164844562" fill="Green" id="43/wp/circle" r="3"/>
+</g>
+<g transform="translate(548.5914183887435 584.4201164844562)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="45.47308612440192" x="-49.47308612440192" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="49.47308612440192" x="-51.47308612440192" y="2"/>
+<text font-size="13.0" font-style="italic" font-weight="normal" id="43/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Burgberg
+</text>
 </g>
 <g>
-<circle cx="1419.8207439015387" cy="813.5706251395604" fill="Gray" id="2/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="931.5040360799285" cy="702.2770918237075" fill="Green" id="42/wp/circle" r="3"/>
+</g>
+<g transform="translate(931.5040360799285 702.2770918237075)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="47.22248803827751" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="51.22248803827751" x="2" y="-15"/>
+<text font-size="13.0" font-style="italic" font-weight="normal" id="42/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Buchberg
+</text>
 </g>
 <g>
-<circle cx="1178.4631796323047" cy="261.9001677436172" fill="Gray" id="3/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="1462.086372600672" cy="819.1443760398688" fill="Black" id="40/wp/circle" r="4"/>
+<circle cx="1462.086372600672" cy="819.1443760398688" fill="white" id="40/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1462.086372600672 819.1443760398688)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="70.12565789473685" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="74.12565789473685" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="40/wp/text" text-anchor="start" x="4.000" y="13.000">
+Kleinhaslach
+</text>
 </g>
 <g>
-<circle cx="345.20437353956004" cy="139.86198291866458" fill="Gray" id="4/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="1336.8044212607674" cy="352.06202734968974" fill="Black" id="39/wp/circle" r="4"/>
+<circle cx="1336.8044212607674" cy="352.06202734968974" fill="white" id="39/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1336.8044212607674 352.06202734968974)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="47.264473684210536" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="51.264473684210536" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="39/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Unterzeil
+</text>
 </g>
 <g>
-<circle cx="387.4662762347325" cy="449.7633021186484" fill="Gray" id="5/wp/circle" r="2" stroke="black" stroke-width="2"/>
+<circle cx="1316.5485526773737" cy="353.8376971684338" fill="Black" id="38/wp/circle" r="4"/>
+<circle cx="1316.5485526773737" cy="353.8376971684338" fill="white" id="38/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1316.5485526773737 353.8376971684338)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="75.43684210526317" x="-79.43684210526317" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="79.43684210526317" x="-81.43684210526317" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="38/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Herbrazhofen
+</text>
 </g>
 <g>
-<circle cx="1390.3506153755297" cy="691.4801810793579" fill="Green" id="41/wp/circle" r="3"/>
+<circle cx="1420.311045458613" cy="588.0109129618359" fill="Black" id="37/wp/circle" r="4"/>
+<circle cx="1420.311045458613" cy="588.0109129618359" fill="white" id="37/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1420.311045458613 588.0109129618359)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="26.712500000000006" x="-30.712500000000006" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="30.712500000000006" x="-32.712500000000006" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="37/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Urlau
+</text>
+</g>
+<g>
+<circle cx="1359.699269453322" cy="685.5118334796716" fill="Black" id="36/wp/circle" r="4"/>
+<circle cx="1359.699269453322" cy="685.5118334796716" fill="white" id="36/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1359.699269453322 685.5118334796716)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="38.48947368421052" x="-42.48947368421052" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="42.48947368421052" x="-44.48947368421052" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="36/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Beuren
+</text>
+</g>
+<g>
+<circle cx="1402.372212390117" cy="785.6783604074444" fill="Black" id="35/wp/circle" r="4"/>
+<circle cx="1402.372212390117" cy="785.6783604074444" fill="white" id="35/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1402.372212390117 785.6783604074444)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="82.74934210526315" x="-41.37467105263158" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="86.74934210526315" x="-43.37467105263158" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="35/wp/text" text-anchor="start" x="-41.375" y="-4.000">
+Neutrauchburg
+</text>
+</g>
+<g>
+<circle cx="1270.5141404589813" cy="386.91781414544675" fill="Black" id="34/wp/circle" r="4"/>
+<circle cx="1270.5141404589813" cy="386.91781414544675" fill="white" id="34/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1270.5141404589813 386.91781414544675)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="76.36052631578947" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="80.36052631578947" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="34/wp/text" text-anchor="start" x="4.000" y="13.000">
+Reichenhofen
+</text>
+</g>
+<g>
+<circle cx="1223.4009016417222" cy="392.93836778690456" fill="Black" id="33/wp/circle" r="4"/>
+<circle cx="1223.4009016417222" cy="392.93836778690456" fill="white" id="33/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1223.4009016417222 392.93836778690456)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="79.20855263157895" x="-83.20855263157895" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="83.20855263157895" x="-85.20855263157895" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="33/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Diepoldshofen
+</text>
+</g>
+<g>
+<circle cx="1261.9651981560419" cy="746.5189967851184" fill="Black" id="32/wp/circle" r="4"/>
+<circle cx="1261.9651981560419" cy="746.5189967851184" fill="white" id="32/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1261.9651981560419 746.5189967851184)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="76.74539473684212" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="80.74539473684212" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="32/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Christazhofen
+</text>
+</g>
+<g>
+<circle cx="611.267501262395" cy="117.56826028438809" fill="Black" id="31/wp/circle" r="4"/>
+<circle cx="611.267501262395" cy="117.56826028438809" fill="white" id="31/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(611.267501262395 117.56826028438809)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="70.51052631578948" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="74.51052631578948" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="31/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Rugetsweiler
+</text>
+</g>
+<g>
+<circle cx="704.0161383572377" cy="172.7258137028839" fill="Black" id="30/wp/circle" r="4"/>
+<circle cx="704.0161383572377" cy="172.7258137028839" fill="white" id="30/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(704.0161383572377 172.7258137028839)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="99.60657894736842" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="103.60657894736842" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="30/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Untermöllenbronn
+</text>
+</g>
+<g>
+<circle cx="668.2011749675185" cy="613.527138802252" fill="Black" id="29/wp/circle" r="4"/>
+<circle cx="668.2011749675185" cy="613.527138802252" fill="white" id="29/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(668.2011749675185 613.527138802252)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="36.10328947368422" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="40.10328947368422" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="29/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Schlier
+</text>
+</g>
+<g>
+<circle cx="530.3682200894436" cy="152.34394125310064" fill="Black" id="28/wp/circle" r="4"/>
+<circle cx="530.3682200894436" cy="152.34394125310064" fill="white" id="28/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(530.3682200894436 152.34394125310064)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="69.04802631578947" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="73.04802631578947" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="28/wp/text" text-anchor="start" x="4.000" y="13.000">
+Steinenbach
+</text>
+</g>
+<g>
+<circle cx="491.70024696699693" cy="158.8737439353863" fill="Black" id="27/wp/circle" r="4"/>
+<circle cx="491.70024696699693" cy="158.8737439353863" fill="white" id="27/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(491.70024696699693 158.8737439353863)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="44.185526315789474" x="-48.185526315789474" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="48.185526315789474" x="-50.185526315789474" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="27/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Blönried
+</text>
+</g>
+<g>
+<circle cx="270.1693184100004" cy="394.55104650050635" fill="Black" id="26/wp/circle" r="4"/>
+<circle cx="270.1693184100004" cy="394.55104650050635" fill="white" id="26/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(270.1693184100004 394.55104650050635)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="77.0532894736842" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="81.0532894736842" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="26/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Danketsweiler
+</text>
+</g>
+<g>
+<circle cx="192.43486578188822" cy="339.2356074680283" fill="Black" id="25/wp/circle" r="4"/>
+<circle cx="192.43486578188822" cy="339.2356074680283" fill="white" id="25/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(192.43486578188822 339.2356074680283)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="68.89407894736843" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="72.89407894736843" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="25/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Esenhausen
+</text>
+</g>
+<g>
+<circle cx="313.41702425626136" cy="428.2251376528875" fill="Black" id="24/wp/circle" r="4"/>
+<circle cx="313.41702425626136" cy="428.2251376528875" fill="white" id="24/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(313.41702425626136 428.2251376528875)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="66.12302631578947" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="70.12302631578947" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="24/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Zogenweiler
+</text>
+</g>
+<g>
+<circle cx="1225.197282584424" cy="772.7224816238304" fill="Black" id="23/wp/circle" r="4"/>
+<circle cx="1225.197282584424" cy="772.7224816238304" fill="white" id="23/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1225.197282584424 772.7224816238304)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="36.71907894736842" x="-40.71907894736842" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="40.71907894736842" x="-42.71907894736842" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="23/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Siggen
+</text>
+</g>
+<g>
+<circle cx="1222.7825918434828" cy="284.90301038137113" fill="Black" id="22/wp/circle" r="4"/>
+<circle cx="1222.7825918434828" cy="284.90301038137113" fill="white" id="22/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1222.7825918434828 284.90301038137113)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="84.67368421052633" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="88.67368421052633" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="22/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Gospoldshofen
+</text>
+</g>
+<g>
+<circle cx="164.79065536095368" cy="212.19889516332478" fill="Black" id="21/wp/circle" r="4"/>
+<circle cx="164.79065536095368" cy="212.19889516332478" fill="white" id="21/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(164.79065536095368 212.19889516332478)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="65.19934210526316" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="69.19934210526316" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="21/wp/text" text-anchor="start" x="4.000" y="13.000">
+Riedhausen
+</text>
+</g>
+<g>
+<circle cx="987.9862647084192" cy="224.95323556486983" fill="Black" id="20/wp/circle" r="4"/>
+<circle cx="987.9862647084192" cy="224.95323556486983" fill="white" id="20/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(987.9862647084192 224.95323556486983)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="44.03157894736842" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="48.03157894736842" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="20/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Haidgau
+</text>
+</g>
+<g>
+<circle cx="1247.373071167247" cy="843.9219366323669" fill="Black" id="19/wp/circle" r="4"/>
+<circle cx="1247.373071167247" cy="843.9219366323669" fill="white" id="19/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1247.373071167247 843.9219366323669)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="54.42302631578948" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="58.42302631578948" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="19/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Eisenharz
+</text>
+</g>
+<g>
+<circle cx="1196.149972034018" cy="917.7808308420645" fill="Black" id="18/wp/circle" r="4"/>
+<circle cx="1196.149972034018" cy="917.7808308420645" fill="white" id="18/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1196.149972034018 917.7808308420645)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="32.48552631578948" x="-36.48552631578948" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="36.48552631578948" x="-38.48552631578948" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="18/wp/text" text-anchor="end" x="-4.000" y="13.000">
+Eglofs
+</text>
+</g>
+<g>
+<circle cx="746.3868669084914" cy="646.5133885887917" fill="Black" id="17/wp/circle" r="4"/>
+<circle cx="746.3868669084914" cy="646.5133885887917" fill="white" id="17/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(746.3868669084914 646.5133885887917)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="50.42039473684211" x="-25.210197368421056" y="-36"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="54.42039473684211" x="-27.210197368421056" y="-38"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="17/wp/text" text-anchor="start" x="-25.210" y="-27.000">
+Waldburg
+</text>
+</g>
+<path d="M746.39,627.51 L746.39,640.51" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
+<g>
+<circle cx="503.5580425872977" cy="483.2120447123307" fill="Black" id="16/wp/circle" r="4"/>
+<circle cx="503.5580425872977" cy="483.2120447123307" fill="white" id="16/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(503.5580425872977 483.2120447123307)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="23.86447368421053" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="27.86447368421053" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="16/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Berg
+</text>
+</g>
+<g>
+<circle cx="385.0383856272201" cy="139.0854182306939" fill="Black" id="15/wp/circle" r="4"/>
+<circle cx="385.0383856272201" cy="139.0854182306939" fill="white" id="15/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(385.0383856272201 139.0854182306939)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="60.96578947368421" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="64.96578947368421" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="15/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Altshausen
+</text>
+</g>
+<g>
+<circle cx="153.98131688524882" cy="338.74382525205147" fill="Black" id="14/wp/circle" r="4"/>
+<circle cx="153.98131688524882" cy="338.74382525205147" fill="white" id="14/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(153.98131688524882 338.74382525205147)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="69.58684210526316" x="-73.58684210526316" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="73.58684210526316" x="-75.58684210526316" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="14/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Wilhelmsdorf
+</text>
+</g>
+<g>
+<circle cx="1382.7663068241527" cy="447.69228392487275" fill="Black" id="13/wp/circle" r="5"/>
+<circle cx="1382.7663068241527" cy="447.69228392487275" fill="white" id="13/wp/circle-little-white" r="3.5"/>
+<circle cx="1382.7663068241527" cy="447.69228392487275" fill="black" id="13/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1382.7663068241527 447.69228392487275)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="124.93447368421053" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="128.93447368421053" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="13/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Leutkirch im Allgäu
+</text>
+</g>
+<g>
+<circle cx="1416.105621703151" cy="832.301790988844" fill="Black" id="12/wp/circle" r="5"/>
+<circle cx="1416.105621703151" cy="832.301790988844" fill="white" id="12/wp/circle-little-white" r="3.5"/>
+<circle cx="1416.105621703151" cy="832.301790988844" fill="black" id="12/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1416.105621703151 832.301790988844)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="90.10210526315788" x="-94.10210526315788" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="94.10210526315788" x="-96.10210526315788" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="12/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Isny im Allgäu
+</text>
+</g>
+<g>
+<circle cx="1122.0348354738599" cy="213.6014078760054" fill="Black" id="11/wp/circle" r="5"/>
+<circle cx="1122.0348354738599" cy="213.6014078760054" fill="white" id="11/wp/circle-little-white" r="3.5"/>
+<circle cx="1122.0348354738599" cy="213.6014078760054" fill="black" id="11/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1122.0348354738599 213.6014078760054)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="86.18118421052634" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="90.18118421052634" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="11/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Bad Wurzach
+</text>
+</g>
+<g>
+<circle cx="991.2253184427282" cy="851.6377496434725" fill="Black" id="10/wp/circle" r="5"/>
+<circle cx="991.2253184427282" cy="851.6377496434725" fill="white" id="10/wp/circle-little-white" r="3.5"/>
+<circle cx="991.2253184427282" cy="851.6377496434725" fill="black" id="10/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(991.2253184427282 851.6377496434725)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="117.00144736842105" x="-121.00144736842105" y="4"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="121.00144736842105" x="-123.00144736842105" y="2"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="10/wp/text" text-anchor="end" x="-4.000" y="14.000">
+Wangen im Allgäu
+</text>
+</g>
+<g>
+<circle cx="600.9773706612941" cy="502.8492781259556" fill="Black" id="9/wp/circle" r="5"/>
+<circle cx="600.9773706612941" cy="502.8492781259556" fill="white" id="9/wp/circle-little-white" r="3.5"/>
+<circle cx="600.9773706612941" cy="502.8492781259556" fill="black" id="9/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(600.9773706612941 502.8492781259556)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="73.68894736842105" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="77.68894736842105" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="9/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Weingarten
+</text>
+</g>
+<g>
+<circle cx="598.4864724626459" cy="84.09779084652837" fill="Black" id="8/wp/circle" r="5"/>
+<circle cx="598.4864724626459" cy="84.09779084652837" fill="white" id="8/wp/circle-little-white" r="3.5"/>
+<circle cx="598.4864724626459" cy="84.09779084652837" fill="black" id="8/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(598.4864724626459 84.09779084652837)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="62.9292105263158" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="66.9292105263158" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="8/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Aulendorf
+</text>
+</g>
+<g>
+<circle cx="829.7208524362577" cy="178.27123370835034" fill="Black" id="7/wp/circle" r="5"/>
+<circle cx="829.7208524362577" cy="178.27123370835034" fill="white" id="7/wp/circle-little-white" r="3.5"/>
+<circle cx="829.7208524362577" cy="178.27123370835034" fill="black" id="7/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(829.7208524362577 178.27123370835034)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="84.99578947368423" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="88.99578947368423" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="7/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Bad Waldsee
+</text>
+</g>
+<g>
+<circle cx="540.5476910984107" cy="576.084041596594" fill="Black" id="6/wp/circle" r="5"/>
+<circle cx="540.5476910984107" cy="576.084041596594" fill="white" id="6/wp/circle-little-white" r="3.5"/>
+<circle cx="540.5476910984107" cy="576.084041596594" fill="black" id="6/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(540.5476910984107 576.084041596594)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="79.16" x="-83.16" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="83.16" x="-85.16" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="6/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+Ravensburg
+</text>
 </g>
 </g>
 </svg>

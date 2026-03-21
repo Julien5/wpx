@@ -161,7 +161,7 @@ impl MapView {
         document = document.add(svgpath);
 
         let mut points_group = svg::node::element::Group::new();
-        for point in &self.points {
+        for point in self.points.iter().rev() {
             point.render_in_group(&mut points_group);
         }
         document = document.add(points_group);

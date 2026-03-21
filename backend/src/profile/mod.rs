@@ -298,7 +298,7 @@ impl ProfileView {
         ceil - self.frame_stroke_width
     }
 
-    pub fn render(&self) -> RenderResult {
+    pub fn render_document(&self) -> RenderResult {
         let font_size = self.font_size();
         let mut world = Group::new()
             .set("id", "world")
@@ -447,7 +447,7 @@ impl ProfileView {
             self.SD.append(svgpath);
         }
         let mut points_group = elements::Group::new();
-        for point in &model.points {
+        for point in model.points.iter().rev() {
             point.render_in_group(&mut points_group);
         }
         self.SD.append(points_group);
@@ -520,11 +520,11 @@ impl ProfileView {
         let (_time_features, usersteps_centers) = self.add_time_ticks(usersteps);
 
         let mut points = Vec::new();
+        points.extend_from_slice(&background_features);
         for (index, center) in usersteps_centers.iter().enumerate() {
             let w = &usersteps[index];
             points.push(Self::userstep_dot(&center, w, index));
         }
-        points.extend_from_slice(&background_features);
 
         self.model = Some(ProfileModel {
             points,
@@ -658,7 +658,7 @@ impl CandidatesGenerator for ProfileGenerator {
                 Vec::new()
             }
             Kind::Controls => Self::header(feature),
-            Kind::GPXWaypoints => Self::header_offset(feature, 25f64),
+            Kind::GPXWaypoints => Self::header_offset(feature, 15f64),
             _ => {
                 let mut ret = self.cardinal(feature);
                 if feature.hardness > 2 {
@@ -854,7 +854,7 @@ pub fn profile_background(
     view.add_canvas();
     view.add_packets(packets, track);
     view.render_model();
-    view.render()
+    view.render_document()
 }
 
 pub fn profile_foreground(
@@ -870,5 +870,5 @@ pub fn profile_foreground(
     view.add_canvas();
     view.add_features(&background.rendered, &parameters.usersteps, track);
     view.render_model();
-    view.render()
+    view.render_document()
 }
