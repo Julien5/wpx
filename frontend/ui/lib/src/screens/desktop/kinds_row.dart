@@ -29,6 +29,15 @@ class _KindsRowState extends State<KindsRow> {
     }
   }
 
+  void onUserStepsCheck(bool? checked) {
+    KindsModel model = Provider.of(context, listen: false);
+    if (checked == null || checked == false) {
+      model.removeKind(Kind.userStep);
+    } else {
+      model.addKind(Kind.userStep);
+    }
+  }
+
   void onOSMCheck(bool? checked) {
     KindsModel model = Provider.of(context, listen: false);
     if (checked == null || checked == false) {
@@ -44,6 +53,7 @@ class _KindsRowState extends State<KindsRow> {
     bool hasControls = model.kinds.contains(Kind.controls);
     bool hasGPXWaypoints = model.kinds.contains(Kind.gpxWaypoints);
     bool hasCities = model.kinds.contains(Kind.cities);
+    bool hasUserSteps = model.kinds.contains(Kind.userStep);
     SizedBox hdiv = SizedBox(width: 10);
     return Row(
       children: [
@@ -63,6 +73,13 @@ class _KindsRowState extends State<KindsRow> {
         hdiv,
         Checkbox(tristate: true, value: hasCities, onChanged: onOSMCheck),
         Text("OSM"),
+        hdiv,
+        Checkbox(
+          tristate: true,
+          value: hasUserSteps,
+          onChanged: onUserStepsCheck,
+        ),
+        Text("Pacing"),
       ],
     );
   }

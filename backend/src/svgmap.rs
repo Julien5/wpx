@@ -426,12 +426,11 @@ pub fn map_foreground(
 ) -> RenderResult {
     log::info!("compute map foreground for parameters {:?}", parameters);
     let maker = MapMaker::init(track, parameters);
-    let view = maker.make_view_features(
-        track,
-        &background.rendered,
-        &parameters.usersteps,
-        debug_dir,
-    );
+    let usersteps = match parameters.kinds.contains(&Kind::UserStep) {
+        true => parameters.usersteps.clone(),
+        false => Vec::new(),
+    };
+    let view = maker.make_view_features(track, &background.rendered, &usersteps, debug_dir);
     RenderResult {
         svg: view.render(),
         rendered: background.rendered.clone(),

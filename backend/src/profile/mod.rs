@@ -868,7 +868,11 @@ pub fn profile_foreground(
         ProfileBoundingBox::from_track(track, &parameters.drange.start, &parameters.drange.end);
     let mut view = ProfileView::init(&profile_bbox, parameters, debug_dir);
     view.add_canvas();
-    view.add_features(&background.rendered, &parameters.usersteps, track);
+    let usersteps = match parameters.kinds.contains(&Kind::UserStep) {
+        true => parameters.usersteps.clone(),
+        false => Vec::new(),
+    };
+    view.add_features(&background.rendered, &usersteps, track);
     view.render_model();
     view.render_document()
 }
