@@ -209,6 +209,8 @@ pub struct _SegmentStatistics {
     pub elevation_gain: f64,
     pub distance_start: f64,
     pub distance_end: f64,
+    pub waypoints: Vec<Waypoint>,
+    pub controls: Vec<Waypoint>,
 }
 
 #[frb(mirror(TrackError), unignore)]

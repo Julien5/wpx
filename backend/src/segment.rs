@@ -6,6 +6,7 @@ use crate::point_collection::{
     Kind, Kinds, Packet, RenderInputParameters, RenderResult, SharedPacketProvider,
 };
 use crate::track::SharedTrack;
+use crate::waypoint::{waypoint_for_segment, Waypoint};
 use crate::{profile, svgmap};
 
 #[derive(Clone)]
@@ -27,6 +28,8 @@ pub struct SegmentStatistics {
     pub elevation_gain: f64,
     pub distance_start: f64,
     pub distance_end: f64,
+    pub waypoints: Vec<Waypoint>,
+    pub controls: Vec<Waypoint>,
 }
 
 impl SegmentData {
@@ -44,6 +47,44 @@ impl SegmentData {
         }
     }
 
+    pub fn statistics(&self) -> SegmentStatistics {
+        let track = &self.track;
+        let range = self.range();
+        let mut waypoints = waypoint_for_segment(&self.gpxwaypoints(), &self);
+        waypoints.sort_by_key(|w| w.track_index.unwrap());
+        let mut controls = waypoint_for_segment(&self.controls(), &self);
+        controls.sort_by_key(|w| w.track_index.unwrap());
+        SegmentStatistics {
+            length: self.segment.end - self.segment.start,
+            elevation_gain: track.elevation_gain_on_range(&range),
+            distance_start: track.distance(range.start),
+            distance_end: track.distance(range.end - 1),
+            waypoints,
+            controls,
+        }
+    }
+
+    fn kind_on_segment(&self, kind: &Kind) -> Vec<InputPoint> {
+        let lock = self.packet_provider.read();
+        let c = lock.unwrap().collection.get_vector(kind);
+        self.points_on_segment(&c)
+    }
+
+    fn points_on_segment(&self, points: &Vec<InputPoint>) -> Vec<InputPoint> {
+        // faster than range_cut (which iterates on all kinds, including OSM)
+        let mut ret = Vec::new();
+        for p in points {
+            for proj in &p.track_projections {
+                let d = proj.distance_on_track_to_projection;
+                if self.start() <= d && d <= self.end() {
+                    ret.push(p.clone());
+                    break;
+                }
+            }
+        }
+        ret
+    }
+
     pub fn id(&self) -> i32 {
         self.segment.id
     }
@@ -56,18 +97,16 @@ impl SegmentData {
         self.segment.end
     }
 
+    pub fn gpxwaypoints(&self) -> Vec<InputPoint> {
+        self.kind_on_segment(&Kind::GPXWaypoints)
+    }
+
     pub fn controls(&self) -> Vec<InputPoint> {
-        let lock = self.packet_provider.read();
-        let mut clone = lock.unwrap().collection.clone();
-        clone.range_cut(&self.range());
-        clone.get_vector(&Kind::Controls)
+        self.kind_on_segment(&Kind::Controls)
     }
 
     pub fn usersteps(&self) -> Vec<InputPoint> {
-        let lock = self.packet_provider.read();
-        let mut clone = lock.unwrap().collection.clone();
-        clone.range_cut(&self.range());
-        clone.get_vector(&Kind::UserStep)
+        self.kind_on_segment(&Kind::UserStep)
     }
 
     pub fn potential_controls(&self) -> Vec<InputPoint> {

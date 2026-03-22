@@ -549,25 +549,11 @@ impl Backend {
     }
 
     pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
-        let range = self.d().track.subrange(segment.start, segment.end);
-        assert!(range.end > 0);
-        SegmentStatistics {
-            length: self.d().track.distance(range.end - 1) - self.d().track.distance(range.start),
-            elevation_gain: self.d().track.elevation_gain_on_range(&range),
-            distance_start: self.d().track.distance(range.start),
-            distance_end: self.d().track.distance(range.end - 1),
-        }
+        self.make_segment_data(segment).statistics()
     }
 
     pub fn statistics(&self) -> SegmentStatistics {
-        let range = 0..self.d().track.len();
-        assert!(range.end > 0);
-        SegmentStatistics {
-            length: self.d().track.distance(range.end - 1) - self.d().track.distance(range.start),
-            elevation_gain: self.d().track.elevation_gain_on_range(&range),
-            distance_start: self.d().track.distance(range.start),
-            distance_end: self.d().track.distance(range.end - 1),
-        }
+        self.segment_statistics(&self.trackSegment())
     }
 }
 

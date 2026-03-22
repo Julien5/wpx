@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ui/src/models/kindsmodel.dart';
 import 'package:ui/src/models/root.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/routes.dart';
@@ -74,11 +75,18 @@ class _ControlStrings {
 
   _ControlStrings({required this.screenModel});
 
-  String? count() {
+  String? controlsCount() {
     if (!screenModel.hasDone(Job.controls)) {
       return null;
     }
-    return "${screenModel.controlsCount()}";
+    return "${screenModel.controlsCount()} controls";
+  }
+
+  String? waypointsCount() {
+    if (!screenModel.hasDone(Job.controls)) {
+      return null;
+    }
+    return "${screenModel.waypointsCount()} waypoints";
   }
 }
 
@@ -91,8 +99,12 @@ class ControlsCard extends StatelessWidget {
     _ControlStrings strings = _ControlStrings(screenModel: model);
     Widget inner = Column(
       children: [
-        SmallText(text: "Controls"),
-        EventWidget(target: Job.controls, forcedString: strings.count()),
+        SmallText(text: "Points"),
+        EventWidget(target: Job.gpx, forcedString: strings.waypointsCount()),
+        EventWidget(
+          target: Job.controls,
+          forcedString: strings.controlsCount(),
+        ),
       ],
     );
     return Card(elevation: 4, child: inner);
@@ -136,7 +148,12 @@ String _title(LoadScreenModel model) {
   return "Loading...";
 }
 
-class _BodyWidget extends StatelessWidget {
+class _BodyWidget extends StatefulWidget {
+  @override
+  State<_BodyWidget> createState() => _BodyWidgetState();
+}
+
+class _BodyWidgetState extends State<_BodyWidget> {
   void onOKPressed(BuildContext context) {
     try {
       Provider.of<SegmentModel>(context, listen: false);
@@ -148,6 +165,17 @@ class _BodyWidget extends StatelessWidget {
 
   void onHomePressed(BuildContext context) {
     gotoHome(context);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LoadScreenModel load = Provider.of(context);
+    KindsModel kinds = Provider.of(context);
+    if (load.doneAll()) {
+      kinds.statistics = load.statistics();
+    }
+    kinds.osmIsLoaded = load.hasFailed(Job.osm) == null;
   }
 
   @override

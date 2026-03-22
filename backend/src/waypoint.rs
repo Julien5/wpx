@@ -175,7 +175,7 @@ impl WaypointInfo {
     }
 }
 
-fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> Waypoints {
+pub fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> Waypoints {
     let mut waypoints = Vec::new();
     for p in points {
         for proj in &p.track_projections {

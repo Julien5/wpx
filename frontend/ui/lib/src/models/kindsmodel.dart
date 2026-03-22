@@ -18,6 +18,10 @@ class KindsModel with ChangeNotifier {
     Kind.mountains,
     Kind.villages,
   };
+
+  bool? osmIsLoaded;
+  SegmentStatistics? statistics;
+
   KindsModel();
 
   void addKind(Kind k) {

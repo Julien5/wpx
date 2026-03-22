@@ -55,23 +55,36 @@ class _KindsRowState extends State<KindsRow> {
     bool hasCities = model.kinds.contains(Kind.cities);
     bool hasUserSteps = model.kinds.contains(Kind.userStep);
     SizedBox hdiv = SizedBox(width: 10);
+
+    Function(bool?)? onControlCallback;
+    if (model.statistics != null && model.statistics!.controls.isNotEmpty) {
+      onControlCallback = onControlsCheck;
+    }
+    Function(bool?)? onWaypointsCallback;
+    if (model.statistics != null && model.statistics!.waypoints.isNotEmpty) {
+      onWaypointsCallback = onWaypointsCheck;
+    }
+    Function(bool?)? onOSMCallback;
+    if (model.osmIsLoaded != null && model.osmIsLoaded!) {
+      onOSMCallback = onOSMCheck;
+    }
     return Row(
       children: [
         Checkbox(
           tristate: true,
           value: hasControls,
-          onChanged: onControlsCheck,
+          onChanged: onControlCallback,
         ),
         Text("Controls"),
         hdiv,
         Checkbox(
           tristate: true,
           value: hasGPXWaypoints,
-          onChanged: onWaypointsCheck,
+          onChanged: onWaypointsCallback,
         ),
         Text("Waypoints"),
         hdiv,
-        Checkbox(tristate: true, value: hasCities, onChanged: onOSMCheck),
+        Checkbox(tristate: true, value: hasCities, onChanged: onOSMCallback),
         Text("OSM"),
         hdiv,
         Checkbox(

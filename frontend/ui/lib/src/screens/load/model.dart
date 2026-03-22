@@ -30,7 +30,6 @@ class LoadScreenModel extends ChangeNotifier {
   final RootModel rootModel;
   final EventModel events;
   final UserInput userInput;
-  List<bridge.Waypoint>? _controls;
   List<bridge.TrackPart>? _trackParts;
   bridge.SegmentStatistics? _statistics;
 
@@ -160,13 +159,8 @@ class LoadScreenModel extends ChangeNotifier {
     if (_isDisposed) {
       return;
     }
-    if (job == Job.gpx) {
+    if (job == Job.gpx || job == Job.controls) {
       _statistics = backend.statistics();
-    } else if (job == Job.controls) {
-      _controls = backend.getWaypoints(
-        segment: backend.trackSegment(),
-        kinds: {bridge.Kind.controls},
-      );
     }
 
     runningFuture = null;
@@ -230,7 +224,12 @@ class LoadScreenModel extends ChangeNotifier {
 
   int controlsCount() {
     assert(done.contains(Job.controls));
-    return _controls!.length;
+    return _statistics!.controls.length;
+  }
+
+  int waypointsCount() {
+    assert(done.contains(Job.controls));
+    return _statistics!.waypoints.length;
   }
 
   String _lastEvent = "";
