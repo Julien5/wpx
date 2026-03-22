@@ -93,22 +93,11 @@ impl WaypointInfo {
         let inter_distance = 0f64;
         let inter_elevation_gain = 0f64;
         let inter_slope = 0f64;
-        let data = WaypointInfoData {
-            distance,
-            elevation,
-            inter_distance,
-            inter_elevation_gain,
-            inter_slope,
-            name: name.clone(),
-            description: description.clone(),
-            origin: origin.clone(),
-        };
-        let gpx_name = Self::make_gpx_name(&data, parameters);
         WaypointInfo {
             description,
             distance,
             elevation,
-            gpx_name,
+            gpx_name: String::new(),
             inter_distance,
             inter_elevation_gain,
             inter_slope,
@@ -141,6 +130,19 @@ impl WaypointInfo {
             };
             (dx, dy, slope)
         };
+
+        let data = WaypointInfoData {
+            distance: ret.distance,
+            elevation: ret.elevation,
+            inter_distance: ret.inter_distance,
+            inter_elevation_gain: ret.inter_elevation_gain,
+            inter_slope: ret.inter_slope,
+            name: ret.name.clone(),
+            description: ret.description.clone(),
+            origin: ret.origin.clone(),
+        };
+        ret.gpx_name = Self::make_gpx_name(&data, parameters);
+
         ret
     }
     pub fn make_waypoint_infos(
