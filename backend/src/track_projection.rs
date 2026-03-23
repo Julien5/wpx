@@ -153,8 +153,8 @@ where
 
 pub struct ProjectionTrees {
     total_tree: locate::IndexedPointsTree,
-    simplified_tree: locate::IndexedPointsTree,
-    trees: Vec<locate::IndexedPointsTree>,
+    graphics_tree: locate::IndexedPointsTree,
+    subtrees: Vec<locate::IndexedPointsTree>,
 }
 
 impl ProjectionTrees {
@@ -178,14 +178,17 @@ impl ProjectionTrees {
             .collect()
     }
 
-    pub fn make(euclidean: &Vec<MercatorPoint>, simplified: &Vec<MercatorPoint>) -> Self {
+    pub fn make_appropriate(
+        euclidean: &Vec<MercatorPoint>,
+        simplified: &Vec<MercatorPoint>,
+    ) -> Self {
         Self {
             total_tree: locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len())),
-            simplified_tree: locate::IndexedPointsTree::from_track(
+            graphics_tree: locate::IndexedPointsTree::from_track(
                 &simplified,
                 &(0..simplified.len()),
             ),
-            trees: Self::make_appropriate_projection_trees(euclidean),
+            subtrees: Self::make_appropriate_projection_trees(euclidean),
         }
     }
 
@@ -199,7 +202,7 @@ impl ProjectionTrees {
         update_track_projection(point, euclidean, distance, elevation, &self.total_tree);
         let index = point.track_projections.first().unwrap().track_index;
         if is_close_to_track(&point) {
-            for tree in &self.trees {
+            for tree in &self.subtrees {
                 if !tree.range.contains(&index) {
                     update_track_projection(point, euclidean, distance, elevation, tree);
                 }
@@ -207,12 +210,12 @@ impl ProjectionTrees {
         }
     }
 
-    pub fn simple_project(
+    pub fn project_graphics(
         &self,
         point: &MercatorPoint,
         euclidean: &Vec<MercatorPoint>,
     ) -> TrackProjection {
-        locate::compute_track_projection_2d(&euclidean, &self.simplified_tree, point)
+        locate::compute_track_projection_2d(&euclidean, &self.graphics_tree, point)
     }
 }
 

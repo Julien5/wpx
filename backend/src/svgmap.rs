@@ -230,7 +230,7 @@ impl MapMaker {
         let euclidean = &w.euclidean;
         let bbox = &self.map_box;
         let size = &self.parameters.screen_size;
-        let on_track = track.project_simplified(&euclidean).euclidean;
+        let on_track = track.project_graphics(&euclidean).euclidean;
         let margin = self.margin();
         let mut p = to_graphics_coordinates(bbox, &euclidean, size.width, size.height, margin);
         let p_track = to_graphics_coordinates(bbox, &on_track, size.width, size.height, margin);

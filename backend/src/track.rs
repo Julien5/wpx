@@ -283,10 +283,10 @@ impl Track {
             }
         }
 
-        // Compute simplified euclidean using Douglas-Peucker
+        // Compute simplified euclidean using Douglas-Peucker (for the map)
         let simplified = Simplified::make(&euclidean, &_distance, &track_smooth_elevation);
 
-        let trees = ProjectionTrees::make(&euclidean, &simplified.xypoints);
+        let trees = ProjectionTrees::make_appropriate(&euclidean, &simplified.xypoints);
 
         let ret = Track {
             wgs84: wgs,
@@ -302,7 +302,7 @@ impl Track {
         Ok(ret)
     }
 
-    pub fn douglas_peucker(&self, epsilon: f64, range: &std::ops::Range<usize>) -> Vec<usize> {
+    pub fn douglas_peucker_z(&self, epsilon: f64, range: &std::ops::Range<usize>) -> Vec<usize> {
         let mut coords = Vec::new();
         for k in range.start..range.end {
             let x = self.distance(k);
@@ -326,8 +326,9 @@ impl Track {
         );
     }
 
-    pub fn project_simplified(&self, point: &MercatorPoint) -> TrackProjection {
-        self.trees.simple_project(point, &self.simplified.xypoints)
+    pub fn project_graphics(&self, point: &MercatorPoint) -> TrackProjection {
+        self.trees
+            .project_graphics(point, &self.simplified.xypoints)
     }
 
     pub fn project_map(&self, map: &mut InputPointMap) {
