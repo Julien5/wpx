@@ -5,6 +5,7 @@ use crate::{
     inputpoint::InputPoint,
     locate,
     mercator::MercatorPoint,
+    parameters::TrackPart,
     point_collection::{is_osm, Kind},
     track::Track,
 };
@@ -178,6 +179,21 @@ impl ProjectionTrees {
             .collect()
     }
 
+    fn make_projection_trees_from_parts(
+        euclidean: &Vec<MercatorPoint>,
+        parts: &Vec<TrackPart>,
+    ) -> Vec<locate::IndexedPointsTree> {
+        parts
+            .iter()
+            .scan(0usize, |offset, part| {
+                let start = *offset;
+                *offset += part.length;
+                Some(start..start + part.length)
+            })
+            .map(|range| locate::IndexedPointsTree::from_track(&euclidean, &range))
+            .collect()
+    }
+
     pub fn make_appropriate(
         euclidean: &Vec<MercatorPoint>,
         simplified: &Vec<MercatorPoint>,
@@ -189,6 +205,21 @@ impl ProjectionTrees {
                 &(0..simplified.len()),
             ),
             subtrees: Self::make_appropriate_projection_trees(euclidean),
+        }
+    }
+
+    pub fn make_from_parts(
+        euclidean: &Vec<MercatorPoint>,
+        simplified: &Vec<MercatorPoint>,
+        parts: &Vec<TrackPart>,
+    ) -> Self {
+        Self {
+            total_tree: locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len())),
+            graphics_tree: locate::IndexedPointsTree::from_track(
+                &simplified,
+                &(0..simplified.len()),
+            ),
+            subtrees: Self::make_projection_trees_from_parts(euclidean, parts),
         }
     }
 

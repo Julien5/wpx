@@ -286,7 +286,16 @@ impl Track {
         // Compute simplified euclidean using Douglas-Peucker (for the map)
         let simplified = Simplified::make(&euclidean, &_distance, &track_smooth_elevation);
 
-        let trees = ProjectionTrees::make_appropriate(&euclidean, &simplified.xypoints);
+        let trees = match parts.len() > 1 {
+            true => {
+                log::trace!("making projection trees from parts");
+                ProjectionTrees::make_from_parts(&euclidean, &simplified.xypoints, &parts)
+            }
+            false => {
+                log::trace!("making appropriate projection trees");
+                ProjectionTrees::make_appropriate(&euclidean, &simplified.xypoints)
+            }
+        };
 
         let ret = Track {
             wgs84: wgs,
