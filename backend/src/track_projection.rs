@@ -7,9 +7,11 @@ use crate::{
     mercator::MercatorPoint,
     parameters::TrackPart,
     point_collection::{is_osm, Kind},
+    split_ambiguity,
     track::Track,
 };
 
+use geo::SimplifyIdx;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -156,26 +158,53 @@ pub struct ProjectionTrees {
     total_tree: locate::IndexedPointsTree,
     graphics_tree: locate::IndexedPointsTree,
     subtrees: Vec<locate::IndexedPointsTree>,
+    parts: Vec<TrackPart>,
+}
+
+pub enum Resolution {
+    #[allow(dead_code)]
+    Graphics,
+    Topology,
 }
 
 impl ProjectionTrees {
-    fn find_appropriate_projection_ranges(
-        euclidean: &Vec<MercatorPoint>,
-    ) -> Vec<std::ops::Range<usize>> {
+    pub fn parts(&self) -> Vec<TrackPart> {
+        self.parts.clone()
+    }
+    pub fn make_parts(euclidean: &Vec<MercatorPoint>, resolution: &Resolution) -> Vec<TrackPart> {
         let start = 0;
         let end = euclidean.len();
-        let start_point = euclidean.first().unwrap();
-        let f = |index: &usize| -> f64 { start_point.d2(&euclidean[*index]) };
-        let extremity = find_global_max(start, end, f);
-        vec![0..extremity, extremity..end]
-    }
 
-    fn make_appropriate_projection_trees(
-        euclidean: &Vec<MercatorPoint>,
-    ) -> Vec<locate::IndexedPointsTree> {
-        Self::find_appropriate_projection_ranges(euclidean)
+        let coords: Vec<geo::Coord> = euclidean
             .iter()
-            .map(|range| locate::IndexedPointsTree::from_track(&euclidean, range))
+            .map(|p| geo::coord!(x: p.x(), y: p.y()))
+            .collect();
+        let line = geo::LineString::new(coords);
+        let epsilon = match resolution {
+            Resolution::Graphics => {
+                let start_point = euclidean.first().unwrap();
+                let distance_from_start =
+                    |index: &usize| -> f64 { start_point.d2(&euclidean[*index]) };
+                let far_index = find_global_max(start, end, distance_from_start);
+                let extend = distance_from_start(&far_index);
+                extend * 500f64 / 500_000f64
+            }
+            Resolution::Topology => 10_000f64,
+        };
+        let split_indices = line.simplify_idx(&epsilon);
+        log::trace!("topology: {} parts", split_indices.len() - 1);
+        let ranges: Vec<std::ops::Range<usize>> = split_indices
+            .windows(2)
+            .map(|window| window[0]..window[1])
+            .collect();
+        ranges
+            .iter()
+            .enumerate()
+            .map(|(index, range)| TrackPart {
+                name: format!("part-{}", index),
+                length: range.len(),
+                part_index: index,
+            })
             .collect()
     }
 
@@ -183,29 +212,10 @@ impl ProjectionTrees {
         euclidean: &Vec<MercatorPoint>,
         parts: &Vec<TrackPart>,
     ) -> Vec<locate::IndexedPointsTree> {
-        parts
+        split_ambiguity::parts_to_ranges(parts)
             .iter()
-            .scan(0usize, |offset, part| {
-                let start = *offset;
-                *offset += part.length;
-                Some(start..start + part.length)
-            })
             .map(|range| locate::IndexedPointsTree::from_track(&euclidean, &range))
             .collect()
-    }
-
-    pub fn make_appropriate(
-        euclidean: &Vec<MercatorPoint>,
-        simplified: &Vec<MercatorPoint>,
-    ) -> Self {
-        Self {
-            total_tree: locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len())),
-            graphics_tree: locate::IndexedPointsTree::from_track(
-                &simplified,
-                &(0..simplified.len()),
-            ),
-            subtrees: Self::make_appropriate_projection_trees(euclidean),
-        }
     }
 
     pub fn make_from_parts(
@@ -220,6 +230,7 @@ impl ProjectionTrees {
                 &(0..simplified.len()),
             ),
             subtrees: Self::make_projection_trees_from_parts(euclidean, parts),
+            parts: parts.clone(),
         }
     }
 

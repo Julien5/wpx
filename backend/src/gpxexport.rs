@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use std::collections::BTreeMap;
+
 use crate::track;
 use crate::waypoint;
 use crate::waypoint::Waypoints;
@@ -36,18 +38,34 @@ fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     ret
 }
 
-pub fn generate(track: &track::Track, waypoints: &Waypoints) -> Vec<u8> {
-    let mut G = gpx::Gpx::default();
-    G.version = gpx::GpxVersion::Gpx11;
+pub fn generate(track: &track::Track, groups: &Vec<Waypoints>) -> BTreeMap<String, Vec<u8>> {
+    let mut ret: BTreeMap<String, Vec<u8>> = BTreeMap::new();
+    let track = {
+        let mut G = gpx::Gpx::default();
+        G.version = gpx::GpxVersion::Gpx11;
 
-    let segment = track.export_to_gpx();
-    let mut gpxtrack = gpx::Track::new();
-    gpxtrack.name = Some(format!("{:.0} km", track.total_distance() / 1000f64));
-    gpxtrack.segments.push(segment);
-    G.tracks.push(gpxtrack);
-    G.waypoints = waypoints.iter().map(|w| to_gpx(w)).collect();
+        let segment = track.export_to_gpx();
+        let mut gpxtrack = gpx::Track::new();
+        gpxtrack.name = Some(format!("{:.0} km", track.total_distance() / 1000f64));
+        gpxtrack.segments.push(segment);
+        G.tracks.push(gpxtrack);
+        let mut ret: Vec<u8> = Vec::new();
+        gpx::write(&G, &mut ret).unwrap();
+        ("track.gpx".to_string(), ret)
+    };
+    ret.insert(track.0, track.1);
 
-    let mut ret: Vec<u8> = Vec::new();
-    gpx::write(&G, &mut ret).unwrap();
+    for (index, group) in groups.iter().enumerate() {
+        let waypoints = {
+            let mut G = gpx::Gpx::default();
+            G.version = gpx::GpxVersion::Gpx11;
+            G.waypoints = group.iter().map(|w| to_gpx(w)).collect();
+
+            let mut ret: Vec<u8> = Vec::new();
+            gpx::write(&G, &mut ret).unwrap();
+            (format!("pacing-{}.gpx", index + 1), ret)
+        };
+        ret.insert(waypoints.0, waypoints.1);
+    }
     ret
 }

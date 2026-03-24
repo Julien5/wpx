@@ -30,6 +30,7 @@ use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
 use crate::render;
 use crate::segment::SegmentData;
+use crate::split_ambiguity;
 use crate::track::SharedTrack;
 use crate::track::Track;
 use crate::track_projection::is_close_to_track;
@@ -334,26 +335,34 @@ impl Backend {
         log::info!("generated {} pdf bytes", ret.len());
         ret
     }
-    pub fn generateGpx(&self) -> Vec<u8> {
-        let mut gpxpoints = Vec::new();
-        let v = self
+    pub fn generateGpx(&self) -> BTreeMap<String, Vec<u8>> {
+        let usersteps = self
             .d()
             .packet_provider
             .read()
             .unwrap()
             .collection
             .get_vector(&Kind::UserStep);
-        v.iter().for_each(|p| {
-            assert!(!p.track_projections.is_empty());
-        });
-        gpxpoints.extend_from_slice(&v);
-        let waypoints = self.export_points(&gpxpoints);
-        gpxexport::generate(&self.d().track, &waypoints)
+        log::trace!("{} parts", self.d().track.parts.len());
+        log::trace!("parts:{:?}", self.d().track.parts);
+        let split_indices = split_ambiguity::user_steps_split(&usersteps, &self.d().track);
+        log::trace!("track len: {}", self.d().track.len());
+        log::trace!("{} splits", split_indices.len());
+        log::trace!("splits:{:?}", split_indices);
+        let waypoints = self.export_points(&usersteps);
+        let groups = waypoint::group_waypoints(&waypoints, &split_indices);
+        if split_indices.is_empty() {
+            debug_assert_eq!(groups.len(), 1);
+            debug_assert_eq!(groups.first().unwrap().len(), waypoints.len());
+        }
+        debug_assert!(!groups.is_empty());
+        gpxexport::generate(&self.d().track, &groups)
     }
     pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
-        let gpx = self.generateGpx();
+        let mut map = self.generateGpx();
         let pdf = self.generatePdf(kinds).await;
-        zipexport::generate(&gpx, &pdf)
+        map.insert("route.pdf".to_string(), pdf);
+        zipexport::generate(map)
     }
 
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
@@ -762,19 +771,21 @@ mod tests {
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
         parameters.map_options.max_area_ratio = 0.15f64;
         backend.set_parameters(&parameters);
-        let svg = backend.generateGpx();
-        let reffilename = std::format!("data/ref/route.gpx");
-        println!("test {}", reffilename);
-        let data = if std::fs::exists(&reffilename).unwrap() {
-            std::fs::read(&reffilename).unwrap()
-        } else {
-            Vec::new()
-        };
-        let tmpfilename = std::format!("/tmp/route.gpx");
-        std::fs::write(&tmpfilename, svg.clone()).unwrap();
-        if data != svg {
-            println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
+        let gpx = backend.generateGpx();
+        for (filename, filecontent) in gpx {
+            let tmpfilename = std::format!("/tmp/{}", filename);
+            let reffilename = std::format!("data/ref/gpx/{}", filename);
+            println!("test {}", reffilename);
+            let data = if std::fs::exists(&reffilename).unwrap() {
+                std::fs::read(&reffilename).unwrap()
+            } else {
+                Vec::new()
+            };
+            std::fs::write(&tmpfilename, filecontent.clone()).unwrap();
+            if data != filecontent {
+                println!("test failed: {} {}", tmpfilename, reffilename);
+                assert!(false);
+            }
         }
     }
 

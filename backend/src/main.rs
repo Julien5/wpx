@@ -290,14 +290,11 @@ async fn main() -> anyhow::Result<()> {
     log::info!("make: {}", pdfname);
     std::fs::write(pdfname, &pdfbytes).expect("Could not write pdf.");
 
-    let gpxbytes = backend.generateGpx();
-    let gpxname = format!(
-        "{}/{}-waypoints.gpx",
-        outdir,
-        gpxpath.file_stem().unwrap().to_str().unwrap()
-    );
-    log::info!("make: {}", gpxname);
-    std::fs::write(gpxname, &gpxbytes).expect("Could not write gpx.");
-
+    let map = backend.generateGpx();
+    for (filename, filecontent) in map {
+        let gpxname = format!("{}/{}", outdir, filename);
+        log::info!("make: {}", gpxname);
+        std::fs::write(gpxname, &filecontent).expect("Could not write gpx.");
+    }
     Ok(())
 }

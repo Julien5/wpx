@@ -240,3 +240,30 @@ pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<W
 pub fn table(segment: &SegmentData, points: &Vec<InputPoint>) -> Vec<Waypoint> {
     waypoint_for_segment(&points, segment)
 }
+
+pub fn group_waypoints(waypoints: &[Waypoint], split_indices: &[usize]) -> Vec<Vec<Waypoint>> {
+    let mut ranges: Vec<(usize, usize)> = Vec::with_capacity(split_indices.len() + 1);
+    let mut start = 0;
+
+    for &split in split_indices {
+        let end = start + waypoints[start..].partition_point(|w| w.track_index.unwrap() < split);
+        ranges.push((start, end));
+        start = end;
+    }
+    ranges.push((start, waypoints.len()));
+
+    // Merge small groups into the previous one
+    let mut merged: Vec<(usize, usize)> = Vec::with_capacity(ranges.len());
+    for (start, end) in ranges {
+        if end - start < 3 && !merged.is_empty() {
+            merged.last_mut().unwrap().1 = end;
+        } else {
+            merged.push((start, end));
+        }
+    }
+
+    merged
+        .iter()
+        .map(|&(s, e)| waypoints[s..e].to_vec())
+        .collect()
+}

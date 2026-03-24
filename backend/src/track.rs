@@ -15,6 +15,7 @@ use crate::parameters::TrackPart;
 use crate::tile;
 use crate::tile::Tiles;
 use crate::track_projection::ProjectionTrees;
+use crate::track_projection::Resolution;
 use crate::track_projection::TrackProjection;
 
 use super::elevation;
@@ -76,6 +77,10 @@ pub type WGS84BoundingBox = super::bbox::BoundingBox;
 impl Track {
     pub fn len(&self) -> usize {
         self.wgs84.len()
+    }
+
+    pub fn trees_parts(&self) -> Vec<TrackPart> {
+        self.trees.parts()
     }
 
     pub fn tiles(&self, start: f64, end: f64) -> Tiles {
@@ -293,7 +298,8 @@ impl Track {
             }
             false => {
                 log::trace!("making appropriate projection trees");
-                ProjectionTrees::make_appropriate(&euclidean, &simplified.xypoints)
+                let parts = ProjectionTrees::make_parts(&euclidean, &Resolution::Topology);
+                ProjectionTrees::make_from_parts(&euclidean, &simplified.xypoints, &parts)
             }
         };
 
