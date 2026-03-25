@@ -30,7 +30,7 @@ class _WheelScaffold extends StatelessWidget {
     );
     List<Widget> children = [
       statisticsCard,
-      Center(child: ExportButton(text: "export zip", type: Type.zip)),
+      Center(child: ExportButton(text: "export zip")),
     ];
 
     return Scaffold(

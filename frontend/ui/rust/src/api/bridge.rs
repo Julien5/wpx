@@ -272,12 +272,6 @@ impl Bridge {
         self.backend.load_ordered(parts).await
     }
 
-    pub async fn generatePdf(&mut self, kinds: &HashSet<Kind>) -> Vec<u8> {
-        self.backend.generatePdf(kinds).await
-    }
-    pub async fn generateGpx(&mut self) -> Vec<u8> {
-        self.backend.generateGpx()
-    }
     pub async fn generateZip(&mut self, kinds: &HashSet<Kind>) -> Vec<u8> {
         self.backend.generateZip(kinds).await
     }

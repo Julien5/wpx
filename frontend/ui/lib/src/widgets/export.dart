@@ -41,20 +41,20 @@ FileType fileType(Type type) {
   return FileType.any;
 }
 
-void fileSave(List<int> data, Type type) async {
+void fileSave(List<int> data) async {
   if (kIsWeb) {
     await FileSaver.instance.saveFile(
       name: "route", // on the web, the extension is set automatically...
       bytes: Uint8List.fromList(data),
-      fileExtension: fileExtension(type),
-      mimeType: mimeType(type),
-      customMimeType: fileExtension(type),
+      fileExtension: fileExtension(Type.zip),
+      mimeType: mimeType(Type.zip),
+      customMimeType: fileExtension(Type.zip),
     );
   } else if (Platform.isLinux) {
     var filepath = await FilePicker.platform.saveFile(
-      fileName: "route.${fileExtension(type)}", // .. but not on linux
-      type: fileType(type),
-      allowedExtensions: [fileExtension(type)],
+      fileName: "route.${fileExtension(Type.zip)}", // .. but not on linux
+      type: fileType(Type.zip),
+      allowedExtensions: [fileExtension(Type.zip)],
       bytes: Uint8List.fromList(data),
     );
     if (filepath == null) {
@@ -64,28 +64,14 @@ void fileSave(List<int> data, Type type) async {
   }
 }
 
-Future<List<int>> generate(
-  bridge.Bridge backend,
-  Type type,
-  Kinds kinds,
-) async {
-  if (type == Type.pdf) {
-    var data = await backend.generatePdf(kinds: kinds);
-    return data;
-  }
-  if (type == Type.zip) {
-    var data = await backend.generateZip(kinds: kinds);
-    return data;
-  }
-  assert(type == Type.gpx);
-  var data = await backend.generateGpx();
+Future<List<int>> generate(bridge.Bridge backend, Kinds kinds) async {
+  var data = await backend.generateZip(kinds: kinds);
   return data;
 }
 
 class ExportButton extends StatefulWidget {
-  final Type type;
   final String text;
-  const ExportButton({super.key, required this.type, required this.text});
+  const ExportButton({super.key, required this.text});
 
   @override
   State<ExportButton> createState() => _ExportButtonState();
@@ -102,8 +88,8 @@ class _ExportButtonState extends State<ExportButton> {
       busy = true;
     });
     KindsModel kindsModel = Provider.of(context, listen: false);
-    var data = await generate(backend, widget.type, kindsModel.kinds);
-    fileSave(data, widget.type);
+    var data = await generate(backend, kindsModel.kinds);
+    fileSave(data);
     setState(() {
       busy = false;
     });

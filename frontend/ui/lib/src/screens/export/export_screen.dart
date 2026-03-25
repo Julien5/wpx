@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
 
 enum Type { pdf, gpx }
 
@@ -49,18 +47,4 @@ void fileSave(List<int> data, Type type) async {
     }
     await Process.run('xdg-open', [filepath]);
   }
-}
-
-Future<List<int>> generate(
-  bridge.Bridge backend,
-  Type type,
-  Kinds kinds,
-) async {
-  if (type == Type.pdf) {
-    var data = await backend.generatePdf(kinds: kinds);
-    return data;
-  }
-  assert(type == Type.gpx);
-  var data = await backend.generateGpx();
-  return data;
 }

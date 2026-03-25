@@ -188,7 +188,7 @@ class _SidePanelState extends State<SidePanel> {
       ),
       div,
       SizedBox(height: 20),
-      Center(child: ExportButton(text: "export zip", type: Type.zip)),
+      Center(child: ExportButton(text: "export zip")),
     ];
     return ConstrainedBox(
       constraints: BoxConstraints(
