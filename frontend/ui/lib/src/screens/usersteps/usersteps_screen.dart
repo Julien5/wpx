@@ -42,6 +42,7 @@ class _TextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Set<Kind> usersteps = {Kind.userStep};
     SegmentModel model = Provider.of<SegmentModel>(context);
+    Provider.of<ParameterModel>(context);
     List<Waypoint> waypoints = model.someWaypoints(usersteps);
     String text =
         waypoints.isEmpty ? "no waypoints" : "${waypoints.length} waypoints";
