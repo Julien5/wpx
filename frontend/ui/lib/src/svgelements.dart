@@ -477,7 +477,7 @@ class TextElement extends SvgElement {
       text: TextSpan(
         text: text,
         style: TextStyle(
-          fontFamily: "LibertinusSans",
+          fontFamily: "LibertinusSerif",
           color: Colors.black,
           fontSize: fontSize,
           fontWeight: fontWeight,
