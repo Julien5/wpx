@@ -5,16 +5,12 @@ const LIBERTINUS_FONT_FILES: &[&str] = &[
 ];
 
 mod download_font {
-    fn get_client() -> reqwest::Client {
-        reqwest::Client::new()
-    }
-
     #[cfg(target_arch = "wasm32")]
     pub async fn get(file: &str) -> Vec<u8> {
         log::trace!("download font data {}", file);
         use crate::pdf::get_font_url;
         let url = get_font_url(file);
-        let client = get_client();
+        let client = reqwest::Client::new();
         let response = client.get(url).send().await.unwrap();
         let data = response.bytes().await;
         let data = data.ok();

@@ -79,7 +79,7 @@ class GPXTable extends StatelessWidget {
 
   Widget buildData(List<Waypoint> waypoints) {
     if (waypoints.isEmpty) {
-      return Center(child: const Text("No waypoints"));
+      return Center(child: const Text("No point."));
     }
     return DataTable(
       // 1. Define the Columns

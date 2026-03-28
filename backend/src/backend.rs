@@ -350,10 +350,11 @@ impl Backend {
         log::trace!("splits:{:?}", split_indices);
         let waypoints = self.export_points(&usersteps);
         let groups = waypoint::group_waypoints(&waypoints, &split_indices);
-        if split_indices.is_empty() {
-            debug_assert_eq!(groups.len(), 1);
-            debug_assert_eq!(groups.first().unwrap().len(), waypoints.len());
+        let mut check_sum = 0;
+        for g in &groups {
+            check_sum += g.len();
         }
+        debug_assert_eq!(check_sum, waypoints.len());
         debug_assert!(!groups.is_empty());
         gpxexport::generate(&self.d().track, &groups)
     }

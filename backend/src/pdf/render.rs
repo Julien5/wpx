@@ -7,8 +7,8 @@ use crate::backend::Backend;
 use crate::parameters::UserStepsOptions;
 use crate::point_collection::Kinds;
 use crate::svgtable::waypoints_to_svg;
+use crate::waypoint;
 use crate::waypoint::decimate;
-use crate::{track, waypoint};
 
 use pdf_writer::{Chunk, Content, Finish, Name, Pdf, Rect, Ref};
 use svg2pdf::usvg::{self, Tree};
@@ -17,8 +17,7 @@ use svg2pdf::ConversionOptions;
 use std::collections::HashMap;
 use std::fs;
 
-pub struct TableInfo<'a> {
-    pub track: &'a track::Track,
+pub struct TableInfo {
     pub waypoints: Vec<waypoint::Waypoint>,
     pub user_steps_options: UserStepsOptions,
     pub elevation_gain: f64,
@@ -217,7 +216,7 @@ impl PdfComposer {
             Self::scale_map(&map, profile_height * 1.25, profile_height * 1.25);
         let (table_width, table_height) =
             Self::fit_table(&points, CONTENT_WIDTH - CELL_GAP - map_width);
-        let separator_height = map_height.max(table_height);
+        let _separator_height = map_height.max(table_height);
 
         let SvgGraphic {
             entry: profile_entry,
@@ -392,7 +391,6 @@ pub async fn make_pdf_document(backend: &Backend, kinds: &Kinds) -> Vec<u8> {
         let user_steps_options = backend.get_parameters().user_steps_options.clone();
         let elevation_gain = backend.d().track.elevation_gain_on_range(&range);
         let table_info = TableInfo {
-            track: &backend.d().track,
             waypoints: waypoints.clone(),
             user_steps_options,
             elevation_gain,

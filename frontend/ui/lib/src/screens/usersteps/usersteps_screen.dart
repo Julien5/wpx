@@ -45,7 +45,9 @@ class _TextWidget extends StatelessWidget {
     Provider.of<ParameterModel>(context);
     List<Waypoint> waypoints = model.someWaypoints(usersteps);
     String text =
-        waypoints.isEmpty ? "no waypoints" : "${waypoints.length} waypoints";
+        waypoints.isEmpty
+            ? "no pacing points"
+            : "${waypoints.length} pacing points";
     return Center(child: Text(text));
   }
 }

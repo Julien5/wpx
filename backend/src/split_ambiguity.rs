@@ -86,9 +86,21 @@ pub fn user_steps_split(steps: &Vec<InputPoint>, track: &Track) -> Vec<usize> {
         let candidate = Range { start, end };
         let namb = ambiguities_count(&points, &candidate);
         if namb > namb_max {
-            let good = good_range.unwrap().clone();
-            clear_range(&mut points, &good);
-            good_ranges.push(good);
+            if good_range.is_some() {
+                let good = good_range.unwrap().clone();
+                clear_range(&mut points, &good);
+                good_ranges.push(good);
+            } else {
+                log::warn!(
+                    "candidate {:?} is not good, but we have no other [{:.0}-{:.0}]:",
+                    candidate,
+                    track.distance(candidate.start) / 1000f64,
+                    track.distance(candidate.end) / 1000f64,
+                );
+                let good = candidate;
+                clear_range(&mut points, &good);
+                good_ranges.push(good);
+            }
             good_range = None;
         } else {
             good_range = Some(candidate.clone());

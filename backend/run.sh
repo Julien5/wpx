@@ -73,7 +73,7 @@ function pdf() {
 		 --map-max-area-ratio 1.0 \
 		 ${options} \
 		 "${file}"
-	${TYPST} compile /tmp/document.typst
+	cp /tmp/wpx/*.pdf /tmp/document.pdf 
 	echo xdg-open /tmp/document.pdf 
 }
 
