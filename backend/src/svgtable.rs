@@ -1,3 +1,4 @@
+use crate::pdf::render::TableInfo;
 use crate::{label_placement::features::text_width, waypoint::WaypointInfo};
 use chrono::DateTime;
 
@@ -22,15 +23,40 @@ pub fn name_description(w: &WaypointInfo, max_width: f64) -> String {
     ret
 }
 
-pub fn waypoints_to_svg(waypoints: &[WaypointInfo], row_height_mm: f64) -> String {
+pub fn waypoints_to_svg(table_info: TableInfo, row_height_mm: f64) -> String {
+    let waypoint_infos: Vec<_> = table_info
+        .waypoints
+        .iter()
+        .map(|w| w.get_info().clone())
+        .collect();
+
     let show_name = true; //waypoints.iter().any(|w| !w.name.is_empty());
     let show_desc = false; //waypoints.iter().any(|w| !w.description.is_empty());
 
+    let user_step_info = if table_info.user_steps_options.step_distance.is_some() {
+        format!(
+            "(pacing every {:.0} km)",
+            table_info.user_steps_options.step_distance.unwrap() / 1000f64
+        )
+    } else if table_info.user_steps_options.step_elevation_gain.is_some() {
+        format!(
+            "(pacing every {:.0} m)",
+            table_info.user_steps_options.step_elevation_gain.unwrap()
+        )
+    } else {
+        String::new()
+    };
+    let info_line = format!(
+        "{:.0} m elevation gain {}",
+        table_info.elevation_gain, user_step_info
+    );
+    let info_line_w = text_width(&info_line, FONT_SIZE, HEADER_FONT_WEIGHT, FONT_STYLE);
     let col_name_w = if show_name {
-        let data_w = waypoints
+        let data_w = waypoint_infos
             .iter()
             .map(|w| text_width(&w.name, FONT_SIZE, FONT_WEIGHT, FONT_STYLE))
             .fold(0.0_f64, f64::max)
+            .max(info_line_w)
             .min(70f64);
         let header_w = text_width("NAME", FONT_SIZE, HEADER_FONT_WEIGHT, FONT_STYLE);
         data_w.max(header_w) + 2.0 * PADDING
@@ -39,7 +65,7 @@ pub fn waypoints_to_svg(waypoints: &[WaypointInfo], row_height_mm: f64) -> Strin
     };
 
     let col_desc_w = if show_desc {
-        let data_w = waypoints
+        let data_w = waypoint_infos
             .iter()
             .map(|w| text_width(&w.description, FONT_SIZE, FONT_WEIGHT, FONT_STYLE))
             .fold(0.0_f64, f64::max);
@@ -56,7 +82,7 @@ pub fn waypoints_to_svg(waypoints: &[WaypointInfo], row_height_mm: f64) -> Strin
     let total_width = x_desc + col_desc_w;
 
     // +1 row for the header
-    let total_height = row_height_mm * (waypoints.len() + 1) as f64;
+    let total_height = row_height_mm * (waypoint_infos.len() + 1) as f64;
 
     let mut svg = format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg"
@@ -86,15 +112,12 @@ pub fn waypoints_to_svg(waypoints: &[WaypointInfo], row_height_mm: f64) -> Strin
     ));
     svg.push('\n');
 
-    // "NAME" — left-aligned in name column
-    if show_name {
-        /*let name_x = x_name + PADDING;
-        svg.push_str(&format!(
-            r##"  <text x="{name_x}" y="{header_y_baseline}" text-anchor="start" font-weight="{HEADER_FONT_WEIGHT}">NAME</text>"##
+    let name_x = x_name + PADDING;
+
+    svg.push_str(&format!(
+        r##"  <text x="{name_x}" y="{header_y_baseline}" text-anchor="start" font-weight="{HEADER_FONT_WEIGHT}">{info_line}</text>"##
         ));
-        svg.push('\n');
-        */
-    }
+    svg.push('\n');
 
     // "DESCRIPTION" — left-aligned in description column
     if show_desc {
@@ -106,7 +129,7 @@ pub fn waypoints_to_svg(waypoints: &[WaypointInfo], row_height_mm: f64) -> Strin
     }
 
     // --- Data rows (offset by one row_height_mm) ---
-    for (i, wp) in waypoints.iter().enumerate() {
+    for (i, wp) in waypoint_infos.iter().enumerate() {
         let y_top = (i + 1) as f64 * row_height_mm;
         let y_baseline = y_top + row_height_mm * 0.72;
 

@@ -4,6 +4,7 @@ use euclid::Size2D;
 
 use crate::backend::Backend;
 
+use crate::parameters::UserStepsOptions;
 use crate::point_collection::Kinds;
 use crate::svgtable::waypoints_to_svg;
 use crate::waypoint::decimate;
@@ -16,9 +17,15 @@ use svg2pdf::ConversionOptions;
 use std::collections::HashMap;
 use std::fs;
 
-fn points_table_svg(_track: &track::Track, waypoints: &Vec<waypoint::Waypoint>) -> String {
-    let infos: Vec<_> = waypoints.iter().map(|w| w.get_info().clone()).collect();
-    waypoints_to_svg(&infos, 3.25f64)
+pub struct TableInfo<'a> {
+    pub track: &'a track::Track,
+    pub waypoints: Vec<waypoint::Waypoint>,
+    pub user_steps_options: UserStepsOptions,
+    pub elevation_gain: f64,
+}
+
+fn points_table_svg(table_info: TableInfo) -> String {
+    waypoints_to_svg(table_info, 3.25f64)
 }
 
 const PAGE_WIDTH: f32 = 595.2756;
@@ -381,9 +388,16 @@ pub async fn make_pdf_document(backend: &Backend, kinds: &Kinds) -> Vec<u8> {
             kinds.clone(),
         );
         let [rendered_map, rendered_profile]: [_; 2] = both.try_into().unwrap();
-        let waypoints_table = &rendered_profile.waypoints;
-        let waypoints_table = decimate(&segment.segment, &waypoints_table, 15);
-        let table_svg = points_table_svg(&backend.d().track, &waypoints_table);
+        let waypoints = decimate(&segment.segment, &rendered_profile.waypoints, 15);
+        let user_steps_options = backend.get_parameters().user_steps_options.clone();
+        let elevation_gain = backend.d().track.elevation_gain_on_range(&range);
+        let table_info = TableInfo {
+            track: &backend.d().track,
+            waypoints: waypoints.clone(),
+            user_steps_options,
+            elevation_gain,
+        };
+        let table_svg = points_table_svg(table_info);
         if debug {
             let f = format!("/tmp/segment-{}.svg", segment.id());
             fs::write(&f, &rendered_profile.svg).unwrap();
