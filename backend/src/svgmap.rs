@@ -345,7 +345,7 @@ impl MapMaker {
         set_attr(
             &mut attributes,
             "viewBox",
-            format!("(0, 0, {}, {})", size.width, size.height).as_str(),
+            format!("0, 0, {}, {}", size.width, size.height).as_str(),
         );
         let mut points = features.clone();
         for w in usersteps {
