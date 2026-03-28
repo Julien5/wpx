@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +32,7 @@ List<double> speedSliderValues() {
 
 class _OverviewWidgetState extends State<OverviewWidget> {
   DateTime? startTime;
+  DateTime? endTime;
   double? speed;
   @override
   void initState() {
@@ -72,13 +74,40 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     });
   }
 
-  Future<void> _selectTime(BuildContext context) async {
+  Future<void> _selectStartDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    // Guard against using the BuildContext after an async gap
+    if (picked != null) {
+      startTime = DateTime(
+        picked.year,
+        picked.month,
+        picked.day,
+        startTime!.hour,
+        startTime!.minute,
+      );
+      writeModel();
+    }
+  }
+
+  Future<void> _selectStartTime(BuildContext context) async {
     // see here
     // https://stackoverflow.com/questions/66023387/flutter-how-to-use-timepickerthemedata-properly
     // to change the colors of the time picker.
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: startTime!.hour, minute: startTime!.minute),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
     );
 
     // Guard against using the BuildContext after an async gap
@@ -94,6 +123,86 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     }
   }
 
+  DateTime bestEndTime(
+    DateTime start,
+    double distance,
+    double initSpeed,
+    int hour,
+    int minute,
+  ) {
+    DateTime? best;
+    double bestDiff = double.infinity;
+
+    // Search a reasonable range of days around the start date
+    for (int dayOffset = 0; dayOffset < 30; dayOffset++) {
+      final candidate = DateTime(
+        start.year,
+        start.month,
+        start.day + dayOffset,
+        hour,
+        minute,
+      );
+      final seconds = candidate.difference(start).inSeconds;
+      if (seconds <= 0) continue;
+
+      final speed = distance / seconds;
+      final diff = (speed - initSpeed).abs();
+      debugPrint("speed candidate:$candidate => speed=$speed => diff=$diff");
+
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        best = candidate;
+      }
+    }
+    debugPrint("speed best:$best");
+
+    return best ?? DateTime(start.year, start.month, start.day, hour, minute);
+  }
+
+  Future<void> _selectEndTime(BuildContext context, DateTime init) async {
+    // see here
+    // https://stackoverflow.com/questions/66023387/flutter-how-to-use-timepickerthemedata-properly
+    // to change the colors of the time picker.
+    SegmentModel segmentModel = Provider.of(context, listen: false);
+
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: init.hour, minute: init.minute),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
+    // Guard against using the BuildContext after an async gap
+    if (picked != null) {
+      SegmentStatistics stat = segmentModel.statistics();
+      double distance = stat.distanceEnd - stat.distanceStart;
+      DateTime endTime = bestEndTime(
+        startTime!,
+        distance,
+        speed!,
+        picked.hour,
+        picked.minute,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      int seconds = endTime.difference(startTime!).inSeconds;
+      if (seconds <= 0) {
+        return;
+      }
+      speed = distance / seconds;
+      // max at 50kmh
+      speed = min(speed!, 50000 / 3600);
+      writeModel();
+    }
+  }
+
   void onSpeedChanged(double newSpeed) {
     developer.log("new speed: $newSpeed");
     speed = newSpeed;
@@ -102,7 +211,9 @@ class _OverviewWidgetState extends State<OverviewWidget> {
   }
 
   void openSpeedDialog() {
-    List<double> values = speedSliderValues();
+    List<double> stdValues = speedSliderValues();
+    stdValues.add(speed!);
+    List<double> values = stdValues.toSet().toList()..sort();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -156,6 +267,15 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     );
   }
 
+  DateTime roundToMinute(DateTime dt) {
+    if (dt.second >= 30 || dt.millisecond >= 500) {
+      return dt
+          .copyWith(second: 0, millisecond: 0, microsecond: 0)
+          .add(const Duration(minutes: 1));
+    }
+    return dt.copyWith(second: 0, millisecond: 0, microsecond: 0);
+  }
+
   @override
   Widget build(BuildContext ctx) {
     SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
@@ -165,16 +285,18 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
     double kmh = parameterModel.parameters().speed * 3600 / 1000;
-    String startTimeText = "?";
-    String endTimeText = "?";
-    if (startTime != null) {
-      startTimeText = DateFormat('HH:mm').format(startTime!);
-      Duration duration = Duration(
-        seconds: (statistics.distanceEnd / parameters.speed).round(),
-      );
-      DateTime endTime = startTime!.add(duration);
-      endTimeText = DateFormat('HH:mm').format(endTime);
+
+    if (startTime == null) {
+      return Text("loading..");
     }
+
+    String startDateText = DateFormat('dd/MM').format(startTime!);
+    String startTimeText = DateFormat('HH:mm').format(startTime!);
+    Duration duration = Duration(
+      seconds: (statistics.distanceEnd / parameters.speed).round(),
+    );
+    DateTime endTime = startTime!.add(duration);
+    String endTimeText = DateFormat('HH:mm').format(roundToMinute(endTime));
 
     String pacingPointsText = getPacingPointText(parameters);
 
@@ -190,9 +312,17 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         TableRow(
           children: [
             SmallText(text: "Start time"),
-            SmallButton(
-              text: startTimeText,
-              callback: () => _selectTime(context),
+            Row(
+              children: [
+                SmallButton(
+                  text: startDateText,
+                  callback: () => _selectStartDate(context),
+                ),
+                SmallButton(
+                  text: startTimeText,
+                  callback: () => _selectStartTime(context),
+                ),
+              ],
             ),
           ],
         ),
@@ -206,7 +336,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
           ],
         ),
         TableRow(
-          children: [SmallText(text: "End time"), SmallText(text: endTimeText)],
+          children: [
+            SmallText(text: "End time"),
+            SmallButton(
+              text: endTimeText,
+              callback: () => _selectEndTime(context, endTime),
+            ),
+          ],
         ),
         TableRow(
           children: [
