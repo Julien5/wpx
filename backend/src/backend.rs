@@ -23,12 +23,10 @@ use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
 use crate::parameters::UserStepsOptions;
-use crate::pdf;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
-use crate::render;
 use crate::segment::SegmentData;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
@@ -330,8 +328,9 @@ impl Backend {
     }
 
     pub async fn generatePdf(&self, kinds: &Kinds) -> Vec<u8> {
-        let typbytes = render::make_typst_document(self, kinds);
-        let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;
+        /*let typbytes = render::make_typst_document(self, kinds);
+        let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;*/
+        let ret = crate::pdf::render::make_pdf_document(self, kinds).await;
         log::info!("generated {} pdf bytes", ret.len());
         ret
     }

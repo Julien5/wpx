@@ -52,7 +52,7 @@ fn char_width(s: &char) -> f64 {
     (ret / 0.57f64) * (super::FONTSIZE / 16f64) * 9f64
 }
 
-fn text_width(s: &str, fontsize: f64, fontweight: &str, fontstyle: &str) -> f64 {
+pub fn text_width(s: &str, fontsize: f64, fontweight: &str, fontstyle: &str) -> f64 {
     let mut ret = 0f64;
     for c in s.chars() {
         let mut w = char_width(&c);

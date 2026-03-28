@@ -1,18 +1,12 @@
+use super::get_host;
 use wasm_bindgen::prelude::*;
-
-fn get_host() -> Option<String> {
-    let h = web_sys::window()
-        .and_then(|win| win.location().host().ok())
-        .unwrap();
-    Some(format!("https://{}", h))
-}
 
 fn get_client() -> reqwest::Client {
     reqwest::Client::new()
 }
 
 async fn compile_remote(document: &str) -> Vec<u8> {
-    let url = format!("{}/api/typst", get_host().unwrap());
+    let url = format!("{}/api/typst", get_host());
     let client = get_client();
     let response = client
         .post(url)

@@ -1,9 +1,6 @@
 use std::process::Command;
 
-fn get_host() -> Option<String> {
-    // TODO: load from config file.
-    Some("https://vps-e637d6c5.vps.ovh.net:8123".to_string())
-}
+use crate::pdf::get_host;
 
 fn get_client() -> reqwest::Client {
     reqwest::ClientBuilder::new()
@@ -14,7 +11,7 @@ fn get_client() -> reqwest::Client {
 
 async fn compile_remote(document: &str) -> Vec<u8> {
     log::trace!("compile remote");
-    let url = format!("{}/api/typst", get_host().unwrap());
+    let url = format!("{}/api/typst", get_host());
     let client = get_client();
     let response = client
         .post(url)

@@ -19,6 +19,7 @@ mod pdf;
 pub mod point_collection;
 mod profile;
 mod split_ambiguity;
+mod svgtable;
 mod tile;
 mod track_projection;
 pub mod wheel;
