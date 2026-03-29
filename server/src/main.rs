@@ -1,17 +1,15 @@
 use axum::{
     body::Body,
-    extract::State,
-    http::{HeaderName, HeaderValue, Request, StatusCode},
+    http::{HeaderName, HeaderValue, Request},
     middleware::{self, Next},
     response::{IntoResponse, Response},
-    routing::{get, post},
+    routing::get,
     Router,
 };
 use clap::Parser;
 use hyper::{service::service_fn, HeaderMap};
 use hyper_util::rt::TokioIo;
-use std::{io::Write, net::IpAddr, net::SocketAddr, path::PathBuf, process::Command, sync::Arc};
-use tempfile::NamedTempFile;
+use std::{net::IpAddr, net::SocketAddr, path::PathBuf, sync::Arc};
 use tokio::net::TcpListener;
 use tokio_rustls::TlsAcceptor;
 use tower::{Service, ServiceBuilder};
@@ -20,7 +18,6 @@ use tower_http::{
     services::ServeDir,
 };
 use tracing::{error, info};
-use uuid::Uuid;
 
 // Avoid musl's default allocator due to lackluster performance
 // https://nickb.dev/blog/default-musl-allocator-considered-harmful-to-performance
@@ -60,63 +57,8 @@ async fn log_request(req: Request<Body>, next: Next) -> impl IntoResponse {
 async fn hello_handler() -> impl IntoResponse {
     let mut headers = HeaderMap::new();
     headers.insert("Content-Type", HeaderValue::from_static("text/plain"));
-    (headers, "Hello, World!")
-}
-
-async fn typst_handler(body: String) -> impl IntoResponse {
-    // Create a temporary directory for our work
-    let temp_dir = match tempfile::Builder::new().prefix("typst_").tempdir() {
-        Ok(dir) => dir,
-        Err(_) => {
-            return (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "Failed to create temporary directory",
-            )
-                .into_response()
-        }
-    };
-
-    // Generate unique filenames
-    let input_path = temp_dir.path().join(format!("{}.typst", Uuid::new_v4()));
-    let pdf_path = temp_dir.path().join(format!("{}.pdf", Uuid::new_v4()));
-
-    // Write content to temporary file
-    if let Err(_) = std::fs::write(&input_path, body) {
-        let error = (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "Failed to write temporary file",
-        );
-        return error.into_response();
-    }
-
-    // create tyspt command
-    let status = Command::new("/opt/typst/typst-x86_64-unknown-linux-musl/typst")
-        .arg("compile")
-        .arg(&input_path)
-        .arg(&pdf_path)
-        .status();
-
-    if let Err(_) = status {
-        let error = (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "Failed to create pdf file",
-        );
-        return error.into_response();
-    }
-
-    // read and return the result
-    match std::fs::read(&pdf_path) {
-        Ok(pdf_content) => {
-            let mut headers = HeaderMap::new();
-            headers.insert("Content-Type", HeaderValue::from_static("application/pdf"));
-            headers.insert(
-                "Content-Disposition",
-                HeaderValue::from_str(&format!("attachment; filename=\"document.pdf\"")).unwrap(),
-            );
-            (headers, pdf_content).into_response()
-        }
-        Err(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Failed to read pdf file").into_response(),
-    }
+    let version = env!("CARGO_PKG_VERSION");
+    (headers, format!("Hello, world! version:{}", version))
 }
 
 async fn cache_control_middleware(req: axum::extract::Request, next: Next) -> Response {
@@ -137,7 +79,7 @@ async fn cache_control_middleware(req: axum::extract::Request, next: Next) -> Re
         // Cache everything else aggressively
         headers.insert(
             "Cache-Control",
-            HeaderValue::from_static("public, max-age=31535000, immutable"),
+            HeaderValue::from_static("public, max-age=31536000, immutable"),
         );
     }
 
@@ -178,7 +120,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = Router::new()
         .nest_service("/", static_files)
         .route("/api/hello", get(hello_handler))
-        .route("/api/typst", post(typst_handler))
         .layer(middleware::from_fn(log_request))
         .layer(middleware::from_fn(cache_control_middleware))
         .layer(cors)
