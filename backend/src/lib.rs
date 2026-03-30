@@ -22,6 +22,7 @@ mod split_ambiguity;
 mod svgtable;
 mod tile;
 mod track_projection;
+mod trackparts;
 pub mod wheel;
 mod zipexport;
 //mod project;

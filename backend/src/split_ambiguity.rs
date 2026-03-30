@@ -1,8 +1,8 @@
 use std::collections::BTreeSet;
 
 use crate::inputpoint::InputPoint;
-use crate::parameters::TrackPart;
 use crate::track::Track;
+use crate::trackparts::parts_to_ranges;
 
 struct Point {
     pub primary: usize,
@@ -107,15 +107,4 @@ pub fn user_steps_split(steps: &Vec<InputPoint>, track: &Track) -> Vec<usize> {
         }
     }
     good_ranges.iter().map(|r| r.end).collect()
-}
-
-pub fn parts_to_ranges(parts: &Vec<TrackPart>) -> Vec<std::ops::Range<usize>> {
-    parts
-        .iter()
-        .scan(0usize, |offset, part| {
-            let start = *offset;
-            *offset += part.length;
-            Some(start..start + part.length)
-        })
-        .collect()
 }

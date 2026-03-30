@@ -7,8 +7,8 @@ use crate::{
     mercator::MercatorPoint,
     parameters::TrackPart,
     point_collection::{is_osm, Kind},
-    split_ambiguity,
     track::Track,
+    trackparts::parts_to_ranges,
 };
 
 use geo::SimplifyIdx;
@@ -212,7 +212,7 @@ impl ProjectionTrees {
         euclidean: &Vec<MercatorPoint>,
         parts: &Vec<TrackPart>,
     ) -> Vec<locate::IndexedPointsTree> {
-        split_ambiguity::parts_to_ranges(parts)
+        parts_to_ranges(parts)
             .iter()
             .map(|range| locate::IndexedPointsTree::from_track(&euclidean, &range))
             .collect()

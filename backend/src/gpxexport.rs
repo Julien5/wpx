@@ -2,9 +2,13 @@
 
 use std::collections::BTreeMap;
 
+use gpx::TrackSegment;
+
 use crate::track;
+use crate::trackparts::parts_to_ranges;
 use crate::waypoint;
 use crate::waypoint::Waypoints;
+use crate::wgs84point::WGS84Point;
 
 fn gps_name(w: &waypoint::Waypoint) -> String {
     match &w.info {
@@ -38,34 +42,61 @@ fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     ret
 }
 
+pub fn flat_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) -> TrackSegment {
+    let mut ret = TrackSegment::new();
+    for index in range.start..range.end {
+        // remove z coordinate to avoid automatic "low" and "hight points" on etrex 10
+        let wgs = wgs84[index];
+        let w = gpx::Waypoint::new(geo::Point::new(wgs.x(), wgs.y()));
+        ret.points.push(w);
+    }
+    ret
+}
+
 pub fn generate(track: &track::Track, groups: &Vec<Waypoints>) -> BTreeMap<String, Vec<u8>> {
     let mut ret: BTreeMap<String, Vec<u8>> = BTreeMap::new();
-    let track = {
+    {
         let mut G = gpx::Gpx::default();
         G.version = gpx::GpxVersion::Gpx11;
 
-        let segment = track.export_to_gpx();
+        let segment = flat_export(
+            &track.wgs84,
+            &std::ops::Range {
+                start: 0,
+                end: track.wgs84.len(),
+            },
+        );
         let mut gpxtrack = gpx::Track::new();
         gpxtrack.name = Some(format!("{:.0} km", track.total_distance() / 1000f64));
         gpxtrack.segments.push(segment);
         G.tracks.push(gpxtrack);
-        let mut ret: Vec<u8> = Vec::new();
-        gpx::write(&G, &mut ret).unwrap();
-        ("track.gpx".to_string(), ret)
+        let mut data: Vec<u8> = Vec::new();
+        gpx::write(&G, &mut data).unwrap();
+        ret.insert("flat-track.gpx".to_string(), data);
     };
-    ret.insert(track.0, track.1);
+
+    let ranges = parts_to_ranges(&track.parts);
+    for (index, part) in track.parts.iter().enumerate() {
+        let mut G = gpx::Gpx::default();
+        G.version = gpx::GpxVersion::Gpx11;
+        let segment = flat_export(&track.wgs84, &ranges[index]);
+        let mut gpxtrack = gpx::Track::new();
+        gpxtrack.name = Some(format!("{:0>2}: {}", index + 1, part.name));
+        gpxtrack.segments.push(segment);
+        G.tracks.push(gpxtrack);
+        let mut data: Vec<u8> = Vec::new();
+        gpx::write(&G, &mut data).unwrap();
+        ret.insert(format!("flat-segment-{:0>2}.gpx", index + 1), data);
+    }
 
     for (index, group) in groups.iter().enumerate() {
-        let waypoints = {
-            let mut G = gpx::Gpx::default();
-            G.version = gpx::GpxVersion::Gpx11;
-            G.waypoints = group.iter().map(|w| to_gpx(w)).collect();
+        let mut G = gpx::Gpx::default();
+        G.version = gpx::GpxVersion::Gpx11;
+        G.waypoints = group.iter().map(|w| to_gpx(w)).collect();
 
-            let mut ret: Vec<u8> = Vec::new();
-            gpx::write(&G, &mut ret).unwrap();
-            (format!("pacing-{}.gpx", index + 1), ret)
-        };
-        ret.insert(waypoints.0, waypoints.1);
+        let mut data: Vec<u8> = Vec::new();
+        gpx::write(&G, &mut data).unwrap();
+        ret.insert(format!("pacing-{}.gpx", index + 1), data);
     }
     ret
 }

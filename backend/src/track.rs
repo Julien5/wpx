@@ -1,7 +1,6 @@
 use std::collections::BTreeSet;
 
 use geo::SimplifyIdx;
-use gpx::TrackSegment;
 
 use super::wgs84point::WGS84Point;
 use crate::error::TrackError;
@@ -191,16 +190,6 @@ impl Track {
         let endidx = self.index_before(d1) + 1;
         assert!(endidx <= self.len());
         startidx..endidx
-    }
-
-    pub fn export_to_gpx(&self) -> TrackSegment {
-        let mut ret = TrackSegment::new();
-        for wgs in &self.wgs84 {
-            // remove z coordinate to avoid automatic "low" and "hight points" on etrex 10
-            let w = gpx::Waypoint::new(geo::Point::new(wgs.x(), wgs.y()));
-            ret.points.push(w);
-        }
-        ret
     }
 
     fn compute_elevation_gain(smooth_elevation: &Vec<f64>) -> Vec<f64> {
