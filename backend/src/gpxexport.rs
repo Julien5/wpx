@@ -89,14 +89,30 @@ pub fn generate(track: &track::Track, groups: &Vec<Waypoints>) -> BTreeMap<Strin
         ret.insert(format!("flat-segment-{:0>2}.gpx", index + 1), data);
     }
 
-    for (index, group) in groups.iter().enumerate() {
+    // export all users steps in one file (maybe useful)
+    {
+        let all: Waypoints = groups.iter().flatten().cloned().collect();
         let mut G = gpx::Gpx::default();
         G.version = gpx::GpxVersion::Gpx11;
-        G.waypoints = group.iter().map(|w| to_gpx(w)).collect();
+        G.waypoints = all.iter().map(|w| to_gpx(w)).collect();
 
         let mut data: Vec<u8> = Vec::new();
         gpx::write(&G, &mut data).unwrap();
-        ret.insert(format!("pacing-{}.gpx", index + 1), data);
+        ret.insert(format!("pacing-all.gpx"), data);
     }
+
+    // only if there are several groups, export them.
+    if groups.len() > 1 {
+        for (index, group) in groups.iter().enumerate() {
+            let mut G = gpx::Gpx::default();
+            G.version = gpx::GpxVersion::Gpx11;
+            G.waypoints = group.iter().map(|w| to_gpx(w)).collect();
+
+            let mut data: Vec<u8> = Vec::new();
+            gpx::write(&G, &mut data).unwrap();
+            ret.insert(format!("pacing-{}.gpx", index + 1), data);
+        }
+    }
+
     ret
 }
