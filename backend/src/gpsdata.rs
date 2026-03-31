@@ -56,11 +56,17 @@ fn read_tracks(gpx: &mut gpx::Gpx) -> Result<Vec<gpx::Track>, TrackError> {
     let tracks = &mut gpx.tracks;
     let mut ret: Vec<gpx::Track> = Vec::new();
     for track in tracks {
-        for segment in &track.segments {
-            ret.push(make_track_from_segment(
-                segment,
-                track.name.clone().unwrap_or("foo".to_string()),
-            ));
+        for (index, segment) in track.segments.iter().enumerate() {
+            let name = if track.segments.len() > 1 {
+                format!(
+                    "segment-{:0>2}: {}",
+                    index + 1,
+                    track.name.clone().unwrap_or_default()
+                )
+            } else {
+                track.name.clone().unwrap_or_default()
+            };
+            ret.push(make_track_from_segment(segment, name));
         }
     }
     if ret.is_empty() {
