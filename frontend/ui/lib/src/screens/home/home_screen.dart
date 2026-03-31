@@ -63,43 +63,49 @@ class _ChooseDataState extends State<_ChooseData> {
 
   @override
   Widget build(BuildContext ctx) {
-    return Center(
-      child: Column(
+    return SafeArea(
+      child: Stack(
         children: [
-          SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/png/combined.png',
-                width: 250,
-                fit: BoxFit.cover,
-              ),
-            ],
-          ),
-          SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: loading ? null : () => chooseGPX(),
-                child: const Text("GPX file"),
-              ),
-              if (errorMessage !=
-                  null) // Conditionally display the error message
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    errorMessage!,
-                    style: const TextStyle(color: Colors.red),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: Image.asset(
+                    'assets/images/png/combined.png',
+                    width: 250,
+                    fit: BoxFit.contain,
                   ),
                 ),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                onPressed: loading ? null : () => chooseDemo(),
-                child: const Text("Demo"),
-              ),
-            ],
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: loading ? null : () => chooseGPX(),
+                      child: const Text("GPX files"),
+                    ),
+                    if (errorMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    const SizedBox(width: 20),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: ElevatedButton(
+              onPressed: loading ? null : () => chooseDemo(),
+              child: const Text("Test"),
+            ),
           ),
         ],
       ),

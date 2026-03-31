@@ -10,7 +10,7 @@ crate-type = ["cdylib", "staticlib"]
 anyhow = "1.0.99"
 chrono = "0.4.42"
 env_logger = "0.11.8"
-flutter_rust_bridge = "=2.11.1"
+flutter_rust_bridge = "=2.12.0"
 log = "0.4.28"
 tokio = { version = "1.45", features = ["time"] }
 #tracks = { version = "*", path = "../../../backend", features=["typstpdf"] }
