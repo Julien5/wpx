@@ -77,12 +77,13 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
   Widget build(BuildContext context) {
     Provider.of<SegmentModel>(context);
     Provider.of<ParameterModel>(context);
+
     return Slider(
       min: _pages!.getMinIndex(),
       max: _pages!.getMaxIndex(),
       divisions: _pages!.possiblePageCounts.length - 1,
       value: _pages!.possiblePageIndex().toDouble(),
-      label: "${_pages!.getPageCount()} pages",
+      label: PageCountInfo.getPagesCountString(_pages!.getSegmentCount()),
       onChanged: (index) => {onChanged(context, index)},
     );
   }

@@ -151,8 +151,22 @@ class PageCountInfo {
     return (segmentLengthWithOverlap / 11).roundToDouble();
   }
 
-  int getPageCount() {
+  int getSegmentCount() {
     return possiblePageCounts[_index];
+  }
+
+  static String getPagesCountString(int segmentCount) {
+    int count = segmentCount;
+    String label = "${count * 0.5}";
+    if (count % 2 == 0) {
+      label = "${(count * 0.5).toInt()}";
+    }
+    if (count > 2) {
+      label = "$label pages";
+    } else {
+      label = "$label page";
+    }
+    return label;
   }
 }
 

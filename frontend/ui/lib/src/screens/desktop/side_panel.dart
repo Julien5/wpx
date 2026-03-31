@@ -83,13 +83,12 @@ class _PDFCardState extends State<PDFCard> {
             .ceil()
             .toString()
             .padLeft(3);
-    String pageCount = segments.length.toString().padLeft(2);
-
+    String pageCount = PageCountInfo.getPagesCountString(segments.length);
     Widget tile = ExpansionTile(
       title: Row(
         children: [
           SmallText(text: "PDF"),
-          SmallText(text: "$pageCount pages, $segLength km per page"),
+          SmallText(text: "$pageCount, $segLength km per page"),
         ],
       ),
       controller: widget.controller,
