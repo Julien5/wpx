@@ -7,7 +7,7 @@ use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::{ControlSource, RenderFunction};
-use tracks::point_collection::{allkinds, Kind};
+use tracks::point_collection::Kind;
 use tracks::{point_collection, speed};
 
 /// Search for a pattern in a file and display the lines that contain it.
@@ -17,6 +17,8 @@ struct Cli {
     debug: Option<bool>,
     #[arg(long, value_name = "outdir")]
     output_directory: Option<std::path::PathBuf>,
+    #[arg(long, value_name = "zip")]
+    output_zip: Option<std::path::PathBuf>,
     #[arg(long, value_name = "segment_length")]
     segment_length: Option<i32>,
     #[arg(long, value_name = "segment_overlap")]
@@ -35,10 +37,12 @@ struct Cli {
     map_max_area_ratio: Option<f64>,
     #[arg(long, value_name = "render_wheel")]
     render_wheel: Option<bool>,
-    #[arg(long, value_name = "main-test")]
-    main_test: Option<bool>,
+    #[arg(long, value_name = "performance-test")]
+    performance_test: Option<bool>,
     #[arg(long, value_name = "render-graph")]
     render_graph: Option<bool>,
+    #[arg(long, value_delimiter = ',', default_values_t = [Kind::Mountains, Kind::Cities],value_name = "kinds")]
+    kinds: Vec<Kind>,
     #[arg(value_name = "gpx")]
     filenames: Vec<std::path::PathBuf>,
 }
@@ -71,7 +75,7 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
+async fn performance_test(backend: &mut Backend) -> anyhow::Result<()> {
     let start = std::time::Instant::now();
     let segment = backend.trackSegment();
     let _ = backend.load_osm().await;
@@ -86,7 +90,7 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
     }
 
     let duration = start.elapsed();
-    log::info!("main_test map took: {:.3?}", duration);
+    println!("main_test map took: {:.3?}", duration);
     let tmpfilename = std::format!("/tmp/maintestmap.svg");
     std::fs::write(&tmpfilename, svg.clone()).unwrap();
 
@@ -100,7 +104,7 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
     }
 
     let duration = start.elapsed();
-    log::info!("main_test profile took: {:.3?}", duration);
+    println!("main_test profile took: {:.3?}", duration);
     let tmpfilename = std::format!("/tmp/maintestprofile.svg");
 
     std::fs::write(&tmpfilename, svg.clone()).unwrap();
@@ -108,7 +112,9 @@ async fn main_test(backend: &mut Backend) -> anyhow::Result<()> {
 }
 
 fn setup_log() {
-    println!("init logger");
+    // println!("init logger");
+    env_logger::init();
+    /*
     use std::io::Write;
     let _ = env_logger::Builder::new()
         .format(|buf, record| {
@@ -121,7 +127,8 @@ fn setup_log() {
             )
         })
         .filter_level(log::LevelFilter::Trace)
-        .try_init();
+    .try_init();
+    */
 }
 
 pub fn read_file(filename: &str) -> Vec<u8> {
@@ -167,10 +174,44 @@ async fn main() -> anyhow::Result<()> {
         log::info!("outdir   {}", outdir);
         gpxdata.push(read_file(gpxinput));
     }
-    let parts = backend.load_track_parts(&gpxdata).await?;
+    let parts = backend.load_track_parts_no_reorder(&gpxdata).await?;
+    for part in &parts {
+        println!("found segment: {}", part.name)
+    }
     backend.load_ordered(&parts).await?;
     let _ = backend.load_osm().await;
     backend.load_controls(ControlSource::Segments).await?;
+
+    let track_segment = backend.trackSegment();
+    {
+        let points = backend.get_waypoints(
+            &track_segment,
+            point_collection::Kinds::from([Kind::Controls, Kind::GPXWaypoints]),
+        );
+        println!("* found {} controls/waypoints", points.len());
+        for point in &points {
+            println!(
+                "   {:>3.0} km: {} ",
+                point.get_info().distance / 1000.0,
+                point.name
+            )
+        }
+    }
+
+    {
+        let points = backend.get_waypoints(
+            &track_segment,
+            point_collection::Kinds::from([Kind::Cities, Kind::Mountains]),
+        );
+        println!("* found {} cities/mountains", points.len());
+        for point in &points {
+            println!(
+                "   {:>3.0} km: {}",
+                point.get_info().distance / 1000.0,
+                point.name,
+            )
+        }
+    }
 
     let mut parameters = backend.get_parameters();
     match args.segment_length {
@@ -240,10 +281,10 @@ async fn main() -> anyhow::Result<()> {
 
     backend.set_parameters(&parameters);
 
-    match args.main_test {
+    match args.performance_test {
         Some(enabled) => {
             if enabled {
-                return main_test(&mut backend).await;
+                return performance_test(&mut backend).await;
             }
         }
         _ => {}
@@ -278,23 +319,35 @@ async fn main() -> anyhow::Result<()> {
     }
 
     let stats = backend.statistics();
-    log::info!("length = {:.1} km", stats.length / 1000f64);
-    log::info!("elevation gain = {:.1} km", stats.elevation_gain);
+    println!("length = {:.1} km", stats.length / 1000f64);
+    println!("elevation gain = {:.1} km", stats.elevation_gain);
 
-    let pdfbytes = backend.generatePdf(&allkinds()).await;
+    let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
+
+    let pdfbytes = backend.generatePdf(&kinds).await;
     let pdfname = format!(
         "{}/{}.pdf",
         outdir,
         gpxpath.file_stem().unwrap().to_str().unwrap()
     );
-    log::info!("make: {}", pdfname);
+    println!("make: {}", pdfname);
     std::fs::write(pdfname, &pdfbytes).expect("Could not write pdf.");
 
     let map = backend.generateGpx();
     for (filename, filecontent) in map {
         let gpxname = format!("{}/{}", outdir, filename);
-        log::info!("make: {}", gpxname);
+        println!("make: {}", gpxname);
         std::fs::write(gpxname, &filecontent).expect("Could not write gpx.");
     }
+    let zipname = format!(
+        "{}/{}.zip",
+        outdir,
+        gpxpath.file_stem().unwrap().to_str().unwrap()
+    );
+    println!("make: {}", zipname);
+
+    let zip = backend.generateZip(&kinds).await;
+    println!("make: {}", zipname);
+    std::fs::write(zipname, &zip).expect("Could not write pdf.");
     Ok(())
 }

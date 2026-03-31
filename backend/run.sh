@@ -77,6 +77,34 @@ function pdf() {
 	echo xdg-open /tmp/document.pdf 
 }
 
+function cli() {
+	set -x
+	echo "args:"$@
+	cmd=run
+	options=
+	file=data/blackforest.gpx
+	mode=""
+	echo make pdf
+	export RUST_LOG=trace
+	cargo build ${mode}
+	export CARGO_PROFILE_RELEASE_DEBUG=true
+	rm -Rf /tmp/wpx
+	mkdir /tmp/wpx
+	time cargo ${cmd} ${mode} -- \
+		 --output-directory /tmp/wpx/ \
+		 --debug true \
+		 --step-elevation-gain 50 \
+		 --segment-length $(segment-length ${file}) \
+		 --segment-overlap $(segment-overlap ${file}) \
+		 --profile-max-area-ratio 1.0 \
+		 --map-max-area-ratio 1.0 \
+		 ${options} \
+		 "${file}"
+	cp /tmp/wpx/*.pdf /tmp/document.pdf 
+	echo xdg-open /tmp/document.pdf 
+}
+
+
 function filter-log {
 	local filename=$1
 	shift
@@ -131,6 +159,10 @@ function main() {
 		elif [ $1 = "render-graph" ]; then
 			shift 
 			render-graph "$@"
+			return;
+		elif [ $1 = "cli" ]; then
+			shift 
+			2>&1 cli "$@"
 			return;
 		elif [ $1 = "pdf" ]; then
 			shift 

@@ -1,3 +1,4 @@
+use clap::ValueEnum;
 use std::collections::{BTreeMap, HashSet};
 
 use crate::{
@@ -289,7 +290,8 @@ impl PacketProvider {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[derive(ValueEnum, Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[value(rename_all = "PascalCase")]
 pub enum Kind {
     Cities,
     Controls,
@@ -300,6 +302,14 @@ pub enum Kind {
     UserStep,
 }
 
+impl std::fmt::Display for Kind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // This converts the variant name to a string.
+        // You can use Debug formatting {:?} to keep it simple.
+        write!(f, "{:?}", self)
+    }
+}
+
 pub fn is_osm(kind: &Kind) -> bool {
     match kind {
         Kind::Controls | Kind::GPXWaypoints | Kind::UserStep => false,
@@ -308,6 +318,7 @@ pub fn is_osm(kind: &Kind) -> bool {
 }
 
 pub type Kinds = HashSet<Kind>;
+
 pub fn allkinds() -> Kinds {
     HashSet::from([
         Kind::UserStep,

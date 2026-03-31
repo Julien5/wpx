@@ -172,6 +172,9 @@ impl Track {
         if distance >= maxdist {
             return end - 1;
         }
+        if distance <= 0f64 {
+            return 0;
+        }
         let mut it = self._distance.iter();
         match it.rposition(|&d| d < distance) {
             Some(index) => index,
