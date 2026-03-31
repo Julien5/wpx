@@ -109,7 +109,7 @@ class SettingsWidget extends StatelessWidget {
         .ceil()
         .toString()
         .padLeft(3);
-    String pageCount = segments.length.toString().padLeft(2);
+    String pageCount = PageCountInfo.getPagesCountString(segments.length);
     IconData showIcon = Icons.arrow_right;
     if (show) {
       showIcon = Icons.arrow_drop_down;
@@ -135,7 +135,7 @@ class SettingsWidget extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("$pageCount pages"),
+                child: Text(pageCount),
               ),
               SizedBox(
                 width: 200, // or 40–56 depending on your design

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:ui/src/models/segmentmodel.dart';
 import 'package:ui/src/rust/api/bridge.dart' as bridge;
 import 'package:ui/src/rust/api/bridge.dart';
+import 'package:ui/src/utils/print.dart';
 import 'package:ui/src/widgets/slidervalues.dart';
 import 'package:ui/src/widgets/small.dart';
 import 'package:ui/src/utils/utils.dart';
@@ -305,7 +306,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
     bridge.Bridge backend = getBackend(ctx);
     List<Segment> segments = backend.segments();
-    String pagesCountText = "${segments.length.toString().padLeft(2)} pages";
+    String pagesCountText = PageCountInfo.getPagesCountString(segments.length);
     Widget table = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
