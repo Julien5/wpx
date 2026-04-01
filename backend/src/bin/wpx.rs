@@ -6,44 +6,46 @@ use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
-use tracks::parameters::{ControlSource, RenderFunction};
+use tracks::parameters::{parse_time, ControlSource, RenderFunction};
 use tracks::point_collection::Kind;
 use tracks::{point_collection, speed};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
 struct Cli {
-    #[arg(long, value_name = "debug")]
-    debug: Option<bool>,
-    /// filename for the ouput (a zip file)
-    #[arg(long, value_name = "zip")]
-    output: Option<std::path::PathBuf>,
     /// the segment length in kilometer
-    #[arg(long, value_name = "segment_length")]
-    segment_length: Option<i32>,
+    #[arg(long, value_name = "segment_length", default_value_t = 110.0)]
+    segment_length: f64,
     /// the segment overlap in kilometer
-    #[arg(long, value_name = "segment_overlap")]
-    segment_overlap: Option<i32>,
-    /// start date time in ISO 8601 format, like 2026-01-10T20:00
+    #[arg(long, value_name = "segment_overlap", default_value_t = 10.0)]
+    segment_overlap: f64,
+    /// start date time in ISO 8601 format, like 2026-01-10T20:00 [default: now]
     #[arg(long, value_name = "start_time")]
     start_time: Option<String>,
     /// speed in kilometer per hour
-    #[arg(long, value_name = "speed")]
-    speed: Option<f64>,
-    /// generate one pacing point every [distance] kilometer
+    #[arg(long, value_name = "speed", default_value_t = 15.0)]
+    speed: f64,
+    /// generate one pacing point every [distance] kilometer [default: 10]
     #[arg(long, value_name = "step_distance")]
-    step_distance: Option<usize>,
+    step_distance: Option<f64>,
     /// generate one pacing point every [evelation gain] meter
     #[arg(long, value_name = "step_elevation_gain")]
-    step_elevation_gain: Option<usize>,
-    #[arg(long, value_delimiter = ',', default_values_t = [Kind::Controls,Kind::GPXWaypoints,Kind::Mountains, Kind::Cities],value_name = "kinds")]
+    step_elevation_gain: Option<f64>,
+    #[arg(long, value_delimiter = ',', default_values_t = [Kind::Controls,Kind::GPXWaypoints,Kind::Cities,Kind::Mountains, Kind::Villages,Kind::Hamlets,Kind::UserStep],value_name = "kinds")]
     kinds: Vec<Kind>,
+
     #[arg(long, value_name = "render_wheel", hide = true)]
     render_wheel: Option<bool>,
     #[arg(long, value_name = "performance-test", hide = true)]
     performance_test: Option<bool>,
     #[arg(long, value_name = "render-graph", hide = true)]
     render_graph: Option<bool>,
+    #[arg(long, value_name = "debug", hide = true)]
+    debug: Option<bool>,
+
+    /// filename for the ouput (a zip file)
+    #[arg(long, value_name = "zip")]
+    output: Option<std::path::PathBuf>,
 
     #[arg(value_name = "gpx")]
     filenames: Vec<std::path::PathBuf>,
@@ -134,12 +136,19 @@ fn setup_log() {
 }
 
 pub fn read_file(filename: &str) -> Vec<u8> {
-    let mut f = std::fs::File::open(filename).unwrap();
-    let mut buffer = Vec::new();
-    // read the whole file
-    use std::io::prelude::*;
-    f.read_to_end(&mut buffer).unwrap();
-    buffer
+    match std::fs::File::open(filename) {
+        Ok(mut f) => {
+            let mut buffer = Vec::new();
+            // read the whole file
+            use std::io::prelude::*;
+            f.read_to_end(&mut buffer).unwrap();
+            buffer
+        }
+        Err(e) => {
+            log::error!("{:?}", e);
+            panic!("failed to read {}. Bye.", filename);
+        }
+    }
 }
 
 #[tokio::main(flavor = "current_thread")]
@@ -178,70 +187,40 @@ async fn main() -> anyhow::Result<()> {
     let _ = backend.load_osm().await;
     backend.load_controls(ControlSource::Segments).await?;
 
+    let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
     let track_segment = backend.trackSegment();
     {
-        let points = backend.get_waypoints(
-            &track_segment,
-            point_collection::Kinds::from([Kind::Controls, Kind::GPXWaypoints]),
-        );
-        println!("* found {} controls/waypoints", points.len());
+        let points = backend.get_waypoints(&track_segment, kinds.clone());
+        println!("* found {} points", points.len());
         for point in &points {
+            let time = parse_time(&point.get_info().time);
             println!(
-                "   {:>3.0} km: {} ",
+                "   {:>3.0} km [{}]: {:30} [{:10}]",
                 point.get_info().distance / 1000.0,
-                point.name
-            )
-        }
-    }
-
-    {
-        let points = backend.get_waypoints(
-            &track_segment,
-            point_collection::Kinds::from([Kind::Cities, Kind::Mountains]),
-        );
-        println!("* found {} cities/mountains", points.len());
-        for point in &points {
-            println!(
-                "   {:>3.0} km: {}",
-                point.get_info().distance / 1000.0,
+                time.format("%H:%M"),
                 point.name,
+                point.get_info().origin
             )
         }
     }
 
     let mut parameters = backend.get_parameters();
-    match args.segment_length {
-        Some(length) => {
-            parameters.segment_length = 1000f64 * (length as f64);
-        }
-        _ => {}
-    }
-
-    match args.segment_overlap {
-        Some(length) => {
-            parameters.segment_overlap = 1000f64 * (length as f64);
-        }
-        _ => {}
-    }
+    parameters.segment_length = 1000f64 * args.segment_length;
+    parameters.segment_overlap = 1000f64 * args.segment_overlap;
 
     match args.start_time {
         Some(time) => {
-            parameters.start_time = time.clone();
+            parameters.start_time = time;
         }
         _ => {}
     }
 
-    match args.speed {
-        Some(speed) => {
-            parameters.speed = speed::mps(speed);
-        }
-        _ => {}
-    }
+    parameters.speed = speed::mps(args.speed);
 
     match args.step_distance {
         Some(km) => {
             parameters.user_steps_options.step_elevation_gain = None;
-            parameters.user_steps_options.step_distance = Some((1000 * km) as f64);
+            parameters.user_steps_options.step_distance = Some(1000.0 * km);
         }
         _ => {}
     }
@@ -249,7 +228,7 @@ async fn main() -> anyhow::Result<()> {
     match args.step_elevation_gain {
         Some(m) => {
             parameters.user_steps_options.step_distance = None;
-            parameters.user_steps_options.step_elevation_gain = Some(m as f64);
+            parameters.user_steps_options.step_elevation_gain = Some(m);
         }
         _ => {}
     }
@@ -303,8 +282,6 @@ async fn main() -> anyhow::Result<()> {
     let stats = backend.statistics();
     println!("length = {:.1} km", stats.length / 1000f64);
     println!("elevation gain = {:.1} m", stats.elevation_gain);
-
-    let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
 
     let zipname = match args.output {
         Some(path) => path.into_os_string().into_string().unwrap_or_default(),

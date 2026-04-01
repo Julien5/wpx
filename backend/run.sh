@@ -88,6 +88,8 @@ function cli() {
 		  --start-time "2026-01-10T20:00:00" \
 		  --speed 15 \
 		  ~/tours/self/2024/05/gpx/with-waypoints/{jura,foret-noire}.gpx
+
+	
 }
 
 

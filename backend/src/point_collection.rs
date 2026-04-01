@@ -295,6 +295,7 @@ impl PacketProvider {
 pub enum Kind {
     Cities,
     Controls,
+    #[value(name = "GPXWaypoints")]
     GPXWaypoints,
     Hamlets,
     Mountains,
