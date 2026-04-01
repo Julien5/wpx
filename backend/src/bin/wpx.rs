@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use std::collections::HashSet;
+use std::path::Path;
 
 use clap::Parser;
 use tracks::backend::Backend;
@@ -43,8 +44,8 @@ struct Cli {
     #[arg(long, value_name = "debug", hide = true)]
     debug: Option<bool>,
 
-    /// filename for the ouput (a zip file)
-    #[arg(long, value_name = "zip")]
+    /// filename for the ouput (zip or pdf)
+    #[arg(long, value_name = "ouput")]
     output: Option<std::path::PathBuf>,
 
     #[arg(value_name = "gpx")]
@@ -283,12 +284,29 @@ async fn main() -> anyhow::Result<()> {
     println!("length = {:.1} km", stats.length / 1000f64);
     println!("elevation gain = {:.1} m", stats.elevation_gain);
 
-    let zipname = match args.output {
+    let filename = match args.output {
         Some(path) => path.into_os_string().into_string().unwrap_or_default(),
         None => format!("{}.zip", gpxpath.file_stem().unwrap().to_str().unwrap()),
     };
-    let zip = backend.generateZip(&kinds).await;
-    println!("make: {}", zipname);
-    std::fs::write(zipname, &zip).expect("Could not write pdf.");
+    println!("make: {}", filename);
+    match get_extension(&filename) {
+        Some("zip") => {
+            let data = backend.generateZip(&kinds).await;
+            std::fs::write(&filename, data).expect("Failed to write ZIP");
+        }
+        Some("pdf") => {
+            let data = backend.generatePdf(&kinds).await;
+            std::fs::write(&filename, data).expect("Failed to write PDF");
+        }
+        Some(other) => panic!("Unsupported extension: .{}", other),
+        None => panic!("Output file has no extension: {}", filename),
+    }
+
     Ok(())
+}
+
+fn get_extension(filename: &str) -> Option<&str> {
+    Path::new(filename)
+        .extension() // Returns Option<&OsStr>
+        .and_then(|ext| ext.to_str()) // Convert to Option<&str>
 }
