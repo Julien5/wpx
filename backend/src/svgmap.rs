@@ -322,7 +322,6 @@ impl MapMaker {
                 Point2D::new(size.width as f64, size.height as f64),
             ),
             &polyline,
-            &self.parameters.parameters.map_options.max_area_ratio,
             debug_graphic_dir.clone(),
         );
         let labeled = PlacementResult::apply(&results, &obstacles, &mut feature_packets);

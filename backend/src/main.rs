@@ -23,8 +23,13 @@ struct Cli {
     segment_length: Option<i32>,
     #[arg(long, value_name = "segment_overlap")]
     segment_overlap: Option<i32>,
+    // start date time in ISO 8601 format, like 2026-01-10T20:00
     #[arg(long, value_name = "start_time")]
     start_time: Option<String>,
+    // end date time in ISO 8601 format, like 2026-01-10T20:00
+    #[arg(long, value_name = "start_time")]
+    end_time: Option<String>,
+    // speed in kilometer per hour
     #[arg(long, value_name = "speed")]
     speed: Option<f64>,
     #[arg(long, value_name = "step_distance")]
@@ -33,8 +38,6 @@ struct Cli {
     step_elevation_gain: Option<usize>,
     #[arg(long, value_name = "profile_max_area_ratio")]
     profile_max_area_ratio: Option<f64>,
-    #[arg(long, value_name = "map_max_area_ratio")]
-    map_max_area_ratio: Option<f64>,
     #[arg(long, value_name = "render_wheel")]
     render_wheel: Option<bool>,
     #[arg(long, value_name = "performance-test")]
@@ -258,20 +261,6 @@ async fn main() -> anyhow::Result<()> {
         _ => {}
     }
 
-    match args.map_max_area_ratio {
-        Some(m) => {
-            parameters.map_options.max_area_ratio = m;
-        }
-        _ => {}
-    }
-
-    match args.profile_max_area_ratio {
-        Some(m) => {
-            parameters.profile_options.max_area_ratio = m;
-        }
-        _ => {}
-    }
-
     match args.debug {
         Some(d) => {
             parameters.debug = d;
@@ -339,13 +328,12 @@ async fn main() -> anyhow::Result<()> {
         println!("make: {}", gpxname);
         std::fs::write(gpxname, &filecontent).expect("Could not write gpx.");
     }
+
     let zipname = format!(
         "{}/{}.zip",
         outdir,
         gpxpath.file_stem().unwrap().to_str().unwrap()
     );
-    println!("make: {}", zipname);
-
     let zip = backend.generateZip(&kinds).await;
     println!("make: {}", zipname);
     std::fs::write(zipname, &zip).expect("Could not write pdf.");

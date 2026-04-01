@@ -100,28 +100,24 @@ impl Default for UserStepsOptions {
 #[derive(Clone, Debug, PartialEq)]
 pub struct ProfileOptions {
     pub elevation_indicators: Vec<ProfileIndication>,
-    pub max_area_ratio: f64,
 }
 
 impl Default for ProfileOptions {
     fn default() -> ProfileOptions {
         ProfileOptions {
             elevation_indicators: vec![ProfileIndication::NumericSlope],
-            max_area_ratio: 0.20f64,
         }
     }
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MapOptions {
-    pub max_area_ratio: f64,
+    // empty
 }
 
 impl Default for MapOptions {
     fn default() -> MapOptions {
-        MapOptions {
-            max_area_ratio: 0.15f64,
-        }
+        MapOptions {}
     }
 }
 

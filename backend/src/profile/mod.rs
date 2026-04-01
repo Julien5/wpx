@@ -616,7 +616,6 @@ impl ProfileView {
                 Point2D::new(self.WD(), self.free_height()),
             ),
             &polyline,
-            &self.parameters.parameters.profile_options.max_area_ratio,
             self.debug_graphic_dir.clone(),
         );
 

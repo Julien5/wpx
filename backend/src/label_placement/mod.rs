@@ -149,11 +149,10 @@ pub fn place_labels(
     gen: &dyn CandidatesGenerator,
     bbox: &BoundingBox,
     polyline: &Polyline,
-    max_area_ratio: &f64,
     debug_graphic_dir: Option<String>,
 ) -> (Vec<PlacementResult>, Obstacles) {
     let mut ret = Vec::new();
-    let mut obstacles = Obstacles::new(bbox, *max_area_ratio);
+    let mut obstacles = Obstacles::new(bbox);
     obstacles.polylines = vec![polyline.clone()];
     for (idx, packet) in packets.iter().enumerate() {
         let kind = match packet.points.first() {

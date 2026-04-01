@@ -7,7 +7,6 @@ use crate::{
 #[derive(Clone)]
 pub struct DrawingArea {
     pub bbox: BoundingBox,
-    _max_area_ratio: f64,
 }
 
 #[derive(Clone)]
@@ -19,12 +18,9 @@ pub struct Obstacles {
 }
 
 impl Obstacles {
-    pub fn new(area: &BoundingBox, ratio: f64) -> Self {
+    pub fn new(area: &BoundingBox) -> Self {
         Self {
-            drawingbox: DrawingArea {
-                bbox: area.clone(),
-                _max_area_ratio: ratio,
-            },
+            drawingbox: DrawingArea { bbox: area.clone() },
             polylines: Vec::new(),
             bboxes: Vec::new(),
             bboxes_tree: QuadTree::new(area.clone()),
