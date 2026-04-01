@@ -5,28 +5,62 @@ This tool is designed for brevet cycling. Starting from brevet GPX files, it doe
 * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). You can print this PDF to take on the ride. Let's call this a *feuille de route*.
 * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slop to that point: "12:34-5.1%", for example. When displayed as "Next Waypoint" on your GPS, it helps you estimate your time buffer. 
 
-![](./frontend/ui/screenshots/screenshot-small.png)
-
 During the ride, your GPS provides local directions, while the *feuille de route* tells you:
 - Where am I on a regional scale (cities/villages)?
 - What difficulties are ahead (distance/elevation)? 
 - How much time do I have left?
 
 ---
+## Command line 
 
-## How to use
+Run with the default arguments on `alpes.gpx`, this results in [this PDF](./backend/pdf/alpes.pdf).
+```
+wpx data/ref/alpes.gpx --output pdf/alpes.pdf
+```
+![](./backend/pdf/alpes-small.png)
 
-### Load GPX files 
-
-![](./frontend/ui/screenshots/gpxbutton.png)
+### Input 
 
 WPX can load multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control.
 
 Elevation gain is computed using a 200-m moving average on the GPX data. This is sufficient for identifying the hilliest sections of a brevet, but do not expect perfect absolute accuracy. 
 
-Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry:
+Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
 
-![](./frontend/ui/screenshots/retrycard.png)
+### Output 
+
+WPX generate either only a pdf file, or zip file containing 
+- **The PDF.**
+- **Flat track:** The complete track without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints.
+- **Flat segments:** The flat segments.
+- **pacing-all.gpx:** All pacing points in one file.
+  - **pacing-1, 2, etc.:** The pacing points separated to avoid ambiguity: the GPS determines what is the "Next Waypoint" based on its geographic coordinates. For an out-and-back tour (like Paris-Brest-Paris), the pacing points belonging to the back way would shown on the out way if they are loaded on the GPS. Load `pacing-1.gpx` on the way out, and `pacing-2.gpx` on the way back.
+
+For example, for a brevet with 7 controls, the ouput might contain:
+```
+$ unzip -l /tmp/foo.zip 
+Archive:  /tmp/foo.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+   114734  2024-01-01 00:00   flat-segment-01.gpx
+   198644  2024-01-01 00:00   flat-segment-02.gpx
+    71852  2024-01-01 00:00   flat-segment-03.gpx
+    34066  2024-01-01 00:00   flat-segment-04.gpx
+    61081  2024-01-01 00:00   flat-segment-05.gpx
+    60580  2024-01-01 00:00   flat-segment-06.gpx
+    38897  2024-01-01 00:00   flat-segment-07.gpx
+   578411  2024-01-01 00:00   flat-track.gpx
+     5033  2024-01-01 00:00   pacing-1.gpx
+      539  2024-01-01 00:00   pacing-2.gpx
+     5424  2024-01-01 00:00   pacing-all.gpx
+   356943  2024-01-01 00:00   route.pdf
+---------                     -------
+  1526204                     12 files
+```
+---
+## Graphical Interface 
+
+![](./frontend/ui/screenshots/screenshot-small.png)
 
 ### Set time parameters
 
@@ -58,13 +92,6 @@ Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.or
 
 ![](./frontend/ui/screenshots/pdfcard.png)
 
-### ZIP export 
-
-"zip export" generates:
-- **Flat tracks:** GPX tracks without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints.
-- **pacing-all.gpx:** All pacing points in one file.
-- **pacing-1, 2, etc.:** Split pacing points to avoid device ambiguity.
-- **The PDF.**
 
 ---
 
