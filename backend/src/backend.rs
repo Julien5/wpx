@@ -14,7 +14,6 @@ use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::parameters;
-use crate::parameters::karl_order;
 use crate::parameters::ControlSource;
 use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
@@ -166,28 +165,13 @@ impl Backend {
         self.load_contents(&vec![content.clone()]).await
     }
 
-    pub async fn load_track_parts_no_reorder(
-        &self,
-        contents: &Vec<Vec<u8>>,
-    ) -> Result<Vec<TrackPart>, TrackError> {
-        self.send("read gpx");
-        let gpxdata = gpsdata::GpxData::read_contents(contents)?;
-        let parts = gpxdata.track_parts();
-        {
-            let mut locked = self.gpxdata.write().unwrap();
-            *locked = Some(gpxdata);
-        }
-        Ok(parts)
-    }
-
     pub async fn load_track_parts(
         &self,
         contents: &Vec<Vec<u8>>,
     ) -> Result<Vec<TrackPart>, TrackError> {
         self.send("read gpx");
         let gpxdata = gpsdata::GpxData::read_contents(contents)?;
-        let rparts = gpxdata.track_parts();
-        let parts = karl_order(&rparts);
+        let parts = gpxdata.track_parts();
         {
             let mut locked = self.gpxdata.write().unwrap();
             *locked = Some(gpxdata);

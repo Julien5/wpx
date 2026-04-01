@@ -122,7 +122,7 @@ pub struct _TrackPart {
 }
 
 #[frb(sync)]
-pub fn karl_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
+pub fn best_guess_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
     parameters::karl_order(parts)
 }
 
