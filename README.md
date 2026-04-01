@@ -3,15 +3,48 @@
 This tool is designed for **brevet cycling**. Starting from brevet GPX files, it does two things:
 
   * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). You can print this PDF to take on the ride as a *feuille de route* (cue sheet).
-  * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. When displayed as "Next Waypoint" on your GPS, it helps you manage your time buffer.
+  * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. When displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
 
 During the ride, your GPS provides local directions, while the *feuille de route* tells you:
 
   - Where am I on a regional scale (cities/villages)?
   - What difficulties are ahead (distance/elevation)?
-  - How much time do I have left?
+  - How much time on hand do I have left?
   
-WPX can be used with a graphical interface or from the command line.  
+WPX can be used with a [graphical interface](#graphical-interface) or from the [command line](#command-line). The graphical interface is available as a webapp [here](https://vps-e637d6c5.vps.ovh.net:8123).
+
+## Input
+
+  - WPX can load multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control.
+  - Elevation gain is computed using a 200m moving average on the GPX data. This is sufficient for identifying the hilliest sections of a brevet, but do not expect perfect absolute accuracy.
+  - Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
+
+## Output
+
+WPX generates either a PDF file or a ZIP file containing PDF and the following GPX files:
+  - `flat-track.gpx`: The complete track without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints.
+  - `flat-segment-<n>.gpx`: Individual segments without elevation data.
+  - `pacing-all.gpx`: All pacing points in a single file.
+  - `pacing-<n>.gpx`: Pacing points separated to avoid ambiguity. GPS devices determine the "Next Waypoint" based on geographic proximity. For an **out-and-back** tour (like Paris-Brest-Paris), pacing points belonging to the return leg might show up during the outbound leg if they are all loaded at once. Load `pacing-1.gpx` on the way out, and `pacing-2.gpx` on the way back.
+
+For example, for a brevet with 7 controls, the output might contain:
+
+```
+$ unzip -l /tmp/foo.zip 
+[...]
+   114734  2024-01-01 00:00   flat-segment-01.gpx
+   198644  2024-01-01 00:00   flat-segment-02.gpx
+    71852  2024-01-01 00:00   flat-segment-03.gpx
+    34066  2024-01-01 00:00   flat-segment-04.gpx
+    61081  2024-01-01 00:00   flat-segment-05.gpx
+    60580  2024-01-01 00:00   flat-segment-06.gpx
+    38897  2024-01-01 00:00   flat-segment-07.gpx
+   578411  2024-01-01 00:00   flat-track.gpx
+     5033  2024-01-01 00:00   pacing-1.gpx
+      539  2024-01-01 00:00   pacing-2.gpx
+     5424  2024-01-01 00:00   pacing-all.gpx
+   356943  2024-01-01 00:00   route.pdf
+```
 
 -----
 
@@ -45,53 +78,39 @@ WPX can be used with a graphical interface or from the command line.
 
 With the default arguments on `alpes.gpx`, this results in [this PDF](./backend/pdf/alpes.pdf).
 
-```bash
+```
 wpx data/ref/alpes.gpx --output pdf/alpes.pdf
 ```
 ![](./backend/pdf/alpes-small.png).
-
-### Input
-
-WPX can load multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control.
-
-Elevation gain is computed using a 200m moving average on the GPX data. This is sufficient for identifying the hilliest sections of a brevet, but do not expect perfect absolute accuracy.
-
-Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
-
-### Output
-
-WPX generates either a standalone PDF file or a ZIP file containing:
-
-  - **The PDF.**
-  - **Flat track:** The complete track without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints.
-  - **Flat segments:** Individual segments without elevation data.
-  - **pacing-all.gpx:** All pacing points in a single file.
-  - **pacing-1, pacing-2, etc.:** Pacing points separated to avoid ambiguity. GPS devices determine the "Next Waypoint" based on geographic proximity. For an **out-and-back** tour (like Paris-Brest-Paris), pacing points belonging to the return leg might show up during the outbound leg if they are all loaded at once. Load `pacing-1.gpx` on the way out, and `pacing-2.gpx` on the way back.
-
-For example, for a brevet with 7 controls, the output might contain:
-
 ```
-$ unzip -l /tmp/foo.zip 
-Archive:  /tmp/foo.zip
-  Length      Date    Time    Name
----------  ---------- -----   ----
-   114734  2024-01-01 00:00   flat-segment-01.gpx
-   198644  2024-01-01 00:00   flat-segment-02.gpx
-    71852  2024-01-01 00:00   flat-segment-03.gpx
-    34066  2024-01-01 00:00   flat-segment-04.gpx
-    61081  2024-01-01 00:00   flat-segment-05.gpx
-    60580  2024-01-01 00:00   flat-segment-06.gpx
-    38897  2024-01-01 00:00   flat-segment-07.gpx
-   578411  2024-01-01 00:00   flat-track.gpx
-     5033  2024-01-01 00:00   pacing-1.gpx
-      539  2024-01-01 00:00   pacing-2.gpx
-     5424  2024-01-01 00:00   pacing-all.gpx
-   356943  2024-01-01 00:00   route.pdf
----------                     -------
-  1526204                     12 files
-```
+$ /home/julien/delme/rust-targets/debug/wpx  --help
+Reads a brevet GPX files and generates the feuille de route and pacing points
 
------
+Usage: wpx [OPTIONS] [gpx]...
+
+Arguments:
+  [gpx]...  
+
+Options:
+      --segment-length <segment_length>
+          the segment length in kilometer [default: 110]
+      --segment-overlap <segment_overlap>
+          the segment overlap in kilometer [default: 10]
+      --start-time <start_time>
+          start date time in ISO 8601 format, like 2026-01-10T20:00 [default: now]
+      --speed <speed>
+          speed in kilometer per hour [default: 15]
+      --step-distance <step_distance>
+          generate one pacing point every [distance] kilometer [default: 10]
+      --step-elevation-gain <step_elevation_gain>
+          generate one pacing point every [evelation gain] meter
+      --kinds <kinds>
+          [default: Controls GPXWaypoints Cities Mountains Villages Hamlets UserStep] [possible values: Cities, Controls, GPXWaypoints, Hamlets, Mountains, Villages, UserStep]
+      --output <ouput>
+          filename for the ouput (zip or pdf)
+  -h, --help
+          Print help
+```
 
 ## Project Architecture
 

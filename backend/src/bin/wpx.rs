@@ -11,7 +11,7 @@ use tracks::parameters::{parse_time, ControlSource, RenderFunction};
 use tracks::point_collection::Kind;
 use tracks::{point_collection, speed};
 
-/// Search for a pattern in a file and display the lines that contain it.
+/// Reads a brevet GPX files and generates the feuille de route and pacing points.
 #[derive(Parser)]
 struct Cli {
     /// the segment length in kilometer
