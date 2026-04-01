@@ -153,10 +153,22 @@ impl Default for Parameters {
 }
 
 pub fn parse_time(data: &str) -> DateTime {
-    let parsed = chrono::DateTime::parse_from_rfc3339(data).expect("Failed to parse");
-    use chrono::{DateTime, Local};
-    let local_dt: DateTime<Local> = DateTime::from(parsed);
-    local_dt
+    use chrono::{Local, NaiveDateTime, TimeZone};
+    // 1. Try to parse with an explicit TimeZone (RFC3339 / ISO8601 with Z or +HH:MM)
+    if let Ok(parsed_with_tz) = chrono::DateTime::parse_from_rfc3339(data) {
+        return DateTime::from(parsed_with_tz);
+    }
+
+    if let Ok(naive) = NaiveDateTime::parse_from_str(data, "%Y-%m-%dT%H:%M:%S") {
+        // Attach the local system timezone to the naive time
+        if let Some(local_dt) = Local.from_local_datetime(&naive).single() {
+            return local_dt;
+        }
+    }
+
+    // 3. Final Fallback: Return current time or panic/error based on your needs
+    // For this example, we'll return the current time if all parsing fails
+    Local::now()
 }
 
 pub fn time_to_iso8601(time: &DateTime) -> String {

@@ -15,10 +15,8 @@ use tracks::{point_collection, speed};
 struct Cli {
     #[arg(long, value_name = "debug")]
     debug: Option<bool>,
-    #[arg(long, value_name = "outdir")]
-    output_directory: Option<std::path::PathBuf>,
     #[arg(long, value_name = "zip")]
-    output_zip: Option<std::path::PathBuf>,
+    output: Option<std::path::PathBuf>,
     #[arg(long, value_name = "segment_length")]
     segment_length: Option<i32>,
     #[arg(long, value_name = "segment_overlap")]
@@ -36,8 +34,6 @@ struct Cli {
     step_distance: Option<usize>,
     #[arg(long, value_name = "step_elevation_gain")]
     step_elevation_gain: Option<usize>,
-    #[arg(long, value_name = "profile_max_area_ratio")]
-    profile_max_area_ratio: Option<f64>,
     #[arg(long, value_name = "render_wheel")]
     render_wheel: Option<bool>,
     #[arg(long, value_name = "performance-test")]
@@ -164,17 +160,11 @@ async fn main() -> anyhow::Result<()> {
     assert!(!gpxinputs.is_empty());
 
     let gpxpath = std::path::Path::new(gpxinputs.first().unwrap());
-    let mut outdir = gpxpath.parent().unwrap().to_str().unwrap();
-    match &args.output_directory {
-        Some(path) => outdir = path.to_str().unwrap(),
-        _ => {}
-    }
 
     let mut backend = Backend::make();
     let mut gpxdata = Vec::new();
     for gpxinput in &gpxinputs {
         log::info!("read gpx {}", gpxinput);
-        log::info!("outdir   {}", outdir);
         gpxdata.push(read_file(gpxinput));
     }
     let parts = backend.load_track_parts_no_reorder(&gpxdata).await?;
@@ -313,27 +303,10 @@ async fn main() -> anyhow::Result<()> {
 
     let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
 
-    let pdfbytes = backend.generatePdf(&kinds).await;
-    let pdfname = format!(
-        "{}/{}.pdf",
-        outdir,
-        gpxpath.file_stem().unwrap().to_str().unwrap()
-    );
-    println!("make: {}", pdfname);
-    std::fs::write(pdfname, &pdfbytes).expect("Could not write pdf.");
-
-    let map = backend.generateGpx();
-    for (filename, filecontent) in map {
-        let gpxname = format!("{}/{}", outdir, filename);
-        println!("make: {}", gpxname);
-        std::fs::write(gpxname, &filecontent).expect("Could not write gpx.");
-    }
-
-    let zipname = format!(
-        "{}/{}.zip",
-        outdir,
-        gpxpath.file_stem().unwrap().to_str().unwrap()
-    );
+    let zipname = match args.output {
+        Some(path) => path.into_os_string().into_string().unwrap_or_default(),
+        None => format!("{}.zip", gpxpath.file_stem().unwrap().to_str().unwrap()),
+    };
     let zip = backend.generateZip(&kinds).await;
     println!("make: {}", zipname);
     std::fs::write(zipname, &zip).expect("Could not write pdf.");

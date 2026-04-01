@@ -79,29 +79,15 @@ function pdf() {
 
 function cli() {
 	set -x
-	echo "args:"$@
-	cmd=run
-	options=
-	file=data/blackforest.gpx
-	mode=""
-	echo make pdf
-	export RUST_LOG=trace
-	cargo build ${mode}
-	export CARGO_PROFILE_RELEASE_DEBUG=true
-	rm -Rf /tmp/wpx
-	mkdir /tmp/wpx
-	time cargo ${cmd} ${mode} -- \
-		 --output-directory /tmp/wpx/ \
-		 --debug true \
-		 --step-elevation-gain 50 \
-		 --segment-length $(segment-length ${file}) \
-		 --segment-overlap $(segment-overlap ${file}) \
-		 --profile-max-area-ratio 1.0 \
-		 --map-max-area-ratio 1.0 \
-		 ${options} \
-		 "${file}"
-	cp /tmp/wpx/*.pdf /tmp/document.pdf 
-	echo xdg-open /tmp/document.pdf 
+	cargo run -- \
+		  --kinds Controls,Villages,Cities,Mountains \
+		  --output /tmp/foo.zip \
+		  --step-elevation-gain 50 \
+		  --segment-length 110 \
+		  --segment-overlap 10 \
+		  --start-time "2026-01-10T20:00:00" \
+		  --speed 32 \
+		  ~/tours/self/2024/05/gpx/with-waypoints/{jura,foret-noire}.gpx
 }
 
 
