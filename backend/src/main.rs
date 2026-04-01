@@ -15,33 +15,36 @@ use tracks::{point_collection, speed};
 struct Cli {
     #[arg(long, value_name = "debug")]
     debug: Option<bool>,
+    /// filename for the ouput (a zip file)
     #[arg(long, value_name = "zip")]
     output: Option<std::path::PathBuf>,
+    /// the segment length in kilometer
     #[arg(long, value_name = "segment_length")]
     segment_length: Option<i32>,
+    /// the segment overlap in kilometer
     #[arg(long, value_name = "segment_overlap")]
     segment_overlap: Option<i32>,
-    // start date time in ISO 8601 format, like 2026-01-10T20:00
+    /// start date time in ISO 8601 format, like 2026-01-10T20:00
     #[arg(long, value_name = "start_time")]
     start_time: Option<String>,
-    // end date time in ISO 8601 format, like 2026-01-10T20:00
-    #[arg(long, value_name = "start_time")]
-    end_time: Option<String>,
-    // speed in kilometer per hour
+    /// speed in kilometer per hour
     #[arg(long, value_name = "speed")]
     speed: Option<f64>,
+    /// generate one pacing point every [distance] kilometer
     #[arg(long, value_name = "step_distance")]
     step_distance: Option<usize>,
+    /// generate one pacing point every [evelation gain] meter
     #[arg(long, value_name = "step_elevation_gain")]
     step_elevation_gain: Option<usize>,
-    #[arg(long, value_name = "render_wheel")]
-    render_wheel: Option<bool>,
-    #[arg(long, value_name = "performance-test")]
-    performance_test: Option<bool>,
-    #[arg(long, value_name = "render-graph")]
-    render_graph: Option<bool>,
-    #[arg(long, value_delimiter = ',', default_values_t = [Kind::Mountains, Kind::Cities],value_name = "kinds")]
+    #[arg(long, value_delimiter = ',', default_values_t = [Kind::Controls,Kind::GPXWaypoints,Kind::Mountains, Kind::Cities],value_name = "kinds")]
     kinds: Vec<Kind>,
+    #[arg(long, value_name = "render_wheel", hide = true)]
+    render_wheel: Option<bool>,
+    #[arg(long, value_name = "performance-test", hide = true)]
+    performance_test: Option<bool>,
+    #[arg(long, value_name = "render-graph", hide = true)]
+    render_graph: Option<bool>,
+
     #[arg(value_name = "gpx")]
     filenames: Vec<std::path::PathBuf>,
 }
@@ -299,7 +302,7 @@ async fn main() -> anyhow::Result<()> {
 
     let stats = backend.statistics();
     println!("length = {:.1} km", stats.length / 1000f64);
-    println!("elevation gain = {:.1} km", stats.elevation_gain);
+    println!("elevation gain = {:.1} m", stats.elevation_gain);
 
     let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
 

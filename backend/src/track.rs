@@ -39,7 +39,7 @@ impl Simplified {
                 .collect();
             let line = geo::LineString::new(coords);
             let epsilon = track_distance * 500f64 / 1200_000f64;
-            line.simplify_idx(&epsilon)
+            line.simplify_idx(epsilon)
         };
         let xypoints = xy.iter().map(|idx| euclidean[*idx].clone()).collect();
         let dz = {
@@ -50,7 +50,7 @@ impl Simplified {
                 .collect();
             let line = geo::LineString::new(coords);
             let epsilon = 2f64;
-            line.simplify_idx(&epsilon)
+            line.simplify_idx(epsilon)
         };
         Self { xy, xypoints, dz }
     }
@@ -318,7 +318,7 @@ impl Track {
             coords.push(geo::coord!(x:x, y:y));
         }
         let line = geo::LineString::new(coords);
-        line.simplify_idx(&epsilon)
+        line.simplify_idx(epsilon)
             .iter()
             .map(|k| k + range.start)
             .collect::<Vec<_>>()

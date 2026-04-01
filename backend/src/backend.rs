@@ -613,7 +613,6 @@ mod tests {
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        parameters.profile_options.max_area_ratio = 0.20f64;
         parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
 
         backend.set_parameters(&parameters);
@@ -709,7 +708,6 @@ mod tests {
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        parameters.map_options.max_area_ratio = 0.15f64;
         backend.set_parameters(&parameters);
 
         let segment = &backend.trackSegment();
@@ -742,7 +740,6 @@ mod tests {
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        parameters.map_options.max_area_ratio = 0.15f64;
         backend.set_parameters(&parameters);
 
         let segments = backend.segments();
@@ -783,7 +780,6 @@ mod tests {
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        parameters.map_options.max_area_ratio = 0.15f64;
         backend.set_parameters(&parameters);
         let gpx = backend.generateGpx();
         for (filename, filecontent) in gpx {

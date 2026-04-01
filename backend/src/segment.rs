@@ -502,7 +502,6 @@ mod tests {
         let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
-        parameters.map_options.max_area_ratio = 0.15f64;
         parameters.user_steps_options.step_distance = None;
         parameters.user_steps_options.step_elevation_gain = Some(250f64);
         parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];

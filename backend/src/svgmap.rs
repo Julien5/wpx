@@ -476,7 +476,7 @@ mod tests {
             hardness: 0,
         };
         let area = BoundingBox::new();
-        let obstacles = Obstacles::new(&area, 0f64);
+        let obstacles = Obstacles::new(&area);
         let candidates = MapGenerator {}.gen(&target, &obstacles);
         let mut found = false;
         assert!(!candidates.is_empty());

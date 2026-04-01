@@ -191,7 +191,7 @@ impl ProjectionTrees {
             }
             Resolution::Topology => 10_000f64,
         };
-        let split_indices = line.simplify_idx(&epsilon);
+        let split_indices = line.simplify_idx(epsilon);
         log::trace!("topology: {} parts", split_indices.len() - 1);
         let ranges: Vec<std::ops::Range<usize>> = split_indices
             .windows(2)

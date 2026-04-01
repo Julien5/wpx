@@ -149,13 +149,10 @@ pub struct _UserStepsOptions {
 #[frb(mirror(ProfileOptions))]
 pub struct _ProfileOptions {
     pub elevation_indicators: Vec<ProfileIndication>,
-    pub max_area_ratio: f64,
 }
 
 #[frb(mirror(MapOptions))]
-pub struct _MapOptions {
-    pub max_area_ratio: f64,
-}
+pub struct _MapOptions {}
 
 #[frb(mirror(Parameters))]
 pub struct _Parameters {

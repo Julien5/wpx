@@ -364,7 +364,7 @@ mod tests {
         let _ = env_logger::try_init();
         // Create a new graph
         let area = BoundingBox::minmax(Point2D::zero(), Point2D::new(10f64, 10f64));
-        let obstacles = Obstacles::new(&area, 1.0);
+        let obstacles = Obstacles::new(&area);
         let mut graph = Graph::new(obstacles, None);
         let mut ca = Candidates::new();
         let mut cb = Candidates::new();

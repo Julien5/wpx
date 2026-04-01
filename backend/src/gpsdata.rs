@@ -5,12 +5,12 @@ use crate::math::Point2D;
 use crate::parameters::TrackPart;
 use crate::wgs84point::WGS84Point;
 use crate::{mercator, track};
-use geo::Distance;
 
 pub fn distance_wgs84(p1: &WGS84Point, p2: &WGS84Point) -> f64 {
-    let p1 = geo::Point::new(p1.x(), p1.y());
-    let p2 = geo::Point::new(p2.x(), p2.y());
-    geo::Haversine::distance(p1, p2)
+    use geo::Distance;
+    let gp1 = geo::Point::new(p1.x(), p1.y());
+    let gp2 = geo::Point::new(p2.x(), p2.y());
+    geo::Haversine.distance(gp1, gp2)
 }
 
 fn read_gpx_content(bytes: &Vec<u8>) -> Result<gpx::Gpx, TrackError> {
@@ -250,7 +250,7 @@ mod tests {
             (x: 27.8, y: 0.1),
         ];
 
-        let simplified = line_string.simplify(&1.0);
+        let simplified = line_string.simplify(1.0);
 
         let expected = line_string![
             (x: 0.0, y: 0.0),

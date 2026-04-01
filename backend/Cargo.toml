@@ -4,47 +4,38 @@ edition = "2021"
 version = "0.1.0"
 
 [dependencies]
-geo = "0.29.3"
+geo = "0.32.0"
+# needed by geo, the js feature enable the geo wasm build 
+getrandom = { version = "0.2", features = ["js"] }
 gpx = "0.10.0"
 kd-tree = "0.6.0"
 proj4rs = "0.1.5"
 svg = "0.18.0"
 tempfile = "3.19.1"
-typenum = "1.18.0"
 chrono = "0.4.41"
-typst-as-lib = { version = "0.14.4", features = ["typst-kit-embed-fonts", "typst-kit-fonts"], optional=true }
-typst-pdf = { version = "0.13.1", optional=true}
 clap = { version = "4.5", features = ["derive"] }
-# fix build error in typst/svg2pdf v0.12.0
-image = { version = "=0.25.6"  }
 serde_json = "1.0.143"
-reqwest = {version="0.12.23",features = ["gzip", "deflate"] }
+reqwest = {version="0.12.23",default-features = false,features = ["gzip", "deflate","rustls-tls"] }
 urlencoding = "2.1.3"
-serde = "1.0.219"
+serde = { version = "1.0", features = ["derive"] }
 dirs = "6.0.0"
-indexed_db_futures = "0.6.4"
 tokio = {version="1.47.1", features=["rt","macros"]}
-futures = "0.3.31"
 anyhow = "1.0.99"
 web-sys = {version="0.3.78", features=["Location","Window"]}
 log = "0.4.28"
-wasm-logger = "0.2.0"
 env_logger = "0.11.8"
-wasmtimer = "0.4.3"
 sphere-knn = "0.1.0"
 rstar = "0.12.2"
-num-traits = "0.2.19"
 wasm-bindgen = "0.2.104"
-petgraph = "0.8.3"
 euclid = "0.22.11"
 regex = "1.12.2"
 # https://github.com/zip-rs/zip2/issues/176
-zip = {version="7.1.0",default-features = false }
+zip = {version="8.4.0",default-features = false }
 thiserror = "2.0.18"
 # pdf rendering
 svg2pdf = "0.12"
-pdf-writer = "0.12"
-usvg = "0.43"
+indexed_db_futures = "0.6.4"
+pdf-writer = "0.12.1"
 
 
 #[features]

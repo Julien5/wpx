@@ -1,5 +1,6 @@
 use core::fmt;
 pub mod quadtree;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct BoundingBox {
@@ -274,8 +275,6 @@ use std::{
     cmp::Ordering,
     hash::{Hash, Hasher},
 };
-
-use serde::{Deserialize, Serialize};
 
 use crate::math::{distance2, partial_compare, IntegerSize2D, Point2D};
 

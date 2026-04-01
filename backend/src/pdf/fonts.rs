@@ -31,7 +31,7 @@ mod download_font {
     }
 }
 
-pub async fn register_libertinus_fonts(db: &mut usvg::fontdb::Database) {
+pub async fn register_libertinus_fonts(db: &mut svg2pdf::usvg::fontdb::Database) {
     for file in LIBERTINUS_FONT_FILES {
         let data = download_font::get(&file).await;
         db.load_font_data(data);
