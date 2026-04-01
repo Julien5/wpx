@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/screen_configuration.dart';
-import 'package:ui/src/widgets/horizontal_layout.dart';
-import 'package:ui/src/widgets/vertical_layout.dart';
+import 'package:wpx/src/models/screen_configuration.dart';
+import 'package:wpx/src/widgets/horizontal_layout.dart';
+import 'package:wpx/src/widgets/vertical_layout.dart';
 
 class AdaptiveLayout extends StatelessWidget {
   final Widget topRow;

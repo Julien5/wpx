@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
 
 class KindsModel with ChangeNotifier {
   Kinds kinds = {

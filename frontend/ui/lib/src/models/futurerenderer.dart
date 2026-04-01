@@ -2,10 +2,10 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ui/src/log.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/log.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 typedef TrackData = bridge.RenderFunction;
 

@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:ui/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
 
 class StackViewsController extends ChangeNotifier {
   int currentIndex = 0;

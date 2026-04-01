@@ -2,10 +2,10 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/stackviewscontroller.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/simpletrackview.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/stackviewscontroller.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/widgets/simpletrackview.dart';
 
 class _SegmentGraphicsButtons extends StatelessWidget {
   final VoidCallback? onPressed;

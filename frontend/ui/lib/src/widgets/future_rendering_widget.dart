@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/log.dart';
+import 'package:wpx/src/log.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/svgelements.dart';
-import 'package:ui/src/widgets/interactive_svg_widget.dart';
-import 'package:ui/src/widgets/static_svg_widget.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/svgelements.dart';
+import 'package:wpx/src/widgets/interactive_svg_widget.dart';
+import 'package:wpx/src/widgets/static_svg_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class FutureRenderingWidget extends StatefulWidget {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/trackview.dart';
-import 'package:ui/src/screens/desktop/central_panel.dart';
-import 'package:ui/src/widgets/waypoints_table_widget.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/widgets/trackview.dart';
+import 'package:wpx/src/screens/desktop/central_panel.dart';
+import 'package:wpx/src/widgets/waypoints_table_widget.dart';
 
 class CentralWidget extends StatelessWidget {
   final double width;

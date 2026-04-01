@@ -4,10 +4,10 @@ import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/kindsmodel.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/models/kindsmodel.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/utils/utils.dart';
 
 enum Type { pdf, gpx, zip }
 

@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
 double scaleDown(Size object, Size drawArea) {
   double sw = drawArea.width / object.width;

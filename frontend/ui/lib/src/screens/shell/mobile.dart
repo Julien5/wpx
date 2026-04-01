@@ -2,13 +2,13 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/screens/controls/controls_screen.dart';
-import 'package:ui/src/screens/home/home_screen.dart';
-import 'package:ui/src/screens/load/load_screen.dart';
-import 'package:ui/src/screens/settings/settings_screen.dart';
-import 'package:ui/src/screens/usersteps/usersteps_screen.dart';
-import 'package:ui/src/screens/wheel/wheel_screen.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/screens/controls/controls_screen.dart';
+import 'package:wpx/src/screens/home/home_screen.dart';
+import 'package:wpx/src/screens/load/load_screen.dart';
+import 'package:wpx/src/screens/settings/settings_screen.dart';
+import 'package:wpx/src/screens/usersteps/usersteps_screen.dart';
+import 'package:wpx/src/screens/wheel/wheel_screen.dart';
 
 class MobileShell extends StatelessWidget {
   const MobileShell({super.key});

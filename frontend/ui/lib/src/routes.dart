@@ -3,9 +3,9 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/screen_configuration.dart';
-import 'package:ui/src/screens/shell/screen_shell.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/models/screen_configuration.dart';
+import 'package:wpx/src/screens/shell/screen_shell.dart';
 
 class Routes {
   static const String home = "/";

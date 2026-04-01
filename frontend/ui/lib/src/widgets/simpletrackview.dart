@@ -2,11 +2,11 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/stackviewscontroller.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/trackview.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/models/stackviewscontroller.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/widgets/trackview.dart';
 
 class SimpleTrackView extends StatefulWidget {
   final RendererParameters rendererParameters;

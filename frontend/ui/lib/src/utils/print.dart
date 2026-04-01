@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/rust/api/bridge.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
 
 List<double> _niceSegmentLengths(double trackLength) {
   double trackLengthKm = trackLength / 1000;

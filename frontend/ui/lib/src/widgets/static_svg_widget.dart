@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/svgelements.dart';
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/svgelements.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 class StaticSvgWidget extends StatelessWidget {
   final SvgRootElement svgRootElement;

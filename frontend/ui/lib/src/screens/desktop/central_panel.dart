@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/kindsmodel.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/screens/desktop/central_panel_overview.dart';
-import 'package:ui/src/screens/desktop/central_panel_pdf.dart';
-import 'package:ui/src/screens/desktop/central_panel_usersteps.dart';
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/kindsmodel.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/screens/desktop/central_panel_overview.dart';
+import 'package:wpx/src/screens/desktop/central_panel_pdf.dart';
+import 'package:wpx/src/screens/desktop/central_panel_usersteps.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 class ProfilePadding extends StatelessWidget {
   final Widget child;

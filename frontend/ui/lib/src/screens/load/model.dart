@@ -1,8 +1,8 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
 enum Job { parts, gpx, osm, controls, none }
 

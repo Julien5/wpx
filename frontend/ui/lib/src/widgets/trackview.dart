@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/future_rendering_widget.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/widgets/future_rendering_widget.dart';
 
 class RendererParameters {
   final Set<Kind> kinds;

@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/kindsmodel.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/screen_configuration.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/stackviewscontroller.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/routes.dart';
-import 'package:ui/src/rust/frb_generated.dart';
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/kindsmodel.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/models/screen_configuration.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/models/stackviewscontroller.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/routes.dart';
+import 'package:wpx/src/rust/frb_generated.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart'; // Import kIsWeb
 
 Future<void> main() async {
@@ -27,6 +28,8 @@ Future<void> main() async {
       setWindowFrame(Rect.fromLTWH(1500, 150, 400, 675));
       //setWindowFrame(Rect.fromLTWH(150, 150, 1366, 768));
     }
+    await windowManager.ensureInitialized();
+    await windowManager.setIcon('assets/icons/png/wpx_icon.png');
   }
   await RustLib.init();
   PackageInfo packageInfo = await PackageInfo.fromPlatform();

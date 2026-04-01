@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/screens/desktop/kinds_row.dart';
-import 'package:ui/src/screens/settings/settings_screen.dart';
-import 'package:ui/src/screens/wheel/statistics_widget.dart';
-import 'package:ui/src/utils/print.dart';
-import 'package:ui/src/widgets/export.dart';
-import 'package:ui/src/widgets/small.dart';
-import 'package:ui/src/widgets/userstepsslider.dart';
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/screens/desktop/kinds_row.dart';
+import 'package:wpx/src/screens/settings/settings_screen.dart';
+import 'package:wpx/src/screens/wheel/statistics_widget.dart';
+import 'package:wpx/src/utils/print.dart';
+import 'package:wpx/src/widgets/export.dart';
+import 'package:wpx/src/widgets/small.dart';
+import 'package:wpx/src/widgets/userstepsslider.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 class UserStepsCard extends StatefulWidget {
   final ExpansibleController controller;

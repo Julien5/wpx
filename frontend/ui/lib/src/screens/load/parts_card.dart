@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/widgets/small.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/widgets/small.dart';
 import 'model.dart';
 
 class _Padding extends StatelessWidget {

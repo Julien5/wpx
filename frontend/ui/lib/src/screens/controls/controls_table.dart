@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/widgets/waypoints_table_widget.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/widgets/waypoints_table_widget.dart';
 
 class ControlsTableWidget extends StatelessWidget {
   const ControlsTableWidget({super.key});

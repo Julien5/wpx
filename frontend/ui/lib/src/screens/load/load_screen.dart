@@ -1,14 +1,14 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/kindsmodel.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/routes.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
-import 'package:ui/src/screens/load/parts_card.dart';
-import 'package:ui/src/widgets/small.dart';
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/models/kindsmodel.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/routes.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/screens/load/parts_card.dart';
+import 'package:wpx/src/widgets/small.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 import 'eventwidget.dart';
 import 'model.dart';

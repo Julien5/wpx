@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/screen_configuration.dart';
-import 'package:ui/src/screens/shell/desktop.dart';
-import 'package:ui/src/screens/shell/mobile.dart';
+import 'package:wpx/src/models/screen_configuration.dart';
+import 'package:wpx/src/screens/shell/desktop.dart';
+import 'package:wpx/src/screens/shell/mobile.dart';
 
 class ScreenShell extends StatelessWidget {
   const ScreenShell({super.key});

@@ -4,8 +4,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ui/src/routes.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/routes.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
 class EventModel extends ChangeNotifier {
   final bridge.Bridge backend;

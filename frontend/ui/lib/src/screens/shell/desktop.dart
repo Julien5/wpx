@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/screens/desktop/main_screen.dart';
-import 'package:ui/src/screens/home/home_screen.dart';
-import 'package:ui/src/screens/load/load_screen.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/screens/desktop/main_screen.dart';
+import 'package:wpx/src/screens/home/home_screen.dart';
+import 'package:wpx/src/screens/load/load_screen.dart';
 
 class DesktopShell extends StatelessWidget {
   const DesktopShell({super.key});

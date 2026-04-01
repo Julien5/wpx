@@ -57,7 +57,8 @@ function build() {
 	fi
 	mkdir -p build/web/pkg/
 	cp -Rv $(find /opt/flutter/ -name "flutter.js.map") build/web/
-	cp -Rf web/pkg/* build/web/pkg/
+	cp -v web/favicon.png build/web/
+	cp -Rvf web/pkg/* build/web/pkg/
 	tar -zcf ${TARBALL} build/web
 }
  

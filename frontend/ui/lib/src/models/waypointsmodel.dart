@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
 class WaypointsModel with ChangeNotifier {
   final bridge.Bridge brd;

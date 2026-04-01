@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/screens/controls/controls_table.dart';
-import 'package:ui/src/widgets/adaptive_layout.dart';
-import 'package:ui/src/widgets/segmentgraphics.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/screens/controls/controls_table.dart';
+import 'package:wpx/src/widgets/adaptive_layout.dart';
+import 'package:wpx/src/widgets/segmentgraphics.dart';
 
 class _ButtonWidget extends StatelessWidget {
   void gotoTable(BuildContext context) {

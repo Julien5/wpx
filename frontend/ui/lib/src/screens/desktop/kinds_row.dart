@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/kindsmodel.dart';
-import 'package:ui/src/rust/api/bridge.dart';
+import 'package:wpx/src/models/kindsmodel.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
 
 class KindsRow extends StatefulWidget {
   const KindsRow({super.key});

@@ -3,17 +3,17 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/futurerenderer.dart';
-import 'package:ui/src/models/root.dart';
-import 'package:ui/src/models/segmentmodel.dart';
-import 'package:ui/src/models/stackviewscontroller.dart';
-import 'package:ui/src/routes.dart';
-import 'package:ui/src/rust/api/bridge.dart';
-import 'package:ui/src/utils/print.dart';
-import 'package:ui/src/widgets/adaptive_layout.dart';
-import 'package:ui/src/widgets/segmentgraphics.dart';
-import 'package:ui/src/widgets/segmentsgraphicsrow.dart';
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/root.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
+import 'package:wpx/src/models/stackviewscontroller.dart';
+import 'package:wpx/src/routes.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/utils/print.dart';
+import 'package:wpx/src/widgets/adaptive_layout.dart';
+import 'package:wpx/src/widgets/segmentgraphics.dart';
+import 'package:wpx/src/widgets/segmentsgraphicsrow.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 class PagesSliderWidget extends StatefulWidget {
   const PagesSliderWidget({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/screen_configuration.dart';
+import 'package:wpx/src/models/screen_configuration.dart';
 
 class SmallButton extends StatelessWidget {
   final VoidCallback? callback;

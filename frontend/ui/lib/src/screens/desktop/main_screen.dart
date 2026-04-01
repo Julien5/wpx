@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ui/src/models/screen_configuration.dart';
-import 'package:ui/src/routes.dart';
-import 'package:ui/src/screens/desktop/central_panel.dart';
-import 'package:ui/src/screens/desktop/side_panel.dart';
+import 'package:wpx/src/models/screen_configuration.dart';
+import 'package:wpx/src/routes.dart';
+import 'package:wpx/src/screens/desktop/central_panel.dart';
+import 'package:wpx/src/screens/desktop/side_panel.dart';
 
 class _MainScaffold extends StatelessWidget {
   @override

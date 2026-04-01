@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:ui/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
 typedef Kinds = Set<bridge.Kind>;
 

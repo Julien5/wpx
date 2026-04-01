@@ -1,8 +1,8 @@
 import 'dart:developer' as developer;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:ui/src/svgelements.dart';
-import 'package:ui/src/utils/utils.dart';
+import 'package:wpx/src/svgelements.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 class SvgWidget extends StatefulWidget {
   final SvgRootElement svgRootElement;
