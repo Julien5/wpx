@@ -6,13 +6,13 @@ This tool is designed for **brevet cycling**. Used *before* the ride, it does tw
 
     ![pdf](backend/pdf/alpes-small.png)
 
-    During the ride, your GPS provides local directions, while the *feuille de route* tells you:
+    During the ride, your GPS provides local directions, while this PDF tells you:
 
     - Where am I on a regional scale, what are the cities/villages around?
     - What elevation is ahead?
     - How much time on hand do I have left?
 	
-	As opposed to many other tools, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
+	Unlike tools that rely on pre-rendered tiles, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
 
   * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. When displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
 
@@ -30,10 +30,16 @@ WPX can be used:
 ## Output
 
 WPX generates a zip file containing the PDF and the following GPX files:
-  - `flat-track.gpx`: The complete track without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints.
-  - `flat-segment-<n>.gpx`: Individual segments, from one control to the next, without elevation data.
-  - `pacing-all.gpx`: All pacing points in a single file.
-  - `pacing-<n>.gpx`: Pacing points separated to avoid ambiguity. GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back tour (like Paris-Brest-Paris), pacing points belonging to the return leg might show up during the outbound leg if they are all loaded at once. Loading `pacing-1.gpx` on the way out, and `pacing-2.gpx` on the way back works around that problem.
+
+| filename               | description                                                                                                                                |
+|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `flat-track.gpx`       | The complete track without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints. |
+| `flat-segment-<n>.gpx` | Individual segments, from one control to the next, without elevation data.                                                                 |
+| `pacing-all.gpx`       | All pacing points in a single file.                                                                                                        |
+| `pacing-<n>.gpx`       | Pacing points separated to avoid ambiguity.                                                                                                |
+
+*Note on pacing point files*: 
+GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `pacing-1.gpx` on the way out, and `pacing-2.gpx` on the way back works around that problem. Loading pacing-1.gpx for the start and pacing-2.gpx for the return solves the proximity issue. But mid-ride file transfers are a gamble you don't want to take with frozen fingers or a dying battery. You can choose your preferred strategy, using either `pacing-all.gpx` or the separated `pacing-1.gpx` and `pacing-2.gpx`.
 
 For example, for a brevet with 7 controls, the output might contain:
 
@@ -67,8 +73,16 @@ They communicate via [flutter\_rust\_bridge](https://cjycode.com/flutter_rust_br
 
 ## HOW TO BUILD
 
-Assuming a working Rust and Flutter toolchain:
+### Command Line 
 
+```
+cd backend 
+cargo build 
+```
+
+### Flutter application 
+
+Assuming working Rust and Flutter toolchains:
 ```
 cd frontend/ui
 cargo install flutter_rust_bridge_codegen
