@@ -38,10 +38,13 @@ WPX generates a zip file containing the PDF and the following GPX files:
 | `pacing-all.gpx`       | All pacing points in a single file.                                                                                                        |
 | `pacing-<n>.gpx`       | Pacing points separated to avoid ambiguity.                                                                                                |
 
-*Note on pacing point files*: 
-GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `pacing-1.gpx` on the way out, and `pacing-2.gpx` on the way back works around that problem. Loading pacing-1.gpx for the start and pacing-2.gpx for the return solves the proximity issue. But mid-ride file transfers are a gamble you don't want to take with frozen fingers or a dying battery. You can choose your preferred strategy, using either `pacing-all.gpx` or the separated `pacing-1.gpx` and `pacing-2.gpx`.
 
-For example, for a brevet with 7 controls, the output might contain:
+*Note on pacing point files*: 
+
+GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `pacing-1.gpx`  for the start, and `pacing-2.gpx` on the way back works around that problem. 
+But mid-ride file transfers are a gamble you don't want to take with frozen fingers or a dying battery. You can choose your preferred strategy, using either `pacing-all.gpx` or the separated `pacing-1.gpx` and `pacing-2.gpx`.
+
+For a brevet with 7 controls, the output might contain:
 
 ```
 $ unzip -l /tmp/foo.zip 
