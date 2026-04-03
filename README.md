@@ -2,14 +2,13 @@
 
 This tool is designed for **brevet cycling**. Starting from brevet GPX files, it does two things:
 
-  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). You can print this PDF to take on the ride as a *feuille de route* (cue sheet).
+  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). You can print this PDF to take on the ride as a *feuille de route* (cue sheet). During the ride, your GPS provides local directions, while the *feuille de route* tells you:
+
+    - Where am I on a regional scale, what are the cities/villages around?
+    - What elevation is ahead?
+    - How much time on hand do I have left?
+
   * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. When displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
-
-During the ride, your GPS provides local directions, while the *feuille de route* tells you:
-
-  - Where am I on a regional scale (cities/villages)?
-  - What difficulties are ahead (distance/elevation)?
-  - How much time on hand do I have left?
   
 Here is a screenshot of a [sample pdf](backend/pdf/alpes.pdf):
 
@@ -18,14 +17,15 @@ Here is a screenshot of a [sample pdf](backend/pdf/alpes.pdf):
 As opposed to many other tools, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
 
 WPX can be used:
-- [online](https://vps-e637d6c5.vps.ovh.net:8123) ([documentation](./frontend/ui/README.md)) 
-- from the [command line](./backend/CLI.md)) 
+- [online](https://vps-e637d6c5.vps.ovh.net:8123) ([documentation](./frontend/ui/README.md)),
+- or from the [command line](./backend/CLI.md).
 
 ## Input
 
-  - WPX can load multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control.
-  - Elevation gain is computed using a 200m moving average on the GPX data. This is sufficient for identifying the hilliest sections, but do not expect perfect absolute accuracy.
+  - WPX loads one or multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control.
   - Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
+
+*Note: The elevation gain is computed using a 200m moving average on the GPX data. This is sufficient for identifying the hilliest sections, but do not expect perfect absolute accuracy.*
 
 ## Output
 
@@ -56,7 +56,7 @@ $ unzip -l /tmp/foo.zip
 
 ---- 
 
-## Directory Structure 
+## Directories
 
 The project consists of two parts:
 
