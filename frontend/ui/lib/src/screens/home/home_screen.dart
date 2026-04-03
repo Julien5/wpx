@@ -83,7 +83,7 @@ class _ChooseDataState extends State<_ChooseData> {
                   children: [
                     ElevatedButton(
                       onPressed: loading ? null : () => chooseGPX(),
-                      child: const Text("GPX files"),
+                      child: const Text("Open GPX files"),
                     ),
                     if (errorMessage != null)
                       Padding(

@@ -7,35 +7,35 @@ import 'package:wpx/src/widgets/waypoints_table_widget.dart';
 class UserStepsTableScaffold extends StatelessWidget {
   const UserStepsTableScaffold({super.key});
 
-  void setShortFormat(BuildContext ctx) {
+  void _setShortFormat(BuildContext ctx) {
     ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
     model.setUserStepGpxNameFormat("TIME[%H:%M]");
   }
 
-  void setMediumFormat(BuildContext ctx) {
+  void _setMediumFormat(BuildContext ctx) {
     ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
     model.setUserStepGpxNameFormat("TIME[%H:%M]-SLOPE[4.1%]");
   }
 
-  void setLongFormat(BuildContext ctx) {
+  void _setLongFormat(BuildContext ctx) {
     ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
     model.setUserStepGpxNameFormat("NAME[*]-TIME[%H:%M]-SLOPE[4.1%]");
   }
 
   @override
   Widget build(BuildContext ctx) {
-    Widget shortButton = ElevatedButton(
-      onPressed: () => setShortFormat(ctx),
+    /*Widget shortButton = ElevatedButton(
+      onPressed: () => _setShortFormat(ctx),
       child: const Text("short"),
     );
 
     Widget mediumButton = ElevatedButton(
-      onPressed: () => setMediumFormat(ctx),
+      onPressed: () => _setMediumFormat(ctx),
       child: const Text("medium"),
     );
 
     Widget longButton = ElevatedButton(
-      onPressed: () => setLongFormat(ctx),
+      onPressed: () => _setLongFormat(ctx),
       child: const Text("long"),
     );
 
@@ -59,14 +59,15 @@ class UserStepsTableScaffold extends StatelessWidget {
         ),
       ),
     );
+    */
 
     Widget column = Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Divider(),
-        buttons,
-        SizedBox(height: 30),
+        /*buttons,
+        SizedBox(height: 30),*/
         Expanded(
           child: Card(
             elevation: 4, // Add shadow to the card
