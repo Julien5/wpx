@@ -1,6 +1,6 @@
 # WPX 
 
-This tool is designed for **brevet cycling**. Used *before* the ride, it does two things starting from brevet GPX files:
+This tool is designed for **brevet cycling**. Used *before* the ride, it reads GPX files and does two things:
 
   * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. It is light, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](backend/data/pdf/alpes.pdf):
 
@@ -14,7 +14,7 @@ This tool is designed for **brevet cycling**. Used *before* the ride, it does tw
 	
 	Unlike tools that rely on pre-rendered tiles, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
 
-  * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. When displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
+  * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. Displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
 
 WPX can be used:
 - [online](https://vps-e637d6c5.vps.ovh.net:8123) ([documentation](./frontend/ui/README.md)),
@@ -22,7 +22,7 @@ WPX can be used:
 
 ## Input
 
-  - WPX loads one or multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control.
+  - WPX loads one or multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control. The segment points should have elevation data.
   - Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
 
 *Note: The elevation gain is computed using a 200m moving average on the GPX data. This is sufficient for identifying the hilliest sections, but do not expect perfect absolute accuracy.*

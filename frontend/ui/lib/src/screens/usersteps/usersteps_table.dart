@@ -7,7 +7,7 @@ import 'package:wpx/src/widgets/waypoints_table_widget.dart';
 class UserStepsTableScaffold extends StatelessWidget {
   const UserStepsTableScaffold({super.key});
 
-  void _setShortFormat(BuildContext ctx) {
+  /* void _setShortFormat(BuildContext ctx) {
     ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
     model.setUserStepGpxNameFormat("TIME[%H:%M]");
   }
@@ -20,7 +20,7 @@ class UserStepsTableScaffold extends StatelessWidget {
   void _setLongFormat(BuildContext ctx) {
     ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
     model.setUserStepGpxNameFormat("NAME[*]-TIME[%H:%M]-SLOPE[4.1%]");
-  }
+  }*/
 
   @override
   Widget build(BuildContext ctx) {

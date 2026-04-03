@@ -72,8 +72,8 @@ class _ChooseDataState extends State<_ChooseData> {
               children: [
                 Flexible(
                   child: Image.asset(
-                    'assets/images/png/combined.png',
-                    width: 250,
+                    'assets/images/png/home.png',
+                    width: 400,
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -83,6 +83,16 @@ class _ChooseDataState extends State<_ChooseData> {
                   children: [
                     ElevatedButton(
                       onPressed: loading ? null : () => chooseGPX(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(
+                          color: Colors.blueAccent,
+                          width: 1,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
                       child: const Text("Open GPX files"),
                     ),
                     if (errorMessage != null)
@@ -104,7 +114,22 @@ class _ChooseDataState extends State<_ChooseData> {
             right: 16,
             child: ElevatedButton(
               onPressed: loading ? null : () => chooseDemo(),
-              child: const Text("Test"),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+              child: const Text("Test", style: const TextStyle(fontSize: 13)),
+            ),
+          ),
+
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: Image.asset(
+              'assets/images/png/home_translation.png',
+              width: 250,
+              fit: BoxFit.contain,
             ),
           ),
         ],
