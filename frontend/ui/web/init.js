@@ -7,134 +7,90 @@ function formatBytes(n) {
         return `${n.toFixed(1)} kb`;
     }
     n = n / 1024;
-    if (n < 1024) {
-        return `${n.toFixed(1)} Mb`;
-    }
+    return `${n.toFixed(1)} Mb`;
 }
 
 function percent(n, total) {
-    const s = (100 * n / total).toFixed(0);
-    return `${s} %`;
+    return `${(100 * n / total).toFixed(0)} %`;
 }
 
 function pretty(url) {
-    var filename = url.split('/').pop()
-    if (filename.includes("canvaskit")) {
-        return "flutter";
-    }
-    if (filename.includes("rust")) {
-        return "rust code";
-    }
-    return "user interface";
+    const filename = url.split('/').pop();
+    if (filename.includes("canvaskit")) return "Flutter engine";
+    if (filename.includes("ttf"))       return "Libertinus fonts";
+    if (filename.includes("rust"))      return "Rust code";
+    if (filename.includes("dart"))      return "Application";
+    return "User interface";
 }
 
-function openAndSend(request, url, retry) {
-    var fullurl = url;
-    if (retry) {
-        var timestamp = Math.floor(Date.now() / 1000);
-        fullurl = url + "?" + timestamp;
+function updateProgressBar(downloadIndex, currentProgress) {
+    const totalProgress = (downloadIndex + currentProgress) / 6;
+    const fill = document.querySelector(".progress-bar-fill");
+    if (fill) fill.style.width = (totalProgress * 100) + "%";
+}
+
+async function download(url, downloadIndex) {
+    const htmltext = document.querySelector(".loading-text");
+    updateProgressBar(downloadIndex, 0);
+
+    let response;
+    try {
+        response = await fetch(url, { cache: "reload" });
+    } catch (error) {
+        const msg = `Network error fetching ${pretty(url)}: ${error.message}`;
+        console.error(msg);
+        htmltext.textContent = msg;
+        throw error;
     }
-    request.open("GET", fullurl, true);
-    request.send()
+
+    if (!response.ok) {
+        const msg = `Failed to fetch ${pretty(url)}: HTTP ${response.status}`;
+        console.error(msg);
+        htmltext.textContent = msg;
+        throw new Error(msg);
+    }
+
+    const total = parseInt(response.headers.get("content-length"), 10);
+    htmltext.textContent = `Fetching ${pretty(url)}: ${formatBytes(total)} (please wait)`;
+
+    const reader = response.body.getReader();
+    let loaded = 0;
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        loaded += value.byteLength;
+		if (total) {
+            const ratio = Math.min(loaded / total, 1);   // cap at 1 (decompressed > compressed)
+            updateProgressBar(downloadIndex, ratio);
+            const pct = Math.min(100, (100 * loaded / total).toFixed(0));
+            htmltext.textContent = `Fetching ${pretty(url)}: ${formatBytes(loaded)} / ~${formatBytes(total)} [${pct} %]`;
+        } else {
+            htmltext.textContent = `Fetching ${pretty(url)}: ${formatBytes(loaded)}`;
+        }
+    }
+
+    updateProgressBar(downloadIndex, 1);
+    console.log(`Fetched ${pretty(url)}: ${formatBytes(loaded)}`);
 }
 
-async function download(url) {
-    return new Promise((resolve, reject) => {
-        const request = new XMLHttpRequest();
-        request.responseType = 'blob';
-        const htmltext = document.querySelector(".loading-text");
-
-        tryfetch = async function (url) {
-            console.log("start fetch", url);
-            try {
-                const response = await fetch(url, { cache: "reload" });
-                if (!response.ok) {
-                    msg = `Fetching ${pretty(url)}: ${response.status}`;
-                    console.error(msg);
-                    htmltext.textContent = msg;
-                    reject(new Error(msg));
-                }
-                const total = parseInt(response.headers.get("content-length"),10);
-                f = formatBytes(total);
-                msg = `Fetching ${pretty(url)}: ${f} (please wait)`;
-                console.log(msg);
-                htmltext.textContent = msg;
-
-                const reader = response.body.getReader();    
-                let loaded = 0;
-                while (true) {
-                    const {done, value} = await reader.read();
-                    if (done) break;
-                    loaded += value.byteLength;
-                    f = formatBytes(loaded);
-                    p = percent(loaded, total);
-                    msg = `Fetch ${pretty(url)}: ${f} [${p}]`;
-                    htmltext.textContent = msg;
-                  }
-                f = formatBytes(loaded);
-                msg = `Fetched ${loaded} bytes`;
-                //await new Promise(r => setTimeout(r, 5000));
-                console.log(msg);
-                htmltext.textContent = msg;
-                resolve(response);
-            } catch (error) {
-                msg = `Fetching ${pretty(url)} failed: ${error.message}`;
-                console.error(msg);
-                htmltext.textContent = msg;
-                reject(new Error(msg));
-            }
-        };
-
-        // Add a progress event listener to track download progress
-        request.onprogress = function (event) {
-            if (event.lengthComputable) {
-                f = formatBytes(event.loaded);
-                p = percent(event.loaded, event.total);
-                msg = `Load ${pretty(url)}: ${f} [${p}]`;
-                htmltext.textContent = msg;
-                console.log(`${url}: ${msg}`);
-            } else {
-                console.log(`Downloaded ${event.loaded} bytes (total size unknown)`);
-            }
-        };
-
-        // Resolve the promise when the request is complete
-        request.onload = function () {
-            if (request.status === 200 || request.status === 206) {
-                console.log(`Download complete: ${url}`);
-                resolve(request.response);
-            } else {
-                tryfetch(url);
-            }
-        };
-
-        // Reject the promise on network errors
-        request.onerror = function () {
-            tryfetch(url);
-        };
-
-        openAndSend(request, url, false);
-    });
-}
-
-// Example usage
 (async () => {
     try {
-		await download("main.dart.js");
-        await download("https://www.gstatic.com/flutter-canvaskit/a8bfdfc394deaed5c57bd45a64ac4294dc976a72/canvaskit.wasm");
-        await download("pkg/rust_lib_ui_bg.wasm");
-		// main.dart.js is loaded by flutter again
-		// it does not bring any advantage to pre-load it
-        const htmltext = document.querySelector(".loading-text");
-        htmltext.textContent = `starting app...`;
-        console.log("start app");
+        await download("main.dart.js",                                                                                        0);
+        await download("https://www.gstatic.com/flutter-canvaskit/a8bfdfc394deaed5c57bd45a64ac4294dc976a72/canvaskit.wasm", 1);
+        await download("pkg/rust_lib_ui_bg.wasm",                                                                            2);
+        await download("assets/fonts/LibertinusSerif-Regular.ttf",                                                      3);
+        await download("assets/fonts/LibertinusSerif-Bold.ttf",                                                         4);
+        await download("assets/fonts/LibertinusSerif-Italic.ttf",                                                       5);
+
+        // All done
+        updateProgressBar(6, 0);
+        document.querySelector(".loading-text").textContent = "Starting WPX…";
+        console.log("Starting app");
         const script = document.createElement("script");
         script.src = "flutter_bootstrap.js";
         document.body.appendChild(script);
-
     } catch (error) {
-        console.error(error);
-        //window.location.reload(true);
+        console.error("Download sequence failed:", error);
     }
 })();
-
