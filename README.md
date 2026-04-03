@@ -56,12 +56,12 @@ $ unzip -l /tmp/foo.zip
 
 ---- 
 
-## Project Architecture
+## Directory Structure 
 
 The project consists of two parts:
 
-  * A **backend** written in Rust (`backend/`).
-  * A **frontend** written in Flutter (`frontend/ui/`).
+  * A [backend](./backend) written in Rust. It contains algorithm to read/write gpx files, computes the profiles, the maps, assembles the pdf. 
+  * A [frontend](./frontend/ui) written in Flutter. This is the code for the UI. 
 
 They communicate via [flutter\_rust\_bridge](https://cjycode.com/flutter_rust_bridge/). I started this project to learn Rust and Flutter; this is my first project in both languages.
 
