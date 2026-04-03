@@ -1,20 +1,20 @@
 # WPX 
 
-This tool is designed for **brevet cycling**. Starting from brevet GPX files, it does two things:
+This tool is designed for **brevet cycling**. Used *before* the ride, it does two things starting from brevet GPX files:
 
-  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). You can print this PDF to take on the ride as a *feuille de route* (cue sheet). During the ride, your GPS provides local directions, while the *feuille de route* tells you:
+  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. It is light, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](backend/pdf/alpes.pdf):
+
+    ![pdf](backend/pdf/alpes-small.png)
+
+    During the ride, your GPS provides local directions, while the *feuille de route* tells you:
 
     - Where am I on a regional scale, what are the cities/villages around?
     - What elevation is ahead?
     - How much time on hand do I have left?
+	
+	As opposed to many other tools, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
 
   * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. When displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
-  
-Here is a screenshot of a [sample pdf](backend/pdf/alpes.pdf):
-
-![pdf](backend/pdf/alpes-small.png)
-
-As opposed to many other tools, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
 
 WPX can be used:
 - [online](https://vps-e637d6c5.vps.ovh.net:8123) ([documentation](./frontend/ui/README.md)),
