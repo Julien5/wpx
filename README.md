@@ -1,4 +1,4 @@
-# WPX TOOL
+# WPX 
 
 This tool is designed for **brevet cycling**. Starting from brevet GPX files, it does two things:
 
@@ -11,21 +11,29 @@ During the ride, your GPS provides local directions, while the *feuille de route
   - What difficulties are ahead (distance/elevation)?
   - How much time on hand do I have left?
   
-WPX can be used with a [graphical interface](#graphical-interface) or from the [command line](#command-line). The graphical interface is available as a webapp [here](https://vps-e637d6c5.vps.ovh.net:8123).
+Here is a screenshot of a [sample pdf](backend/pdf/alpes.pdf):
+
+![pdf](backend/pdf/alpes-small.png)
+
+As opposed to many other tools, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
+
+WPX can be used:
+- [online](https://vps-e637d6c5.vps.ovh.net:8123) ([documentation](./frontend/ui/README.md)) 
+- from the [command line](./backend/CLI.md)) 
 
 ## Input
 
   - WPX can load multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control.
-  - Elevation gain is computed using a 200m moving average on the GPX data. This is sufficient for identifying the hilliest sections of a brevet, but do not expect perfect absolute accuracy.
+  - Elevation gain is computed using a 200m moving average on the GPX data. This is sufficient for identifying the hilliest sections, but do not expect perfect absolute accuracy.
   - Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
 
 ## Output
 
-WPX generates either a PDF file or a ZIP file containing PDF and the following GPX files:
+WPX generates a zip file containing the PDF and the following GPX files:
   - `flat-track.gpx`: The complete track without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints.
-  - `flat-segment-<n>.gpx`: Individual segments without elevation data.
+  - `flat-segment-<n>.gpx`: Individual segments, from one control to the next, without elevation data.
   - `pacing-all.gpx`: All pacing points in a single file.
-  - `pacing-<n>.gpx`: Pacing points separated to avoid ambiguity. GPS devices determine the "Next Waypoint" based on geographic proximity. For an **out-and-back** tour (like Paris-Brest-Paris), pacing points belonging to the return leg might show up during the outbound leg if they are all loaded at once. Load `pacing-1.gpx` on the way out, and `pacing-2.gpx` on the way back.
+  - `pacing-<n>.gpx`: Pacing points separated to avoid ambiguity. GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back tour (like Paris-Brest-Paris), pacing points belonging to the return leg might show up during the outbound leg if they are all loaded at once. Loading `pacing-1.gpx` on the way out, and `pacing-2.gpx` on the way back works around that problem.
 
 For example, for a brevet with 7 controls, the output might contain:
 
@@ -46,71 +54,7 @@ $ unzip -l /tmp/foo.zip
    356943  2024-01-01 00:00   route.pdf
 ```
 
------
-
-## Graphical Interface
-
-![](./frontend/ui/screenshots/screenshot-small.png)
-
-### Set Time Parameters
-
-  - **Start Time:** Set the date and time. An accurate start date helps label the days correctly on the elevation profile for rides passing midnight.
-  - **Speed:** Currently, only constant speed is supported. This is generally sufficient for brevets up to 600km per ACP rules.
-  - **End Time:** This can be adjusted to match the official brevet cutoff. This will recalculate the average speed accordingly.
-
-*Note: The computed closing times for each control may not perfectly match the official organization times, but they should be very close.*
-
-### Choose Point Types
-
-  - **Controls:** Points found at the ends of segments.
-  - **Waypoints:** Original waypoints from the input GPX. If a waypoint matches a control point, it is merged into the control (and not shown as a separate waypoint).
-  - **OSM:** Names of cities, villages, and mountain passes. Only the most important OSM points are shown to keep the table readable (filtered by a minimum distance of 10% of the track/page length).
-  - **Pacing:** These are shown as dots on the elevation profile and map, but are excluded from the tables.
-
-### PDF
-
-  - Since two segments are printed on a single A4 page, you can select the number of pages in increments of 0.5 (e.g., 0.5, 1, 1.5, etc.).
-  - WPX attempts to generate segments covering round distances (like 100km) with a 10% overlap. Due to these constraints, the slider does not offer every page count.
-
------
-
-## Command Line
-
-With the default arguments on `alpes.gpx`, this results in [this PDF](./backend/pdf/alpes.pdf).
-
-```
-wpx data/ref/alpes.gpx --output pdf/alpes.pdf
-```
-![](./backend/pdf/alpes-small.png).
-```
-$ /home/julien/delme/rust-targets/debug/wpx  --help
-Reads a brevet GPX files and generates the feuille de route and pacing points
-
-Usage: wpx [OPTIONS] [gpx]...
-
-Arguments:
-  [gpx]...  
-
-Options:
-      --segment-length <segment_length>
-          the segment length in kilometer [default: 110]
-      --segment-overlap <segment_overlap>
-          the segment overlap in kilometer [default: 10]
-      --start-time <start_time>
-          start date time in ISO 8601 format, like 2026-01-10T20:00 [default: now]
-      --speed <speed>
-          speed in kilometer per hour [default: 15]
-      --step-distance <step_distance>
-          generate one pacing point every [distance] kilometer [default: 10]
-      --step-elevation-gain <step_elevation_gain>
-          generate one pacing point every [evelation gain] meter
-      --kinds <kinds>
-          [default: Controls GPXWaypoints Cities Mountains Villages Hamlets UserStep] [possible values: Cities, Controls, GPXWaypoints, Hamlets, Mountains, Villages, UserStep]
-      --output <ouput>
-          filename for the ouput (zip or pdf)
-  -h, --help
-          Print help
-```
+---- 
 
 ## Project Architecture
 
@@ -125,7 +69,7 @@ They communicate via [flutter\_rust\_bridge](https://cjycode.com/flutter_rust_br
 
 Assuming a working Rust and Flutter toolchain:
 
-```bash
+```
 cd frontend/ui
 cargo install flutter_rust_bridge_codegen
 flutter_rust_bridge_codegen generate
