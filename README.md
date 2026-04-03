@@ -2,9 +2,9 @@
 
 This tool is designed for **brevet cycling**. Used *before* the ride, it does two things starting from brevet GPX files:
 
-  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. It is light, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](backend/pdf/alpes.pdf):
+  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. It is light, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](backend/data/pdf/alpes.pdf):
 
-    ![pdf](backend/pdf/alpes-small.png)
+    ![pdf](backend/data/pdf/alpes-small.png)
 
     During the ride, your GPS provides local directions, while this PDF tells you:
 

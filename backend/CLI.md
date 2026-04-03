@@ -1,9 +1,9 @@
-With the default arguments on `alpes.gpx`, this results in [this PDF](./backend/pdf/alpes.pdf).
+With the default arguments on `alpes.gpx`, this results in [this PDF](./backend/data/pdf/alpes.pdf).
 
 ```
 wpx data/ref/alpes.gpx --output pdf/alpes.pdf
 ```
-![](./backend/pdf/alpes-small.png).
+![](./backend/data/pdf/alpes-small.png).
 ```
 $ wpx  --help
 Reads a brevet GPX files and generates the feuille de route and pacing points
