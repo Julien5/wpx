@@ -32,8 +32,8 @@ html {
 /* ── Title / quote line ── */
 .loading-title {
     margin-top: 10px;
-    color: #888;
-    font-size: 13px;
+    color: #333;
+    font-size: 15px;
     font-family: 'Georgia', 'Times New Roman', serif;
     font-style: italic;
     letter-spacing: 0.03em;
@@ -44,7 +44,7 @@ html {
 .loading-text {
     margin-top: 14px;
     color: #444;
-    font-size: 15px;
+    font-size: 13px;
     font-family: 'Georgia', 'Times New Roman', serif;
     letter-spacing: 0.04em;
     text-align: center;

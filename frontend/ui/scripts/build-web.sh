@@ -40,28 +40,37 @@ function build() {
 	echo "incrementing build version..."
 	perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)\+(\d+)$/$1.($2)."+".($3+1)/e' pubspec.yaml
 	version=$(grep ^version pubspec.yaml | cut -f2 -d":" | tr -d " ")
-	#rm -Rf /tmp/build.d
-	#mv build /tmp/build.d
-	# deep clean
-	find . -name "*rust*lib*wasm" -print -delete
-	# prevent build errors on subsequent native builds
-	mkdir -p build/native_assets/linux
-	rustup target add wasm32-unknown-unknown
-	rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
-	/opt/rust/cargo/bin/flutter_rust_bridge_codegen generate
-	/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web ${RELEASE}
-	if [ "${RELEASE}" = "--release" ]; then
-		flutter build web ${RELEASE} --pwa-strategy=none --build-name=${version}
+	# NOBUILD=1 # to test the webapp loading page, we dont want to rebuild everything.
+	if [ -z ${NOBUILD} ]; then
+		# deep clean
+		find . -name "*rust*lib*wasm" -print -delete
+		# prevent build errors on subsequent native builds
+		mkdir -p build/native_assets/linux
+		rustup target add wasm32-unknown-unknown
+		rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+		/opt/rust/cargo/bin/flutter_rust_bridge_codegen generate
+		/opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web ${RELEASE}
+		if [ "${RELEASE}" = "--release" ]; then
+			flutter build web ${RELEASE} --pwa-strategy=none --build-name=${version}
+		else
+			flutter build web --debug --pwa-strategy=none --build-name=${version}
+		fi
 	else
-		flutter build web --debug --pwa-strategy=none --build-name=${version}
+		cp web/*.* build/web/
+		json=$(cat <<EOF
+{"app_name":"wpx","version":"${version}","build_number":"19","package_name":"wpx"}
+EOF
+			)
+		echo ${json} > build/web/version.json
+		sed -i "s/\$FLUTTER_BASE_HREF/\/${version}\//g" build/web/index.html
 	fi
 	mkdir -p build/web/pkg/
 	cp -Rv $(find /opt/flutter/ -name "flutter.js.map") build/web/
-	cp -v web/favicon.png build/web/
+	cp -v web/*.png build/web/
 	cp -Rvf web/pkg/* build/web/pkg/
 	tar -zcf ${TARBALL} build/web
 }
- 
+
 function main() {
 	build 
 }

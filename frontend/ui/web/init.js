@@ -31,6 +31,7 @@ function updateProgressBar(downloadIndex, currentProgress) {
 
 async function download(url, downloadIndex) {
     const htmltext = document.querySelector(".loading-text");
+	const htmltitle = document.querySelector(".loading-title");
     updateProgressBar(downloadIndex, 0);
 
     let response;
@@ -50,8 +51,12 @@ async function download(url, downloadIndex) {
         throw new Error(msg);
     }
 
-    const total = parseInt(response.headers.get("content-length"), 10);
-    htmltext.textContent = `Fetching ${pretty(url)}: ${formatBytes(total)} (please wait)`;
+    let total = parseInt(response.headers.get("content-length"), 10);
+	if (url.includes("canvaskit")) {
+		total = 10*1024*1024;
+	}
+	htmltitle.textContent = "The legs complain, the clock insists, the road continues."
+    htmltext.textContent = `${pretty(url)}: ${formatBytes(total)} (please wait)`;
 
     const reader = response.body.getReader();
     let loaded = 0;
@@ -63,13 +68,18 @@ async function download(url, downloadIndex) {
 		if (total) {
             const ratio = Math.min(loaded / total, 1);   // cap at 1 (decompressed > compressed)
             updateProgressBar(downloadIndex, ratio);
-            const pct = Math.min(100, (100 * loaded / total).toFixed(0));
-            htmltext.textContent = `Fetching ${pretty(url)}: ${formatBytes(loaded)} / ~${formatBytes(total)} [${pct} %]`;
+			while (loaded > total) {
+				total = 2*total;
+			}
+            const pct = (100 * loaded / total).toFixed(0);
+			htmltitle.textContent = `Only ${((total-loaded)/1000).toFixed(0)} km to the next coffee.`
+            htmltext.textContent = `${pretty(url)} (${pct} %)`;
         } else {
-            htmltext.textContent = `Fetching ${pretty(url)}: ${formatBytes(loaded)}`;
+			htmltitle.textContent = "It’s not far. It just takes a long time."
+            htmltext.textContent = `${pretty(url)} (${formatBytes(loaded)})`;
         }
     }
-
+	htmltitle.textContent = "Somewhere ahead there is a bakery."
     updateProgressBar(downloadIndex, 1);
     console.log(`Fetched ${pretty(url)}: ${formatBytes(loaded)}`);
 }

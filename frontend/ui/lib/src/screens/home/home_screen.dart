@@ -70,13 +70,8 @@ class _ChooseDataState extends State<_ChooseData> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Flexible(
-                  child: Image.asset(
-                    'assets/images/png/home.png',
-                    width: 400,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                // the image seems blurry, even so it shown at its native size.
+                Flexible(child: Image.asset('assets/images/png/home.png')),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -119,17 +114,7 @@ class _ChooseDataState extends State<_ChooseData> {
                   borderRadius: BorderRadius.circular(5),
                 ),
               ),
-              child: const Text("Test", style: const TextStyle(fontSize: 13)),
-            ),
-          ),
-
-          Positioned(
-            bottom: 16,
-            left: 16,
-            child: Image.asset(
-              'assets/images/png/home_translation.png',
-              width: 250,
-              fit: BoxFit.contain,
+              child: const Text("Test", style: TextStyle(fontSize: 13)),
             ),
           ),
         ],
