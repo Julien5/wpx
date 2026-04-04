@@ -36,7 +36,7 @@ async function download(url, downloadIndex) {
 
     let response;
     try {
-        response = await fetch(url, { cache: "reload" });
+        response = await fetch(url);
     } catch (error) {
         const msg = `Network error fetching ${pretty(url)}: ${error.message}`;
         console.error(msg);
