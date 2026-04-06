@@ -1,6 +1,6 @@
 # UI
 
-![](./screenshots/screenshot-small.png)
+![](./images/screenshot-small.png)
 
 ### Set Time Parameters
 

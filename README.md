@@ -2,9 +2,9 @@
 
 This tool is designed for **brevet cycling**. Used *before* the ride, it reads GPX files and does two things:
 
-  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. It is light, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](backend/data/pdf/alpes.pdf):
+  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. It is light, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](docs/sample/alpes.pdf):
 
-    ![pdf](backend/data/pdf/alpes-small.png)
+    ![pdf](docs/images/alpes-small.png)
 
     During the ride, your GPS provides local directions, while this PDF tells you:
 
@@ -17,8 +17,8 @@ This tool is designed for **brevet cycling**. Used *before* the ride, it reads G
   * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. Displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
 
 WPX can be used:
-- [online](https://vps-e637d6c5.vps.ovh.net:8123) ([documentation](./frontend/ui/README.md)),
-- or from the [command line](./backend/CLI.md).
+- [online](https://www.julien5.dev/wpx) ([documentation](./docs/UI.md)),
+- or from the [command line](./docs/CLI.md).
 
 ## Input
 
