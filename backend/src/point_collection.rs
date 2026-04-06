@@ -104,9 +104,19 @@ pub struct RenderInputParameters {
 
 impl RenderInputParameters {
     pub fn hash(&self) -> String {
+        let mut parameters = self.parameters.clone();
+        // Parameters must be taken into account (because of start time and speed),
+        // but the cache may be re-used for different user steps parameters because
+        // user steps are rendered in the foreground.
+        parameters.user_steps_options = UserStepsOptions::default();
         format!(
-            "F={:?}-S={:?}-K={:?}-Rd={:?}-O={:?}",
-            self.function, self.screen_size, self.kinds, self.drange, self.other_parameters_hash
+            "F={:?}-S={:?}-K={:?}-Rd={:?}-P={:?}-O={:?}",
+            self.function,
+            self.screen_size,
+            self.kinds,
+            self.drange,
+            parameters,
+            self.other_parameters_hash
         )
     }
 }

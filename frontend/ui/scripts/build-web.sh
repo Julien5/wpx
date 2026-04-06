@@ -56,6 +56,10 @@ function build() {
 			flutter build web --debug --pwa-strategy=none --build-name=${version}
 		fi
 	else
+		if [ -f ${TARBALL} ]; then
+			echo reusing ${TARBALL}
+			return
+		fi
 		cp web/*.* build/web/
 		json=$(cat <<EOF
 {"app_name":"wpx","version":"${version}","build_number":"19","package_name":"wpx"}
