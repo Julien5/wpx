@@ -1,3 +1,5 @@
+# WPX command line
+
 With the default arguments on `alpes.gpx`, this results in [this PDF](./sample/alpes.pdf).
 
 ```

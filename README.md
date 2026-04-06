@@ -1,6 +1,14 @@
 # WPX 
 
-This tool is designed for **brevet cycling**. Used *before* the ride, it reads GPX files and does two things:
+**WPX** is a tool for **brevet cycling**. It generates printable route PDFs with elevation profiles, maps, and control information from GPX tracks.
+
+Try it online, [julien5.dev/wpx](https://www.julien5.dev/wpx).
+
+No installation required.
+
+## What is it ?
+
+Used *before* the ride, WPX reads GPX files and does two things:
 
   * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. It is light, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](docs/sample/alpes.pdf):
 
@@ -16,9 +24,14 @@ This tool is designed for **brevet cycling**. Used *before* the ride, it reads G
 
   * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. Displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
 
-WPX can be used:
-- [online](https://www.julien5.dev/wpx) ([documentation](./docs/UI.md)),
-- or from the [command line](./docs/CLI.md).
+#### Notes on the PDF:
+   * The elevation profile contains most of the relevant information:
+
+![](docs/images/profile-closeup.png)
+
+   * WPX tries to display the same labels on the map as on the elevation profile. However, it may fail to find positions where labels do not overlap the track or other points. In that case, OSM points are omitted; this is why you might see points on the elevation profile but not on the map. GPX waypoints, on the other hand, are still shown even if they overlap.
+   
+   * The table lists controls, waypoints, and selected OSM points. Pacing points are not included. Only the most important OSM points are shown, based on population and proximity to other points, in order to maintain an even spatial distribution
 
 ## Input
 
@@ -29,6 +42,8 @@ WPX can be used:
 
 ## Output
 
+### Zip File 
+
 WPX generates a zip file containing the PDF and the following GPX files:
 
 | filename               | description                                                                                                                                |
@@ -37,7 +52,6 @@ WPX generates a zip file containing the PDF and the following GPX files:
 | `flat-segment-<n>.gpx` | Individual segments, from one control to the next, without elevation data.                                                                 |
 | `pacing-all.gpx`       | All pacing points in a single file.                                                                                                        |
 | `pacing-<n>.gpx`       | Pacing points separated to avoid ambiguity.                                                                                                |
-
 
 *Note on pacing point files*: 
 
@@ -63,16 +77,7 @@ $ unzip -l /tmp/foo.zip
    356943  2024-01-01 00:00   route.pdf
 ```
 
----- 
-
-## Directories
-
-The project consists of two parts:
-
-  * A [backend](./backend) written in Rust. It contains algorithm to read/write gpx files, computes the profiles, the maps, assembles the pdf. 
-  * A [frontend](./frontend/ui) written in Flutter. This is the code for the UI. 
-
-They communicate via [flutter\_rust\_bridge](https://cjycode.com/flutter_rust_bridge/). I started this project to learn Rust and Flutter; this is my first project in both languages.
+----
 
 ## HOW TO BUILD
 
@@ -82,6 +87,7 @@ They communicate via [flutter\_rust\_bridge](https://cjycode.com/flutter_rust_br
 cd backend 
 cargo build 
 ```
+See [CLI notes](./docs/CLI.md).
 
 ### Flutter application 
 
@@ -92,3 +98,17 @@ cargo install flutter_rust_bridge_codegen
 flutter_rust_bridge_codegen generate
 flutter build linux
 ```
+This is the application that is served at [julien5.dev/wpx](https://www.julien5.dev/wpx).
+See [UI notes](./docs/UI.md).
+
+----
+
+## Directories
+
+The project consists of two parts:
+
+  * A [backend](./backend) written in Rust. It contains algorithm to read/write gpx files, computes the profiles, the maps, assembles the pdf. 
+  * A [frontend](./frontend/ui) written in Flutter. This is the code for the UI. 
+
+They communicate via [flutter\_rust\_bridge](https://cjycode.com/flutter_rust_bridge/). I started this project to learn Rust and Flutter; this is my first project in both languages.
+

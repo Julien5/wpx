@@ -1,4 +1,4 @@
-# UI
+# WPX frontend
 
 ![](./images/screenshot-small.png)
 
