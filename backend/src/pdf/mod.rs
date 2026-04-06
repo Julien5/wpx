@@ -56,7 +56,7 @@ fn extract_ui_version() -> String {
 #[allow(dead_code)]
 pub fn get_host_with_version() -> String {
     // https://localhost:8124/0.5.0+3/assets/fonts/LibertinusSerif-Regular.ttf
-    format!("{}/{}", get_host(), extract_ui_version())
+    format!("{}/wpx/{}", get_host(), extract_ui_version())
 }
 
 #[allow(dead_code)]
