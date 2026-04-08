@@ -112,8 +112,8 @@ class ControlsCard extends StatelessWidget {
 }
 
 class _OSMCard extends StatelessWidget {
-  void onRetryPressed(LoadScreenModel model) {
-    model.retry(Job.osm);
+  void onSkipPressed(LoadScreenModel model) {
+    model.cancelOsm();
   }
 
   @override
@@ -122,15 +122,18 @@ class _OSMCard extends StatelessWidget {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
 
     Widget row = EventWidget(target: Job.osm);
-    if (model.hasFailed(Job.osm) != null) {
+    if (model.hasFailed(Job.osm) != null || model.runningJob() == Job.osm) {
       row = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           EventWidget(target: Job.osm),
           ElevatedButton(
-            onPressed: () => onRetryPressed(model),
-            child: const Text("retry"),
+            onPressed:
+                model.runningJob() == Job.osm
+                    ? () => onSkipPressed(model)
+                    : null,
+            child: const Text("cancel"),
           ),
         ],
       );
@@ -181,17 +184,20 @@ class _BodyWidgetState extends State<_BodyWidget> {
   @override
   Widget build(BuildContext ctx) {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+
+    bool okAllowed =
+        model.hasDone(Job.controls) && model.runningJob() == Job.none;
+
     Widget button = ElevatedButton(
       onPressed: null,
       child: Text("Please wait..."),
     );
-    if (model.doneAll()) {
+    if (okAllowed) {
       button = ElevatedButton(
         onPressed: () => onOKPressed(ctx),
         child: Text("OK"),
       );
-    }
-    if (model.failed().isNotEmpty) {
+    } else if (model.runningJob() == Job.none) {
       button = ElevatedButton(
         onPressed: () => onHomePressed(ctx),
         child: Text("Home"),

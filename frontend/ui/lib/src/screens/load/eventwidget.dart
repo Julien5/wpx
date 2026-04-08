@@ -55,6 +55,12 @@ String errorString(Object o) {
   if (e is bridge.TrackError_OSMDownloadTimeout) {
     return "download timed out";
   }
+  if (e is bridge.TrackError_OSMDownloadRunning) {
+    return "download running";
+  }
+  if (e is bridge.TrackError_OSMDownloadCancelled) {
+    return "download cancelled";
+  }
   if (e is bridge.TrackError_Unknown) {
     return "unknown error";
   }
@@ -62,16 +68,20 @@ String errorString(Object o) {
   return e.toString();
 }
 
-String filterEvent(String? event, Job targetJob, LoadScreenModel screenModel) {
-  if (screenModel.hasFailed(targetJob) != null) {
-    return errorString(screenModel.hasFailed(targetJob)!);
+String filterEvent(String? event, Job targetJob, LoadScreenModel model) {
+  if (model.hasFailed(targetJob) != null) {
+    if (targetJob == Job.osm) {
+      return "${errorString(model.hasFailed(targetJob)!)} (${model.osmRetryCount()})";
+    }
+    return errorString(model.hasFailed(targetJob)!);
   }
-  if (screenModel.runningFuture != null &&
-      screenModel.runningFuture!.job == targetJob) {
-    //return "event: [${safeLast(eventModel)}]";
+  if (model.runningFuture != null && model.runningFuture!.job == targetJob) {
+    if (targetJob == Job.osm) {
+      return "${safeLast(event)} (${model.osmRetryCount()})";
+    }
     return safeLast(event);
   }
-  if (screenModel.hasDone(targetJob)) {
+  if (model.hasDone(targetJob)) {
     return "done";
   }
   return "..";

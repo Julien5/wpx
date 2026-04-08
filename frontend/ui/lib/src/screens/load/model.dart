@@ -30,6 +30,8 @@ class LoadScreenModel extends ChangeNotifier {
   final RootModel rootModel;
   final EventModel events;
   final UserInput userInput;
+  bool retryOsm = false;
+  int _osmRetryCount = 0;
   List<bridge.TrackPart>? _trackParts;
   bridge.SegmentStatistics? _statistics;
 
@@ -120,16 +122,24 @@ class LoadScreenModel extends ChangeNotifier {
     if (_isDisposed) {
       return;
     }
+    retryOsm = true;
+    _osmRetryCount = 0;
+    done.clear();
+    _failed.clear();
     startJob(Job.parts);
   }
 
-  void retry(Job job) {
+  void cancelOsm() {
     if (_isDisposed) {
       return;
     }
-    done.remove(job);
-    _failed.remove(job);
-    startJob(job);
+    if (runningJob() != Job.osm) {
+      debugPrint("running job is not osm");
+      return;
+    }
+    retryOsm = false;
+    backend.cancelOsm();
+    runningFuture = null;
   }
 
   void startJob(Job job) {
@@ -165,6 +175,7 @@ class LoadScreenModel extends ChangeNotifier {
 
     runningFuture = null;
     done.add(job);
+    _failed.remove(job);
     debugPrint("running notify");
     notifyListeners();
 
@@ -212,14 +223,38 @@ class LoadScreenModel extends ChangeNotifier {
       return;
     }
 
-    if (hasFailed is bridge.TrackError) {
-      // Now you can handle your specific Rust variants
-      developer.log("onError:${hasFailed.toString()}");
+    if (e is bridge.TrackError) {
+      developer.log("e:${e.toString()}");
+      bridge.TrackError trackError = e;
+      if (trackError is bridge.TrackError_OSMDownloadTimeout) {
+        developer.log("timeout => retry");
+        if (retryOsm) {
+          Future.delayed(const Duration(seconds: 1), () {
+            _failed.remove(job);
+            startJob(Job.osm);
+            _osmRetryCount += 1;
+          });
+        }
+      }
+      if (trackError is bridge.TrackError_OSMDownloadFailed) {
+        developer.log("timeout => should not retry");
+        if (retryOsm) {
+          Future.delayed(const Duration(seconds: 1), () {
+            _failed.remove(job);
+            startJob(Job.osm);
+            _osmRetryCount += 1;
+          });
+        }
+      }
     }
 
     developer.log("error: $e");
     _failed[job] = e;
     notifyListeners();
+  }
+
+  int osmRetryCount() {
+    return _osmRetryCount;
   }
 
   int controlsCount() {

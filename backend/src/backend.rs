@@ -120,24 +120,24 @@ impl Backend {
             let mut lock = self.osm_cancel_token.write().unwrap();
             *lock = Some(token.clone());
         }
-        let mut osmpoints =
-            match osm::download_for_track(&self.d().track, &self.sender, token).await {
-                Ok(p) => {
-                    if std::path::Path::new(&"/tmp/force_error").exists() {
-                        return Err(TrackError::OSMDownloadFailed);
-                    }
-                    p
-                }
-                Err(e) => {
-                    log::error!("OSM download failed {}", e);
-                    return Err(error::TrackError::from(e));
-                }
-            };
-
+        let result = osm::download_for_track(&self.d().track, &self.sender, token).await;
         {
             let mut lock = self.osm_cancel_token.write().unwrap();
             *lock = None;
         }
+
+        let mut osmpoints = match result {
+            Ok(p) => {
+                if std::path::Path::new(&"/tmp/force_error").exists() {
+                    return Err(TrackError::OSMDownloadFailed);
+                }
+                p
+            }
+            Err(e) => {
+                log::error!("OSM download failed {}", e);
+                return Err(error::TrackError::from(e));
+            }
+        };
 
         self.d().track.project_map(&mut osmpoints);
 

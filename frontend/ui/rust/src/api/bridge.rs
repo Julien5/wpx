@@ -256,6 +256,10 @@ impl Bridge {
         self.backend.load_osm().await
     }
 
+    pub async fn cancel_osm(&self) {
+        self.backend.cancel_osm().await
+    }
+
     pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
         self.backend.load_contents(contents).await
     }
