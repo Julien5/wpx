@@ -218,6 +218,8 @@ pub enum _TrackError {
     MissingElevation { index: usize },
     OSMDownloadFailed,
     OSMDownloadTimeout,
+    OSMDownloadCancelled,
+    OSMDownloadRunning,
     Unknown,
 }
 

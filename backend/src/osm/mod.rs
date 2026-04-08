@@ -5,6 +5,8 @@ mod filesystem;
 mod indexdb;
 pub mod osmpoint;
 
+use tokio_util::sync::CancellationToken;
+
 use crate::error::{GenericResult, TrackError};
 use crate::event::SenderHandlerLock;
 use crate::inputpoint::{InputPointMap, InputPoints};
@@ -27,10 +29,11 @@ fn osm3(bbox: &WGS84BoundingBox) -> String {
 async fn download_chunk_real(
     bbox: &WGS84BoundingBox,
     logger: &SenderHandlerLock,
+    cancel_token: CancellationToken,
 ) -> GenericResult<InputPoints> {
     use download::*;
     let bboxparam = osm3(&bbox);
-    let dl_result = all(&bboxparam, logger).await;
+    let dl_result = all(&bboxparam, logger, cancel_token).await;
     match dl_result {
         Err(e) => {
             log::error!("download failed, error = {}", e);
@@ -57,6 +60,7 @@ async fn download_chunk_real(
 async fn download_tiles(
     tiles: &MissingTiles,
     logger: &SenderHandlerLock,
+    cancel_token: CancellationToken,
 ) -> GenericResult<InputPoints> {
     if tiles.is_empty() {
         return Ok(InputPoints::new());
@@ -66,7 +70,7 @@ async fn download_tiles(
 
     log::info!("downloading for {} tiles", tiles.len());
     let mut empty_tiles = 0;
-    match download_chunk_real(&wgsbbox, logger).await {
+    match download_chunk_real(&wgsbbox, logger, cancel_token).await {
         Ok(points) => {
             log::info!("downloaded {:3} points", points.points.len());
             let mut map = InputPointMap::from_vector(&points.points);
@@ -118,6 +122,7 @@ async fn process(
     bbox: &EuclideanBoundingBox,
     track: &Track,
     logger: &SenderHandlerLock,
+    cancel_token: CancellationToken,
 ) -> GenericResult<InputPointMap> {
     let mut found = InputPointMap::new();
     let mut missing = tiles_from_bbox(bbox);
@@ -146,7 +151,7 @@ async fn process(
 
     event::send_worker(logger, &format!("{}", "download"));
     // download and write in cache
-    download_tiles(&missing, logger).await?;
+    download_tiles(&missing, logger, cancel_token).await?;
 
     event::send_worker(logger, &format!("{}", "read from cache"));
     match read(bbox).await {
@@ -173,9 +178,10 @@ async fn process(
 pub async fn download_for_track(
     track: &Track,
     logger: &SenderHandlerLock,
+    cancel_token: CancellationToken,
 ) -> GenericResult<InputPointMap> {
     let bbox = track.euclidean_bounding_box();
     assert!(!bbox.empty());
-    let ret = process(&bbox, track, logger).await;
+    let ret = process(&bbox, track, logger, cancel_token).await;
     ret
 }

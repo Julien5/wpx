@@ -50,9 +50,12 @@ pub struct BackendData {
     pub packet_provider: SharedPacketProvider,
 }
 
+use tokio_util::sync::CancellationToken;
+
 pub struct Backend {
     backend_data: Option<BackendData>,
     gpxdata: std::sync::RwLock<Option<GpxData>>,
+    osm_cancel_token: std::sync::RwLock<Option<CancellationToken>>,
     pub sender: SenderHandlerLock,
 }
 
@@ -61,6 +64,7 @@ impl Backend {
         Backend {
             backend_data: None,
             gpxdata: std::sync::RwLock::new(None),
+            osm_cancel_token: std::sync::RwLock::new(None),
             sender: std::sync::RwLock::new(None),
         }
     }
@@ -78,28 +82,62 @@ impl Backend {
         event::send_worker(&self.sender, data);
     }
 
+    pub async fn cancel_osm(&self) {
+        log::trace!("cancel osm data");
+        self.send("cancel osm data");
+        {
+            // .take() moves the value out and leaves None in its place
+            if let Some(token) = self.osm_cancel_token.write().unwrap().take() {
+                log::trace!("cancel osm data");
+                token.cancel();
+            } else {
+                log::error!("cannot cancel osm data (probably not running)");
+            }
+        }
+    }
+
     pub async fn load_osm(&self) -> Result<(), TrackError> {
         log::trace!("download osm data");
         self.send("download osm data");
 
         /*let tick = tokio::time::Duration::from_millis(1000);
-        for i in 0..5 {
-            self.send(&format!("download {}", i));
-            tokio::time::sleep(tick).await;
+                    for i in 0..5 {
+                        self.send(&format!("download {}", i));
+                        tokio::time::sleep(tick).await;
         }*/
-
-        let mut osmpoints = match osm::download_for_track(&self.d().track, &self.sender).await {
-            Ok(p) => {
-                if std::path::Path::new(&"/tmp/force_error").exists() {
-                    return Err(TrackError::OSMDownloadFailed);
+        {
+            let lock = self.osm_cancel_token.read().unwrap();
+            match *lock {
+                Some(_) => {
+                    return Err(TrackError::OSMDownloadRunning);
                 }
-                p
+                None => {}
             }
-            Err(e) => {
-                log::error!("OSM download failed {}", e);
-                return Err(error::TrackError::from(e));
-            }
-        };
+        }
+
+        let token = CancellationToken::new();
+        {
+            let mut lock = self.osm_cancel_token.write().unwrap();
+            *lock = Some(token.clone());
+        }
+        let mut osmpoints =
+            match osm::download_for_track(&self.d().track, &self.sender, token).await {
+                Ok(p) => {
+                    if std::path::Path::new(&"/tmp/force_error").exists() {
+                        return Err(TrackError::OSMDownloadFailed);
+                    }
+                    p
+                }
+                Err(e) => {
+                    log::error!("OSM download failed {}", e);
+                    return Err(error::TrackError::from(e));
+                }
+            };
+
+        {
+            let mut lock = self.osm_cancel_token.write().unwrap();
+            *lock = None;
+        }
 
         self.d().track.project_map(&mut osmpoints);
 

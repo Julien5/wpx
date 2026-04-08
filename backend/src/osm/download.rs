@@ -1,5 +1,6 @@
 use reqwest::Client;
 use serde_json::Value;
+use tokio_util::sync::CancellationToken;
 
 use crate::{
     error::{GenericResult, TrackError},
@@ -28,7 +29,32 @@ fn use_disk() -> bool {
     false
 }
 
-async fn dl_worker(req: &str, logger: &SenderHandlerLock) -> GenericResult<String> {
+async fn handle_response(response: reqwest::Response) -> GenericResult<String> {
+    log::trace!("status = {}", response.status());
+    if response.status() == 504 {
+        return Err(TrackError::OSMDownloadTimeout.into());
+    }
+    if response.status() != 200 {
+        return Err(TrackError::OSMDownloadFailed.into());
+    }
+    let text = response.text().await;
+    if use_disk() {
+        let filename = std::format!("/tmp/last-dl.data");
+        let data = text.as_ref().unwrap().clone();
+        // write overwrites.
+        std::fs::write(filename, data).expect("Unable to write file");
+    }
+    match text {
+        Ok(json) => Ok(json),
+        Err(e) => Err(e.into()),
+    }
+}
+
+async fn dl_worker(
+    req: &str,
+    logger: &SenderHandlerLock,
+    cancel_token: CancellationToken,
+) -> GenericResult<String> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
     // let url = "https://overpass.private.coffee/api/interpreter";
@@ -55,32 +81,26 @@ async fn dl_worker(req: &str, logger: &SenderHandlerLock) -> GenericResult<Strin
     event::send_worker(logger, &format!("{}", "wait for response"));
     //let tick = tokio::time::Duration::from_millis(20);
     //tokio::time::sleep(tick).await;
-    match request.send().await {
-        Ok(response) => {
-            log::trace!("status = {}", response.status());
-            if response.status() == 504 {
-                return Err(TrackError::OSMDownloadTimeout.into());
-            }
-            if response.status() != 200 {
-                return Err(TrackError::OSMDownloadFailed.into());
-            }
-            let text = response.text().await;
-            if use_disk() {
-                let filename = std::format!("/tmp/last-dl.data");
-                let data = text.as_ref().unwrap().clone();
-                // write overwrites.
-                std::fs::write(filename, data).expect("Unable to write file");
-            }
-            match text {
-                Ok(json) => Ok(json),
+    let future = request.send();
+    tokio::select! {
+        response = future => {
+            match response {
+                Ok(resp) => handle_response(resp).await,
                 Err(e) => Err(e.into()),
             }
         }
+        _ = cancel_token.cancelled() => {
+            return Err(TrackError::OSMDownloadCancelled.into());
+        }
+    }
+    /*
+    match future.await {
+        Ok(response) => handle_response(response).await,
         Err(e) => {
             log::trace!("e = {}", e);
             Err(e.into())
         }
-    }
+    }*/
 }
 
 /*
@@ -89,7 +109,11 @@ Grabener Höhe is tourism = viewpoint.
 To get it: node["tourism"="viewpoint"]({{bbox}});
 */
 
-pub async fn all(bbox: &str, logger: &SenderHandlerLock) -> GenericResult<String> {
+pub async fn all(
+    bbox: &str,
+    logger: &SenderHandlerLock,
+    cancel_token: CancellationToken,
+) -> GenericResult<String> {
     if use_disk() {
         //let data = std::fs::read_to_string("data/ref/overpass/dl.txt").unwrap();
         //let data = std::fs::read_to_string("/tmp/dl.data").unwrap();
@@ -113,7 +137,7 @@ pub async fn all(bbox: &str, logger: &SenderHandlerLock) -> GenericResult<String
     let footer = "out geom".to_string();
     let request = format!("{};({};);{};", header, body, footer);
     event::send_worker(logger, &format!("{}", "send request"));
-    dl_worker(&request, logger).await
+    dl_worker(&request, logger, cancel_token).await
 }
 
 fn read_f64(map: &serde_json::Map<String, Value>, name: &str) -> f64 {

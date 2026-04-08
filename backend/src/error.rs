@@ -20,6 +20,12 @@ pub enum TrackError {
     #[error("OSM download timed out")]
     OSMDownloadTimeout,
 
+    #[error("OSM download cancelled")]
+    OSMDownloadCancelled,
+
+    #[error("OSM download running")]
+    OSMDownloadRunning,
+
     #[error("An unknown error occurred")]
     Unknown,
 }
