@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 
 use gpx::TrackSegment;
 
+use crate::point_collection::Kind;
 use crate::track;
 use crate::trackparts::parts_to_ranges;
 use crate::waypoint;
@@ -11,21 +12,24 @@ use crate::waypoint::Waypoints;
 use crate::wgs84point::WGS84Point;
 
 fn gps_name(w: &waypoint::Waypoint) -> String {
-    match &w.info {
-        Some(step) => {
-            use chrono::*;
-            let t: DateTime<Local> = step.time.parse().unwrap();
-            let time = format!("{}", t.format("%H:%M"));
-            let percent = 100f64 * step.inter_slope;
-            let info = if true {
-                format!("{:.1}%", percent)
-            } else if !w.name.is_empty() {
-                format!("{}", w.name)
-            } else {
-                format!("{:.1}%", percent)
-            };
-            return format!("{}-{}", time, info);
-        }
+    match &w.origin {
+        Kind::UserStep => match &w.info {
+            Some(step) => {
+                use chrono::*;
+                let t: DateTime<Local> = step.time.parse().unwrap();
+                let time = format!("{}", t.format("%H:%M"));
+                let percent = 100f64 * step.inter_slope;
+                let info = if true {
+                    format!("{:.1}%", percent)
+                } else if !w.name.is_empty() {
+                    format!("{}", w.name)
+                } else {
+                    format!("{:.1}%", percent)
+                };
+                return format!("{}-{}", time, info);
+            }
+            _ => {}
+        },
         _ => {}
     }
     w.name.clone()
@@ -53,7 +57,11 @@ pub fn flat_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) -> T
     ret
 }
 
-pub fn generate(track: &track::Track, groups: &Vec<Waypoints>) -> BTreeMap<String, Vec<u8>> {
+pub fn generate(
+    track: &track::Track,
+    groups: &Vec<Waypoints>,
+    waypoints: &Waypoints,
+) -> BTreeMap<String, Vec<u8>> {
     let mut ret: BTreeMap<String, Vec<u8>> = BTreeMap::new();
     {
         let mut G = gpx::Gpx::default();
@@ -87,6 +95,17 @@ pub fn generate(track: &track::Track, groups: &Vec<Waypoints>) -> BTreeMap<Strin
         let mut data: Vec<u8> = Vec::new();
         gpx::write(&G, &mut data).unwrap();
         ret.insert(format!("flat-segment-{:0>2}.gpx", index + 1), data);
+    }
+
+    // export all waypoints in one file
+    {
+        let mut G = gpx::Gpx::default();
+        G.version = gpx::GpxVersion::Gpx11;
+        G.waypoints = waypoints.iter().map(|w| to_gpx(w)).collect();
+
+        let mut data: Vec<u8> = Vec::new();
+        gpx::write(&G, &mut data).unwrap();
+        ret.insert(format!("waypoints-all.gpx"), data);
     }
 
     // export all users steps in one file (maybe useful)

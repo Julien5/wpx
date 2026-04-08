@@ -371,28 +371,25 @@ impl Backend {
         ret
     }
     pub fn generateGpx(&self) -> BTreeMap<String, Vec<u8>> {
-        let usersteps = self
-            .d()
-            .packet_provider
-            .read()
-            .unwrap()
-            .collection
-            .get_vector(&Kind::UserStep);
+        let collection = &self.d().packet_provider.read().unwrap().collection;
+        let usersteps = collection.get_vector(&Kind::UserStep);
+        let waypoints = collection.get_vector(&Kind::GPXWaypoints);
         log::trace!("{} parts", self.d().track.parts.len());
         log::trace!("parts:{:?}", self.d().track.parts);
         let split_indices = split_ambiguity::user_steps_split(&usersteps, &self.d().track);
         log::trace!("track len: {}", self.d().track.len());
         log::trace!("{} splits", split_indices.len());
         log::trace!("splits:{:?}", split_indices);
-        let waypoints = self.export_points(&usersteps);
-        let groups = waypoint::group_waypoints(&waypoints, &split_indices);
+        let userssteps_w = self.export_points(&usersteps);
+        let usersteps_groups = waypoint::group_waypoints(&userssteps_w, &split_indices);
         let mut check_sum = 0;
-        for g in &groups {
+        for g in &usersteps_groups {
             check_sum += g.len();
         }
-        debug_assert_eq!(check_sum, waypoints.len());
-        debug_assert!(!groups.is_empty());
-        gpxexport::generate(&self.d().track, &groups)
+        debug_assert_eq!(check_sum, userssteps_w.len());
+        debug_assert!(!usersteps_groups.is_empty());
+        let waypoints_w = self.export_points(&waypoints);
+        gpxexport::generate(&self.d().track, &usersteps_groups, &waypoints_w)
     }
     pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
         let mut map = self.generateGpx();
