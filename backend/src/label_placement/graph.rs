@@ -293,8 +293,6 @@ impl Graph {
     fn best_candidate_for_node(&self, node: &Node) -> Option<usize> {
         let candidates = &self.nodes[*node].candidates;
         if candidates.is_empty() {
-            let feature = &self.nodes[*node].feature;
-            debug_assert!(!feature.force_rendering());
             log::info!("no candidate found for {}", self.nodes[*node].feature.id(),);
             return None;
         }

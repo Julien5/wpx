@@ -65,7 +65,12 @@ impl CandidatesGenerator for MapGenerator {
         match feature.input_point() {
             Some(point) => {
                 if !is_close_to_track(&point) {
-                    debug_assert!(!feature.force_rendering());
+                    if feature.force_rendering() {
+                        log::info!(
+                            "feature has force rendering but is away from track: {:?}",
+                            feature.label.text
+                        );
+                    }
                     cardinal_candidates.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
                     return cardinal_candidates;
                 }
