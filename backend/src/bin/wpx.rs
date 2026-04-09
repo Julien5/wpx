@@ -190,20 +190,6 @@ async fn main() -> anyhow::Result<()> {
 
     let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
     let track_segment = backend.trackSegment();
-    {
-        let points = backend.get_waypoints(&track_segment, kinds.clone());
-        println!("* found {} points", points.len());
-        for point in &points {
-            let time = parse_time(&point.get_info().time);
-            println!(
-                "   {:>3.0} km [{}]: {:30} [{:10}]",
-                point.get_info().distance / 1000.0,
-                time.format("%H:%M"),
-                point.name,
-                point.get_info().origin
-            )
-        }
-    }
 
     let mut parameters = backend.get_parameters();
     parameters.segment_length = 1000f64 * args.segment_length;
@@ -278,6 +264,21 @@ async fn main() -> anyhow::Result<()> {
             }
         }
         _ => {}
+    }
+
+    {
+        let points = backend.get_waypoints(&track_segment, kinds.clone());
+        println!("* found {} points", points.len());
+        for point in &points {
+            let time = parse_time(&point.get_info().time);
+            println!(
+                "   {:>3.0} km [{}]: {:30} [{:10}]",
+                point.get_info().distance / 1000.0,
+                time.format("%H:%M"),
+                point.name,
+                point.get_info().origin
+            )
+        }
     }
 
     let stats = backend.statistics();
