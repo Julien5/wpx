@@ -373,8 +373,14 @@ pub fn make_with_osm(
 mod tests {
     use std::sync::Arc;
 
+    use tokio_util::sync::CancellationToken;
+
     use crate::{
-        event, gpsdata::GpxData, inputpoint::InputPoint, osm, parameters,
+        event,
+        gpsdata::GpxData,
+        inputpoint::InputPoint,
+        osm::{self, DownloadSideData},
+        parameters,
         point_collection::PacketProvider,
     };
 
@@ -445,7 +451,12 @@ mod tests {
 
         let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
         let logger = std::sync::RwLock::new(Some(b));
-        let mut osmpoints = osm::download_for_track(&track, &logger).await.unwrap();
+        let token = CancellationToken::new();
+        let side = DownloadSideData {
+            logger: &logger,
+            cancel_token: &token,
+        };
+        let mut osmpoints = osm::download_for_track(&track, &side).await.unwrap();
         track.project_map(&mut osmpoints);
 
         let mut provider = PacketProvider::new();

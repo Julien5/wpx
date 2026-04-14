@@ -64,23 +64,24 @@ function pdf() {
 	rm -Rf /tmp/wpx
 	mkdir /tmp/wpx
 	time cargo ${cmd} ${mode} -- \
-		 --output-directory /tmp/wpx/ \
+		 --output /tmp/wpx/route.zip \
+		 --start-time "2026-04-10T00:00:00" \
+		 --speed 10.0 \
+		 --kinds Controls,UserStep \
 		 --debug true \
-		 --step-elevation-gain 50 \
+		 --step-distance 10 \
 		 --segment-length $(segment-length ${file}) \
 		 --segment-overlap $(segment-overlap ${file}) \
-		 --profile-max-area-ratio 1.0 \
-		 --map-max-area-ratio 1.0 \
 		 ${options} \
 		 "${file}"
-	cp /tmp/wpx/*.pdf /tmp/document.pdf 
-	echo xdg-open /tmp/document.pdf 
+	
+	unzip -o /tmp/wpx/route.zip -d /tmp route.pdf 
+	echo xdg-open /tmp/route.pdf 
 }
 
 function cli() {
 	set -x
 	cargo run -- \
-		  --kinds Controls,Villages,Cities,Mountains \
 		  --output /tmp/foo.zip \
 		  --step-elevation-gain 50 \
 		  --segment-length 110 \

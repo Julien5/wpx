@@ -1,12 +1,12 @@
 use reqwest::Client;
 use serde_json::Value;
-use tokio_util::sync::CancellationToken;
 
 use crate::{
     error::{GenericResult, TrackError},
-    event::{self, SenderHandlerLock},
+    event::{self},
     inputpoint::{InputPoint, InputPoints, Tags},
     mercator,
+    osm::DownloadSideData,
     track_projection::TrackProjections,
     wgs84point::WGS84Point,
 };
@@ -50,11 +50,7 @@ async fn handle_response(response: reqwest::Response) -> GenericResult<String> {
     }
 }
 
-async fn dl_worker(
-    req: &str,
-    logger: &SenderHandlerLock,
-    cancel_token: CancellationToken,
-) -> GenericResult<String> {
+async fn dl_worker(req: &str, side: &DownloadSideData<'_, '_>) -> GenericResult<String> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
     // let url = "https://overpass.private.coffee/api/interpreter";
@@ -78,7 +74,7 @@ async fn dl_worker(
         .header("Priority", "u=0")
         .body(format!("data={}", urlencoding::encode(&req)));
     log::debug!("request={:?}", request);
-    event::send_worker(logger, &format!("{}", "wait for response"));
+    event::send_worker(&side.logger, &format!("{}", "wait for response"));
     //let tick = tokio::time::Duration::from_millis(20);
     //tokio::time::sleep(tick).await;
     let future = request.send();
@@ -89,7 +85,7 @@ async fn dl_worker(
                 Err(e) => Err(e.into()),
             }
         }
-        _ = cancel_token.cancelled() => {
+        _ = side.cancel_token.cancelled() => {
             return Err(TrackError::OSMDownloadCancelled.into());
         }
     }
@@ -109,11 +105,7 @@ Grabener Höhe is tourism = viewpoint.
 To get it: node["tourism"="viewpoint"]({{bbox}});
 */
 
-pub async fn all(
-    bbox: &str,
-    logger: &SenderHandlerLock,
-    cancel_token: CancellationToken,
-) -> GenericResult<String> {
+pub async fn all(bbox: &str, side: &DownloadSideData<'_, '_>) -> GenericResult<String> {
     if use_disk() {
         //let data = std::fs::read_to_string("data/ref/overpass/dl.txt").unwrap();
         //let data = std::fs::read_to_string("/tmp/dl.data").unwrap();
@@ -136,8 +128,8 @@ pub async fn all(
     let body = reqs.join(";");
     let footer = "out geom".to_string();
     let request = format!("{};({};);{};", header, body, footer);
-    event::send_worker(logger, &format!("{}", "send request"));
-    dl_worker(&request, logger, cancel_token).await
+    event::send_worker(&side.logger, &format!("{}", "send request"));
+    dl_worker(&request, side).await
 }
 
 fn read_f64(map: &serde_json::Map<String, Value>, name: &str) -> f64 {

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" creator="https://github.com/georust/gpx">
+  <wpt lat="48.05084" lon="8.20577">
+    <ele>0</ele>
+    <name>K1</name>
+    <desc>Furtwangen</desc>
+  </wpt>
+  <wpt lat="48.279406" lon="8.090605">
+    <ele>0</ele>
+    <name>K2</name>
+    <desc>Haslach</desc>
+  </wpt>
+  <wpt lat="48.533576" lon="8.288608">
+    <ele>0</ele>
+    <name>K3</name>
+    <desc>Obertal</desc>
+  </wpt>
+  <wpt lat="49.054234" lon="8.266062">
+    <ele>0</ele>
+    <name>K4</name>
+    <desc>END</desc>
+  </wpt>
+</gpx>

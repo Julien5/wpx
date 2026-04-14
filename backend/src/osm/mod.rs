@@ -7,8 +7,8 @@ pub mod osmpoint;
 
 use tokio_util::sync::CancellationToken;
 
+use crate::backend::SenderHandlerLock;
 use crate::error::{GenericResult, TrackError};
-use crate::event::SenderHandlerLock;
 use crate::inputpoint::{InputPointMap, InputPoints};
 use crate::mercator::EuclideanBoundingBox;
 use crate::osm::cache::{tiles_from_bbox, MissingTiles};
@@ -28,12 +28,11 @@ fn osm3(bbox: &WGS84BoundingBox) -> String {
 
 async fn download_chunk_real(
     bbox: &WGS84BoundingBox,
-    logger: &SenderHandlerLock,
-    cancel_token: CancellationToken,
+    side: &DownloadSideData<'_, '_>,
 ) -> GenericResult<InputPoints> {
     use download::*;
     let bboxparam = osm3(&bbox);
-    let dl_result = all(&bboxparam, logger, cancel_token).await;
+    let dl_result = all(&bboxparam, side).await;
     match dl_result {
         Err(e) => {
             log::error!("download failed, error = {}", e);
@@ -59,8 +58,7 @@ async fn download_chunk_real(
 
 async fn download_tiles(
     tiles: &MissingTiles,
-    logger: &SenderHandlerLock,
-    cancel_token: CancellationToken,
+    side: &DownloadSideData<'_, '_>,
 ) -> GenericResult<InputPoints> {
     if tiles.is_empty() {
         return Ok(InputPoints::new());
@@ -70,7 +68,7 @@ async fn download_tiles(
 
     log::info!("downloading for {} tiles", tiles.len());
     let mut empty_tiles = 0;
-    match download_chunk_real(&wgsbbox, logger, cancel_token).await {
+    match download_chunk_real(&wgsbbox, side).await {
         Ok(points) => {
             log::info!("downloaded {:3} points", points.points.len());
             let mut map = InputPointMap::from_vector(&points.points);
@@ -84,7 +82,7 @@ async fn download_tiles(
                 }
             }
             log::info!("inserted {} empty tiles", empty_tiles);
-            cache::write(&map, logger).await?;
+            cache::write(&map, &side.logger).await?;
             Ok(points)
         }
         Err(e) => {
@@ -121,12 +119,11 @@ fn print_missing(missing: &MissingTiles) {
 async fn process(
     bbox: &EuclideanBoundingBox,
     track: &Track,
-    logger: &SenderHandlerLock,
-    cancel_token: CancellationToken,
+    side: &DownloadSideData<'_, '_>,
 ) -> GenericResult<InputPointMap> {
     let mut found = InputPointMap::new();
     let mut missing = tiles_from_bbox(bbox);
-    event::send_worker(logger, &format!("{}", "read from cache"));
+    event::send_worker(&side.logger, &format!("{}", "read from cache"));
     match read(bbox).await {
         Ok((local_found, local_missing)) => {
             found = local_found;
@@ -149,11 +146,11 @@ async fn process(
         }
     }
 
-    event::send_worker(logger, &format!("{}", "download"));
+    event::send_worker(&side.logger, &format!("{}", "download"));
     // download and write in cache
-    download_tiles(&missing, logger, cancel_token).await?;
+    download_tiles(&missing, side).await?;
 
-    event::send_worker(logger, &format!("{}", "read from cache"));
+    event::send_worker(&side.logger, &format!("{}", "read from cache"));
     match read(bbox).await {
         Ok((mut map, missing)) => {
             log::info!("found: {} missing: {}", map.map.len(), missing.len());
@@ -175,13 +172,17 @@ async fn process(
     }
 }
 
+pub struct DownloadSideData<'a, 'b> {
+    pub logger: &'a SenderHandlerLock,
+    pub cancel_token: &'b CancellationToken,
+}
+
 pub async fn download_for_track(
     track: &Track,
-    logger: &SenderHandlerLock,
-    cancel_token: CancellationToken,
+    side: &DownloadSideData<'_, '_>,
 ) -> GenericResult<InputPointMap> {
     let bbox = track.euclidean_bounding_box();
     assert!(!bbox.empty());
-    let ret = process(&bbox, track, logger, cancel_token).await;
+    let ret = process(&bbox, track, side).await;
     ret
 }

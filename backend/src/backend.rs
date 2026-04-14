@@ -13,6 +13,7 @@ use crate::inputpoint::*;
 use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
+use crate::osm::DownloadSideData;
 use crate::parameters;
 use crate::parameters::ControlSource;
 use crate::parameters::Parameters;
@@ -76,6 +77,8 @@ impl Backend {
     }
     pub fn send(&self, data: &str) {
         log::trace!("event:{}", data);
+        // if there is no sender (sender is an Option)
+        // => do nothing
         if self.sender.read().unwrap().is_none() {
             return;
         }
@@ -120,7 +123,11 @@ impl Backend {
             let mut lock = self.osm_cancel_token.write().unwrap();
             *lock = Some(token.clone());
         }
-        let result = osm::download_for_track(&self.d().track, &self.sender, token).await;
+        let side = DownloadSideData {
+            logger: &self.sender,
+            cancel_token: &token,
+        };
+        let result = osm::download_for_track(&self.d().track, &side).await;
         {
             let mut lock = self.osm_cancel_token.write().unwrap();
             *lock = None;
