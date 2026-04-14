@@ -175,7 +175,8 @@ class _BodyWidgetState extends State<_BodyWidget> {
     super.didChangeDependencies();
     LoadScreenModel load = Provider.of(context);
     KindsModel kinds = Provider.of(context);
-    if (load.backend.isLoaded()) {
+    RootModel root = Provider.of(context);
+    if (root.isLoaded()) {
       kinds.statistics = load.statistics();
     }
     kinds.osmIsLoaded = load.hasFailed(Job.osm) == null;

@@ -57,7 +57,12 @@ class RootModel extends ChangeNotifier {
 
   void setUserInput(UserInput u) {
     userInput = u;
+    backend.unload();
     notifyListeners();
+  }
+
+  bool isLoaded() {
+    return backend.isLoaded();
   }
 
   void notify() {

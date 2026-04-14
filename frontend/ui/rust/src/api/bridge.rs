@@ -316,6 +316,11 @@ impl Bridge {
         self.backend.loaded()
     }
 
+    #[frb(sync)]
+    pub fn unload(&mut self) {
+        self.backend.unload()
+    }
+
     pub async fn renderSegment(
         &mut self,
         segment: &Segment,

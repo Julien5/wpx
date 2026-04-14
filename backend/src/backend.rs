@@ -72,6 +72,9 @@ impl Backend {
     pub fn loaded(&self) -> bool {
         self.backend_data.is_some()
     }
+    pub fn unload(&mut self) {
+        self.backend_data = None;
+    }
     pub fn set_sink(&mut self, sink: SenderHandler) {
         self.sender = std::sync::RwLock::new(Some(sink));
     }

@@ -60,9 +60,9 @@ class TrackProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bridge.Bridge backend = getBackend(context);
-    Provider.of<RootModel>(context);
-    developer.log("build TrackProvider: loaded: ${backend.isLoaded()}");
-    if (backend.isLoaded()) {
+    RootModel root = Provider.of<RootModel>(context);
+    developer.log("build TrackProvider: loaded: ${root.isLoaded()}");
+    if (root.isLoaded()) {
       /* we cannot simply:
           return MultiProvider(
             providers: [ChangeNotifierProvider(create: (_) => _create(backend))],

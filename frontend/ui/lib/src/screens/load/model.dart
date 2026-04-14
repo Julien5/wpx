@@ -152,7 +152,7 @@ class LoadScreenModel extends ChangeNotifier {
     }
 
     makeFuture(job);
-    developer.log("future created");
+    developer.log("future created for $job");
     notifyListeners();
   }
 
@@ -169,9 +169,7 @@ class LoadScreenModel extends ChangeNotifier {
     if (_isDisposed) {
       return;
     }
-    if (job == Job.gpx || job == Job.controls) {
-      _statistics = backend.statistics();
-    }
+    if (job == Job.gpx || job == Job.controls) {}
 
     runningFuture = null;
     done.add(job);
@@ -186,7 +184,7 @@ class LoadScreenModel extends ChangeNotifier {
       });
     }
 
-    if (backend.isLoaded()) {
+    if (rootModel.isLoaded()) {
       // TODO: the rootModel should notify autonomously
       rootModel.notify();
       // go to overview.
@@ -194,6 +192,7 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   bridge.SegmentStatistics statistics() {
+    _statistics ??= backend.statistics();
     return _statistics!;
   }
 
@@ -262,12 +261,12 @@ class LoadScreenModel extends ChangeNotifier {
 
   int controlsCount() {
     assert(done.contains(Job.controls));
-    return _statistics!.controls.length;
+    return statistics().controls.length;
   }
 
   int waypointsCount() {
     assert(done.contains(Job.controls));
-    return _statistics!.waypoints.length;
+    return statistics().waypoints.length;
   }
 
   String _lastEvent = "";
