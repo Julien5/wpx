@@ -184,7 +184,10 @@ class LoadScreenModel extends ChangeNotifier {
       Future.delayed(const Duration(milliseconds: 250), () {
         startJob(nextJob);
       });
-    } else if (doneAll()) {
+    }
+
+    if (backend.isLoaded()) {
+      // TODO: the rootModel should notify autonomously
       rootModel.notify();
       // go to overview.
     }
