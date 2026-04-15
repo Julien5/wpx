@@ -189,8 +189,6 @@ impl Backend {
             }
         };
 
-        // the case of mutiple projections for a single point is not handled correctly
-        // in export_points (the waypoint creation assume a single projections).
         for c in &mut controls {
             debug_assert!(!c.track_projections.is_empty());
             if c.track_projections.is_empty() {
@@ -358,7 +356,6 @@ impl Backend {
     }
 
     pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
-        // TODO: handle multiple projections.
         let mut ret = Waypoints::new();
         let projections = InputPoint::flatten_projections(&points);
         for (index, projection) in projections {
