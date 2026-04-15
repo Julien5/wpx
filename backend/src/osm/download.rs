@@ -50,7 +50,7 @@ async fn handle_response(response: reqwest::Response) -> GenericResult<String> {
     }
 }
 
-async fn dl_worker(req: &str, side: &DownloadSideData<'_, '_>) -> GenericResult<String> {
+async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<String> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
     // let url = "https://overpass.private.coffee/api/interpreter";
@@ -105,7 +105,7 @@ Grabener Höhe is tourism = viewpoint.
 To get it: node["tourism"="viewpoint"]({{bbox}});
 */
 
-pub async fn all(bbox: &str, side: &DownloadSideData<'_, '_>) -> GenericResult<String> {
+pub async fn all(bbox: &str, side: &DownloadSideData<'_>) -> GenericResult<String> {
     if use_disk() {
         //let data = std::fs::read_to_string("data/ref/overpass/dl.txt").unwrap();
         //let data = std::fs::read_to_string("/tmp/dl.data").unwrap();

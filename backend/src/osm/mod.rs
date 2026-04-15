@@ -28,7 +28,7 @@ fn osm3(bbox: &WGS84BoundingBox) -> String {
 
 async fn download_chunk_real(
     bbox: &WGS84BoundingBox,
-    side: &DownloadSideData<'_, '_>,
+    side: &DownloadSideData<'_>,
 ) -> GenericResult<InputPoints> {
     use download::*;
     let bboxparam = osm3(&bbox);
@@ -58,7 +58,7 @@ async fn download_chunk_real(
 
 async fn download_tiles(
     tiles: &MissingTiles,
-    side: &DownloadSideData<'_, '_>,
+    side: &DownloadSideData<'_>,
 ) -> GenericResult<InputPoints> {
     if tiles.is_empty() {
         return Ok(InputPoints::new());
@@ -119,7 +119,7 @@ fn print_missing(missing: &MissingTiles) {
 async fn process(
     bbox: &EuclideanBoundingBox,
     track: &Track,
-    side: &DownloadSideData<'_, '_>,
+    side: &DownloadSideData<'_>,
 ) -> GenericResult<InputPointMap> {
     let mut found = InputPointMap::new();
     let mut missing = tiles_from_bbox(bbox);
@@ -172,14 +172,14 @@ async fn process(
     }
 }
 
-pub struct DownloadSideData<'a, 'b> {
+pub struct DownloadSideData<'a> {
     pub logger: &'a SenderHandlerLock,
-    pub cancel_token: &'b CancellationToken,
+    pub cancel_token: &'a CancellationToken,
 }
 
 pub async fn download_for_track(
     track: &Track,
-    side: &DownloadSideData<'_, '_>,
+    side: &DownloadSideData<'_>,
 ) -> GenericResult<InputPointMap> {
     let bbox = track.euclidean_bounding_box();
     assert!(!bbox.empty());
