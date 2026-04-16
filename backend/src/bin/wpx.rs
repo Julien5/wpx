@@ -7,7 +7,7 @@ use clap::Parser;
 use tracks::backend::Backend;
 use tracks::error;
 use tracks::math::IntegerSize2D;
-use tracks::parameters::{parse_time, ControlSource, RenderFunction};
+use tracks::parameters::{parse_time, RenderFunction};
 use tracks::point_collection::Kind;
 use tracks::{point_collection, speed};
 
@@ -185,7 +185,7 @@ async fn main() -> anyhow::Result<()> {
     }
     backend.load_ordered(&parts).await?;
     let _ = backend.load_osm().await;
-    backend.load_controls(ControlSource::Segments).await?;
+    let _ = backend.load_controls();
 
     let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
     let track_segment = backend.trackSegment();

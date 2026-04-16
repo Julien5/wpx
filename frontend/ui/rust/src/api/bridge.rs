@@ -12,7 +12,6 @@ pub use tracks::backend::SegmentStatistics;
 pub use tracks::error::RenderError;
 pub use tracks::error::TrackError;
 pub use tracks::mercator::MercatorPoint;
-pub use tracks::parameters::ControlSource;
 pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
 pub use tracks::parameters::ProfileIndication;
@@ -132,13 +131,6 @@ pub enum _ProfileIndication {
     NumericSlope,
 }
 
-#[frb(mirror(ControlSource))]
-pub enum _ControlSource {
-    Segments,
-    Waypoints,
-    OSM,
-}
-
 #[frb(mirror(UserStepsOptions))]
 pub struct _UserStepsOptions {
     pub step_distance: Option<f64>,
@@ -198,6 +190,7 @@ pub struct _Waypoint {
     pub name: String,
     pub description: String,
     pub info: Option<WaypointInfo>,
+    pub id: String,
 }
 
 #[frb(mirror(SegmentStatistics))]
@@ -248,8 +241,14 @@ impl Bridge {
         Ok(())
     }
 
-    pub async fn load_controls(&self, source: ControlSource) -> Result<usize, TrackError> {
-        self.backend.load_controls(source).await
+    #[frb(sync)]
+    pub fn load_controls(&self) -> Result<usize, TrackError> {
+        self.backend.load_controls()
+    }
+
+    #[frb(sync)]
+    pub fn make_control_at_waypoint(&self, waypoint: &Waypoint, on: bool) {
+        self.backend.make_control_at_waypoint(waypoint, on);
     }
 
     pub async fn load_osm(&self) -> Result<(), TrackError> {

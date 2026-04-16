@@ -15,7 +15,6 @@ use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::osm::DownloadSideData;
 use crate::parameters;
-use crate::parameters::ControlSource;
 use crate::parameters::Parameters;
 use crate::parameters::ProfileIndication;
 use crate::parameters::RenderFunction;
@@ -162,7 +161,7 @@ impl Backend {
         Ok(())
     }
 
-    pub async fn load_controls(&self, source: ControlSource) -> Result<usize, TrackError> {
+    pub fn load_controls(&self) -> Result<usize, TrackError> {
         let waypoints = self
             .d()
             .packet_provider
@@ -170,25 +169,7 @@ impl Backend {
             .unwrap()
             .collection
             .get_vector(&Kind::GPXWaypoints);
-        let mut controls = match source {
-            ControlSource::Segments => {
-                controls::infer_controls_from_gpx_segments(&self.d().track, &waypoints)
-            }
-            ControlSource::Waypoints => {
-                controls::make_controls_with_waypoints(&self.d().track, &waypoints)
-            }
-            ControlSource::OSM => {
-                assert!(false);
-                let segment = self.make_segment_data(&self.trackSegment());
-                controls::make_with_osm(
-                    &segment,
-                    self.d().packet_provider.clone(),
-                    70_000.0,
-                    &Kind::Controls,
-                )
-            }
-        };
-
+        let mut controls = controls::infer_controls_from_gpx_segments(&self.d().track, &waypoints);
         for c in &mut controls {
             debug_assert!(!c.track_projections.is_empty());
             if c.track_projections.is_empty() {
@@ -205,6 +186,24 @@ impl Backend {
         }
 
         Ok(len)
+    }
+
+    pub fn make_control_at_waypoint(&self, waypoint: &Waypoint, on: bool) {
+        let controls = self
+            .d()
+            .packet_provider
+            .read()
+            .unwrap()
+            .collection
+            .get_vector(&Kind::Controls);
+        let new = match on {
+            true => controls::add_control_at_waypoint(&self.d().track, controls, waypoint),
+            false => controls::remove_control_at_waypoint(controls, waypoint),
+        };
+        {
+            let mut locked = self.d().packet_provider.write().unwrap();
+            locked.collection.import_other(&Kind::Controls, new);
+        }
     }
 
     pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
@@ -611,7 +610,7 @@ mod tests {
     use crate::{
         backend::Backend,
         math::IntegerSize2D,
-        parameters::{self, ControlSource, ProfileIndication, RenderFunction},
+        parameters::{self, ProfileIndication, RenderFunction},
         point_collection::{self, Kind},
         wheel,
     };
@@ -624,10 +623,7 @@ mod tests {
             .await
             .expect("fail");
         backend.load_osm().await.unwrap();
-        backend
-            .load_controls(ControlSource::Waypoints)
-            .await
-            .unwrap();
+        backend.load_controls().unwrap();
         backend
     }
 

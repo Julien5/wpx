@@ -10,6 +10,7 @@ use crate::{
     segment::SegmentData,
     track::Track,
     track_projection::{is_close_to_track, TrackProjection},
+    waypoint::Waypoint,
     wheel::shorten::shorten_name,
 };
 use rstar::{RTree, AABB};
@@ -132,38 +133,57 @@ pub fn infer_controls_from_gpx_segments(
     ret.iter().map(|(_, w)| w.clone()).collect()
 }
 
-pub fn make_controls_with_waypoints(track: &Track, gpxpoints: &Vec<InputPoint>) -> Vec<InputPoint> {
-    let mut ret = Vec::new();
-    let maxdist = 100f64;
-    log::trace!("{} gpx waypoints", gpxpoints.len());
-    for p in gpxpoints {
-        assert!(p.track_projections.len() >= 1);
-    }
-    let projections = InputPoint::flatten_projections(&gpxpoints);
-    assert!(projections.len() >= gpxpoints.len());
-    for (index, projection) in projections {
-        let point = &gpxpoints[index];
-        let segment_name = String::new();
-        if point.distance_to_track() < maxdist {
-            let control = InputPoint::create_control_on_track(
-                track,
-                projection,
-                ret.len() + 1,
-                &segment_name,
-                &point.name(),
-                &point.description(),
-                &point.id(),
-            );
-            ret.push(control);
-            log::trace!("pushed {}", point.name());
-        } else {
-            log::info!("point {} is too far from track", point.name());
+pub fn add_control_at_waypoint(
+    track: &Track,
+    controls: Vec<InputPoint>,
+    waypoint: &Waypoint,
+) -> Vec<InputPoint> {
+    let mut ret = controls.clone();
+    ret.sort_by_key(|p| p.track_projections.first().unwrap().track_index);
+    let index = {
+        let mut k = 0;
+        for c in &ret {
+            if c.track_projections.first().unwrap().track_index > waypoint.track_index.unwrap() {
+                break;
+            }
+            k += 1;
         }
+        k
+    };
+    let projection = TrackProjection::at_track_index(track, waypoint.track_index.unwrap());
+    let new = InputPoint::create_control_on_track(
+        track,
+        projection,
+        0,
+        &"foo",
+        &waypoint.name,
+        &waypoint.description,
+        &waypoint.id,
+    );
+    ret.insert(index, new);
+    for (index, p) in ret.iter_mut().enumerate() {
+        p.tags
+            .insert("control_index".to_string(), format!("K{}", index + 1));
     }
     ret
 }
 
-fn control_point_goodness(point: &InputPoint) -> i32 {
+pub fn remove_control_at_waypoint(
+    controls: Vec<InputPoint>,
+    waypoint: &Waypoint,
+) -> Vec<InputPoint> {
+    let mut ret = controls.clone();
+    ret.retain(|p| {
+        p.track_projections.first().unwrap().track_index != waypoint.track_index.unwrap()
+    });
+    for (index, p) in ret.iter_mut().enumerate() {
+        p.tags
+            .insert("control_index".to_string(), format!("K{}", index + 1));
+    }
+    ret
+}
+
+fn _control_point_goodness(point: &InputPoint) -> i32 {
     let min_population = match point.kind() {
         Kind::Cities => 10000,
         Kind::Villages => 1000,
@@ -235,7 +255,7 @@ pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) 
     }
 }
 
-pub fn select_osm_points_on_segment(
+pub fn _select_osm_points_on_segment(
     segment: &SegmentData,
     start: f64,
     end: f64,
@@ -257,11 +277,11 @@ pub fn select_osm_points_on_segment(
         }
         false
     });
-    points.sort_by_key(|w| -control_point_goodness(&w));
+    points.sort_by_key(|w| -_control_point_goodness(&w));
     points
 }
 
-pub fn make_with_osm(
+pub fn _make_with_osm(
     bigsegment: &SegmentData,
     packet_provider: SharedPacketProvider,
     typical_distance: f64,
@@ -305,7 +325,7 @@ pub fn make_with_osm(
     let margin = typical_distance * 0.1;
     let mut last_control_distance = 0f64;
     for subsegment in &subsegments {
-        let points = select_osm_points_on_segment(
+        let points = _select_osm_points_on_segment(
             &subsegment,
             last_control_distance + margin,
             bigsegment.start() + total_distance - margin,
@@ -423,7 +443,7 @@ mod tests {
     async fn controls_infer_self() {
         let _ = env_logger::try_init();
         use crate::controls::*;
-        let gpxdata = read("data/blackforest.gpx");
+        let gpxdata = read("data/ref/roland.gpx");
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints);
         assert!(controls.is_empty());
@@ -431,7 +451,7 @@ mod tests {
         for p in &mut gpxpoints {
             track.project_point(p);
         }
-        let controls = make_controls_with_waypoints(&track, &gpxpoints);
+        let controls = infer_controls_from_gpx_segments(&track, &gpxpoints);
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -473,7 +493,7 @@ mod tests {
             provider.clone(),
             Parameters::default(),
         );
-        make_with_osm(&segment, provider, 70_000f64, &Kind::Controls)
+        _make_with_osm(&segment, provider, 70_000f64, &Kind::Controls)
     }
 
     #[tokio::test]

@@ -43,12 +43,14 @@ fn read<T: FromStr>(data: Option<&String>) -> Option<T> {
 
 impl InputPoint {
     pub fn id(&self) -> String {
+        let zero = String::new();
+        let index = self.tags.get("index").unwrap_or(&zero);
         format!(
-            "{}|{}|{}|{:?}",
+            "{}|{}|{}|{}",
             self.wgs84.longitude(),
             self.wgs84.latitude(),
-            self.name(),
-            self.kind()
+            self.kind(),
+            index,
         )
     }
     pub fn create_user_step_on_track(
@@ -326,6 +328,7 @@ impl InputPoint {
             description: self.description(),
             info: None,
             origin: self.kind(),
+            id: self.id(),
         }
     }
 }

@@ -47,6 +47,7 @@ pub struct Waypoint {
     pub name: String,
     pub description: String,
     pub info: Option<WaypointInfo>,
+    pub id: String,
 }
 
 pub type Waypoints = Vec<Waypoint>;
@@ -61,6 +62,7 @@ impl Waypoint {
             description: String::new(),
             info: None,
             origin: kind,
+            id: String::new(),
         }
     }
 

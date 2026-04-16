@@ -473,7 +473,7 @@ mod tests {
         let mut collection = PointCollection::new();
         collection.import_osm(&osmpoints.as_vector());
 
-        let mut controls = controls::make_controls_with_waypoints(&track, &waypoints);
+        let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
         for c in &mut controls {
             track.project_point(c);
         }

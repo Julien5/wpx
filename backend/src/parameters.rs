@@ -73,13 +73,6 @@ pub enum ProfileIndication {
     NumericSlope,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ControlSource {
-    Segments,
-    Waypoints,
-    OSM,
-}
-
 #[derive(Clone, Debug, PartialEq)]
 pub struct UserStepsOptions {
     pub step_distance: Option<f64>,

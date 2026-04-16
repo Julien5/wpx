@@ -86,7 +86,7 @@ class LoadScreenModel extends ChangeNotifier {
     } else if (job == Job.osm) {
       future = backend.loadOsm();
     } else if (job == Job.controls) {
-      future = backend.loadControls(source: bridge.ControlSource.segments);
+      future = Future<void>(() => backend.loadControls());
     } else {
       assert(false);
     }
