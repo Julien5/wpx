@@ -463,26 +463,9 @@ impl PointCollection {
 
     fn controls(&self) -> Vec<InputPoint> {
         let controls = self.get_vector(&Kind::Controls);
-        let waypoints = self.get_vector(&Kind::GPXWaypoints);
         let mut ret = Vec::new();
         for w in controls {
-            let origin_id = w.control_waypoint_origin_id();
-            if origin_id.is_empty() {
-                // there is no gpx waypoint with this control
-                ret.push(w.clone());
-            } else if let Some(point) = waypoints.iter().find(|ww| ww.id() == origin_id) {
-                // there is one gpx waypoint with this control
-                let mut copy = point.clone();
-                debug_assert!(copy.kind() == Kind::GPXWaypoints);
-                copy.tags
-                    .insert("wpxtype".to_string(), "Control".to_string());
-                debug_assert!(copy.kind() == Kind::Controls);
-                ret.push(copy);
-            } else {
-                // The origin of the control (a waypoint) is not in the waypoints,
-                // because waypoints are not shown at all (kinds_cut).
-                ret.push(w.clone());
-            }
+            ret.push(w.clone());
         }
         ret
     }

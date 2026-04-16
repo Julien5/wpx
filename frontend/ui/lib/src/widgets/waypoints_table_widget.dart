@@ -5,11 +5,16 @@ import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/utils/utils.dart';
 
-class DesktopTable extends StatelessWidget {
+class DesktopTable extends StatefulWidget {
   final List<Waypoint> waypoints;
 
   const DesktopTable({super.key, required this.waypoints});
 
+  @override
+  State<DesktopTable> createState() => _DesktopTableState();
+}
+
+class _DesktopTableState extends State<DesktopTable> {
   String _formatDistance(double distance) {
     final km = distance / 1000.0;
     return NumberFormat('0.0').format(km);
@@ -18,6 +23,11 @@ class DesktopTable extends StatelessWidget {
   String _formatTime(String isoTime) {
     DateTime time = parseDateTime(isoTime);
     return DateFormat('HH:mm').format(time);
+  }
+
+  void makeControlAtWaypoint(Waypoint waypoint, bool on) {
+    SegmentModel segment = Provider.of(context, listen: false);
+    segment.makeControlAtWaypoint(waypoint, on);
   }
 
   Widget buildData(List<Waypoint> waypoints) {
@@ -38,17 +48,40 @@ class DesktopTable extends StatelessWidget {
           numeric: true,
         ),
         DataColumn(label: Text(""), numeric: false),
+        DataColumn(
+          label: Text('control', style: TextStyle(fontWeight: FontWeight.bold)),
+          numeric: false,
+        ),
       ],
       rows:
           waypoints.map((w) {
             final formattedDistance = _formatDistance(w.info!.distance);
             final time = _formatTime(w.info!.time);
             final description = joinNonEmpty([w.name, w.description]);
+            final isGpxWaypoint = w.origin == Kind.gpxWaypoints;
+            final isControl = w.origin == Kind.controls;
+            final waypointId = w.id.toString();
+            final showCheckbox = isControl || isGpxWaypoint;
+            final checkBoxValue = isControl;
             return DataRow(
               cells: <DataCell>[
                 DataCell(Text(formattedDistance)),
                 DataCell(Text(time)),
                 DataCell(Text(description)),
+                DataCell(
+                  showCheckbox
+                      ? Checkbox(
+                        value: checkBoxValue,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value != null) {
+                              makeControlAtWaypoint(w, value);
+                            }
+                          });
+                        },
+                      )
+                      : const SizedBox.shrink(),
+                ),
               ],
             );
           }).toList(),
@@ -62,7 +95,7 @@ class DesktopTable extends StatelessWidget {
     context.watch<ParameterModel>();
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      child: buildData(waypoints),
+      child: buildData(widget.waypoints),
     );
   }
 }

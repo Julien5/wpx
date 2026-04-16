@@ -14,9 +14,7 @@ pub fn make_label_text(w: &InputPoint) -> Label {
         //Kind::GPXWaypoints => format!("{}", "ⓘ"),
         Kind::GPXWaypoints => w.name().clone().trim().to_string(),
         Kind::UserStep => String::new(),
-        Kind::Controls => {
-            format!("{}", w.name())
-        }
+        Kind::Controls => w.name(),
     };
     let base_font_size = FONTSIZE;
     let normal = "normal";

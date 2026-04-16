@@ -86,11 +86,9 @@ impl InputPoint {
         let euc = track.euclidean[index].clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::Controls);
         p.tags
-            .insert("name".to_string(), format!("K{}", control_index));
+            .insert("name".to_string(), format!("CP-{}", control_index));
         p.tags
             .insert("waypoint_name".to_string(), waypoint_name.into());
-        p.tags
-            .insert("control_index".to_string(), format!("K{}", control_index));
         p.tags.insert(
             "waypoint_description".to_string(),
             waypoint_description.into(),

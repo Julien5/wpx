@@ -35,6 +35,11 @@ class SegmentModel extends ChangeNotifier {
   List<bridge.Waypoint> tableWaypoints() {
     return someWaypoints({bridge.Kind.gpxWaypoints, bridge.Kind.controls});
   }
+
+  void makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) {
+    backend.makeControlAtWaypoint(waypoint: waypoint, on_: on);
+    notifyListeners();
+  }
 }
 
 class ParameterModel extends ChangeNotifier {

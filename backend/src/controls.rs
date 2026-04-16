@@ -155,7 +155,7 @@ pub fn add_control_at_waypoint(
         track,
         projection,
         0,
-        &"foo",
+        &"",
         &waypoint.name,
         &waypoint.description,
         &waypoint.id,
@@ -163,7 +163,8 @@ pub fn add_control_at_waypoint(
     ret.insert(index, new);
     for (index, p) in ret.iter_mut().enumerate() {
         p.tags
-            .insert("control_index".to_string(), format!("K{}", index + 1));
+            .insert("name".to_string(), format!("CP-{}", index + 1));
+        log::trace!("control index {} name:{} ", index, p.name());
     }
     ret
 }
@@ -178,7 +179,8 @@ pub fn remove_control_at_waypoint(
     });
     for (index, p) in ret.iter_mut().enumerate() {
         p.tags
-            .insert("control_index".to_string(), format!("K{}", index + 1));
+            .insert("name".to_string(), format!("CP-{}", index + 1));
+        log::trace!("control index {} name:{} ", index, p.name());
     }
     ret
 }
