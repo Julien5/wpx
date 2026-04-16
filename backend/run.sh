@@ -47,8 +47,8 @@ function pdf() {
 				mode="--release"
 				shift
 				;;
-			main-test)
-				options="--main-test true"
+			performance-test)
+				options="--performance-test true"
 				file=data/ref/berlin.gpx
 				shift
 				;;
@@ -109,11 +109,11 @@ function unit-tests() {
 	2>&1 cargo test $@ -- --nocapture
 }
 
-function main-test() {
+function performance-test() {
 	rm -Rf /tmp/*.svg /tmp/wpx
 	export RUST_LOG=trace
 	export RUST_BACKTRACE=1
-	cargo flamegraph --no-inline -- --main-test true --output-directory /tmp/wpx/ --debug false --step-elevation-gain 500 --profile-max-area-ratio 0.05 --map-max-area-ratio 0.07 data/ref/pbp2023.gpx 
+	cargo flamegraph --no-inline -- --performance-test true --output /tmp/route.zip --debug false --step-elevation-gain 500 data/ref/pbp2023.gpx 
 }
 
 function render-graph() {
@@ -141,9 +141,9 @@ function main() {
 			shift 
 			render-wheel "$@"
 			return;
-		elif [ $1 = "main-test" ]; then
+		elif [ $1 = "performance-test" ]; then
 			shift 
-			main-test "$@"
+			performance-test "$@"
 			return;
 		elif [ $1 = "render-graph" ]; then
 			shift 

@@ -60,7 +60,6 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
 
     let map_size = IntegerSize2D::new(1479, 778);
     let profile_size = IntegerSize2D::new(1504, 255);
-
     let ret = backend.render_segment_map_profile(
         &segment,
         &map_size,
@@ -95,7 +94,7 @@ async fn performance_test(backend: &mut Backend) -> anyhow::Result<()> {
     }
 
     let duration = start.elapsed();
-    println!("main_test map took: {:.3?}", duration);
+    println!("performance_test map took: {:.3?}", duration);
     let tmpfilename = std::format!("/tmp/maintestmap.svg");
     std::fs::write(&tmpfilename, svg.clone()).unwrap();
 
@@ -109,7 +108,7 @@ async fn performance_test(backend: &mut Backend) -> anyhow::Result<()> {
     }
 
     let duration = start.elapsed();
-    println!("main_test profile took: {:.3?}", duration);
+    println!("performance_test profile took: {:.3?}", duration);
     let tmpfilename = std::format!("/tmp/maintestprofile.svg");
 
     std::fs::write(&tmpfilename, svg.clone()).unwrap();
