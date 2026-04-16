@@ -99,6 +99,7 @@ pub struct RenderInputParameters {
     pub range: std::ops::Range<usize>,
     pub screen_size: IntegerSize2D,
     pub other_parameters_hash: Option<String>,
+    pub background_points: Vec<Vec<InputPoint>>,
     pub usersteps: Vec<InputPoint>,
 }
 
@@ -110,13 +111,14 @@ impl RenderInputParameters {
         // user steps are rendered in the foreground.
         parameters.user_steps_options = UserStepsOptions::default();
         format!(
-            "F={:?}-S={:?}-K={:?}-Rd={:?}-P={:?}-O={:?}",
+            "F={:?}-S={:?}-K={:?}-Rd={:?}-P={:?}-O={:?}-B={:?}",
             self.function,
             self.screen_size,
             self.kinds,
             self.drange,
             parameters,
-            self.other_parameters_hash
+            self.other_parameters_hash,
+            self.background_points
         )
     }
 }
@@ -152,6 +154,7 @@ impl RenderInputParameters {
         track: &Track,
         start: f64,
         end: f64,
+        background_points: &Vec<Vec<InputPoint>>,
         usersteps: &Vec<InputPoint>,
     ) -> Self {
         Self {
@@ -165,6 +168,7 @@ impl RenderInputParameters {
             range: track.subrange(start, end),
             screen_size: size.clone(),
             other_parameters_hash: None,
+            background_points: background_points.clone(),
             usersteps: usersteps.clone(),
         }
     }
@@ -176,6 +180,7 @@ impl RenderInputParameters {
         track: &Track,
         start: f64,
         end: f64,
+        background_points: &Vec<Vec<InputPoint>>,
         usersteps: &Vec<InputPoint>,
     ) -> Self {
         Self {
@@ -189,6 +194,7 @@ impl RenderInputParameters {
             range: track.subrange(start, end),
             screen_size: size.clone(),
             other_parameters_hash: None,
+            background_points: background_points.clone(),
             usersteps: usersteps.clone(),
         }
     }
@@ -226,6 +232,12 @@ impl RenderInputParameters {
         }
         if self.range != other.range {
             return format!("range mismatch {:?} != {:?}", self.range, other.range);
+        }
+        if self.background_points != other.background_points {
+            return format!(
+                "background points mismatch ({:?} != {:?})",
+                self.background_points, other.background_points
+            );
         }
         String::new()
     }

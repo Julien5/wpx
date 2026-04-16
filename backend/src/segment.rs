@@ -105,6 +105,10 @@ impl SegmentData {
         self.kind_on_segment(&Kind::Controls)
     }
 
+    pub fn background_points(&self) -> Vec<Vec<InputPoint>> {
+        vec![self.controls(), self.gpxwaypoints()]
+    }
+
     pub fn usersteps(&self) -> Vec<InputPoint> {
         self.kind_on_segment(&Kind::UserStep)
     }
@@ -298,6 +302,7 @@ impl SegmentData {
             &self.track,
             self.start(),
             self.end(),
+            &self.background_points(),
             &self.usersteps(),
         )
     }
@@ -310,6 +315,7 @@ impl SegmentData {
             &self.track,
             self.start(),
             self.end(),
+            &self.background_points(),
             &self.usersteps(),
         )
     }
