@@ -295,10 +295,10 @@ Furtwangen
 <circle cx="882.6140096429942" cy="288.89117857142855" fill="Blue" id="1/wp" r="5"/>
 </g>
 <g transform="translate(882.6140096429942 288.89117857142855)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.87513157894739" x="-7.437565789473638" y="-284.89117857142855"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894739" x="-9.437565789473638" y="-286.89117857142855"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="start" x="-7.438" y="-274.891">
-K2
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947367" x="-15.279407894736892" y="-284.89117857142855"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947367" x="-17.27940789473689" y="-286.89117857142855"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="start" x="-15.279" y="-274.891">
+CP-2
 </text>
 </g>
 <path d="M882.61,22.00 L882.61,282.89" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
@@ -306,10 +306,10 @@ K2
 <circle cx="364.8191215688331" cy="139.83578571428572" fill="Blue" id="0/wp" r="5"/>
 </g>
 <g transform="translate(364.8191215688331 139.83578571428572)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.87513157894739" x="-7.437565789473695" y="-135.83578571428572"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894739" x="-9.437565789473695" y="-137.83578571428572"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="start" x="-7.438" y="-125.836">
-K1
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947367" x="-15.279407894736835" y="-135.83578571428572"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947367" x="-17.279407894736835" y="-137.83578571428572"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="start" x="-15.279" y="-125.836">
+CP-1
 </text>
 </g>
 <path d="M364.82,22.00 L364.82,133.84" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>

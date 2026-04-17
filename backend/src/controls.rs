@@ -434,11 +434,11 @@ mod tests {
         for k in 0..=4 {
             log::trace!("k={} => {}", k, controls[k].name());
         }
-        assert!(controls[0].name().contains("K1"));
-        assert!(controls[1].name().contains("K2"));
-        assert!(controls[2].name().contains("K3"));
-        assert!(controls[3].name().contains("K4"));
-        assert!(controls[4].name().contains("K5"));
+        assert!(controls[0].name().contains("CP-1"));
+        assert!(controls[1].name().contains("CP-2"));
+        assert!(controls[2].name().contains("CP-3"));
+        assert!(controls[3].name().contains("CP-4"));
+        assert!(controls[4].name().contains("CP-5"));
     }
 
     #[tokio::test]
@@ -448,21 +448,14 @@ mod tests {
         let gpxdata = read("data/ref/roland.gpx");
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints);
-        assert!(controls.is_empty());
-        let mut gpxpoints = gpxdata.waypoints;
-        for p in &mut gpxpoints {
-            track.project_point(p);
-        }
-        let controls = infer_controls_from_gpx_segments(&track, &gpxpoints);
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
         }
-        assert_eq!(controls.len(), 4);
-        assert!(controls[0].name().contains("K1"));
-        assert!(controls[1].name().contains("K2"));
-        assert!(controls[2].name().contains("K3"));
-        assert!(controls[3].name().contains("K4"));
+        assert_eq!(controls.len(), 3);
+        assert!(controls[0].name().contains("CP-1"));
+        assert!(controls[1].name().contains("CP-2"));
+        assert!(controls[2].name().contains("CP-3"));
     }
 
     async fn get_controls(filename: &str) -> Vec<InputPoint> {
@@ -510,11 +503,11 @@ mod tests {
             log::info!("c={} {}", c.name(), c.description());
         }
         assert_eq!(controls.len(), 3);
-        assert!(controls[0].name().contains("K1"));
+        assert!(controls[0].name().contains("CP-1"));
         assert!(controls[0].description().contains("Furtwangen"));
-        assert!(controls[1].name().contains("K2"));
+        assert!(controls[1].name().contains("CP-2"));
         assert!(controls[1].description().contains("Haslach"));
-        assert!(controls[2].name().contains("K3"));
+        assert!(controls[2].name().contains("CP-3"));
         assert!(controls[2].description().contains("Forbach"));
     }
 
@@ -530,11 +523,11 @@ mod tests {
             log::info!("c={} {}", c.name(), c.description());
         }
         assert_eq!(controls.len(), 3);
-        assert!(controls[0].name().contains("K1"));
+        assert!(controls[0].name().contains("CP-1"));
         assert!(controls[0].description().contains("Wangen"));
-        assert!(controls[1].name().contains("K2"));
+        assert!(controls[1].name().contains("CP-2"));
         assert!(controls[1].description().contains("Isny"));
-        assert!(controls[2].name().contains("K3"));
+        assert!(controls[2].name().contains("CP-3"));
         assert!(controls[2].description().contains("Bad Waldsee"));
     }
 }

@@ -223,20 +223,20 @@ Furtwangen
 <circle cx="112.29933618751011" cy="121.77452894393718" fill="Blue" id="1/wp/circle" r="5"/>
 </g>
 <g transform="translate(112.29933618751011 121.77452894393718)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="-18.87513157894737" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="-20.87513157894737" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947369" x="-34.55881578947369" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947369" x="-36.55881578947369" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-K2
+CP-2
 </text>
 </g>
 <g>
 <circle cx="168.70572993366022" cy="289.99014695820733" fill="Blue" id="0/wp/circle" r="5"/>
 </g>
 <g transform="translate(168.70572993366022 289.99014695820733)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="2" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947369" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947369" x="2" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="start" x="4.000" y="-4.000">
-K1
+CP-1
 </text>
 </g>
 </g>

@@ -283,10 +283,10 @@ Baden-Baden
 <circle cx="202.32920698735688" cy="246.230216877957" fill="Blue" id="0/wp/circle" r="5"/>
 </g>
 <g transform="translate(202.32920698735688 246.230216877957)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="2" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947369" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947369" x="2" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="start" x="4.000" y="-4.000">
-K3
+CP-3
 </text>
 </g>
 </g>

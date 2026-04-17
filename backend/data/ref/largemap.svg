@@ -457,13 +457,13 @@ Haslach im Kinzigtal
 <circle cx="374.8560662725786" cy="683.1644508880236" fill="black" id="7/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(374.8560662725786 683.1644508880236)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="76.8803947368421" x="27" y="-5"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="80.8803947368421" x="25" y="-7"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="7/wp/text" text-anchor="start" x="27.000" y="5.000">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="76.8803947368421" x="-103.8803947368421" y="-5"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="80.8803947368421" x="-105.8803947368421" y="-7"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="7/wp/text" text-anchor="end" x="-27.000" y="5.000">
 Furtwangen
 </text>
 </g>
-<path d="M393.86,683.16 L380.86,683.16" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
+<path d="M355.86,683.16 L368.86,683.16" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="430.63670617520575" cy="227.9251318647548" fill="Black" id="6/wp/circle" r="5"/>
 <circle cx="430.63670617520575" cy="227.9251318647548" fill="white" id="6/wp/circle-little-white" r="3.5"/>
@@ -501,12 +501,12 @@ Baden-Baden
 </text>
 </g>
 <g>
-<circle cx="400.4816089084484" cy="40.38084211569003" fill="Blue" id="3/wp/circle" r="5"/>
+<circle cx="400.4816089084484" cy="40.38084211569003" fill="Blue" id="3/wp/circle" r="4"/>
 </g>
 <g transform="translate(400.4816089084484 40.38084211569003)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="3/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="13.159210526315789" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="17.15921052631579" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="3/wp/text" text-anchor="start" x="4.000" y="-4.000">
 K4
 </text>
 </g>
@@ -514,30 +514,30 @@ K4
 <circle cx="410.0370219228048" cy="375.45641496225653" fill="Blue" id="2/wp/circle" r="5"/>
 </g>
 <g transform="translate(410.0370219228048 375.45641496225653)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="2" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947369" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947369" x="2" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="2/wp/text" text-anchor="start" x="4.000" y="-4.000">
-K3
+CP-3
 </text>
 </g>
 <g>
 <circle cx="326.0963498858382" cy="537.7767517794782" fill="Blue" id="1/wp/circle" r="5"/>
 </g>
 <g transform="translate(326.0963498858382 537.7767517794782)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="-18.87513157894737" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="-20.87513157894737" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947369" x="-34.55881578947369" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947369" x="-36.55881578947369" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="end" x="-4.000" y="-4.000">
-K2
+CP-2
 </text>
 </g>
 <g>
 <circle cx="374.82718508350445" cy="683.1022550551861" fill="Blue" id="0/wp/circle" r="5"/>
 </g>
 <g transform="translate(374.82718508350445 683.1022550551861)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.875131578947371" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.87513157894737" x="2" y="-16"/>
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947369" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947369" x="2" y="-16"/>
 <text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="start" x="4.000" y="-4.000">
-K1
+CP-1
 </text>
 </g>
 </g>
