@@ -206,14 +206,11 @@ impl Backend {
         }
     }
 
-    pub async fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
-        self.load_contents(&vec![content.clone()]).await
+    pub fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
+        self.load_contents(&vec![content.clone()])
     }
 
-    pub async fn load_track_parts(
-        &self,
-        contents: &Vec<Vec<u8>>,
-    ) -> Result<Vec<TrackPart>, TrackError> {
+    pub fn load_track_parts(&self, contents: &Vec<Vec<u8>>) -> Result<Vec<TrackPart>, TrackError> {
         self.send("read gpx");
         let gpxdata = gpsdata::GpxData::read_contents(contents)?;
         let parts = gpxdata.track_parts();
@@ -224,7 +221,7 @@ impl Backend {
         Ok(parts)
     }
 
-    pub async fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
+    pub fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
         assert!(self.gpxdata.read().unwrap().is_some());
         let mut gpxdata = {
             let mut locked = self.gpxdata.write().unwrap();
@@ -260,18 +257,18 @@ impl Backend {
         Ok(())
     }
 
-    pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
+    pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
         self.send("read gpx");
-        let track_parts = self.load_track_parts(contents).await?;
-        self.load_ordered(&track_parts).await
+        let track_parts = self.load_track_parts(contents)?;
+        self.load_ordered(&track_parts)
     }
-    pub async fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
+    pub fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
         let mut f = std::fs::File::open(filename).unwrap();
         let mut buffer = Vec::new();
         // read the whole file
         use std::io::prelude::*;
         f.read_to_end(&mut buffer).unwrap();
-        self.load_content(&buffer).await
+        self.load_content(&buffer)
     }
 }
 
@@ -618,10 +615,7 @@ mod tests {
 
     async fn load_test_data() -> Backend {
         let mut backend = Backend::make();
-        backend
-            .load_filename("data/blackforest.gpx")
-            .await
-            .expect("fail");
+        backend.load_filename("data/blackforest.gpx").expect("fail");
         backend.load_osm().await.unwrap();
         backend.load_controls().unwrap();
         backend
@@ -833,8 +827,8 @@ mod tests {
             buffer
         };
         let mut backend = Backend::make();
-        let mut track_parts = backend.load_track_parts(&vec![bytes]).await.unwrap();
-        let result = backend.load_ordered(&track_parts).await;
+        let mut track_parts = backend.load_track_parts(&vec![bytes]).unwrap();
+        let result = backend.load_ordered(&track_parts);
         assert!(result.is_ok());
         assert!(backend.loaded());
         let s1 = backend.statistics();
@@ -847,7 +841,7 @@ mod tests {
 
         track_parts.insert(0, track_parts.last().unwrap().clone());
         track_parts.remove(track_parts.len() - 1);
-        let result = backend.load_ordered(&track_parts).await;
+        let result = backend.load_ordered(&track_parts);
         assert!(result.is_ok());
         assert!(backend.loaded());
         let s2 = backend.statistics();

@@ -259,19 +259,19 @@ impl Bridge {
         self.backend.cancel_osm().await
     }
 
-    pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
-        self.backend.load_contents(contents).await
+    #[frb(sync)]
+    pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
+        self.backend.load_contents(contents)
     }
 
-    pub async fn load_track_parts(
-        &self,
-        contents: &Vec<Vec<u8>>,
-    ) -> Result<Vec<TrackPart>, TrackError> {
-        self.backend.load_track_parts(contents).await
+    #[frb(sync)]
+    pub fn load_track_parts(&self, contents: &Vec<Vec<u8>>) -> Result<Vec<TrackPart>, TrackError> {
+        self.backend.load_track_parts(contents)
     }
 
-    pub async fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
-        self.backend.load_ordered(parts).await
+    #[frb(sync)]
+    pub fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
+        self.backend.load_ordered(parts)
     }
 
     pub async fn generateZip(&mut self, kinds: &HashSet<Kind>) -> Vec<u8> {

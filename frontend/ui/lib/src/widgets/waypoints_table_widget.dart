@@ -60,7 +60,6 @@ class _DesktopTableState extends State<DesktopTable> {
             final description = joinNonEmpty([w.name, w.description]);
             final isGpxWaypoint = w.origin == Kind.gpxWaypoints;
             final isControl = w.origin == Kind.controls;
-            final waypointId = w.id.toString();
             final showCheckbox = isControl || isGpxWaypoint;
             final checkBoxValue = isControl;
             return DataRow(

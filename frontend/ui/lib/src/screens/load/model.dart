@@ -78,14 +78,18 @@ class LoadScreenModel extends ChangeNotifier {
     Future<void>? future;
     Future<List<bridge.TrackPart>>? trackPartsFuture;
     if (job == Job.parts) {
-      trackPartsFuture = backend.loadTrackParts(contents: userInput.contents());
+      trackPartsFuture = Future<List<bridge.TrackPart>>(
+        () => backend.loadTrackParts(contents: userInput.contents()),
+      );
     } else if (job == Job.gpx) {
       assert(_trackParts != null);
-      future = backend.loadOrdered(parts: _trackParts!);
+      future = Future<void>(() => backend.loadOrdered(parts: _trackParts!));
       //future = backend.loadContents(contents: userInput.contents());
     } else if (job == Job.osm) {
       future = backend.loadOsm();
     } else if (job == Job.controls) {
+      // statistics are changed after controls are loaded
+      _statistics = null;
       future = Future<void>(() => backend.loadControls());
     } else {
       assert(false);

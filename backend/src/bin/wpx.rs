@@ -179,11 +179,11 @@ async fn main() -> anyhow::Result<()> {
         log::info!("read gpx {}", gpxinput);
         gpxdata.push(read_file(gpxinput));
     }
-    let parts = backend.load_track_parts(&gpxdata).await?;
+    let parts = backend.load_track_parts(&gpxdata)?;
     for part in &parts {
         println!("found segment: {}", part.name)
     }
-    backend.load_ordered(&parts).await?;
+    backend.load_ordered(&parts)?;
     let _ = backend.load_osm().await;
     let _ = backend.load_controls();
 
