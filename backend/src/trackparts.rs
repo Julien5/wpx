@@ -38,6 +38,10 @@ pub fn control_to_segments(track: &Track, controls: &Vec<InputPoint>) -> Vec<Tra
     let mut start = 0;
     for control in controls.iter() {
         let end = control.track_projections.first().unwrap().track_index;
+        // extend_end is used to get segments that go to the control point
+        // (not the last wgs point preceding the control). For tracks that
+        // came as segments, this generate an artifact: the last point is
+        // repeated. This is ok.
         ret.push(TrackSegment {
             name: format!("to {}", control.name()),
             range: start..extend_end(end, track.len()),

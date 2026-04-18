@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" creator="https://github.com/georust/gpx">
   <trk>
-    <name>02: MittelgebirgeClassique2023 - Final</name>
+    <name>[flat] 02: to CP-2</name>
     <trkseg>
       <trkpt lat="48.05084" lon="8.20577" />
       <trkpt lat="48.05107" lon="8.205709" />
@@ -1002,6 +1002,7 @@
       <trkpt lat="48.27876" lon="8.090278" />
       <trkpt lat="48.279047" lon="8.090396" />
       <trkpt lat="48.279282" lon="8.090558" />
+      <trkpt lat="48.279406" lon="8.090605" />
       <trkpt lat="48.279406" lon="8.090605" />
     </trkseg>
   </trk>
