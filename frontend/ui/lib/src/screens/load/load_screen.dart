@@ -177,7 +177,11 @@ class _BodyWidgetState extends State<_BodyWidget> {
     KindsModel kinds = Provider.of(context);
     RootModel root = Provider.of(context);
     if (root.isLoaded()) {
-      kinds.statistics = load.statistics();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // KindsModel needs the statistics to decide what
+        // what kinds are disabled or not.
+        kinds.updateStatistics(load.statistics());
+      });
     }
     kinds.osmIsLoaded = load.hasFailed(Job.osm) == null;
   }

@@ -190,6 +190,7 @@ class LoadScreenModel extends ChangeNotifier {
 
     if (rootModel.isLoaded()) {
       // TODO: the rootModel should notify autonomously
+      debugPrint("rootModel notify");
       rootModel.notify();
       // go to overview.
     }
@@ -256,6 +257,7 @@ class LoadScreenModel extends ChangeNotifier {
 
     developer.log("error: $e");
     _failed[job] = e;
+    debugPrint("load notify");
     notifyListeners();
   }
 
@@ -276,7 +278,7 @@ class LoadScreenModel extends ChangeNotifier {
   String _lastEvent = "";
 
   void onChanged(RootModel root, EventModel event) {
-    developer.log("LoadScreenModel::onRootChanged");
+    debugPrint("LoadScreenModel::onRootChanged");
     _lastEvent = event.get();
     notifyListeners();
   }

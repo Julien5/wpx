@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/kindsmodel.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/utils/utils.dart';
@@ -28,6 +29,11 @@ class _DesktopTableState extends State<DesktopTable> {
   void makeControlAtWaypoint(Waypoint waypoint, bool on) {
     SegmentModel segment = Provider.of(context, listen: false);
     segment.makeControlAtWaypoint(waypoint, on);
+    KindsModel kinds = Provider.of(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // KindsModel wants to know how many controls there are.
+      kinds.updateStatistics(segment.statistics());
+    });
   }
 
   Widget buildData(List<Waypoint> waypoints) {

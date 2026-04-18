@@ -20,7 +20,6 @@ class KindsModel with ChangeNotifier {
   };
 
   bool? osmIsLoaded;
-  SegmentStatistics? statistics;
 
   KindsModel();
 
@@ -30,6 +29,30 @@ class KindsModel with ChangeNotifier {
     }
     kinds.add(k);
     notifyListeners();
+  }
+
+  bool? _hasControls;
+  bool? _hasGPXWaypoints;
+  void updateStatistics(SegmentStatistics s) {
+    // we must notifiy only if there is a change, otherwise there is
+    // an endless build loop (i dont known really what causes the loop).
+    bool lhasControls = s.controls.isNotEmpty;
+    bool lhasGPXWaypoints = s.waypoints.isNotEmpty;
+    if (lhasControls == hasControls() &&
+        lhasGPXWaypoints == hasGPXWaypoints()) {
+      return;
+    }
+    _hasControls = lhasControls;
+    _hasGPXWaypoints = lhasGPXWaypoints;
+    notifyListeners();
+  }
+
+  bool hasControls() {
+    return _hasControls != null && _hasControls!;
+  }
+
+  bool hasGPXWaypoints() {
+    return _hasGPXWaypoints != null && _hasGPXWaypoints!;
   }
 
   void removeKind(Kind k) {

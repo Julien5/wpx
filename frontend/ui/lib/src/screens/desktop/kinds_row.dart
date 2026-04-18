@@ -51,21 +51,19 @@ class _KindsRowState extends State<KindsRow> {
   Widget build(BuildContext context) {
     KindsModel model = Provider.of(context);
     bool hasControls =
-        model.kinds.contains(Kind.controls) &&
-        model.statistics!.controls.isNotEmpty;
+        model.kinds.contains(Kind.controls) && model.hasControls();
     bool hasGPXWaypoints =
-        model.kinds.contains(Kind.gpxWaypoints) &&
-        model.statistics!.waypoints.isNotEmpty;
+        model.kinds.contains(Kind.gpxWaypoints) && model.hasGPXWaypoints();
     bool hasCities = model.kinds.contains(Kind.cities) && model.osmIsLoaded!;
     bool hasUserSteps = model.kinds.contains(Kind.userStep);
-    SizedBox hdiv = SizedBox(width: 10);
+    SizedBox hdiv = SizedBox(width: 20);
 
     Function(bool?)? onControlCallback;
-    if (model.statistics != null && model.statistics!.controls.isNotEmpty) {
+    if (model.hasControls()) {
       onControlCallback = onControlsCheck;
     }
     Function(bool?)? onWaypointsCallback;
-    if (model.statistics != null && model.statistics!.waypoints.isNotEmpty) {
+    if (model.hasGPXWaypoints()) {
       onWaypointsCallback = onWaypointsCheck;
     }
     Function(bool?)? onOSMCallback;
@@ -73,14 +71,15 @@ class _KindsRowState extends State<KindsRow> {
       onOSMCallback = onOSMCheck;
     }
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Checkbox(
+        /*Checkbox(
           tristate: true,
           value: hasControls,
           onChanged: onControlCallback,
         ),
         Text("Controls"),
-        hdiv,
+        hdiv,*/
         Checkbox(
           tristate: true,
           value: hasGPXWaypoints,
