@@ -76,6 +76,8 @@ class _ControlStrings {
   _ControlStrings({required this.screenModel});
 
   String? controlsCount() {
+    // Note: this `if` is important. Otherwise: crash in backend,
+    // since the backend_data may be none.
     if (!screenModel.hasDone(Job.controls)) {
       return null;
     }
@@ -83,6 +85,8 @@ class _ControlStrings {
   }
 
   String? waypointsCount() {
+    // Note: this `if` is important. Otherwise: crash in backend,
+    // since the backend_data may be none.
     if (!screenModel.hasDone(Job.controls)) {
       return null;
     }

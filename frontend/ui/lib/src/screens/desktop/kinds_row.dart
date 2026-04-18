@@ -50,18 +50,17 @@ class _KindsRowState extends State<KindsRow> {
   @override
   Widget build(BuildContext context) {
     KindsModel model = Provider.of(context);
-    bool hasControls =
-        model.kinds.contains(Kind.controls) && model.hasControls();
+    //bool hasControls = model.kinds.contains(Kind.controls) && model.hasControls();
     bool hasGPXWaypoints =
         model.kinds.contains(Kind.gpxWaypoints) && model.hasGPXWaypoints();
     bool hasCities = model.kinds.contains(Kind.cities) && model.osmIsLoaded!;
     bool hasUserSteps = model.kinds.contains(Kind.userStep);
     SizedBox hdiv = SizedBox(width: 20);
 
-    Function(bool?)? onControlCallback;
+    /*Function(bool?)? onControlCallback;
     if (model.hasControls()) {
       onControlCallback = onControlsCheck;
-    }
+    }*/
     Function(bool?)? onWaypointsCallback;
     if (model.hasGPXWaypoints()) {
       onWaypointsCallback = onWaypointsCheck;

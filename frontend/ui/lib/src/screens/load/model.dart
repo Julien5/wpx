@@ -33,7 +33,6 @@ class LoadScreenModel extends ChangeNotifier {
   bool retryOsm = false;
   int _osmRetryCount = 0;
   List<bridge.TrackPart>? _trackParts;
-  bridge.SegmentStatistics? _statistics;
 
   FutureJob? runningFuture;
   LoadScreenModel({
@@ -88,8 +87,6 @@ class LoadScreenModel extends ChangeNotifier {
     } else if (job == Job.osm) {
       future = backend.loadOsm();
     } else if (job == Job.controls) {
-      // statistics are changed after controls are loaded
-      _statistics = null;
       future = Future<void>(() => backend.loadControls());
     } else {
       assert(false);
@@ -173,8 +170,6 @@ class LoadScreenModel extends ChangeNotifier {
     if (_isDisposed) {
       return;
     }
-    if (job == Job.gpx || job == Job.controls) {}
-
     runningFuture = null;
     done.add(job);
     _failed.remove(job);
@@ -197,8 +192,7 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   bridge.SegmentStatistics statistics() {
-    _statistics ??= backend.statistics();
-    return _statistics!;
+    return backend.statistics();
   }
 
   List<bridge.TrackPart> parts() {
