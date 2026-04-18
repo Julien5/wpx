@@ -397,7 +397,6 @@ pub fn render(total_size: &IntegerSize2D, model: &model::WheelModel) -> RenderRe
 
 #[cfg(test)]
 mod tests {
-
     use super::model;
     use super::model::CirclePoint;
     use super::model::WheelModel;
@@ -496,8 +495,8 @@ mod tests {
         }
     }
 
-    #[tokio::test]
-    async fn svg_wheel() {
+    #[test]
+    fn svg_wheel() {
         let _ = env_logger::try_init();
         for n in [50] {
             let reffilename = std::format!("data/ref/wheel-{}.svg", n);

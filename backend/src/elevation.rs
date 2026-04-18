@@ -52,13 +52,10 @@ pub fn elevation_gain(smooth: &Vec<f64>, from: usize, to: usize) -> f64 {
 mod tests {
     use crate::backend;
 
-    #[tokio::test]
-    async fn ele() {
+    #[test]
+    fn ele() {
         let mut backend = backend::Backend::make();
-        backend
-            .load_filename("data/blackforest.gpx")
-            .await
-            .expect("fail");
+        backend.load_filename("data/blackforest.gpx").expect("fail");
         let S = backend.segments();
         let km = 1000f64;
         for s in &S {

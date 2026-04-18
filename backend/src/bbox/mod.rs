@@ -331,8 +331,8 @@ mod tests {
     use super::*;
     use crate::math::*;
 
-    #[tokio::test]
-    async fn bbox_bounds() {
+    #[test]
+    fn bbox_bounds() {
         let _ = env_logger::try_init();
         let p = Point2D::new(1.0, 1.0);
         let b1 = BoundingBox::minmax(Point2D::new(0.0, 0.0), Point2D::new(1.0, 2.0));
