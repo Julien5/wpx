@@ -4,9 +4,10 @@ use std::collections::BTreeMap;
 
 use gpx::TrackSegment;
 
+use crate::inputpoint::InputPoint;
 use crate::point_collection::Kind;
 use crate::track;
-use crate::trackparts::parts_to_ranges;
+use crate::trackparts::control_to_segments;
 use crate::waypoint;
 use crate::waypoint::Waypoints;
 use crate::wgs84point::WGS84Point;
@@ -59,6 +60,7 @@ pub fn flat_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) -> T
 
 pub fn generate(
     track: &track::Track,
+    controls: &Vec<InputPoint>,
     groups: &Vec<Waypoints>,
     waypoints: &Waypoints,
 ) -> BTreeMap<String, Vec<u8>> {
@@ -83,11 +85,12 @@ pub fn generate(
         ret.insert("flat-track.gpx".to_string(), data);
     };
 
-    let ranges = parts_to_ranges(&track.parts);
-    for (index, part) in track.parts.iter().enumerate() {
+    let parts = control_to_segments(&track, &controls);
+    for (index, part) in parts.iter().enumerate() {
         let mut G = gpx::Gpx::default();
+        let range = &part.range;
         G.version = gpx::GpxVersion::Gpx11;
-        let segment = flat_export(&track.wgs84, &ranges[index]);
+        let segment = flat_export(&track.wgs84, &range);
         let mut gpxtrack = gpx::Track::new();
         gpxtrack.name = Some(format!("{:0>2}: {}", index + 1, part.name));
         gpxtrack.segments.push(segment);

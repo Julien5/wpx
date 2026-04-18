@@ -377,6 +377,7 @@ impl Backend {
         let collection = &self.d().packet_provider.read().unwrap().collection;
         let usersteps = collection.get_vector(&Kind::UserStep);
         let waypoints = collection.get_vector(&Kind::GPXWaypoints);
+        let controls = collection.get_vector(&Kind::Controls);
         log::trace!("{} parts", self.d().track.parts.len());
         log::trace!("parts:{:?}", self.d().track.parts);
         let split_indices = split_ambiguity::user_steps_split(&usersteps, &self.d().track);
@@ -392,7 +393,7 @@ impl Backend {
         debug_assert_eq!(check_sum, userssteps_w.len());
         debug_assert!(!usersteps_groups.is_empty());
         let waypoints_w = self.export_points(&waypoints);
-        gpxexport::generate(&self.d().track, &usersteps_groups, &waypoints_w)
+        gpxexport::generate(&self.d().track, &controls, &usersteps_groups, &waypoints_w)
     }
     pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
         let mut map = self.generateGpx();
