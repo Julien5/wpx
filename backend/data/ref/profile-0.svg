@@ -130,50 +130,42 @@
 <circle cx="121.86682658802444" cy="28" fill="Gray" id="user-step" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g/>
-<g transform="translate(1260.9375000000002 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-21.625" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-23.625" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-21.625" y="-3.000">
+<g transform="translate(1270.9375000000002 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
 15h
 </text>
 </g>
 <g/>
-<g transform="translate(1077.1875 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-21.625" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-23.625" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-21.625" y="-3.000">
+<g transform="translate(1087.1875 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
 14h
 </text>
 </g>
 <g/>
-<g transform="translate(709.6875000000001 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-21.625" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-23.625" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-21.625" y="-3.000">
+<g transform="translate(719.6875000000001 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
 12h
 </text>
 </g>
 <g/>
-<g transform="translate(525.9375 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-21.625" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-23.625" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-21.625" y="-3.000">
+<g transform="translate(535.9375 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
 11h
 </text>
 </g>
 <g/>
-<g transform="translate(342.18750000000006 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-21.625" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-23.625" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-21.625" y="-3.000">
-10h
-</text>
-</g>
-<g/>
-<g transform="translate(158.43750000000003 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.817105263157885" x="-16.817105263157885" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.817105263157885" x="-18.817105263157885" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="start" x="-16.817" y="-3.000">
+<g transform="translate(168.43750000000003 17)">
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.817105263157885" x="-7.408552631578942" y="-13"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.817105263157885" x="-9.408552631578942" y="-15"/>
+<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
  9h
 </text>
 </g>
@@ -297,7 +289,7 @@ Furtwangen
 <g transform="translate(882.6140096429942 288.89117857142855)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947367" x="-15.279407894736892" y="-284.89117857142855"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947367" x="-17.27940789473689" y="-286.89117857142855"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="start" x="-15.279" y="-274.891">
+<text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="middle" x="-0.000" y="-274.891">
 CP-2
 </text>
 </g>
@@ -308,7 +300,7 @@ CP-2
 <g transform="translate(364.8191215688331 139.83578571428572)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947367" x="-15.279407894736835" y="-135.83578571428572"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947367" x="-17.279407894736835" y="-137.83578571428572"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="start" x="-15.279" y="-125.836">
+<text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="middle" x="0.000" y="-125.836">
 CP-1
 </text>
 </g>

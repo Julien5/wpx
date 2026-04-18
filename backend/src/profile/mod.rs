@@ -213,7 +213,7 @@ impl ProfileView {
             let feature = PointFeature {
                 circle: PointFeatureDrawing {
                     group: svg::node::element::Group::new(),
-                    center: Point2D::new(xd - 10.0, bottom - self.frame_stroke_width),
+                    center: Point2D::new(xd, bottom - self.frame_stroke_width),
                 },
                 label,
                 input_point: None,
@@ -636,7 +636,7 @@ struct ProfileGenerator {
 impl CandidatesGenerator for ProfileGenerator {
     fn gen(&self, feature: &PointFeature, obstacles: &Obstacles) -> Vec<Candidate> {
         if feature.input_point.is_none() {
-            // [left mid right] => [mid]
+            // [start mid end] => [mid]
             let mut ret = vec![Self::header(feature)[1].clone()];
             debug_assert!(!feature.force_rendering());
             ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
@@ -656,7 +656,7 @@ impl CandidatesGenerator for ProfileGenerator {
                 debug_assert!(false);
                 Vec::new()
             }
-            Kind::Controls => Self::header(feature),
+            Kind::Controls => vec![Self::header(feature)[1].clone()],
             //Kind::GPXWaypoints => Self::header_offset(feature, 15f64),
             _ => {
                 let mut ret = self.cardinal(feature);
@@ -758,14 +758,20 @@ impl ProfileGenerator {
         let target = feature.circle.center;
         let width = feature.width();
         let mut ret = Vec::new();
-        for dx in [0.0, -0.5 * width, 0.5 * width] {
-            let x = target.x + dx - width / 2f64;
+        for anchor in ["start", "middle", "end"] {
+            let dx = if anchor == "start" {
+                0.0
+            } else if anchor == "middle" {
+                -0.5 * width
+            } else {
+                -width
+            };
             let bbox = BoundingBox::minsize(
-                Point2D::new(x, Self::header_ceil() + yoffset),
+                Point2D::new(target.x + dx, Self::header_ceil() + yoffset),
                 width,
                 feature.height(),
             );
-            let lbbox = LabelBoundingBox::new_absolute(&bbox, &target);
+            let lbbox = LabelBoundingBox::new_absolute(&bbox, &target).with_text_anchor(anchor);
             ret.push(Candidate::make_external(&lbbox));
         }
         ret

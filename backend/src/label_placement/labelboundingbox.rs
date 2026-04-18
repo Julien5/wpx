@@ -2,6 +2,7 @@
 pub struct LabelBoundingBox {
     relativebbox: BoundingBox,
     target: Point2D,
+    text_anchor: Option<String>,
 }
 
 impl LabelBoundingBox {
@@ -9,12 +10,14 @@ impl LabelBoundingBox {
         LabelBoundingBox {
             relativebbox: BoundingBox::new(),
             target: Point2D::zero(),
+            text_anchor: None,
         }
     }
     pub fn new_relative(bbox: &BoundingBox, target: &Point2D) -> Self {
         LabelBoundingBox {
             relativebbox: bbox.clone(),
             target: target.clone(),
+            text_anchor: None,
         }
     }
     pub fn new_absolute(absolutebbox: &BoundingBox, target: &Point2D) -> Self {
@@ -22,7 +25,15 @@ impl LabelBoundingBox {
         LabelBoundingBox {
             relativebbox: relative,
             target: target.clone(),
+            text_anchor: None,
         }
+    }
+    pub fn with_text_anchor(mut self, anchor: &str) -> Self {
+        self.text_anchor = Some(anchor.to_string());
+        self
+    }
+    pub fn text_anchor(&self) -> &Option<String> {
+        &self.text_anchor
     }
     pub fn area(&self) -> f64 {
         self.relativebbox.area()

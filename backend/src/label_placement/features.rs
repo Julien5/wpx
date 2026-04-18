@@ -130,16 +130,25 @@ impl Label {
 
     pub fn to_attributes(&self) -> Attributes {
         let mut ret = Attributes::new();
-        let mut x = self.bbox.relative().get_xmin() + 2f64;
-        let anchor = if self.bounding_box().relative().get_xmax() < 0f64 {
-            "end"
-        } else {
-            "start"
+        let anchor = match self.bbox.text_anchor() {
+            Some(a) => a.clone(),
+            None => {
+                if self.bounding_box().relative().get_xmax() < 0f64 {
+                    "end".to_string()
+                } else {
+                    "start".to_string()
+                }
+            }
         };
-        if anchor == "end" {
-            x = self.bbox.relative().get_xmax() - 2f64;
-        }
-        set_attr(&mut ret, "text-anchor", anchor);
+
+        let x = match anchor.as_str() {
+            "start" => self.bbox.relative().get_xmin() + 2f64,
+            "end" => self.bbox.relative().get_xmax() - 2f64,
+            "middle" => (self.bbox.relative().get_xmin() + self.bbox.relative().get_xmax()) / 2f64,
+            _ => self.bbox.relative().get_xmin() + 2f64, // "start" or default
+        };
+
+        set_attr(&mut ret, "text-anchor", &anchor);
         let y = self.bbox.relative().get_ymax() - 2f64;
         set_attr(&mut ret, "id", self.id.as_str());
         set_attr(
