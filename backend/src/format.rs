@@ -64,8 +64,6 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
     let original_format = format.to_string(); // Keep original for iterating
     let time = speed::time_at_distance(data.distance, parameters);
 
-    //log::trace!("format={}", format);
-
     // Iterate over all matched placeholders in the format string
     for cap in format_regex.captures_iter(&original_format) {
         let field_type = &cap[1];

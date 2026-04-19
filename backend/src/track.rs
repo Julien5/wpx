@@ -241,9 +241,6 @@ impl Track {
 
                     if last_point.is_some() {
                         let dloc = distance_wgs84(&last_point.unwrap(), &w);
-                        if dloc > 1000f64 {
-                            log::trace!("name={} k={} dloc={}", name, k, dloc);
-                        }
                         dacc += dloc;
                     }
                     last_point = Some(w.clone());

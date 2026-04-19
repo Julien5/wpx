@@ -70,13 +70,9 @@ pub fn user_steps_split(
             .collect(),
     };
 
-    log::trace!("found {} candidate indices", candidate_indices.len());
-
     if !candidate_indices.contains(&(track.len() - 1)) {
         candidate_indices.insert(track.len() - 1);
     }
-
-    log::trace!("controls {:?}", controls);
 
     let namb_max = 3;
     let mut good_range: Option<Range> = None;

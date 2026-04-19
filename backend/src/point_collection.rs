@@ -74,7 +74,6 @@ impl RenderResult {
                 .points
                 .retain(|point| seen.insert(point.id()) && point.kind() != Kind::UserStep);
             n2 += packet.points.len();
-            log::trace!("hardness={} n={}", packet.hardness, packet.points.len());
             ret.push(packet);
         }
         debug_assert!(n2 <= n1);
@@ -132,7 +131,7 @@ impl std::fmt::Debug for RenderInputParameters {
             .field("end", &self.drange.end)
             .field("width", &self.screen_size.width)
             .field("height", &self.screen_size.width)
-            .field("other", &self.other_parameters_hash)
+            .field("other", &self.other_parameters_hash.is_some())
             .field("|usersteps|", &self.usersteps.len())
             .finish()
     }
@@ -293,7 +292,6 @@ impl PacketProvider {
         }
     }
     pub fn register_result(&mut self, result: &RenderResult) {
-        log::trace!("register:{}", result.parameters.hash());
         assert!(self.results.hit(&result.parameters).is_none());
         self.results.push(result.clone());
     }

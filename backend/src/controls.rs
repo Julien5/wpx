@@ -101,16 +101,10 @@ pub fn infer_controls_from_gpx_segments(
                     if !neighbor.description().is_empty() {
                         description = neighbor.description();
                     }
-                    log::trace!("waypoint {} near end of {}", name, candidate.segment_name);
-                } else {
-                    log::trace!("no waypoint near end of {}", candidate.segment_name);
                 }
                 (name, description, id)
             }
-            None => {
-                log::trace!("no waypoint near end of {}", candidate.segment_name);
-                (String::new(), String::new(), String::new())
-            }
+            None => (String::new(), String::new(), String::new()),
         };
         ret.push((
             track_index,
@@ -164,7 +158,6 @@ pub fn add_control_at_waypoint(
     for (index, p) in ret.iter_mut().enumerate() {
         p.tags
             .insert("name".to_string(), format!("CP-{}", index + 1));
-        log::trace!("control index {} name:{} ", index, p.name());
     }
     ret
 }
@@ -184,7 +177,6 @@ pub fn remove_control_at_waypoint(
     for (index, p) in ret.iter_mut().enumerate() {
         p.tags
             .insert("name".to_string(), format!("CP-{}", index + 1));
-        log::trace!("control index {} name:{} ", index, p.name());
     }
     ret
 }

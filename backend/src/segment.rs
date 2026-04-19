@@ -370,11 +370,6 @@ impl SegmentData {
         let (map_ret, profile_ret) = {
             let (map_parameters, profile_parameters) =
                 self.map_profile_join_parameters(kinds, map_size, profile_size);
-            log::trace!(
-                "users steps profile: {}",
-                profile_parameters.usersteps.len()
-            );
-            log::trace!("users steps map: {}", map_parameters.usersteps.len());
             let lock = self.packet_provider.read().unwrap();
 
             let map_background = lock.load(&map_parameters);

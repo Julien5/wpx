@@ -139,7 +139,6 @@ impl GpxData {
         assert_eq!(track.segments.len(), 1);
         let points = &track.segments.first().as_ref().unwrap().points;
         let name = Self::track_name(track);
-        log::trace!("id:{} name:{}", id, name);
         TrackPart {
             name,
             part_index: id,
@@ -174,10 +173,6 @@ impl GpxData {
                 let p1 = Self::to_wgs84(last_end.unwrap());
                 let p2 = Self::to_wgs84(track_begin);
                 let d = distance_wgs84(&p1, &p2);
-                //log::trace!("name:{}", name);
-                //log::trace!("end:{:?}", p1);
-                //log::trace!("begin:{:?}", p2);
-                log::trace!("index:{} name:{:25} d(end,begin)={:.1}", index, name, d);
             }
             last_end = Some(track_end);
         }
@@ -187,11 +182,6 @@ impl GpxData {
         // The waypoints are not affected.
         let mut new_tracks = Vec::new();
         for index in order {
-            log::trace!(
-                "reorder: {}: {}",
-                index,
-                Self::track_name(&self.tracks[*index].1)
-            );
             new_tracks.push(self.tracks[*index].clone());
         }
 
@@ -225,7 +215,6 @@ impl ProfileBoundingBox {
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<InputPoint> {
     let mut ret = Vec::new();
     let projection = mercator::WebMercatorProjection::make();
-    log::trace!("read {} waypoints", gpx.waypoints.len());
     for w in &gpx.waypoints {
         let (lon, lat) = w.point().x_y();
         let wgs = WGS84Point::new(&lon, &lat, &0f64);

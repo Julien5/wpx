@@ -88,12 +88,10 @@ impl Backend {
     }
 
     pub async fn cancel_osm(&self) {
-        log::trace!("cancel osm data");
         self.send("cancel osm data");
         {
             // .take() moves the value out and leaves None in its place
             if let Some(token) = self.osm_cancel_token.write().unwrap().take() {
-                log::trace!("cancel osm data");
                 token.cancel();
             } else {
                 log::error!("cannot cancel osm data (probably not running)");
@@ -102,7 +100,6 @@ impl Backend {
     }
 
     pub async fn load_osm(&self) -> Result<(), TrackError> {
-        log::trace!("download osm data");
         self.send("download osm data");
 
         /*let tick = tokio::time::Duration::from_millis(1000);
@@ -378,13 +375,8 @@ impl Backend {
         let usersteps = collection.get_vector(&Kind::UserStep);
         let waypoints = collection.get_vector(&Kind::GPXWaypoints);
         let controls = collection.get_vector(&Kind::Controls);
-        log::trace!("{} parts", self.d().track.parts.len());
-        log::trace!("parts:{:?}", self.d().track.parts);
         let split_indices =
             split_ambiguity::user_steps_split(&usersteps, &controls, &self.d().track);
-        log::trace!("track len: {}", self.d().track.len());
-        log::trace!("{} splits", split_indices.len());
-        log::trace!("splits:{:?}", split_indices);
         let userssteps_w = self.export_points(&usersteps);
         let usersteps_groups = waypoint::group_waypoints(&userssteps_w, &split_indices);
         let mut check_sum = 0;

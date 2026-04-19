@@ -19,7 +19,6 @@ mod download_font {
 
     #[cfg(not(target_arch = "wasm32"))]
     pub async fn get(file: &str) -> Vec<u8> {
-        log::trace!("load embedded font data {}", file);
         if file.contains("Bold") {
             return include_bytes!("../../../frontend/ui/fonts/LibertinusSerif-Bold.ttf").to_vec();
         }

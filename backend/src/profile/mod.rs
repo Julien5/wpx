@@ -516,7 +516,6 @@ impl ProfileView {
             }
         }
 
-        log::trace!("users steps profile features: {}", usersteps.len());
         let (_time_features, usersteps_centers) = self.add_time_ticks(usersteps);
 
         let mut points = Vec::new();
@@ -643,13 +642,6 @@ impl CandidatesGenerator for ProfileGenerator {
             return ret;
         }
         let kind = feature.input_point().unwrap().kind();
-        if feature.input_point.is_some() {
-            log::trace!(
-                "name:{} hardness:{}",
-                feature.input_point.as_ref().unwrap().0.name(),
-                feature.hardness
-            );
-        }
         let drawing_width = obstacles.drawingbox.bbox.width();
         let mut ret = match kind {
             Kind::UserStep => {
