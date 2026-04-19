@@ -47,8 +47,13 @@ class LoadScreenModel extends ChangeNotifier {
   @override
   void dispose() {
     _isDisposed = true;
-    // TODO: cancel osm task if it is running, otherwise it
-    // blocks as soon as a &mut self function is called.
+    // The UI should not allow leaving LoadScreen while a job is running.
+    assert(runningJob() == Job.none);
+    // If we want to allow leaving the screen, we need to:
+    /*
+    if (runningJob() != Job.none && runningJob() == Job.osm) {
+      cancelOsm();  
+    }*/
     super.dispose();
   }
 

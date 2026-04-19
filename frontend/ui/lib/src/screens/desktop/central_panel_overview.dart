@@ -31,7 +31,7 @@ class _CentralWidgetState extends State<CentralWidget> {
         segment: renderer.getSegment(),
         n: BigInt.from(renderOutput.waypoints.length),
       );
-      table = DesktopTable(waypoints: waypoints);
+      table = DesktopTable(waypoints: waypoints, editControls: true);
     }
     Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,

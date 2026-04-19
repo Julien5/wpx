@@ -8,8 +8,13 @@ import 'package:wpx/src/utils/utils.dart';
 
 class DesktopTable extends StatefulWidget {
   final List<Waypoint> waypoints;
+  final bool editControls;
 
-  const DesktopTable({super.key, required this.waypoints});
+  const DesktopTable({
+    super.key,
+    required this.waypoints,
+    required this.editControls,
+  });
 
   @override
   State<DesktopTable> createState() => _DesktopTableState();
@@ -40,24 +45,27 @@ class _DesktopTableState extends State<DesktopTable> {
     if (waypoints.isEmpty) {
       return Center(child: const Text("No waypoints"));
     }
-
     debugPrint("build table with ${waypoints.length} waypoints");
     return DataTable(
       // 1. Define the Columns
-      columns: const <DataColumn>[
-        DataColumn(
+      columns: <DataColumn>[
+        const DataColumn(
           label: Text('km', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
         ),
-        DataColumn(
+        const DataColumn(
           label: Text('time', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
         ),
-        DataColumn(label: Text(""), numeric: false),
-        DataColumn(
-          label: Text('control', style: TextStyle(fontWeight: FontWeight.bold)),
-          numeric: false,
-        ),
+        const DataColumn(label: Text(""), numeric: false),
+        if (widget.editControls)
+          const DataColumn(
+            label: Text(
+              'control',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            numeric: false,
+          ),
       ],
       rows:
           waypoints.map((w) {
@@ -73,20 +81,21 @@ class _DesktopTableState extends State<DesktopTable> {
                 DataCell(Text(formattedDistance)),
                 DataCell(Text(time)),
                 DataCell(Text(description)),
-                DataCell(
-                  showCheckbox
-                      ? Checkbox(
-                        value: checkBoxValue,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            if (value != null) {
-                              makeControlAtWaypoint(w, value);
-                            }
-                          });
-                        },
-                      )
-                      : const SizedBox.shrink(),
-                ),
+                if (widget.editControls)
+                  DataCell(
+                    showCheckbox
+                        ? Checkbox(
+                          value: checkBoxValue,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value != null) {
+                                makeControlAtWaypoint(w, value);
+                              }
+                            });
+                          },
+                        )
+                        : const SizedBox.shrink(),
+                  ),
               ],
             );
           }).toList(),
