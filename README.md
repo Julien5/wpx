@@ -1,44 +1,46 @@
 # WPX 
 
-**WPX** is a tool for **brevet cycling**. It generates printable route PDFs with elevation profiles, maps, and control information from GPX tracks.
+**WPX** is a tool for long-distance cycling, especially brevet/randonneuring. It generates printable route PDFs with elevation profiles, maps, and control points from GPX tracks.
 
-Try it online, [julien5.dev/wpx](https://www.julien5.dev/wpx).
+Try it online: [julien5.dev/wpx](https://www.julien5.dev/wpx).
 
 No installation required.
 
-## What is it ?
+## What is it?
 
 Used *before* the ride, WPX reads GPX files and does two things:
 
-  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. It is light, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](docs/sample/alpes.pdf):
+  * **Generate a PDF file** containing elevation profiles, maps, and a table of important points (controls). Print this PDF to take on the ride. Paper is lightweight, does not run out of battery, and has a larger display than a mobile phone.  Here is a screenshot of a [sample pdf](docs/sample/alpes.pdf):
 
     ![pdf](docs/images/alpes-small.png)
 
     During the ride, your GPS provides local directions, while this PDF tells you:
 
-    - Where am I on a regional scale, what are the cities/villages around?
-    - What elevation is ahead?
+    - Where am I on a regional scale? What are the cities/villages around?
+    - What elevation gain and slope is ahead?
     - How much time on hand do I have left?
-	
-	Unlike tools that rely on pre-rendered tiles, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
 
-  * **Generate cutoff points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. Displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
+    Unlike tools that rely on pre-rendered tiles, WPX renders the map on the fly using the GPX track and OSM points.
 
-#### Notes on the PDF:
-   * The elevation profile contains most of the relevant information:
+  * **Generate cutoff points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: `12:34-5.1%`, for example. Displayed as "Next Waypoint" on your GPS, they help you estimate your time on hand.
+
+#### Notes on the PDF
+
+* The elevation profile has a header with the cutoff time and the control points.
 
 ![](docs/images/profile-closeup.png)
 
    * WPX tries to display the same labels on the map as on the elevation profile. However, it may fail to find positions where labels do not overlap the track or other points. In that case, OSM points are omitted; this is why you might see points on the elevation profile but not on the map. GPX waypoints, on the other hand, are still shown even if they overlap.
    
-   * The table lists controls, waypoints, and selected OSM points. Cutoff points are not included. Only the most important OSM points are shown, based on population and proximity to other points, in order to maintain an even spatial distribution
+   * The table lists controls, waypoints, and selected OSM points. Cutoff points are not included. Only the most important OSM points are shown, based on population and proximity to other points, in order to maintain an even spatial distribution.
 
 ## Input
 
-  - WPX loads one or multiple GPX files and reads all tracks and segments. **Control points** are determined by the end of segments. If a waypoint exists near a segment end, its name and description are used for that control. The segment points should have elevation data.
-  - Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
+* WPX loads one or multiple GPX files and reads all tracks and segments. **Control points** are determined by the ends of segments. If a waypoint exists near a segment end, its name and description are used for that control. The segment points should have elevation data.
 
-*Note: The elevation gain is computed using a 200m moving average on the GPX data. This is sufficient for identifying the hilliest sections, but do not expect perfect absolute accuracy.*
+* Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
+
+*Note: Elevation gain is computed using a 200 m moving average on the GPX data. This is sufficient for identifying the hilliest sections, but do not expect perfect absolute accuracy.*
 
 ## Output
 
@@ -46,36 +48,20 @@ Used *before* the ride, WPX reads GPX files and does two things:
 
 WPX generates a zip file containing the PDF and the following GPX files:
 
-| filename               | description                                                                                                                                |
-|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| `flat-track.gpx`       | The complete track without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints. |
-| `flat-segment-<n>.gpx` | Individual segments, from one control to the next, without elevation data.                                                                 |
-| `cutoff-all.gpx`       | All cutoff points in a single file.                                                                                                        |
-| `cutoff-<n>.gpx`       | Cutoff points separated to avoid ambiguity.                                                                                                |
+| filename                   | description                                                                                   |
+|----------------------------|-----------------------------------------------------------------------------------------------|
+| `track-waypoints.gpx`      | Individual segments, from one control to the next, and the waypoints. Useful as input to WPX. |
+| `flat-segment-<n>.gpx`     | Individual segments, from one control to the next, without elevation data.                    |
+| `elevated-segment-<n>.gpx` | Individual segments, from one control to the next, with elevation data.                       |
+| `cutoff-all.gpx`           | All cutoff points in a single file.                                                           |
+| `cutoff-<n>.gpx`           | Cutoff points separated to avoid ambiguity.                                                   |
+
+The "flat" segments without elevation data are useful to prevent devices like the Garmin eTrex from automatically generating "high/low" waypoints.
 
 *Note on cutoff point files*: 
 
-GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `cutoff-1.gpx`  for the start, and `cutoff-2.gpx` on the way back works around that problem. 
+GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `cutoff-1.gpx`  at the start, and `cutoff-2.gpx` on the way back works around that problem. 
 But mid-ride file transfers are a gamble you don't want to take with frozen fingers or a dying battery. You can choose your preferred strategy, using either `cutoff-all.gpx` or the separated `cutoff-1.gpx` and `cutoff-2.gpx`.
-
-For a brevet with 7 controls, the output might contain:
-
-```
-$ unzip -l /tmp/foo.zip 
-[...]
-   114734  2024-01-01 00:00   flat-segment-01.gpx
-   198644  2024-01-01 00:00   flat-segment-02.gpx
-    71852  2024-01-01 00:00   flat-segment-03.gpx
-    34066  2024-01-01 00:00   flat-segment-04.gpx
-    61081  2024-01-01 00:00   flat-segment-05.gpx
-    60580  2024-01-01 00:00   flat-segment-06.gpx
-    38897  2024-01-01 00:00   flat-segment-07.gpx
-   578411  2024-01-01 00:00   flat-track.gpx
-     5033  2024-01-01 00:00   cutoff-1.gpx
-      539  2024-01-01 00:00   cutoff-2.gpx
-     5424  2024-01-01 00:00   cutoff-all.gpx
-   356943  2024-01-01 00:00   route.pdf
-```
 
 ----
 
@@ -107,7 +93,7 @@ See [UI notes](./docs/UI.md).
 
 The project consists of two parts:
 
-  * A [backend](./backend) written in Rust. It contains algorithm to read/write gpx files, computes the profiles, the maps, assembles the pdf. 
+  * A [backend](./backend) written in Rust. It contains algorithm to read/write gpx files, computes the profiles, the maps, assembles the pdf. The map and profile are serialized as svg documents.
   * A [frontend](./frontend/ui) written in Flutter. This is the code for the UI. 
 
 They communicate via [flutter\_rust\_bridge](https://cjycode.com/flutter_rust_bridge/). I started this project to learn Rust and Flutter; this is my first project in both languages.
