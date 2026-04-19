@@ -114,7 +114,7 @@ class _ChooseDataState extends State<_ChooseData> {
                   borderRadius: BorderRadius.circular(5),
                 ),
               ),
-              child: const Text("Test", style: TextStyle(fontSize: 13)),
+              child: const Text("Load sample", style: TextStyle(fontSize: 13)),
             ),
           ),
         ],
