@@ -22,7 +22,7 @@ Used *before* the ride, WPX reads GPX files and does two things:
 	
 	Unlike tools that rely on pre-rendered tiles, WPX does not fetch pre-rendered tiles, it renders the map on-the-fly using the gpx track and OSM points.
 
-  * **Generate pacing points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. Displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
+  * **Generate cutoff points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: "12:34-5.1%", for example. Displayed as "Next Waypoint" on your GPS, it helps you estimate your time on hand.
 
 #### Notes on the PDF:
    * The elevation profile contains most of the relevant information:
@@ -31,7 +31,7 @@ Used *before* the ride, WPX reads GPX files and does two things:
 
    * WPX tries to display the same labels on the map as on the elevation profile. However, it may fail to find positions where labels do not overlap the track or other points. In that case, OSM points are omitted; this is why you might see points on the elevation profile but not on the map. GPX waypoints, on the other hand, are still shown even if they overlap.
    
-   * The table lists controls, waypoints, and selected OSM points. Pacing points are not included. Only the most important OSM points are shown, based on population and proximity to other points, in order to maintain an even spatial distribution
+   * The table lists controls, waypoints, and selected OSM points. Cutoff points are not included. Only the most important OSM points are shown, based on population and proximity to other points, in order to maintain an even spatial distribution
 
 ## Input
 
@@ -50,13 +50,13 @@ WPX generates a zip file containing the PDF and the following GPX files:
 |------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | `flat-track.gpx`       | The complete track without elevation data. This prevents devices like the Garmin eTrex from automatically generating "high/low" waypoints. |
 | `flat-segment-<n>.gpx` | Individual segments, from one control to the next, without elevation data.                                                                 |
-| `pacing-all.gpx`       | All pacing points in a single file.                                                                                                        |
-| `pacing-<n>.gpx`       | Pacing points separated to avoid ambiguity.                                                                                                |
+| `cutoff-all.gpx`       | All cutoff points in a single file.                                                                                                        |
+| `cutoff-<n>.gpx`       | Cutoff points separated to avoid ambiguity.                                                                                                |
 
-*Note on pacing point files*: 
+*Note on cutoff point files*: 
 
-GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `pacing-1.gpx`  for the start, and `pacing-2.gpx` on the way back works around that problem. 
-But mid-ride file transfers are a gamble you don't want to take with frozen fingers or a dying battery. You can choose your preferred strategy, using either `pacing-all.gpx` or the separated `pacing-1.gpx` and `pacing-2.gpx`.
+GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `cutoff-1.gpx`  for the start, and `cutoff-2.gpx` on the way back works around that problem. 
+But mid-ride file transfers are a gamble you don't want to take with frozen fingers or a dying battery. You can choose your preferred strategy, using either `cutoff-all.gpx` or the separated `cutoff-1.gpx` and `cutoff-2.gpx`.
 
 For a brevet with 7 controls, the output might contain:
 
@@ -71,9 +71,9 @@ $ unzip -l /tmp/foo.zip
     60580  2024-01-01 00:00   flat-segment-06.gpx
     38897  2024-01-01 00:00   flat-segment-07.gpx
    578411  2024-01-01 00:00   flat-track.gpx
-     5033  2024-01-01 00:00   pacing-1.gpx
-      539  2024-01-01 00:00   pacing-2.gpx
-     5424  2024-01-01 00:00   pacing-all.gpx
+     5033  2024-01-01 00:00   cutoff-1.gpx
+      539  2024-01-01 00:00   cutoff-2.gpx
+     5424  2024-01-01 00:00   cutoff-all.gpx
    356943  2024-01-01 00:00   route.pdf
 ```
 

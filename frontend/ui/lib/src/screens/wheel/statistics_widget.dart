@@ -366,7 +366,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         if (widget.onPacingPointPressed != null)
           TableRow(
             children: [
-              SmallText(text: "Pacing points"),
+              SmallText(text: "Cutoff points"),
               SmallButton(
                 callback: widget.onPacingPointPressed,
                 text: pacingPointsText,

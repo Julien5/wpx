@@ -430,7 +430,7 @@ pub fn map_foreground(
 ) -> RenderResult {
     log::info!("compute map foreground for parameters {:?}", parameters);
     let maker = MapMaker::init(track, parameters);
-    let usersteps = match parameters.kinds.contains(&Kind::UserStep) {
+    let usersteps = match parameters.kinds.contains(&Kind::CutOff) {
         true => parameters.usersteps.clone(),
         false => Vec::new(),
     };

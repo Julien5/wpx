@@ -13,7 +13,7 @@ pub fn make_label_text(w: &InputPoint) -> Label {
         }
         //Kind::GPXWaypoints => format!("{}", "ⓘ"),
         Kind::GPXWaypoints => w.name().clone().trim().to_string(),
-        Kind::UserStep => String::new(),
+        Kind::CutOff => String::new(),
         Kind::Controls => w.name(),
     };
     let base_font_size = FONTSIZE;
@@ -61,13 +61,13 @@ pub fn draw_for_profile(center: &Point2D, id: &str, w: &InputPoint) -> PointFeat
         Kind::Hamlets => (2f64, "Gray"),
         Kind::Mountains => (3f64, "Green"),
         Kind::GPXWaypoints => (4f64, "Blue"),
-        Kind::UserStep => (2f64, "Gray"),
+        Kind::CutOff => (2f64, "Gray"),
         Kind::Controls => (5f64, "Blue"),
     };
 
     let mut circle = make_circle(center, &format!("{}", id), fill, &0.0, "");
     circle = circle.set("r", format!("{}", r));
-    if w.kind() == Kind::UserStep {
+    if w.kind() == Kind::CutOff {
         circle = circle.set("stroke", format!("{}", "black"));
         circle = circle.set("stroke-width", format!("{}", "2"));
     }

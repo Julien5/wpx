@@ -15,7 +15,7 @@
   - **Controls:** Points found at the ends of segments.
   - **Waypoints:** Original waypoints from the input GPX. If a waypoint matches a control point, it is merged into the control (and not shown as a separate waypoint).
   - **OSM:** Names of cities, villages, and mountain passes. Only the most important OSM points are shown to keep the table readable (filtered by a minimum distance of 10% of the track/page length).
-  - **Pacing:** These are shown as dots on the elevation profile and map, but are excluded from the tables.
+  - **Cutoff:** These are shown as dots on the elevation profile and map, but are excluded from the tables.
 
 ### PDF
 

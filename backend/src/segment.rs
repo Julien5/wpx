@@ -110,7 +110,7 @@ impl SegmentData {
     }
 
     pub fn usersteps(&self) -> Vec<InputPoint> {
-        self.kind_on_segment(&Kind::UserStep)
+        self.kind_on_segment(&Kind::CutOff)
     }
 
     pub fn potential_controls(&self) -> Vec<InputPoint> {
@@ -254,7 +254,7 @@ impl SegmentData {
                 .clone()
                 .iter()
                 .map(|k| k.clone())
-                .filter(|k| *k != Kind::UserStep)
+                .filter(|k| *k != Kind::CutOff)
                 .collect();
             coll.kinds_cut(&clean);
             coll
@@ -476,7 +476,7 @@ mod tests {
         collection.import_other(&Kind::Controls, controls);
 
         let usersteps = make_points::user_points(&track, &parameters.user_steps_options);
-        collection.import_other(&Kind::UserStep, usersteps);
+        collection.import_other(&Kind::CutOff, usersteps);
 
         let fsegment = Segment {
             id: 0,

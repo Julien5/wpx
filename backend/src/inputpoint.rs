@@ -59,7 +59,7 @@ impl InputPoint {
         name: &String,
     ) -> InputPoint {
         let euc = &proj.euclidean;
-        let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::UserStep);
+        let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::CutOff);
         p.tags.insert("name".to_string(), name.clone());
         p.track_projections = BTreeSet::from([proj]);
         p
@@ -213,7 +213,7 @@ impl InputPoint {
             Kind::Hamlets => "hamlet",
             Kind::Cities => "city",
             Kind::Mountains => "mountains",
-            Kind::UserStep => "UserStep",
+            Kind::CutOff => "UserStep",
             Kind::Controls => "Control",
         };
         tags.insert("wpxtype".to_string(), value.to_string());
@@ -227,7 +227,7 @@ impl InputPoint {
                     return Kind::GPXWaypoints;
                 }
                 "UserStep" => {
-                    return Kind::UserStep;
+                    return Kind::CutOff;
                 }
                 "Control" => {
                     return Kind::Controls;

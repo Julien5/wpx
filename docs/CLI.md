@@ -8,7 +8,7 @@ wpx data/ref/alpes.gpx --output pdf/alpes.pdf
 ![](./images/alpes-small.png).
 ```
 $ wpx  --help
-Reads a brevet GPX files and generates the feuille de route and pacing points
+Reads a GPX files and generates a PDF feuille de route and cutoff points
 
 Usage: wpx [OPTIONS] [gpx]...
 
@@ -25,13 +25,14 @@ Options:
       --speed <speed>
           speed in kilometer per hour [default: 15]
       --step-distance <step_distance>
-          generate one pacing point every [distance] kilometer [default: 10]
+          generate one cutoff point every [distance] kilometer [default: 10]
       --step-elevation-gain <step_elevation_gain>
-          generate one pacing point every [evelation gain] meter
+          generate one cutoff point every [evelation gain] meter
       --kinds <kinds>
-          [default: Controls GPXWaypoints Cities Mountains Villages Hamlets UserStep] [possible values: Cities, Controls, GPXWaypoints, Hamlets, Mountains, Villages, UserStep]
+          [default: Controls GPXWaypoints Cities Mountains Villages Hamlets CutOff] [possible values: Cities, Controls, GPXWaypoints, Hamlets, Mountains, Villages, CutOff]
       --output <ouput>
           filename for the ouput (zip or pdf)
   -h, --help
           Print help
+
 ```

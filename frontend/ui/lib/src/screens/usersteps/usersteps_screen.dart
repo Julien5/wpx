@@ -40,14 +40,14 @@ class _TextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Set<Kind> usersteps = {Kind.userStep};
+    Set<Kind> usersteps = {Kind.cutOff};
     SegmentModel model = Provider.of<SegmentModel>(context);
     Provider.of<ParameterModel>(context);
     List<Waypoint> waypoints = model.someWaypoints(usersteps);
     String text =
         waypoints.isEmpty
-            ? "no pacing points"
-            : "${waypoints.length} pacing points";
+            ? "no cutoff points"
+            : "${waypoints.length} cutoff points";
     return Center(child: Text(text));
   }
 }
@@ -57,7 +57,7 @@ class UserStepsScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Set<Kind> usersteps = {Kind.userStep};
+    Set<Kind> usersteps = {Kind.cutOff};
 
     List<Widget> midChilren = [
       _TextWidget(),
@@ -70,7 +70,7 @@ class UserStepsScaffold extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           onPressed: () => gotoOverview(ctx),
         ),
-        title: const Text('Pacing Points'),
+        title: const Text('Cutoff Points'),
       ),
 
       body: AdaptiveLayout(

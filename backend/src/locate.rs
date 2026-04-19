@@ -236,7 +236,7 @@ pub fn compute_track_projection(
     point: &InputPoint,
 ) -> TrackProjection {
     // user steps projection on track is unique...
-    if point.kind() == Kind::UserStep {
+    if point.kind() == Kind::CutOff {
         assert!(!point.track_projections.is_empty());
         return point.track_projections.first().unwrap().clone();
     }

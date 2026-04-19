@@ -32,9 +32,9 @@ class _KindsRowState extends State<KindsRow> {
   void onUserStepsCheck(bool? checked) {
     KindsModel model = Provider.of(context, listen: false);
     if (checked == null || checked == false) {
-      model.removeKind(Kind.userStep);
+      model.removeKind(Kind.cutOff);
     } else {
-      model.addKind(Kind.userStep);
+      model.addKind(Kind.cutOff);
     }
   }
 
@@ -54,7 +54,7 @@ class _KindsRowState extends State<KindsRow> {
     bool hasGPXWaypoints =
         model.kinds.contains(Kind.gpxWaypoints) && model.hasGPXWaypoints();
     bool hasCities = model.kinds.contains(Kind.cities) && model.osmIsLoaded!;
-    bool hasUserSteps = model.kinds.contains(Kind.userStep);
+    bool hasUserSteps = model.kinds.contains(Kind.cutOff);
     SizedBox hdiv = SizedBox(width: 20);
 
     /*Function(bool?)? onControlCallback;
@@ -94,7 +94,7 @@ class _KindsRowState extends State<KindsRow> {
           value: hasUserSteps,
           onChanged: onUserStepsCheck,
         ),
-        Text("Pacing"),
+        Text("Cutoff"),
       ],
     );
   }

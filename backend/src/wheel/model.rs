@@ -150,7 +150,7 @@ impl WheelModel {
             }
             self.control_points.sort_by_key(|p| p.angle.floor() as i32);
         }
-        if kinds.contains(&Kind::UserStep) {
+        if kinds.contains(&Kind::CutOff) {
             for c in get_mid_points(segment) {
                 for a in angles(&c, &segment.track) {
                     let cp = CirclePoint {

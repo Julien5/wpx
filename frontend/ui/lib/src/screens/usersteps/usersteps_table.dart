@@ -74,7 +74,7 @@ class UserStepsTableScaffold extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // Rounded corners
             ),
-            child: GPXTable(kinds: {Kind.userStep}),
+            child: GPXTable(kinds: {Kind.cutOff}),
           ),
         ),
         Divider(),
@@ -83,7 +83,7 @@ class UserStepsTableScaffold extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pacing Points Table')),
+      appBar: AppBar(title: const Text('Cutoff Points Table')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(

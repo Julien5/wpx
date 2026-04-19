@@ -30,13 +30,12 @@ class _UserStepsCardState extends State<UserStepsCard> {
   @override
   Widget build(BuildContext context) {
     ParameterModel parameterModel = Provider.of<ParameterModel>(context);
-    debugPrint("REBUILD PACING CARD");
 
     String pacingPointsText = getPacingPointText(parameterModel.parameters());
     Widget tile = ExpansionTile(
       title: Row(
         children: [
-          SmallText(text: "Pacing points"),
+          SmallText(text: "Cutoff points"),
           SmallText(text: pacingPointsText),
         ],
       ),

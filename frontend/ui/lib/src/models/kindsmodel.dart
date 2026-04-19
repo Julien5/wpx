@@ -6,7 +6,7 @@ class KindsModel with ChangeNotifier {
   Kinds kinds = {
     Kind.controls,
     Kind.gpxWaypoints,
-    Kind.userStep,
+    Kind.cutOff,
     Kind.cities,
     Kind.hamlets,
     Kind.mountains,

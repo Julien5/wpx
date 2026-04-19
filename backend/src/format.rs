@@ -53,7 +53,7 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
     let format_regex: Regex =
         Regex::new(r"(TIME|SLOPE|NAME|DESCRIPTION)(?:\[([^\]]+)\])?").unwrap();
     let format = match data.origin {
-        Kind::UserStep => parameters.user_steps_options.gpx_name_format.clone(),
+        Kind::CutOff => parameters.user_steps_options.gpx_name_format.clone(),
         Kind::Controls => parameters.control_gpx_name_format.clone(),
         _ => String::new(),
     };
@@ -121,7 +121,7 @@ mod tests {
             inter_elevation_gain: 50.0,
             name: "P2".to_string(),
             description: "description".to_string(),
-            origin: Kind::UserStep,
+            origin: Kind::CutOff,
         }
     }
 

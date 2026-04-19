@@ -72,7 +72,7 @@ impl RenderResult {
             let mut seen = HashSet::new();
             packet
                 .points
-                .retain(|point| seen.insert(point.id()) && point.kind() != Kind::UserStep);
+                .retain(|point| seen.insert(point.id()) && point.kind() != Kind::CutOff);
             n2 += packet.points.len();
             ret.push(packet);
         }
@@ -84,7 +84,7 @@ impl RenderResult {
     pub fn rendered_input_points_for_table(&self) -> Vec<InputPoint> {
         let mut ret = self.rendered_input_points();
         let mut seen = HashSet::new();
-        ret.retain(|point| seen.insert(point.id()) && point.kind() != Kind::UserStep);
+        ret.retain(|point| seen.insert(point.id()) && point.kind() != Kind::CutOff);
         ret
     }
 }
@@ -320,7 +320,7 @@ pub enum Kind {
     Hamlets,
     Mountains,
     Villages,
-    UserStep,
+    CutOff,
 }
 
 impl std::fmt::Display for Kind {
@@ -333,7 +333,7 @@ impl std::fmt::Display for Kind {
 
 pub fn is_osm(kind: &Kind) -> bool {
     match kind {
-        Kind::Controls | Kind::GPXWaypoints | Kind::UserStep => false,
+        Kind::Controls | Kind::GPXWaypoints | Kind::CutOff => false,
         _ => true,
     }
 }
@@ -342,7 +342,7 @@ pub type Kinds = HashSet<Kind>;
 
 pub fn allkinds() -> Kinds {
     HashSet::from([
-        Kind::UserStep,
+        Kind::CutOff,
         Kind::GPXWaypoints,
         Kind::Cities,
         Kind::Villages,
@@ -517,7 +517,7 @@ impl PointCollection {
             Packet::make_forced_packet(clone.gpxwaypoints()),
             Packet {
                 hardness: 0,
-                points: clone.get_vector(&Kind::UserStep),
+                points: clone.get_vector(&Kind::CutOff),
             },
             Self::osm_packet(clone.ontrack_cities()),
             Self::osm_packet(clone.get_vector(&Kind::Villages)),
@@ -533,7 +533,7 @@ impl PointCollection {
             Packet::make_forced_packet(clone.gpxwaypoints()),
             Packet {
                 hardness: 0,
-                points: clone.get_vector(&Kind::UserStep),
+                points: clone.get_vector(&Kind::CutOff),
             },
             Self::osm_packet(clone.ontrack_cities()),
             Self::osm_packet(clone.get_vector(&Kind::Villages)),

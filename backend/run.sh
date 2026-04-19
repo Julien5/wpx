@@ -67,7 +67,7 @@ function pdf() {
 		 --output /tmp/wpx/route.zip \
 		 --start-time "2026-04-10T00:00:00" \
 		 --speed 10.0 \
-		 --kinds Controls,UserStep,GPXWaypoints,Cities \
+		 --kinds Controls,CutOff,GPXWaypoints,Cities \
 		 --debug true \
 		 --step-distance 10 \
 		 --segment-length $(segment-length ${file}) \

@@ -156,7 +156,7 @@ impl WaypointInfo {
         let mut infos = Vec::new();
         let wgs0 = track.wgs84.first().unwrap();
         let euc0 = track.euclidean.first().unwrap();
-        let w0 = Waypoint::create(*wgs0, euc0, 0, Kind::UserStep);
+        let w0 = Waypoint::create(*wgs0, euc0, 0, Kind::CutOff);
         for k in 0..waypoints.len() {
             let w = &waypoints[k];
             let wprev = match k {

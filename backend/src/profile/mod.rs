@@ -487,7 +487,7 @@ impl ProfileView {
     }
 
     fn userstep_dot(box_center: &Point2D, w: &InputPoint, k: usize) -> PointFeature {
-        assert!(w.kind() == Kind::UserStep);
+        assert!(w.kind() == Kind::CutOff);
         let center = *box_center + Point2D::new(0f64, 8f64);
         let circle = draw_for_profile(&center, &format!("user-step"), w);
         let mut label = drawings::make_label_text(&w);
@@ -553,7 +553,7 @@ impl ProfileView {
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in &packet.points {
-                if w.kind() == Kind::UserStep {
+                if w.kind() == Kind::CutOff {
                     continue;
                 }
                 for proj in &w.track_projections {
@@ -599,7 +599,7 @@ impl ProfileView {
             if packet.points.is_empty() {
                 continue;
             }
-            if packet.points.first().unwrap().kind() == Kind::UserStep {
+            if packet.points.first().unwrap().kind() == Kind::CutOff {
                 pacing_points = packet.points.clone();
             }
         }
@@ -644,7 +644,7 @@ impl CandidatesGenerator for ProfileGenerator {
         let kind = feature.input_point().unwrap().kind();
         let drawing_width = obstacles.drawingbox.bbox.width();
         let mut ret = match kind {
-            Kind::UserStep => {
+            Kind::CutOff => {
                 debug_assert!(false);
                 Vec::new()
             }
@@ -865,7 +865,7 @@ pub fn profile_foreground(
         ProfileBoundingBox::from_track(track, &parameters.drange.start, &parameters.drange.end);
     let mut view = ProfileView::init(&profile_bbox, parameters, debug_dir);
     view.add_canvas();
-    let usersteps = match parameters.kinds.contains(&Kind::UserStep) {
+    let usersteps = match parameters.kinds.contains(&Kind::CutOff) {
         true => parameters.usersteps.clone(),
         false => Vec::new(),
     };

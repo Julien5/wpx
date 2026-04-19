@@ -11,7 +11,7 @@ use tracks::parameters::{parse_time, RenderFunction};
 use tracks::point_collection::Kind;
 use tracks::{point_collection, speed};
 
-/// Reads a brevet GPX files and generates the feuille de route and pacing points.
+/// Reads a GPX files and generates a PDF feuille de route and cutoff points.
 #[derive(Parser)]
 struct Cli {
     /// the segment length in kilometer
@@ -26,13 +26,13 @@ struct Cli {
     /// speed in kilometer per hour
     #[arg(long, value_name = "speed", default_value_t = 15.0)]
     speed: f64,
-    /// generate one pacing point every [distance] kilometer [default: 10]
+    /// generate one cutoff point every [distance] kilometer [default: 10]
     #[arg(long, value_name = "step_distance")]
     step_distance: Option<f64>,
-    /// generate one pacing point every [evelation gain] meter
+    /// generate one cutoff point every [evelation gain] meter
     #[arg(long, value_name = "step_elevation_gain")]
     step_elevation_gain: Option<f64>,
-    #[arg(long, value_delimiter = ',', default_values_t = [Kind::Controls,Kind::GPXWaypoints,Kind::Cities,Kind::Mountains, Kind::Villages,Kind::Hamlets,Kind::UserStep],value_name = "kinds")]
+    #[arg(long, value_delimiter = ',', default_values_t = [Kind::Controls,Kind::GPXWaypoints,Kind::Cities,Kind::Mountains, Kind::Villages,Kind::Hamlets,Kind::CutOff],value_name = "kinds")]
     kinds: Vec<Kind>,
 
     #[arg(long, value_name = "render_wheel", hide = true)]

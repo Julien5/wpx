@@ -189,7 +189,7 @@ fn _control_point_goodness(point: &InputPoint) -> i32 {
         _ => 0,
     };
     match point.kind() {
-        Kind::UserStep => {
+        Kind::CutOff => {
             return i32::MIN;
         }
         Kind::GPXWaypoints | Kind::Controls => {

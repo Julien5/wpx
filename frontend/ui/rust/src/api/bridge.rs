@@ -77,7 +77,7 @@ pub enum _Kind {
     Hamlets,
     Mountains,
     Villages,
-    UserStep,
+    CutOff,
 }
 
 #[frb(sync)]

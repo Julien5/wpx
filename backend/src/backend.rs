@@ -302,7 +302,7 @@ impl Backend {
             let mut locked = self.d().packet_provider.write().unwrap();
             let usersteps =
                 make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-            locked.collection.import_other(&Kind::UserStep, usersteps);
+            locked.collection.import_other(&Kind::CutOff, usersteps);
         }
     }
 
@@ -372,7 +372,7 @@ impl Backend {
     }
     pub fn generateGpx(&self) -> BTreeMap<String, Vec<u8>> {
         let collection = &self.d().packet_provider.read().unwrap().collection;
-        let usersteps = collection.get_vector(&Kind::UserStep);
+        let usersteps = collection.get_vector(&Kind::CutOff);
         let waypoints = collection.get_vector(&Kind::GPXWaypoints);
         let controls = collection.get_vector(&Kind::Controls);
         let split_indices =
@@ -402,7 +402,7 @@ impl Backend {
             let mut locked = self.d().packet_provider.write().unwrap();
             let usersteps =
                 make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-            locked.collection.import_other(&Kind::UserStep, usersteps);
+            locked.collection.import_other(&Kind::CutOff, usersteps);
         }
     }
 

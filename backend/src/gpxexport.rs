@@ -14,7 +14,7 @@ use crate::wgs84point::WGS84Point;
 
 fn gps_name(w: &waypoint::Waypoint) -> String {
     match &w.origin {
-        Kind::UserStep => match &w.info {
+        Kind::CutOff => match &w.info {
             Some(step) => {
                 use chrono::*;
                 let t: DateTime<Local> = step.time.parse().unwrap();
@@ -143,7 +143,7 @@ pub fn generate(
     // Export all user steps in one file
     let all: Waypoints = groups.iter().flatten().cloned().collect();
     let all_pacing: Vec<gpx::Waypoint> = all.iter().map(|w| to_gpx(w)).collect();
-    write_gpx_file(all_pacing, vec![], "pacing-all.gpx", &mut ret);
+    write_gpx_file(all_pacing, vec![], "cutoff-all.gpx", &mut ret);
 
     // Export individual groups if there are several
     if groups.len() > 1 {
@@ -152,7 +152,7 @@ pub fn generate(
             write_gpx_file(
                 group_waypoints,
                 vec![],
-                &format!("pacing-{}.gpx", index + 1),
+                &format!("cutoff-{}.gpx", index + 1),
                 &mut ret,
             );
         }
