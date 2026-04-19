@@ -103,22 +103,38 @@ pub fn generate(
         let mut gpxtrack = gpx::Track::new();
         gpxtrack.name = Some(format!("[flat] {:0>2}: {}", index + 1, part.name));
         gpxtrack.segments.push(segment);
-        write_gpx_file(vec![], vec![gpxtrack], &format!("flat-segment-{:0>2}.gpx", index + 1), &mut ret);
+        write_gpx_file(
+            vec![],
+            vec![gpxtrack],
+            &format!("flat-segment-{:0>2}.gpx", index + 1),
+            &mut ret,
+        );
 
         // Elevated segment
         let segment = elevated_export(&track.wgs84, &range);
         let mut gpxtrack = gpx::Track::new();
         gpxtrack.name = Some(format!("[ele] {:0>2}: {}", index + 1, part.name));
         gpxtrack.segments.push(segment);
+        write_gpx_file(
+            vec![],
+            vec![gpxtrack.clone()],
+            &format!("elevated-segment-{:0>2}.gpx", index + 1),
+            &mut ret,
+        );
+
         let mut gpxtrack_archive = gpxtrack.clone();
         gpxtrack_archive.name = Some(format!("{:0>2}: {}", index + 1, part.name));
-        write_gpx_file(vec![], vec![gpxtrack], &format!("elevated-segment-{:0>2}.gpx", index + 1), &mut ret);
         archive_tracks.push(gpxtrack_archive);
     }
 
     // Archive with all waypoints and tracks
     let archive_waypoints: Vec<gpx::Waypoint> = waypoints.iter().map(|w| to_gpx(w)).collect();
-    write_gpx_file(archive_waypoints, archive_tracks, "track-waypoints.gpx", &mut ret);
+    write_gpx_file(
+        archive_waypoints,
+        archive_tracks,
+        "track-waypoints.gpx",
+        &mut ret,
+    );
 
     // Export all waypoints in one file
     let all_waypoints: Vec<gpx::Waypoint> = waypoints.iter().map(|w| to_gpx(w)).collect();
@@ -133,7 +149,12 @@ pub fn generate(
     if groups.len() > 1 {
         for (index, group) in groups.iter().enumerate() {
             let group_waypoints: Vec<gpx::Waypoint> = group.iter().map(|w| to_gpx(w)).collect();
-            write_gpx_file(group_waypoints, vec![], &format!("pacing-{}.gpx", index + 1), &mut ret);
+            write_gpx_file(
+                group_waypoints,
+                vec![],
+                &format!("pacing-{}.gpx", index + 1),
+                &mut ret,
+            );
         }
     }
 

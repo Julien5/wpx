@@ -30,8 +30,11 @@ fn clear_range(points: &mut Vec<Point>, range: &Range) {
     points.retain(|p| !range.contains(&p.primary));
 }
 
-#[allow(dead_code)]
-pub fn user_steps_split(steps: &Vec<InputPoint>, track: &Track) -> Vec<usize> {
+pub fn user_steps_split(
+    steps: &Vec<InputPoint>,
+    controls: &Vec<InputPoint>,
+    track: &Track,
+) -> Vec<usize> {
     if steps.is_empty() {
         log::warn!("no steps to export => no split.");
         return Vec::new();
@@ -56,28 +59,29 @@ pub fn user_steps_split(steps: &Vec<InputPoint>, track: &Track) -> Vec<usize> {
         points.push(Point { primary, secondary });
     });
 
-    let parts = match track.parts.len() > 1 {
+    let mut candidate_indices: BTreeSet<usize> = match controls.is_empty() {
         true => {
-            log::trace!("using track parts");
-            track.parts.clone()
+            let ranges = parts_to_ranges(&track.trees_parts());
+            ranges.iter().map(|r| r.end).collect()
         }
-        false => {
-            log::trace!("using tree parts");
-            track.trees_parts()
-        }
+        false => controls
+            .iter()
+            .map(|c| c.track_projections.first().unwrap().track_index)
+            .collect(),
     };
-    log::trace!("found {} parts", parts.len());
-    let controls: BTreeSet<usize> = parts_to_ranges(&parts)
-        .iter()
-        .map(|range| range.end)
-        .collect();
+
+    log::trace!("found {} candidate indices", candidate_indices.len());
+
+    if !candidate_indices.contains(&(track.len() - 1)) {
+        candidate_indices.insert(track.len() - 1);
+    }
 
     log::trace!("controls {:?}", controls);
 
     let namb_max = 3;
     let mut good_range: Option<Range> = None;
     let mut good_ranges: Vec<Range> = Vec::new();
-    for end in controls {
+    for end in candidate_indices {
         let start = match good_ranges.last() {
             Some(r) => r.end,
             None => 0,

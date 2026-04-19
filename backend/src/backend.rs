@@ -380,7 +380,8 @@ impl Backend {
         let controls = collection.get_vector(&Kind::Controls);
         log::trace!("{} parts", self.d().track.parts.len());
         log::trace!("parts:{:?}", self.d().track.parts);
-        let split_indices = split_ambiguity::user_steps_split(&usersteps, &self.d().track);
+        let split_indices =
+            split_ambiguity::user_steps_split(&usersteps, &controls, &self.d().track);
         log::trace!("track len: {}", self.d().track.len());
         log::trace!("{} splits", split_indices.len());
         log::trace!("splits:{:?}", split_indices);
