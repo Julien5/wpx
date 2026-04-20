@@ -35,12 +35,12 @@ pub fn waypoints_to_svg(table_info: TableInfo, row_height_mm: f64) -> String {
 
     let user_step_info = if table_info.user_steps_options.step_distance.is_some() {
         format!(
-            "(pacing every {:.0} km)",
+            "(cutoffs every {:.0} km)",
             table_info.user_steps_options.step_distance.unwrap() / 1000f64
         )
     } else if table_info.user_steps_options.step_elevation_gain.is_some() {
         format!(
-            "(pacing every {:.0} m)",
+            "(cutoffs every {:.0} m)",
             table_info.user_steps_options.step_elevation_gain.unwrap()
         )
     } else {
