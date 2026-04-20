@@ -148,11 +148,17 @@ pub fn generate(
     // Export individual groups if there are several
     if groups.len() > 1 {
         for (index, group) in groups.iter().enumerate() {
+            debug_assert!(!group.is_empty());
+            if group.is_empty() {
+                continue;
+            }
+            let windex = group.first().unwrap().track_index.unwrap();
+            let distance = track.distance(windex);
             let group_waypoints: Vec<gpx::Waypoint> = group.iter().map(|w| to_gpx(w)).collect();
             write_gpx_file(
                 group_waypoints,
                 vec![],
-                &format!("cutoff-{}.gpx", index + 1),
+                &format!("cutoff-{}-KM{:.0}.gpx", index + 1, distance / 1000f64),
                 &mut ret,
             );
         }
