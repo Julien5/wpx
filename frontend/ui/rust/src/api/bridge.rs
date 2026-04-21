@@ -223,7 +223,7 @@ pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<W
 
 #[frb(sync)]
 pub fn demo_bytes() -> Vec<u8> {
-    include_bytes!("../../../../../backend/data/ref/roland.gpx").to_vec()
+    include_bytes!("../../../../../backend/data/ref/sample.gpx").to_vec()
 }
 
 use tracks::backend;
