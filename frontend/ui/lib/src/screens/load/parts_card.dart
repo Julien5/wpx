@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/screens/load/eventwidget.dart';
 import 'package:wpx/src/widgets/small.dart';
 import 'model.dart';
 
@@ -25,8 +26,15 @@ class PartsCard extends StatelessWidget {
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
     debugPrint("running:${model.runningJob()}");
     if (!model.hasDone(Job.parts)) {
+      if (model.hasFailed(Job.parts) != null) {
+        return Card(
+          elevation: 4,
+          child: _Padding(child: EventWidget(target: Job.parts)),
+        );
+      }
       return Card(elevation: 4, child: _Padding(child: Text("loading ...")));
     }
+
     List<bridge.TrackPart> parts = model.parts();
     bool enabled = parts.length > 1 && model.doneAll();
 

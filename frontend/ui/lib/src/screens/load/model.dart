@@ -58,7 +58,7 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   bool needsStart() {
-    return runningFuture == null && done.isEmpty;
+    return runningFuture == null && done.isEmpty && _failed.isEmpty;
   }
 
   bool hasDone(Job job) {
@@ -158,7 +158,7 @@ class LoadScreenModel extends ChangeNotifier {
     }
 
     makeFuture(job);
-    developer.log("future created for $job");
+    debugPrint("future created for $job");
     notifyListeners();
   }
 
@@ -225,12 +225,14 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   void onError(Job job, Object e) {
+    debugPrint("onError: $job isDisposed:$_isDisposed");
+    runningFuture = null;
     if (_isDisposed) {
       return;
     }
 
     if (e is bridge.TrackError) {
-      developer.log("e:${e.toString()}");
+      debugPrint("e:${e.toString()}");
       bridge.TrackError trackError = e;
       if (trackError is bridge.TrackError_OSMDownloadTimeout) {
         developer.log("timeout => retry");
@@ -243,7 +245,7 @@ class LoadScreenModel extends ChangeNotifier {
         }
       }
       if (trackError is bridge.TrackError_OSMDownloadFailed) {
-        developer.log("timeout => should not retry");
+        debugPrint("timeout => should not retry");
         if (retryOsm) {
           Future.delayed(const Duration(seconds: 1), () {
             _failed.remove(job);
