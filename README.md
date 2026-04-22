@@ -1,10 +1,13 @@
 # WPX 
 
-**WPX** is a tool for long-distance cycling, especially brevet/randonneuring. It generates printable route PDFs with elevation profiles, maps, and control points from GPX tracks. 
+WPX is a tool for long-distance cycling, especially brevet/randonneuring. It generates printable route PDFs with elevation profiles, maps, and control points from GPX tracks. 
+
+![pdf](docs/images/overview-small.png)
 
 Try it online: [julien5.dev/wpx](https://www.julien5.dev/wpx).
 - No installation required.
 - Best used on desktop. The mobile version works, but some features are not yet available.
+- See [here](./docs/UI.md) for more info on the frontend.
 
 Source code on [github](https://github.com/Julien5/wpx).
 
@@ -25,7 +28,7 @@ Used *before* the ride, WPX reads GPX files and does two things:
     Unlike tools that rely on pre-rendered tiles, WPX renders the map on the fly using the GPX track and OSM points.
 
   * **Generate cutoff points.** These are waypoints placed at regular intervals (e.g., every 10 km or every 250 m of elevation gain). Each waypoint is labeled with its closing time and the average slope to that point: `12:34-5.1%`, for example. Displayed as "Next Waypoint" on your GPS, they help you estimate your time on hand.
-
+  
 #### Notes on the PDF
 
 * The elevation profile has a header with the cutoff time and the control points.
@@ -38,9 +41,11 @@ Used *before* the ride, WPX reads GPX files and does two things:
 
 ## Input
 
-* WPX loads one or multiple GPX files and reads all tracks and segments. **Control points** are determined by the ends of segments. If a waypoint exists near a segment end, its name and description are used for that control. The segment points should have elevation data.
+* The GPX file must have elevation data.
 
-* Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails (common with very long tracks), please retry.
+* WPX loads one or multiple GPX files and reads all tracks and segments. **Control points** are determined by the ends of segments. If a waypoint exists near a segment end, its name and description are used for that control. Additionally, the [UI](./docs/UI.md) supports converting waypoints into control points.
+
+* Cities and villages are downloaded from [OSM data](https://wiki.openstreetmap.org/wiki/Overpass_API) based on the track's bounding box. If the download fails, which common with very long tracks, please retry (the UI retries automatically).
 
 *Note: Elevation gain is computed using a 200 m moving average on the GPX data. This is sufficient for identifying the hilliest sections, but do not expect perfect absolute accuracy.*
 
@@ -64,6 +69,11 @@ The "flat" segments without elevation data are useful to prevent devices like th
 
 GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `cutoff-1.gpx`  at the start, and `cutoff-2.gpx` on the way back works around that problem. 
 But mid-ride file transfers are a gamble you don't want to take with frozen fingers or a dying battery. You can choose your preferred strategy, using either `cutoff-all.gpx` or the separated `cutoff-1.gpx` and `cutoff-2.gpx`.
+
+---
+## Known Issues
+
+- OSM download takes too long for very long tracks, like one-way 1000km brevets. 
 
 ----
 
