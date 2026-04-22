@@ -167,7 +167,7 @@ class LoadScreenModel extends ChangeNotifier {
       return;
     }
     assert(job == Job.parts);
-    _trackParts = bridge.bestGuessOrder(parts: parts);
+    _trackParts = parts;
     onCompleted(job);
   }
 
