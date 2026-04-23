@@ -75,7 +75,6 @@ impl InputPoint {
     pub fn create_control_on_track(
         track: &Track,
         proj: TrackProjection,
-        control_index: usize,
         segment_name: &str,
         waypoint_name: &str,
         waypoint_description: &str,
@@ -85,8 +84,6 @@ impl InputPoint {
         let wgs = track.wgs84[index].clone();
         let euc = track.euclidean[index].clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::Controls);
-        p.tags
-            .insert("name".to_string(), format!("CP-{}", control_index));
         p.tags
             .insert("waypoint_name".to_string(), waypoint_name.into());
         p.tags.insert(

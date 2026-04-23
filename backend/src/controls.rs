@@ -34,20 +34,25 @@ impl rstar::PointDistance for InputPoint {
     }
 }
 
+pub fn set_control_names(controls: &mut Vec<InputPoint>) {
+    let ncontrols = controls.len();
+    for (index, p) in controls.iter_mut().enumerate() {
+        let control_name = if index < (ncontrols - 1) {
+            format!("CP-{}", index + 1)
+        } else {
+            format!("END")
+        };
+        p.tags.insert("name".to_string(), control_name);
+    }
+}
+
 pub fn infer_controls_from_gpx_segments(
     track: &Track,
     waypoints: &Vec<InputPoint>,
 ) -> Vec<InputPoint> {
-    let parts = &track.parts;
-    if parts.len() == 1 {
-        log::info!("cannot infer control from a single track/segment");
-        return Vec::new();
-    }
-
     struct Candidate {
         position: MercatorPoint,
         segment_name: String,
-        segment_index: usize,
         track_index: usize,
         waypoint_name: String,
         waypoint_description: String,
@@ -57,23 +62,19 @@ pub fn infer_controls_from_gpx_segments(
     // construct candidates with the *end* of each segment.
     let mut candidates: Vec<Candidate> = Vec::new();
     let mut part_end_index = 0;
-    for (index, part) in parts.iter().enumerate() {
-        part_end_index += part.length;
-        if part_end_index == track.len() {
-            break;
-        }
+    for part in &track.parts {
+        part_end_index += part.length - 1;
         assert!(part_end_index <= track.len());
         candidates.push(Candidate {
             position: track.euclidean[part_end_index - 1].clone(),
             segment_name: part.name.clone(),
-            segment_index: index,
             track_index: part_end_index,
             waypoint_name: String::new(),
             waypoint_description: String::new(),
             nearest_waypoint_id: String::new(),
         });
     }
-    debug_assert_eq!(candidates.len(), parts.len() - 1);
+    debug_assert_eq!(candidates.len(), track.parts.len());
     debug_assert!(candidates.len() > 0);
 
     let tree = RTree::bulk_load(waypoints.to_vec());
@@ -110,7 +111,6 @@ pub fn infer_controls_from_gpx_segments(
             InputPoint::create_control_on_track(
                 track,
                 TrackProjection::at_track_index(track, candidate.track_index),
-                candidate.segment_index + 1,
                 &candidate.segment_name,
                 &candidate.waypoint_name,
                 &candidate.waypoint_description,
@@ -120,10 +120,9 @@ pub fn infer_controls_from_gpx_segments(
     }
     debug_assert!(ret.is_sorted_by_key(|(index, _)| *index));
     ret.sort_by_key(|(index, _)| *index);
-    for (index, point) in &ret {
-        log::trace!("control index {} name:{} ", index, point.name());
-    }
-    ret.iter().map(|(_, w)| w.clone()).collect()
+    let mut ret = ret.iter().map(|(_, w)| w.clone()).collect();
+    set_control_names(&mut ret);
+    ret
 }
 
 pub fn add_control_at_waypoint(
@@ -147,17 +146,13 @@ pub fn add_control_at_waypoint(
     let new = InputPoint::create_control_on_track(
         track,
         projection,
-        0,
         &"",
         &waypoint.name,
         &waypoint.description,
         &waypoint.id,
     );
     ret.insert(index, new);
-    for (index, p) in ret.iter_mut().enumerate() {
-        p.tags
-            .insert("name".to_string(), format!("CP-{}", index + 1));
-    }
+    set_control_names(&mut ret);
     ret
 }
 
@@ -173,10 +168,7 @@ pub fn remove_control_at_waypoint(
         p.track_projections.first().unwrap().track_index != waypoint.track_index.unwrap()
             || p.tags.get("nearest_waypoint_id").unwrap().is_empty()
     });
-    for (index, p) in ret.iter_mut().enumerate() {
-        p.tags
-            .insert("name".to_string(), format!("CP-{}", index + 1));
-    }
+    set_control_names(&mut ret);
     ret
 }
 
@@ -219,37 +211,6 @@ pub fn has_startend_controls(track: &Track, controls: &Vec<InputPoint>) -> (bool
     let last = indices.last().unwrap();
     let has_end = (track.total_distance() - track.distance(*last)).abs() <= maxdist;
     (has_start, has_end)
-}
-
-#[allow(dead_code)]
-pub fn insert_start_end_controls(track: &Track, controls: &mut Vec<InputPoint>) {
-    let length = track.len();
-    let (has_start, has_end) = has_startend_controls(track, controls);
-
-    if !has_start {
-        let start = InputPoint::create_control_on_track(
-            track,
-            TrackProjection::at_track_index(track, 0),
-            controls.len() + 1,
-            "",
-            "start",
-            "start",
-            "",
-        );
-        controls.push(start.clone());
-    }
-    if !has_end {
-        let end = InputPoint::create_control_on_track(
-            track,
-            TrackProjection::at_track_index(track, length - 1),
-            controls.len() + 1,
-            "End",
-            "end",
-            "end",
-            "",
-        );
-        controls.push(end.clone());
-    }
 }
 
 pub fn _select_osm_points_on_segment(
@@ -369,7 +330,6 @@ pub fn _make_with_osm(
             &Kind::Controls => InputPoint::create_control_on_track(
                 &track,
                 proj,
-                ret.len() + 1,
                 &segment_name,
                 &waypoint_name,
                 &waypoint_description,
