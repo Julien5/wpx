@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 use crate::{
     backend::Segment,
@@ -48,39 +48,38 @@ pub fn infer_controls_from_gpx_segments(
         position: MercatorPoint,
         segment_name: String,
         segment_index: usize,
+        track_index: usize,
         waypoint_name: String,
         waypoint_description: String,
         nearest_waypoint_id: String,
     }
 
     // construct candidates with the *end* of each segment.
-    let mut candidates: BTreeMap<usize, Candidate> = BTreeMap::new();
+    let mut candidates: Vec<Candidate> = Vec::new();
     let mut part_end_index = 0;
-    for (_index, part) in parts.iter().enumerate() {
+    for (index, part) in parts.iter().enumerate() {
         part_end_index += part.length;
         if part_end_index == track.len() {
             break;
         }
         assert!(part_end_index <= track.len());
-        candidates.insert(
-            part_end_index,
-            Candidate {
-                position: track.euclidean[part_end_index - 1].clone(),
-                segment_name: part.name.clone(),
-                segment_index: _index,
-                waypoint_name: String::new(),
-                waypoint_description: String::new(),
-                nearest_waypoint_id: String::new(),
-            },
-        );
+        candidates.push(Candidate {
+            position: track.euclidean[part_end_index - 1].clone(),
+            segment_name: part.name.clone(),
+            segment_index: index,
+            track_index: part_end_index,
+            waypoint_name: String::new(),
+            waypoint_description: String::new(),
+            nearest_waypoint_id: String::new(),
+        });
     }
-    assert_eq!(candidates.len(), parts.len() - 1);
-    assert!(candidates.len() > 0);
+    debug_assert_eq!(candidates.len(), parts.len() - 1);
+    debug_assert!(candidates.len() > 0);
 
     let tree = RTree::bulk_load(waypoints.to_vec());
     let mut ret = Vec::new();
     let maxdist = 200f64;
-    for (track_index, mut candidate) in candidates {
+    for mut candidate in candidates {
         let point = candidate.position.clone();
         let nearest = tree.nearest_neighbor(&[point.0, point.1]);
         (
@@ -107,10 +106,10 @@ pub fn infer_controls_from_gpx_segments(
             None => (String::new(), String::new(), String::new()),
         };
         ret.push((
-            track_index,
+            candidate.track_index,
             InputPoint::create_control_on_track(
                 track,
-                TrackProjection::at_track_index(track, track_index),
+                TrackProjection::at_track_index(track, candidate.track_index),
                 candidate.segment_index + 1,
                 &candidate.segment_name,
                 &candidate.waypoint_name,
