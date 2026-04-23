@@ -440,33 +440,37 @@ mod tests {
     }
 
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
+    const WITH_OSM: bool = true;
 
     async fn load_segment(
         filename: &str,
         start: f64,
         length: f64,
         parameters: Parameters,
+        with_osm: bool,
     ) -> SegmentData {
         let gpxdata = read(filename);
         let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
-
-        let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
-        let logger = std::sync::RwLock::new(Some(b));
-        let token = CancellationToken::new();
-        let side = DownloadSideData {
-            logger: &logger,
-            cancel_token: &token,
-        };
-        let mut osmpoints = osm::download_for_track(&track, &side).await.unwrap();
-        track.project_map(&mut osmpoints);
-
+        log::trace!("segment length: {}m", length);
+        log::trace!("  track length: {}m", track.total_distance());
         let mut waypoints = gpxdata.waypoints.clone();
         for w in &mut waypoints {
             track.project_point(w);
         }
-
         let mut collection = PointCollection::new();
-        collection.import_osm(&osmpoints.as_vector());
+
+        if with_osm {
+            let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
+            let logger = std::sync::RwLock::new(Some(b));
+            let token = CancellationToken::new();
+            let side = DownloadSideData {
+                logger: &logger,
+                cancel_token: &token,
+            };
+            let mut osmpoints = osm::download_for_track(&track, &side).await.unwrap();
+            track.project_map(&mut osmpoints);
+            collection.import_osm(&osmpoints.as_vector());
+        }
 
         let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
         for c in &mut controls {
@@ -506,6 +510,7 @@ mod tests {
         start: f64,
         length: f64,
         size: &IntegerSize2D,
+        with_osm: bool,
     ) -> bool {
         let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
@@ -513,7 +518,7 @@ mod tests {
         parameters.user_steps_options.step_distance = None;
         parameters.user_steps_options.step_elevation_gain = Some(250f64);
         parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
-        let segment = load_segment(src, start, length, parameters).await;
+        let segment = load_segment(src, start, length, parameters, with_osm).await;
         //let kinds = onekind(Kind::Cities);
         let kinds = allkinds();
         let map_parameters = segment.map_render_parameters(&kinds, size);
@@ -566,6 +571,7 @@ mod tests {
             start,
             length,
             &size,
+            WITH_OSM,
         )
         .await;
         assert!(ok);
@@ -584,6 +590,7 @@ mod tests {
             start,
             length,
             &size,
+            WITH_OSM,
         )
         .await;
         assert!(ok);
@@ -602,6 +609,7 @@ mod tests {
             start,
             length,
             &size,
+            WITH_OSM,
         )
         .await;
         assert!(ok);
@@ -620,6 +628,7 @@ mod tests {
             start,
             length,
             &size,
+            WITH_OSM,
         )
         .await;
         assert!(ok);
@@ -638,6 +647,26 @@ mod tests {
             start,
             length,
             &size,
+            WITH_OSM,
+        )
+        .await;
+        assert!(ok);
+    }
+
+    #[tokio::test]
+    async fn graph_profile_nudel() {
+        let _ = env_logger::try_init();
+        let start = 0_000f64;
+        let length = 380979.9055239884;
+        let size = IntegerSize2D::new(1099, 255);
+        let ok = graph_test(
+            "data/ref/nudel.gpx",
+            "data/ref/singleprofile-nudel.svg",
+            &RenderFunction::Profile,
+            start,
+            length,
+            &size,
+            !WITH_OSM,
         )
         .await;
         assert!(ok);
@@ -656,6 +685,7 @@ mod tests {
             start,
             length,
             &size,
+            WITH_OSM,
         )
         .await;
         assert!(ok);

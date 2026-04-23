@@ -465,10 +465,7 @@ impl ProfileView {
 
     fn range(&self, track: &Track) -> std::ops::Range<usize> {
         let bbox = &self.bboxview();
-        std::ops::Range {
-            start: track.index_before(bbox.get_xmin()),
-            end: track.index_after(bbox.get_xmax()),
-        }
+        track.subrange(bbox.get_xmin(), bbox.get_xmax())
     }
 
     fn make_polyline(&self, track: &Track) -> Polyline {

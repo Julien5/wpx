@@ -58,8 +58,9 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
     //let map_size = IntegerSize2D::new(839, 349);
     //let profile_size = IntegerSize2D::new(864, 255);
 
-    let map_size = IntegerSize2D::new(1479, 778);
-    let profile_size = IntegerSize2D::new(1504, 255);
+    let map_size = IntegerSize2D::new(517, 504);
+    let profile_size = IntegerSize2D::new(1099, 255);
+
     let ret = backend.render_segment_map_profile(
         &segment,
         &map_size,
@@ -184,7 +185,11 @@ async fn main() -> anyhow::Result<()> {
         println!("found segment: {}", part.name)
     }
     backend.load_ordered(&parts)?;
-    let _ = backend.load_osm().await;
+
+    let is_test = args.render_graph.unwrap_or(false);
+    if !is_test {
+        let _ = backend.load_osm().await;
+    }
     let _ = backend.load_controls();
 
     let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
