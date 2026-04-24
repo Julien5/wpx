@@ -26,7 +26,7 @@ pub fn smooth(
         if start != end {
             ret[i] = acc / (end - start) as f64;
         } else {
-            assert!(false);
+            debug_assert!(false);
             ret[i] = elevation(i);
         }
     }

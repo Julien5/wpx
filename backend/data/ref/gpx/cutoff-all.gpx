@@ -1,128 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" creator="https://github.com/georust/gpx">
-  <wpt lat="47.98940210230769" lon="8.376680226576923">
-    <ele>731.3</ele>
-    <name>08:45-0.6%</name>
+  <wpt lat="48.08993203637245" lon="8">
+    <ele>300</ele>
+    <name>08:49-0.4%</name>
     <desc></desc>
   </wpt>
-  <wpt lat="48.02268425803646" lon="8.270998192825633">
-    <ele>869.5</ele>
-    <name>09:25-1.7%</name>
+  <wpt lat="48.179864072744905" lon="8">
+    <ele>200</ele>
+    <name>09:33-0.0%</name>
     <desc></desc>
   </wpt>
-  <wpt lat="48.05255088196808" lon="8.204433744261323">
-    <ele>867.3</ele>
-    <name>10:05-1.6%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.120912861616425" lon="8.169302094897038">
-    <ele>1004.7</ele>
-    <name>10:45-2.1%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.13835486741742" lon="8.1591799599732">
-    <ele>793.8</ele>
-    <name>11:24-1.2%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.21547343711615" lon="8.142433600689523">
-    <ele>468</ele>
-    <name>12:04-0.1%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.26349037225744" lon="8.101213731107599">
-    <ele>251.3</ele>
-    <name>12:45-1.7%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.32316391241137" lon="8.11427209622948">
-    <ele>483.5</ele>
-    <name>13:24-2.8%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.36012562002905" lon="8.178141174512646">
-    <ele>724.4</ele>
-    <name>14:05-4.5%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.362908346624494" lon="8.273448670544909">
-    <ele>368.2</ele>
-    <name>14:44-0.7%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.415466663737924" lon="8.236268719604046">
-    <ele>661.5</ele>
-    <name>15:24-4.0%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.451651444867906" lon="8.255793959336344">
-    <ele>650.2</ele>
-    <name>16:04-2.7%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.505639223561" lon="8.259467506646576">
-    <ele>853</ele>
-    <name>16:45-3.4%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.54931166912402" lon="8.266491732804058">
-    <ele>714</ele>
-    <name>17:25-1.2%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.59356458066867" lon="8.216761068091337">
-    <ele>953.9</ele>
-    <name>18:04-3.0%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.589518289724545" lon="8.321788017812432">
-    <ele>554.1</ele>
-    <name>18:44-0.3%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.6483866265911" lon="8.355353117177664">
-    <ele>394.7</ele>
-    <name>19:25-0.2%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.70384914074153" lon="8.327980697079628">
-    <ele>520.8</ele>
-    <name>20:05-2.5%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.74657926930037" lon="8.295840527453326">
-    <ele>356.5</ele>
-    <name>20:45-2.4%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.77201870237608" lon="8.285764016091234">
-    <ele>339.4</ele>
-    <name>21:24-2.4%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.81294458964309" lon="8.19762098966493">
-    <ele>121.8</ele>
-    <name>22:05-0.8%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.84969062309201" lon="8.105120751007927">
-    <ele>120.5</ele>
-    <name>22:45-0.3%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.90850579468497" lon="8.131918160607194">
-    <ele>114.4</ele>
-    <name>23:24-0.2%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="48.97204613726208" lon="8.184440186595035">
-    <ele>115.6</ele>
-    <name>00:05-0.3%</name>
-    <desc></desc>
-  </wpt>
-  <wpt lat="49.03553068636448" lon="8.26085938082449">
-    <ele>109.5</ele>
-    <name>00:44-0.4%</name>
+  <wpt lat="48.26979610911736" lon="8">
+    <ele>100</ele>
+    <name>10:00-2.2%</name>
     <desc></desc>
   </wpt>
 </gpx>

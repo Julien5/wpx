@@ -53,6 +53,14 @@ pub fn flat_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) -> T
         // remove z coordinate to avoid automatic "low" and "hight points" on etrex 10
         let wgs = wgs84[index];
         let w = gpx::Waypoint::new(geo::Point::new(wgs.x(), wgs.y()));
+        match ret.points.last() {
+            Some(last) => {
+                if last.point() == w.point() {
+                    continue;
+                }
+            }
+            None => {}
+        }
         ret.points.push(w);
     }
     ret
@@ -65,6 +73,14 @@ pub fn elevated_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) 
         let wgs = wgs84[index];
         let mut w = gpx::Waypoint::new(geo::Point::new(wgs.x(), wgs.y()));
         w.elevation = Some(wgs.z());
+        match ret.points.last() {
+            Some(last) => {
+                if last.point() == w.point() {
+                    continue;
+                }
+            }
+            None => {}
+        }
         ret.points.push(w);
     }
     ret

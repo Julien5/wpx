@@ -51,7 +51,7 @@ pub fn infer_controls_from_gpx_segments(
     waypoints: &Vec<InputPoint>,
 ) -> Vec<InputPoint> {
     struct Candidate {
-        position: MercatorPoint,
+        euc: MercatorPoint,
         segment_name: String,
         track_index: usize,
         waypoint_name: String,
@@ -61,14 +61,14 @@ pub fn infer_controls_from_gpx_segments(
 
     // construct candidates with the *end* of each segment.
     let mut candidates: Vec<Candidate> = Vec::new();
-    let mut part_end_index = 0;
+    let mut acc_length = 0;
     for part in &track.parts {
-        part_end_index += part.length - 1;
-        assert!(part_end_index <= track.len());
+        acc_length += part.length;
+        assert!(acc_length <= track.len());
         candidates.push(Candidate {
-            position: track.euclidean[part_end_index - 1].clone(),
+            euc: track.euclidean[acc_length - 1].clone(),
             segment_name: part.name.clone(),
-            track_index: part_end_index,
+            track_index: acc_length - 1,
             waypoint_name: String::new(),
             waypoint_description: String::new(),
             nearest_waypoint_id: String::new(),
@@ -81,7 +81,7 @@ pub fn infer_controls_from_gpx_segments(
     let mut ret = Vec::new();
     let maxdist = 200f64;
     for mut candidate in candidates {
-        let point = candidate.position.clone();
+        let point = candidate.euc.clone();
         let nearest = tree.nearest_neighbor(&[point.0, point.1]);
         (
             candidate.waypoint_name,
@@ -92,15 +92,12 @@ pub fn infer_controls_from_gpx_segments(
                 let mut name = String::new();
                 let mut description = String::new();
                 let mut id = String::new();
-                if math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt() < maxdist
-                {
+                let distance =
+                    math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt();
+                if distance < maxdist {
                     id = neighbor.id();
-                    if !neighbor.name().is_empty() {
-                        name = neighbor.name();
-                    }
-                    if !neighbor.description().is_empty() {
-                        description = neighbor.description();
-                    }
+                    name = neighbor.name();
+                    description = neighbor.description();
                 }
                 (name, description, id)
             }

@@ -501,13 +501,13 @@ Baden-Baden
 </text>
 </g>
 <g>
-<circle cx="400.4816089084484" cy="40.38084211569003" fill="Blue" id="3/wp/circle" r="4"/>
+<circle cx="400.4816089084484" cy="40.38084211569003" fill="Blue" id="3/wp/circle" r="5"/>
 </g>
 <g transform="translate(400.4816089084484 40.38084211569003)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="13.159210526315789" x="4" y="-14"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="17.15921052631579" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="3/wp/text" text-anchor="start" x="4.000" y="-4.000">
-K4
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="26.637894736842114" x="4" y="-14"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="30.637894736842114" x="2" y="-16"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="3/wp/text" text-anchor="start" x="4.000" y="-4.000">
+END
 </text>
 </g>
 <g>

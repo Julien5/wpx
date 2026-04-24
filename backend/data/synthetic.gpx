@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" version="1.1" creator="gpx.py -- https://github.com/tkrajina/gpxpy" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxpx="http://www.garmin.com/xmlschemas/PowerExtension/v1" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
+  <metadata>
+    <name>track-2</name>
+    <author>
+      <name>gpx.studio</name>
+      <link href="https://gpx.studio"/>
+    </author>
+  </metadata>
+  <wpt lat="48.1" lon="8.0">
+    <ele>200</ele>
+    <name>K1</name>
+    <desc>Furtwangen</desc>
+    <sym>Flag, Blue</sym>
+  </wpt>
+  <wpt lat="48.2" lon="8.0">
+    <ele>200</ele>
+    <name>K2</name>
+    <desc>Haslach</desc>
+    <sym>Flag, Blue</sym>
+  </wpt>
+  <wpt lat="49.3" lon="8.0">
+    <ele>200</ele>
+    <name>K3</name>
+    <desc>END</desc>
+    <sym>Flag, Blue</sym>
+  </wpt>
+  <trk>
+    <name>SEG1</name>
+    <trkseg>
+	  <trkpt lat="48.00" lon="8.0"><ele>200</ele></trkpt>
+	  <trkpt lat="48.05" lon="8.0"><ele>300</ele></trkpt>
+	  <trkpt lat="48.10" lon="8.0"><ele>200</ele></trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>SEG2</name>
+    <trkseg>
+      <trkpt lat="48.10" lon="8.0"><ele>200</ele></trkpt>
+	  <trkpt lat="48.20" lon="8.0"><ele>200</ele></trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>SEG3</name>
+    <trkseg>
+      <trkpt lat="48.20" lon="8.0"><ele>200</ele></trkpt>
+	  <trkpt lat="48.23" lon="8.0"><ele>500</ele></trkpt>
+	  <trkpt lat="48.26" lon="8.0"><ele>100</ele></trkpt>
+	  <trkpt lat="48.30" lon="8.0"><ele>200</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

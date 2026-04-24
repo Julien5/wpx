@@ -606,10 +606,11 @@ mod tests {
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
+    static BLACK_FOREST: &'static str = "data/blackforest.gpx";
 
-    async fn load_test_data() -> Backend {
+    async fn load_test_data(filename: &str) -> Backend {
         let mut backend = Backend::make();
-        backend.load_filename("data/blackforest.gpx").expect("fail");
+        backend.load_filename(filename).expect("fail");
         backend.load_osm().await.unwrap();
         backend.load_controls().unwrap();
         backend
@@ -618,7 +619,7 @@ mod tests {
     #[tokio::test]
     async fn svg_profile() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data().await;
+        let mut backend = load_test_data(BLACK_FOREST).await;
 
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
@@ -660,7 +661,7 @@ mod tests {
     #[tokio::test]
     async fn svg_segment_wheel() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data().await;
+        let mut backend = load_test_data(BLACK_FOREST).await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((3_000) as f64);
@@ -697,7 +698,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_waypoints() {
         let _ = env_logger::try_init();
-        let backend = load_test_data().await;
+        let backend = load_test_data(BLACK_FOREST).await;
         let fseg = backend.trackSegment();
         let seg = backend.make_segment_data(&fseg);
         let controls = seg.controls();
@@ -714,7 +715,7 @@ mod tests {
     #[tokio::test]
     async fn svg_large_map() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data().await;
+        let mut backend = load_test_data(BLACK_FOREST).await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
@@ -746,7 +747,7 @@ mod tests {
     #[tokio::test]
     async fn svg_map() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data().await;
+        let mut backend = load_test_data(BLACK_FOREST).await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
@@ -786,12 +787,13 @@ mod tests {
     #[tokio::test]
     async fn gpx() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data().await;
+        let mut backend = load_test_data(&"data/synthetic.gpx").await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
         backend.set_parameters(&parameters);
         let gpx = backend.generateGpx();
+        let mut bad = Vec::new();
         for (filename, filecontent) in gpx {
             let tmpfilename = std::format!("/tmp/{}", filename);
             let reffilename = std::format!("data/ref/gpx/{}", filename);
@@ -804,9 +806,11 @@ mod tests {
             std::fs::write(&tmpfilename, filecontent.clone()).unwrap();
             if data != filecontent {
                 println!("test failed: {} {}", tmpfilename, reffilename);
-                assert!(false);
+                bad.push(tmpfilename);
             }
         }
+        log::trace!("bad={:?}", bad);
+        assert!(bad.is_empty());
     }
 
     #[tokio::test]
