@@ -4,7 +4,7 @@ use std::collections::HashSet;
 use std::path::Path;
 
 use clap::Parser;
-use tracks::backend::Backend;
+use tracks::backend::{Backend, Segment};
 use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::{parse_time, RenderFunction};
@@ -53,13 +53,20 @@ struct Cli {
 }
 
 async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
-    let segment = backend.trackSegment();
+    let segment = Segment {
+        id: 0,
+        start: 200_000f64,
+        end: 310_000f64,
+    };
 
     //let map_size = IntegerSize2D::new(839, 349);
     //let profile_size = IntegerSize2D::new(864, 255);
 
-    let map_size = IntegerSize2D::new(517, 504);
-    let profile_size = IntegerSize2D::new(1099, 255);
+    //let map_size = IntegerSize2D::new(517, 504);
+    //let profile_size = IntegerSize2D::new(1099, 255);
+
+    let map_size = IntegerSize2D::new(400, 400);
+    let profile_size = IntegerSize2D::new(1400, 300);
 
     let ret = backend.render_segment_map_profile(
         &segment,

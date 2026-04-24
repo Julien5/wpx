@@ -470,13 +470,24 @@ impl ProfileView {
 
     fn make_polyline(&self, track: &Track) -> Polyline {
         let range = self.range(track);
+        log::trace!("push range {:?}", range);
         let mut polyline_points = PolylinePoints::new();
         // make sure to cover the whole bounding box.
-        // => start before, end after
-        for k in &track.simplified.dz {
-            if range.contains(&k) {
-                let e = track.smooth_elevation[*k];
-                let p = self.toSD(&Point2D::new(track.distance(*k), e));
+        for w in track.simplified.dz.windows(2) {
+            let (k1, k2) = (w[0], w[1]);
+            if !range.contains(&k1) && range.contains(&k2) || (range.start == 0 && k1 == 0) {
+                let e = track.smooth_elevation[range.start];
+                let p = self.toSD(&Point2D::new(track.distance(range.start), e));
+                log::trace!("push start {}", range.start);
+                polyline_points.push(PolylinePoint(p));
+            } else if range.contains(&k1) && !range.contains(&k2) {
+                let e = track.smooth_elevation[range.end - 1];
+                let p = self.toSD(&Point2D::new(track.distance(range.end - 1), e));
+                log::trace!("push end {}", range.end - 1);
+                polyline_points.push(PolylinePoint(p));
+            } else if range.contains(&k2) {
+                let e = track.smooth_elevation[k2];
+                let p = self.toSD(&Point2D::new(track.distance(k2), e));
                 polyline_points.push(PolylinePoint(p));
             }
         }
