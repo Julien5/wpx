@@ -47,24 +47,32 @@ class _DesktopTableState extends State<DesktopTable> {
     }
     debugPrint("build table with ${waypoints.length} waypoints");
     return DataTable(
-      // 1. Define the Columns
+      columnSpacing: 15.0,
+      horizontalMargin: 10.0,
+      headingRowHeight: 32.0,
+      dataRowMinHeight: 28.0,
+      dataRowMaxHeight: 40.0,
+      border: const TableBorder(
+        verticalInside: BorderSide(width: 0.3, style: BorderStyle.solid),
+      ),
       columns: <DataColumn>[
         const DataColumn(
-          label: Text('km', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: Text('KM', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
         ),
         const DataColumn(
-          label: Text('time', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: Text('TIME', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
         ),
         const DataColumn(label: Text(""), numeric: false),
         if (widget.editControls)
           const DataColumn(
             label: Text(
-              'control',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              'Control\nPoint',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0),
             ),
-            numeric: false,
+            numeric: true,
           ),
       ],
       rows:

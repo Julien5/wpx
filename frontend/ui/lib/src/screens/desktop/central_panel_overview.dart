@@ -39,7 +39,7 @@ class _CentralWidgetState extends State<CentralWidget> {
         Expanded(
           child: GraphicsPadding(child: TrackView(trackData: TrackData.map)),
         ),
-        Expanded(child: table!),
+        Expanded(child: Center(child: table!)),
       ],
     );
 
