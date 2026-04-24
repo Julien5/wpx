@@ -7,7 +7,7 @@ use gpx::TrackSegment;
 use crate::inputpoint::InputPoint;
 use crate::point_collection::Kind;
 use crate::track;
-use crate::trackparts::control_to_segments;
+use crate::trackparts::controls_to_segments;
 use crate::waypoint;
 use crate::waypoint::Waypoints;
 use crate::wgs84point::WGS84Point;
@@ -108,7 +108,7 @@ pub fn generate(
     waypoints: &Waypoints,
 ) -> BTreeMap<String, Vec<u8>> {
     let mut ret: BTreeMap<String, Vec<u8>> = BTreeMap::new();
-    let parts = control_to_segments(&track, &controls);
+    let parts = controls_to_segments(&track, &controls);
 
     let mut archive_tracks = Vec::new();
     for (index, part) in parts.iter().enumerate() {

@@ -59,7 +59,7 @@ pub fn user_steps_split(
         points.push(Point { primary, secondary });
     });
 
-    let mut candidate_indices: BTreeSet<usize> = match controls.is_empty() {
+    let mut candidate_track_indices: BTreeSet<usize> = match controls.is_empty() {
         true => {
             let ranges = parts_to_ranges(&track.trees_parts());
             ranges.iter().map(|r| r.end).collect()
@@ -70,18 +70,21 @@ pub fn user_steps_split(
             .collect(),
     };
 
-    if !candidate_indices.contains(&(track.len() - 1)) {
-        candidate_indices.insert(track.len() - 1);
+    if !candidate_track_indices.contains(&(track.len() - 1)) {
+        candidate_track_indices.insert(track.len() - 1);
     }
 
     let namb_max = 3;
     let mut good_range: Option<Range> = None;
     let mut good_ranges: Vec<Range> = Vec::new();
-    for end in candidate_indices {
+    for end in candidate_track_indices {
         let start = match good_ranges.last() {
             Some(r) => r.end,
             None => 0,
         };
+        if end == 0 {
+            continue;
+        }
         debug_assert!(end > start);
         let candidate = Range { start, end };
         let namb = ambiguities_count(&points, &candidate);

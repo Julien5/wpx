@@ -55,8 +55,8 @@ struct Cli {
 async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
     let segment = Segment {
         id: 0,
-        start: 200_000f64,
-        end: 310_000f64,
+        start: 220_000f64,
+        end: 287_500f64,
     };
 
     //let map_size = IntegerSize2D::new(839, 349);
@@ -84,6 +84,12 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
     std::fs::write(&tmpfilename, ret[0].svg.clone()).unwrap();
     let tmpfilename = std::format!("/tmp/rendergraph-profile.svg");
     std::fs::write(&tmpfilename, ret[1].svg.clone()).unwrap();
+    for w in &ret[0].waypoints {
+        log::trace!("map rendered: {}", w.name);
+    }
+    for w in &ret[1].waypoints {
+        log::trace!("profile rendered: {}", w.name);
+    }
     Ok(())
 }
 

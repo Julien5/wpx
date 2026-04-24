@@ -37,8 +37,11 @@ impl rstar::PointDistance for InputPoint {
 pub fn set_control_names(controls: &mut Vec<InputPoint>) {
     let ncontrols = controls.len();
     for (index, p) in controls.iter_mut().enumerate() {
-        let control_name = if index < (ncontrols - 1) {
-            format!("CP-{}", index + 1)
+        let track_index = p.track_projections.first().unwrap().track_index;
+        let control_name = if track_index == 0 {
+            format!("START")
+        } else if index < (ncontrols - 1) {
+            format!("CP-{}", index)
         } else {
             format!("END")
         };
@@ -61,6 +64,15 @@ pub fn infer_controls_from_gpx_segments(
 
     // construct candidates with the *end* of each segment.
     let mut candidates: Vec<Candidate> = Vec::new();
+    candidates.push(Candidate {
+        euc: track.euclidean[0].clone(),
+        segment_name: String::new(),
+        track_index: 0,
+        waypoint_name: String::new(),
+        waypoint_description: String::new(),
+        nearest_waypoint_id: String::new(),
+    });
+
     let mut acc_length = 0;
     for part in &track.parts {
         acc_length += part.length;
@@ -74,7 +86,7 @@ pub fn infer_controls_from_gpx_segments(
             nearest_waypoint_id: String::new(),
         });
     }
-    debug_assert_eq!(candidates.len(), track.parts.len());
+    debug_assert_eq!(candidates.len(), track.parts.len() + 1);
     debug_assert!(candidates.len() > 0);
 
     let tree = RTree::bulk_load(waypoints.to_vec());
@@ -340,6 +352,18 @@ pub fn _make_with_osm(
         };
         ret.push(w);
     }
+    // add the start of the track
+    ret.insert(
+        0,
+        InputPoint::create_control_on_track(
+            &track,
+            TrackProjection::at_track_index(&track, 0),
+            &"",
+            &"",
+            &"",
+            &"",
+        ),
+    );
     // add the end of the track
     ret.push(InputPoint::create_control_on_track(
         &track,
@@ -392,16 +416,17 @@ mod tests {
         for control in &controls {
             log::info!("found:{}", control.name());
         }
-        assert_eq!(controls.len(), 6);
+        assert_eq!(controls.len(), 7);
         for k in 0..=4 {
             log::trace!("k={} => {}", k, controls[k].name());
         }
-        assert!(controls[0].name().contains("CP-1"));
-        assert!(controls[1].name().contains("CP-2"));
-        assert!(controls[2].name().contains("CP-3"));
-        assert!(controls[3].name().contains("CP-4"));
-        assert!(controls[4].name().contains("CP-5"));
-        assert!(controls[5].name().contains("END"));
+        assert!(controls[0].name().contains("START"));
+        assert!(controls[1].name().contains("CP-1"));
+        assert!(controls[2].name().contains("CP-2"));
+        assert!(controls[3].name().contains("CP-3"));
+        assert!(controls[4].name().contains("CP-4"));
+        assert!(controls[5].name().contains("CP-5"));
+        assert!(controls[6].name().contains("END"));
     }
 
     #[tokio::test]
@@ -415,11 +440,12 @@ mod tests {
         for control in &controls {
             log::info!("found:{}", control.name());
         }
-        assert_eq!(controls.len(), 4);
-        assert!(controls[0].name().contains("CP-1"));
-        assert!(controls[1].name().contains("CP-2"));
-        assert!(controls[2].name().contains("CP-3"));
-        assert!(controls[3].name().contains("END"));
+        assert_eq!(controls.len(), 5);
+        assert!(controls[0].name().contains("START"));
+        assert!(controls[1].name().contains("CP-1"));
+        assert!(controls[2].name().contains("CP-2"));
+        assert!(controls[3].name().contains("CP-3"));
+        assert!(controls[4].name().contains("END"));
     }
 
     async fn get_controls_from_osm(filename: &str) -> Vec<InputPoint> {
@@ -466,14 +492,15 @@ mod tests {
         for c in &controls {
             log::info!("c={} {}", c.name(), c.description());
         }
-        assert_eq!(controls.len(), 4);
-        assert!(controls[0].name().contains("CP-1"));
-        assert!(controls[0].description().contains("Furtwangen"));
-        assert!(controls[1].name().contains("CP-2"));
-        assert!(controls[1].description().contains("Haslach"));
-        assert!(controls[2].name().contains("CP-3"));
-        assert!(controls[2].description().contains("Forbach"));
-        assert!(controls[3].name().contains("END"));
+        assert_eq!(controls.len(), 5);
+        assert!(controls[1].name().contains("CP-1"));
+        assert!(controls[1].description().contains("Furtwangen"));
+        assert!(controls[2].name().contains("CP-2"));
+        assert!(controls[2].description().contains("Haslach"));
+        assert!(controls[3].name().contains("CP-3"));
+        assert!(controls[3].description().contains("Forbach"));
+        assert!(controls[4].name().contains("END"));
+        assert!(controls[0].name().contains("START"));
     }
 
     #[tokio::test]
@@ -487,13 +514,13 @@ mod tests {
         for c in &controls {
             log::info!("c={} {}", c.name(), c.description());
         }
-        assert_eq!(controls.len(), 4);
-        assert!(controls[0].name().contains("CP-1"));
-        assert!(controls[0].description().contains("Wangen"));
-        assert!(controls[1].name().contains("CP-2"));
-        assert!(controls[1].description().contains("Isny"));
-        assert!(controls[2].name().contains("CP-3"));
-        assert!(controls[2].description().contains("Bad Waldsee"));
-        assert!(controls[3].name().contains("END"));
+        assert_eq!(controls.len(), 5);
+        assert!(controls[1].name().contains("CP-1"));
+        assert!(controls[1].description().contains("Wangen"));
+        assert!(controls[2].name().contains("CP-2"));
+        assert!(controls[2].description().contains("Isny"));
+        assert!(controls[3].name().contains("CP-3"));
+        assert!(controls[3].description().contains("Bad Waldsee"));
+        assert!(controls[4].name().contains("END"));
     }
 }

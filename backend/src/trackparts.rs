@@ -16,7 +16,7 @@ pub struct TrackSegment {
     pub range: std::ops::Range<usize>,
 }
 
-pub fn control_to_segments(track: &Track, controls: &Vec<InputPoint>) -> Vec<TrackSegment> {
+pub fn controls_to_segments(track: &Track, controls: &Vec<InputPoint>) -> Vec<TrackSegment> {
     let mut ret = Vec::new();
     if controls.is_empty() {
         let ranges = parts_to_ranges(&track.parts);
@@ -31,6 +31,10 @@ pub fn control_to_segments(track: &Track, controls: &Vec<InputPoint>) -> Vec<Tra
     let mut start = 0;
     for control in controls.iter() {
         let last_index = control.track_projections.first().unwrap().track_index;
+        // handle the case of the START control
+        if last_index == 0 {
+            continue;
+        }
         ret.push(TrackSegment {
             name: format!("to {}", control.name()),
             range: start..last_index + 1,

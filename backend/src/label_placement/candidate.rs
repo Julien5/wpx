@@ -1,6 +1,6 @@
 use super::labelboundingbox::LabelBoundingBox;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Candidate {
     _bbox: LabelBoundingBox,
     external: bool,

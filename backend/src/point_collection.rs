@@ -70,9 +70,15 @@ impl RenderResult {
                     .collect(),
             };
             let mut seen = HashSet::new();
-            packet
-                .points
-                .retain(|point| seen.insert(point.id()) && point.kind() != Kind::CutOff);
+            packet.points.retain(|point| {
+                if point.kind() == Kind::CutOff {
+                    return false;
+                }
+                if is_osm(&point.kind()) {
+                    return seen.insert(point.id());
+                }
+                true
+            });
             n2 += packet.points.len();
             ret.push(packet);
         }
@@ -83,8 +89,12 @@ impl RenderResult {
 
     pub fn rendered_input_points_for_table(&self) -> Vec<InputPoint> {
         let mut ret = self.rendered_input_points();
-        let mut seen = HashSet::new();
-        ret.retain(|point| seen.insert(point.id()) && point.kind() != Kind::CutOff);
+        ret.retain(|point| {
+            if point.kind() == Kind::CutOff {
+                return false;
+            }
+            true
+        });
         ret
     }
 }

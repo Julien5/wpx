@@ -39,6 +39,13 @@ impl SegmentData {
         packet_provider: SharedPacketProvider,
         parameters: Parameters,
     ) -> SegmentData {
+        if segment.start > track.total_distance() {
+            panic!(
+                "range does not intersect with the track ({}>{})",
+                segment.start,
+                track.total_distance()
+            );
+        }
         SegmentData {
             segment: segment.clone(),
             track,

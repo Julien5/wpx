@@ -656,7 +656,11 @@ impl CandidatesGenerator for ProfileGenerator {
                 debug_assert!(false);
                 Vec::new()
             }
-            Kind::Controls => vec![Self::header(feature)[1].clone()],
+            Kind::Controls => {
+                let [start, middle, end]: [Candidate; 3] =
+                    Self::header(feature).try_into().unwrap();
+                vec![middle, start, end]
+            }
             //Kind::GPXWaypoints => Self::header_offset(feature, 15f64),
             _ => {
                 let mut ret = self.cardinal(feature);
