@@ -340,6 +340,16 @@ pub fn _make_with_osm(
         };
         ret.push(w);
     }
+    // add the end of the track
+    ret.push(InputPoint::create_control_on_track(
+        &track,
+        TrackProjection::at_track_index(&track, track.len() - 1),
+        &"",
+        &"",
+        &"",
+        &"",
+    ));
+    set_control_names(&mut ret);
     ret
 }
 
@@ -382,7 +392,7 @@ mod tests {
         for control in &controls {
             log::info!("found:{}", control.name());
         }
-        assert_eq!(controls.len(), 5);
+        assert_eq!(controls.len(), 6);
         for k in 0..=4 {
             log::trace!("k={} => {}", k, controls[k].name());
         }
@@ -391,6 +401,7 @@ mod tests {
         assert!(controls[2].name().contains("CP-3"));
         assert!(controls[3].name().contains("CP-4"));
         assert!(controls[4].name().contains("CP-5"));
+        assert!(controls[5].name().contains("END"));
     }
 
     #[tokio::test]
@@ -404,13 +415,14 @@ mod tests {
         for control in &controls {
             log::info!("found:{}", control.name());
         }
-        assert_eq!(controls.len(), 3);
+        assert_eq!(controls.len(), 4);
         assert!(controls[0].name().contains("CP-1"));
         assert!(controls[1].name().contains("CP-2"));
         assert!(controls[2].name().contains("CP-3"));
+        assert!(controls[3].name().contains("END"));
     }
 
-    async fn get_controls(filename: &str) -> Vec<InputPoint> {
+    async fn get_controls_from_osm(filename: &str) -> Vec<InputPoint> {
         let _ = env_logger::try_init();
         use crate::controls::*;
         let gpxdata = read(filename);
@@ -446,7 +458,7 @@ mod tests {
     #[tokio::test]
     async fn controls_infer_sectors_1() {
         let _ = env_logger::try_init();
-        let controls = get_controls("data/blackforest.gpx").await;
+        let controls = get_controls_from_osm("data/blackforest.gpx").await;
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -454,19 +466,20 @@ mod tests {
         for c in &controls {
             log::info!("c={} {}", c.name(), c.description());
         }
-        assert_eq!(controls.len(), 3);
+        assert_eq!(controls.len(), 4);
         assert!(controls[0].name().contains("CP-1"));
         assert!(controls[0].description().contains("Furtwangen"));
         assert!(controls[1].name().contains("CP-2"));
         assert!(controls[1].description().contains("Haslach"));
         assert!(controls[2].name().contains("CP-3"));
         assert!(controls[2].description().contains("Forbach"));
+        assert!(controls[3].name().contains("END"));
     }
 
     #[tokio::test]
     async fn controls_infer_sectors_2() {
         let _ = env_logger::try_init();
-        let controls = get_controls("data/ref/roland-nowaypoints.gpx").await;
+        let controls = get_controls_from_osm("data/ref/roland-nowaypoints.gpx").await;
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -474,12 +487,13 @@ mod tests {
         for c in &controls {
             log::info!("c={} {}", c.name(), c.description());
         }
-        assert_eq!(controls.len(), 3);
+        assert_eq!(controls.len(), 4);
         assert!(controls[0].name().contains("CP-1"));
         assert!(controls[0].description().contains("Wangen"));
         assert!(controls[1].name().contains("CP-2"));
         assert!(controls[1].description().contains("Isny"));
         assert!(controls[2].name().contains("CP-3"));
         assert!(controls[2].description().contains("Bad Waldsee"));
+        assert!(controls[3].name().contains("END"));
     }
 }
