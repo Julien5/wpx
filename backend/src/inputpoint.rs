@@ -42,19 +42,24 @@ fn read<T: FromStr>(data: Option<&String>) -> Option<T> {
 }
 
 impl InputPoint {
-    pub fn id(&self) -> String {
-        let mut indices = self
-            .track_projections
-            .iter()
-            .map(|proj| format!("{}", proj.track_floating_index))
-            .collect::<Vec<_>>();
-        indices.sort();
+    pub fn gpxwaypoint_id(&self) -> String {
+        // We need an index, otherwise there is no way to differenciate
+        // two gpx waypoints with the same data.
         format!(
-            "{}|{}|{}|{}",
+            "{}|{}|{:?}",
+            self.wgs84.longitude(),
+            self.wgs84.latitude(),
+            self.tags
+        )
+    }
+    pub fn map_id(&self) -> String {
+        // The track projection is not taken into account
+        format!(
+            "{}|{}|{}|{:?}",
             self.wgs84.longitude(),
             self.wgs84.latitude(),
             self.kind(),
-            indices.join("-"),
+            self.tags
         )
     }
     pub fn create_user_step_on_track(
@@ -103,6 +108,13 @@ impl InputPoint {
         p.track_projections = BTreeSet::from([{ proj }]);
 
         p
+    }
+
+    pub fn clone_with_proj(&self, proj: &TrackProjection) -> InputPoint {
+        let mut w = self.clone();
+        w.track_projections.clear();
+        w.track_projections.insert(proj.clone());
+        w
     }
 
     pub fn from_wgs84(wgs84: &WGS84Point, euclidean: &MercatorPoint, kind: Kind) -> InputPoint {
@@ -327,7 +339,7 @@ impl InputPoint {
             description: self.description(),
             info: None,
             origin: self.kind(),
-            id: self.id(),
+            id: self.gpxwaypoint_id(),
         }
     }
 }

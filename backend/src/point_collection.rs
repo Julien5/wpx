@@ -74,8 +74,9 @@ impl RenderResult {
                 if point.kind() == Kind::CutOff {
                     return false;
                 }
+                log::trace!("point:{:?} id:{}", point, point.map_id());
                 if is_osm(&point.kind()) {
-                    return seen.insert(point.id());
+                    return seen.insert(point.map_id());
                 }
                 true
             });
@@ -89,13 +90,9 @@ impl RenderResult {
 
     pub fn rendered_input_points_for_table(&self) -> Vec<InputPoint> {
         let mut ret = self.rendered_input_points();
-        let mut seen = HashSet::new();
         ret.retain(|point| {
             if point.kind() == Kind::CutOff {
                 return false;
-            }
-            if is_osm(&point.kind()) {
-                return seen.insert(point.id());
             }
             true
         });
@@ -487,7 +484,7 @@ impl PointCollection {
         let waypoints = self.get_vector(&Kind::GPXWaypoints);
         let mut ret = Vec::new();
         for w in waypoints {
-            let origin_id = w.id();
+            let origin_id = w.gpxwaypoint_id();
             match controls
                 .iter()
                 .find(|c| c.control_waypoint_origin_id() == origin_id)

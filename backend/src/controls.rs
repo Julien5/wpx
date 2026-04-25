@@ -107,7 +107,7 @@ pub fn infer_controls_from_gpx_segments(
                 let distance =
                     math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt();
                 if distance < maxdist {
-                    id = neighbor.id();
+                    id = neighbor.gpxwaypoint_id();
                     name = neighbor.name();
                     description = neighbor.description();
                 }
@@ -317,7 +317,7 @@ pub fn _make_with_osm(
         proto.push(ProtoPoint {
             index,
             osm_name: name,
-            nearest_osm_id: selected.id(),
+            nearest_osm_id: selected.gpxwaypoint_id(),
         });
         last_control_distance = selected
             .track_projections

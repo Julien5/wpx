@@ -2,8 +2,6 @@
 mod elements;
 mod ticks;
 
-use std::collections::BTreeSet;
-
 use svg::Node;
 
 use crate::bbox::BoundingBox;
@@ -456,7 +454,7 @@ impl ProfileView {
     pub fn add_packets(&mut self, packets: &Packets, track: &Track) {
         let features = self.make_features(packets, track);
         // the userstep-based time line and time points are rendered
-        // in the foreground => do not render them hier.
+        // in the foreground => do not render them here.
         self.model = Some(ProfileModel {
             points: features.points(),
             polylines: features.polylines,
@@ -504,7 +502,7 @@ impl ProfileView {
         PointFeature {
             circle,
             label,
-            input_point: Some((w.clone(), BTreeSet::from([proj.track_index]))),
+            input_point: Some(w.clone_with_proj(&proj)),
             link: None,
             xmlid: k,
             hardness: 0,
@@ -586,7 +584,7 @@ impl ProfileView {
                     let feature = PointFeature {
                         circle,
                         label,
-                        input_point: Some((w.clone(), BTreeSet::from([proj.track_index]))),
+                        input_point: Some(w.clone_with_proj(&proj)),
                         link: None,
                         xmlid: k,
                         hardness: packet.hardness,

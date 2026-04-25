@@ -1,7 +1,5 @@
 #![allow(non_snake_case)]
 
-use std::collections::BTreeSet;
-
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::label_placement::candidate::Candidate;
@@ -249,15 +247,10 @@ impl MapMaker {
         // on the map, all projections are equivalent
         let mut label = drawings::make_label_text(&w);
         label.id = format!("{}/wp/text", k);
-        let track_indices: BTreeSet<_> = w
-            .track_projections
-            .iter()
-            .map(|proj| proj.track_index)
-            .collect();
         PointFeature {
             circle,
             label,
-            input_point: Some((w.clone(), track_indices)),
+            input_point: Some(w.clone()),
             link: None,
             xmlid: k,
             hardness,

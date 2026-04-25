@@ -1,7 +1,4 @@
-use std::{
-    collections::{BTreeSet, HashMap},
-    str::FromStr,
-};
+use std::{collections::HashMap, str::FromStr};
 
 use rstar::{PointDistance, RTree, RTreeObject, AABB};
 
@@ -173,13 +170,12 @@ impl Label {
 }
 
 pub type PointFeatureId = usize;
-pub type TrackIndex = usize;
 
 #[derive(Clone, Debug)]
 pub struct PointFeature {
     pub circle: PointFeatureDrawing,
     pub label: Label,
-    pub input_point: Option<(InputPoint, BTreeSet<TrackIndex>)>,
+    pub input_point: Option<InputPoint>,
     pub link: Option<svg::node::element::Path>,
     pub xmlid: PointFeatureId,
     pub hardness: usize,
@@ -191,9 +187,11 @@ impl PointFeature {
     }
     pub fn id(&self) -> String {
         match &self.input_point {
-            Some((point, track_indices)) => {
-                let indices: String = track_indices
+            Some(point) => {
+                let indices: String = point
+                    .track_projections
                     .iter()
+                    .map(|p| p.track_index)
                     .map(|n| format!("{}", n))
                     .collect::<Vec<String>>()
                     .join(".");
@@ -224,7 +222,7 @@ impl PointFeature {
     }
     pub fn input_point(&self) -> Option<InputPoint> {
         if self.input_point.is_some() {
-            return Some(self.input_point.as_ref().unwrap().0.clone());
+            return Some(self.input_point.as_ref().unwrap().clone());
         }
         None
     }
