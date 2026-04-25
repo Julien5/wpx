@@ -128,8 +128,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     DateTime start,
     double distance,
     double initSpeed,
-    int hour,
-    int minute,
+    int endHour,
+    int endMinute,
   ) {
     final duration = Duration(seconds: (distance / initSpeed).round());
     DateTime initEndTime = start.add(duration);
@@ -142,9 +142,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         start.year,
         start.month,
         start.day + dayOffset,
-        hour,
-        minute,
+        endHour,
+        endMinute,
       );
+
+      if (candidate.microsecondsSinceEpoch < start.microsecondsSinceEpoch) {
+        continue;
+      }
 
       final diffmicrosec =
           (initEndTime.microsecondsSinceEpoch -
@@ -160,7 +164,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     if (best != null) {
       return best;
     }
-    return DateTime(start.year, start.month, start.day, hour, minute);
+    return DateTime(start.year, start.month, start.day, endHour, endMinute);
   }
 
   Future<void> _selectEndTime(BuildContext context, DateTime init) async {
