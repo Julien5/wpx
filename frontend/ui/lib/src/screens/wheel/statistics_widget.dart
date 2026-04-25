@@ -131,17 +131,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     int hour,
     int minute,
   ) {
+    final duration = Duration(seconds: (distance / initSpeed).round());
+    DateTime initEndTime = start.add(duration);
+
     DateTime? best;
-    DateTime initEndTime = DateTime(
-      start.year,
-      start.month,
-      start.day,
-      hour,
-      minute,
-    );
     double bestDiff = double.infinity;
 
-    for (int dayOffset = -5; dayOffset < 6; dayOffset++) {
+    for (int dayOffset = -10; dayOffset < 10; dayOffset++) {
       final candidate = DateTime(
         start.year,
         start.month,
@@ -149,26 +145,22 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         hour,
         minute,
       );
-      final seconds = candidate.difference(start).inSeconds;
-      if (seconds <= 0) continue;
 
-      final speed = distance / seconds;
       final diffmicrosec =
           (initEndTime.microsecondsSinceEpoch -
                   candidate.microsecondsSinceEpoch)
               .abs();
-      debugPrint(
-        "speed candidate:$candidate => speed=$speed => diff=$diffmicrosec",
-      );
 
+      debugPrint("offset: $dayOffset diff:${diffmicrosec / 1000 / 3600}");
       if (diffmicrosec < bestDiff) {
         bestDiff = diffmicrosec.toDouble();
         best = candidate;
       }
     }
-    debugPrint("speed best:$best");
-
-    return best ?? DateTime(start.year, start.month, start.day, hour, minute);
+    if (best != null) {
+      return best;
+    }
+    return DateTime(start.year, start.month, start.day, hour, minute);
   }
 
   Future<void> _selectEndTime(BuildContext context, DateTime init) async {
