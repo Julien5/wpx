@@ -132,10 +132,16 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     int minute,
   ) {
     DateTime? best;
+    DateTime initEndTime = DateTime(
+      start.year,
+      start.month,
+      start.day,
+      hour,
+      minute,
+    );
     double bestDiff = double.infinity;
 
-    // Search a reasonable range of days around the start date
-    for (int dayOffset = 0; dayOffset < 30; dayOffset++) {
+    for (int dayOffset = -5; dayOffset < 6; dayOffset++) {
       final candidate = DateTime(
         start.year,
         start.month,
@@ -147,11 +153,16 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       if (seconds <= 0) continue;
 
       final speed = distance / seconds;
-      final diff = (speed - initSpeed).abs();
-      debugPrint("speed candidate:$candidate => speed=$speed => diff=$diff");
+      final diffmicrosec =
+          (initEndTime.microsecondsSinceEpoch -
+                  candidate.microsecondsSinceEpoch)
+              .abs();
+      debugPrint(
+        "speed candidate:$candidate => speed=$speed => diff=$diffmicrosec",
+      );
 
-      if (diff < bestDiff) {
-        bestDiff = diff;
+      if (diffmicrosec < bestDiff) {
+        bestDiff = diffmicrosec.toDouble();
         best = candidate;
       }
     }
