@@ -89,9 +89,13 @@ impl RenderResult {
 
     pub fn rendered_input_points_for_table(&self) -> Vec<InputPoint> {
         let mut ret = self.rendered_input_points();
+        let mut seen = HashSet::new();
         ret.retain(|point| {
             if point.kind() == Kind::CutOff {
                 return false;
+            }
+            if is_osm(&point.kind()) {
+                return seen.insert(point.id());
             }
             true
         });
