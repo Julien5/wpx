@@ -113,14 +113,7 @@ pub fn infer_controls_from_gpx_segments(
                 }
                 (name, description, id)
             }
-            None => {
-                log::trace!(
-                    "[x] no nearest for {} {}",
-                    candidate.segment_name,
-                    candidate.track_index
-                );
-                (String::new(), String::new(), String::new())
-            }
+            None => (String::new(), String::new(), String::new()),
         };
         ret.push((
             candidate.track_index,

@@ -7,9 +7,7 @@ use crate::{
     math::IntegerSize2D,
     parameters::{Parameters, RenderFunction, UserStepsOptions},
     track::Track,
-    track_projection::{
-        is_close_to_track, string_projection, string_projections, TrackProjection, TrackProjections,
-    },
+    track_projection::{is_close_to_track, TrackProjection, TrackProjections},
 };
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
@@ -494,15 +492,8 @@ impl PointCollection {
                 .map(|c| c.track_projections.clone())
                 .flatten()
                 .collect();
-            log::trace!(
-                "[x] name: {} matching projs:{}",
-                w.name(),
-                string_projections(&matching_control_projections)
-            );
             for proj in &w.track_projections {
-                log::trace!("[x] name:{} proj:{}", w.name(), string_projection(&proj));
                 if !projections_contains_fuzzy(&matching_control_projections, &proj) {
-                    log::trace!("[x] insert name:{}", w.name());
                     ret.push(w.clone_with_proj(proj));
                 }
             }
