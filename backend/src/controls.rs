@@ -189,12 +189,31 @@ pub fn remove_control_at_waypoint(
     waypoint: &Waypoint,
 ) -> Vec<InputPoint> {
     let mut ret = controls.clone();
+    let start_index = controls
+        .first()
+        .unwrap()
+        .track_projections
+        .first()
+        .unwrap()
+        .track_index;
+    let end_index = controls
+        .last()
+        .unwrap()
+        .track_projections
+        .first()
+        .unwrap()
+        .track_index;
     ret.retain(|control| {
         // We should not remove control that are not associated with a waypoint
         // because we cannot re-create them (since there is no waypoint to create
         // them from).
-        control.track_projections.first().unwrap().track_index != waypoint.track_index.unwrap()
-            || control.tags.get("nearest_waypoint_id").unwrap().is_empty()
+        let index = control.track_projections.first().unwrap().track_index;
+        let not_this_waypoint = index != waypoint.track_index.unwrap();
+        let has_waypoint = !control.tags.get("nearest_waypoint_id").unwrap().is_empty();
+        // Keep start or end segment. Otherwise the end control might be moved to the
+        // middle of the track (CP-1), which is confusing.
+        let is_start_or_end = index == start_index || index == end_index;
+        not_this_waypoint || !has_waypoint || is_start_or_end
     });
     set_control_names(&mut ret);
     ret

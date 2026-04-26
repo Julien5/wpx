@@ -192,6 +192,7 @@ impl ProjectionTrees {
                 let extend = distance_from_start(&far_index);
                 extend * 500f64 / 500_000f64
             }
+            // for small test tours, this is too large.
             Resolution::Topology => 10_000f64,
         };
         let split_indices = line.simplify_idx(epsilon);
@@ -246,20 +247,11 @@ impl ProjectionTrees {
     ) {
         update_track_projection(point, euclidean, distance, elevation, &self.total_tree);
         let index = point.track_projections.first().unwrap().track_index;
-        if point.kind() == Kind::GPXWaypoints {
-            log::trace!("[x] [1] project name: {:?}", point.name());
-            log::trace!("[x] [1] project index:{}", index);
-            log::trace!("[x] [1] project len:{}", point.track_projections.len());
-        }
         if is_close_to_track(&point) {
             for tree in &self.subtrees {
                 // consider a tree only if it does *not* contain the already known index.
                 if !tree.range.contains(&index) {
                     update_track_projection(point, euclidean, distance, elevation, tree);
-                    if point.kind() == Kind::GPXWaypoints {
-                        log::trace!("[x] [2] project name: {:?}", point.name());
-                        log::trace!("[x] [2] project len:{}", point.track_projections.len());
-                    }
                 }
             }
         }

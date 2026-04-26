@@ -3,7 +3,6 @@ use crate::inputpoint::InputPoint;
 use crate::parameters;
 use crate::point_collection::{is_osm, Kind};
 use crate::segment::SegmentData;
-use crate::track_projection::string_projection;
 use crate::{
     elevation, mercator::MercatorPoint, parameters::Parameters, speed, track,
     wgs84point::WGS84Point,
@@ -193,24 +192,7 @@ pub fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> 
                     &w,
                 );
                 w.info = Some(info);
-                log::trace!(
-                    "[x] pushing: {} at proj:{}",
-                    p.name(),
-                    string_projection(&proj)
-                );
                 waypoints.push(w);
-            } else {
-                log::trace!(
-                    "[x] not pushing: {} at proj:{}",
-                    p.name(),
-                    string_projection(&proj)
-                );
-                log::trace!(
-                    "[x] not pushing a:{} d:{} b:{}",
-                    segment.start(),
-                    d,
-                    segment.end()
-                );
             }
         }
     }
