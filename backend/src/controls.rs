@@ -9,7 +9,7 @@ use crate::{
     point_collection::{Kind, SharedPacketProvider},
     segment::SegmentData,
     track::Track,
-    track_projection::{is_close_to_track, TrackProjection},
+    track_projection::{is_close_to_track, TrackProjection, TrackProjections},
     waypoint::Waypoint,
     wheel::shorten::shorten_name,
 };
@@ -134,24 +134,34 @@ pub fn infer_controls_from_gpx_segments(
     ret
 }
 
+fn find_closest(projections: &TrackProjections, target_track_index: usize) -> TrackProjection {
+    let target = target_track_index as f64;
+    projections
+        .iter()
+        .min_by(|a, b| {
+            let da = (a.track_floating_index - target).abs();
+            let db = (b.track_floating_index - target).abs();
+            da.total_cmp(&db)
+        })
+        .unwrap()
+        .clone()
+}
+
 pub fn add_control_at_waypoint(
     track: &Track,
     controls: Vec<InputPoint>,
     waypoint: &Waypoint,
 ) -> Vec<InputPoint> {
     let mut ret = controls.clone();
-    ret.sort_by_key(|p| p.track_projections.first().unwrap().track_index);
-    let index = {
-        let mut k = 0;
-        for c in &ret {
-            if c.track_projections.first().unwrap().track_index > waypoint.track_index.unwrap() {
-                break;
-            }
-            k += 1;
-        }
-        k
-    };
-    let projection = TrackProjection::at_track_index(track, waypoint.track_index.unwrap());
+    // we must recompute the projections because we mussing the floating track index.
+    let mut position = InputPoint::from_wgs84(
+        &waypoint.wgs84,
+        &waypoint.euclidean,
+        waypoint.origin.clone(),
+    );
+    track.project_point(&mut position);
+    // now select the projection that is the closest to waypoint.track_index
+    let projection = find_closest(&position.track_projections, waypoint.track_index.unwrap());
     let new = InputPoint::create_control_on_track(
         track,
         projection,
@@ -160,7 +170,16 @@ pub fn add_control_at_waypoint(
         &waypoint.description,
         &waypoint.id,
     );
-    ret.insert(index, new);
+    ret.push(new);
+    ret.sort_by(|a, b| {
+        debug_assert!(a.track_projections.len() == 1);
+        debug_assert!(b.track_projections.len() == 1);
+        a.track_projections
+            .first()
+            .unwrap()
+            .track_floating_index
+            .total_cmp(&b.track_projections.first().unwrap().track_floating_index)
+    });
     set_control_names(&mut ret);
     ret
 }

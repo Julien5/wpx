@@ -49,7 +49,7 @@ impl InputPoint {
             "{}|{}|{:?}",
             self.wgs84.longitude(),
             self.wgs84.latitude(),
-            self.tags
+            self.tags,
         )
     }
     pub fn map_id(&self) -> String {

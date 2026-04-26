@@ -7,7 +7,7 @@ use crate::{
     math::IntegerSize2D,
     parameters::{Parameters, RenderFunction, UserStepsOptions},
     track::Track,
-    track_projection::is_close_to_track,
+    track_projection::{is_close_to_track, TrackProjections},
 };
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
@@ -74,7 +74,6 @@ impl RenderResult {
                 if point.kind() == Kind::CutOff {
                     return false;
                 }
-                log::trace!("point:{:?} id:{}", point, point.map_id());
                 if is_osm(&point.kind()) {
                     return seen.insert(point.map_id());
                 }
@@ -483,20 +482,21 @@ impl PointCollection {
         let controls = self.get_vector(&Kind::Controls);
         let waypoints = self.get_vector(&Kind::GPXWaypoints);
         let mut ret = Vec::new();
+        // filter out waypoints that are rendered as controls,
+        // "projection-aware":
+        // a waypoint may have two projections P1 and P2.
+        // If only P1 is rendered as control, push P2.
         for w in waypoints {
             let origin_id = w.gpxwaypoint_id();
-            match controls
+            let matching_control_projections: TrackProjections = controls
                 .iter()
-                .find(|c| c.control_waypoint_origin_id() == origin_id)
-            {
-                Some(_control) => {
-                    // This is a control waypoint
-                    // => show it only if the controls are not shown.
-                    // Now, if we get in this match branch, controls must be shown.
-                    // So do not include render that point as waypoint.
-                }
-                None => {
-                    ret.push(w.clone());
+                .filter(|c| c.control_waypoint_origin_id() == origin_id)
+                .map(|c| c.track_projections.clone())
+                .flatten()
+                .collect();
+            for proj in &w.track_projections {
+                if !matching_control_projections.contains(proj) {
+                    ret.push(w.clone_with_proj(proj));
                 }
             }
         }

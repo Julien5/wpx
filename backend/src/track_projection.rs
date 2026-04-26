@@ -39,6 +39,20 @@ impl TrackProjection {
 
 pub type TrackProjections = BTreeSet<TrackProjection>;
 
+#[allow(dead_code)]
+pub fn string_projection(projection: &TrackProjection) -> String {
+    format!("proj index:{}", projection.track_index)
+}
+
+#[allow(dead_code)]
+pub fn string_projections(projections: &TrackProjections) -> String {
+    let indices: Vec<_> = projections
+        .iter()
+        .map(|proj| string_projection(&proj))
+        .collect();
+    format!("[{}]", indices.join(";"))
+}
+
 impl PartialEq for TrackProjection {
     fn eq(&self, other: &Self) -> bool {
         self.track_index.cmp(&other.track_index).is_eq()
