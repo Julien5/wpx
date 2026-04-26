@@ -267,8 +267,18 @@ pub fn compute_track_projection(
     let di = point.euclidean.d2(&track[index]);
     let df = point.euclidean.d2(&middle);
     debug_assert!(df <= di);
+    let distance_on_track_to_projection = distance(index1) + track[index1].d2(&middle).sqrt();
 
-    let distance_on_track_to_projection = distance(index) + track[index].d2(&middle).sqrt();
+    if point.name() == "Rouboubou" {
+        log::trace!("[x] euc: {:?}", point.euclidean);
+        log::trace!("[x] index1:{}", index1);
+        log::trace!("[x] index2:{}", index2);
+        log::trace!("[x] floating_index:{}", floating_index);
+        log::trace!(
+            "[x] distance_on_track_to_projection:{}",
+            distance_on_track_to_projection
+        );
+    }
     let new_proj = TrackProjection {
         track_floating_index: floating_index,
         track_index: index,

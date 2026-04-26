@@ -90,28 +90,15 @@ pub fn is_close_to_track(w: &InputPoint) -> bool {
         return false;
     }
     let d = w.track_projections.first().unwrap().track_distance;
-    let dmin = 300f64;
-    if d < dmin {
-        return true;
-    }
-    let kind = w.kind();
-    if is_osm(&kind) && kind != Kind::Mountains {
-        let kind = w.kind();
-        let pop = w.population().unwrap_or(population_estimate(&kind));
-        // the factor 20 was suggested by gemini
-        // (is it too large ? (Baden-Baden) with blackforest.gpx).
-        let radius = 20f64 * (pop as f64).sqrt();
-        return d < radius;
-    }
-    return d < dmin;
+    d < dmax(&w.kind(), &w.population())
 }
 
 fn dmax(kind: &Kind, population: &Option<i32>) -> f64 {
-    if is_osm(kind) {
-        let pop = population.unwrap_or(0);
-        if *kind == Kind::Cities || pop > 1000 {
-            return 2000.0;
-        }
+    if is_osm(kind) && *kind != Kind::Mountains {
+        let pop = population.unwrap_or(population_estimate(kind));
+        // the factor 20 was suggested by gemini
+        // (is it too large ? (Baden-Baden) with blackforest.gpx).
+        return 20f64 * (pop as f64).sqrt();
     }
     300.0
 }
@@ -259,10 +246,20 @@ impl ProjectionTrees {
     ) {
         update_track_projection(point, euclidean, distance, elevation, &self.total_tree);
         let index = point.track_projections.first().unwrap().track_index;
+        if point.kind() == Kind::GPXWaypoints {
+            log::trace!("[x] [1] project name: {:?}", point.name());
+            log::trace!("[x] [1] project index:{}", index);
+            log::trace!("[x] [1] project len:{}", point.track_projections.len());
+        }
         if is_close_to_track(&point) {
             for tree in &self.subtrees {
+                // consider a tree only if it does *not* contain the already known index.
                 if !tree.range.contains(&index) {
                     update_track_projection(point, euclidean, distance, elevation, tree);
+                    if point.kind() == Kind::GPXWaypoints {
+                        log::trace!("[x] [2] project name: {:?}", point.name());
+                        log::trace!("[x] [2] project len:{}", point.track_projections.len());
+                    }
                 }
             }
         }

@@ -14,129 +14,140 @@
 <circle cx="448.00726890034275" cy="292.3294712633942" fill="Gray" id="2/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="1427.2617348639105" cy="924.9471506928676" fill="Black" id="17/wp/circle" r="5"/>
-<circle cx="1427.2617348639105" cy="924.9471506928676" fill="white" id="17/wp/circle-little-white" r="3.5"/>
-<circle cx="1427.2617348639105" cy="924.9471506928676" fill="black" id="17/wp/circle-little-white" r="2.5"/>
+<circle cx="1427.2617348639105" cy="924.9471506928676" fill="Black" id="18/wp/circle" r="5"/>
+<circle cx="1427.2617348639105" cy="924.9471506928676" fill="white" id="18/wp/circle-little-white" r="3.5"/>
+<circle cx="1427.2617348639105" cy="924.9471506928676" fill="black" id="18/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1427.2617348639105 924.9471506928676)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="51.80473684210527" x="4" y="-14"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="55.80473684210527" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="17/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="14.0" font-style="normal" font-weight="bold" id="18/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Obernai
 </text>
 </g>
 <g>
-<circle cx="1081.7261486397038" cy="247.71850953641115" fill="Green" id="16/wp/circle" r="3"/>
+<circle cx="1081.7261486397038" cy="247.71850953641115" fill="Green" id="17/wp/circle" r="3"/>
 </g>
 <g transform="translate(1081.7261486397038 247.71850953641115)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="53.0305023923445" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="57.0305023923445" x="2" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="16/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="italic" font-weight="normal" id="17/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Drei Spitze
 </text>
 </g>
 <g>
-<circle cx="1051.4977314667558" cy="279.5084183513536" fill="Green" id="15/wp/circle" r="3"/>
+<circle cx="1051.4977314667558" cy="279.5084183513536" fill="Green" id="16/wp/circle" r="3"/>
 </g>
 <g transform="translate(1051.4977314667558 279.5084183513536)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="57.36901913875598" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="61.36901913875598" x="2" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="15/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="italic" font-weight="normal" id="16/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Katzenburg
 </text>
 </g>
 <g>
-<circle cx="1109.0668613332527" cy="361.58095786487684" fill="Green" id="14/wp/circle" r="3"/>
+<circle cx="1109.0668613332527" cy="361.58095786487684" fill="Green" id="15/wp/circle" r="3"/>
 </g>
 <g transform="translate(1109.0668613332527 361.58095786487684)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="41.41447368421053" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="45.41447368421053" x="2" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="14/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="italic" font-weight="normal" id="15/wp/text" text-anchor="start" x="4.000" y="-4.000">
 der Berg
 </text>
 </g>
 <g>
-<circle cx="406.8928071833652" cy="696.9520737021812" fill="Green" id="13/wp/circle" r="3"/>
+<circle cx="406.8928071833652" cy="696.9520737021812" fill="Green" id="14/wp/circle" r="3"/>
 </g>
 <g transform="translate(406.8928071833652 696.9520737021812)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="97.95514354066984" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="101.95514354066984" x="2" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="13/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="italic" font-weight="normal" id="14/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Col du Holderbusch
 </text>
 </g>
 <g>
-<circle cx="306.02090690957266" cy="518.8355517979944" fill="Green" id="12/wp/circle" r="3"/>
+<circle cx="306.02090690957266" cy="518.8355517979944" fill="Green" id="13/wp/circle" r="3"/>
 </g>
 <g transform="translate(306.02090690957266 518.8355517979944)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="52.7505980861244" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="56.7505980861244" x="2" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="12/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="italic" font-weight="normal" id="13/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Breitsteige
 </text>
 </g>
 <g>
-<circle cx="222.35329382984492" cy="521.0146731646382" fill="Green" id="11/wp/circle" r="3"/>
+<circle cx="222.35329382984492" cy="521.0146731646382" fill="Green" id="12/wp/circle" r="3"/>
 </g>
 <g transform="translate(222.35329382984492 521.0146731646382)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="125.31578947368416" x="-129.31578947368416" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="129.31578947368416" x="-131.31578947368416" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="11/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+<text font-size="13.0" font-style="italic" font-weight="normal" id="12/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Rocher de Grendelbruch
 </text>
 </g>
 <g>
-<circle cx="503.1243467764216" cy="841.958834311692" fill="Green" id="10/wp/circle" r="3"/>
+<circle cx="503.1243467764216" cy="841.958834311692" fill="Green" id="11/wp/circle" r="3"/>
 </g>
 <g transform="translate(503.1243467764216 841.958834311692)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="55.75956937799044" x="-59.75956937799044" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="59.75956937799044" x="-61.75956937799044" y="-15"/>
-<text font-size="13.0" font-style="italic" font-weight="normal" id="10/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+<text font-size="13.0" font-style="italic" font-weight="normal" id="11/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Heidenkopf
 </text>
 </g>
 <g>
-<circle cx="1083.1533378414388" cy="413.98069295065943" fill="Black" id="9/wp/circle" r="4"/>
-<circle cx="1083.1533378414388" cy="413.98069295065943" fill="white" id="9/wp/circle-little-white" r="2.5"/>
+<circle cx="1083.1533378414388" cy="413.98069295065943" fill="Black" id="10/wp/circle" r="4"/>
+<circle cx="1083.1533378414388" cy="413.98069295065943" fill="white" id="10/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1083.1533378414388 413.98069295065943)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.197368421052644" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.19736842105264" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="9/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="10/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Rosenwiller
 </text>
 </g>
 <g>
-<circle cx="107.72242360290693" cy="564.5907308852184" fill="Black" id="8/wp/circle" r="4"/>
-<circle cx="107.72242360290693" cy="564.5907308852184" fill="white" id="8/wp/circle-little-white" r="2.5"/>
+<circle cx="107.72242360290693" cy="564.5907308852184" fill="Black" id="9/wp/circle" r="4"/>
+<circle cx="107.72242360290693" cy="564.5907308852184" fill="white" id="9/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(107.72242360290693 564.5907308852184)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="76.20657894736843" x="-80.20657894736843" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="80.20657894736843" x="-82.20657894736843" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="8/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="9/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Grendelbruch
 </text>
 </g>
 <g>
-<circle cx="1014.5007882722857" cy="65.4810201433138" fill="Black" id="7/wp/circle" r="4"/>
-<circle cx="1014.5007882722857" cy="65.4810201433138" fill="white" id="7/wp/circle-little-white" r="2.5"/>
+<circle cx="1014.5007882722857" cy="65.4810201433138" fill="Black" id="8/wp/circle" r="4"/>
+<circle cx="1014.5007882722857" cy="65.4810201433138" fill="white" id="8/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1014.5007882722857 65.4810201433138)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="60.503947368421066" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="64.50394736842107" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="7/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="8/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Gresswiller
 </text>
 </g>
 <g>
-<circle cx="1088.782112066132" cy="755.6594559550867" fill="Black" id="6/wp/circle" r="4"/>
-<circle cx="1088.782112066132" cy="755.6594559550867" fill="white" id="6/wp/circle-little-white" r="2.5"/>
+<circle cx="1088.782112066132" cy="755.6594559550867" fill="Black" id="7/wp/circle" r="4"/>
+<circle cx="1088.782112066132" cy="755.6594559550867" fill="white" id="7/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1088.782112066132 755.6594559550867)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="36.95" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="40.95" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="6/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="7/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Bœrsch
+</text>
+</g>
+<g>
+<circle cx="1328.7073636659406" cy="525.1076916135498" fill="Black" id="6/wp/circle" r="4"/>
+<circle cx="1328.7073636659406" cy="525.1076916135498" fill="white" id="6/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1328.7073636659406 525.1076916135498)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="46.34078947368422" x="4" y="-13"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="50.34078947368422" x="2" y="-15"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="6/wp/text" text-anchor="start" x="4.000" y="-4.000">
+Rosheim
 </text>
 </g>
 <g>

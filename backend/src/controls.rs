@@ -189,12 +189,12 @@ pub fn remove_control_at_waypoint(
     waypoint: &Waypoint,
 ) -> Vec<InputPoint> {
     let mut ret = controls.clone();
-    ret.retain(|p| {
+    ret.retain(|control| {
         // We should not remove control that are not associated with a waypoint
         // because we cannot re-create them (since there is no waypoint to create
         // them from).
-        p.track_projections.first().unwrap().track_index != waypoint.track_index.unwrap()
-            || p.tags.get("nearest_waypoint_id").unwrap().is_empty()
+        control.track_projections.first().unwrap().track_index != waypoint.track_index.unwrap()
+            || control.tags.get("nearest_waypoint_id").unwrap().is_empty()
     });
     set_control_names(&mut ret);
     ret

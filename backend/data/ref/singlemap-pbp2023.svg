@@ -110,36 +110,36 @@
 <circle cx="1429.3630604988975" cy="435.49714991927794" fill="Gray" id="2/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="1374.016086265979" cy="424.6886332178092" fill="Black" id="161/wp/circle" r="4"/>
-<circle cx="1374.016086265979" cy="424.6886332178092" fill="white" id="161/wp/circle-little-white" r="2.5"/>
+<circle cx="1374.016086265979" cy="424.6886332178092" fill="Black" id="160/wp/circle" r="4"/>
+<circle cx="1374.016086265979" cy="424.6886332178092" fill="white" id="160/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1374.016086265979 424.6886332178092)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="27.867105263157896" x="4" y="4"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="31.867105263157896" x="2" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="161/wp/text" text-anchor="start" x="4.000" y="13.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="160/wp/text" text-anchor="start" x="4.000" y="13.000">
 Blévy
 </text>
 </g>
 <g>
-<circle cx="420.6729945519521" cy="602.8800409368359" fill="Black" id="159/wp/circle" r="4"/>
-<circle cx="420.6729945519521" cy="602.8800409368359" fill="white" id="159/wp/circle-little-white" r="2.5"/>
+<circle cx="420.6729945519521" cy="602.8800409368359" fill="Black" id="158/wp/circle" r="4"/>
+<circle cx="420.6729945519521" cy="602.8800409368359" fill="white" id="158/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(420.6729945519521 602.8800409368359)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="28.021052631578947" x="-14.010526315789473" y="27"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="32.02105263157895" x="-16.010526315789473" y="25"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="159/wp/text" text-anchor="start" x="-14.011" y="36.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="158/wp/text" text-anchor="start" x="-14.011" y="36.000">
 Stival
 </text>
 </g>
 <path d="M420.67,621.88 L420.67,608.88" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
-<circle cx="346.66081503297164" cy="542.918285853495" fill="Black" id="158/wp/circle" r="4"/>
-<circle cx="346.66081503297164" cy="542.918285853495" fill="white" id="158/wp/circle-little-white" r="2.5"/>
+<circle cx="346.66081503297164" cy="542.918285853495" fill="Black" id="157/wp/circle" r="4"/>
+<circle cx="346.66081503297164" cy="542.918285853495" fill="white" id="157/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(346.66081503297164 542.918285853495)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.6592105263158" x="-31.3296052631579" y="-36"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.6592105263158" x="-33.3296052631579" y="-38"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="158/wp/text" text-anchor="start" x="-31.330" y="-27.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="157/wp/text" text-anchor="start" x="-31.330" y="-27.000">
 Saint-Lubin
 </text>
 </g>

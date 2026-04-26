@@ -229,6 +229,7 @@ impl Backend {
         let track = std::sync::Arc::new(track_data);
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
+            log::trace!("[x] name: {} projs:{}", p.name(), p.track_projections.len());
         }
 
         let parameters = Parameters::default();
@@ -572,6 +573,7 @@ impl Backend {
         ret.iter()
             .map(|(function, size, result)| {
                 debug_assert_eq!(result.parameters.function, function.clone());
+                log::trace!("[x] table function:{:?}", function);
                 let points = result.rendered_input_points_for_table();
                 RenderOutput {
                     svg: result.svg.clone(),

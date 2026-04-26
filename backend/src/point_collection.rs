@@ -7,7 +7,9 @@ use crate::{
     math::IntegerSize2D,
     parameters::{Parameters, RenderFunction, UserStepsOptions},
     track::Track,
-    track_projection::{is_close_to_track, TrackProjections},
+    track_projection::{
+        is_close_to_track, string_projection, string_projections, TrackProjections,
+    },
 };
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
@@ -93,6 +95,7 @@ impl RenderResult {
             if point.kind() == Kind::CutOff {
                 return false;
             }
+            log::trace!("[x] table point {} ", point.name());
             true
         });
         ret
@@ -335,8 +338,6 @@ pub enum Kind {
 
 impl std::fmt::Display for Kind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // This converts the variant name to a string.
-        // You can use Debug formatting {:?} to keep it simple.
         write!(f, "{:?}", self)
     }
 }
@@ -410,6 +411,9 @@ impl PointCollection {
             Some(vector) => vector.clone(),
             None => Vec::new(),
         };
+        for w in &ret {
+            log::trace!("[xxx] {}: {} ", w.name(), is_close_to_track(&w));
+        }
         ret
     }
 
@@ -494,8 +498,20 @@ impl PointCollection {
                 .map(|c| c.track_projections.clone())
                 .flatten()
                 .collect();
+            log::trace!(
+                "[x] considering: {} (proj:{})matching: {}",
+                w.name(),
+                string_projections(&w.track_projections),
+                string_projections(&matching_control_projections)
+            );
             for proj in &w.track_projections {
                 if !matching_control_projections.contains(proj) {
+                    log::trace!(
+                        "[x] considering: {} (proj:{})matching: {}",
+                        w.name(),
+                        string_projection(&proj),
+                        string_projections(&matching_control_projections)
+                    );
                     ret.push(w.clone_with_proj(proj));
                 }
             }
