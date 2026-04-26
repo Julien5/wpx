@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use std::collections::HashSet;
+
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::label_placement::candidate::Candidate;
@@ -293,9 +295,13 @@ impl MapMaker {
         let mut feature_unlabeled = Vec::new();
         let mut counter = 0;
         let size = &self.parameters.screen_size;
+        let mut seen = HashSet::new();
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in &packet.points {
+                if !seen.insert(w.map_id()) {
+                    continue;
+                }
                 let feature = self.make_one_feature(w, packet.hardness, track, counter);
                 if !self.point_is_visible(&feature.center()) {
                     continue;
