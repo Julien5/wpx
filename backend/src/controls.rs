@@ -91,7 +91,7 @@ pub fn infer_controls_from_gpx_segments(
 
     let tree = RTree::bulk_load(waypoints.to_vec());
     let mut ret = Vec::new();
-    let maxdist = 200f64;
+    let dmax = 300.0;
     for mut candidate in candidates {
         let point = candidate.euc.clone();
         let nearest = tree.nearest_neighbor(&[point.0, point.1]);
@@ -106,14 +106,21 @@ pub fn infer_controls_from_gpx_segments(
                 let mut id = String::new();
                 let distance =
                     math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt();
-                if distance < maxdist {
+                if distance < dmax {
                     id = neighbor.gpxwaypoint_id();
                     name = neighbor.name();
                     description = neighbor.description();
                 }
                 (name, description, id)
             }
-            None => (String::new(), String::new(), String::new()),
+            None => {
+                log::trace!(
+                    "[x] no nearest for {} {}",
+                    candidate.segment_name,
+                    candidate.track_index
+                );
+                (String::new(), String::new(), String::new())
+            }
         };
         ret.push((
             candidate.track_index,
