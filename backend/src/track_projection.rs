@@ -55,7 +55,9 @@ pub fn string_projections(projections: &TrackProjections) -> String {
 
 impl PartialEq for TrackProjection {
     fn eq(&self, other: &Self) -> bool {
-        self.track_index.cmp(&other.track_index).is_eq()
+        self.track_floating_index
+            .total_cmp(&other.track_floating_index)
+            .is_eq()
     }
 }
 
