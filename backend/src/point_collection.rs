@@ -553,13 +553,33 @@ impl PointCollection {
     }
 }
 
-fn projections_contains_fuzzy(projections: &TrackProjections, target: &TrackProjection) -> bool {
-    for proj in projections {
-        let d = proj
+fn projections_contains_fuzzy(
+    control_projections: &TrackProjections,
+    waypoint_projection: &TrackProjection,
+) -> bool {
+    for proj in control_projections {
+        // Consider the following situation:
+        //  C1,C2----+
+        //           |
+        //           | W
+        // ------------------
+        // C1 is a control. Segment  1 goes to C1. Segment  2 start from C1.
+        // C2 is a control. Segment 10 goes to C1. Segment 11 start from C2.
+        // W is the waypoint, it is associated to C2, but not to C1.
+        // Considering only d_geo would associate W to C1 and C2.
+        // => we must consider also the distance along the track, but it can
+        // be "a bit large", depending on the distance along the track between
+        // W and C1 or C2.
+        let d_geo = proj
             .euclidean
             .point2d()
-            .distance_to(&target.euclidean.point2d());
-        if d < 300.0 {
+            .distance_to(&waypoint_projection.euclidean.point2d());
+
+        let d_ontrack = (proj.distance_on_track_to_projection
+            - waypoint_projection.distance_on_track_to_projection)
+            .abs();
+
+        if d_geo < 300.0 && d_ontrack < 1000.0 {
             return true;
         }
     }
