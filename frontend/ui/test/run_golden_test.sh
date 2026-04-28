@@ -1,23 +1,24 @@
-#!/bin/bash
-# Helper script to run golden tests with the real Rust bridge.
-# The test will hang during cleanup, so we use a timeout.
+#!/usr/bin/env bash
 
 set -e
 
-TIMEOUT=15
-TEST_FILE="test/home_screen_golden_test.dart"
+TEST_FILE="$1"
+shift
 
-echo "Running golden test with ${TIMEOUT}s timeout..."
-echo
+pushd rust
+dev.rust
+cargo build
+popd
 
-if timeout --preserve-status ${TIMEOUT} flutter test "$TEST_FILE" "$@"; then
+dev.flutter-rust
+
+export LD_LIBRARY_PATH=${CARGO_TARGET_DIR}/debug
+
+if flutter test --verbose "$TEST_FILE" "$@"; then
     echo "✓ Test completed successfully!"
 else
     EXIT_CODE=$?
     if [ $EXIT_CODE -eq 124 ] || [ $EXIT_CODE -eq 143 ]; then
-        echo
-        echo "⚠ Test timed out (expected behavior - EventModel creates infinite stream)"
-        
         # Check if golden was created/updated
         if [ -f "test/goldens/home_screen.png" ]; then
             echo "✓ Golden file exists: test/goldens/home_screen.png"

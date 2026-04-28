@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -67,7 +69,7 @@ GoRouter getRouter() {
 }
 
 void gotoOverview(BuildContext ctx) {
-  debugPrint("goto home");
+  print("goto home");
   FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
   ScreenConfiguration config = Provider.of<ScreenConfiguration>(
     ctx,

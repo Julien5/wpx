@@ -43,10 +43,7 @@ Future<void> main() async {
   );
 }
 
-class PackageModel extends ChangeNotifier {
-  final PackageInfo packageInfo;
-  PackageModel({required this.packageInfo});
-}
+
 
 class TrackProvider extends StatelessWidget {
   final Widget child;

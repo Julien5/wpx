@@ -1,9 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
@@ -12,21 +15,20 @@ class EventModel extends ChangeNotifier {
   late Stream<String> _stream;
   StreamSubscription<String>? _subscription; 
   String event = "";
-  final bool _enableStream;
 
   EventModel({required this.backend, bool enableStream = true}) 
-      : _enableStream = enableStream {
-    if (_enableStream) {
+       {
       _stream = backend.setSink();
       _subscription = _stream.listen((data) {  
         developer.log("EventModel.listen:$data");
         onEvent(data);
       });
     }
-  }
+  
 
   void onEvent(String data) {
     developer.log("onEvent:$data");
+    print("onEvent:$data");
     event = data;
     notifyListeners();
   }
@@ -182,4 +184,10 @@ class FociModel extends ChangeNotifier {
     debugPrint("foci:$foci");
     return foci.contains(f);
   }
+}
+
+
+class PackageModel extends ChangeNotifier {
+  final PackageInfo packageInfo;
+  PackageModel({required this.packageInfo});
 }
