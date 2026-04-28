@@ -396,7 +396,7 @@ impl ProfileView {
             let yd = self
                 .toSD(&Point2D::new(self.bboxview().get_xmin(), *ytick))
                 .y;
-            if yd > self.free_height() {
+            if *ytick < 0f64 {
                 continue;
             }
             self.SL.append(text_end(
@@ -409,9 +409,6 @@ impl ProfileView {
             let yd = self
                 .toSD(&Point2D::new(self.bboxview().get_xmin(), *ytick))
                 .y;
-            if yd > self.free_height() {
-                continue;
-            }
             self.SD
                 .append(stroke("1", Point2D::new(0f64, yd), Point2D::new(WD, yd)));
         }
@@ -420,9 +417,6 @@ impl ProfileView {
             let yd = self
                 .toSD(&Point2D::new(self.bboxview().get_xmin(), *ytick))
                 .y;
-            if yd > self.free_height() {
-                continue;
-            }
             self.SD
                 .append(dashed(Point2D::new(0f64, yd), Point2D::new(WD, yd)));
         }

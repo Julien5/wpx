@@ -39,6 +39,7 @@
 <path d="M857.5,20 L857.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M1102.5,20 L1102.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M1347.5,20 L1347.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,338.5 L1347.5,338.5" stroke="black" stroke-width="1"/>
 <path d="M0,292.7143 L1347.5,292.7143" stroke="black" stroke-width="1"/>
 <path d="M0,246.92857 L1347.5,246.92857" stroke="black" stroke-width="1"/>
 <path d="M0,201.14285 L1347.5,201.14285" stroke="black" stroke-width="1"/>
@@ -319,6 +320,9 @@ START
 </g>
 </g>
 <g id="SL" transform="translate(0 0)">
+<text text-anchor="end" x="66" y="343.5">
+0
+</text>
 <text text-anchor="end" x="66" y="297.7142857142857">
 200
 </text>

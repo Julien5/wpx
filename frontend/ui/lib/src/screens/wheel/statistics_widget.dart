@@ -27,8 +27,26 @@ class OverviewWidget extends StatefulWidget {
   State<OverviewWidget> createState() => _OverviewWidgetState();
 }
 
+String formatNumber(double value) {
+  // Dart's toString() gives the shortest round-trippable representation,
+  // avoiding binary noise — e.g. 12.5 stays "12.5", not "12.50049..."
+  String result = value.toStringAsFixed(3);
+
+  // Ensure at least one decimal place
+  if (!result.contains('.')) {
+    result = '$result.0';
+  }
+
+  // Remove trailing zeros but keep at least one decimal digit
+  while (result.endsWith('0') && !result.endsWith('.0')) {
+    result = result.substring(0, result.length - 1);
+  }
+
+  return result;
+}
+
 List<double> speedSliderValues() {
-  return fromKmh([5, 10, 12.5, 13.5, 15, 18.0, 20, 25, 28]);
+  return fromKmh([5, 10, 11.428, 12.5, 13.333, 15, 18.0, 20, 25, 30]);
 }
 
 class _OverviewWidgetState extends State<OverviewWidget> {
@@ -230,7 +248,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
             String kmh = "none";
             int index = 0;
             if (speed != null) {
-              kmh = "${(speed! * 3600 / 1000).toStringAsFixed(1)} km/h";
+              kmh = "${formatNumber(speed! * 3600 / 1000)} km/h";
               index = getClosestIndex(values, speed!);
             }
             return SimpleDialog(
@@ -240,8 +258,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                   values: values,
                   initIndex: index,
                   formatLabel:
-                      (value) =>
-                          "${(value * 3600 / 1000).toStringAsFixed(1)} km/h",
+                      (value) => "${formatNumber(value * 3600 / 1000)} km/h",
                   onValueChanged: (newSpeed) {
                     setDialogState(() {
                       speed = newSpeed;
