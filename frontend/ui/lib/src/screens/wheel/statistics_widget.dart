@@ -28,16 +28,10 @@ class OverviewWidget extends StatefulWidget {
 }
 
 String formatNumber(double value) {
-  // Dart's toString() gives the shortest round-trippable representation,
-  // avoiding binary noise — e.g. 12.5 stays "12.5", not "12.50049..."
   String result = value.toStringAsFixed(3);
-
-  // Ensure at least one decimal place
   if (!result.contains('.')) {
     result = '$result.0';
   }
-
-  // Remove trailing zeros but keep at least one decimal digit
   while (result.endsWith('0') && !result.endsWith('.0')) {
     result = result.substring(0, result.length - 1);
   }
@@ -46,7 +40,14 @@ String formatNumber(double value) {
 }
 
 List<double> speedSliderValues() {
-  return fromKmh([5, 10, 11.428, 12.5, 13.333, 15, 18.0, 20, 25, 30]);
+  // Pick speeds relevant to randonneuring.
+  /*
+  https://www.randonneursmondiaux.org/files/LRM_Event_Regulations_2023.pdf
+  https://rusa.org/pages/acp-brevet-control-times-calculator
+  https://www.audax-club-parisien.com/organisation/brm-monde/#reglement-BRM
+  https://www.audax-club-parisien.com/download/plages_horaires_brm_10_FR.xls
+  */
+  return fromKmh([5, 10, 11.428, 12.5, 13.333, 15, 18.0, 20, 25, 28]);
 }
 
 class _OverviewWidgetState extends State<OverviewWidget> {

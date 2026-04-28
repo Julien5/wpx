@@ -213,7 +213,7 @@ impl ProfileView {
                     group: svg::node::element::Group::new(),
                     center: Point2D::new(xd, bottom - self.frame_stroke_width),
                 },
-                label,
+                label,  
                 input_point: None,
                 link: None,
                 xmlid: k, // TODO: remove this

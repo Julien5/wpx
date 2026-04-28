@@ -85,7 +85,6 @@ fn yticks_all(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
         ret.push(p);
         p = p + delta;
     }
-    // log::trace!("yticks-full:{:?}", ret);
     ret
 }
 
