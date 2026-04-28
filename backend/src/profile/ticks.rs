@@ -69,7 +69,7 @@ fn ytick_delta(height: &f64, H: f64) -> f64 {
 
 fn yticks_all(bbox: &ProfileBoundingBox, H: f64) -> Vec<f64> {
     let mut ret = Vec::new();
-    let delta_min = 750f64;
+    let delta_min = 300f64;
     let delta = ytick_delta(&bbox.height().max(delta_min), H);
     let mut start = snap_floor(bbox.get_min().y, delta) - delta;
     start = start.max(0f64);
