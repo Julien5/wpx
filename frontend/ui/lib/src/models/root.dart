@@ -10,14 +10,19 @@ import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 class EventModel extends ChangeNotifier {
   final bridge.Bridge backend;
   late Stream<String> _stream;
+  StreamSubscription<String>? _subscription; 
   String event = "";
+  final bool _enableStream;
 
-  EventModel({required this.backend}) {
-    _stream = backend.setSink();
-    _stream.listen((data) {
-      developer.log("EventModel.listen:$data");
-      onEvent(data);
-    });
+  EventModel({required this.backend, bool enableStream = true}) 
+      : _enableStream = enableStream {
+    if (_enableStream) {
+      _stream = backend.setSink();
+      _subscription = _stream.listen((data) {  
+        developer.log("EventModel.listen:$data");
+        onEvent(data);
+      });
+    }
   }
 
   void onEvent(String data) {
@@ -29,7 +34,19 @@ class EventModel extends ChangeNotifier {
   String get() {
     return event;
   }
-}
+
+  @override
+   void dispose() {
+     developer.log("EventModel.dispose: cancelling subscription");
+     _subscription?.cancel();  
+     _subscription = null;
+     // Note: We cannot call backend.clearSink() here because it causes
+     // "Cannot close sink while adding stream" error. The FFI bridge
+     // doesn't support proper stream closure from the Rust side.
+     // The stream will be cleaned up when the process exits.
+     super.dispose();
+   }
+ }
 
 class UserInput {
   List<List<int>>? bytes;

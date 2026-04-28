@@ -51,6 +51,9 @@ impl Sender for EventSender {
             }
         }
     }
+    fn close(&mut self) {
+        log::trace!("close the sink");
+    }
 }
 
 #[frb(opaque)]
@@ -239,6 +242,12 @@ impl Bridge {
         let cell = Box::new(EventSender { sink });
         self.backend.set_sink(cell);
         Ok(())
+    }
+
+    /// Clear the event sink to allow proper cleanup
+    #[frb(sync)]
+    pub fn clear_sink(&mut self) {
+        self.backend.clear_sink();
     }
 
     #[frb(sync)]

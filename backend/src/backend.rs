@@ -77,6 +77,25 @@ impl Backend {
     pub fn set_sink(&mut self, sink: SenderHandler) {
         self.sender = std::sync::RwLock::new(Some(sink));
     }
+
+    /// Clear the event sink to allow proper cleanup and stream closure
+    pub fn clear_sink(&mut self) {
+        {
+            match self.sender.write() {
+                Ok(mut lock) => {
+                    match &mut *lock {
+                        Some(ref mut sender) => {
+                            sender.close();
+                        }
+                        None => {}
+                    };
+                }
+                _ => {}
+            }
+        }
+        self.sender = std::sync::RwLock::new(None);
+    }
+
     pub fn send(&self, data: &str) {
         log::trace!("event:{}", data);
         // if there is no sender (sender is an Option)

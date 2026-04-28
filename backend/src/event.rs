@@ -1,5 +1,6 @@
 pub trait Sender {
     fn send(&mut self, data: &str);
+    fn close(&mut self);
 }
 
 pub type SenderHandler = Box<dyn Sender + Send + Sync>;
@@ -37,4 +38,5 @@ impl Sender for ConsoleEventSender {
     fn send(&mut self, data: &str) {
         println!("EVENT: {}", data);
     }
+    fn close(&mut self) {}
 }
