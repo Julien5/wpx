@@ -54,6 +54,7 @@
 <path d="M0,132.46428 L1347.5,132.46428" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M0,86.67857 L1347.5,86.67857" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M0,40.892857 L1347.5,40.892857" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
+<path d="M0,-4.892857 L1347.5,-4.892857" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M0,20 L1347.5,20" stroke="black" stroke-width="3"/>
 <text font-size="14" text-anchor="end" x="112.5" y="352.5">
 4.0%

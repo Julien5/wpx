@@ -204,8 +204,7 @@ impl ProfileBoundingBox {
     pub fn from_track(track: &track::Track, start: &f64, end: &f64) -> ProfileBoundingBox {
         let mut ymin = f64::MAX;
         let mut ymax = f64::MIN;
-        let range = track.subrange(*start, *end);
-        for k in range.start..range.end {
+        for k in 0..track.len() {
             let y = track.elevation(k);
             ymin = y.min(ymin);
             ymax = y.max(ymax);
