@@ -26,6 +26,9 @@ struct Cli {
     /// speed in kilometer per hour
     #[arg(long, value_name = "speed", default_value_t = 15.0)]
     speed: f64,
+    /// use ACP rules: 15 km/h for first 600 km, then variable speed to maintain 13.3 km/h average
+    #[arg(long, value_name = "acp_rules", default_value_t = false)]
+    acp_rules: bool,
     /// generate one cutoff point every [distance] kilometer [default: 10]
     #[arg(long, value_name = "step_distance")]
     step_distance: Option<f64>,
@@ -220,6 +223,7 @@ async fn main() -> anyhow::Result<()> {
     }
 
     parameters.speed = speed::mps(args.speed);
+    parameters.use_acp_rules = args.acp_rules;
 
     match args.step_distance {
         Some(km) => {

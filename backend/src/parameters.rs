@@ -125,6 +125,7 @@ pub struct Parameters {
     pub smooth_width: f64,
     pub speed: f64,
     pub start_time: String,
+    pub use_acp_rules: bool,
     pub user_steps_options: UserStepsOptions,
 }
 
@@ -138,6 +139,7 @@ impl Default for Parameters {
             segment_overlap: 10f64 * 1000f64,
             smooth_width: 200f64,
             debug: false,
+            use_acp_rules: false,
             profile_options: ProfileOptions::default(),
             map_options: MapOptions::default(),
             user_steps_options: UserStepsOptions::default(),

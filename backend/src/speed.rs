@@ -14,9 +14,253 @@ pub fn mps(_kmh: f64) -> f64 {
     _kmh / 3.6f64
 }
 
-pub fn time_at_distance(distance: f64, parameters: &Parameters) -> DateTime {
-    let start_time = parameters::parse_time(&parameters.start_time);
-    let dt = (distance / parameters.speed).ceil() as i64;
+// ACP (Audax Club Parisien) control closing time rules:
+// 
+// Staggered minimum speeds based on distance segments:
+//   - 0-600 km: 15.0 km/h
+//   - 600-1000 km: 11.428 km/h (8/7 km/h)
+//   - 1000-1300 km: 13.333 km/h (40/3 km/h)
+//
+// Special case for short distances (0-60 km): T = 1 + (D / 20)
+// 
+// Example for 1000 km:
+//   First 600 km: 600 / 15 = 40 hours
+//   Next 400 km: 400 / 11.428 = 35 hours
+//   Total: 75 hours
+fn time_at_distance_acp(distance: f64, start_time: DateTime) -> DateTime {
+    let distance_km = distance / 1000.0;
+    
+    // Calculate time in hours based on ACP rules
+    let time_hours = if distance_km <= 60.0 {
+        // Short distance exception: grace period
+        1.0 + (distance_km / 20.0)
+    } else if distance_km <= 600.0 {
+        // Segment 1: 0-600 km at 15.0 km/h
+        distance_km / 15.0
+    } else if distance_km <= 1000.0 {
+        // Segment 1: 0-600 km at 15.0 km/h
+        // Segment 2: 600-1000 km at 11.428 km/h
+        (600.0 / 15.0) + ((distance_km - 600.0) / 11.428)
+    } else if distance_km <= 1300.0 {
+        // Segment 1: 0-600 km at 15.0 km/h
+        // Segment 2: 600-1000 km at 11.428 km/h
+        // Segment 3: 1000-1300 km at 13.333 km/h
+        (600.0 / 15.0) + (400.0 / 11.428) + ((distance_km - 1000.0) / 13.333)
+    } else {
+        // Beyond 1300 km: continue with 13.333 km/h
+        (600.0 / 15.0) + (400.0 / 11.428) + ((distance_km - 1000.0) / 13.333)
+    };
+    
+    // Apply event finish hard-caps for standard brevet distances
+    // These are checked based on the control distance matching standard distances
+    let capped_time_hours = {
+        let rounded_km = distance_km.round();
+        let hard_cap = if (rounded_km - 200.0).abs() < 1.0 {
+            Some(13.5) // 200 km: 13h 30m
+        } else if (rounded_km - 300.0).abs() < 1.0 {
+            Some(20.0) // 300 km: 20h 00m
+        } else if (rounded_km - 400.0).abs() < 1.0 {
+            Some(27.0) // 400 km: 27h 00m
+        } else if (rounded_km - 600.0).abs() < 1.0 {
+            Some(40.0) // 600 km: 40h 00m
+        } else if (rounded_km - 1000.0).abs() < 1.0 {
+            Some(75.0) // 1000 km: 75h 00m
+        } else {
+            None // No hard cap for other distances
+        };
+        
+        if let Some(cap) = hard_cap {
+            time_hours.min(cap)
+        } else {
+            time_hours
+        }
+    };
+    
+    let dt = (capped_time_hours * 3600.0).ceil() as i64; // convert hours to seconds
     let delta = chrono::TimeDelta::new(dt, 0).unwrap();
     start_time + delta
+}
+
+pub fn time_at_distance(distance: f64, parameters: &Parameters) -> DateTime {
+    let start_time = parameters::parse_time(&parameters.start_time);
+    
+    if parameters.use_acp_rules {
+        time_at_distance_acp(distance, start_time)
+    } else {
+        // Original constant speed calculation
+        let dt = (distance / parameters.speed).ceil() as i64;
+        let delta = chrono::TimeDelta::new(dt, 0).unwrap();
+        start_time + delta
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_constant_speed_mode() {
+        let mut params = Parameters::default();
+        params.use_acp_rules = false;
+        params.speed = mps(15.0); // 15 km/h
+        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        
+        let start = parameters::parse_time(&params.start_time);
+        
+        // 300 km at 15 km/h should take 20 hours
+        let dist_300km = 300_000.0;
+        let time_300 = time_at_distance(dist_300km, &params);
+        let duration_sec = (time_300 - start).num_seconds();
+        let duration_hours = duration_sec as f64 / 3600.0;
+        
+        assert!((duration_hours - 20.0).abs() < 0.01, 
+                "Expected ~20 hours, got {}", duration_hours);
+    }
+
+    #[test]
+    fn test_acp_short_distance() {
+        let mut params = Parameters::default();
+        params.use_acp_rules = true;
+        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        
+        let start = parameters::parse_time(&params.start_time);
+        
+        // Short distance (< 60 km): T = 1 + (D / 20)
+        // 40 km should take: 1 + (40/20) = 3 hours
+        let dist_40km = 40_000.0;
+        let time_40 = time_at_distance(dist_40km, &params);
+        let duration_sec = (time_40 - start).num_seconds();
+        let duration_hours = duration_sec as f64 / 3600.0;
+        let expected = 1.0 + (40.0 / 20.0); // 3 hours
+        
+        assert!((duration_hours - expected).abs() < 0.01, 
+                "Expected ~{} hours for 40km, got {}", expected, duration_hours);
+    }
+
+    #[test]
+    fn test_acp_below_600km() {
+        let mut params = Parameters::default();
+        params.use_acp_rules = true;
+        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        
+        let start = parameters::parse_time(&params.start_time);
+        
+        // 300 km at 15 km/h should take 20 hours
+        let dist_300km = 300_000.0;
+        let time_300 = time_at_distance(dist_300km, &params);
+        let duration_sec = (time_300 - start).num_seconds();
+        let duration_hours = duration_sec as f64 / 3600.0;
+        
+        assert!((duration_hours - 20.0).abs() < 0.01, 
+                "Expected ~20 hours for 300km, got {}", duration_hours);
+    }
+
+    #[test]
+    fn test_acp_at_600km() {
+        let mut params = Parameters::default();
+        params.use_acp_rules = true;
+        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        
+        let start = parameters::parse_time(&params.start_time);
+        
+        // 600 km: hard cap should be 40 hours
+        let dist_600km = 600_000.0;
+        let time_600 = time_at_distance(dist_600km, &params);
+        let duration_sec = (time_600 - start).num_seconds();
+        let duration_hours = duration_sec as f64 / 3600.0;
+        
+        assert!((duration_hours - 40.0).abs() < 0.01, 
+                "Expected 40 hours for 600km (hard cap), got {}", duration_hours);
+    }
+
+    #[test]
+    fn test_acp_between_600_and_1000km() {
+        let mut params = Parameters::default();
+        params.use_acp_rules = true;
+        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        
+        let start = parameters::parse_time(&params.start_time);
+        
+        // 800 km: 600/15 + (800-600)/11.428
+        //       = 40 + 200/11.428 = 40 + 17.5 = 57.5 hours
+        let dist_800km = 800_000.0;
+        let time_800 = time_at_distance(dist_800km, &params);
+        let duration_sec = (time_800 - start).num_seconds();
+        let duration_hours = duration_sec as f64 / 3600.0;
+        let expected = 40.0 + (200.0 / 11.428); // ~57.5 hours
+        
+        assert!((duration_hours - expected).abs() < 0.1, 
+                "Expected ~{} hours for 800km, got {}", expected, duration_hours);
+    }
+
+    #[test]
+    fn test_acp_at_1000km() {
+        let mut params = Parameters::default();
+        params.use_acp_rules = true;
+        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        
+        let start = parameters::parse_time(&params.start_time);
+        
+        // 1000 km: hard cap should be 75 hours
+        // Calculated: 600/15 + 400/11.428 = 40 + 35 = 75 hours
+        let dist_1000km = 1_000_000.0;
+        let time_1000 = time_at_distance(dist_1000km, &params);
+        let duration_sec = (time_1000 - start).num_seconds();
+        let duration_hours = duration_sec as f64 / 3600.0;
+        
+        assert!((duration_hours - 75.0).abs() < 0.1, 
+                "Expected 75 hours for 1000km (hard cap), got {}", duration_hours);
+    }
+
+    #[test]
+    fn test_acp_above_1000km() {
+        let mut params = Parameters::default();
+        params.use_acp_rules = true;
+        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        
+        let start = parameters::parse_time(&params.start_time);
+        
+        // 1200 km: 600/15 + 400/11.428 + 200/13.333
+        //        = 40 + 35 + 15 = 90 hours
+        let dist_1200km = 1_200_000.0;
+        let time_1200 = time_at_distance(dist_1200km, &params);
+        let duration_sec = (time_1200 - start).num_seconds();
+        let duration_hours = duration_sec as f64 / 3600.0;
+        let expected = 40.0 + (400.0 / 11.428) + (200.0 / 13.333);
+        
+        assert!((duration_hours - expected).abs() < 0.1, 
+                "Expected ~{} hours for 1200km, got {}", expected, duration_hours);
+    }
+
+    #[test]
+    fn test_acp_standard_brevets() {
+        // Test the standard brevet distances with their hard caps
+        let mut params = Parameters::default();
+        params.use_acp_rules = true;
+        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        
+        let start = parameters::parse_time(&params.start_time);
+        
+        // Test each standard distance
+        let test_cases = vec![
+            (200_000.0, 13.5),   // 200 km: 13h 30m
+            (300_000.0, 20.0),   // 300 km: 20h 00m
+            (400_000.0, 27.0),   // 400 km: 27h 00m
+            (600_000.0, 40.0),   // 600 km: 40h 00m
+            (1_000_000.0, 75.0), // 1000 km: 75h 00m
+        ];
+        
+        for (distance, expected_hours) in test_cases {
+            let time = time_at_distance(distance, &params);
+            let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
+            println!("{} km: {:.2} hours", distance / 1000.0, duration_hours);
+            assert!(
+                duration_hours <= expected_hours + 0.1,
+                "{} km should not exceed {} hours, got {}",
+                distance / 1000.0,
+                expected_hours,
+                duration_hours
+            );
+        }
+    }
 }
