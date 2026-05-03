@@ -1,3 +1,4 @@
+use crate::inputpoint::InputPointData::OSM;
 use clap::ValueEnum;
 use std::collections::{BTreeMap, HashSet};
 
@@ -7,15 +8,27 @@ use crate::{
     math::IntegerSize2D,
     parameters::{Parameters, RenderFunction, UserStepsOptions},
     track::Track,
-    track_projection::{is_close_to_track, TrackProjection, TrackProjections},
+    track_projection::{TrackProjection, TrackProjections},
 };
 
 fn sort_by_elevation(mountains: &mut Vec<InputPoint>) {
-    mountains.sort_by_key(|w| std::cmp::Reverse(w.ele().unwrap_or(0f64).floor() as i32));
+    mountains.sort_by_key(|w| {
+        let elevation = match &w.data {
+            OSM(d) => d.elevation(),
+            _ => 0f64,
+        };
+        std::cmp::Reverse(elevation.floor() as i32)
+    });
 }
 
 fn sort_by_population(cities: &mut Vec<InputPoint>) {
-    cities.sort_by_key(|w| std::cmp::Reverse(w.population().unwrap_or(0)));
+    cities.sort_by_key(|w| {
+        let population = match &w.data {
+            OSM(d) => d.population(),
+            _ => 0,
+        };
+        std::cmp::Reverse(population)
+    });
 }
 
 #[allow(dead_code)]
@@ -422,6 +435,10 @@ impl PointCollection {
 
     pub fn import_osm(&mut self, points: &Vec<InputPoint>) {
         let empty = Vec::new();
+        for p in points.iter() {
+            log::trace!("checkA = {}", p.name());
+        }
+
         self.map.insert(Kind::Cities, empty.clone());
         self.map.insert(Kind::Hamlets, empty.clone());
         self.map.insert(Kind::Mountains, empty.clone());
@@ -432,8 +449,14 @@ impl PointCollection {
             if !is_osm(&wi.kind()) {
                 continue;
             }
+            let d = if let Some(proj) = wi.track_projections.first() {
+                proj.track_distance
+            } else {
+                0f64
+            };
+            let dmax = wi.dmax();
             // insert also offtrack cities
-            if wi.kind() == Kind::Cities || is_close_to_track(&wi) {
+            if wi.kind() == Kind::Cities || wi.is_close_to_track() {
                 self.push(wi);
             }
         }
@@ -453,14 +476,14 @@ impl PointCollection {
 
     fn ontrack_cities(&self) -> Vec<InputPoint> {
         let mut cities = self.get_vector(&Kind::Cities);
-        cities.retain(|w| is_close_to_track(&w));
+        cities.retain(|w| w.is_close_to_track());
         sort_by_population(&mut cities);
         cities
     }
 
     pub fn offtrack_cities(&self) -> Vec<InputPoint> {
         let mut cities = self.get_vector(&Kind::Cities);
-        cities.retain(|w| !is_close_to_track(&w));
+        cities.retain(|w| !w.is_close_to_track());
         //sort_by_distance(&mut cities);
         sort_by_population(&mut cities);
         cities.truncate(8);

@@ -13,8 +13,7 @@ fn profile_points_elevation_gain_track(track: &Track, d: &f64) -> Vec<InputPoint
             break;
         }
         let (wgs, proj) = track.point_at_elevation_gain(di, start_search);
-        let count = ret.len() + 1;
-        let w = InputPoint::create_user_step_on_track(&wgs, proj, &format!("P{}", count));
+        let w = InputPoint::create_user_step_on_track(&wgs, proj);
         ret.push(w);
     }
     ret
@@ -32,8 +31,7 @@ fn profile_points_distance_track(track: &Track, d: &f64) -> Vec<InputPoint> {
             break;
         }
         let (wgs, proj) = track.point_at_distance(di, start_search);
-        let count = ret.len() + 1;
-        let w = InputPoint::create_user_step_on_track(&wgs, proj, &format!("P{}", count));
+        let w = InputPoint::create_user_step_on_track(&wgs, proj);
         ret.push(w);
     }
     ret

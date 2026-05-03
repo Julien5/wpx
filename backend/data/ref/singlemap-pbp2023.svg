@@ -110,246 +110,246 @@
 <circle cx="1429.3630604988975" cy="435.49714991927794" fill="Gray" id="2/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="1374.016086265979" cy="424.6886332178092" fill="Black" id="160/wp/circle" r="4"/>
-<circle cx="1374.016086265979" cy="424.6886332178092" fill="white" id="160/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(1374.016086265979 424.6886332178092)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="27.867105263157896" x="4" y="4"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="31.867105263157896" x="2" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="160/wp/text" text-anchor="start" x="4.000" y="13.000">
-Blévy
-</text>
-</g>
-<g>
-<circle cx="420.6729945519521" cy="602.8800409368359" fill="Black" id="158/wp/circle" r="4"/>
-<circle cx="420.6729945519521" cy="602.8800409368359" fill="white" id="158/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(420.6729945519521 602.8800409368359)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="28.021052631578947" x="-14.010526315789473" y="27"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="32.02105263157895" x="-16.010526315789473" y="25"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="158/wp/text" text-anchor="start" x="-14.011" y="36.000">
-Stival
-</text>
-</g>
-<path d="M420.67,621.88 L420.67,608.88" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
-<g>
-<circle cx="346.66081503297164" cy="542.918285853495" fill="Black" id="157/wp/circle" r="4"/>
-<circle cx="346.66081503297164" cy="542.918285853495" fill="white" id="157/wp/circle-little-white" r="2.5"/>
-</g>
-<g transform="translate(346.66081503297164 542.918285853495)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.6592105263158" x="-31.3296052631579" y="-36"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.6592105263158" x="-33.3296052631579" y="-38"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="157/wp/text" text-anchor="start" x="-31.330" y="-27.000">
-Saint-Lubin
-</text>
-</g>
-<path d="M346.66,523.92 L346.66,536.92" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
-<g>
-<circle cx="1190.5149710884143" cy="483.00241609499244" fill="Black" id="155/wp/circle" r="4"/>
-<circle cx="1190.5149710884143" cy="483.00241609499244" fill="white" id="155/wp/circle-little-white" r="2.5"/>
+<circle cx="1190.5149710884143" cy="483.00241609499244" fill="Black" id="161/wp/circle" r="4"/>
+<circle cx="1190.5149710884143" cy="483.00241609499244" fill="white" id="161/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1190.5149710884143 483.00241609499244)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="24.9421052631579" x="-12.47105263157895" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="28.9421052631579" x="-14.47105263157895" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="155/wp/text" text-anchor="start" x="-12.471" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="161/wp/text" text-anchor="start" x="-12.471" y="-4.000">
 Vidai
 </text>
 </g>
 <g>
-<circle cx="561.7182464586276" cy="555.9839793857682" fill="Black" id="148/wp/circle" r="4"/>
-<circle cx="561.7182464586276" cy="555.9839793857682" fill="white" id="148/wp/circle-little-white" r="2.5"/>
+<circle cx="561.7182464586276" cy="555.9839793857682" fill="Black" id="154/wp/circle" r="4"/>
+<circle cx="561.7182464586276" cy="555.9839793857682" fill="white" id="154/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(561.7182464586276 555.9839793857682)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="80.97894736842106" x="-40.48947368421053" y="-36"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="84.97894736842106" x="-42.48947368421053" y="-38"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="148/wp/text" text-anchor="start" x="-40.489" y="-27.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="154/wp/text" text-anchor="start" x="-40.489" y="-27.000">
 Saint-Launeuc
 </text>
 </g>
 <path d="M561.72,536.98 L561.72,549.98" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
-<circle cx="1173.6727643467061" cy="481.74708764924617" fill="Black" id="146/wp/circle" r="4"/>
-<circle cx="1173.6727643467061" cy="481.74708764924617" fill="white" id="146/wp/circle-little-white" r="2.5"/>
+<circle cx="1173.6727643467061" cy="481.74708764924617" fill="Black" id="152/wp/circle" r="4"/>
+<circle cx="1173.6727643467061" cy="481.74708764924617" fill="white" id="152/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1173.6727643467061 481.74708764924617)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="39.5671052631579" x="-43.5671052631579" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="43.5671052631579" x="-45.5671052631579" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="146/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="152/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Roullée
 </text>
 </g>
 <g>
-<circle cx="1396.1989359305794" cy="415.325075618317" fill="Black" id="145/wp/circle" r="4"/>
-<circle cx="1396.1989359305794" cy="415.325075618317" fill="white" id="145/wp/circle-little-white" r="2.5"/>
+<circle cx="1396.1989359305794" cy="415.325075618317" fill="Black" id="151/wp/circle" r="4"/>
+<circle cx="1396.1989359305794" cy="415.325075618317" fill="white" id="151/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1396.1989359305794 415.325075618317)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="71.35723684210527" x="-75.35723684210527" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="75.35723684210527" x="-77.35723684210527" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="145/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="151/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Crécy-Couvé
 </text>
 </g>
 <g>
-<circle cx="909.5127702314562" cy="496.31445273213285" fill="Black" id="141/wp/circle" r="4"/>
-<circle cx="909.5127702314562" cy="496.31445273213285" fill="white" id="141/wp/circle-little-white" r="2.5"/>
+<circle cx="909.5127702314562" cy="496.31445273213285" fill="Black" id="147/wp/circle" r="4"/>
+<circle cx="909.5127702314562" cy="496.31445273213285" fill="white" id="147/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(909.5127702314562 496.31445273213285)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="30.407236842105263" x="-15.203618421052632" y="27"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="34.40723684210526" x="-17.20361842105263" y="25"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="141/wp/text" text-anchor="start" x="-15.204" y="36.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="147/wp/text" text-anchor="start" x="-15.204" y="36.000">
 Hercé
 </text>
 </g>
 <path d="M909.51,515.31 L909.51,502.31" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
-<circle cx="442.33981098047946" cy="541.4961280176049" fill="Black" id="131/wp/circle" r="4"/>
-<circle cx="442.33981098047946" cy="541.4961280176049" fill="white" id="131/wp/circle-little-white" r="2.5"/>
+<circle cx="442.33981098047946" cy="541.4961280176049" fill="Black" id="137/wp/circle" r="4"/>
+<circle cx="442.33981098047946" cy="541.4961280176049" fill="white" id="137/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(442.33981098047946 541.4961280176049)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="42.33815789473685" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="46.33815789473685" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="131/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="137/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Merléac
 </text>
 </g>
 <g>
-<circle cx="1011.313954686208" cy="507.78215899369025" fill="Black" id="129/wp/circle" r="4"/>
-<circle cx="1011.313954686208" cy="507.78215899369025" fill="white" id="129/wp/circle-little-white" r="2.5"/>
+<circle cx="1011.313954686208" cy="507.78215899369025" fill="Black" id="135/wp/circle" r="4"/>
+<circle cx="1011.313954686208" cy="507.78215899369025" fill="white" id="135/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1011.313954686208 507.78215899369025)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="46.10986842105264" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="50.10986842105264" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="129/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="135/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Le Ribay
 </text>
 </g>
 <g>
-<circle cx="1052.7353842867421" cy="524.1065228997068" fill="Black" id="127/wp/circle" r="4"/>
-<circle cx="1052.7353842867421" cy="524.1065228997068" fill="white" id="127/wp/circle-little-white" r="2.5"/>
+<circle cx="1052.7353842867421" cy="524.1065228997068" fill="Black" id="133/wp/circle" r="4"/>
+<circle cx="1052.7353842867421" cy="524.1065228997068" fill="white" id="133/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1052.7353842867421 524.1065228997068)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="41.56842105263158" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="45.56842105263158" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="127/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="133/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Averton
 </text>
 </g>
 <g>
-<circle cx="1310.4869652305788" cy="457.3379902857523" fill="Black" id="125/wp/circle" r="4"/>
-<circle cx="1310.4869652305788" cy="457.3379902857523" fill="white" id="125/wp/circle-little-white" r="2.5"/>
+<circle cx="1310.4869652305788" cy="457.3379902857523" fill="Black" id="131/wp/circle" r="4"/>
+<circle cx="1310.4869652305788" cy="457.3379902857523" fill="white" id="131/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1310.4869652305788 457.3379902857523)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="89.90789473684212" x="-44.95394736842106" y="-36"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="93.90789473684212" x="-46.95394736842106" y="-38"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="125/wp/text" text-anchor="start" x="-44.954" y="-27.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="131/wp/text" text-anchor="start" x="-44.954" y="-27.000">
 Neuilly-sur-Eure
 </text>
 </g>
 <path d="M1310.49,438.34 L1310.49,451.34" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
-<circle cx="974.2880220562796" cy="497.476232408093" fill="Black" id="124/wp/circle" r="4"/>
-<circle cx="974.2880220562796" cy="497.476232408093" fill="white" id="124/wp/circle-little-white" r="2.5"/>
+<circle cx="974.2880220562796" cy="497.476232408093" fill="Black" id="130/wp/circle" r="4"/>
+<circle cx="974.2880220562796" cy="497.476232408093" fill="white" id="130/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(974.2880220562796 497.476232408093)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="59.81118421052632" x="-29.90559210526316" y="27"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="63.81118421052632" x="-31.90559210526316" y="25"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="124/wp/text" text-anchor="start" x="-29.906" y="36.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="130/wp/text" text-anchor="start" x="-29.906" y="36.000">
 Chantrigné
 </text>
 </g>
 <path d="M974.29,516.48 L974.29,503.48" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
-<circle cx="1132.9061444201236" cy="491.22201485124606" fill="Black" id="123/wp/circle" r="4"/>
-<circle cx="1132.9061444201236" cy="491.22201485124606" fill="white" id="123/wp/circle-little-white" r="2.5"/>
+<circle cx="1132.9061444201236" cy="491.22201485124606" fill="Black" id="129/wp/circle" r="4"/>
+<circle cx="1132.9061444201236" cy="491.22201485124606" fill="white" id="129/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1132.9061444201236 491.22201485124606)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="60.73486842105264" x="4" y="4"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="64.73486842105264" x="2" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="123/wp/text" text-anchor="start" x="4.000" y="13.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="129/wp/text" text-anchor="start" x="4.000" y="13.000">
 Le Chevain
 </text>
 </g>
 <g>
-<circle cx="222.94240868081658" cy="505.00942737211153" fill="Black" id="118/wp/circle" r="4"/>
-<circle cx="222.94240868081658" cy="505.00942737211153" fill="white" id="118/wp/circle-little-white" r="2.5"/>
+<circle cx="222.94240868081658" cy="505.00942737211153" fill="Black" id="124/wp/circle" r="4"/>
+<circle cx="222.94240868081658" cy="505.00942737211153" fill="white" id="124/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(222.94240868081658 505.00942737211153)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="58.5796052631579" x="-29.28980263157895" y="-36"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="62.5796052631579" x="-31.28980263157895" y="-38"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="118/wp/text" text-anchor="start" x="-29.290" y="-27.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="124/wp/text" text-anchor="start" x="-29.290" y="-27.000">
 La Feuillée
 </text>
 </g>
 <path d="M222.94,486.01 L222.94,499.01" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
-<circle cx="670.947040988081" cy="530.2378921097825" fill="Black" id="116/wp/circle" r="4"/>
-<circle cx="670.947040988081" cy="530.2378921097825" fill="white" id="116/wp/circle-little-white" r="2.5"/>
+<circle cx="670.947040988081" cy="530.2378921097825" fill="Black" id="122/wp/circle" r="4"/>
+<circle cx="670.947040988081" cy="530.2378921097825" fill="white" id="122/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(670.947040988081 530.2378921097825)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="74.59013157894738" x="-37.29506578947369" y="-36"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="78.59013157894738" x="-39.29506578947369" y="-38"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="116/wp/text" text-anchor="start" x="-37.295" y="-27.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="122/wp/text" text-anchor="start" x="-37.295" y="-27.000">
 La Baussaine
 </text>
 </g>
 <path d="M670.95,511.24 L670.95,524.24" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
-<circle cx="1455.5257187622715" cy="423.0548384070571" fill="Black" id="115/wp/circle" r="4"/>
-<circle cx="1455.5257187622715" cy="423.0548384070571" fill="white" id="115/wp/circle-little-white" r="2.5"/>
+<circle cx="1455.5257187622715" cy="423.0548384070571" fill="Black" id="121/wp/circle" r="4"/>
+<circle cx="1455.5257187622715" cy="423.0548384070571" fill="white" id="121/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1455.5257187622715 423.0548384070571)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="46.80263157894737" x="-50.80263157894737" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="50.80263157894737" x="-52.80263157894737" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="115/wp/text" text-anchor="end" x="-4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="121/wp/text" text-anchor="end" x="-4.000" y="-4.000">
 Lormaye
 </text>
 </g>
 <g>
-<circle cx="1107.719137882186" cy="516.5799206272968" fill="Black" id="106/wp/circle" r="4"/>
-<circle cx="1107.719137882186" cy="516.5799206272968" fill="white" id="106/wp/circle-little-white" r="2.5"/>
+<circle cx="1107.719137882186" cy="516.5799206272968" fill="Black" id="112/wp/circle" r="4"/>
+<circle cx="1107.719137882186" cy="516.5799206272968" fill="white" id="112/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1107.719137882186 516.5799206272968)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="113.46184210526314" x="27" y="-4.5"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="117.46184210526314" x="25" y="-6.5"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="106/wp/text" text-anchor="start" x="27.000" y="4.500">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="112/wp/text" text-anchor="start" x="27.000" y="4.500">
 Gesnes-le-Gandelin
 </text>
 </g>
 <path d="M1126.72,516.58 L1113.72,516.58" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
-<circle cx="1102.2328712646504" cy="527.0243813013021" fill="Black" id="105/wp/circle" r="4"/>
-<circle cx="1102.2328712646504" cy="527.0243813013021" fill="white" id="105/wp/circle-little-white" r="2.5"/>
+<circle cx="1102.2328712646504" cy="527.0243813013021" fill="Black" id="111/wp/circle" r="4"/>
+<circle cx="1102.2328712646504" cy="527.0243813013021" fill="white" id="111/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(1102.2328712646504 527.0243813013021)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="84.36578947368422" x="4" y="4"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="88.36578947368422" x="2" y="2"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="105/wp/text" text-anchor="start" x="4.000" y="13.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="111/wp/text" text-anchor="start" x="4.000" y="13.000">
 Assé-le-Boisne
 </text>
 </g>
 <g>
-<circle cx="377.5812980197061" cy="558.139614813028" fill="Black" id="103/wp/circle" r="4"/>
-<circle cx="377.5812980197061" cy="558.139614813028" fill="white" id="103/wp/circle-little-white" r="2.5"/>
+<circle cx="377.5812980197061" cy="558.139614813028" fill="Black" id="109/wp/circle" r="4"/>
+<circle cx="377.5812980197061" cy="558.139614813028" fill="white" id="109/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(377.5812980197061 558.139614813028)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="46.80263157894738" x="4" y="-13"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="50.80263157894738" x="2" y="-15"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="103/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="109/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Gouarec
 </text>
 </g>
 <g>
-<circle cx="252.46312330567275" cy="558.0425838897227" fill="Black" id="102/wp/circle" r="4"/>
-<circle cx="252.46312330567275" cy="558.0425838897227" fill="white" id="102/wp/circle-little-white" r="2.5"/>
+<circle cx="252.46312330567275" cy="558.0425838897227" fill="Black" id="108/wp/circle" r="4"/>
+<circle cx="252.46312330567275" cy="558.0425838897227" fill="white" id="108/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(252.46312330567275 558.0425838897227)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="57.348026315789475" x="-28.674013157894738" y="27"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="61.348026315789475" x="-30.674013157894738" y="25"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="102/wp/text" text-anchor="start" x="-28.674" y="36.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="108/wp/text" text-anchor="start" x="-28.674" y="36.000">
 Landeleau
 </text>
 </g>
 <path d="M252.46,577.04 L252.46,564.04" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
+<g>
+<circle cx="1374.016086265979" cy="424.6886332178092" fill="Black" id="106/wp/circle" r="4"/>
+<circle cx="1374.016086265979" cy="424.6886332178092" fill="white" id="106/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(1374.016086265979 424.6886332178092)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="27.867105263157896" x="4" y="4"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="31.867105263157896" x="2" y="2"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="106/wp/text" text-anchor="start" x="4.000" y="13.000">
+Blévy
+</text>
+</g>
+<g>
+<circle cx="420.6729945519521" cy="602.8800409368359" fill="Black" id="104/wp/circle" r="4"/>
+<circle cx="420.6729945519521" cy="602.8800409368359" fill="white" id="104/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(420.6729945519521 602.8800409368359)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="28.021052631578947" x="-14.010526315789473" y="27"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="32.02105263157895" x="-16.010526315789473" y="25"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="104/wp/text" text-anchor="start" x="-14.011" y="36.000">
+Stival
+</text>
+</g>
+<path d="M420.67,621.88 L420.67,608.88" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
+<g>
+<circle cx="346.66081503297164" cy="542.918285853495" fill="Black" id="103/wp/circle" r="4"/>
+<circle cx="346.66081503297164" cy="542.918285853495" fill="white" id="103/wp/circle-little-white" r="2.5"/>
+</g>
+<g transform="translate(346.66081503297164 542.918285853495)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="62.6592105263158" x="-31.3296052631579" y="-36"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="66.6592105263158" x="-33.3296052631579" y="-38"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="103/wp/text" text-anchor="start" x="-31.330" y="-27.000">
+Saint-Lubin
+</text>
+</g>
+<path d="M346.66,523.92 L346.66,536.92" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 <g>
 <circle cx="514.3868700456507" cy="597.7517910322094" fill="Black" id="101/wp/circle" r="4"/>
 <circle cx="514.3868700456507" cy="597.7517910322094" fill="white" id="101/wp/circle-little-white" r="2.5"/>

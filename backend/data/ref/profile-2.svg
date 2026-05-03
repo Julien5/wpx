@@ -147,36 +147,36 @@ Sat
 </text>
 </g>
 <g>
-<circle cx="93.0395602675776" cy="285.25121428571424" fill="Black" id="10/wp" r="4"/>
-<circle cx="93.0395602675776" cy="285.25121428571424" fill="white" id="10/wp-little-white" r="2.5"/>
-</g>
-<g transform="translate(93.0395602675776 285.25121428571424)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="88.29144736842105" x="-44.14572368421052" y="7"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="92.29144736842105" x="-46.14572368421052" y="5"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="10/wp/text" text-anchor="start" x="-44.146" y="16.000">
-Haueneberstein
-</text>
-</g>
-<g>
-<circle cx="218.16344649043003" cy="288.9598571428571" fill="Black" id="9/wp" r="4"/>
-<circle cx="218.16344649043003" cy="288.9598571428571" fill="white" id="9/wp-little-white" r="2.5"/>
-</g>
-<g transform="translate(218.16344649043003 288.9598571428571)">
-<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="61.96644736842107" x="-30.983223684210536" y="7"/>
-<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="65.96644736842107" x="-32.983223684210536" y="5"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="9/wp/text" text-anchor="start" x="-30.983" y="16.000">
-Wintersdorf
-</text>
-</g>
-<g>
-<circle cx="389.1032450693051" cy="289.57796428571424" fill="Black" id="8/wp" r="4"/>
-<circle cx="389.1032450693051" cy="289.57796428571424" fill="white" id="8/wp-little-white" r="2.5"/>
+<circle cx="389.1032450693051" cy="289.57796428571424" fill="Black" id="11/wp" r="4"/>
+<circle cx="389.1032450693051" cy="289.57796428571424" fill="white" id="11/wp-little-white" r="2.5"/>
 </g>
 <g transform="translate(389.1032450693051 289.57796428571424)">
 <rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="77.97697368421053" x="-38.98848684210527" y="-16"/>
 <rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="81.97697368421053" x="-40.98848684210527" y="-18"/>
-<text font-size="13.0" font-style="normal" font-weight="normal" id="8/wp/text" text-anchor="start" x="-38.988" y="-7.000">
+<text font-size="13.0" font-style="normal" font-weight="normal" id="11/wp/text" text-anchor="start" x="-38.988" y="-7.000">
 Munchhausen
+</text>
+</g>
+<g>
+<circle cx="93.0395602675776" cy="285.25121428571424" fill="Black" id="9/wp" r="4"/>
+<circle cx="93.0395602675776" cy="285.25121428571424" fill="white" id="9/wp-little-white" r="2.5"/>
+</g>
+<g transform="translate(93.0395602675776 285.25121428571424)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="88.29144736842105" x="-44.14572368421052" y="7"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="92.29144736842105" x="-46.14572368421052" y="5"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="9/wp/text" text-anchor="start" x="-44.146" y="16.000">
+Haueneberstein
+</text>
+</g>
+<g>
+<circle cx="218.16344649043003" cy="288.9598571428571" fill="Black" id="8/wp" r="4"/>
+<circle cx="218.16344649043003" cy="288.9598571428571" fill="white" id="8/wp-little-white" r="2.5"/>
+</g>
+<g transform="translate(218.16344649043003 288.9598571428571)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="61.96644736842107" x="-30.983223684210536" y="7"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="65.96644736842107" x="-32.983223684210536" y="5"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="8/wp/text" text-anchor="start" x="-30.983" y="16.000">
+Wintersdorf
 </text>
 </g>
 <g>

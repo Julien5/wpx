@@ -17,7 +17,6 @@ use crate::track::Track;
 use crate::math::distance2;
 #[allow(unused_imports)]
 use crate::point_collection::Kind;
-use crate::track_projection::is_close_to_track;
 
 use svg::Document;
 
@@ -64,7 +63,7 @@ impl CandidatesGenerator for MapGenerator {
 
         match feature.input_point() {
             Some(point) => {
-                if !is_close_to_track(&point) {
+                if !point.is_close_to_track() {
                     if feature.force_rendering() {
                         log::info!(
                             "feature has force rendering but is away from track: {:?}",

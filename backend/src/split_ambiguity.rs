@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use crate::inputpoint::InputPoint;
+use crate::inputpoint::{GPXWaypointData, InputPoint, InputPointData};
 use crate::track::Track;
 use crate::trackparts::parts_to_ranges;
 
@@ -47,7 +47,7 @@ pub fn user_steps_split(
         let primary = w.track_projections.first().unwrap().track_index;
         let mut clone = w.clone();
         // ugly hack to bypass locate.rs:234
-        clone.tags.insert("wpxtype".to_string(), "GPX".to_string());
+        clone.data = InputPointData::GPXWaypoint(GPXWaypointData::default());
         clone.track_projections.clear();
         track.project_point(&mut clone);
         let mut secondary = Vec::new();

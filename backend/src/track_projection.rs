@@ -2,12 +2,7 @@
 use std::{cmp::Ordering, collections::BTreeSet};
 
 use crate::{
-    inputpoint::InputPoint,
-    locate,
-    mercator::MercatorPoint,
-    parameters::TrackPart,
-    point_collection::{is_osm, Kind},
-    track::Track,
+    inputpoint::InputPoint, locate, mercator::MercatorPoint, parameters::TrackPart, track::Track,
     trackparts::parts_to_ranges,
 };
 
@@ -76,33 +71,6 @@ impl Ord for TrackProjection {
     }
 }
 
-fn population_estimate(kind: &Kind) -> i32 {
-    match kind {
-        Kind::Cities => 10000,
-        Kind::Villages => 1000,
-        Kind::Hamlets => 300,
-        _ => 0,
-    }
-}
-
-pub fn is_close_to_track(w: &InputPoint) -> bool {
-    if w.track_projections.is_empty() {
-        return false;
-    }
-    let d = w.track_projections.first().unwrap().track_distance;
-    d < dmax(&w.kind(), &w.population())
-}
-
-fn dmax(kind: &Kind, population: &Option<i32>) -> f64 {
-    if is_osm(kind) && *kind != Kind::Mountains {
-        let pop = population.unwrap_or(population_estimate(kind));
-        // the factor 20 was suggested by gemini
-        // (is it too large ? (Baden-Baden) with blackforest.gpx).
-        return 20f64 * (pop as f64).sqrt();
-    }
-    300.0
-}
-
 pub fn update_track_projection(
     point: &mut InputPoint,
     euclidean: &Vec<MercatorPoint>,
@@ -117,7 +85,7 @@ pub fn update_track_projection(
         return;
     }
 
-    let dmax = dmax(&point.kind(), &point.population());
+    let dmax = point.dmax();
     let d = new_projection.track_distance;
     if d > dmax {
         return;
@@ -247,7 +215,7 @@ impl ProjectionTrees {
     ) {
         update_track_projection(point, euclidean, distance, elevation, &self.total_tree);
         let index = point.track_projections.first().unwrap().track_index;
-        if is_close_to_track(&point) {
+        if point.is_close_to_track() {
             for tree in &self.subtrees {
                 // consider a tree only if it does *not* contain the already known index.
                 if !tree.range.contains(&index) {
@@ -268,7 +236,11 @@ impl ProjectionTrees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{gpsdata::GpxData, inputpoint::InputPointMap, wgs84point::WGS84Point};
+    use crate::{
+        gpsdata::GpxData,
+        inputpoint::{GPXWaypointData, InputPointData, InputPointMap},
+        wgs84point::WGS84Point,
+    };
 
     fn read(filename: String) -> GpxData {
         use crate::gpsdata;
@@ -295,7 +267,7 @@ mod tests {
         let mortagne = InputPoint {
             wgs84: WGS84Point::new(&0.5501095, &48.5205106, &0.0),
             euclidean: pos.clone(),
-            tags: tags,
+            data: InputPointData::GPXWaypoint(GPXWaypointData::default()),
             track_projections: TrackProjections::new(),
         };
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();

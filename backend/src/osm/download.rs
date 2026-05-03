@@ -4,7 +4,7 @@ use serde_json::Value;
 use crate::{
     error::{GenericResult, TrackError},
     event::{self},
-    inputpoint::{InputPoint, InputPoints, Tags},
+    inputpoint::{InputPoint, InputPointData, InputPoints, OSMData, Tags},
     mercator,
     osm::DownloadSideData,
     track_projection::TrackProjections,
@@ -82,7 +82,10 @@ async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<Stri
         response = future => {
             match response {
                 Ok(resp) => handle_response(resp).await,
-                Err(e) => Err(e.into()),
+                Err(e) => {
+                    log::trace!("e={:?}",e);
+                    Err(e.into())
+                },
             }
         }
         _ = side.cancel_token.cancelled() => {
@@ -130,6 +133,7 @@ pub async fn all(bbox: &str, side: &DownloadSideData<'_>) -> GenericResult<Strin
     let request = format!("{};({};);{};", header, body, footer);
     event::send_worker(&side.logger, &format!("{}", "send request"));
     dl_worker(&request, side).await
+    //Err(TrackError::OSMDownloadCancelled.into())
 }
 
 fn read_f64(map: &serde_json::Map<String, Value>, name: &str) -> f64 {
@@ -174,7 +178,7 @@ fn read_download_element(
     let ret = InputPoint {
         wgs84: wgs,
         euclidean,
-        tags,
+        data: InputPointData::OSM(OSMData { tags: tags }),
         track_projections: TrackProjections::new(),
     };
     Ok(ret)

@@ -2,14 +2,14 @@ use std::collections::BTreeSet;
 
 use crate::{
     backend::Segment,
-    inputpoint::InputPoint,
+    inputpoint::{InputPoint, InputPointData},
     math,
     mercator::MercatorPoint,
     parameters::Parameters,
     point_collection::{Kind, SharedPacketProvider},
     segment::SegmentData,
     track::Track,
-    track_projection::{is_close_to_track, TrackProjection, TrackProjections},
+    track_projection::{TrackProjection, TrackProjections},
     waypoint::Waypoint,
     wheel::shorten::shorten_name,
 };
@@ -45,7 +45,7 @@ pub fn set_control_names(controls: &mut Vec<InputPoint>) {
         } else {
             format!("END")
         };
-        p.tags.insert("name".to_string(), control_name);
+        p.data.as_control_mut().unwrap().name = control_name;
     }
 }
 
@@ -209,7 +209,12 @@ pub fn remove_control_at_waypoint(
         // them from).
         let index = control.track_projections.first().unwrap().track_index;
         let not_this_waypoint = index != waypoint.track_index.unwrap();
-        let has_waypoint = !control.tags.get("nearest_waypoint_id").unwrap().is_empty();
+        let has_waypoint = !control
+            .data
+            .as_control()
+            .unwrap()
+            .nearest_waypoint_id
+            .is_empty();
         // Keep start or end segment. Otherwise the end control might be moved to the
         // middle of the track (CP-1), which is confusing.
         let is_start_or_end = index == start_index || index == end_index;
@@ -220,23 +225,17 @@ pub fn remove_control_at_waypoint(
 }
 
 fn _control_point_goodness(point: &InputPoint) -> i32 {
-    let min_population = match point.kind() {
-        Kind::Cities => 10000,
-        Kind::Villages => 1000,
-        Kind::Hamlets => 100,
-        _ => 0,
-    };
-    match point.kind() {
-        Kind::CutOff => {
+    match &point.data {
+        InputPointData::CutOff => {
             return i32::MIN;
         }
-        Kind::GPXWaypoints | Kind::Controls => {
+        InputPointData::Control(_) | InputPointData::GPXWaypoint(_) => {
             return i32::MAX;
         }
-        _ => {
-            let population = point.population().unwrap_or(min_population);
+        InputPointData::OSM(d) => {
+            let population = d.population();
             if population > 0 {
-                return population;
+                return population as i32;
             }
             return 0;
         }
@@ -275,7 +274,7 @@ pub fn _select_osm_points_on_segment(
             let distance = proj.distance_on_track_to_projection;
             let is_far_from_last = distance > start;
             let is_far_from_end = distance < end;
-            let good = is_close_to_track(w) && is_far_from_last && is_far_from_end;
+            let good = w.is_close_to_track() && is_far_from_last && is_far_from_end;
             if good {
                 return true;
             }

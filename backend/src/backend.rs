@@ -30,7 +30,6 @@ use crate::segment::SegmentData;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
 use crate::track::Track;
-use crate::track_projection::is_close_to_track;
 use crate::waypoint;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
@@ -333,7 +332,7 @@ impl Backend {
                         return false;
                     }
                 }
-                is_close_to_track(&w)
+                w.is_close_to_track()
                     && range.contains(&w.track_projections.first().unwrap().track_index)
             });
             points.extend_from_slice(&copy);
@@ -608,6 +607,13 @@ mod tests {
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
     static BLACK_FOREST: &'static str = "data/blackforest.gpx";
 
+    async fn load_test_data_no_osm(filename: &str) -> Backend {
+        let mut backend = Backend::make();
+        backend.load_filename(filename).expect("fail");
+        backend.load_controls().unwrap();
+        backend
+    }
+
     async fn load_test_data(filename: &str) -> Backend {
         let mut backend = Backend::make();
         backend.load_filename(filename).expect("fail");
@@ -661,7 +667,7 @@ mod tests {
     #[tokio::test]
     async fn svg_segment_wheel() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data(BLACK_FOREST).await;
+        let mut backend = load_test_data_no_osm(BLACK_FOREST).await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((3_000) as f64);
