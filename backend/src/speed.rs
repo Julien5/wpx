@@ -81,7 +81,7 @@ fn duration_to_distance_acp(distance: f64) -> f64 {
     capped_time_hours * 3600.0 // convert hours to seconds
 }
 
-pub fn duration_to_distance(distance: f64, speed: &Speed) -> TimeDelta {
+pub fn duration_distance(distance: f64, speed: &Speed) -> TimeDelta {
     let seconds = match speed {
         Speed::ACP => duration_to_distance_acp(distance),
         Speed::MPS(mps) => distance / mps,
@@ -92,7 +92,7 @@ pub fn duration_to_distance(distance: f64, speed: &Speed) -> TimeDelta {
 pub fn time_at_distance(distance: f64, parameters: &Parameters) -> DateTime {
     let start_time = parameters::parse_time(&parameters.start_time);
     let speed = parse_speed(&parameters.speed);
-    let delta = duration_to_distance(distance, &speed);
+    let delta = duration_distance(distance, &speed);
     start_time + delta
 }
 

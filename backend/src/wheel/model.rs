@@ -7,7 +7,7 @@ use crate::{
     mercator::DateTime,
     point_collection::{Kind, Kinds},
     segment::SegmentData,
-    speed::{duration_to_distance, Speed},
+    speed::{duration_distance, Speed},
     track::Track,
     wheel::time_points,
 };
@@ -29,7 +29,7 @@ pub struct TimeParameters {
 
 impl TimeParameters {
     pub fn duration(&self) -> TimeDelta {
-        duration_to_distance(self.total_distance, &self.speed)
+        duration_distance(self.total_distance, &self.speed)
     }
 }
 
