@@ -87,7 +87,9 @@ impl WaypointInfo {
     ) -> WaypointInfo {
         assert!(w.get_track_index() < track.len());
         let distance = track.distance(w.get_track_index());
-        let time = speed::time_at_distance(distance, parameters);
+        let start_time = parameters::parse_time(&parameters.start_time);
+        let speed = speed::parse_speed(&parameters.speed);
+        let time = speed::time_at_distance(distance, &start_time, &speed);
         let name = w.name.clone();
         let description = w.description.clone();
         let elevation = track.elevation(w.get_track_index());

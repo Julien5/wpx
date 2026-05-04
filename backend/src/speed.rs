@@ -1,9 +1,6 @@
 use chrono::TimeDelta;
 
-use crate::{
-    mercator::DateTime,
-    parameters::{self, Parameters},
-};
+use crate::mercator::DateTime;
 
 // from mps to kmh
 pub fn _kmh(_mps: f64) -> f64 {
@@ -89,12 +86,24 @@ pub fn duration_distance(distance: f64, speed: &Speed) -> TimeDelta {
     TimeDelta::nanoseconds((1000_000_000f64 * seconds).round() as i64)
 }
 
-pub fn time_at_distance(distance: f64, parameters: &Parameters) -> DateTime {
-    let start_time = parameters::parse_time(&parameters.start_time);
-    let speed = parse_speed(&parameters.speed);
+pub fn time_at_distance(distance: f64, start_time: &DateTime, speed: &Speed) -> DateTime {
     let delta = duration_distance(distance, &speed);
-    start_time + delta
+    *start_time + delta
 }
+
+/*pub struct ControlSpeedData {
+    distance: f64,
+}
+
+pub fn time_at_distance_with_controls(
+    controls: Vec<ControlSpeedData>,
+    distance: f64,
+    start_time: &DateTime,
+    speed: &Speed,
+) -> DateTime {
+    let delta = duration_distance(distance, &speed);
+    *start_time + delta
+}*/
 
 pub fn distance_after_duration(duration: TimeDelta, speed: &Speed) -> f64 {
     match speed {
@@ -121,6 +130,11 @@ pub fn parse_speed(data: &str) -> Speed {
 
 #[cfg(test)]
 mod tests {
+    use crate::{
+        parameters::{self, Parameters},
+        speed,
+    };
+
     use super::*;
 
     #[test]
@@ -133,7 +147,8 @@ mod tests {
 
         // 300 km at 15 km/h should take 20 hours
         let dist_300km = 300_000.0;
-        let time_300 = time_at_distance(dist_300km, &params);
+        let speed = speed::parse_speed(&params.speed);
+        let time_300 = speed::time_at_distance(dist_300km, &start, &speed);
         let duration_sec = (time_300 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
@@ -155,7 +170,8 @@ mod tests {
         // Short distance (< 60 km): T = 1 + (D / 20)
         // 40 km should take: 1 + (40/20) = 3 hours
         let dist_40km = 40_000.0;
-        let time_40 = time_at_distance(dist_40km, &params);
+        let speed = speed::parse_speed(&params.speed);
+        let time_40 = time_at_distance(dist_40km, &start, &speed);
         let duration_sec = (time_40 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 1.0 + (40.0 / 20.0); // 3 hours
@@ -178,7 +194,8 @@ mod tests {
 
         // 300 km at 15 km/h should take 20 hours
         let dist_300km = 300_000.0;
-        let time_300 = time_at_distance(dist_300km, &params);
+        let speed = speed::parse_speed(&params.speed);
+        let time_300 = time_at_distance(dist_300km, &start, &speed);
         let duration_sec = (time_300 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
@@ -199,7 +216,8 @@ mod tests {
 
         // 600 km: hard cap should be 40 hours
         let dist_600km = 600_000.0;
-        let time_600 = time_at_distance(dist_600km, &params);
+        let speed = speed::parse_speed(&params.speed);
+        let time_600 = time_at_distance(dist_600km, &start, &speed);
         let duration_sec = (time_600 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
@@ -217,11 +235,11 @@ mod tests {
         params.start_time = "2026-04-29T10:00:00+02:00".to_string();
 
         let start = parameters::parse_time(&params.start_time);
-
+        let speed = speed::parse_speed(&params.speed);
         // 800 km: 600/15 + (800-600)/11.428
         //       = 40 + 200/11.428 = 40 + 17.5 = 57.5 hours
         let dist_800km = 800_000.0;
-        let time_800 = time_at_distance(dist_800km, &params);
+        let time_800 = time_at_distance(dist_800km, &start, &speed);
         let duration_sec = (time_800 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 40.0 + (200.0 / 11.428); // ~57.5 hours
@@ -245,7 +263,8 @@ mod tests {
         // 1000 km: hard cap should be 75 hours
         // Calculated: 600/15 + 400/11.428 = 40 + 35 = 75 hours
         let dist_1000km = 1_000_000.0;
-        let time_1000 = time_at_distance(dist_1000km, &params);
+        let speed = speed::parse_speed(&params.speed);
+        let time_1000 = time_at_distance(dist_1000km, &start, &speed);
         let duration_sec = (time_1000 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
@@ -267,7 +286,8 @@ mod tests {
         // 1200 km: 600/15 + 400/11.428 + 200/13.333
         //        = 40 + 35 + 15 = 90 hours
         let dist_1200km = 1_200_000.0;
-        let time_1200 = time_at_distance(dist_1200km, &params);
+        let speed = speed::parse_speed(&params.speed);
+        let time_1200 = time_at_distance(dist_1200km, &start, &speed);
         let duration_sec = (time_1200 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 40.0 + (400.0 / 11.428) + (200.0 / 13.333);
@@ -287,8 +307,6 @@ mod tests {
         params.speed = format!("ACP");
         params.start_time = "2026-04-29T10:00:00+02:00".to_string();
 
-        let start = parameters::parse_time(&params.start_time);
-
         // Test each standard distance
         let test_cases = vec![
             (200_000.0, 13.5),   // 200 km: 13h 30m
@@ -298,8 +316,10 @@ mod tests {
             (1_000_000.0, 75.0), // 1000 km: 75h 00m
         ];
 
+        let start = parameters::parse_time(&params.start_time);
+        let speed = speed::parse_speed(&params.speed);
         for (distance, expected_hours) in test_cases {
-            let time = time_at_distance(distance, &params);
+            let time = time_at_distance(distance, &start, &speed);
             let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
             println!("{} km: {:.2} hours", distance / 1000.0, duration_hours);
             assert!(

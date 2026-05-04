@@ -1,4 +1,4 @@
-use crate::parameters::Parameters;
+use crate::parameters::{self, Parameters};
 use crate::point_collection::Kind;
 use crate::speed;
 
@@ -62,7 +62,9 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
     }
     let mut result = format.to_string();
     let original_format = format.to_string(); // Keep original for iterating
-    let time = speed::time_at_distance(data.distance, parameters);
+    let start_time = parameters::parse_time(&parameters.start_time);
+    let speed = speed::parse_speed(&parameters.speed);
+    let time = speed::time_at_distance(data.distance, &start_time, &speed);
 
     // Iterate over all matched placeholders in the format string
     for cap in format_regex.captures_iter(&original_format) {

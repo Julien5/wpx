@@ -12,7 +12,6 @@ use crate::label_placement::drawings::draw_for_profile;
 use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
-use crate::label_placement::*;
 use crate::math::Point2D;
 use crate::parameters::ProfileIndication;
 use crate::point_collection::{Kind, Packets, RenderInputParameters, RenderResult};
@@ -20,6 +19,7 @@ use crate::track::Track;
 use crate::wheel::model::TimeParameters;
 use crate::{gpsdata, speed};
 use crate::{label_placement, wheel};
+use crate::{label_placement::*, parameters};
 use elements::*;
 
 pub struct ProfileModel {
@@ -184,8 +184,11 @@ impl ProfileView {
         pacing_points: &Vec<InputPoint>,
     ) -> (Vec<PointFeature>, Vec<Point2D>) {
         let xstart = self.bboxview().get_xmin();
-        let start = speed::time_at_distance(xstart, &self.parameters.parameters);
+
+        let start_time = parameters::parse_time(&self.parameters.parameters.start_time);
         let speed = speed::parse_speed(&self.parameters.parameters.speed);
+
+        let start = speed::time_at_distance(xstart, &start_time, &speed);
         let total_distance = self.bboxview().width();
         let time_parameters = TimeParameters {
             start,
