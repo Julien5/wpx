@@ -185,11 +185,11 @@ impl ProfileView {
     ) -> (Vec<PointFeature>, Vec<Point2D>) {
         let xstart = self.bboxview().get_xmin();
         let start = speed::time_at_distance(xstart, &self.parameters.parameters);
-        let speed = self.parameters.parameters.speed;
+        let speed = speed::parse_speed(&self.parameters.parameters.speed);
         let total_distance = self.bboxview().width();
         let time_parameters = TimeParameters {
             start,
-            speed,
+            speed: speed.clone(),
             total_distance,
         };
         let times = wheel::time_points::generate_times(&time_parameters);
@@ -197,7 +197,7 @@ impl ProfileView {
         let mut features = Vec::new();
         for (k, time) in times.iter().enumerate() {
             let duration = *time - start;
-            let x = xstart + duration.as_seconds_f64() * speed;
+            let x = xstart + speed::distance_after_duration(duration, &speed);
             let xd = self.toSD(&Point2D::new(x, 0f64)).x;
             if xd > self.WD() {
                 break;
@@ -213,7 +213,7 @@ impl ProfileView {
                     group: svg::node::element::Group::new(),
                     center: Point2D::new(xd, bottom - self.frame_stroke_width),
                 },
-                label,  
+                label,
                 input_point: None,
                 link: None,
                 xmlid: k, // TODO: remove this

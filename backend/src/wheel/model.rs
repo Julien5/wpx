@@ -1,3 +1,5 @@
+use chrono::TimeDelta;
+
 use crate::{
     backend::Segment,
     controls,
@@ -5,6 +7,7 @@ use crate::{
     mercator::DateTime,
     point_collection::{Kind, Kinds},
     segment::SegmentData,
+    speed::{duration_to_distance, Speed},
     track::Track,
     wheel::time_points,
 };
@@ -20,13 +23,13 @@ pub fn angle(x: f64, total: f64) -> f64 {
 #[derive(Clone)]
 pub struct TimeParameters {
     pub start: DateTime,
-    pub speed: f64,
+    pub speed: Speed,
     pub total_distance: f64,
 }
 
 impl TimeParameters {
-    pub fn duration_seconds(&self) -> f64 {
-        self.total_distance / self.speed
+    pub fn duration(&self) -> TimeDelta {
+        duration_to_distance(self.total_distance, &self.speed)
     }
 }
 

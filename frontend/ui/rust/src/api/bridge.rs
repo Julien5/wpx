@@ -155,7 +155,7 @@ pub struct _Parameters {
     pub segment_length: f64,
     pub segment_overlap: f64,
     pub smooth_width: f64,
-    pub speed: f64,
+    pub speed: String,
     pub start_time: String,
     pub user_steps_options: UserStepsOptions,
 }

@@ -435,10 +435,6 @@ impl PointCollection {
 
     pub fn import_osm(&mut self, points: &Vec<InputPoint>) {
         let empty = Vec::new();
-        for p in points.iter() {
-            log::trace!("checkA = {}", p.name());
-        }
-
         self.map.insert(Kind::Cities, empty.clone());
         self.map.insert(Kind::Hamlets, empty.clone());
         self.map.insert(Kind::Mountains, empty.clone());
@@ -449,12 +445,6 @@ impl PointCollection {
             if !is_osm(&wi.kind()) {
                 continue;
             }
-            let d = if let Some(proj) = wi.track_projections.first() {
-                proj.track_distance
-            } else {
-                0f64
-            };
-            let dmax = wi.dmax();
             // insert also offtrack cities
             if wi.kind() == Kind::Cities || wi.is_close_to_track() {
                 self.push(wi);

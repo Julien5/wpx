@@ -1,8 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{
-    error::RenderError, mercator::DateTime, point_collection::Kind, speed, waypoint::Waypoint,
-};
+use crate::{error::RenderError, mercator::DateTime, point_collection::Kind, waypoint::Waypoint};
 
 #[derive(Clone, PartialOrd, Ord, PartialEq, Eq, Debug, Default)]
 pub enum RenderFunction {
@@ -123,9 +121,9 @@ pub struct Parameters {
     pub segment_length: f64,
     pub segment_overlap: f64,
     pub smooth_width: f64,
-    pub speed: f64,
+    /// "17.8" (kmh) or "ACP"
+    pub speed: String,
     pub start_time: String,
-    pub use_acp_rules: bool,
     pub user_steps_options: UserStepsOptions,
 }
 
@@ -134,12 +132,11 @@ impl Default for Parameters {
         Parameters {
             control_gpx_name_format: "NAME[3]-TIME[%H:%M]-SLOPE[4.1%]".to_string(),
             start_time: time_to_iso8601(&chrono::Local::now()),
-            speed: speed::mps(15f64),
+            speed: format!("{}", 15.0),
             segment_length: 110f64 * 1000f64,
             segment_overlap: 10f64 * 1000f64,
             smooth_width: 200f64,
             debug: false,
-            use_acp_rules: false,
             profile_options: ProfileOptions::default(),
             map_options: MapOptions::default(),
             user_steps_options: UserStepsOptions::default(),

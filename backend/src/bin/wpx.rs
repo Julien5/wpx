@@ -3,13 +3,35 @@
 use std::collections::HashSet;
 use std::path::Path;
 
+use clap::Args;
 use clap::Parser;
 use tracks::backend::{Backend, Segment};
 use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::parameters::{parse_time, RenderFunction};
+use tracks::point_collection;
 use tracks::point_collection::Kind;
-use tracks::{point_collection, speed};
+
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct SpeedArgs {
+    /// Use a constant speed value
+    #[arg(long)]
+    speed: Option<f64>,
+
+    /// use ACP rules: 15 km/h for first 600 km, then variable speed to maintain 13.3 km/h average
+    #[arg(long)]
+    acp: bool,
+}
+
+impl SpeedArgs {
+    fn as_string(&self) -> String {
+        match &self.speed {
+            Some(mps) => format!("{}", *mps),
+            _ => format!("ACP"),
+        }
+    }
+}
 
 /// Reads a GPX files and generates a PDF feuille de route and cutoff points.
 #[derive(Parser)]
@@ -23,12 +45,8 @@ struct Cli {
     /// start date time in ISO 8601 format, like 2026-01-10T20:00 [default: now]
     #[arg(long, value_name = "start_time")]
     start_time: Option<String>,
-    /// speed in kilometer per hour
-    #[arg(long, value_name = "speed", default_value_t = 15.0)]
-    speed: f64,
-    /// use ACP rules: 15 km/h for first 600 km, then variable speed to maintain 13.3 km/h average
-    #[arg(long, value_name = "acp_rules", default_value_t = false)]
-    acp_rules: bool,
+    #[command(flatten)]
+    speed: SpeedArgs,
     /// generate one cutoff point every [distance] kilometer [default: 10]
     #[arg(long, value_name = "step_distance")]
     step_distance: Option<f64>,
@@ -222,8 +240,7 @@ async fn main() -> anyhow::Result<()> {
         _ => {}
     }
 
-    parameters.speed = speed::mps(args.speed);
-    parameters.use_acp_rules = args.acp_rules;
+    parameters.speed = args.speed.as_string();
 
     match args.step_distance {
         Some(km) => {

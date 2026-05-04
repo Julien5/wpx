@@ -128,13 +128,14 @@ mod tests {
     fn parameters(format: &str) -> Parameters {
         let mut ret = Parameters::default();
         ret.start_time = "1985-04-12T06:00:00.00Z".to_string();
-        ret.speed = speed::mps(15f64);
+        ret.speed = format!("{}", 15f64);
         ret.user_steps_options.gpx_name_format = format.to_string();
         ret
     }
 
     #[test]
     fn test_time_formatting() {
+        let _ = env_logger::try_init();
         // Time is 12:32:30 UTC
         let data = setup_test_data(0.0);
 
@@ -148,6 +149,7 @@ mod tests {
 
     #[test]
     fn test_name_formatting() {
+        let _ = env_logger::try_init();
         // Time is 12:32:30 UTC
         let data = setup_test_data(0.0);
 
@@ -158,6 +160,7 @@ mod tests {
 
     #[test]
     fn test_slope_formatting_standard_examples() {
+        let _ = env_logger::try_init();
         // Slope is 9.1% (Ratio 0.091)
         let data = setup_test_data(0.091);
 
@@ -186,6 +189,7 @@ mod tests {
 
     #[test]
     fn test_slope_formatting_edge_cases() {
+        let _ = env_logger::try_init();
         // Low slope (1.5%)
         let data_low = setup_test_data(0.015);
 
@@ -200,6 +204,7 @@ mod tests {
 
     #[test]
     fn test_combined_formatting() {
+        let _ = env_logger::try_init();
         // Time 12:32, Slope 10.1%
         let data = setup_test_data(0.101);
 

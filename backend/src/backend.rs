@@ -27,6 +27,7 @@ use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
 use crate::segment::SegmentData;
+use crate::speed;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
 use crate::track::Track;
@@ -420,9 +421,6 @@ impl Backend {
     pub fn setStartTime(&mut self, rfc3339: String) {
         self.dmut().parameters.start_time = rfc3339;
     }
-    pub fn setSpeed(&mut self, s: f64) {
-        self.dmut().parameters.speed = s;
-    }
     pub fn setSegmentLength(&mut self, length: f64) {
         self.dmut().parameters.segment_length = length;
     }
@@ -509,7 +507,7 @@ impl Backend {
                 RenderFunction::Wheel => {
                     let time_parameters = wheel::model::TimeParameters {
                         start: parameters::parse_time(&self.d().parameters.start_time),
-                        speed: self.d().parameters.speed,
+                        speed: speed::parse_speed(&self.d().parameters.speed),
                         total_distance: self.d().track.total_distance(),
                     };
                     let mut model = wheel::model::WheelModel::new(&time_parameters);
@@ -519,7 +517,7 @@ impl Backend {
                 RenderFunction::WheelPages => {
                     let time_parameters = wheel::model::TimeParameters {
                         start: parameters::parse_time(&self.d().parameters.start_time),
-                        speed: self.d().parameters.speed,
+                        speed: speed::parse_speed(&self.d().parameters.speed),
                         total_distance: self.d().track.total_distance(),
                     };
                     let mut model = wheel::model::WheelModel::new(&time_parameters);
@@ -602,7 +600,7 @@ mod tests {
         math::IntegerSize2D,
         parameters::{self, ProfileIndication, RenderFunction},
         point_collection::{self, Kind},
-        wheel,
+        speed, wheel,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
     static BLACK_FOREST: &'static str = "data/blackforest.gpx";
@@ -685,7 +683,7 @@ mod tests {
         let segments = backend.segments();
         let time_parameters = wheel::model::TimeParameters {
             start: parameters::parse_time(&parameters.start_time),
-            speed: parameters.speed,
+            speed: speed::parse_speed(&parameters.speed),
             total_distance: backend.d().track.total_distance(),
         };
         let mut model = wheel::model::WheelModel::new(&time_parameters);
