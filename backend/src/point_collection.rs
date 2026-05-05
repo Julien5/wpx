@@ -613,9 +613,6 @@ pub fn control_speed_data(
         .first()
         .unwrap()
         .distance_on_track_to_projection;
-    let time = match control.data.as_control().unwrap().cutoff_time {
-        Some(t) => t.clone(),
-        None => *start + speed::duration_distance(distance, &speed),
-    };
+    let time = control.data.as_control().unwrap().cutoff_time.clone();
     speed::ControlSpeedData { distance, time }
 }

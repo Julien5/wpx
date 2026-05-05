@@ -93,7 +93,7 @@ pub fn time_at_distance(distance: f64, start_time: &DateTime, speed: &Speed) -> 
 
 pub struct ControlSpeedData {
     pub distance: f64,
-    pub time: DateTime,
+    pub time: Option<DateTime>,
 }
 
 pub fn time_at_distance_with_controls(

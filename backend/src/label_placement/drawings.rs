@@ -1,10 +1,39 @@
 use crate::{
     inputpoint::InputPoint,
-    label_placement::features::{Label, PointFeatureDrawing},
-    label_placement::FONTSIZE,
+    label_placement::{
+        features::{Label, PointFeatureDrawing},
+        FONTSIZE,
+    },
     math::Point2D,
     point_collection::Kind,
 };
+
+pub struct LabelFormat {
+    pub fontsize: f64,
+    pub fontweight: String,
+    pub fontstyle: String,
+}
+
+pub fn format_for_kind(kind: &Kind) -> LabelFormat {
+    let base_font_size = FONTSIZE;
+    let normal = "normal";
+    let light = "lighter";
+    let bold = "bold";
+    let italic = "italic";
+    let (fontsize, fontweight, fontstyle) = match kind {
+        Kind::Villages => (base_font_size - 1f64, normal, normal),
+        Kind::Hamlets => (base_font_size - 2f64, light, normal),
+        Kind::Mountains => (base_font_size - 1f64, normal, italic),
+        Kind::Cities => (base_font_size, bold, normal),
+        Kind::Controls => (base_font_size, bold, normal),
+        _ => (base_font_size, normal, normal),
+    };
+    LabelFormat {
+        fontsize,
+        fontweight: fontweight.to_string(),
+        fontstyle: fontstyle.to_string(),
+    }
+}
 
 pub fn make_label_text(w: &InputPoint) -> Label {
     let text = match w.kind() {
@@ -16,23 +45,17 @@ pub fn make_label_text(w: &InputPoint) -> Label {
         Kind::CutOff => String::new(),
         Kind::Controls => w.name(),
     };
-    let base_font_size = FONTSIZE;
-    let normal = "normal";
-    let light = "lighter";
-    let bold = "bold";
-    let italic = "italic";
-    let (fontsize, fontweight, fontstyle) = match w.kind() {
-        Kind::Villages => (base_font_size - 1f64, normal, normal),
-        Kind::Hamlets => (base_font_size - 2f64, light, normal),
-        Kind::Mountains => (base_font_size - 1f64, normal, italic),
-        Kind::Cities => (base_font_size, bold, normal),
-        Kind::Controls => (base_font_size, bold, normal),
-        _ => (base_font_size, normal, normal),
-    };
+
+    let format = format_for_kind(&w.kind());
     if text.is_empty() {
         return Label::empty();
     }
-    Label::new(&text, fontsize, &fontweight, &fontstyle)
+    Label::new(
+        &text,
+        format.fontsize,
+        &format.fontweight,
+        &format.fontstyle,
+    )
 }
 
 fn make_circle(

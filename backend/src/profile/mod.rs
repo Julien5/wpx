@@ -579,6 +579,8 @@ impl ProfileView {
         }); // make features packets
         let mut feature_packets = Vec::new();
         let mut feature_unlabeled = Vec::new();
+        let start = parameters::parse_time(&self.parameters.parameters.start_time);
+        let speed = speed::parse_speed(&self.parameters.parameters.speed);
         let mut counter = 0;
         for packet in packets {
             let mut feature_packet = Vec::new();
@@ -604,6 +606,24 @@ impl ProfileView {
                     //assert!(label.unplaced());
                     let mut label = drawings::make_label_text(&w);
                     label.id = format!("{}/wp/text", k);
+                    if w.kind() == Kind::Controls
+                        && proj.track_index != 0
+                        && proj.track_index != track.len()
+                    {
+                        let time = speed::time_at_distance(
+                            proj.distance_on_track_to_projection,
+                            &start,
+                            &speed,
+                        );
+                        let text = format!("{} ({})", w.name(), time.format("%H:%M"));
+                        let format = drawings::format_for_kind(&w.kind());
+                        label = Label::new(
+                            &text,
+                            format.fontsize,
+                            &format.fontweight,
+                            &format.fontstyle,
+                        );
+                    }
                     let empty = label.is_empty();
                     let feature = PointFeature {
                         circle,
