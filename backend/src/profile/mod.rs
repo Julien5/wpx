@@ -14,7 +14,9 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::math::Point2D;
 use crate::parameters::ProfileIndication;
-use crate::point_collection::{Kind, Packets, RenderInputParameters, RenderResult};
+use crate::point_collection::{
+    control_speed_data, Kind, Packets, RenderInputParameters, RenderResult,
+};
 use crate::track::Track;
 use crate::wheel::model::TimeParameters;
 use crate::{gpsdata, speed};
@@ -55,6 +57,18 @@ fn fix_margins(bbox: &ProfileBoundingBox, free_height: f64) -> ProfileBoundingBo
     ret.set_ymin(ticks.first().unwrap().clone());
     ret.set_ymax(ticks.last().unwrap().clone());
     ret
+}
+
+fn controls(features: &Vec<PointFeature>) -> Vec<InputPoint> {
+    let mut ret = Vec::new();
+    for feature in features {
+        if let Some(f) = feature.input_point() {
+            ret.push(f);
+        } else {
+            continue;
+        }
+    }
+    Vec::new()
 }
 
 impl ProfileView {
@@ -181,6 +195,7 @@ impl ProfileView {
 
     fn add_time_ticks(
         &mut self,
+        controls: &Vec<InputPoint>,
         pacing_points: &Vec<InputPoint>,
     ) -> (Vec<PointFeature>, Vec<Point2D>) {
         let xstart = self.bboxview().get_xmin();
@@ -195,12 +210,23 @@ impl ProfileView {
             speed: speed.clone(),
             total_distance,
         };
+
+        let controls_speed_data = controls
+            .iter()
+            .map(|c| control_speed_data(c, &start, &speed))
+            .collect();
         let times = wheel::time_points::generate_times(&time_parameters);
         let bottom = ProfileGenerator::header_bottom();
+
         let mut features = Vec::new();
         for (k, time) in times.iter().enumerate() {
             let duration = *time - start;
-            let x = xstart + speed::distance_after_duration(duration, &speed);
+            let x = xstart
+                + speed::distance_after_duration_with_controls(
+                    &controls_speed_data,
+                    duration,
+                    &speed,
+                );
             let xd = self.toSD(&Point2D::new(x, 0f64)).x;
             if xd > self.WD() {
                 break;
@@ -519,7 +545,8 @@ impl ProfileView {
             }
         }
 
-        let (_time_features, usersteps_centers) = self.add_time_ticks(usersteps);
+        let (_time_features, usersteps_centers) =
+            self.add_time_ticks(&controls(&background_features), usersteps);
 
         let mut points = Vec::new();
         points.extend_from_slice(&background_features);
@@ -597,6 +624,7 @@ impl ProfileView {
         }
 
         let mut pacing_points = Vec::new();
+        let mut controls = Vec::new();
 
         for packet in packets {
             if packet.points.is_empty() {
@@ -605,9 +633,12 @@ impl ProfileView {
             if packet.points.first().unwrap().kind() == Kind::CutOff {
                 pacing_points = packet.points.clone();
             }
+            if packet.points.first().unwrap().kind() == Kind::Controls {
+                controls = packet.points.clone();
+            }
         }
 
-        let (time_packet, _time_boxes) = self.add_time_ticks(&pacing_points);
+        let (time_packet, _time_boxes) = self.add_time_ticks(&controls, &pacing_points);
         feature_packets.push(PointFeatures::make(time_packet));
 
         let (results, obstacles) = label_placement::place_labels(

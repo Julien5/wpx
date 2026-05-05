@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
-    mercator::MercatorPoint,
+    mercator::{DateTime, MercatorPoint},
     point_collection::Kind,
     tile::{self, Tile},
     track::Track,
@@ -44,6 +44,7 @@ pub struct ControlData {
     pub waypoint_name: String,
     pub waypoint_descriptio: String,
     pub segment_name: String,
+    pub cutoff_time: Option<DateTime>,
 }
 
 impl ControlData {
@@ -281,6 +282,7 @@ impl InputPoint {
             waypoint_descriptio: format!("{}", waypoint_description),
             segment_name: format!("{}", segment_name),
             nearest_waypoint_id: format!("{}", nearest_waypoint_id),
+            cutoff_time: None,
         };
         p.track_projections = BTreeSet::from([{ proj }]);
         p.data = InputPointData::Control(data);

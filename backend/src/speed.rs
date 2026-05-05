@@ -91,23 +91,35 @@ pub fn time_at_distance(distance: f64, start_time: &DateTime, speed: &Speed) -> 
     *start_time + delta
 }
 
-/*pub struct ControlSpeedData {
-    distance: f64,
+pub struct ControlSpeedData {
+    pub distance: f64,
+    pub time: DateTime,
 }
 
 pub fn time_at_distance_with_controls(
-    controls: Vec<ControlSpeedData>,
+    _controls: Vec<ControlSpeedData>,
     distance: f64,
     start_time: &DateTime,
     speed: &Speed,
 ) -> DateTime {
     let delta = duration_distance(distance, &speed);
     *start_time + delta
-}*/
+}
+
+pub fn distance_after_duration_with_controls(
+    _controls: &Vec<ControlSpeedData>,
+    duration: TimeDelta,
+    speed: &Speed,
+) -> f64 {
+    match speed {
+        Speed::ACP => duration.as_seconds_f64() * 15.0 * 1000.0 / 3600.0, // FIXME
+        Speed::MPS(mps) => duration.as_seconds_f64() * mps,
+    }
+}
 
 pub fn distance_after_duration(duration: TimeDelta, speed: &Speed) -> f64 {
     match speed {
-        Speed::ACP => duration.as_seconds_f64() * 15.0 * 1000.0 / 3600.0,
+        Speed::ACP => duration.as_seconds_f64() * 15.0 * 1000.0 / 3600.0, // FIXME
         Speed::MPS(mps) => duration.as_seconds_f64() * mps,
     }
 }
