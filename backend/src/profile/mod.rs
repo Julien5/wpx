@@ -13,6 +13,7 @@ use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::math::Point2D;
+use crate::mercator::DateTime;
 use crate::parameters::ProfileIndication;
 use crate::point_collection::{
     control_speed_data, Kind, Packets, RenderInputParameters, RenderResult,
@@ -199,31 +200,59 @@ impl ProfileView {
         pacing_points: &Vec<InputPoint>,
     ) -> (Vec<PointFeature>, Vec<Point2D>) {
         let xstart = self.bboxview().get_xmin();
+        let xend = self.bboxview().get_xmax();
 
         let start_time = parameters::parse_time(&self.parameters.parameters.start_time);
         let speed = speed::parse_speed(&self.parameters.parameters.speed);
 
         let start = speed::time_at_distance(xstart, &start_time, &speed);
-        let total_distance = self.bboxview().width();
-        let time_parameters = TimeParameters {
-            start,
-            speed: speed.clone(),
-            total_distance,
-        };
-
-        let controls_speed_data = controls
+        let all_controls_speed_data: Vec<_> =
+            controls.iter().map(|c| control_speed_data(c)).collect();
+        let mut local_controls_speed_data = all_controls_speed_data.clone();
+        local_controls_speed_data
+            .retain(|c| xstart <= c.distance && c.distance <= xend && c.time.is_some());
+        let mut distances_limits = Vec::new();
+        distances_limits.push(xstart);
+        local_controls_speed_data
             .iter()
-            .map(|c| control_speed_data(c, &start, &speed))
+            .for_each(|c| distances_limits.push(c.distance));
+        distances_limits.push(xend);
+        let times_limits: Vec<_> = distances_limits
+            .iter()
+            .map(|d| {
+                let time = speed::time_at_distance_with_controls(
+                    &all_controls_speed_data,
+                    *d,
+                    &start_time,
+                    &speed,
+                );
+                (d, time)
+            })
             .collect();
-        let times = wheel::time_points::generate_times(&time_parameters);
+        let mut times: Vec<DateTime> = Vec::new();
+        for window in times_limits.windows(2) {
+            let (start, end) = (window[0], window[1]);
+            let parameters = TimeParameters {
+                start: start.1.clone(),
+                speed: speed.clone(),
+                total_distance: end.0 - start.0,
+            };
+            let mut local_times = wheel::time_points::generate_times(&parameters);
+            debug_assert!(local_times.len() >= 2);
+            // remove the first and the last element
+            local_times.pop(); // remove last
+            if !local_times.is_empty() {
+                local_times.remove(0); // remove first
+            }
+            times.extend_from_slice(&local_times);
+        }
         let bottom = ProfileGenerator::header_bottom();
-
         let mut features = Vec::new();
         for (k, time) in times.iter().enumerate() {
             let duration = *time - start;
             let x = xstart
                 + speed::distance_after_duration_with_controls(
-                    &controls_speed_data,
+                    &all_controls_speed_data,
                     duration,
                     &speed,
                 );

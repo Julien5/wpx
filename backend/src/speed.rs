@@ -91,13 +91,14 @@ pub fn time_at_distance(distance: f64, start_time: &DateTime, speed: &Speed) -> 
     *start_time + delta
 }
 
+#[derive(Clone)]
 pub struct ControlSpeedData {
     pub distance: f64,
     pub time: Option<DateTime>,
 }
 
 pub fn time_at_distance_with_controls(
-    _controls: Vec<ControlSpeedData>,
+    _controls: &Vec<ControlSpeedData>,
     distance: f64,
     start_time: &DateTime,
     speed: &Speed,

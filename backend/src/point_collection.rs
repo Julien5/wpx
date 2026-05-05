@@ -1,8 +1,4 @@
-use crate::{
-    inputpoint::InputPointData::OSM,
-    mercator::DateTime,
-    speed::{self, Speed},
-};
+use crate::{inputpoint::InputPointData::OSM, speed};
 use clap::ValueEnum;
 use std::collections::{BTreeMap, HashSet};
 
@@ -603,11 +599,7 @@ fn projections_contains_fuzzy(
     false
 }
 
-pub fn control_speed_data(
-    control: &InputPoint,
-    start: &DateTime,
-    speed: &Speed,
-) -> speed::ControlSpeedData {
+pub fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {
     let distance = control
         .track_projections
         .first()
