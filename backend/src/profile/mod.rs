@@ -205,7 +205,6 @@ impl ProfileView {
         let start_time = parameters::parse_time(&self.parameters.parameters.start_time);
         let speed = speed::parse_speed(&self.parameters.parameters.speed);
 
-        let start = speed::time_at_distance(xstart, &start_time, &speed);
         let all_controls_speed_data: Vec<_> =
             controls.iter().map(|c| control_speed_data(c)).collect();
         let mut local_controls_speed_data = all_controls_speed_data.clone();
@@ -248,6 +247,7 @@ impl ProfileView {
         }
         let bottom = ProfileGenerator::header_bottom();
         let mut features = Vec::new();
+        let start = speed::time_at_distance(xstart, &start_time, &speed);
         for (k, time) in times.iter().enumerate() {
             let duration = *time - start;
             let x = xstart

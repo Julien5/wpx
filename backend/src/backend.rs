@@ -203,6 +203,31 @@ impl Backend {
         }
     }
 
+    pub fn set_control_time(&self, waypoint: &Waypoint, time: Option<String>) {
+        let mut controls = self
+            .d()
+            .packet_provider
+            .read()
+            .unwrap()
+            .collection
+            .get_vector(&Kind::Controls);
+        if let Some(control) = controls
+            .iter_mut()
+            .find(|c| c.gpxwaypoint_id() == waypoint.id)
+        {
+            if let Some(data) = time {
+                let t = parameters::parse_time(&data);
+                control.data.as_control_mut().unwrap().cutoff_time = Some(t);
+            } else {
+                control.data.as_control_mut().unwrap().cutoff_time = None;
+            }
+        }
+        {
+            let mut locked = self.d().packet_provider.write().unwrap();
+            locked.collection.import_other(&Kind::Controls, controls);
+        }
+    }
+
     pub fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
         self.load_contents(&vec![content.clone()])
     }
