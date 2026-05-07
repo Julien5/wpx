@@ -50,6 +50,7 @@ pub fn string_projections(projections: &TrackProjections) -> String {
 
 impl PartialEq for TrackProjection {
     fn eq(&self, other: &Self) -> bool {
+        // keep equality based on the full floating index total order
         self.track_floating_index
             .total_cmp(&other.track_floating_index)
             .is_eq()
@@ -236,9 +237,12 @@ impl ProjectionTrees {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeMap;
+
     use crate::{
         gpsdata::GpxData,
         inputpoint::{GPXWaypointData, InputPointData, InputPointMap},
+        track_projection::*,
         wgs84point::WGS84Point,
     };
 
@@ -252,8 +256,8 @@ mod tests {
         gpsdata::GpxData::read_content(&content).unwrap()
     }
 
-    #[tokio::test]
-    async fn projection() {
+    #[test]
+    fn projection() {
         let _ = env_logger::try_init();
         use crate::track_projection::*;
         //let gpxdata = read("data/ref/pbp2023.gpx".to_string());
@@ -263,7 +267,7 @@ mod tests {
         tags.insert("name".to_string(), "Mortagne-au-Perche".to_string());
         tags.insert("place".to_string(), "town".to_string());
         tags.insert("population".to_string(), "3815".to_string());
-        let pos = MercatorPoint::new(&61237.909420542324, &6193890.266343569);
+        let pos = MercatorPoint::new(61237.909420542324, 6193890.266343569);
         let mortagne = InputPoint {
             wgs84: WGS84Point::new(&0.5501095, &48.5205106, &0.0),
             euclidean: pos.clone(),

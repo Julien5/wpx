@@ -1,6 +1,11 @@
 use chrono::TimeDelta;
 
-use crate::{mercator::DateTime, point_collection::Kind, waypoint::Waypoint};
+use crate::{
+    mercator::DateTime,
+    parameters::{self, Parameters},
+    point_collection::Kind,
+    waypoint::Waypoint,
+};
 
 // from mps to kmh
 pub fn _kmh(_mps: f64) -> f64 {
@@ -100,6 +105,14 @@ pub struct TimeParameters {
 }
 
 impl TimeParameters {
+    pub fn from_parameters(parameters: &Parameters) -> Self {
+        Self {
+            controls: Vec::new(),
+            start: parameters::parse_time(&parameters.start_time),
+            speed: parse_speed(&parameters.start_time),
+            total_distance: 0f64,
+        }
+    }
     pub fn total_duration(&self) -> TimeDelta {
         duration_distance(self.total_distance, &self.speed)
     }

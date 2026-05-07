@@ -1,9 +1,13 @@
+use std::collections::BTreeMap;
+
 use crate::backend::Segment;
 use crate::inputpoint::InputPoint;
 use crate::mercator::DateTime;
 use crate::parameters;
 use crate::point_collection::{is_osm, Kind};
 use crate::segment::SegmentData;
+use crate::speed::TimeParameters;
+use crate::track_projection::TrackProjection;
 use crate::{
     elevation, mercator::MercatorPoint, parameters::Parameters, track, wgs84point::WGS84Point,
 };
@@ -25,8 +29,13 @@ pub struct WaypointInfo {
 
 use crate::format::WaypointInfoData;
 
+pub struct ExportParameters {
+    pub parameters: Parameters,
+    pub time_parameters: TimeParameters,
+}
+
 impl WaypointInfo {
-    fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String {
+    fn make_gpx_name(data: &WaypointInfoData, parameters: &ExportParameters) -> String {
         use crate::format;
         format::make_gpx_name(data, parameters)
     }
@@ -51,6 +60,7 @@ pub struct Waypoint {
 }
 
 pub type Waypoints = Vec<Waypoint>;
+pub type WaypointsMap = BTreeMap<TrackProjection, Waypoint>;
 
 impl Waypoint {
     pub fn create(wgs: WGS84Point, euc: &MercatorPoint, indx: usize, kind: Kind) -> Waypoint {
@@ -111,12 +121,15 @@ impl WaypointInfo {
     fn create_waypoint_info_cross(
         track: &track::Track,
         smooth: &Vec<f64>,
-        parameters: &Parameters,
+        parameters: &ExportParameters,
+        proj: &TrackProjection,
         w: &Waypoint,
         wprev: &Waypoint,
     ) -> WaypointInfo {
         assert!(w.get_track_index() < track.len());
-        let time = DateTime::default();
+        let time = parameters
+            .time_parameters
+            .time_at_waypoint(&w, proj.distance_on_track_to_projection);
         let mut ret = Self::create_waypoint_info_simple(track, &time, w);
         (
             ret.inter_distance,
@@ -148,33 +161,25 @@ impl WaypointInfo {
         ret
     }
     pub fn make_waypoint_infos(
-        waypoints: &mut Waypoints,
+        waypoints: &mut WaypointsMap,
         track: &track::Track,
-        parameters: &Parameters,
+        parameters: &ExportParameters,
     ) {
-        waypoints.sort_by_key(|w| w.get_track_index());
-        let mut infos = Vec::new();
         let wgs0 = track.wgs84.first().unwrap();
         let euc0 = track.euclidean.first().unwrap();
         let w0 = Waypoint::create(*wgs0, euc0, 0, Kind::CutOff);
-        for k in 0..waypoints.len() {
-            let w = &waypoints[k];
-            let wprev = match k {
-                0 => &w0,
-                _ => &waypoints[k - 1],
-            };
+        let mut wprev = w0.clone();
+        for (proj, w) in waypoints.iter_mut() {
             let info = Self::create_waypoint_info_cross(
                 track,
                 &track.smooth_elevation,
                 parameters,
+                proj,
                 w,
-                wprev,
+                &wprev,
             );
-            infos.push(info.clone());
-        }
-        for k in 0..waypoints.len() {
-            let w = &mut waypoints[k];
-            w.info = Some(infos[k].clone());
+            w.info = Some(info.clone());
+            wprev = w.clone();
         }
     }
 }

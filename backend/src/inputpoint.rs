@@ -409,7 +409,7 @@ impl InputPoint {
     }
 
     pub fn flatten_projections(points: &[InputPoint]) -> Vec<(usize, TrackProjection)> {
-        let mut result: Vec<(usize, TrackProjection)> = points
+        let result: Vec<(usize, TrackProjection)> = points
             .iter()
             .enumerate()
             .flat_map(|(idx, point)| {
@@ -419,12 +419,6 @@ impl InputPoint {
                     .map(move |proj| (idx, proj.clone()))
             })
             .collect();
-        assert!(result.len() >= points.len());
-        result.sort_by(|a, b| {
-            a.1.track_floating_index
-                .partial_cmp(&b.1.track_floating_index)
-                .unwrap_or(std::cmp::Ordering::Equal)
-        });
         assert!(result.len() >= points.len());
         result
     }

@@ -1,6 +1,7 @@
-use crate::parameters::{self, Parameters};
+use crate::parameters;
 use crate::point_collection::Kind;
 use crate::speed;
+use crate::waypoint::ExportParameters;
 
 // a bit messy, mostly AI generated
 #[allow(dead_code)]
@@ -48,13 +49,17 @@ fn format_slope(slope_ratio: f64, specifier: &str) -> String {
     }
 }
 
-pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String {
+pub fn make_gpx_name(data: &WaypointInfoData, parameters: &ExportParameters) -> String {
     use regex::Regex;
     let format_regex: Regex =
         Regex::new(r"(TIME|SLOPE|NAME|DESCRIPTION)(?:\[([^\]]+)\])?").unwrap();
     let format = match data.origin {
-        Kind::CutOff => parameters.user_steps_options.gpx_name_format.clone(),
-        Kind::Controls => parameters.control_gpx_name_format.clone(),
+        Kind::CutOff => parameters
+            .parameters
+            .user_steps_options
+            .gpx_name_format
+            .clone(),
+        Kind::Controls => parameters.parameters.control_gpx_name_format.clone(),
         _ => String::new(),
     };
     if format.is_empty() {
@@ -62,8 +67,8 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
     }
     let mut result = format.to_string();
     let original_format = format.to_string(); // Keep original for iterating
-    let start_time = parameters::parse_time(&parameters.start_time);
-    let speed = speed::parse_speed(&parameters.speed);
+    let start_time = parameters::parse_time(&parameters.parameters.start_time);
+    let speed = speed::parse_speed(&parameters.parameters.speed);
     let time = speed::time_at_distance(data.distance, &start_time, &speed);
 
     // Iterate over all matched placeholders in the format string
@@ -111,6 +116,8 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &Parameters) -> String
 
 #[cfg(test)]
 mod tests {
+    use crate::parameters::Parameters;
+
     use super::*;
 
     // Helper function to create a test WaypointInfoData
@@ -127,12 +134,16 @@ mod tests {
         }
     }
 
-    fn parameters(format: &str) -> Parameters {
-        let mut ret = Parameters::default();
-        ret.start_time = "1985-04-12T06:00:00.00Z".to_string();
-        ret.speed = format!("{}", 15f64);
-        ret.user_steps_options.gpx_name_format = format.to_string();
-        ret
+    fn parameters(format: &str) -> ExportParameters {
+        let mut parameters = Parameters::default();
+        parameters.start_time = "1985-04-12T06:00:00.00Z".to_string();
+        parameters.speed = format!("{}", 15f64);
+        parameters.user_steps_options.gpx_name_format = format.to_string();
+        let time_parameters = speed::TimeParameters::from_parameters(&parameters);
+        ExportParameters {
+            parameters,
+            time_parameters,
+        }
     }
 
     #[test]
