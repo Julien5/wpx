@@ -395,7 +395,6 @@ impl Backend {
     pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
         let projections = InputPoint::flatten_projections(&points);
         let mut map = WaypointsMap::new();
-        let time_parameters = self.time_parameters();
         for (index, projection) in projections {
             let w = points[index].waypoint(&projection);
             map.insert(projection.clone(), w);
@@ -677,6 +676,7 @@ mod tests {
         let mut ok_count = 0;
         let profile_size = IntegerSize2D::new(1420, 400);
         for segment in &segments {
+            log::trace!("times segment: {:?}", segment.id);
             let result = backend.render_segment_simple(
                 &segment,
                 &profile_size,

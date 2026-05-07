@@ -109,7 +109,7 @@ impl TimeParameters {
         Self {
             controls: Vec::new(),
             start: parameters::parse_time(&parameters.start_time),
-            speed: parse_speed(&parameters.start_time),
+            speed: parse_speed(&parameters.speed),
             total_distance: 0f64,
         }
     }
@@ -129,6 +129,9 @@ impl TimeParameters {
             }
             _ => time_at_distance_with_controls(&self.controls, distance, &self.start, &self.speed),
         }
+    }
+    pub fn time_at_distance(&self, distance: f64) -> DateTime {
+        time_at_distance_with_controls(&self.controls, distance, &self.start, &self.speed)
     }
 }
 
@@ -223,7 +226,7 @@ pub fn parse_speed(data: &str) -> Speed {
         return Speed::ACP;
     }
     let ok = data.parse().ok();
-    debug_assert!(ok.is_some());
+    debug_assert!(ok.is_some(), "data={}", data);
     let kmh: f64 = ok.unwrap();
     Speed::MPS(kmh * 1000.0 / 3600.0)
 }

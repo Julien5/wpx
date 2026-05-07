@@ -200,28 +200,36 @@ impl ProfileView {
         pacing_points: &Vec<InputPoint>,
     ) -> (Vec<PointFeature>, Vec<Point2D>) {
         let xstart = self.bboxview().get_xmin();
+        let xend = self.bboxview().get_xmax();
 
         let start_time = parameters::parse_time(&self.parameters.parameters.start_time);
         let speed = speed::parse_speed(&self.parameters.parameters.speed);
 
         let all_controls_speed_data = controls_speed_data(&controls);
-        let times_limits: Vec<_> = all_controls_speed_data
+        let mut times_limits: Vec<_> = all_controls_speed_data
             .iter()
             .map(|c| {
                 let time = speed::time_at_control(c, &start_time, &speed);
                 (c.distance, time)
             })
             .collect();
+        times_limits.push((xstart, speed::time_at_distance(xstart, &start_time, &speed)));
+        times_limits.push((xend, speed::time_at_distance(xend, &start_time, &speed)));
+        times_limits.sort_by(|a, b| a.0.total_cmp(&b.0));
+
         let mut times: Vec<DateTime> = Vec::new();
         for window in times_limits.windows(2) {
             let (start, end) = (window[0], window[1]);
+            let width = end.0 - start.0;
             let parameters = TimeParameters {
                 controls: all_controls_speed_data.clone(),
                 start: start.1.clone(),
                 speed: speed.clone(),
-                total_distance: end.0 - start.0,
+                total_distance: width,
             };
-            let n = (12000f64 * self.W / self.bboxview().width())
+            let _tstart = parameters.time_at_distance(start.0);
+            let _tend = parameters.time_at_distance(end.0);
+            let n = (0.01 * self.W * width / self.bboxview().width())
                 .ceil()
                 .max(0f64) as usize;
             let mut local_times = wheel::time_points::generate_times(&parameters, n);

@@ -268,10 +268,10 @@ Furtwangen
 <circle cx="882.6140096429942" cy="265.9983214285714" fill="Blue" id="2/wp" r="5"/>
 </g>
 <g transform="translate(882.6140096429942 265.9983214285714)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947367" x="-15.279407894736892" y="-261.9983214285714"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947367" x="-17.27940789473689" y="-263.9983214285714"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="2/wp/text" text-anchor="middle" x="-0.000" y="-251.998">
-CP-2
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="84.08394736842104" x="-42.041973684210575" y="-261.9983214285714"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="88.08394736842104" x="-44.041973684210575" y="-263.9983214285714"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="" text-anchor="middle" x="-0.000" y="-251.998">
+CP-2 (12:53)
 </text>
 </g>
 <path d="M882.61,22.00 L882.61,260.00" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
@@ -279,10 +279,10 @@ CP-2
 <circle cx="364.8191215688331" cy="116.94292857142855" fill="Blue" id="1/wp" r="5"/>
 </g>
 <g transform="translate(364.8191215688331 116.94292857142855)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947367" x="-15.279407894736835" y="-112.94292857142855"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947367" x="-17.279407894736835" y="-114.94292857142855"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="middle" x="0.000" y="-102.943">
-CP-1
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="84.0839473684211" x="-42.04197368421052" y="-112.94292857142855"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="88.0839473684211" x="-44.04197368421052" y="-114.94292857142855"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="" text-anchor="middle" x="0.000" y="-102.943">
+CP-1 (10:04)
 </text>
 </g>
 <path d="M364.82,22.00 L364.82,110.94" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>

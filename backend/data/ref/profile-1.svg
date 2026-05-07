@@ -172,14 +172,6 @@
 </text>
 </g>
 <g/>
-<g transform="translate(413.4375 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
-17h
-</text>
-</g>
-<g/>
 <g transform="translate(229.6875 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
@@ -392,10 +384,10 @@ Baden-Baden
 <circle cx="457.75016641695674" cy="178.8223214285714" fill="Blue" id="0/wp" r="5"/>
 </g>
 <g transform="translate(457.75016641695674 178.8223214285714)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="30.55881578947367" x="-15.279407894736835" y="-174.8223214285714"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="34.55881578947367" x="-17.279407894736835" y="-176.8223214285714"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="middle" x="0.000" y="-164.822">
-CP-3
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="84.0839473684211" x="-42.04197368421052" y="-174.8223214285714"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="88.0839473684211" x="-44.04197368421052" y="-176.8223214285714"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="" text-anchor="middle" x="0.000" y="-164.822">
+CP-3 (17:14)
 </text>
 </g>
 <path d="M457.75,22.00 L457.75,172.82" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
