@@ -5,6 +5,7 @@ use crate::parameters::{Parameters, RenderFunction};
 use crate::point_collection::{
     Kind, Kinds, Packet, RenderInputParameters, RenderResult, SharedPacketProvider,
 };
+use crate::speed::TimeParameters;
 use crate::track::SharedTrack;
 use crate::waypoint::{waypoint_for_segment, Waypoint};
 use crate::{profile, svgmap};
@@ -20,6 +21,7 @@ pub struct SegmentData {
     pub segment: Segment,
     pub track: SharedTrack,
     pub parameters: Parameters,
+    pub time_parameters: TimeParameters,
     pub packet_provider: SharedPacketProvider,
 }
 
@@ -38,6 +40,7 @@ impl SegmentData {
         track: SharedTrack,
         packet_provider: SharedPacketProvider,
         parameters: Parameters,
+        time_parameters: TimeParameters,
     ) -> SegmentData {
         if segment.start > track.total_distance() {
             panic!(
@@ -51,6 +54,7 @@ impl SegmentData {
             track,
             packet_provider: packet_provider,
             parameters: parameters,
+            time_parameters,
         }
     }
 
@@ -426,13 +430,14 @@ mod tests {
         make_points,
         math::IntegerSize2D,
         osm::{self, DownloadSideData},
-        parameters::{Parameters, ProfileIndication, RenderFunction},
+        parameters::{self, Parameters, ProfileIndication, RenderFunction},
         point_collection::{
-            allkinds, Kind, PacketProvider, PointCollection, RenderResult, SharedPacketProvider,
+            allkinds, controls_speed_data, Kind, PacketProvider, PointCollection, RenderResult,
+            SharedPacketProvider,
         },
         profile,
         segment::{Segment, SegmentData},
-        svgmap,
+        speed, svgmap,
         track::Track,
     };
 
@@ -480,6 +485,14 @@ mod tests {
         }
 
         let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
+
+        let time_parameters = speed::TimeParameters {
+            controls: controls_speed_data(&controls),
+            start: parameters::parse_time(&parameters.start_time),
+            speed: speed::parse_speed(&parameters.speed),
+            total_distance: track.total_distance(),
+        };
+
         for c in &mut controls {
             track.project_point(c);
         }
@@ -498,7 +511,7 @@ mod tests {
         pprovider.collection = collection;
         let provider = SharedPacketProvider::new(pprovider.into());
 
-        SegmentData::new(&fsegment, track, provider, parameters)
+        SegmentData::new(&fsegment, track, provider, parameters, time_parameters)
     }
 
     fn basename(path: &str) -> String {

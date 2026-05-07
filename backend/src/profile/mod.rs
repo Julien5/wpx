@@ -16,10 +16,10 @@ use crate::math::Point2D;
 use crate::mercator::DateTime;
 use crate::parameters::ProfileIndication;
 use crate::point_collection::{
-    control_speed_data, Kind, Packets, RenderInputParameters, RenderResult,
+    controls_speed_data, Kind, Packets, RenderInputParameters, RenderResult,
 };
+use crate::speed::TimeParameters;
 use crate::track::Track;
-use crate::wheel::model::TimeParameters;
 use crate::{gpsdata, speed};
 use crate::{label_placement, wheel};
 use crate::{label_placement::*, parameters};
@@ -200,48 +200,36 @@ impl ProfileView {
         pacing_points: &Vec<InputPoint>,
     ) -> (Vec<PointFeature>, Vec<Point2D>) {
         let xstart = self.bboxview().get_xmin();
-        let xend = self.bboxview().get_xmax();
 
         let start_time = parameters::parse_time(&self.parameters.parameters.start_time);
         let speed = speed::parse_speed(&self.parameters.parameters.speed);
 
-        let all_controls_speed_data: Vec<_> =
-            controls.iter().map(|c| control_speed_data(c)).collect();
-        let mut local_controls_speed_data = all_controls_speed_data.clone();
-        local_controls_speed_data
-            .retain(|c| xstart <= c.distance && c.distance <= xend && c.time.is_some());
-        let mut distances_limits = Vec::new();
-        distances_limits.push(xstart);
-        local_controls_speed_data
+        let all_controls_speed_data = controls_speed_data(&controls);
+        let times_limits: Vec<_> = all_controls_speed_data
             .iter()
-            .for_each(|c| distances_limits.push(c.distance));
-        distances_limits.push(xend);
-        let times_limits: Vec<_> = distances_limits
-            .iter()
-            .map(|d| {
-                let time = speed::time_at_distance_with_controls(
-                    &all_controls_speed_data,
-                    *d,
-                    &start_time,
-                    &speed,
-                );
-                (d, time)
+            .map(|c| {
+                let time = speed::time_at_control(c, &start_time, &speed);
+                (c.distance, time)
             })
             .collect();
         let mut times: Vec<DateTime> = Vec::new();
         for window in times_limits.windows(2) {
             let (start, end) = (window[0], window[1]);
             let parameters = TimeParameters {
+                controls: all_controls_speed_data.clone(),
                 start: start.1.clone(),
                 speed: speed.clone(),
                 total_distance: end.0 - start.0,
             };
-            let mut local_times = wheel::time_points::generate_times(&parameters);
+            let n = (12000f64 * self.W / self.bboxview().width())
+                .ceil()
+                .max(0f64) as usize;
+            let mut local_times = wheel::time_points::generate_times(&parameters, n);
             debug_assert!(local_times.len() >= 2);
             // remove the first and the last element
-            local_times.pop(); // remove last
+            local_times.pop();
             if !local_times.is_empty() {
-                local_times.remove(0); // remove first
+                local_times.remove(0);
             }
             times.extend_from_slice(&local_times);
         }
@@ -520,7 +508,6 @@ impl ProfileView {
 
     fn make_polyline(&self, track: &Track) -> Polyline {
         let range = self.range(track);
-        log::trace!("push range {:?}", range);
         let mut polyline_points = PolylinePoints::new();
         // make sure to cover the whole bounding box.
         for w in track.simplified.dz.windows(2) {
@@ -528,12 +515,10 @@ impl ProfileView {
             if !range.contains(&k1) && range.contains(&k2) || (range.start == 0 && k1 == 0) {
                 let e = track.smooth_elevation[range.start];
                 let p = self.toSD(&Point2D::new(track.distance(range.start), e));
-                log::trace!("push start {}", range.start);
                 polyline_points.push(PolylinePoint(p));
             } else if range.contains(&k1) && !range.contains(&k2) {
                 let e = track.smooth_elevation[range.end - 1];
                 let p = self.toSD(&Point2D::new(track.distance(range.end - 1), e));
-                log::trace!("push end {}", range.end - 1);
                 polyline_points.push(PolylinePoint(p));
             } else if range.contains(&k2) {
                 let e = track.smooth_elevation[k2];

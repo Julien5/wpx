@@ -22,6 +22,7 @@ use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
 use crate::parameters::UserStepsOptions;
+use crate::point_collection::controls_speed_data;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
@@ -226,6 +227,7 @@ impl Backend {
             let mut locked = self.d().packet_provider.write().unwrap();
             locked.collection.import_other(&Kind::Controls, controls);
         }
+        // SegmentData is invalid after that.
     }
 
     pub fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
@@ -309,6 +311,7 @@ impl Backend {
             self.d().track.clone(),
             self.d().packet_provider.clone(),
             self.d().parameters.clone(),
+            self.time_parameters(),
         )
     }
 
@@ -371,6 +374,20 @@ impl Backend {
             points.len()
         );
         points
+    }
+
+    fn controls(&self) -> Vec<InputPoint> {
+        let lock = self.d().packet_provider.read();
+        lock.unwrap().collection.get_vector(&Kind::Controls)
+    }
+
+    fn time_parameters(&self) -> speed::TimeParameters {
+        speed::TimeParameters {
+            controls: controls_speed_data(&self.controls()),
+            start: parameters::parse_time(&self.d().parameters.start_time),
+            speed: speed::parse_speed(&self.d().parameters.speed),
+            total_distance: self.d().track.total_distance(),
+        }
     }
 
     pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
@@ -526,25 +543,16 @@ impl Backend {
         for render_input in render_inputs {
             let size = IntegerSize2D::new(render_input.size.0, render_input.size.1);
             data.preload(&render_input.function, &render_input.kinds, &size);
+            let time_parameters = self.time_parameters();
             let render_result = match render_input.function {
                 RenderFunction::Profile => data.render_profile(&size, &render_input.kinds),
                 RenderFunction::Map => data.render_map(&size, &render_input.kinds),
                 RenderFunction::Wheel => {
-                    let time_parameters = wheel::model::TimeParameters {
-                        start: parameters::parse_time(&self.d().parameters.start_time),
-                        speed: speed::parse_speed(&self.d().parameters.speed),
-                        total_distance: self.d().track.total_distance(),
-                    };
                     let mut model = wheel::model::WheelModel::new(&time_parameters);
                     model.add_points(&data, &render_input.kinds);
                     wheel::render(&size, &model)
                 }
                 RenderFunction::WheelPages => {
-                    let time_parameters = wheel::model::TimeParameters {
-                        start: parameters::parse_time(&self.d().parameters.start_time),
-                        speed: speed::parse_speed(&self.d().parameters.speed),
-                        total_distance: self.d().track.total_distance(),
-                    };
                     let mut model = wheel::model::WheelModel::new(&time_parameters);
                     model.add_points(&data, &render_input.kinds);
                     model.add_pages(&self.segments());
@@ -623,9 +631,9 @@ mod tests {
     use crate::{
         backend::Backend,
         math::IntegerSize2D,
-        parameters::{self, ProfileIndication, RenderFunction},
+        parameters::{ProfileIndication, RenderFunction},
         point_collection::{self, Kind},
-        speed, wheel,
+        wheel,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
     static BLACK_FOREST: &'static str = "data/blackforest.gpx";
@@ -706,11 +714,7 @@ mod tests {
         let segment = backend.trackSegment();
         let sgdata = backend.make_segment_data(&segment);
         let segments = backend.segments();
-        let time_parameters = wheel::model::TimeParameters {
-            start: parameters::parse_time(&parameters.start_time),
-            speed: speed::parse_speed(&parameters.speed),
-            total_distance: backend.d().track.total_distance(),
-        };
+        let time_parameters = backend.time_parameters();
         let mut model = wheel::model::WheelModel::new(&time_parameters);
         model.add_pages(&segments);
         model.add_points(&sgdata, &point_collection::allkinds());

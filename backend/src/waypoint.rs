@@ -1,11 +1,11 @@
 use crate::backend::Segment;
 use crate::inputpoint::InputPoint;
+use crate::mercator::DateTime;
 use crate::parameters;
 use crate::point_collection::{is_osm, Kind};
 use crate::segment::SegmentData;
 use crate::{
-    elevation, mercator::MercatorPoint, parameters::Parameters, speed, track,
-    wgs84point::WGS84Point,
+    elevation, mercator::MercatorPoint, parameters::Parameters, track, wgs84point::WGS84Point,
 };
 
 #[derive(Clone, Debug)]
@@ -82,14 +82,11 @@ impl Waypoint {
 impl WaypointInfo {
     fn create_waypoint_info_simple(
         track: &track::Track,
-        parameters: &Parameters,
+        time: &DateTime,
         w: &Waypoint,
     ) -> WaypointInfo {
         assert!(w.get_track_index() < track.len());
         let distance = track.distance(w.get_track_index());
-        let start_time = parameters::parse_time(&parameters.start_time);
-        let speed = speed::parse_speed(&parameters.speed);
-        let time = speed::time_at_distance(distance, &start_time, &speed);
         let name = w.name.clone();
         let description = w.description.clone();
         let elevation = track.elevation(w.get_track_index());
@@ -119,7 +116,8 @@ impl WaypointInfo {
         wprev: &Waypoint,
     ) -> WaypointInfo {
         assert!(w.get_track_index() < track.len());
-        let mut ret = Self::create_waypoint_info_simple(track, parameters, w);
+        let time = DateTime::default();
+        let mut ret = Self::create_waypoint_info_simple(track, &time, w);
         (
             ret.inter_distance,
             ret.inter_elevation_gain,
@@ -188,11 +186,10 @@ pub fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> 
             let d = proj.distance_on_track_to_projection;
             if segment.start() <= d && d <= segment.end() {
                 let mut w = p.waypoint(&proj);
-                let info = WaypointInfo::create_waypoint_info_simple(
-                    &segment.track,
-                    &segment.parameters,
-                    &w,
-                );
+                let time = segment
+                    .time_parameters
+                    .time_at_waypoint(&w, proj.distance_on_track_to_projection);
+                let info = WaypointInfo::create_waypoint_info_simple(&segment.track, &time, &w);
                 w.info = Some(info);
                 waypoints.push(w);
             }

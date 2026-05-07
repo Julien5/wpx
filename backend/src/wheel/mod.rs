@@ -479,7 +479,8 @@ mod tests {
         // Creates 1970-01-01 00:00:00 UTC, adjusted to your Local offset
         let default_date: DateTime<Local> = Local.timestamp_opt(0, 0).unwrap();
 
-        let time_parameters = model::TimeParameters {
+        let time_parameters = speed::TimeParameters {
+            controls: Vec::new(),
             start: default_date,
             speed: speed::Speed::MPS(1f64),
             total_distance: 1f64,

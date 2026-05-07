@@ -1,6 +1,6 @@
 use chrono::TimeDelta;
 
-use crate::mercator::DateTime;
+use crate::{mercator::DateTime, point_collection::Kind, waypoint::Waypoint};
 
 // from mps to kmh
 pub fn _kmh(_mps: f64) -> f64 {
@@ -14,18 +14,11 @@ pub fn mps(_kmh: f64) -> f64 {
 }
 
 // ACP (Audax Club Parisien) control closing time rules:
-//
 // Staggered minimum speeds based on distance segments:
 //   - 0-600 km: 15.0 km/h
 //   - 600-1000 km: 11.428 km/h (8/7 km/h)
 //   - 1000-1300 km: 13.333 km/h (40/3 km/h)
-//
 // Special case for short distances (0-60 km): T = 1 + (D / 20)
-//
-// Example for 1000 km:
-//   First 600 km: 600 / 15 = 40 hours
-//   Next 400 km: 400 / 11.428 = 35 hours
-//   Total: 75 hours
 fn duration_to_distance_acp(distance: f64) -> f64 {
     let distance_km = distance / 1000.0;
 
@@ -91,20 +84,95 @@ pub fn time_at_distance(distance: f64, start_time: &DateTime, speed: &Speed) -> 
     *start_time + delta
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Default)]
 pub struct ControlSpeedData {
+    pub track_index: usize,
     pub distance: f64,
     pub time: Option<DateTime>,
 }
 
+#[derive(Clone, Default)]
+pub struct TimeParameters {
+    pub controls: Vec<ControlSpeedData>,
+    pub start: DateTime,
+    pub speed: Speed,
+    pub total_distance: f64,
+}
+
+impl TimeParameters {
+    pub fn total_duration(&self) -> TimeDelta {
+        duration_distance(self.total_distance, &self.speed)
+    }
+    pub fn time_at_waypoint(&self, waypoint: &Waypoint, distance: f64) -> DateTime {
+        let index = waypoint.track_index.unwrap();
+        match waypoint.origin {
+            Kind::Controls => {
+                let control = self
+                    .controls
+                    .iter()
+                    .find(|c| c.track_index == index)
+                    .unwrap();
+                time_at_control(control, &self.start, &self.speed)
+            }
+            _ => time_at_distance_with_controls(&self.controls, distance, &self.start, &self.speed),
+        }
+    }
+}
+
+pub fn time_at_control(
+    control: &ControlSpeedData,
+    start_time: &DateTime,
+    speed: &Speed,
+) -> DateTime {
+    control
+        .time
+        .unwrap_or(time_at_distance(control.distance, start_time, speed))
+}
+
 pub fn time_at_distance_with_controls(
-    _controls: &Vec<ControlSpeedData>,
+    controls: &Vec<ControlSpeedData>,
     distance: f64,
     start_time: &DateTime,
     speed: &Speed,
 ) -> DateTime {
-    let delta = duration_distance(distance, &speed);
-    *start_time + delta
+    // controls has to be sorted by distance and time
+    // controls must contains START and END.
+    let maybe = controls
+        .iter()
+        .enumerate()
+        .find(|(_, c)| c.distance >= distance);
+    if maybe.is_none() {
+        log::info!("could not find next control for distance={:.1}", distance);
+        for c in controls {
+            log::info!("control {:?}", c);
+        }
+        return time_at_distance(distance, start_time, speed);
+    }
+    let (index_next, next) = maybe.unwrap();
+    if index_next == 0 {
+        return start_time.clone();
+    }
+    let previous = &controls[index_next - 1];
+
+    let normal_previous_time = time_at_distance(previous.distance, start_time, speed);
+    let real_previous_time = time_at_control(previous, start_time, speed);
+    let normal_next_time = time_at_distance(next.distance, start_time, speed);
+    let real_next_time = time_at_control(next, start_time, speed);
+
+    let normal_time = time_at_distance(distance, start_time, speed);
+    debug_assert!(normal_time <= normal_next_time);
+
+    let delta1 = normal_time - normal_previous_time;
+    let delta2 = normal_next_time - normal_previous_time;
+    let delta2real = real_next_time - real_previous_time;
+
+    let lambda = delta1.as_seconds_f64() / delta2.as_seconds_f64();
+    let seconds = lambda * delta2real.as_seconds_f64();
+    // i64 + nanos => 290 years max.
+    let ret = time_at_control(&previous, start_time, speed)
+        + TimeDelta::nanoseconds((1_000_000_000f64 * seconds).round() as i64);
+    debug_assert!(lambda <= 1f64);
+    ret
 }
 
 pub fn distance_after_duration_with_controls(
@@ -129,6 +197,12 @@ pub fn distance_after_duration(duration: TimeDelta, speed: &Speed) -> f64 {
 pub enum Speed {
     MPS(f64),
     ACP,
+}
+
+impl Default for Speed {
+    fn default() -> Self {
+        Speed::MPS(15.0 * 1000.0 / 3600.0)
+    }
 }
 
 pub fn parse_speed(data: &str) -> Speed {

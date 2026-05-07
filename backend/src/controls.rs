@@ -8,6 +8,7 @@ use crate::{
     parameters::Parameters,
     point_collection::{Kind, SharedPacketProvider},
     segment::SegmentData,
+    speed::TimeParameters,
     track::Track,
     track_projection::{TrackProjection, TrackProjections},
     waypoint::Waypoint,
@@ -313,6 +314,7 @@ pub fn _make_with_osm(
             track.clone(),
             packet_provider.clone(),
             Parameters::default(),
+            TimeParameters::default(),
         );
         subsegments.push(data);
         start = end;
@@ -514,6 +516,7 @@ mod tests {
             track.clone(),
             provider.clone(),
             Parameters::default(),
+            TimeParameters::default(),
         );
         _make_with_osm(&segment, provider, 70_000f64, &Kind::Controls)
     }

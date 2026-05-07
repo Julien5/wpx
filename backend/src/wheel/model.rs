@@ -1,13 +1,10 @@
-use chrono::TimeDelta;
-
 use crate::{
     backend::Segment,
     controls,
     inputpoint::InputPoint,
-    mercator::DateTime,
     point_collection::{Kind, Kinds},
     segment::SegmentData,
-    speed::{duration_distance, Speed},
+    speed::TimeParameters,
     track::Track,
     wheel::time_points,
 };
@@ -18,19 +15,6 @@ pub fn angle(x: f64, total: f64) -> f64 {
     let b = topmargin;
     assert!(x <= total);
     a * x + b
-}
-
-#[derive(Clone)]
-pub struct TimeParameters {
-    pub start: DateTime,
-    pub speed: Speed,
-    pub total_distance: f64,
-}
-
-impl TimeParameters {
-    pub fn duration(&self) -> TimeDelta {
-        duration_distance(self.total_distance, &self.speed)
-    }
 }
 
 pub struct Arc {

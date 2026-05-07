@@ -606,5 +606,16 @@ pub fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {
         .unwrap()
         .distance_on_track_to_projection;
     let time = control.data.as_control().unwrap().cutoff_time.clone();
-    speed::ControlSpeedData { distance, time }
+    let track_index = control.track_projections.first().unwrap().track_index;
+    speed::ControlSpeedData {
+        distance,
+        time,
+        track_index,
+    }
+}
+
+pub fn controls_speed_data(controls: &Vec<InputPoint>) -> Vec<speed::ControlSpeedData> {
+    let mut ret: Vec<_> = controls.iter().map(|c| control_speed_data(c)).collect();
+    ret.sort_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap());
+    ret
 }
