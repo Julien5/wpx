@@ -213,8 +213,8 @@ impl ProfileView {
                 (c.distance, time)
             })
             .collect();
-        times_limits.push((xstart, speed::time_at_distance(xstart, &start_time, &speed)));
-        times_limits.push((xend, speed::time_at_distance(xend, &start_time, &speed)));
+        times_limits.push((xstart, speed::time(xstart, &start_time, &speed)));
+        times_limits.push((xend, speed::time(xend, &start_time, &speed)));
         times_limits.sort_by(|a, b| a.0.total_cmp(&b.0));
 
         let mut times: Vec<DateTime> = Vec::new();
@@ -227,8 +227,8 @@ impl ProfileView {
                 speed: speed.clone(),
                 total_distance: width,
             };
-            let _tstart = parameters.time_at_distance(start.0);
-            let _tend = parameters.time_at_distance(end.0);
+            let _tstart = parameters.time(start.0);
+            let _tend = parameters.time(end.0);
             let n = (0.01 * self.W * width / self.bboxview().width())
                 .ceil()
                 .max(0f64) as usize;
@@ -243,15 +243,15 @@ impl ProfileView {
         }
         let bottom = ProfileGenerator::header_bottom();
         let mut features = Vec::new();
-        let start = speed::time_at_distance(xstart, &start_time, &speed);
+        let time_parameters = TimeParameters {
+            controls: all_controls_speed_data.clone(),
+            start: start_time.clone(),
+            speed: speed.clone(),
+            total_distance: 0f64,
+        };
         for (k, time) in times.iter().enumerate() {
-            let duration = *time - start;
-            let x = xstart
-                + speed::distance_after_duration_with_controls(
-                    &all_controls_speed_data,
-                    duration,
-                    &speed,
-                );
+            let duration = *time - start_time;
+            let x = time_parameters.distance(&duration);
             let xd = self.toSD(&Point2D::new(x, 0f64)).x;
             if xd > self.WD() {
                 break;
@@ -632,11 +632,8 @@ impl ProfileView {
                         && proj.track_index != 0
                         && proj.track_index != track.len()
                     {
-                        let time = speed::time_at_distance(
-                            proj.distance_on_track_to_projection,
-                            &start,
-                            &speed,
-                        );
+                        let time =
+                            speed::time(proj.distance_on_track_to_projection, &start, &speed);
                         let text = format!("{} ({})", w.name(), time.format("%H:%M"));
                         let format = drawings::format_for_kind(&w.kind());
                         label = Label::new(

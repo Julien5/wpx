@@ -534,6 +534,7 @@ mod tests {
     ) -> bool {
         let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
+        parameters.speed = "ACP".to_string();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = None;
         parameters.user_steps_options.step_elevation_gain = Some(250f64);
@@ -702,6 +703,25 @@ mod tests {
             "data/ref/pbp2023.gpx",
             "data/ref/singlemap-pbp2023.svg",
             &RenderFunction::Map,
+            start,
+            length,
+            &size,
+            WITH_OSM,
+        )
+        .await;
+        assert!(ok);
+    }
+
+    #[tokio::test]
+    async fn graph_profilepbp() {
+        let _ = env_logger::try_init();
+        let start = 0f64;
+        let length = 1200_000f64;
+        let size = IntegerSize2D::new(3000, 300);
+        let ok = graph_test(
+            "data/PBP-simple.gpx",
+            "data/ref/singleprofile-pbpsimple.svg",
+            &RenderFunction::Profile,
             start,
             length,
             &size,

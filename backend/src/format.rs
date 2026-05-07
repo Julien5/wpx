@@ -69,7 +69,7 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &ExportParameters) -> 
     let original_format = format.to_string(); // Keep original for iterating
     let start_time = parameters::parse_time(&parameters.parameters.start_time);
     let speed = speed::parse_speed(&parameters.parameters.speed);
-    let time = speed::time_at_distance(data.distance, &start_time, &speed);
+    let time = speed::time(data.distance, &start_time, &speed);
 
     // Iterate over all matched placeholders in the format string
     for cap in format_regex.captures_iter(&original_format) {
