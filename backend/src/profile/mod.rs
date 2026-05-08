@@ -229,6 +229,7 @@ impl ProfileView {
             let nkm = (0.01 * self.W * width / self.bboxview().width())
                 .ceil()
                 .max(0f64) as usize;
+            debug_assert!(start.1 <= end.1);
             let duration = end.1 - start.1;
             let mut local_times = wheel::time_points::generate_times(&parameters, &duration, nkm);
             debug_assert!(local_times.len() >= 2);

@@ -18,6 +18,33 @@ pub fn mps(_kmh: f64) -> f64 {
     _kmh / 3.6f64
 }
 
+fn duration_acp_last(distance: f64) -> f64 {
+    let distance_km = distance / 1000.0;
+    // Calculate time in hours based on ACP rules
+    let distances = vec![
+        (200.0, 13.5),
+        (300.0, 20.0),
+        (400.0, 27.0),
+        (600.0, 40.0),
+        (1000.0, 75.0),
+        (1200.0, 90.0),
+    ];
+    let closest = distances.iter().copied().min_by(|a, b| {
+        (a.0 - distance_km)
+            .abs()
+            .partial_cmp(&(b.0 - distance_km).abs())
+            .unwrap()
+    });
+    match closest {
+        Some(d) => {
+            log::trace!("time at control:{:?}", d);
+            return d.1 * 3600.0;
+        }
+        _ => {}
+    }
+    0f64
+}
+
 // ACP (Audax Club Parisien) control closing time rules:
 // Staggered minimum speeds based on distance segments:
 //   - 0-600 km: 15.0 km/h
@@ -93,6 +120,7 @@ pub struct ControlSpeedData {
     pub track_index: usize,
     pub distance: f64,
     pub time: Option<DateTime>,
+    pub last_control: bool,
 }
 
 pub fn time_at_control(
@@ -100,6 +128,19 @@ pub fn time_at_control(
     start_time: &DateTime,
     speed: &Speed,
 ) -> DateTime {
+    log::trace!("time at control: {:?}", control);
+    if control.last_control {
+        match speed {
+            Speed::ACP => {
+                log::trace!("time at control 2: {:?}", control);
+                let delta = duration_acp_last(control.distance).round() as i64 * 1_000_000_000;
+                let duration = TimeDelta::nanoseconds(delta);
+                log::trace!("time at control delta: {:?}", duration);
+                return *start_time + duration;
+            }
+            _ => {}
+        }
+    }
     control
         .time
         .unwrap_or(time(control.distance, start_time, speed))
