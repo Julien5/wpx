@@ -3,35 +3,18 @@
 use std::collections::HashSet;
 use std::path::Path;
 
-use clap::Args;
+use chrono::TimeDelta;
 use clap::Parser;
 use tracks::backend::{Backend, Segment};
 use tracks::error;
 use tracks::math::IntegerSize2D;
+use tracks::mercator::DateTime;
+use tracks::parameters;
 use tracks::parameters::{parse_time, RenderFunction};
 use tracks::point_collection;
+use tracks::point_collection::onekind;
 use tracks::point_collection::Kind;
-
-#[derive(Args)]
-#[group(required = true, multiple = false)]
-struct SpeedArgs {
-    /// Use a constant speed value
-    #[arg(long)]
-    speed: Option<f64>,
-
-    /// use ACP rules: 15 km/h for first 600 km, then variable speed to maintain 13.3 km/h average
-    #[arg(long)]
-    acp: bool,
-}
-
-impl SpeedArgs {
-    fn as_string(&self) -> String {
-        match &self.speed {
-            Some(mps) => format!("{}", *mps),
-            _ => format!("ACP"),
-        }
-    }
-}
+use tracks::waypoint::Waypoint;
 
 /// Reads a GPX files and generates a PDF feuille de route and cutoff points.
 #[derive(Parser)]
@@ -45,8 +28,8 @@ struct Cli {
     /// start date time in ISO 8601 format, like 2026-01-10T20:00 [default: now]
     #[arg(long, value_name = "start_time")]
     start_time: Option<String>,
-    #[command(flatten)]
-    speed: SpeedArgs,
+    #[arg(long, value_name = "speed", default_value = "15.0")]
+    speed: String,
     /// generate one cutoff point every [distance] kilometer [default: 10]
     #[arg(long, value_name = "step_distance")]
     step_distance: Option<f64>,
@@ -73,11 +56,44 @@ struct Cli {
     filenames: Vec<std::path::PathBuf>,
 }
 
+fn format_delta(delta: &TimeDelta) -> String {
+    let hours = delta.num_hours();
+    let minutes = delta.num_minutes() % 60;
+    format!("{:02}:{:02}", hours, minutes)
+}
+
+fn display_table(result: &Vec<Waypoint>, start_time: &DateTime) {
+    if result.is_empty() {
+        log::info!("table is empty");
+    }
+    for (index, p) in result.iter().enumerate() {
+        let info = p.info.as_ref().unwrap();
+        let time = parameters::parse_time(&info.time);
+        let duration = time - start_time;
+        log::info!(
+            "[{:3}] | {} | {} | {:6.1} | {:16} | {:32} | {:?}",
+            index,
+            time.format("%d-%H:%M"),
+            format_delta(&duration),
+            info.distance / 1000.0,
+            p.name,
+            p.description,
+            p.origin
+        );
+    }
+}
+
 async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
-    let segment = Segment {
+    let _segment = Segment {
         id: 0,
         start: 220_000f64,
         end: 287_500f64,
+    };
+
+    let segment = Segment {
+        id: 0,
+        start: 0_000f64,
+        end: 1300_000f64,
     };
 
     //let map_size = IntegerSize2D::new(839, 349);
@@ -85,9 +101,22 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
 
     //let map_size = IntegerSize2D::new(517, 504);
     //let profile_size = IntegerSize2D::new(1099, 255);
-
+    let start_time = parameters::parse_time(&backend.get_parameters().start_time);
     let map_size = IntegerSize2D::new(400, 400);
     let profile_size = IntegerSize2D::new(1400, 300);
+    let waypoints = backend.get_waypoints(&segment, onekind(Kind::GPXWaypoints));
+    display_table(&waypoints, &start_time);
+
+    let controls = backend.get_waypoints(&segment, onekind(Kind::Controls));
+    display_table(&controls, &start_time);
+
+    backend.make_control_at_waypoint(&waypoints[5], true);
+    let controls = backend.get_waypoints(&segment, onekind(Kind::Controls));
+    backend.set_control_time(&controls[1], Some("2026-04-12T20:00:00".into()));
+    let controls = backend.get_waypoints(&segment, onekind(Kind::Controls));
+    display_table(&controls, &start_time);
+    let waypoints = backend.get_waypoints(&segment, onekind(Kind::GPXWaypoints));
+    display_table(&waypoints, &start_time);
 
     let ret = backend.render_segment_map_profile(
         &segment,
@@ -240,7 +269,7 @@ async fn main() -> anyhow::Result<()> {
         _ => {}
     }
 
-    parameters.speed = args.speed.as_string();
+    parameters.speed = args.speed.clone();
 
     match args.step_distance {
         Some(km) => {

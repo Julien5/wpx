@@ -103,7 +103,7 @@ function filter-log {
 }
 
 function unit-tests() {
-	export RUST_LOG=trace
+	# export RUST_LOG=trace
 	export RUST_BACKTRACE=1
 	rm -Rf /tmp/graphs/
 	2>&1 cargo test $@ -- --nocapture
@@ -120,8 +120,12 @@ function render-graph() {
 	rm -Rf /tmp/*.svg /tmp/wpx /tmp/graphs/
 	export RUST_LOG=trace
 	export RUST_BACKTRACE=1
-	2>&1 cargo run -- --render-graph true --output-directory /tmp/wpx/ --debug true \
-		 data/ref/600.gpx
+	2>&1 cargo run -- --render-graph true \
+		 --start-time "2026-04-12T00:00:00" \
+		 --speed ACP \
+		 --output /tmp/wpx.zip \
+		 --debug true \
+		 data/PBP-simple.gpx 
 }
 
 

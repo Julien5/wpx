@@ -225,14 +225,12 @@ impl ProfileView {
                 controls: all_controls_speed_data.clone(),
                 start: start.1.clone(),
                 speed: speed.clone(),
-                total_distance: width,
             };
-            let _tstart = parameters.time(start.0);
-            let _tend = parameters.time(end.0);
-            let n = (0.01 * self.W * width / self.bboxview().width())
+            let nkm = (0.01 * self.W * width / self.bboxview().width())
                 .ceil()
                 .max(0f64) as usize;
-            let mut local_times = wheel::time_points::generate_times(&parameters, n);
+            let duration = end.1 - start.1;
+            let mut local_times = wheel::time_points::generate_times(&parameters, &duration, nkm);
             debug_assert!(local_times.len() >= 2);
             // remove the first and the last element
             local_times.pop();
@@ -243,15 +241,9 @@ impl ProfileView {
         }
         let bottom = ProfileGenerator::header_bottom();
         let mut features = Vec::new();
-        let time_parameters = TimeParameters {
-            controls: all_controls_speed_data.clone(),
-            start: start_time.clone(),
-            speed: speed.clone(),
-            total_distance: 0f64,
-        };
         for (k, time) in times.iter().enumerate() {
             let duration = *time - start_time;
-            let x = time_parameters.distance(&duration);
+            let x = self.parameters.time_parameters.distance(&duration);
             let xd = self.toSD(&Point2D::new(x, 0f64)).x;
             if xd > self.WD() {
                 break;
@@ -601,9 +593,10 @@ impl ProfileView {
         }); // make features packets
         let mut feature_packets = Vec::new();
         let mut feature_unlabeled = Vec::new();
-        let start = parameters::parse_time(&self.parameters.parameters.start_time);
-        let speed = speed::parse_speed(&self.parameters.parameters.speed);
         let mut counter = 0;
+
+        let time_parameters = &self.parameters.time_parameters;
+
         for packet in packets {
             let mut feature_packet = Vec::new();
             for w in &packet.points {
@@ -632,8 +625,10 @@ impl ProfileView {
                         && proj.track_index != 0
                         && proj.track_index != track.len()
                     {
-                        let time =
-                            speed::time(proj.distance_on_track_to_projection, &start, &speed);
+                        let time = time_parameters.time_at_waypoint(
+                            &w.waypoint(&proj),
+                            proj.distance_on_track_to_projection,
+                        );
                         let text = format!("{} ({})", w.name(), time.format("%H:%M"));
                         let format = drawings::format_for_kind(&w.kind());
                         label = Label::new(

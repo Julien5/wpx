@@ -132,7 +132,7 @@
 <circle cx="122.35588921865315" cy="28" fill="Gray" id="user-step" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g/>
-<g transform="translate(1332.1875 17)">
+<g transform="translate(1332.1874999999936 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -140,7 +140,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(1148.4375 17)">
+<g transform="translate(1148.4374999999945 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -148,7 +148,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(964.6875 17)">
+<g transform="translate(964.6874999999955 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -156,7 +156,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(780.9375 17)">
+<g transform="translate(780.9374999999966 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -164,7 +164,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(597.1875 17)">
+<g transform="translate(597.1874999999975 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -172,7 +172,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(229.6875 17)">
+<g transform="translate(229.68749999999977 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -180,7 +180,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(45.9375 17)">
+<g transform="translate(45.93750000000114 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">

@@ -178,6 +178,7 @@ impl Backend {
         }
 
         let len = controls.len();
+        debug_assert!(len >= 2);
 
         // update provider
         {
@@ -224,6 +225,8 @@ impl Backend {
             } else {
                 control.data.as_control_mut().unwrap().cutoff_time = None;
             }
+        } else {
+            log::error!("no control found with id={}", waypoint.id);
         }
         {
             let mut locked = self.d().packet_provider.write().unwrap();
@@ -388,7 +391,6 @@ impl Backend {
             controls: controls_speed_data(&self.controls()),
             start: parameters::parse_time(&self.d().parameters.start_time),
             speed: speed::parse_speed(&self.d().parameters.speed),
-            total_distance: self.d().track.total_distance(),
         }
     }
 
@@ -547,20 +549,22 @@ impl Backend {
 
         let data = self.make_segment_data(segment);
         let mut ret = Vec::new();
+        let time_parameters = self.time_parameters();
+        let duration = time_parameters.time(segment.end) - time_parameters.time(segment.start);
         for render_input in render_inputs {
             let size = IntegerSize2D::new(render_input.size.0, render_input.size.1);
             data.preload(&render_input.function, &render_input.kinds, &size);
-            let time_parameters = self.time_parameters();
+
             let render_result = match render_input.function {
                 RenderFunction::Profile => data.render_profile(&size, &render_input.kinds),
                 RenderFunction::Map => data.render_map(&size, &render_input.kinds),
                 RenderFunction::Wheel => {
-                    let mut model = wheel::model::WheelModel::new(&time_parameters);
+                    let mut model = wheel::model::WheelModel::new(&time_parameters, &duration);
                     model.add_points(&data, &render_input.kinds);
                     wheel::render(&size, &model)
                 }
                 RenderFunction::WheelPages => {
-                    let mut model = wheel::model::WheelModel::new(&time_parameters);
+                    let mut model = wheel::model::WheelModel::new(&time_parameters, &duration);
                     model.add_points(&data, &render_input.kinds);
                     model.add_pages(&self.segments());
                     wheel::render(&size, &model)
@@ -676,7 +680,6 @@ mod tests {
         let mut ok_count = 0;
         let profile_size = IntegerSize2D::new(1420, 400);
         for segment in &segments {
-            log::trace!("times segment: {:?}", segment.id);
             let result = backend.render_segment_simple(
                 &segment,
                 &profile_size,
@@ -719,11 +722,13 @@ mod tests {
         } else {
             String::new()
         };
-        let segment = backend.trackSegment();
-        let sgdata = backend.make_segment_data(&segment);
+        let track_segment = backend.trackSegment();
+        let sgdata = backend.make_segment_data(&track_segment);
         let segments = backend.segments();
         let time_parameters = backend.time_parameters();
-        let mut model = wheel::model::WheelModel::new(&time_parameters);
+        let duration =
+            time_parameters.time(track_segment.end) - time_parameters.time(track_segment.start);
+        let mut model = wheel::model::WheelModel::new(&time_parameters, &duration);
         model.add_pages(&segments);
         model.add_points(&sgdata, &point_collection::allkinds());
         let result = wheel::render(&IntegerSize2D::new(400, 400), &model);

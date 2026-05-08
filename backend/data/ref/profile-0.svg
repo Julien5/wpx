@@ -132,7 +132,7 @@
 <circle cx="121.86682658802444" cy="28" fill="Gray" id="user-step" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g/>
-<g transform="translate(1270.9375000000002 17)">
+<g transform="translate(1270.9375000000011 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -140,7 +140,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(1087.1875 17)">
+<g transform="translate(1087.1875000000023 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -148,7 +148,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(719.6875000000001 17)">
+<g transform="translate(719.6875000000028 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -156,7 +156,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(535.9375 17)">
+<g transform="translate(535.9375000000017 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
@@ -164,7 +164,7 @@
 </text>
 </g>
 <g/>
-<g transform="translate(168.43750000000003 17)">
+<g transform="translate(168.4375000000004 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.817105263157885" x="-7.408552631578942" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.817105263157885" x="-9.408552631578942" y="-15"/>
 <text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">

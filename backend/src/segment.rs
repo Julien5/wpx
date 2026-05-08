@@ -309,6 +309,7 @@ impl SegmentData {
         RenderInputParameters::make_profile_parameters(
             kinds,
             &self.parameters,
+            &self.time_parameters,
             size,
             &self.track,
             self.start(),
@@ -322,6 +323,7 @@ impl SegmentData {
         RenderInputParameters::make_map_parameters(
             kinds,
             &self.parameters,
+            &self.time_parameters,
             size,
             &self.track,
             self.start(),
@@ -490,7 +492,6 @@ mod tests {
             controls: controls_speed_data(&controls),
             start: parameters::parse_time(&parameters.start_time),
             speed: speed::parse_speed(&parameters.speed),
-            total_distance: track.total_distance(),
         };
 
         for c in &mut controls {

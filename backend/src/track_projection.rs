@@ -237,12 +237,10 @@ impl ProjectionTrees {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::BTreeMap;
 
     use crate::{
         gpsdata::GpxData,
         inputpoint::{GPXWaypointData, InputPointData, InputPointMap},
-        track_projection::*,
         wgs84point::WGS84Point,
     };
 

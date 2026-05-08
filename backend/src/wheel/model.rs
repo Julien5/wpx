@@ -1,3 +1,5 @@
+use chrono::TimeDelta;
+
 use crate::{
     backend::Segment,
     controls,
@@ -43,10 +45,10 @@ impl Arc {
         angle(x.min(total), total)
     }
 
-    pub fn from_segments(segments: &[Segment], time_parameters: &TimeParameters) -> Vec<Self> {
+    pub fn from_segments(segments: &[Segment]) -> Vec<Self> {
         let distances = Self::distances(segments);
         let mut ret = Vec::new();
-        let end_distance = time_parameters.total_distance;
+        let end_distance = segments.last().unwrap().end - segments.first().unwrap().start;
         for i in 0..distances.len() - 1 {
             if i % 2 == 0 {
                 let begin = distances[i];
@@ -110,14 +112,14 @@ fn control_name(w: &InputPoint) -> String {
 }
 
 impl WheelModel {
-    pub fn new(time_parameters: &TimeParameters) -> Self {
+    pub fn new(time_parameters: &TimeParameters, duration: &TimeDelta) -> Self {
         Self {
             time_parameters: time_parameters.clone(),
             control_points: Vec::new(),
             mid_points: Vec::new(),
             has_start_control: false,
             has_end_control: false,
-            time_points: time_points::generate_circle_points(time_parameters),
+            time_points: time_points::generate_circle_points(time_parameters, duration),
             outer_arcs: Vec::new(),
         }
     }
@@ -151,6 +153,6 @@ impl WheelModel {
         }
     }
     pub fn add_pages(&mut self, segments: &Vec<Segment>) {
-        self.outer_arcs = Arc::from_segments(segments, &self.time_parameters);
+        self.outer_arcs = Arc::from_segments(segments);
     }
 }

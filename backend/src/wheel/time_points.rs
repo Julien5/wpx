@@ -43,7 +43,7 @@ fn nice_interval(total_duration: Duration, n: usize) -> Duration {
     Duration::from_secs_f64(best_interval)
 }
 
-use chrono::{Duration as ChronoDuration, Timelike};
+use chrono::{Duration as ChronoDuration, TimeDelta, Timelike};
 use mercator::DateTime;
 
 use crate::{
@@ -82,7 +82,6 @@ fn generate_time_intervals(
             times.push(candidate);
         }
 
-        // Stop if we've passed the end time
         if candidate >= end_time {
             break;
         }
@@ -141,15 +140,22 @@ fn make(times: &Vec<DateTime>, start_time: &DateTime, duration_seconds: f64) -> 
     ret
 }
 
-pub fn generate_circle_points(time_parameters: &TimeParameters) -> Vec<CirclePoint> {
-    let duration_seconds = time_parameters.total_duration().as_seconds_f64();
+pub fn generate_circle_points(
+    time_parameters: &TimeParameters,
+    duration: &TimeDelta,
+) -> Vec<CirclePoint> {
+    let duration_seconds = duration.as_seconds_f64();
     let start_time: DateTime = time_parameters.start;
-    let times = generate_times(time_parameters, 12);
+    let times = generate_times(time_parameters, duration, 12);
     make(&times, &start_time, duration_seconds)
 }
 
-pub fn generate_times(time_parameters: &TimeParameters, n: usize) -> Vec<DateTime> {
-    let duration_seconds = time_parameters.total_duration().as_seconds_f64();
+pub fn generate_times(
+    time_parameters: &TimeParameters,
+    duration: &TimeDelta,
+    n: usize,
+) -> Vec<DateTime> {
+    let duration_seconds = duration.as_seconds_f64();
     let start_time: DateTime = time_parameters.start;
     let duration = std::time::Duration::from_secs_f64(duration_seconds);
     let interval = nice_interval(duration, n);

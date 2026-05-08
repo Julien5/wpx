@@ -1,4 +1,7 @@
-use crate::{inputpoint::InputPointData::OSM, speed};
+use crate::{
+    inputpoint::InputPointData::OSM,
+    speed::{self, TimeParameters},
+};
 use clap::ValueEnum;
 use std::collections::{BTreeMap, HashSet};
 
@@ -117,6 +120,7 @@ pub struct RenderInputParameters {
     pub function: RenderFunction,
     pub kinds: Kinds,
     pub parameters: Parameters,
+    pub time_parameters: TimeParameters,
     pub drange: std::ops::Range<f64>,
     pub range: std::ops::Range<usize>,
     pub screen_size: IntegerSize2D,
@@ -172,6 +176,7 @@ impl RenderInputParameters {
     pub fn make_map_parameters(
         kinds: &Kinds,
         parameters: &Parameters,
+        time_parameters: &TimeParameters,
         size: &IntegerSize2D,
         track: &Track,
         start: f64,
@@ -183,6 +188,7 @@ impl RenderInputParameters {
             function: RenderFunction::Map,
             kinds: kinds.clone(),
             parameters: parameters.clone(),
+            time_parameters: time_parameters.clone(),
             drange: std::ops::Range {
                 start: start,
                 end: end,
@@ -198,6 +204,7 @@ impl RenderInputParameters {
     pub fn make_profile_parameters(
         kinds: &Kinds,
         parameters: &Parameters,
+        time_parameters: &TimeParameters,
         size: &IntegerSize2D,
         track: &Track,
         start: f64,
@@ -209,6 +216,7 @@ impl RenderInputParameters {
             function: RenderFunction::Profile,
             kinds: kinds.clone(),
             parameters: parameters.clone(),
+            time_parameters: time_parameters.clone(),
             drange: std::ops::Range {
                 start: start,
                 end: end,

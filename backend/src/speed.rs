@@ -172,7 +172,10 @@ pub fn distance_with_controls(
         .find(|(_, c)| time_at_control(c, start_time, speed) >= current_time);
 
     if maybe.is_none() {
-        log::info!("could not find next control for distance_with_controls");
+        log::info!(
+            "could not find next control for distance_with_controls at time: {:?}",
+            current_time
+        );
         return distance(duration, speed);
     }
 
@@ -228,7 +231,6 @@ pub struct TimeParameters {
     pub controls: Vec<ControlSpeedData>,
     pub start: DateTime,
     pub speed: Speed,
-    pub total_distance: f64,
 }
 
 impl TimeParameters {
@@ -237,11 +239,7 @@ impl TimeParameters {
             controls: Vec::new(),
             start: parameters::parse_time(&parameters.start_time),
             speed: parse_speed(&parameters.speed),
-            total_distance: 0f64,
         }
-    }
-    pub fn total_duration(&self) -> TimeDelta {
-        duration(self.total_distance, &self.speed)
     }
     pub fn time_at_waypoint(&self, waypoint: &Waypoint, distance: f64) -> DateTime {
         let index = waypoint.track_index.unwrap();
