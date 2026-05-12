@@ -220,15 +220,17 @@ impl ProfileView {
         let mut times: Vec<DateTime> = Vec::new();
         for window in times_limits.windows(2) {
             let (start, end) = (window[0], window[1]);
+            debug_assert!(start.0 <= end.0);
+            if start.0 == end.0 {
+                continue;
+            }
             let width = end.0 - start.0;
             let parameters = TimeParameters {
                 controls: all_controls_speed_data.clone(),
                 start: start.1.clone(),
                 speed: speed.clone(),
             };
-            let nkm = (0.01 * self.W * width / self.bboxview().width())
-                .ceil()
-                .max(0f64) as usize;
+            let nkm = (0.01 * self.W * width / self.bboxview().width()).ceil() as usize;
             debug_assert!(start.1 <= end.1);
             let duration = end.1 - start.1;
             let mut local_times = wheel::time_points::generate_times(&parameters, &duration, nkm);

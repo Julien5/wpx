@@ -453,7 +453,7 @@ mod tests {
         gpsdata::GpxData::read_content(&content).unwrap()
     }
 
-    static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
+    static START_TIME: &'static str = "1985-04-12T09:00:00";
     const WITH_OSM: bool = true;
 
     async fn load_segment(
@@ -657,7 +657,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn graph_profile() {
+    async fn graph_profile_black() {
         let _ = env_logger::try_init();
         let start = 0_000f64;
         let length = 110_000f64;
@@ -714,7 +714,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn graph_profilepbp() {
+    async fn graph_profile_pbp() {
         let _ = env_logger::try_init();
         let start = 0f64;
         let length = 1200_000f64;

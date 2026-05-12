@@ -66,10 +66,10 @@ function pdf() {
 	time cargo ${cmd} ${mode} -- \
 		 --output /tmp/wpx/route.zip \
 		 --start-time "2026-04-10T00:00:00" \
-		 --speed 10.0 \
+		 --speed ACP \
 		 --kinds Controls,CutOff,GPXWaypoints,Cities \
 		 --debug true \
-		 --step-distance 10 \
+		 --step-elevation-gain 100 \
 		 --segment-length $(segment-length ${file}) \
 		 --segment-overlap $(segment-overlap ${file}) \
 		 ${options} \
@@ -92,7 +92,6 @@ function cli() {
 
 	
 }
-
 
 function filter-log {
 	local filename=$1
@@ -127,7 +126,6 @@ function render-graph() {
 		 --debug true \
 		 data/PBP-simple.gpx 
 }
-
 
 function render-wheel() {
 	export RUST_LOG=trace

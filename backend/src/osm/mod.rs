@@ -100,12 +100,12 @@ async fn read(bbox: &EuclideanBoundingBox) -> GenericResult<(InputPointMap, Miss
 #[allow(dead_code)]
 fn print_missing(missing: &MissingTiles) {
     let mchunks = split_chunks(&bounding_box(missing));
-    log::trace!(" {} tiles missing", missing.len());
+    log::info!(" {} tiles missing", missing.len());
     for mchunk in mchunks {
-        log::trace!("missing in chunk {}", mchunk.basename());
+        log::info!("missing in chunk {}", mchunk.basename());
         for tile in missing {
             if mchunk.contains(&tile) {
-                log::trace!(
+                log::info!(
                     "missing in chunk {}: tile:{} BBOX:{:?}",
                     mchunk.basename(),
                     tile.basename(),

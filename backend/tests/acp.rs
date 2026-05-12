@@ -74,7 +74,7 @@ fn display_table(result: &Vec<Waypoint>, start_time: &DateTime) {
 }
 
 #[test]
-fn constant_strech() {
+fn test_constant_strech() {
     let _ = env_logger::try_init();
     let mut backend = load_test_data(&"data/PBP-simple.gpx");
     let mut parameters = backend.get_parameters();
@@ -117,7 +117,7 @@ fn constant_strech() {
 }
 
 #[test]
-fn acp_strech() {
+fn test_acp_strech() {
     let _ = env_logger::try_init();
     let mut backend = load_test_data(&"data/PBP-simple.gpx");
     let mut parameters = backend.get_parameters();
@@ -150,5 +150,5 @@ fn acp_strech() {
     assert_eq!(format!("{}", control_time.format("%d-%H:%M")), "12-20:00");
 
     let fougere_time = parameters::parse_time(&result[8].info.as_ref().unwrap().time);
-    assert_eq!(format!("{}", fougere_time.format("%d-%H:%M")), "14-11:07");
+    assert_eq!(format!("{}", fougere_time.format("%d-%H:%M")), "14-16:07");
 }

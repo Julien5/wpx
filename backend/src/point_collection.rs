@@ -607,7 +607,7 @@ fn projections_contains_fuzzy(
     false
 }
 
-pub fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {
+fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {
     let distance = control
         .track_projections
         .first()
@@ -616,7 +616,6 @@ pub fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {
     let time = control.data.as_control().unwrap().cutoff_time.clone();
     let track_index = control.track_projections.first().unwrap().track_index;
     let last_control = control.name().contains("END");
-    log::trace!("last control:{} => {}", control.name(), last_control);
     speed::ControlSpeedData {
         distance,
         time,
