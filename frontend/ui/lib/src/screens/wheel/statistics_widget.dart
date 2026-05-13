@@ -133,49 +133,6 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     }
   }
 
-  DateTime bestEndTime(
-    DateTime start,
-    double distance,
-    double initSpeed,
-    int endHour,
-    int endMinute,
-  ) {
-    final duration = Duration(seconds: (distance / initSpeed).round());
-    DateTime initEndTime = start.add(duration);
-
-    DateTime? best;
-    double bestDiff = double.infinity;
-
-    for (int dayOffset = -10; dayOffset < 10; dayOffset++) {
-      final candidate = DateTime(
-        start.year,
-        start.month,
-        start.day + dayOffset,
-        endHour,
-        endMinute,
-      );
-
-      if (candidate.microsecondsSinceEpoch < start.microsecondsSinceEpoch) {
-        continue;
-      }
-
-      final diffmicrosec =
-          (initEndTime.microsecondsSinceEpoch -
-                  candidate.microsecondsSinceEpoch)
-              .abs();
-
-      debugPrint("offset: $dayOffset diff:${diffmicrosec / 1000 / 3600}");
-      if (diffmicrosec < bestDiff) {
-        bestDiff = diffmicrosec.toDouble();
-        best = candidate;
-      }
-    }
-    if (best != null) {
-      return best;
-    }
-    return DateTime(start.year, start.month, start.day, endHour, endMinute);
-  }
-
   Future<void> _selectEndTime(BuildContext context, DateTime init) async {
     // see here
     // https://stackoverflow.com/questions/66023387/flutter-how-to-use-timepickerthemedata-properly
@@ -198,9 +155,9 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       SegmentStatistics stat = segmentModel.statistics();
       double distance = stat.distanceEnd - stat.distanceStart;
       DateTime endTime = bestEndTime(
-        startTime!,
-        distance,
-        parseSpeedMps(speed!),
+        startTime,
+        init,
+        null,
         picked.hour,
         picked.minute,
       );
@@ -220,8 +177,6 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       writeModel();
     }
   }
-
-
 
   DateTime roundToMinute(DateTime dt) {
     if (dt.second >= 30 || dt.millisecond >= 500) {
@@ -260,6 +215,17 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     bridge.Bridge backend = getBackend(ctx);
     List<Segment> segments = backend.segments();
     String pagesCountText = PageCountInfo.getPagesCountString(segments.length);
+
+    String speedText = parameters.speed;
+    Widget endTimeWidget = SmallText(text: endTimeText);
+    if (parseSpeedMode(parameters.speed) == SpeedMode.constant) {
+      endTimeWidget = SmallButton(
+        text: endTimeText,
+        callback: () => _selectEndTime(context, endTime),
+      );
+      speedText = "${parameters.speed} kmh";
+    }
+
     Widget table = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
@@ -284,30 +250,23 @@ class _OverviewWidgetState extends State<OverviewWidget> {
           children: [
             SmallText(text: "Average speed"),
             SmallButton(
-              callback: () => openSpeedDialog(
-                context: context,
-                speed: speed,
-                onSpeedChanged: (newSpeed) {
-                  debugPrint("speed:$newSpeed");
-                  setState(() {
-                    this.speed = newSpeed;
-                  });
-                  writeModel();
-                },
-              ),
-              text: "$speed kmh",
+              callback:
+                  () => openSpeedDialog(
+                    context: context,
+                    speed: speed,
+                    onSpeedChanged: (newSpeed) {
+                      debugPrint("speed:$newSpeed");
+                      setState(() {
+                        this.speed = newSpeed;
+                      });
+                      writeModel();
+                    },
+                  ),
+              text: speedText,
             ),
           ],
         ),
-        TableRow(
-          children: [
-            SmallText(text: "End time"),
-            SmallButton(
-              text: endTimeText,
-              callback: () => _selectEndTime(context, endTime),
-            ),
-          ],
-        ),
+        TableRow(children: [SmallText(text: "End time"), endTimeWidget]),
         TableRow(
           children: [
             SmallText(text: "Distance"),

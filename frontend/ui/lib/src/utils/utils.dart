@@ -172,3 +172,47 @@ String speedString(double mps) {
   double kmh = mps * 3600 / 1000;
   return kmh.toStringAsFixed(1);
 }
+
+DateTime bestEndTime(
+  DateTime? min,
+  DateTime init,
+  DateTime? max,
+  int endHour,
+  int endMinute,
+) {
+  DateTime? best;
+  double bestDiff = double.infinity;
+
+  for (int dayOffset = -10; dayOffset < 10; dayOffset++) {
+    final candidate = DateTime(
+      init.year,
+      init.month,
+      init.day + dayOffset,
+      endHour,
+      endMinute,
+    );
+
+    if (min != null &&
+        candidate.microsecondsSinceEpoch < min.microsecondsSinceEpoch) {
+      continue;
+    }
+
+    if (max != null &&
+        candidate.microsecondsSinceEpoch > max.microsecondsSinceEpoch) {
+      continue;
+    }
+
+    final diffmicrosec =
+        (init.microsecondsSinceEpoch - candidate.microsecondsSinceEpoch).abs();
+
+    debugPrint("offset: $dayOffset diff:${diffmicrosec / 1000 / 3600}");
+    if (diffmicrosec < bestDiff) {
+      bestDiff = diffmicrosec.toDouble();
+      best = candidate;
+    }
+  }
+  if (best != null) {
+    return best;
+  }
+  return DateTime(init.year, init.month, init.day, endHour, endMinute);
+}

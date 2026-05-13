@@ -1,47 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wpx/src/utils/utils.dart';
 
-DateTime bestDateTimeForTime(
-  DateTime currentDateTime,
-  int targetHour,
-  int targetMinute,
-) {
-  DateTime? best;
-  double bestDiff = double.infinity;
-
-  for (int dayOffset = -10; dayOffset < 10; dayOffset++) {
-    final candidate = DateTime(
-      currentDateTime.year,
-      currentDateTime.month,
-      currentDateTime.day + dayOffset,
-      targetHour,
-      targetMinute,
-    );
-
-    final diffMicrosec =
-        (currentDateTime.microsecondsSinceEpoch -
-                candidate.microsecondsSinceEpoch)
-            .abs();
-
-    if (diffMicrosec < bestDiff) {
-      bestDiff = diffMicrosec.toDouble();
-      best = candidate;
-    }
-  }
-
-  if (best != null) {
-    return best;
-  }
-
-  return DateTime(
-    currentDateTime.year,
-    currentDateTime.month,
-    currentDateTime.day,
-    targetHour,
-    targetMinute,
-  );
-}
-
 Future<void> openControlTimeDialog({
   required BuildContext context,
   required String currentTimeIso,
@@ -64,8 +23,10 @@ Future<void> openControlTimeDialog({
   );
 
   if (picked != null) {
-    DateTime newDateTime = bestDateTimeForTime(
+    DateTime newDateTime = bestEndTime(
+      null,
       currentDateTime,
+      null,
       picked.hour,
       picked.minute,
     );
