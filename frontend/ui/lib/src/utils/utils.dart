@@ -170,7 +170,7 @@ double parseSpeedMps(String speed) {
 
 String speedString(double mps) {
   double kmh = mps * 3600 / 1000;
-  return kmh.toStringAsFixed(1);
+  return kmh.toStringAsFixed(3);
 }
 
 DateTime bestEndTime(
