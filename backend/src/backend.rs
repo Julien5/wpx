@@ -207,7 +207,7 @@ impl Backend {
         }
     }
 
-    pub fn set_control_time(&self, waypoint: &Waypoint, time: Option<String>) {
+    pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) {
         let mut controls = self
             .d()
             .packet_provider

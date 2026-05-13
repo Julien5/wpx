@@ -1,7 +1,7 @@
 use crate::bbox::BoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::math::IntegerSize2D;
-use crate::parameters::{Parameters, RenderFunction};
+use crate::parameters::{self, Parameters, RenderFunction};
 use crate::point_collection::{
     Kind, Kinds, Packet, RenderInputParameters, RenderResult, SharedPacketProvider,
 };
@@ -30,6 +30,8 @@ pub struct SegmentStatistics {
     pub elevation_gain: f64,
     pub distance_start: f64,
     pub distance_end: f64,
+    pub start_time: String,
+    pub duration_seconds: i64,
     pub waypoints: Vec<Waypoint>,
     pub controls: Vec<Waypoint>,
 }
@@ -65,11 +67,19 @@ impl SegmentData {
         waypoints.sort_by_key(|w| w.track_index.unwrap());
         let mut controls = waypoint_for_segment(&self.controls(), &self);
         controls.sort_by_key(|w| w.track_index.unwrap());
+        let distance_start = track.distance(range.start);
+        let distance_end = track.distance(range.end - 1);
         SegmentStatistics {
             length: self.segment.end - self.segment.start,
             elevation_gain: track.elevation_gain_on_range(&range),
-            distance_start: track.distance(range.start),
-            distance_end: track.distance(range.end - 1),
+            distance_start,
+            distance_end,
+            start_time: parameters::time_to_iso8601(&self.time_parameters.time(distance_start)),
+            duration_seconds: self
+                .time_parameters
+                .duration(distance_start, distance_end)
+                .as_seconds_f64()
+                .round() as i64,
             waypoints,
             controls,
         }

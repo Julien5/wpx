@@ -48,12 +48,9 @@ class LoadScreenModel extends ChangeNotifier {
   void dispose() {
     _isDisposed = true;
     // The UI should not allow leaving LoadScreen while a job is running.
-    assert(runningJob() == Job.none);
-    // If we want to allow leaving the screen, we need to:
-    /*
     if (runningJob() != Job.none && runningJob() == Job.osm) {
       cancelOsm();  
-    }*/
+    }
     super.dispose();
   }
 

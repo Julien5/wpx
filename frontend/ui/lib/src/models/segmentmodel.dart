@@ -40,6 +40,12 @@ class SegmentModel extends ChangeNotifier {
     backend.makeControlAtWaypoint(waypoint: waypoint, on_: on);
     notifyListeners();
   }
+
+  void setControlTime(bridge.Waypoint waypoint, DateTime? time) {
+    String? rfc3339time = time?.toUtc().toIso8601String();
+    backend.setControlTime(waypoint: waypoint, time: rfc3339time);
+    notifyListeners();
+  }
 }
 
 class ParameterModel extends ChangeNotifier {

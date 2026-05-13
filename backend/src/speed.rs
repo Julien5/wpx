@@ -403,6 +403,13 @@ impl TimeParameters {
     pub fn distance(&self, duration: &TimeDelta) -> f64 {
         distance_with_controls(&self.controls, &self.start, duration, &self.speed)
     }
+    pub fn duration(&self, distance_a: f64, distance_b: f64) -> TimeDelta {
+        debug_assert!(distance_a <= distance_b);
+        let ta = time_with_controls(&self.controls, distance_a, &self.start, &self.speed);
+        let tb = time_with_controls(&self.controls, distance_b, &self.start, &self.speed);
+        debug_assert!(ta <= tb);
+        tb - ta
+    }
 }
 
 #[cfg(test)]

@@ -199,6 +199,8 @@ pub struct _SegmentStatistics {
     pub elevation_gain: f64,
     pub distance_start: f64,
     pub distance_end: f64,
+    pub start_time: String,
+    pub duration_seconds: i64,
     pub waypoints: Vec<Waypoint>,
     pub controls: Vec<Waypoint>,
 }
@@ -308,6 +310,11 @@ impl Bridge {
     #[frb(sync)]
     pub fn set_control_gpx_name_format(&mut self, format: &String) {
         self.backend.set_control_gpx_name_format(format);
+    }
+
+    #[frb(sync)]
+    pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) {
+        self.backend.set_control_time(waypoint, time);
     }
 
     #[frb(sync)]

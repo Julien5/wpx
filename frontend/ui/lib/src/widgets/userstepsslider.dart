@@ -5,7 +5,6 @@ import 'package:wpx/src/models/screen_configuration.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/widgets/slidervalues.dart';
-import 'package:wpx/src/utils/utils.dart';
 
 enum SelectedParameter { distance, elevation, none }
 
@@ -13,8 +12,8 @@ class UserStepsModel extends ChangeNotifier {
   final ParameterModel parameterModel;
   UserStepsOptions? currentOptions;
 
-  final Map<SelectedParameter, List<double>> _sliderValues = {};
-  final Map<SelectedParameter, double> _selectedValue = {};
+  final Map<SelectedParameter, List<String>> _sliderValues = {};
+  final Map<SelectedParameter, String> _selectedValue = {};
 
   static SelectedParameter parameter(UserStepsOptions options) {
     if (options.stepDistance != null) {
@@ -28,28 +27,28 @@ class UserStepsModel extends ChangeNotifier {
     return SelectedParameter.none;
   }
 
-  static double? value(UserStepsOptions options) {
+  static String? value(UserStepsOptions options) {
     if (options.stepDistance == null && options.stepElevationGain == null) {
       return null;
     }
     if (options.stepDistance != null) {
-      return options.stepDistance;
+      return (options.stepDistance!/1000).toStringAsFixed(0);
     }
-    return options.stepElevationGain;
+    return "${options.stepElevationGain}";
   }
 
   UserStepsModel({required this.parameterModel}) {
-    _sliderValues[SelectedParameter.distance] = fromKm([5, 10, 15, 20, 25]);
+    _sliderValues[SelectedParameter.distance] = ["5", "10", "15", "20", "25"];
     _sliderValues[SelectedParameter.elevation] = [
-      10,
-      25,
-      50,
-      100,
-      200,
-      250,
-      300,
-      400,
-      500,
+      "10",
+      "25",
+      "50",
+      "100",
+      "200",
+      "250",
+      "300",
+      "400",
+      "500",
     ];
 
     // defaults
@@ -78,22 +77,22 @@ class UserStepsModel extends ChangeNotifier {
     return parameter(currentOptions!);
   }
 
-  double getCurrentValue(SelectedParameter p) {
+  String getCurrentValue(SelectedParameter p) {
     return _selectedValue[p]!;
   }
 
-  void updateValue(double value) {
+  void updateValue(String value) {
     SelectedParameter p = parameter(currentOptions!);
     _updateOptions(p, value);
     _selectedValue[p] = value;
   }
 
   void updateParameter(SelectedParameter p) {
-    double? v = _selectedValue[p];
+    String? v = _selectedValue[p];
     _updateOptions(p, v);
   }
 
-  void updateParameterValue(SelectedParameter parameter, double value) {
+  void updateParameterValue(SelectedParameter parameter, String value) {
     _selectedValue[parameter] = value;
     _updateOptions(parameter, value);
   }
@@ -107,7 +106,7 @@ class UserStepsModel extends ChangeNotifier {
     parameterModel.setUserStepsOptions(currentOptions!);
   }
 
-  void _updateOptions(SelectedParameter parameter, double? value) {
+  void _updateOptions(SelectedParameter parameter, String? value) {
     if (parameter == SelectedParameter.none) {
       currentOptions = UserStepsOptions(
         stepDistance: null,
@@ -116,7 +115,7 @@ class UserStepsModel extends ChangeNotifier {
       );
     } else if (parameter == SelectedParameter.distance) {
       currentOptions = UserStepsOptions(
-        stepDistance: value!,
+        stepDistance: double.parse(value!)*1000,
         stepElevationGain: null,
         gpxNameFormat: currentOptions!.gpxNameFormat,
       );
@@ -124,7 +123,7 @@ class UserStepsModel extends ChangeNotifier {
       assert(parameter == SelectedParameter.elevation);
       currentOptions = UserStepsOptions(
         stepDistance: null,
-        stepElevationGain: value!,
+        stepElevationGain: double.parse(value!),
         gpxNameFormat: currentOptions!.gpxNameFormat,
       );
     }
@@ -149,16 +148,16 @@ class UserStepsSlider extends StatelessWidget {
     required this.enabled,
   });
 
-  void onChanged(UserStepsModel model, double value) {
+  void onChanged(UserStepsModel model, String value) {
     model.updateParameterValue(widgetParameter, value);
   }
 
-  String formatLabel(UserStepsModel model, double value) {
+  String formatLabel(UserStepsModel model, String value) {
     if (widgetParameter == SelectedParameter.elevation) {
-      return "${(value).toInt()} m";
+      return "$value m";
     }
     if (widgetParameter == SelectedParameter.distance) {
-      return "${(value).toInt() / 1000} km";
+      return "$value km";
     }
     return "$value ??";
   }
@@ -223,9 +222,9 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
     );
     final ListTileControlAffinity side = ListTileControlAffinity.leading;
 
-    double km = model.getCurrentValue(SelectedParameter.distance) / 1000;
+    String km = model.getCurrentValue(SelectedParameter.distance);
     Text kmtext = Text(
-      "one point every ${km.toStringAsFixed(0)} km",
+      "one point every $km km",
       textAlign: TextAlign.start, // Added to flush text to the left
       style: TextStyle(
         color:
@@ -235,9 +234,9 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
       ),
     );
 
-    double hm = model.getCurrentValue(SelectedParameter.elevation);
+    String hm = model.getCurrentValue(SelectedParameter.elevation);
     Text hmtext = Text(
-      "one point every ${hm.toStringAsFixed(0)} m elevation gain",
+      "one point every $hm m elevation gain",
       textAlign: TextAlign.start, // Added to flush text to the left
       style: TextStyle(
         color:

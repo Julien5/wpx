@@ -20,14 +20,6 @@ List<double> fromKm(List<double> list) {
   return ret;
 }
 
-List<double> fromKmh(List<double> list) {
-  List<double> ret = list;
-  for (int k = 0; k < list.length; ++k) {
-    ret[k] = list[k] * 1000 / 3600;
-  }
-  return ret;
-}
-
 enum ScreenOrientation { desktop, landscape, portrait }
 
 ScreenOrientation screenOrientation(Size size) {
@@ -67,7 +59,7 @@ class ParameterChanger {
     return init;
   }
 
-  bridge.Parameters changeSpeed(double speed) {
+  bridge.Parameters changeSpeed(String speed) {
     bridge.Parameters ret = bridge.Parameters(
       speed: speed,
       startTime: init.startTime,
@@ -169,4 +161,14 @@ String statisticsString(bridge.SegmentStatistics statistics) {
   double k1 = statistics.distanceStart / 1000;
   double k2 = statistics.distanceEnd / 1000;
   return "${k1.toStringAsFixed(1)} - ${k2.toStringAsFixed(1)}";
+}
+
+// convert from kmh to mps
+double parseSpeedMps(String speed) {
+  return double.parse(speed) * 1000 / 3600;
+}
+
+String speedString(double mps) {
+  double kmh = mps * 3600 / 1000;
+  return kmh.toStringAsFixed(1);
 }

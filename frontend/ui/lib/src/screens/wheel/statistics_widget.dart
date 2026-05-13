@@ -7,8 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/screens/wheel/speed_dialog.dart';
 import 'package:wpx/src/utils/print.dart';
-import 'package:wpx/src/widgets/slidervalues.dart';
 import 'package:wpx/src/widgets/small.dart';
 import 'package:wpx/src/utils/utils.dart';
 
@@ -39,21 +39,10 @@ String formatNumber(double value) {
   return result;
 }
 
-List<double> speedSliderValues() {
-  // Pick speeds relevant to randonneuring.
-  /*
-  https://www.randonneursmondiaux.org/files/LRM_Event_Regulations_2023.pdf
-  https://rusa.org/pages/acp-brevet-control-times-calculator
-  https://www.audax-club-parisien.com/organisation/brm-monde/#reglement-BRM
-  https://www.audax-club-parisien.com/download/plages_horaires_brm_10_FR.xls
-  */
-  return fromKmh([5, 10, 11.428, 12.5, 13.333, 15, 18.0, 20, 25, 28]);
-}
-
 class _OverviewWidgetState extends State<OverviewWidget> {
   DateTime? startTime;
   DateTime? endTime;
-  double? speed;
+  String? speed;
   @override
   void initState() {
     super.initState();
@@ -88,6 +77,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     changer.changeStartTime(startTime!);
     bridge.Parameters parameters = changer.current();
     parametersModel.setParameters(parameters);
+    debugPrint("write speed:${parameters.speed}");
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
@@ -210,7 +200,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       DateTime endTime = bestEndTime(
         startTime!,
         distance,
-        speed!,
+        parseSpeedMps(speed!),
         picked.hour,
         picked.minute,
       );
@@ -223,75 +213,15 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       if (seconds <= 0) {
         return;
       }
-      speed = distance / seconds;
+      double mps = distance / seconds;
       // max at 50kmh
-      speed = min(speed!, 50000 / 3600);
+      mps = min(mps, 50000 / 3600);
+      speed = speedString(mps);
       writeModel();
     }
   }
 
-  void onSpeedChanged(double newSpeed) {
-    developer.log("new speed: $newSpeed");
-    speed = newSpeed;
-    setState(() {});
-    writeModel();
-  }
 
-  void openSpeedDialog() {
-    List<double> stdValues = speedSliderValues();
-    stdValues.add(speed!);
-    List<double> values = stdValues.toSet().toList()..sort();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            String kmh = "none";
-            int index = 0;
-            if (speed != null) {
-              kmh = "${formatNumber(speed! * 3600 / 1000)} km/h";
-              index = getClosestIndex(values, speed!);
-            }
-            return SimpleDialog(
-              title: Text('Speed', textAlign: TextAlign.center),
-              children: [
-                SliderValuesWidget(
-                  values: values,
-                  initIndex: index,
-                  formatLabel:
-                      (value) => "${formatNumber(value * 3600 / 1000)} km/h",
-                  onValueChanged: (newSpeed) {
-                    setDialogState(() {
-                      speed = newSpeed;
-                    });
-                    writeModel();
-                  },
-                  enabled: true,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(kmh, textAlign: TextAlign.right),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(
-                    8.0,
-                  ), // Add padding to the right
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      // already called when the slider changed
-                      // writeModel();
-                    },
-                    child: Text('OK', textAlign: TextAlign.right),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
 
   DateTime roundToMinute(DateTime dt) {
     if (dt.second >= 30 || dt.millisecond >= 500) {
@@ -310,7 +240,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     bridge.SegmentStatistics statistics = segmentModel.statistics();
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
-    double kmh = parameterModel.parameters().speed * 3600 / 1000;
+    String speed = parameterModel.parameters().speed;
 
     if (startTime == null) {
       return Text("loading..");
@@ -318,9 +248,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
     String startDateText = DateFormat('dd/MM').format(startTime!);
     String startTimeText = DateFormat('HH:mm').format(startTime!);
-    Duration duration = Duration(
-      seconds: (statistics.distanceEnd / parameters.speed).round(),
-    );
+    Duration duration = Duration(seconds: statistics.durationSeconds);
     DateTime endTime = startTime!.add(duration);
     String endTimeText = DateFormat('HH:mm').format(roundToMinute(endTime));
 
@@ -356,8 +284,18 @@ class _OverviewWidgetState extends State<OverviewWidget> {
           children: [
             SmallText(text: "Average speed"),
             SmallButton(
-              callback: openSpeedDialog,
-              text: "${kmh.toStringAsFixed(1)} kmh",
+              callback: () => openSpeedDialog(
+                context: context,
+                speed: speed,
+                onSpeedChanged: (newSpeed) {
+                  debugPrint("speed:$newSpeed");
+                  setState(() {
+                    this.speed = newSpeed;
+                  });
+                  writeModel();
+                },
+              ),
+              text: "$speed kmh",
             ),
           ],
         ),

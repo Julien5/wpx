@@ -3,34 +3,30 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class SliderValues {
-  List<double> values = [];
+  List<String> values = [];
   int _index = 0;
 
   SliderValues();
 
-  void init(List<double> v, double value) {
+  void init(List<String> v, String value) {
     values = v;
     _index = getIndex(value);
   }
 
-  void setValue(double value) {
+  void setValue(String value) {
     _index = getIndex(value);
   }
 
-  int getIndex(double value) {
-    int closestIndex = 0;
-    double smallestDifference = double.infinity;
-    for (int i = 0; i < values.length; i++) {
-      double difference = (values[i] - value).abs();
-      if (difference < smallestDifference) {
-        smallestDifference = difference;
-        closestIndex = i;
-      }
+  int getIndex(String value) {
+    int ret=values.indexOf(value);
+    if (ret<0) {
+      debugPrint("could not find $value in {$values}");
+      assert(false);
     }
-    return closestIndex;
+    return ret;
   }
 
-  double getValue(int index) {
+  String getValue(int index) {
     return values[index];
   }
 
@@ -38,9 +34,9 @@ class SliderValues {
     return values.length;
   }
 
-  double current() {
+  String current() {
     if (values.isEmpty) {
-      return 0;
+      return "";
     }
     return values[_index];
   }
@@ -50,25 +46,12 @@ class SliderValues {
   }
 }
 
-int getClosestIndex(List<double> values, double value) {
-  int closestIndex = 0;
-  double smallestDifference = double.infinity;
-  for (int i = 0; i < values.length; i++) {
-    double difference = (values[i] - value).abs();
-    if (difference < smallestDifference) {
-      smallestDifference = difference;
-      closestIndex = i;
-    }
-  }
-  return closestIndex;
-}
-
 class SliderValuesWidget extends StatefulWidget {
-  final String Function(double) formatLabel;
-  final void Function(double) onValueChanged;
+  final String Function(String) formatLabel;
+  final void Function(String) onValueChanged;
   final bool enabled;
   final int initIndex;
-  final List<double> values;
+  final List<String> values;
   const SliderValuesWidget({
     super.key,
     required this.values,
@@ -96,7 +79,7 @@ class _SliderValuesWidgetState extends State<SliderValuesWidget> {
     _debounceTimer?.cancel();
     int index = sliderIndex.round();
     _debounceTimer = Timer(const Duration(milliseconds: 250), () {
-      double value = widget.values[index];
+      String value = widget.values[index];
       widget.onValueChanged(value);
     });
     setState(() {
@@ -107,7 +90,10 @@ class _SliderValuesWidgetState extends State<SliderValuesWidget> {
   @override
   Widget build(BuildContext context) {
     assert(widget.values.isNotEmpty);
-    String label = widget.formatLabel(widget.values[_currentIndex]);
+  String label="unknown";
+  if (_currentIndex>= 0) {
+    label = widget.formatLabel(widget.values[_currentIndex]);
+  }
     return Slider(
       min: 0,
       max: widget.values.length - 1,

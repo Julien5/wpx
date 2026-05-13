@@ -112,7 +112,7 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
 
     backend.make_control_at_waypoint(&waypoints[5], true);
     let controls = backend.get_waypoints(&segment, onekind(Kind::Controls));
-    backend.set_control_time(&controls[1], Some("2026-04-12T20:00:00".into()));
+    backend.set_control_time(&controls[1], &Some("2026-04-12T20:00:00".into()));
     let controls = backend.get_waypoints(&segment, onekind(Kind::Controls));
     display_table(&controls, &start_time);
     let waypoints = backend.get_waypoints(&segment, onekind(Kind::GPXWaypoints));
