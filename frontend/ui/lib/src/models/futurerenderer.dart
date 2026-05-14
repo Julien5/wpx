@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpx/src/log.dart';
@@ -14,7 +15,7 @@ class FutureRenderer with ChangeNotifier {
   final bridge.Bridge _backend;
   final List<TrackData> clients;
 
-  final Set<bridge.Kind> kinds;
+  final Set<bridge.Kind> _kinds;
 
   Future<List<bridge.RenderOutput>>? _future;
 
@@ -23,15 +24,19 @@ class FutureRenderer with ChangeNotifier {
 
   bool _visible = false;
   bool _disposed = false;
+  final String name;
 
   FutureRenderer({
     required bridge.Bridge bridge,
     required bridge.Segment segment,
     required this.clients,
-    required this.kinds,
-  }) : _segment = segment,
+    required Set<Kind> kinds,
+    required this.name,
+  }) : _kinds = <Kind>{},
+       _segment = segment,
        _backend = bridge {
-    developer.log("[CREATE FUTURE RENDERER ($segment) ($clients) ($kinds)]");
+    developer.log("[CREATE FUTURE RENDERER ($segment) ($clients) ($_kinds)]");
+    _kinds.addAll(kinds);
     assert(_backend.isLoaded());
   }
 
@@ -56,12 +61,15 @@ class FutureRenderer with ChangeNotifier {
   }
 
   void setKinds(Set<bridge.Kind> newkinds) {
-    if (kinds == newkinds) {
+    debugPrint("SET KINDS $name: ${newkinds.length} (old:${_kinds.length})");
+    if (setEquals(_kinds, newkinds)) {
       return;
     }
-    kinds.clear();
-    kinds.addAll(newkinds);
+    _kinds
+      ..clear()
+      ..addAll(newkinds);
     reset();
+    assert(!done());
   }
 
   Size getSize(TrackData d) {
@@ -84,34 +92,36 @@ class FutureRenderer with ChangeNotifier {
   }
 
   void start() {
-    debugPrint("[render-request] ($clients) ($kinds)");
+    debugPrint("[render-request] ($name) ($clients) ($_kinds)");
     if (_disposed) {
-      debugPrint("[render-request] ($clients) abort: renderer disposed");
+      debugPrint(
+        "[render-request] ($name) ($clients) abort: renderer disposed",
+      );
       return;
     }
     if (_sizes.length != clients.length) {
       debugPrint(
-        "[render-request] ($clients) abort: size is not set for all track data",
+        "[render-request] ($name) ($clients) abort: size is not set for all track data",
       );
       return;
     }
     if (!needsStart()) {
       debugPrint(
-        "[render-request] ($clients) abort: renderer does not need start",
+        "[render-request] ($name) ($clients) abort: renderer does not need start",
       );
       debugPrint(
-        "[render-request] ($clients) abort: started=${started()} && done=${done()} && visible=${isVisible()};",
+        "[render-request] ($name) ($clients) abort: started=${started()} && done=${done()} && visible=${isVisible()};",
       );
       return;
     }
 
-    log("[render-request-start:$clients]");
+    log("[render-request-start(($name)):$clients]");
     _results.clear();
     List<bridge.RenderInput> renderInputs = [];
     for (TrackData d in clients) {
       (int, int) sizeParameter = sizeAsTuple(makeFinite(_sizes[d]!));
       renderInputs.add(
-        bridge.RenderInput(kinds: kinds, function: d, size: sizeParameter),
+        bridge.RenderInput(kinds: _kinds, function: d, size: sizeParameter),
       );
     }
     _future = _backend.renderSegment(segment: _segment, inputs: renderInputs);
@@ -119,7 +129,7 @@ class FutureRenderer with ChangeNotifier {
   }
 
   String id() {
-    final sortedKinds = kinds.map((k) => k.toString()).toList()..sort();
+    final sortedKinds = _kinds.map((k) => k.toString()).toList()..sort();
     return "${clients.toString()}|${sortedKinds.join(",")}|${_segment.id()}";
   }
 
@@ -138,11 +148,13 @@ class FutureRenderer with ChangeNotifier {
       return;
     }
 
+    developer.log("[onCompleted ($name)]");
+
     for (bridge.RenderOutput output in values) {
       TrackData d = output.renderInput.function;
       Set<Kind> k = output.renderInput.kinds;
 
-      debugPrint("found value for $d and $k");
+      debugPrint("($name)found value for $d and $k");
       _results[d] = output;
     }
 
@@ -156,6 +168,7 @@ class FutureRenderer with ChangeNotifier {
     _future = null;
     _results.clear();
     _sizes.clear();
+    assert(!done());
     notifyListeners();
   }
 
@@ -169,7 +182,7 @@ class FutureRenderer with ChangeNotifier {
     if (newSize == _sizes[d]) {
       return false;
     }
-    debugPrint("setSize($d,$newSize)");
+    debugPrint("setSize($d,$newSize) old:[${_sizes[d]}]");
     _sizes[d] = newSize;
     _future = null;
     _results.clear();
@@ -178,7 +191,7 @@ class FutureRenderer with ChangeNotifier {
   }
 
   bool done() {
-    return _results.length == clients.length;
+    return _results.length == clients.length && _results.isNotEmpty;
   }
 
   String result(TrackData d) {

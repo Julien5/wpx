@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/futurerenderer.dart';
 import 'package:wpx/src/models/kindsmodel.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -146,6 +147,11 @@ class _DesktopTableState extends State<DesktopTable> {
                                 listen: false,
                               );
                               segment.setControlTime(w, newDateTime);
+                              FutureRenderer renderer = Provider.of(
+                                context,
+                                listen: false,
+                              );
+                              renderer.reset();
                             },
                           );
                         },
@@ -171,6 +177,11 @@ class _DesktopTableState extends State<DesktopTable> {
                             setState(() {
                               if (value != null) {
                                 makeControlAtWaypoint(w, value);
+                                FutureRenderer renderer = Provider.of(
+                                  context,
+                                  listen: false,
+                                );
+                                renderer.reset();
                               }
                             });
                           },

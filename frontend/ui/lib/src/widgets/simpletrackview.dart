@@ -45,6 +45,7 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
         segment: segment.segment,
         kinds: widget.rendererParameters.kinds,
         clients: [widget.rendererParameters.trackData],
+        name: "SimpleTrackView",
       );
 
       StackViewsController viewSwitch = context.read<StackViewsController>();

@@ -68,12 +68,16 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
     KindsModel kindsModel = Provider.of(context);
     if (futureRenderer == null) {
       SegmentModel segmentModel = Provider.of(context);
+      debugPrint("CREATE FUTURE RENDER FOR ${widget.screenFocus}");
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
         segment: segmentModel.segment,
         clients: widget.clients,
         kinds: kindsModel.kinds,
+        name: "${widget.screenFocus}",
       );
+    } else {
+      debugPrint("REUSE FUTURE RENDER FOR ${widget.screenFocus}");
     }
     futureRenderer!.setKinds(kindsModel.kinds);
     futureRenderer!.setVisible(isVisible(fociModel));
@@ -89,13 +93,6 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
   Widget build(BuildContext context) {
     debugPrint("_CentralPanelContentState(${futureRenderer!.clients}) build()");
     assert(futureRenderer != null);
-    // Rendering is done on "each frame". This works because the build() function
-    // is not called often, only when one of the dependency has changed
-    // (ParameterModel, FociModel) or the window has a new size. Which are exactly
-    // the situations where we need to recompute the graphics.
-    // However, we still need to maintain the renderer in the state, because it
-    // works asynchronously and must be kept between frames.
-    futureRenderer!.reset();
     return _Provider(futureRenderer: futureRenderer!, child: widget.child);
   }
 }
@@ -150,6 +147,7 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
             segment: segs[k],
             clients: widget.clients,
             kinds: widget.kinds,
+            name: "${widget.screenFocus}",
           ),
         );
         segments.add(SegmentModel(segment: segs[k], backend: root.backend));

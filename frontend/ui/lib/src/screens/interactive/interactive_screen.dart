@@ -83,6 +83,7 @@ class _InteractiveScaffoldState extends State<InteractiveScaffold> {
               segment: track.segment,
               kinds: allkinds(),
               clients: [TrackData.map],
+              name: "interactive",
             ),
         child: _InteractiveConsumer(),
       ),

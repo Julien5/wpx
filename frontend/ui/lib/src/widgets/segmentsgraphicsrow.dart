@@ -36,6 +36,7 @@ class _LocalSegmentGraphicsState extends State<LocalSegmentGraphics> {
       segment: widget.model.segment,
       kinds: widget.kinds,
       clients: [TrackData.map, TrackData.profile],
+      name: "LocalSegmentGraphics",
     );
     futureRenderer!.setVisible(true);
     futureRenderer!.updateSegment(widget.model.segment);
