@@ -159,7 +159,7 @@ fn distance_acp(seconds: f64) -> f64 {
     distance_km * 1000.0
 }
 
-pub fn duration(distance: f64, speed: &Speed) -> TimeDelta {
+fn duration(distance: f64, speed: &Speed) -> TimeDelta {
     let seconds = match speed {
         Speed::ACP => duration_acp(distance),
         Speed::MPS(mps) => distance / mps,
@@ -167,7 +167,7 @@ pub fn duration(distance: f64, speed: &Speed) -> TimeDelta {
     TimeDelta::nanoseconds((1000_000_000f64 * seconds).round() as i64)
 }
 
-pub fn time(distance: f64, start_time: &DateTime, speed: &Speed) -> DateTime {
+fn time(distance: f64, start_time: &DateTime, speed: &Speed) -> DateTime {
     let delta = duration(distance, &speed);
     *start_time + delta
 }
@@ -181,18 +181,13 @@ pub struct ControlSpeedData {
 }
 
 impl ControlSpeedData {
-    fn virtual_acp_controls() -> Vec<ControlSpeedData> {
-        let mut ret = vec![ControlSpeedData {
-            track_index: 0,
-            distance: 60_000f64,
-            time: None,
-            last_control: false,
-        }];
-        for (km, _hours) in acp_distance_time_intermediate() {
+    fn virtual_acp_controls(start: &DateTime) -> Vec<ControlSpeedData> {
+        let mut ret = Vec::new();
+        for (km, hours) in acp_distance_time_intermediate() {
             ret.push(ControlSpeedData {
                 track_index: 0,
                 distance: km * 1000f64,
-                time: None,
+                time: Some(*start + TimeDelta::seconds((hours * 3600f64).round() as i64)),
                 last_control: false,
             });
         }
@@ -200,11 +195,7 @@ impl ControlSpeedData {
     }
 }
 
-pub fn time_at_control(
-    control: &ControlSpeedData,
-    start_time: &DateTime,
-    speed: &Speed,
-) -> DateTime {
+fn time_at_control(control: &ControlSpeedData, start_time: &DateTime, speed: &Speed) -> DateTime {
     if control.last_control {
         match speed {
             Speed::ACP => {
@@ -220,10 +211,40 @@ pub fn time_at_control(
         .unwrap_or(time(control.distance, start_time, speed))
 }
 
-fn setup_interpolation_controls(realcontrols: &Vec<ControlSpeedData>) -> Vec<ControlSpeedData> {
+fn filter_control_speed_data(data: Vec<ControlSpeedData>) -> Vec<ControlSpeedData> {
+    fn time(control: &ControlSpeedData) -> DateTime {
+        control.time.as_ref().unwrap().clone()
+    }
+    let keep: Vec<bool> = data
+        .iter()
+        .enumerate()
+        .map(|(index, pl)| {
+            !data
+                .iter()
+                .any(|pk| (pk.distance > pl.distance && time(pk) < time(pl)))
+                || index == 0 // keep START
+                || index == data.len() - 1 // keep END
+        })
+        .collect();
+
+    data.into_iter()
+        .zip(keep)
+        .filter_map(|(item, keep)| if keep { Some(item) } else { None })
+        .collect()
+}
+
+fn setup_interpolation_controls(
+    start_time: &DateTime,
+    realcontrols: &Vec<ControlSpeedData>,
+) -> Vec<ControlSpeedData> {
     let mut all_controls = realcontrols.clone();
-    all_controls.retain(|c| c.track_index == 0 || c.last_control || c.time.is_some());
-    let mut virtual_controls = ControlSpeedData::virtual_acp_controls();
+    let maxdist = realcontrols
+        .iter()
+        .find(|c| c.last_control)
+        .unwrap()
+        .distance;
+    all_controls.retain(|c| c.last_control || c.time.is_some());
+    let mut virtual_controls = ControlSpeedData::virtual_acp_controls(start_time);
     if !realcontrols.is_empty() {
         // remove virtual controls if there is a real one by less than 15km.
         virtual_controls.retain(|c| {
@@ -239,7 +260,20 @@ fn setup_interpolation_controls(realcontrols: &Vec<ControlSpeedData>) -> Vec<Con
     }
     all_controls.extend_from_slice(&virtual_controls);
     all_controls.sort_by(|a, b| a.distance.total_cmp(&b.distance));
-    all_controls
+    all_controls.retain(|c| c.distance <= maxdist);
+    all_controls.iter_mut().enumerate().for_each(|(index, c)| {
+        log::trace!("{} [{:?}]", index, c);
+        debug_assert!(c.time.is_some() || c.last_control);
+        if c.time.is_none() {
+            let duration = duration_acp_last(c.distance);
+            c.time = Some(*start_time + TimeDelta::seconds((3600f64 * duration).round() as i64));
+        }
+    });
+    let ret = filter_control_speed_data(all_controls);
+    ret.iter().enumerate().for_each(|(index, c)| {
+        log::trace!("ret {} [{:?}]", index, c);
+    });
+    ret
 }
 
 pub fn time_with_controls(
@@ -249,7 +283,7 @@ pub fn time_with_controls(
     speed: &Speed,
 ) -> DateTime {
     let all_controls = match speed {
-        Speed::ACP => setup_interpolation_controls(&realcontrols),
+        Speed::ACP => setup_interpolation_controls(start_time, realcontrols),
         Speed::MPS(_) => realcontrols.clone(),
     };
     // controls has to be sorted by distance and time
@@ -307,7 +341,7 @@ pub fn distance_with_controls(
 ) -> f64 {
     let current_time = *start_time + *duration;
     let all_controls = match speed {
-        Speed::ACP => setup_interpolation_controls(&realcontrols),
+        Speed::ACP => setup_interpolation_controls(start_time, realcontrols),
         Speed::MPS(_) => realcontrols.clone(),
     };
     let maybe = all_controls
@@ -384,6 +418,12 @@ impl TimeParameters {
             controls: Vec::new(),
             start: parameters::parse_time(&parameters.start_time),
             speed: parse_speed(&parameters.speed),
+        }
+    }
+    pub fn time_at_control_speed_data(&self, data: &ControlSpeedData) -> DateTime {
+        match data.time {
+            Some(t) => t.clone(),
+            None => self.time(data.distance),
         }
     }
     pub fn time_at_waypoint(&self, waypoint: &Waypoint, distance: f64) -> DateTime {

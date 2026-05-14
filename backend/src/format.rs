@@ -1,6 +1,4 @@
-use crate::parameters;
 use crate::point_collection::Kind;
-use crate::speed;
 use crate::waypoint::ExportParameters;
 
 // a bit messy, mostly AI generated
@@ -114,7 +112,7 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &ExportParameters) -> 
 
 #[cfg(test)]
 mod tests {
-    use crate::parameters::Parameters;
+    use crate::{parameters::Parameters, speed};
 
     use super::*;
 

@@ -209,12 +209,17 @@ impl ProfileView {
         let mut times_limits: Vec<_> = all_controls_speed_data
             .iter()
             .map(|c| {
-                let time = speed::time_at_control(c, &start_time, &speed);
-                (c.distance, time)
+                (
+                    c.distance,
+                    self.parameters
+                        .time_parameters
+                        .time_at_control_speed_data(&c),
+                )
             })
             .collect();
-        times_limits.push((xstart, speed::time(xstart, &start_time, &speed)));
-        times_limits.push((xend, speed::time(xend, &start_time, &speed)));
+
+        times_limits.push((xstart, self.parameters.time_parameters.time(xstart)));
+        times_limits.push((xend, self.parameters.time_parameters.time(xend)));
         times_limits.sort_by(|a, b| a.0.total_cmp(&b.0));
 
         let mut times: Vec<DateTime> = Vec::new();
