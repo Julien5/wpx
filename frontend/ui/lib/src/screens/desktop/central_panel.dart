@@ -81,6 +81,9 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
     }
     futureRenderer!.setKinds(kindsModel.kinds);
     futureRenderer!.setVisible(isVisible(fociModel));
+    // Needed because futureRenderer does not know the time parameters.
+    // Change time parameters => update graphics.
+    futureRenderer!.reset();
   }
 
   @override
@@ -157,6 +160,7 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
     for (FutureRenderer renderer in renderers) {
       renderer.setKinds(kindsModel.kinds);
       renderer.setVisible(isVisible(fociModel));
+      renderer.reset();
     }
   }
 
