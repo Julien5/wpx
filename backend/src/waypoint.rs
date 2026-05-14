@@ -129,7 +129,7 @@ impl WaypointInfo {
         assert!(w.get_track_index() < track.len());
         let time = parameters
             .time_parameters
-            .time_at_waypoint(&w, proj.distance_on_track_to_projection);
+            .time(proj.distance_on_track_to_projection);
         let mut ret = Self::create_waypoint_info_simple(track, &time, w);
         (
             ret.inter_distance,
@@ -193,7 +193,7 @@ pub fn waypoint_for_segment(points: &Vec<InputPoint>, segment: &SegmentData) -> 
                 let mut w = p.waypoint(&proj);
                 let time = segment
                     .time_parameters
-                    .time_at_waypoint(&w, proj.distance_on_track_to_projection);
+                    .time(proj.distance_on_track_to_projection);
                 let info = WaypointInfo::create_waypoint_info_simple(&segment.track, &time, &w);
                 w.info = Some(info);
                 waypoints.push(w);

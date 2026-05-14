@@ -3,8 +3,6 @@ use chrono::TimeDelta;
 use crate::{
     mercator::DateTime,
     parameters::{self, Parameters},
-    point_collection::Kind,
-    waypoint::Waypoint,
 };
 
 // from mps to kmh
@@ -211,6 +209,7 @@ fn time_at_control(control: &ControlSpeedData, start_time: &DateTime, speed: &Sp
         .unwrap_or(time(control.distance, start_time, speed))
 }
 
+// interpolation points that are earlier but farther are not valid.
 fn filter_control_speed_data(data: Vec<ControlSpeedData>) -> Vec<ControlSpeedData> {
     fn time(control: &ControlSpeedData) -> DateTime {
         control.time.as_ref().unwrap().clone()
@@ -424,20 +423,6 @@ impl TimeParameters {
         match data.time {
             Some(t) => t.clone(),
             None => self.time(data.distance),
-        }
-    }
-    pub fn time_at_waypoint(&self, waypoint: &Waypoint, distance: f64) -> DateTime {
-        let index = waypoint.track_index.unwrap();
-        match waypoint.origin {
-            Kind::Controls => {
-                let control = self
-                    .controls
-                    .iter()
-                    .find(|c| c.track_index == index)
-                    .unwrap();
-                time_at_control(control, &self.start, &self.speed)
-            }
-            _ => time_with_controls(&self.controls, distance, &self.start, &self.speed),
         }
     }
     pub fn time(&self, distance: f64) -> DateTime {

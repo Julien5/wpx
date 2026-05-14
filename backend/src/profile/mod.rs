@@ -633,10 +633,7 @@ impl ProfileView {
                         && proj.track_index != 0
                         && proj.track_index != track.len()
                     {
-                        let time = time_parameters.time_at_waypoint(
-                            &w.waypoint(&proj),
-                            proj.distance_on_track_to_projection,
-                        );
+                        let time = time_parameters.time(proj.distance_on_track_to_projection);
                         let text = format!("{} ({})", w.name(), time.format("%H:%M"));
                         let format = drawings::format_for_kind(&w.kind());
                         label = Label::new(
