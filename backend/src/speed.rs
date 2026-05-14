@@ -306,7 +306,10 @@ pub fn distance_with_controls(
     speed: &Speed,
 ) -> f64 {
     let current_time = *start_time + *duration;
-    let all_controls = setup_interpolation_controls(&realcontrols);
+    let all_controls = match speed {
+        Speed::ACP => setup_interpolation_controls(&realcontrols),
+        Speed::MPS(_) => realcontrols.clone(),
+    };
     let maybe = all_controls
         .iter()
         .enumerate()
