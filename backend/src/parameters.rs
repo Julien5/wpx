@@ -157,10 +157,7 @@ pub fn parse_time(data: &str) -> DateTime {
             return local_dt;
         }
     }
-
-    // 3. Final Fallback: Return current time or panic/error based on your needs
-    // For this example, we'll return the current time if all parsing fails
-    Local::now()
+    panic!("cannot parse time string:{}", data);
 }
 
 pub fn time_to_iso8601(time: &DateTime) -> String {
