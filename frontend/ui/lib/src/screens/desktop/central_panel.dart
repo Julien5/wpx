@@ -189,7 +189,6 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
     for (int k = 0; k < segments.length; ++k) {
       FutureRenderer renderer = renderers[k];
       Segment segment = segments[k].segment;
-      renderer.reset();
       SegmentStatistics stat = root.backend.segmentStatistics(segment: segment);
       debugPrint("MODEL segment: ${segment.id()}: ${statisticsString(stat)}");
       MultiProvider provider = MultiProvider(

@@ -42,12 +42,36 @@ class _DesktopTableState extends State<DesktopTable> {
     });
   }
 
+  Waypoint? previousControl(List<Waypoint> waypoints, int index) {
+    if (index <= 0) {
+      return null;
+    }
+    for (int i = index - 1; i >= 0; --i) {
+      if (waypoints[i].origin == Kind.controls) {
+        return waypoints[i];
+      }
+    }
+    return null;
+  }
+
+  Waypoint? nextControl(List<Waypoint> waypoints, int index) {
+    if (index >= (waypoints.length - 1)) {
+      return null;
+    }
+    for (int i = index + 1; i < waypoints.length; ++i) {
+      if (waypoints[i].origin == Kind.controls) {
+        return waypoints[i];
+      }
+    }
+    return null;
+  }
+
   Widget buildData(List<Waypoint> waypoints) {
     if (waypoints.isEmpty) {
       return Center(child: const Text("No waypoints"));
     }
     debugPrint("build table with ${waypoints.length} waypoints");
-    
+
     // Find indices of first and last control
     int firstControlIndex = -1;
     int lastControlIndex = -1;
@@ -59,7 +83,7 @@ class _DesktopTableState extends State<DesktopTable> {
         lastControlIndex = i;
       }
     }
-    
+
     return DataTable(
       columnSpacing: 15.0,
       horizontalMargin: 10.0,
@@ -98,9 +122,10 @@ class _DesktopTableState extends State<DesktopTable> {
             final description = joinNonEmpty([w.name, w.description]);
             final isGpxWaypoint = w.origin == Kind.gpxWaypoints;
             final isControl = w.origin == Kind.controls;
-            final isEditableControl = isControl && 
-                                      index != firstControlIndex && 
-                                      index != lastControlIndex;
+            final isEditableControl =
+                isControl &&
+                index != firstControlIndex &&
+                index != lastControlIndex;
             final showCheckbox = isControl || isGpxWaypoint;
             final checkBoxValue = isControl;
             return DataRow(
@@ -109,26 +134,31 @@ class _DesktopTableState extends State<DesktopTable> {
                 DataCell(
                   isEditableControl
                       ? ElevatedButton(
-                          onPressed: () {
-                            openControlTimeDialog(
-                              context: context,
-                              currentTimeIso: w.info!.time,
-                              onTimeChanged: (DateTime newDateTime) {
-                                SegmentModel segment = Provider.of(context, listen: false);
-                                segment.setControlTime(w, newDateTime);
-                              },
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        onPressed: () {
+                          openControlTimeDialog(
+                            context: context,
+                            previousControl: previousControl(waypoints, index),
+                            nextControl: nextControl(waypoints, index),
+                            currentTimeIso: w.info!.time,
+                            onTimeChanged: (DateTime newDateTime) {
+                              SegmentModel segment = Provider.of(
+                                context,
+                                listen: false,
+                              );
+                              segment.setControlTime(w, newDateTime);
+                            },
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 4.0,
                           ),
-                          child: Text(
-                            time,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        )
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(time, style: const TextStyle(fontSize: 12)),
+                      )
                       : Text(time),
                 ),
                 DataCell(Text(description)),
