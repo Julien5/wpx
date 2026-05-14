@@ -634,6 +634,7 @@ impl ProfileView {
                         && proj.track_index != track.len()
                     {
                         let time = time_parameters.time(proj.distance_on_track_to_projection);
+                        log::trace!("XXname:{} time:{}", w.name(), time.format("%H:%M"));
                         let text = format!("{} ({})", w.name(), time.format("%H:%M"));
                         let format = drawings::format_for_kind(&w.kind());
                         label = Label::new(

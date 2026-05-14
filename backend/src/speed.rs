@@ -111,23 +111,6 @@ fn duration_acp(distance: f64) -> f64 {
         debug_assert_eq!(remain_km, 0f64);
         time
     };
-
-    /*else if distance_km <= 600.0 {
-        // Segment 1: 0-600 km at 15.0 km/h
-        distance_km / 15.0
-    } else if distance_km <= 1000.0 {
-        // Segment 1: 0-600 km at 15.0 km/h
-        // Segment 2: 600-1000 km at 11.428 km/h
-        (600.0 / 15.0) + ((distance_km - 600.0) / 11.428)
-    } else if distance_km <= 1300.0 {
-        // Segment 1: 0-600 km at 15.0 km/h
-        // Segment 2: 600-1000 km at 11.428 km/h
-        // Segment 3: 1000-1300 km at 13.333 km/h
-        (600.0 / 15.0) + (400.0 / 11.428) + ((distance_km - 1000.0) / 13.333)
-    } else {
-        // Beyond 1300 km: continue with 13.333 km/h
-        (600.0 / 15.0) + (400.0 / 11.428) + ((distance_km - 1000.0) / 13.333)
-    };*/
     time_hours * 3600.0
 }
 
@@ -157,7 +140,7 @@ fn distance_acp(seconds: f64) -> f64 {
     distance_km * 1000.0
 }
 
-fn duration(distance: f64, speed: &Speed) -> TimeDelta {
+fn duration_at_control_distance(distance: f64, speed: &Speed) -> TimeDelta {
     let seconds = match speed {
         Speed::ACP => duration_acp(distance),
         Speed::MPS(mps) => distance / mps,
@@ -165,8 +148,8 @@ fn duration(distance: f64, speed: &Speed) -> TimeDelta {
     TimeDelta::nanoseconds((1000_000_000f64 * seconds).round() as i64)
 }
 
-fn time(distance: f64, start_time: &DateTime, speed: &Speed) -> DateTime {
-    let delta = duration(distance, &speed);
+fn time_at_control_distance(distance: f64, start_time: &DateTime, speed: &Speed) -> DateTime {
+    let delta = duration_at_control_distance(distance, &speed);
     *start_time + delta
 }
 
@@ -204,26 +187,38 @@ fn time_at_control(control: &ControlSpeedData, start_time: &DateTime, speed: &Sp
             _ => {}
         }
     }
-    control
-        .time
-        .unwrap_or(time(control.distance, start_time, speed))
+    control.time.unwrap_or(time_at_control_distance(
+        control.distance,
+        start_time,
+        speed,
+    ))
 }
 
-// interpolation points that are earlier but farther are not valid.
-fn filter_control_speed_data(data: Vec<ControlSpeedData>) -> Vec<ControlSpeedData> {
+fn dominate(a: &ControlSpeedData, b: &ControlSpeedData) -> bool {
     fn time(control: &ControlSpeedData) -> DateTime {
         control.time.as_ref().unwrap().clone()
     }
+    a.distance > b.distance && time(a) < time(b)
+}
+
+fn is_dominated(a: &ControlSpeedData, all: &Vec<ControlSpeedData>) -> bool {
+    for x in all {
+        if dominate(x, a) {
+            return true;
+        }
+    }
+    false
+}
+
+// interpolation points that are earlier but farther are not valid.
+fn filter_control_speed_data(
+    data: Vec<ControlSpeedData>,
+    keep0: &[usize],
+) -> Vec<ControlSpeedData> {
     let keep: Vec<bool> = data
         .iter()
         .enumerate()
-        .map(|(index, pl)| {
-            !data
-                .iter()
-                .any(|pk| (pk.distance > pl.distance && time(pk) < time(pl)))
-                || index == 0 // keep START
-                || index == data.len() - 1 // keep END
-        })
+        .map(|(index, pl)| !is_dominated(pl, &data) || keep0.contains(&index))
         .collect();
 
     data.into_iter()
@@ -237,26 +232,17 @@ fn setup_interpolation_controls(
     realcontrols: &Vec<ControlSpeedData>,
 ) -> Vec<ControlSpeedData> {
     let mut all_controls = realcontrols.clone();
-    let maxdist = realcontrols
-        .iter()
-        .find(|c| c.last_control)
-        .unwrap()
-        .distance;
+    debug_assert!(realcontrols.last().unwrap().last_control);
+    debug_assert!(realcontrols.is_sorted_by_key(|c| c.distance));
+    let maxdist = realcontrols.last().unwrap().distance;
+    // the last control and the one before must be kept
+    let mut keep = vec![realcontrols.len() - 1];
+    if realcontrols.len() > 2 {
+        keep.insert(0, realcontrols.len() - 2);
+    }
     all_controls.retain(|c| c.last_control || c.time.is_some());
     let mut virtual_controls = ControlSpeedData::virtual_acp_controls(start_time);
-    if !realcontrols.is_empty() {
-        // remove virtual controls if there is a real one by less than 15km.
-        virtual_controls.retain(|c| {
-            let closest = all_controls.iter().min_by(|a, b| {
-                (a.distance - c.distance)
-                    .abs()
-                    .partial_cmp(&(b.distance - c.distance).abs())
-                    .unwrap()
-            });
-            let ret = (closest.unwrap().distance - c.distance).abs() > 15_000f64;
-            ret
-        });
-    }
+    virtual_controls.retain(|c| c.distance < maxdist);
     all_controls.extend_from_slice(&virtual_controls);
     all_controls.sort_by(|a, b| a.distance.total_cmp(&b.distance));
     all_controls.retain(|c| c.distance <= maxdist);
@@ -265,7 +251,10 @@ fn setup_interpolation_controls(
         debug_assert!(c.time.is_some() || c.last_control);
         if c.time.is_none() {
             let duration = duration_acp_last(c.distance);
-            c.time = Some(*start_time + TimeDelta::seconds((3600f64 * duration).round() as i64));
+            c.time = Some(
+                *start_time
+                    + TimeDelta::nanoseconds((3600f64 * duration).round() as i64 * 1_000_000_000),
+            );
         }
     });
     let ret = filter_control_speed_data(all_controls);
@@ -296,7 +285,7 @@ pub fn time_with_controls(
         for c in all_controls {
             log::info!("control {:?}", c);
         }
-        return time(distance, start_time, speed);
+        return time_at_control_distance(distance, start_time, speed);
     }
     let (index_next, next) = maybe.unwrap();
     if index_next == 0 {
@@ -304,12 +293,12 @@ pub fn time_with_controls(
     }
     let previous = &all_controls[index_next - 1];
 
-    let normal_previous_time = time(previous.distance, start_time, speed);
+    let normal_previous_time = time_at_control_distance(previous.distance, start_time, speed);
     let real_previous_time = time_at_control(previous, start_time, speed);
-    let normal_next_time = time(next.distance, start_time, speed);
+    let normal_next_time = time_at_control_distance(next.distance, start_time, speed);
     let real_next_time = time_at_control(next, start_time, speed);
 
-    let normal_time = time(distance, start_time, speed);
+    let normal_time = time_at_control_distance(distance, start_time, speed);
     debug_assert!(normal_time <= normal_next_time);
 
     let delta1 = normal_time - normal_previous_time;
@@ -322,6 +311,14 @@ pub fn time_with_controls(
     let ret = time_at_control(&previous, start_time, speed)
         + TimeDelta::nanoseconds((1_000_000_000f64 * seconds).round() as i64);
     debug_assert!(lambda <= 1f64);
+    log::trace!("XX previous: {:?}", previous);
+    log::trace!("XX next: {:?}", next);
+    log::trace!("XX delta1: {} delta2: {}", delta1, delta2);
+    log::trace!(
+        "XX distance:{:.1} time:{}",
+        distance / 1000f64,
+        ret.format("%H:%M")
+    );
     ret
 }
 
@@ -379,6 +376,11 @@ pub fn distance_with_controls(
     let normal_previous_dist = previous.distance;
     let normal_next_dist = next.distance;
     let ret = normal_previous_dist + lambda * (normal_next_dist - normal_previous_dist);
+    log::trace!(
+        "retro: time:{} => distance:{:.1}",
+        current_time.format("%H:%M"),
+        ret / 1000f64
+    );
     ret
 }
 
@@ -461,7 +463,7 @@ mod tests {
         // 300 km at 15 km/h should take 20 hours
         let dist_300km = 300_000.0;
         let speed = speed::parse_speed(&params.speed);
-        let time_300 = speed::time(dist_300km, &start, &speed);
+        let time_300 = speed::time_at_control_distance(dist_300km, &start, &speed);
         let duration_sec = (time_300 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
@@ -485,7 +487,7 @@ mod tests {
         // 40 km should take: 1 + (40/20) = 3 hours
         let dist_40km = 40_000.0;
         let speed = speed::parse_speed(&params.speed);
-        let time_40 = time(dist_40km, &start, &speed);
+        let time_40 = time_at_control_distance(dist_40km, &start, &speed);
         let duration_sec = (time_40 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 1.0 + (40.0 / 20.0); // 3 hours
@@ -510,7 +512,7 @@ mod tests {
         // 300 km at 15 km/h should take 20 hours
         let dist_300km = 300_000.0;
         let speed = speed::parse_speed(&params.speed);
-        let time_300 = time(dist_300km, &start, &speed);
+        let time_300 = time_at_control_distance(dist_300km, &start, &speed);
         let duration_sec = (time_300 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
@@ -533,7 +535,7 @@ mod tests {
         // 600 km: hard cap should be 40 hours
         let dist_600km = 600_000.0;
         let speed = speed::parse_speed(&params.speed);
-        let time_600 = time(dist_600km, &start, &speed);
+        let time_600 = time_at_control_distance(dist_600km, &start, &speed);
         let duration_sec = (time_600 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
@@ -556,7 +558,7 @@ mod tests {
         // 800 km: 600/15 + (800-600)/11.428
         //       = 40 + 200/11.428 = 40 + 17.5 = 57.5 hours
         let dist_800km = 800_000.0;
-        let time_800 = time(dist_800km, &start, &speed);
+        let time_800 = time_at_control_distance(dist_800km, &start, &speed);
         let duration_sec = (time_800 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 40.0 + (200.0 / 11.428); // ~57.5 hours
@@ -582,7 +584,7 @@ mod tests {
         // Calculated: 600/15 + 400/11.428 = 40 + 35 = 75 hours
         let dist_1000km = 1_000_000.0;
         let speed = speed::parse_speed(&params.speed);
-        let time_1000 = time(dist_1000km, &start, &speed);
+        let time_1000 = time_at_control_distance(dist_1000km, &start, &speed);
         let duration_sec = (time_1000 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
@@ -606,7 +608,7 @@ mod tests {
         //        = 40 + 35 + 15 = 90 hours
         let dist_1200km = 1_200_000.0;
         let speed = speed::parse_speed(&params.speed);
-        let time_1200 = time(dist_1200km, &start, &speed);
+        let time_1200 = time_at_control_distance(dist_1200km, &start, &speed);
         let duration_sec = (time_1200 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 40.0 + (400.0 / 11.428) + (200.0 / 13.333);
@@ -631,7 +633,7 @@ mod tests {
         // 2400 km at 10kmh => 240 hours => 10 days
         let dist = 2_400_000.0;
         let speed = speed::parse_speed(&params.speed);
-        let time = time(dist, &start, &speed);
+        let time = time_at_control_distance(dist, &start, &speed);
         let duration_sec = (time - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 240.0;
@@ -664,7 +666,7 @@ mod tests {
         let start = parameters::parse_time(&params.start_time);
         let speed = speed::parse_speed(&params.speed);
         for (distance, expected_hours) in test_cases {
-            let time = time(distance, &start, &speed);
+            let time = time_at_control_distance(distance, &start, &speed);
             let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
             println!("{} km: {:.2} hours", distance / 1000.0, duration_hours);
             assert!(
