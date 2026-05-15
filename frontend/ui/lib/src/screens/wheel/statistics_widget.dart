@@ -223,7 +223,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         text: endTimeText,
         callback: () => _selectEndTime(context, endTime),
       );
-      speedText = "${parameters.speed} kmh";
+      speedText = "${formatNumber(double.parse(parameters.speed))} kmh";
     }
 
     Widget table = Table(

@@ -2,10 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-enum SpeedMode {
-  constant,
-  acp,
-}
+enum SpeedMode { constant, acp }
 
 List<String> _speedSliderValues() {
   // Pick speeds relevant to randonneuring.
@@ -49,16 +46,27 @@ void openSpeedDialog({
   required Function(String) onSpeedChanged,
 }) {
   SpeedMode initialMode = parseSpeedMode(speed);
-  String initialConstantSpeed = initialMode == SpeedMode.constant ? speed : "15";
-  
+  String initialConstantSpeed =
+      initialMode == SpeedMode.constant ? speed : "15";
+  SpeedMode currentMode = initialMode;
+  String constantSpeed = initialConstantSpeed;
+  TextEditingController textController = TextEditingController(
+    text: constantSpeed,
+  );
+  Timer? debounceTimer;
+  final FocusNode textFieldFocusNode = FocusNode(
+    onKeyEvent: (node, event) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
+          event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        // Let the TextField handle cursor movement; stop propagation to RadioGroup.
+        return KeyEventResult.skipRemainingHandlers;
+      }
+      return KeyEventResult.ignored;
+    },
+  );
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      SpeedMode currentMode = initialMode;
-      String constantSpeed = initialConstantSpeed;
-      TextEditingController textController = TextEditingController(text: constantSpeed);
-      Timer? debounceTimer;
-      
       return StatefulBuilder(
         builder: (context, setDialogState) {
           return SimpleDialog(
@@ -85,16 +93,25 @@ void openSpeedDialog({
                       controlAffinity: ListTileControlAffinity.leading,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
                       child: Row(
                         children: [
                           Expanded(
                             child: TextField(
+                              focusNode: textFieldFocusNode,
                               controller: textController,
                               enabled: currentMode == SpeedMode.constant,
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                               inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,1}'),
+                                ),
                               ],
                               decoration: const InputDecoration(
                                 labelText: 'Speed (km/h)',
@@ -102,15 +119,25 @@ void openSpeedDialog({
                                 suffixText: 'km/h',
                               ),
                               onChanged: (value) {
-                                if (value.isNotEmpty && double.tryParse(value) != null) {
+                                if (value.isNotEmpty &&
+                                    double.tryParse(value) != null) {
                                   double parsedValue = double.parse(value);
-                                  double clampedValue = parsedValue.clamp(1.0, 100.0);
+                                  double clampedValue = parsedValue.clamp(
+                                    1.0,
+                                    100.0,
+                                  );
                                   constantSpeed = clampedValue.toString();
                                   debounceTimer?.cancel();
-                                  debounceTimer = Timer(const Duration(milliseconds: 250), () {
-                                    String newSpeed = speedModeToString(currentMode, constantSpeed);
-                                    onSpeedChanged(newSpeed);
-                                  });
+                                  debounceTimer = Timer(
+                                    const Duration(milliseconds: 250),
+                                    () {
+                                      String newSpeed = speedModeToString(
+                                        currentMode,
+                                        constantSpeed,
+                                      );
+                                      onSpeedChanged(newSpeed);
+                                    },
+                                  );
                                 }
                               },
                             ),
