@@ -189,6 +189,7 @@ pub struct _Waypoint {
     pub origin: Kind,
     pub name: String,
     pub description: String,
+    pub has_custom_time: bool,
     pub info: Option<WaypointInfo>,
     pub id: String,
 }

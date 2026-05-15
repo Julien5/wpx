@@ -27,7 +27,7 @@ class ControlEditTimeButton extends StatelessWidget {
   final Waypoint? previousControl;
   final Waypoint? nextControl;
   final String currentTimeIso;
-  final String label;
+  final Widget label;
   final Function(DateTime) onTimeChanged;
   const ControlEditTimeButton({
     super.key,
@@ -55,7 +55,7 @@ class ControlEditTimeButton extends StatelessWidget {
         minimumSize: const Size(0, 0),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      child: Text(label, style: const TextStyle(fontSize: 12)),
+      child: label,
     );
   }
 }
@@ -158,7 +158,19 @@ class _DesktopTableState extends State<DesktopTable> {
             final index = entry.key;
             final w = entry.value;
             final formattedDistance = _formatDistance(w.info!.distance);
-            final time = _formatTime(w.info!.time);
+            Widget labelText = Text(
+              _formatTime(w.info!.time),
+              style: const TextStyle(fontSize: 12),
+            );
+            if (w.hasCustomTime) {
+              labelText = Text(
+                _formatTime(w.info!.time),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            }
             final description = joinNonEmpty([w.name, w.description]);
             final isGpxWaypoint = w.origin == Kind.gpxWaypoints;
             final isControl = w.origin == Kind.controls;
@@ -176,7 +188,7 @@ class _DesktopTableState extends State<DesktopTable> {
                       previousControl: previousControl(waypoints, index),
                       nextControl: nextControl(waypoints, index),
                       currentTimeIso: w.info!.time,
-                      label: time,
+                      label: labelText,
                       onTimeChanged: (DateTime newDateTime) {
                         SegmentModel segment = Provider.of(
                           context,
@@ -190,7 +202,7 @@ class _DesktopTableState extends State<DesktopTable> {
                         renderer.reset();
                       },
                     )
-                    : Text(time);
+                    : labelText;
 
             return DataRow(
               cells: <DataCell>[

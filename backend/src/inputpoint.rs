@@ -424,12 +424,18 @@ impl InputPoint {
     }
 
     pub fn waypoint(&self, projection: &TrackProjection) -> Waypoint {
+        let has_custom_time = if let InputPointData::Control(control) = &self.data {
+            control.cutoff_time.is_some()
+        } else {
+            false
+        };
         Waypoint {
             wgs84: self.wgs84.clone(),
             euclidean: self.euclidean.clone(),
             track_index: Some(projection.track_index),
             name: self.name(),
             description: self.description(),
+            has_custom_time,
             info: None,
             origin: self.kind(),
             id: self.gpxwaypoint_id(),

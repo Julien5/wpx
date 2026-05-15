@@ -55,6 +55,7 @@ pub struct Waypoint {
     pub origin: Kind,
     pub name: String,
     pub description: String,
+    pub has_custom_time: bool,
     pub info: Option<WaypointInfo>,
     pub id: String,
 }
@@ -70,6 +71,7 @@ impl Waypoint {
             track_index: Some(indx),
             name: String::new(),
             description: String::new(),
+            has_custom_time: false,
             info: None,
             origin: kind,
             id: String::new(),
