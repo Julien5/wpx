@@ -5,6 +5,7 @@ mod ticks;
 use svg::Node;
 
 use crate::bbox::BoundingBox;
+use crate::format::round_time;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::label_placement::candidate::Candidate;
@@ -634,13 +635,7 @@ impl ProfileView {
                         && proj.track_index != track.len()
                     {
                         let time = time_parameters.time(proj.distance_on_track_to_projection);
-                        log::trace!(
-                            "XX name:{} time:{} ({:?})",
-                            w.name(),
-                            time.format("%H:%M"),
-                            proj
-                        );
-                        let text = format!("{} ({})", w.name(), time.format("%H:%M"));
+                        let text = format!("{} ({})", w.name(), round_time(&time).format("%H:%M"));
                         let format = drawings::format_for_kind(&w.kind());
                         label = Label::new(
                             &text,

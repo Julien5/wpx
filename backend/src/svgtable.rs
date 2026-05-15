@@ -1,3 +1,4 @@
+use crate::format::round_time;
 use crate::pdf::render::TableInfo;
 use crate::{label_placement::features::text_width, waypoint::WaypointInfo};
 use chrono::DateTime;
@@ -154,7 +155,7 @@ pub fn waypoints_to_svg(table_info: TableInfo, row_height_mm: f64) -> String {
         svg.push('\n');
 
         let time_str = DateTime::parse_from_rfc3339(&wp.time)
-            .map(|dt| dt.format("%H:%M").to_string())
+            .map(|dt| round_time(&dt.into()).format("%H:%M").to_string())
             .unwrap_or_else(|_| "--:--".to_string());
         let time_x = x_time + COL_TIME_W / 2.0;
         svg.push_str(&format!(

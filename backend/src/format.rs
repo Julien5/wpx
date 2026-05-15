@@ -50,7 +50,7 @@ fn format_slope(slope_ratio: f64, specifier: &str) -> String {
     }
 }
 
-fn round_time(time: &DateTime) -> DateTime {
+pub fn round_time(time: &DateTime) -> DateTime {
     let mut rounded = time.clone();
 
     // If seconds are 30 or higher, round up by adding 1 minute

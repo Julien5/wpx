@@ -226,13 +226,6 @@ pub fn time_with_controls(
         .enumerate()
         .find(|(_, c)| c.distance >= distance);
     if maybe.is_none() {
-        log::info!(
-            "XX could not find next control for distance={:.1}",
-            distance
-        );
-        for c in all_controls {
-            log::info!("XX control {:?}", c);
-        }
         return time_at_control_distance(distance, start_time, speed);
     }
     let (index_next, next) = maybe.unwrap();
@@ -259,14 +252,6 @@ pub fn time_with_controls(
     let ret = time_at_control(&previous, start_time, speed)
         + TimeDelta::nanoseconds((1_000_000_000f64 * seconds).round() as i64);
     debug_assert!(lambda <= 1f64);
-    log::trace!("XX previous: {:?}", previous);
-    log::trace!("XX next: {:?}", next);
-    log::trace!("XX delta1: {} delta2: {}", delta1, delta2);
-    log::trace!(
-        "XX distance:{:.1} time:{}",
-        distance / 1000f64,
-        ret.format("%H:%M")
-    );
     ret
 }
 
