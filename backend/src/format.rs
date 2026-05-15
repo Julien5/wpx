@@ -1,3 +1,6 @@
+use chrono::{TimeDelta, Timelike};
+
+use crate::mercator::DateTime;
 use crate::point_collection::Kind;
 use crate::waypoint::ExportParameters;
 
@@ -47,6 +50,19 @@ fn format_slope(slope_ratio: f64, specifier: &str) -> String {
     }
 }
 
+fn round_time(time: &DateTime) -> DateTime {
+    let mut rounded = time.clone();
+
+    // If seconds are 30 or higher, round up by adding 1 minute
+    if rounded.second() >= 30 {
+        // Adding a duration handles the overflow automatically
+        // (e.g., 23:59:59 becomes 00:00:00 of the next day)
+        rounded = rounded + TimeDelta::minutes(1);
+    }
+    rounded = rounded.with_second(0).unwrap().with_nanosecond(0).unwrap();
+    rounded
+}
+
 pub fn make_gpx_name(data: &WaypointInfoData, parameters: &ExportParameters) -> String {
     use regex::Regex;
     let format_regex: Regex =
@@ -78,7 +94,7 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &ExportParameters) -> 
             "TIME" => {
                 // The specifier is a Chrono format string (e.g., "%H:%M")
                 // NOTE: Using "%H:%M" corresponds to the example TIME[HH:MM]
-                time.format(specifier).to_string()
+                round_time(&time).format(specifier).to_string()
             }
             "SLOPE" => {
                 // The specifier is a custom W.P[%] string (e.g., "4.1" or "4.1%")

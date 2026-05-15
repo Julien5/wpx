@@ -507,6 +507,9 @@ mod tests {
         for c in &mut controls {
             track.project_point(c);
         }
+
+        let controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
+
         collection.import_other(&Kind::GPXWaypoints, waypoints);
         collection.import_other(&Kind::Controls, controls);
 
@@ -559,6 +562,7 @@ mod tests {
         let mut collection = segment.packet_provider.read().unwrap().collection.clone();
         collection.range_cut(&segment.range());
         collection.kinds_cut(&kinds);
+
         let result = match function {
             &RenderFunction::Profile => profile::profile_background(
                 &segment.track,
@@ -705,13 +709,13 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn graph_pbp() {
+    async fn graph_map_pbp() {
         let _ = env_logger::try_init();
         let start = 0f64;
-        let length = 1200_000f64;
+        let length = 1220_000f64;
         let size = IntegerSize2D::new(1600, 1000);
         let ok = graph_test(
-            "data/ref/pbp2023.gpx",
+            "data/PBP-simple.gpx",
             "data/ref/singlemap-pbp2023.svg",
             &RenderFunction::Map,
             start,
@@ -727,7 +731,7 @@ mod tests {
     async fn graph_profile_pbp() {
         let _ = env_logger::try_init();
         let start = 0f64;
-        let length = 1200_000f64;
+        let length = 1220_000f64;
         let size = IntegerSize2D::new(3000, 300);
         let ok = graph_test(
             "data/PBP-simple.gpx",

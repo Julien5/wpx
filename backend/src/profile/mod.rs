@@ -236,7 +236,7 @@ impl ProfileView {
                 speed: speed.clone(),
             };
             let nkm = (0.01 * self.W * width / self.bboxview().width()).ceil() as usize;
-            debug_assert!(start.1 <= end.1);
+            debug_assert!(start.1 <= end.1, "{:?},{:?}", start, end);
             let duration = end.1 - start.1;
             let mut local_times = wheel::time_points::generate_times(&parameters, &duration, nkm);
             debug_assert!(local_times.len() >= 2);
@@ -634,7 +634,12 @@ impl ProfileView {
                         && proj.track_index != track.len()
                     {
                         let time = time_parameters.time(proj.distance_on_track_to_projection);
-                        log::trace!("XXname:{} time:{}", w.name(), time.format("%H:%M"));
+                        log::trace!(
+                            "XX name:{} time:{} ({:?})",
+                            w.name(),
+                            time.format("%H:%M"),
+                            proj
+                        );
                         let text = format!("{} ({})", w.name(), time.format("%H:%M"));
                         let format = drawings::format_for_kind(&w.kind());
                         label = Label::new(

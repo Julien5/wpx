@@ -29,6 +29,8 @@ use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
 use crate::segment::SegmentData;
 use crate::speed;
+use crate::speed::parse_speed;
+use crate::speed::Speed;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
 use crate::track::Track;
@@ -207,7 +209,13 @@ impl Backend {
         }
     }
 
-    pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) {
+    pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) -> bool {
+        match self.time_parameters().speed {
+            Speed::ACP => {
+                return false;
+            }
+            Speed::MPS(_) => {}
+        }
         let mut controls = self
             .d()
             .packet_provider
@@ -232,7 +240,7 @@ impl Backend {
             let mut locked = self.d().packet_provider.write().unwrap();
             locked.collection.import_other(&Kind::Controls, controls);
         }
-        // SegmentData is invalid after that.
+        true
     }
 
     pub fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
@@ -325,6 +333,8 @@ impl Backend {
     }
 
     pub fn set_parameters(&mut self, parameters: &Parameters) {
+        let old_speed = parse_speed(&self.d().parameters.speed);
+        let new_speed = parse_speed(&parameters.speed);
         self.dmut().parameters = parameters.clone();
         if self.d().parameters.segment_overlap > self.d().parameters.segment_length {
             assert!(false);
@@ -336,6 +346,23 @@ impl Backend {
             let usersteps =
                 make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
             locked.collection.import_other(&Kind::CutOff, usersteps);
+        }
+
+        // remove control time data if the constant speed has changed, otherwise
+        // we might have t(end) < t(CP) (if the speed gets higher).
+        if let Speed::MPS(oldmps) = old_speed {
+            if let Speed::MPS(newmps) = new_speed {
+                // at less drastic measure would be to only reset the time
+                // on controls which time are after the time of the last control.
+                if newmps > oldmps {
+                    let mut locked = self.d().packet_provider.write().unwrap();
+                    let mut controls = locked.collection.get_vector(&Kind::Controls);
+                    for c in &mut controls {
+                        c.data.as_control_mut().unwrap().cutoff_time = None;
+                    }
+                    locked.collection.import_other(&Kind::Controls, controls);
+                }
+            }
         }
     }
 

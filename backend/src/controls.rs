@@ -154,7 +154,7 @@ pub fn add_control_at_waypoint(
     waypoint: &Waypoint,
 ) -> Vec<InputPoint> {
     let mut ret = controls.clone();
-    // we must recompute the projections because we mussing the floating track index.
+    // we must recompute the projections to fix the missing floating track index
     let mut position = InputPoint::from_wgs84(
         &waypoint.wgs84,
         &waypoint.euclidean,

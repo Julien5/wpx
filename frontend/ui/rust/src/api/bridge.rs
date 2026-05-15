@@ -313,8 +313,8 @@ impl Bridge {
     }
 
     #[frb(sync)]
-    pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) {
-        self.backend.set_control_time(waypoint, time);
+    pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) -> bool {
+        self.backend.set_control_time(waypoint, time)
     }
 
     #[frb(sync)]

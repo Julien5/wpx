@@ -6,6 +6,7 @@ import 'package:wpx/src/models/kindsmodel.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/screens/wheel/control_time_dialog.dart';
+import 'package:wpx/src/screens/wheel/speed_dialog.dart';
 import 'package:wpx/src/utils/utils.dart';
 
 class DesktopTable extends StatefulWidget {
@@ -20,6 +21,43 @@ class DesktopTable extends StatefulWidget {
 
   @override
   State<DesktopTable> createState() => _DesktopTableState();
+}
+
+class ControlEditTimeButton extends StatelessWidget {
+  final Waypoint? previousControl;
+  final Waypoint? nextControl;
+  final String currentTimeIso;
+  final String label;
+  final Function(DateTime) onTimeChanged;
+  const ControlEditTimeButton({
+    super.key,
+    required this.previousControl,
+    this.nextControl,
+    required this.currentTimeIso,
+    required this.label,
+    required this.onTimeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        openControlTimeDialog(
+          context: context,
+          previousControl: previousControl,
+          nextControl: nextControl,
+          currentTimeIso: currentTimeIso,
+          onTimeChanged: onTimeChanged,
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        minimumSize: const Size(0, 0),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      child: Text(label, style: const TextStyle(fontSize: 12)),
+    );
+  }
 }
 
 class _DesktopTableState extends State<DesktopTable> {
@@ -67,7 +105,7 @@ class _DesktopTableState extends State<DesktopTable> {
     return null;
   }
 
-  Widget buildData(List<Waypoint> waypoints) {
+  Widget buildData(List<Waypoint> waypoints, Parameters parameters) {
     if (waypoints.isEmpty) {
       return Center(child: const Text("No waypoints"));
     }
@@ -84,6 +122,7 @@ class _DesktopTableState extends State<DesktopTable> {
         lastControlIndex = i;
       }
     }
+    SpeedMode speedMode = parseSpeedMode(parameters.speed);
 
     return DataTable(
       columnSpacing: 15.0,
@@ -125,48 +164,38 @@ class _DesktopTableState extends State<DesktopTable> {
             final isControl = w.origin == Kind.controls;
             final isEditableControl =
                 isControl &&
+                speedMode == SpeedMode.constant &&
                 index != firstControlIndex &&
                 index != lastControlIndex;
             final showCheckbox = isControl || isGpxWaypoint;
             final checkBoxValue = isControl;
+
+            Widget timeWidget =
+                isEditableControl
+                    ? ControlEditTimeButton(
+                      previousControl: previousControl(waypoints, index),
+                      nextControl: nextControl(waypoints, index),
+                      currentTimeIso: w.info!.time,
+                      label: time,
+                      onTimeChanged: (DateTime newDateTime) {
+                        SegmentModel segment = Provider.of(
+                          context,
+                          listen: false,
+                        );
+                        segment.setControlTime(w, newDateTime);
+                        FutureRenderer renderer = Provider.of(
+                          context,
+                          listen: false,
+                        );
+                        renderer.reset();
+                      },
+                    )
+                    : Text(time);
+
             return DataRow(
               cells: <DataCell>[
                 DataCell(Text(formattedDistance)),
-                DataCell(
-                  isEditableControl
-                      ? ElevatedButton(
-                        onPressed: () {
-                          openControlTimeDialog(
-                            context: context,
-                            previousControl: previousControl(waypoints, index),
-                            nextControl: nextControl(waypoints, index),
-                            currentTimeIso: w.info!.time,
-                            onTimeChanged: (DateTime newDateTime) {
-                              SegmentModel segment = Provider.of(
-                                context,
-                                listen: false,
-                              );
-                              segment.setControlTime(w, newDateTime);
-                              FutureRenderer renderer = Provider.of(
-                                context,
-                                listen: false,
-                              );
-                              renderer.reset();
-                            },
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ),
-                          minimumSize: const Size(0, 0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(time, style: const TextStyle(fontSize: 12)),
-                      )
-                      : Text(time),
-                ),
+                DataCell(timeWidget),
                 DataCell(Text(description)),
                 if (widget.editControls)
                   DataCell(
@@ -198,10 +227,10 @@ class _DesktopTableState extends State<DesktopTable> {
   Widget build(BuildContext context) {
     SegmentModel model = Provider.of<SegmentModel>(context);
     debugPrint("build table for segment ${model.segment.id()}");
-    context.watch<ParameterModel>();
+    ParameterModel parameters = Provider.of<ParameterModel>(context);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      child: buildData(widget.waypoints),
+      child: buildData(widget.waypoints, parameters.parameters()),
     );
   }
 }

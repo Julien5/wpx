@@ -99,10 +99,11 @@ fn test_constant_strech() {
     let loudeac_time = parameters::parse_time(&result[3].info.as_ref().unwrap().time);
     assert_eq!(format!("{}", loudeac_time.format("%H:%M")), "14:57");
 
-    backend.set_control_time(
+    let ok = backend.set_control_time(
         &result[control_index],
         &Some(format!("2026-04-12T20:00:00")),
     );
+    assert_eq!(ok, true);
     let result = table(&backend);
     display_table(&result, &start_time);
 
@@ -145,16 +146,18 @@ fn test_acp_strech() {
     let fougere_time = parameters::parse_time(&result[8].info.as_ref().unwrap().time);
     assert_eq!(format!("{}", fougere_time.format("%d-%H:%M")), "14-20:04");
 
-    backend.set_control_time(
+    let ok = backend.set_control_time(
         &result[control_index],
         &Some(format!("2026-04-12T20:00:00")),
     );
+    assert_eq!(ok, false);
     let result = table(&backend);
     display_table(&result, &start_time);
 
+    // check that nothing has changed
     let control_time = parameters::parse_time(&result[control_index].info.as_ref().unwrap().time);
-    assert_eq!(format!("{}", control_time.format("%d-%H:%M")), "12-20:00");
+    assert_eq!(format!("{}", control_time.format("%d-%H:%M")), "13-15:59");
 
     let fougere_time = parameters::parse_time(&result[8].info.as_ref().unwrap().time);
-    assert_eq!(format!("{}", fougere_time.format("%d-%H:%M")), "14-16:07");
+    assert_eq!(format!("{}", fougere_time.format("%d-%H:%M")), "14-20:04");
 }

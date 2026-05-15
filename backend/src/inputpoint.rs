@@ -42,7 +42,7 @@ pub struct ControlData {
     pub nearest_waypoint_id: String,
     pub name: String,
     pub waypoint_name: String,
-    pub waypoint_descriptio: String,
+    pub waypoint_description: String,
     pub segment_name: String,
     pub cutoff_time: Option<DateTime>,
 }
@@ -58,7 +58,7 @@ impl ControlData {
     }
 
     pub fn description(&self) -> String {
-        Self::join_non_empty(&[&self.waypoint_name, &self.waypoint_descriptio, &{
+        Self::join_non_empty(&[&self.waypoint_name, &self.waypoint_description, &{
             if !self.segment_name.is_empty() {
                 format!("End of {}", self.segment_name)
             } else {
@@ -279,7 +279,7 @@ impl InputPoint {
         let data = ControlData {
             name: format!("{}", waypoint_name),
             waypoint_name: format!("{}", waypoint_name),
-            waypoint_descriptio: format!("{}", waypoint_description),
+            waypoint_description: format!("{}", waypoint_description),
             segment_name: format!("{}", segment_name),
             nearest_waypoint_id: format!("{}", nearest_waypoint_id),
             cutoff_time: None,
@@ -395,7 +395,7 @@ impl InputPoint {
         match &self.data {
             InputPointData::OSM(d) => d.description(),
             InputPointData::GPXWaypoint(d) => d.description.clone(),
-            InputPointData::Control(d) => d.waypoint_descriptio.clone(),
+            InputPointData::Control(d) => d.description(),
             InputPointData::CutOff => String::new(),
         }
     }

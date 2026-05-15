@@ -187,80 +187,25 @@ fn time_at_control(control: &ControlSpeedData, start_time: &DateTime, speed: &Sp
             _ => {}
         }
     }
-    control.time.unwrap_or(time_at_control_distance(
-        control.distance,
-        start_time,
-        speed,
-    ))
-}
-
-fn dominate(a: &ControlSpeedData, b: &ControlSpeedData) -> bool {
-    fn time(control: &ControlSpeedData) -> DateTime {
-        control.time.as_ref().unwrap().clone()
+    let normal_time = time_at_control_distance(control.distance, start_time, speed);
+    match speed {
+        Speed::ACP => normal_time,
+        Speed::MPS(_) => control.time.unwrap_or(normal_time),
     }
-    a.distance > b.distance && time(a) < time(b)
 }
 
-fn is_dominated(a: &ControlSpeedData, all: &Vec<ControlSpeedData>) -> bool {
-    for x in all {
-        if dominate(x, a) {
-            return true;
-        }
-    }
-    false
-}
-
-// interpolation points that are earlier but farther are not valid.
-fn filter_control_speed_data(
-    data: Vec<ControlSpeedData>,
-    keep0: &[usize],
-) -> Vec<ControlSpeedData> {
-    let keep: Vec<bool> = data
-        .iter()
-        .enumerate()
-        .map(|(index, pl)| !is_dominated(pl, &data) || keep0.contains(&index))
-        .collect();
-
-    data.into_iter()
-        .zip(keep)
-        .filter_map(|(item, keep)| if keep { Some(item) } else { None })
-        .collect()
-}
-
-fn setup_interpolation_controls(
+fn acp_interpolation_controls(
     start_time: &DateTime,
-    realcontrols: &Vec<ControlSpeedData>,
+    controls: &Vec<ControlSpeedData>,
 ) -> Vec<ControlSpeedData> {
-    let mut all_controls = realcontrols.clone();
-    debug_assert!(realcontrols.last().unwrap().last_control);
-    debug_assert!(realcontrols.is_sorted_by_key(|c| c.distance));
-    let maxdist = realcontrols.last().unwrap().distance;
-    // the last control and the one before must be kept
-    let mut keep = vec![realcontrols.len() - 1];
-    if realcontrols.len() > 2 {
-        keep.insert(0, realcontrols.len() - 2);
+    let end_distance = controls.last().unwrap().distance;
+    let mut ret = ControlSpeedData::virtual_acp_controls(start_time);
+    ret.retain(|c| c.distance < end_distance);
+    ret.push(controls.last().unwrap().clone());
+    if controls.len() > 3 {
+        ret.push(controls[controls.len() - 2].clone());
     }
-    all_controls.retain(|c| c.last_control || c.time.is_some());
-    let mut virtual_controls = ControlSpeedData::virtual_acp_controls(start_time);
-    virtual_controls.retain(|c| c.distance < maxdist);
-    all_controls.extend_from_slice(&virtual_controls);
-    all_controls.sort_by(|a, b| a.distance.total_cmp(&b.distance));
-    all_controls.retain(|c| c.distance <= maxdist);
-    all_controls.iter_mut().enumerate().for_each(|(index, c)| {
-        log::trace!("{} [{:?}]", index, c);
-        debug_assert!(c.time.is_some() || c.last_control);
-        if c.time.is_none() {
-            let duration = duration_acp_last(c.distance);
-            c.time = Some(
-                *start_time
-                    + TimeDelta::nanoseconds((3600f64 * duration).round() as i64 * 1_000_000_000),
-            );
-        }
-    });
-    let ret = filter_control_speed_data(all_controls);
-    ret.iter().enumerate().for_each(|(index, c)| {
-        log::trace!("ret {} [{:?}]", index, c);
-    });
+    ret.sort_by(|a, b| a.distance.total_cmp(&b.distance));
     ret
 }
 
@@ -271,7 +216,7 @@ pub fn time_with_controls(
     speed: &Speed,
 ) -> DateTime {
     let all_controls = match speed {
-        Speed::ACP => setup_interpolation_controls(start_time, realcontrols),
+        Speed::ACP => acp_interpolation_controls(start_time, realcontrols),
         Speed::MPS(_) => realcontrols.clone(),
     };
     // controls has to be sorted by distance and time
@@ -281,9 +226,12 @@ pub fn time_with_controls(
         .enumerate()
         .find(|(_, c)| c.distance >= distance);
     if maybe.is_none() {
-        log::info!("could not find next control for distance={:.1}", distance);
+        log::info!(
+            "XX could not find next control for distance={:.1}",
+            distance
+        );
         for c in all_controls {
-            log::info!("control {:?}", c);
+            log::info!("XX control {:?}", c);
         }
         return time_at_control_distance(distance, start_time, speed);
     }
@@ -337,7 +285,7 @@ pub fn distance_with_controls(
 ) -> f64 {
     let current_time = *start_time + *duration;
     let all_controls = match speed {
-        Speed::ACP => setup_interpolation_controls(start_time, realcontrols),
+        Speed::ACP => acp_interpolation_controls(start_time, &realcontrols),
         Speed::MPS(_) => realcontrols.clone(),
     };
     let maybe = all_controls
@@ -400,9 +348,9 @@ pub fn parse_speed(data: &str) -> Speed {
     if data == "ACP" {
         return Speed::ACP;
     }
-    let ok = data.parse().ok();
+    let ok: Option<f64> = data.parse().ok();
     debug_assert!(ok.is_some(), "data={}", data);
-    let kmh: f64 = ok.unwrap();
+    let kmh: f64 = ok.as_ref().unwrap().max(0.1f64);
     Speed::MPS(kmh * 1000.0 / 3600.0)
 }
 

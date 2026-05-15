@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -6,7 +7,7 @@ enum SpeedMode {
   acp,
 }
 
-List<String> speedSliderValues() {
+List<String> _speedSliderValues() {
   // Pick speeds relevant to randonneuring.
   /*
   https://www.randonneursmondiaux.org/files/LRM_Event_Regulations_2023.pdf
@@ -56,6 +57,7 @@ void openSpeedDialog({
       SpeedMode currentMode = initialMode;
       String constantSpeed = initialConstantSpeed;
       TextEditingController textController = TextEditingController(text: constantSpeed);
+      Timer? debounceTimer;
       
       return StatefulBuilder(
         builder: (context, setDialogState) {
@@ -101,9 +103,14 @@ void openSpeedDialog({
                               ),
                               onChanged: (value) {
                                 if (value.isNotEmpty && double.tryParse(value) != null) {
-                                  constantSpeed = value;
-                                  String newSpeed = speedModeToString(currentMode, constantSpeed);
-                                  onSpeedChanged(newSpeed);
+                                  double parsedValue = double.parse(value);
+                                  double clampedValue = parsedValue.clamp(1.0, 100.0);
+                                  constantSpeed = clampedValue.toString();
+                                  debounceTimer?.cancel();
+                                  debounceTimer = Timer(const Duration(milliseconds: 250), () {
+                                    String newSpeed = speedModeToString(currentMode, constantSpeed);
+                                    onSpeedChanged(newSpeed);
+                                  });
                                 }
                               },
                             ),
