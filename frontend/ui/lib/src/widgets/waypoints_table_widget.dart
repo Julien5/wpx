@@ -23,13 +23,10 @@ class DesktopTable extends StatefulWidget {
   State<DesktopTable> createState() => _DesktopTableState();
 }
 
-Text makeTimeLabel(Waypoint w) {
+Text makeTimeLabel(Waypoint w, FontWeight weight) {
   return Text(
     formatTime(parseDateTime(w.info!.time)),
-    style: TextStyle(
-      fontSize: 12,
-      fontWeight: w.hasCustomTime ? FontWeight.bold : FontWeight.normal,
-    ),
+    style: TextStyle(fontSize: 12, fontWeight: weight),
   );
 }
 
@@ -49,6 +46,9 @@ class ControlEditTimeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // we are not in acp mode
+    FontWeight weight =
+        currentControl.hasCustomTime ? FontWeight.bold : FontWeight.normal;
     return ElevatedButton(
       onPressed: () {
         openControlTimeDialog(
@@ -64,7 +64,7 @@ class ControlEditTimeButton extends StatelessWidget {
         minimumSize: const Size(0, 0),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      child: makeTimeLabel(currentControl),
+      child: makeTimeLabel(currentControl, weight),
     );
   }
 }
@@ -192,7 +192,7 @@ class _DesktopTableState extends State<DesktopTable> {
                         renderer.reset();
                       },
                     )
-                    : makeTimeLabel(w);
+                    : makeTimeLabel(w, FontWeight.normal);
 
             return DataRow(
               cells: <DataCell>[
