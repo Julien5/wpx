@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
@@ -171,6 +172,21 @@ double parseSpeedMps(String speed) {
 String speedString(double mps) {
   double kmh = mps * 3600 / 1000;
   return kmh.toStringAsFixed(3);
+}
+
+DateTime _roundToMinute(DateTime dt) {
+  if (dt.second >= 30 || dt.millisecond >= 500) {
+    return dt
+        .copyWith(second: 0, millisecond: 0, microsecond: 0)
+        .add(const Duration(minutes: 1));
+  }
+  return dt.copyWith(second: 0, millisecond: 0, microsecond: 0);
+}
+
+String formatTime(DateTime t) {
+  // rounding to the minute (as opposed to truncating the seconds part)
+  // allows to display 12:34:59.999 as 12:35:00.
+  return DateFormat('HH:mm').format(_roundToMinute(t));
 }
 
 DateTime bestEndTime(

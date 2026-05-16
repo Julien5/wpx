@@ -502,6 +502,7 @@ mod tests {
             controls: controls_speed_data(&controls),
             start: parameters::parse_time(&parameters.start_time),
             speed: speed::parse_speed(&parameters.speed),
+            track_distance: track.total_distance(),
         };
 
         for c in &mut controls {

@@ -418,6 +418,7 @@ impl Backend {
             controls: controls_speed_data(&self.controls()),
             start: parameters::parse_time(&self.d().parameters.start_time),
             speed: speed::parse_speed(&self.d().parameters.speed),
+            track_distance: self.d().track.total_distance(),
         }
     }
 

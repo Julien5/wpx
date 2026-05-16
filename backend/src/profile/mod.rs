@@ -235,6 +235,7 @@ impl ProfileView {
                 controls: all_controls_speed_data.clone(),
                 start: start.1.clone(),
                 speed: speed.clone(),
+                track_distance: self.parameters.time_parameters.track_distance,
             };
             let nkm = (0.01 * self.W * width / self.bboxview().width()).ceil() as usize;
             debug_assert!(start.1 <= end.1, "{:?},{:?}", start, end);

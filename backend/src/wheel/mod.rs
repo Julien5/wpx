@@ -483,6 +483,7 @@ mod tests {
             controls: Vec::new(),
             start: default_date,
             speed: speed::Speed::MPS(1f64),
+            track_distance: 200_000f64,
         };
 
         WheelModel {

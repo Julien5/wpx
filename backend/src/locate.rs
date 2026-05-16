@@ -122,6 +122,7 @@ fn middle_point(a: &(f64, f64, f64), b: &(f64, f64, f64), alpha: f64) -> (f64, f
 mod projection {
     use crate::mercator::MercatorPoint;
 
+    #[derive(Debug)]
     pub struct PartialProjection {
         pub track_floating_index: f64,
         pub projection: MercatorPoint,
@@ -241,7 +242,7 @@ pub fn compute_track_projection(
         return point.track_projections.first().unwrap().clone();
     }
     // as opposed to GPX and OSM points, which may be on several segments
-    let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
+    let mut index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
     let partial = projection::compute(track, &point.euclidean, &index);
     let index1 = partial.track_floating_index.floor() as usize;
     let index2 = (index1 + 1).min(track.len() - 1) as usize;
@@ -253,6 +254,17 @@ pub fn compute_track_projection(
         .unwrap();
     assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
     let floating_index = index1 as f64 + index_floating_part;
+    // prevent ill-formed projection where floating_index is more than 1 unit from index.
+    if (floating_index - index as f64).abs() >= 1f64 {
+        /*
+        log::trace!("point:{:?}", point);
+        log::trace!("index:{}", index);
+        log::trace!("index1:{}", index1);
+        log::trace!("index2:{}", index2);
+        log::trace!("partial:{:?}", partial);*/
+        index = floating_index.round() as usize;
+    }
+    debug_assert!((floating_index - index as f64).abs() < 1f64);
     let t1 = &track[index1];
     let t2 = &track[index2];
     let a1 = (t1.0, t1.1, elevation(index1));

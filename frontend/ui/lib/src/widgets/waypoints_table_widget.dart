@@ -23,18 +23,27 @@ class DesktopTable extends StatefulWidget {
   State<DesktopTable> createState() => _DesktopTableState();
 }
 
+Text makeTimeLabel(Waypoint w) {
+  return Text(
+    formatTime(parseDateTime(w.info!.time)),
+    style: TextStyle(
+      fontSize: 12,
+      fontWeight: w.hasCustomTime ? FontWeight.bold : FontWeight.normal,
+    ),
+  );
+}
+
 class ControlEditTimeButton extends StatelessWidget {
   final Waypoint? previousControl;
   final Waypoint? nextControl;
-  final String currentTimeIso;
-  final Widget label;
+  final Waypoint currentControl;
+
   final Function(DateTime) onTimeChanged;
   const ControlEditTimeButton({
     super.key,
     required this.previousControl,
     this.nextControl,
-    required this.currentTimeIso,
-    required this.label,
+    required this.currentControl,
     required this.onTimeChanged,
   });
 
@@ -46,7 +55,7 @@ class ControlEditTimeButton extends StatelessWidget {
           context: context,
           previousControl: previousControl,
           nextControl: nextControl,
-          currentTimeIso: currentTimeIso,
+          currentControl: currentControl,
           onTimeChanged: onTimeChanged,
         );
       },
@@ -55,7 +64,7 @@ class ControlEditTimeButton extends StatelessWidget {
         minimumSize: const Size(0, 0),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      child: label,
+      child: makeTimeLabel(currentControl),
     );
   }
 }
@@ -64,11 +73,6 @@ class _DesktopTableState extends State<DesktopTable> {
   String _formatDistance(double distance) {
     final km = distance / 1000.0;
     return NumberFormat('0.0').format(km);
-  }
-
-  String _formatTime(String isoTime) {
-    DateTime time = parseDateTime(isoTime);
-    return DateFormat('HH:mm').format(time);
   }
 
   void makeControlAtWaypoint(Waypoint waypoint, bool on) {
@@ -139,7 +143,7 @@ class _DesktopTableState extends State<DesktopTable> {
           numeric: true,
         ),
         const DataColumn(
-          label: Text('TIME', style: TextStyle(fontWeight: FontWeight.bold)),
+          label: Text('CUTOFF', style: TextStyle(fontWeight: FontWeight.bold)),
           numeric: true,
         ),
         const DataColumn(label: Text(""), numeric: false),
@@ -158,19 +162,6 @@ class _DesktopTableState extends State<DesktopTable> {
             final index = entry.key;
             final w = entry.value;
             final formattedDistance = _formatDistance(w.info!.distance);
-            Widget labelText = Text(
-              _formatTime(w.info!.time),
-              style: const TextStyle(fontSize: 12),
-            );
-            if (w.hasCustomTime) {
-              labelText = Text(
-                _formatTime(w.info!.time),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              );
-            }
             final description = joinNonEmpty([w.name, w.description]);
             final isGpxWaypoint = w.origin == Kind.gpxWaypoints;
             final isControl = w.origin == Kind.controls;
@@ -187,8 +178,7 @@ class _DesktopTableState extends State<DesktopTable> {
                     ? ControlEditTimeButton(
                       previousControl: previousControl(waypoints, index),
                       nextControl: nextControl(waypoints, index),
-                      currentTimeIso: w.info!.time,
-                      label: labelText,
+                      currentControl: w,
                       onTimeChanged: (DateTime newDateTime) {
                         SegmentModel segment = Provider.of(
                           context,
@@ -202,7 +192,7 @@ class _DesktopTableState extends State<DesktopTable> {
                         renderer.reset();
                       },
                     )
-                    : labelText;
+                    : makeTimeLabel(w);
 
             return DataRow(
               cells: <DataCell>[

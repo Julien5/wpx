@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/screens/wheel/statistics_widget.dart';
+import 'package:wpx/src/utils/utils.dart';
 
 String _formatDateTime(DateTime dt) {
   final d =
@@ -37,25 +40,17 @@ String _monthName(int m) =>
 /// or null if the user cancelled.
 Future<DateTime?> showDateTimeRangePickerDialog({
   required BuildContext context,
-  required DateTime min,
-  required String minLabel,
-  required DateTime max,
-  required String maxLabel,
-  DateTime? initial,
+  required Waypoint? previous,
+  required Waypoint? next,
+  required Waypoint current,
 }) {
-  DateTime min0 = DateTime(min.year, min.month, min.day, min.hour, min.minute);
-  min0 = min0.add(Duration(minutes: 5));
-  DateTime max0 = DateTime(max.year, max.month, max.day, max.hour, max.minute);
-  max0 = max0.add(Duration(minutes: -5));
   return showDialog<DateTime>(
     context: context,
     builder:
         (_) => DateTimeRangePickerDialog(
-          min: min0,
-          minLabel: minLabel,
-          max: max0,
-          maxLabel: maxLabel,
-          initial: initial,
+          previousControl: previous,
+          nextControl: next,
+          currentControl: current,
         ),
   );
 }
@@ -65,18 +60,14 @@ Future<DateTime?> showDateTimeRangePickerDialog({
 class DateTimeRangePickerDialog extends StatefulWidget {
   const DateTimeRangePickerDialog({
     super.key,
-    required this.min,
-    required this.minLabel,
-    required this.max,
-    required this.maxLabel,
-    this.initial,
+    required this.previousControl,
+    required this.nextControl,
+    required this.currentControl,
   });
 
-  final DateTime min;
-  final String minLabel;
-  final DateTime max;
-  final String maxLabel;
-  final DateTime? initial;
+  final Waypoint? previousControl;
+  final Waypoint? nextControl;
+  final Waypoint currentControl;
 
   @override
   State<DateTimeRangePickerDialog> createState() =>
@@ -94,8 +85,40 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   late final TextEditingController _hourCtrl;
   late final TextEditingController _minuteCtrl;
 
+  DateTime start() {
+    return parseDateTime(widget.previousControl!.info!.time);
+  }
+
+  DateTime min() {
+    DateTime ret = parseDateTime(widget.previousControl!.info!.time);
+    ret = ret.add(const Duration(minutes: 5));
+    return ret;
+  }
+
+  String minLabel() {
+    return widget.previousControl!.name;
+  }
+
+  DateTime end() {
+    return parseDateTime(widget.nextControl!.info!.time);
+  }
+
+  DateTime max() {
+    DateTime ret = parseDateTime(widget.nextControl!.info!.time);
+    ret = ret.add(const Duration(minutes: -5));
+    return ret;
+  }
+
+  String maxLabel() {
+    return widget.nextControl!.name;
+  }
+
+  DateTime init() {
+    return parseDateTime(widget.currentControl.info!.time);
+  }
+
   // Day index relative to widget.min (0, 1, 2, …)
-  int get _dayIndex => _current.difference(_dayStart(widget.min)).inDays;
+  int get _dayIndex => _current.difference(_dayStart(min())).inDays;
 
   // List of distinct calendar days in the range
   late final List<DateTime> _days;
@@ -103,17 +126,17 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   @override
   void initState() {
     super.initState();
-    _totalMinutes = widget.max.difference(widget.min).inMinutes;
-    final initial = widget.initial ?? widget.min;
+    _totalMinutes = max().difference(min()).inMinutes;
+    final initial = init();
     _offsetMinutes = initial
-        .difference(widget.min)
+        .difference(min())
         .inMinutes
         .clamp(0, _totalMinutes);
 
     // Build the list of days
     _days = [];
-    var d = _dayStart(widget.min);
-    while (!d.isAfter(_dayStart(widget.max))) {
+    var d = _dayStart(min());
+    while (!d.isAfter(_dayStart(max()))) {
       _days.add(d);
       d = d.add(const Duration(days: 1));
     }
@@ -133,14 +156,14 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     super.dispose();
   }
 
-  DateTime get _current => widget.min.add(Duration(minutes: _offsetMinutes));
+  DateTime get _current => min().add(Duration(minutes: _offsetMinutes));
 
   DateTime _dayStart(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
   /// Valid hour range for a given day index.
   ({int min, int max}) _hourBounds(int dayIdx) {
-    final minH = dayIdx == 0 ? widget.min.hour : 0;
-    final maxH = dayIdx == _days.length - 1 ? widget.max.hour : 23;
+    final minH = dayIdx == 0 ? min().hour : 0;
+    final maxH = dayIdx == _days.length - 1 ? max().hour : 23;
     return (min: minH, max: maxH);
   }
 
@@ -149,9 +172,9 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     final hb = _hourBounds(dayIdx);
     int minM = 0;
     int maxM = 59;
-    if (dayIdx == 0 && hour == hb.min) minM = widget.min.minute;
+    if (dayIdx == 0 && hour == hb.min) minM = min().minute;
     if (dayIdx == _days.length - 1 && hour == hb.max) {
-      maxM = widget.max.minute;
+      maxM = max().minute;
     }
     return (min: minM, max: maxM);
   }
@@ -178,7 +201,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     final mb = _minuteBounds(dayIdx, hour);
     minute = minute.clamp(mb.min, mb.max);
     final target = _days[dayIdx].add(Duration(hours: hour, minutes: minute));
-    final offset = target.difference(widget.min).inMinutes;
+    final offset = target.difference(min()).inMinutes;
     _applyOffset(offset);
   }
 
@@ -248,7 +271,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
           ),
           const SizedBox(height: 4),
           Text(
-            _formatDateTime(_current),
+            widget.currentControl.name,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w500,
@@ -264,6 +287,16 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   // ── Coarse slider ────────────────────────────────────────────────────────
 
   Widget _buildSliderSection(ColorScheme cs) {
+    double startDistance = widget.previousControl!.info!.distance;
+    double currentDistance = widget.currentControl.info!.distance;
+    double endDistance = widget.nextControl!.info!.distance;
+    Duration fromStart = _current.difference(start());
+    double mpsFromStart =
+        (currentDistance - startDistance) / fromStart.inSeconds;
+    Duration toEnd = end().difference(_current);
+    double mpsToEnd = (endDistance - currentDistance) / toEnd.inSeconds;
+    String fromStartKmh = "${formatKmh(mpsFromStart * 3600 / 1000, 1)} kmh";
+    String toEndKmh = "${formatKmh(mpsToEnd * 3600 / 1000, 1)} kmh";
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
       child: Column(
@@ -281,8 +314,10 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(widget.minLabel, style: _boundsStyle(cs)),
-              Text(widget.maxLabel, style: _boundsStyle(cs)),
+              Text(minLabel(), style: _boundsStyle(cs)),
+              Text(fromStartKmh, style: _boundsStyle(cs)),
+              Text(toEndKmh, style: _boundsStyle(cs)),
+              Text(maxLabel(), style: _boundsStyle(cs)),
             ],
           ),
           const SizedBox(height: 2),
@@ -307,7 +342,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
           // Day-boundary pips
           _DayPips(
             days: _days,
-            min: widget.min,
+            min: min(),
             totalMinutes: _totalMinutes,
             accentColor: cs.primary,
           ),

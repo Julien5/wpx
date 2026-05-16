@@ -27,8 +27,8 @@ class OverviewWidget extends StatefulWidget {
   State<OverviewWidget> createState() => _OverviewWidgetState();
 }
 
-String formatNumber(double value) {
-  String result = value.toStringAsFixed(3);
+String formatKmh(double kmh, int n) {
+  String result = kmh.toStringAsFixed(n);
   if (!result.contains('.')) {
     result = '$result.0';
   }
@@ -178,15 +178,6 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     }
   }
 
-  DateTime roundToMinute(DateTime dt) {
-    if (dt.second >= 30 || dt.millisecond >= 500) {
-      return dt
-          .copyWith(second: 0, millisecond: 0, microsecond: 0)
-          .add(const Duration(minutes: 1));
-    }
-    return dt.copyWith(second: 0, millisecond: 0, microsecond: 0);
-  }
-
   @override
   Widget build(BuildContext ctx) {
     SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
@@ -202,10 +193,10 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     }
 
     String startDateText = DateFormat('dd/MM').format(startTime!);
-    String startTimeText = DateFormat('HH:mm').format(startTime!);
+    String startTimeText = formatTime(startTime!);
     Duration duration = Duration(seconds: statistics.durationSeconds);
     DateTime endTime = startTime!.add(duration);
-    String endTimeText = DateFormat('HH:mm').format(roundToMinute(endTime));
+    String endTimeText = formatTime(endTime);
 
     String pacingPointsText = getPacingPointText(parameters);
 
@@ -223,7 +214,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         text: endTimeText,
         callback: () => _selectEndTime(context, endTime),
       );
-      speedText = "${formatNumber(double.parse(parameters.speed))} kmh";
+      speedText = "${formatKmh(double.parse(parameters.speed), 3)} kmh";
     }
 
     Widget table = Table(

@@ -128,7 +128,19 @@ pub fn make_gpx_name(data: &WaypointInfoData, parameters: &ExportParameters) -> 
 
 #[cfg(test)]
 mod tests {
-    use crate::{parameters::Parameters, speed};
+    use crate::{
+        parameters::{self, Parameters},
+        speed::{parse_speed, TimeParameters},
+    };
+
+    fn from_parameters(parameters: &Parameters, distance: f64) -> TimeParameters {
+        TimeParameters {
+            controls: Vec::new(),
+            start: parameters::parse_time(&parameters.start_time),
+            speed: parse_speed(&parameters.speed),
+            track_distance: distance,
+        }
+    }
 
     use super::*;
 
@@ -151,7 +163,7 @@ mod tests {
         parameters.start_time = "1985-04-12T06:00:00.00Z".to_string();
         parameters.speed = format!("{}", 15f64);
         parameters.user_steps_options.gpx_name_format = format.to_string();
-        let time_parameters = speed::TimeParameters::from_parameters(&parameters);
+        let time_parameters = from_parameters(&parameters, 200_000f64);
         ExportParameters {
             parameters,
             time_parameters,

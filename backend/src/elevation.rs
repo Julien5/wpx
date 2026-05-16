@@ -34,7 +34,7 @@ pub fn smooth(
 }
 
 pub fn elevation_gain(smooth: &Vec<f64>, from: usize, to: usize) -> f64 {
-    debug_assert!(from <= to);
+    debug_assert!(from <= to, "from:{}, to:{}", from, to);
     let mut ret = 0f64;
     for k in from..to {
         if k == 0 {

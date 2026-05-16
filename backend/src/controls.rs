@@ -65,6 +65,7 @@ pub fn infer_controls_from_gpx_segments(
 
     // construct candidates with the *end* of each segment.
     let mut candidates: Vec<Candidate> = Vec::new();
+    // START
     candidates.push(Candidate {
         euc: track.euclidean[0].clone(),
         segment_name: String::new(),
