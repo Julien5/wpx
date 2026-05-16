@@ -218,7 +218,7 @@ fn acp_interpolation_controls(
     copy.sort_by(|a, b| a.distance.total_cmp(&b.distance));
     if !copy.is_empty() {
         let prelastc = copy.last().unwrap();
-        debug_assert!(prelastc.time.is_none());
+        // in ACP mode, ignore the time set by user on that control.
         let prelast = ControlSpeedData {
             distance: prelastc.distance,
             time: Some(*start_time + closest_acp_distance(prelastc.distance).1),
