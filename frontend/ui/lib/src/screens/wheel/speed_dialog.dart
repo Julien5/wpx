@@ -4,27 +4,13 @@ import 'package:flutter/services.dart';
 
 enum SpeedMode { constant, acp }
 
-List<String> _speedSliderValues() {
-  // Pick speeds relevant to randonneuring.
-  /*
+// Pick speeds relevant to randonneuring.
+/*
   https://www.randonneursmondiaux.org/files/LRM_Event_Regulations_2023.pdf
   https://rusa.org/pages/acp-brevet-control-times-calculator
   https://www.audax-club-parisien.com/organisation/brm-monde/#reglement-BRM
   https://www.audax-club-parisien.com/download/plages_horaires_brm_10_FR.xls
-  */
-  return [
-    "5",
-    "10",
-    "11.428",
-    "12.5",
-    "13.333",
-    "15",
-    "18.0",
-    "20",
-    "25",
-    "28",
-  ];
-}
+*/
 
 SpeedMode parseSpeedMode(String speed) {
   if (speed.toUpperCase() == "ACP") {

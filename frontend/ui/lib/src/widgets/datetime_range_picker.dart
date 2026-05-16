@@ -7,16 +7,6 @@ import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/screens/wheel/statistics_widget.dart';
 import 'package:wpx/src/utils/utils.dart';
 
-String _formatDateTime(DateTime dt) {
-  final d =
-      '${dt.day.toString().padLeft(2, '0')} '
-      '${_monthName(dt.month)} ${dt.year}';
-  final t =
-      '${dt.hour.toString().padLeft(2, '0')}:'
-      '${dt.minute.toString().padLeft(2, '0')}';
-  return '$d  ·  $t';
-}
-
 String _monthName(int m) =>
     const [
       '',
@@ -465,9 +455,6 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
 
   TextStyle _boundsStyle(ColorScheme cs) =>
       TextStyle(fontSize: 11, color: cs.onSurface.withValues(alpha: 0.4));
-
-  String _formatShort(DateTime dt) =>
-      '${dt.day} ${_monthName(dt.month)}  ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
 }
 
 // ─── Day-boundary pip row ──────────────────────────────────────────────────
@@ -701,29 +688,5 @@ class _SpinnerFieldState extends State<_SpinnerField> {
                 ),
       ),
     );
-  }
-}
-
-// ─── Input formatter: clamp on keystroke ──────────────────────────────────
-
-class _RangeFormatter extends TextInputFormatter {
-  const _RangeFormatter({required this.min, required this.max});
-  final int min;
-  final int max;
-
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue _, TextEditingValue next) {
-    if (next.text.isEmpty) return next;
-    final v = int.tryParse(next.text);
-    if (v == null) return next;
-    final clamped = v.clamp(min, max);
-    if (clamped != v) {
-      final s = clamped.toString().padLeft(2, '0');
-      return TextEditingValue(
-        text: s,
-        selection: TextSelection.collapsed(offset: s.length),
-      );
-    }
-    return next;
   }
 }

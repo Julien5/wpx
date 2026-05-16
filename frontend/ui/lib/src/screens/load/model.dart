@@ -49,7 +49,7 @@ class LoadScreenModel extends ChangeNotifier {
     _isDisposed = true;
     // The UI should not allow leaving LoadScreen while a job is running.
     if (runningJob() != Job.none && runningJob() == Job.osm) {
-      cancelOsm();  
+      cancelOsm();
     }
     super.dispose();
   }
@@ -186,7 +186,6 @@ class LoadScreenModel extends ChangeNotifier {
     }
 
     if (rootModel.isLoaded()) {
-      // TODO: the rootModel should notify autonomously
       debugPrint("rootModel notify");
       rootModel.notify();
       // go to overview.
