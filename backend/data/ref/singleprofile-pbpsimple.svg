@@ -493,6 +493,17 @@ Levaré
 </text>
 </g>
 <g>
+<circle cx="613.368303334475" cy="127.54258489000001" fill="Black" id="169/wp" r="4"/>
+<circle cx="613.368303334475" cy="127.54258489000001" fill="white" id="169/wp-little-white" r="2.5"/>
+</g>
+<g transform="translate(613.368303334475 127.54258489000001)">
+<rect fill="white" fill-opacity="0.75" height="9" id="label-bg" width="36.411184210526315" x="-18.205592105263158" y="-16"/>
+<rect fill="none" height="13" id="label-dbg" stroke="blue" stroke-width="2" width="40.411184210526315" x="-20.205592105263158" y="-18"/>
+<text font-size="13.0" font-style="normal" font-weight="normal" id="169/wp/text" text-anchor="start" x="-18.206" y="-7.000">
+Levaré
+</text>
+</g>
+<g>
 <circle cx="600.939855839454" cy="152.256576837" fill="Black" id="165/wp" r="4"/>
 <circle cx="600.939855839454" cy="152.256576837" fill="white" id="165/wp-little-white" r="2.5"/>
 </g>

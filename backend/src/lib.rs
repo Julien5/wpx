@@ -10,6 +10,7 @@ mod gpxexport;
 pub mod inputpoint;
 mod label_placement;
 mod locate;
+mod locate_debug;
 mod make_points;
 pub mod math;
 pub mod mercator;

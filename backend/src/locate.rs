@@ -2,7 +2,7 @@ use crate::math::Point2D;
 use crate::mercator::MercatorPoint;
 use crate::point_collection::Kind;
 use crate::track_projection::TrackProjection;
-use crate::{inputpoint::*, math, mercator};
+use crate::{inputpoint::*, locate_debug, math, mercator};
 use geo::LineLocatePoint;
 use rstar::{RTree, AABB};
 
@@ -242,8 +242,20 @@ pub fn compute_track_projection(
         return point.track_projections.first().unwrap().clone();
     }
     // as opposed to GPX and OSM points, which may be on several segments
-    let mut index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
-    let partial = projection::compute(track, &point.euclidean, &index);
+    let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
+    let mut partial = projection::compute(track, &point.euclidean, &index);
+
+    // check if the "floating" projection remains on the tree, otherwise clamp it
+    let min = tracktree.range.start as f64;
+    let max = tracktree.range.end as f64 - 1f64;
+    if !(min <= partial.track_floating_index && partial.track_floating_index <= max) {
+        //log::trace!("clamping {:?}", partial);
+        partial.track_floating_index = partial.track_floating_index.clamp(min, max);
+        let rounded = partial.track_floating_index.round() as usize;
+        partial.projection = track[rounded].clone();
+        //log::trace!("clamped {:?}", partial);
+    }
+
     let index1 = partial.track_floating_index.floor() as usize;
     let index2 = (index1 + 1).min(track.len() - 1) as usize;
     let p1 = &track[index1];
@@ -253,25 +265,21 @@ pub fn compute_track_projection(
         .line_locate_point(&geo::point!(point.euclidean.xy()))
         .unwrap();
     assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
-    let floating_index = index1 as f64 + index_floating_part;
-    // prevent ill-formed projection where floating_index is more than 1 unit from index.
-    if (floating_index - index as f64).abs() >= 1f64 {
-        /*
-        log::trace!("point:{:?}", point);
-        log::trace!("index:{}", index);
-        log::trace!("index1:{}", index1);
-        log::trace!("index2:{}", index2);
-        log::trace!("partial:{:?}", partial);*/
-        index = floating_index.round() as usize;
+    let mut floating_index = index1 as f64 + index_floating_part;
+
+    if !(min <= floating_index && floating_index <= max) {
+        //log::trace!("clamping {:?}", floating_index);
+        floating_index = floating_index.clamp(min, max);
+        //log::trace!("clamped {:?}", floating_index);
     }
-    debug_assert!((floating_index - index as f64).abs() < 1f64);
+
     let t1 = &track[index1];
     let t2 = &track[index2];
     let a1 = (t1.0, t1.1, elevation(index1));
     let a2 = (t2.0, t2.1, elevation(index2));
     let m = middle_point(&a1, &a2, index_floating_part);
 
-    let middle = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
+    let mut middle = MercatorPoint::from_point2d(&Point2D::new(m.0, m.1));
 
     let elevation = m.2;
     let track_distance = middle.d2(&point.euclidean).sqrt();
@@ -280,6 +288,35 @@ pub fn compute_track_projection(
     let df = point.euclidean.d2(&middle);
     debug_assert!(df <= di);
     let distance_on_track_to_projection = distance(index1) + track[index1].d2(&middle).sqrt();
+
+    let well = (index as f64 - floating_index).abs() < 1f64;
+    // may happen if track[index]==track[index+1]
+    if !well {
+        let d = track[index].point2d().distance_to(&middle.point2d());
+        if d < 1f64 {
+            floating_index = index as f64;
+            middle = track[index].clone();
+        }
+    }
+    let well = (index as f64 - floating_index).abs() < 1f64;
+    // make svg to visualize the situation
+    if !well && false {
+        let svg = locate_debug::svg(
+            &track,
+            (index - 10).max(0),
+            (index + 10).min(track.len() - 1),
+            &point.euclidean,
+            &vec![index, index1, index2],
+        );
+        let filename = format!("/tmp/proj-{}-{}.svg", index, floating_index);
+        std::fs::write(&filename, svg.clone()).unwrap();
+        log::trace!("range:{:?}", tracktree.range);
+        log::trace!("index:{:?}", index);
+        log::trace!("floating_index:{:?}", floating_index);
+        log::trace!("track[index]:{:?}", track[index]);
+        log::trace!("floating_point:{:?}", middle);
+    }
+    debug_assert!(well);
 
     let new_proj = TrackProjection {
         track_floating_index: floating_index,
