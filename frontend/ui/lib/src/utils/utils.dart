@@ -189,6 +189,14 @@ String formatTime(DateTime t) {
   return DateFormat('HH:mm').format(_roundToMinute(t));
 }
 
+String formatDuration(Duration duration) {
+  // https://stackoverflow.com/questions/54775097/formatting-a-duration-as-hhmmss
+  String negativeSign = duration.isNegative ? '-' : '';
+  String twoDigits(int n) => n.toString().padLeft(2, "0");
+  String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60).abs());
+  return "$negativeSign${twoDigits(duration.inHours)}h${twoDigitMinutes}";
+}
+
 DateTime bestEndTime(
   DateTime? min,
   DateTime init,

@@ -247,6 +247,14 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     );
   }
 
+  String formatDistance(double meters) {
+    return "${(meters / 1000).toStringAsFixed(0)} km";
+  }
+
+  String formatMps(double mps) {
+    return "${formatKmh(mps * 3600 / 1000, 1)} km/h";
+  }
+
   // ── Header ──────────────────────────────────────────────────────────────
 
   Widget _buildHeader(ColorScheme cs) {
@@ -265,7 +273,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
           ),
           const SizedBox(height: 4),
           Text(
-            widget.currentControl.name,
+            "${widget.currentControl.name} at ${formatDistance(widget.currentControl.info!.distance)}",
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w500,
@@ -281,27 +289,30 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   // ── Coarse slider ────────────────────────────────────────────────────────
 
   Widget _buildSliderSection(ColorScheme cs) {
-    double startDistance = widget.previousControl!.info!.distance;
+    double m1 = widget.previousControl!.info!.distance;
     double currentDistance = widget.currentControl.info!.distance;
-    double endDistance = widget.nextControl!.info!.distance;
-    Duration fromStart = _current.difference(start());
-    double mpsFromStart =
-        (currentDistance - startDistance) / fromStart.inSeconds;
-    Duration toEnd = end().difference(_current);
-    double mpsToEnd = (endDistance - currentDistance) / toEnd.inSeconds;
-    String fromStartKmh = "${formatKmh(mpsFromStart * 3600 / 1000, 1)} kmh";
-    String toEndKmh = "${formatKmh(mpsToEnd * 3600 / 1000, 1)} kmh";
+    double m2 = widget.nextControl!.info!.distance;
+    Duration duration1 = _current.difference(start());
+    double distance1 = (currentDistance - m1);
+    double mps1 = distance1 / duration1.inSeconds;
+    Duration duration2 = end().difference(_current);
+    double distance2 = m2 - currentDistance;
+    double mps2 = distance2 / duration2.inSeconds;
+    String header =
+        "${formatDistance(distance1)} from ${widget.previousControl!.name}, ${formatDistance(distance2)} to ${widget.nextControl!.name}";
+    String text1 = "${formatDuration(duration1)} at ${formatMps(mps1)}";
+    String text2 = "${formatDuration(duration2)} at ${formatMps(mps2)}";
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'COARSE SELECTION',
+            header,
             style: TextStyle(
               fontSize: 11,
               letterSpacing: 1.1,
-              color: cs.onSurface.withValues(alpha: 0.45),
+              color: cs.onSurface.withValues(alpha: 0.9),
             ),
           ),
           const SizedBox(height: 8),
@@ -309,8 +320,8 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(minLabel(), style: _boundsStyle(cs)),
-              Text(fromStartKmh, style: _boundsStyle(cs)),
-              Text(toEndKmh, style: _boundsStyle(cs)),
+              Text(text1, style: _boundsStyle(cs)),
+              Text(text2, style: _boundsStyle(cs)),
               Text(maxLabel(), style: _boundsStyle(cs)),
             ],
           ),
@@ -458,7 +469,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   }
 
   TextStyle _boundsStyle(ColorScheme cs) =>
-      TextStyle(fontSize: 11, color: cs.onSurface.withValues(alpha: 0.4));
+      TextStyle(fontSize: 11, color: cs.onSurface.withValues(alpha: 0.9));
 }
 
 // ─── Day-boundary pip row ──────────────────────────────────────────────────
