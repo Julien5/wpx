@@ -199,7 +199,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
     String startDateText = DateFormat('dd/MM').format(startTime!);
     String startTimeText = formatTime(startTime!);
-    Duration duration = Duration(seconds: statistics.durationSeconds);
+    Duration duration = Duration(seconds: statistics.durationSeconds.toInt());
     DateTime endTime = startTime!.add(duration);
     String endTimeText = formatTime(endTime);
 
