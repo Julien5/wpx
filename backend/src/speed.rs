@@ -61,7 +61,7 @@ fn time_delta(seconds: f64) -> TimeDelta {
     TimeDelta::nanoseconds(nano)
 }
 
-fn closest_acp_distance(distance: f64) -> (f64, TimeDelta) {
+fn closest_acp_point(distance: f64) -> (f64, TimeDelta) {
     let distance_km = distance / 1000.0;
     let closest = acp_distance_time_last().iter().copied().min_by(|a, b| {
         (a.0 - distance_km)
@@ -85,7 +85,7 @@ fn duration_acp_last(distance: f64) -> TimeDelta {
     if distance_km > 2250.0 {
         return time_delta(3600.0 * distance_km / 10f64);
     }
-    closest_acp_distance(distance).1
+    closest_acp_point(distance).1
 }
 
 // ACP (Audax Club Parisien) control closing time rules:
@@ -194,6 +194,53 @@ fn time_at_control(control: &ControlSpeedData, start_time: &DateTime, speed: &Sp
         Speed::MPS(_) => control.time.unwrap_or(normal_time),
     }
 }
+/*
+ * This version of the interpolation controls do not set points when there are no real controls.
+ *  => Brest in 600/13.5 hours.
+ */
+/*
+fn acp_interpolation_controls(
+    start_time: &DateTime,
+    end_distance: f64,
+    controls: &Vec<ControlSpeedData>,
+) -> Vec<ControlSpeedData> {
+    let mut ret = Vec::new();
+
+    let closest_acp = closest_acp_point(end_distance);
+    debug_assert!(controls.is_sorted_by(|a, b| a.distance.total_cmp(&b.distance).is_le()));
+    if controls.is_empty() || controls.first().unwrap().distance > 0f64 {
+        // start
+        ret.push(ControlSpeedData {
+            distance: 0f64,
+            time: None,
+            last_control: false,
+        });
+    }
+    if controls.is_empty() || controls.last().unwrap().distance == end_distance {
+        // end
+        ret.push(ControlSpeedData {
+            distance: end_distance,
+            time: None,
+            last_control: true,
+        });
+    }
+
+    for c in controls.iter() {
+        let time = if c.last_control == true {
+            *start_time + closest_acp.1
+        } else {
+            *start_time + duration_acp(c.distance)
+        };
+        ret.push(ControlSpeedData {
+            distance: c.distance,
+            time: Some(time),
+            last_control: c.last_control,
+        });
+    }
+    ret.sort_by(|a, b| a.distance.total_cmp(&b.distance));
+    ret
+}
+ */
 
 fn acp_interpolation_controls(
     start_time: &DateTime,
@@ -202,7 +249,7 @@ fn acp_interpolation_controls(
 ) -> Vec<ControlSpeedData> {
     let mut ret = Vec::new();
 
-    let closest_acp = closest_acp_distance(end_distance);
+    let closest_acp = closest_acp_point(end_distance);
 
     // END
     let end = ControlSpeedData {
@@ -221,7 +268,7 @@ fn acp_interpolation_controls(
         // in ACP mode, ignore the time set by user on that control.
         let prelast = ControlSpeedData {
             distance: prelastc.distance,
-            time: Some(*start_time + closest_acp_distance(prelastc.distance).1),
+            time: Some(*start_time + duration_acp(prelastc.distance)),
             last_control: false,
         };
         ret.push(prelast);
@@ -404,12 +451,7 @@ impl TimeParameters {
             }
             Speed::MPS(_) => self.controls.clone(),
         };
-        all.retain(|c| {
-            if c.time.is_none() {
-                log::trace!("[TP1] discard {:?}", c);
-            }
-            c.time.is_some()
-        });
+        all.retain(|c| c.time.is_some());
         // add START if needed
         if all.iter().find(|c| c.distance == 0f64).is_none() {
             all.push(ControlSpeedData {
@@ -504,7 +546,7 @@ mod tests {
         let duration_hours = duration_sec as f64 / 3600.0;
 
         assert!(
-            (duration_hours - 20.0).abs() < 0.01,
+            duration_hours == 20.0,
             "Expected ~20 hours, got {}",
             duration_hours
         );
@@ -513,12 +555,8 @@ mod tests {
     #[test]
     fn test_acp_short_distance() {
         let _ = env_logger::try_init();
-        let mut params = Parameters::default();
-        params.speed = format!("ACP");
-        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
-
-        let start = parameters::parse_time(&params.start_time);
-        let dist_40km = 40_000.0;
+        let start_time = "2026-04-29T10:00:00+02:00".to_string();
+        let start = parameters::parse_time(&start_time);
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
@@ -526,6 +564,7 @@ mod tests {
             track_distance: TRACK_DISTANCE_1200,
         };
 
+        let dist_40km = 40_000.0;
         let time_40 = time_parameters.time(dist_40km);
         let duration_sec = (time_40 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
@@ -542,27 +581,22 @@ mod tests {
     #[test]
     fn test_acp_below_600km() {
         let _ = env_logger::try_init();
-        let mut params = Parameters::default();
-        params.speed = format!("ACP");
-        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
-
-        let start = parameters::parse_time(&params.start_time);
-        let dist_300km = 300_000.0;
+        let start_time = "2026-04-29T10:00:00+02:00".to_string();
+        let start = parameters::parse_time(&start_time);
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
             speed: parse_speed("ACP"),
             track_distance: TRACK_DISTANCE_1200,
         };
-
-        // 300 km at 15 km/h should take 20 hours
+        let dist_300km = 300_000.0;
         let time_300 = time_parameters.time(dist_300km);
         let duration_sec = (time_300 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
         assert!(
-            (duration_hours - 20.0).abs() < 0.01,
-            "Expected ~20 hours for 300km, got {}",
+            duration_hours == 20.0,
+            "Expected 20 hours for 300km, got {}",
             duration_hours
         );
     }
@@ -570,12 +604,8 @@ mod tests {
     #[test]
     fn test_acp_at_600km() {
         let _ = env_logger::try_init();
-        let mut params = Parameters::default();
-        params.speed = format!("ACP");
-        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        let start = parameters::parse_time(&"2026-04-29T10:00:00+02:00");
 
-        let start = parameters::parse_time(&params.start_time);
-        let dist_600km = 600_000.0;
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
@@ -583,7 +613,7 @@ mod tests {
             track_distance: TRACK_DISTANCE_1200,
         };
 
-        // 600 km: hard cap should be 40 hours
+        let dist_600km = 600_000.0;
         let time_600 = time_parameters.time(dist_600km);
         let duration_sec = (time_600 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
@@ -629,11 +659,7 @@ mod tests {
     #[test]
     fn test_acp_at_1000km() {
         let _ = env_logger::try_init();
-        let mut params = Parameters::default();
-        params.speed = format!("ACP");
-        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
-
-        let start = parameters::parse_time(&params.start_time);
+        let start = parameters::parse_time(&"2026-04-29T10:00:00+02:00".to_string());
         let dist_1000km = 1_000_000.0;
         let time_parameters = TimeParameters {
             controls: Vec::new(),
