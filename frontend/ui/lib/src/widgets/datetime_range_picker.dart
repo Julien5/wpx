@@ -79,10 +79,14 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     return parseDateTime(widget.previousControl!.info!.time);
   }
 
+  DateTime zeroSeconds(DateTime t) {
+    return DateTime(t.year, t.month, t.day, t.hour, t.minute);
+  }
+
   DateTime min() {
     DateTime ret = parseDateTime(widget.previousControl!.info!.time);
     ret = ret.add(const Duration(minutes: 5));
-    return ret;
+    return zeroSeconds(ret);
   }
 
   String minLabel() {
@@ -96,7 +100,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   DateTime max() {
     DateTime ret = parseDateTime(widget.nextControl!.info!.time);
     ret = ret.add(const Duration(minutes: -5));
-    return ret;
+    return zeroSeconds(ret);
   }
 
   String maxLabel() {
