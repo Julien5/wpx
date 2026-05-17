@@ -29,13 +29,12 @@ String speedModeToString(SpeedMode mode, String constantValue) {
 void openSpeedDialog({
   required BuildContext context,
   required String speed,
+  required String? initialConstantSpeed,
   required Function(String) onSpeedChanged,
 }) {
   SpeedMode initialMode = parseSpeedMode(speed);
-  String initialConstantSpeed =
-      initialMode == SpeedMode.constant ? speed : "15";
   SpeedMode currentMode = initialMode;
-  String constantSpeed = initialConstantSpeed;
+  String constantSpeed = initialConstantSpeed ?? "15";
   TextEditingController textController = TextEditingController(
     text: constantSpeed,
   );

@@ -43,6 +43,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
   DateTime? startTime;
   DateTime? endTime;
   String? speed;
+  String? lastConstantSpeed;
   @override
   void initState() {
     super.initState();
@@ -73,6 +74,10 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     );
     bridge.Parameters oldParameters = parametersModel.parameters();
     ParameterChanger changer = ParameterChanger(init: oldParameters);
+    SpeedMode speedMode = parseSpeedMode(speed!);
+    if (speedMode == SpeedMode.constant) {
+      lastConstantSpeed = speed;
+    }
     changer.changeSpeed(speed!);
     changer.changeStartTime(startTime!);
     bridge.Parameters parameters = changer.current();
@@ -245,6 +250,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                   () => openSpeedDialog(
                     context: context,
                     speed: speed,
+                    initialConstantSpeed: lastConstantSpeed,
                     onSpeedChanged: (newSpeed) {
                       debugPrint("speed:$newSpeed");
                       setState(() {
