@@ -45,6 +45,26 @@ Future<DateTime?> showDateTimeRangePickerDialog({
   );
 }
 
+class InfoText extends StatelessWidget {
+  final String text;
+
+  const InfoText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 11,
+        letterSpacing: 1.1,
+        color: cs.onSurface.withValues(alpha: 0.9),
+      ),
+    );
+  }
+}
+
 // ─── Dialog widget ─────────────────────────────────────────────────────────
 
 class DateTimeRangePickerDialog extends StatefulWidget {
@@ -286,9 +306,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     );
   }
 
-  // ── Coarse slider ────────────────────────────────────────────────────────
-
-  Widget _buildSliderSection(ColorScheme cs) {
+  Widget _buildInfoRow(ColorScheme cs) {
     double m1 = widget.previousControl!.info!.distance;
     double currentDistance = widget.currentControl.info!.distance;
     double m2 = widget.nextControl!.info!.distance;
@@ -298,33 +316,81 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     Duration duration2 = end().difference(_current);
     double distance2 = m2 - currentDistance;
     double mps2 = distance2 / duration2.inSeconds;
-    String header =
-        "${formatDistance(distance1)} from ${widget.previousControl!.name}, ${formatDistance(distance2)} to ${widget.nextControl!.name}";
-    String text1 = "${formatDuration(duration1)} at ${formatMps(mps1)}";
-    String text2 = "${formatDuration(duration2)} at ${formatMps(mps2)}";
+
+    String text1a = formatDuration(duration1);
+    String text1b = formatMps(mps1);
+    String text1c = formatDistance(distance1);
+    String text2a = formatDuration(duration2);
+    String text2b = formatMps(mps2);
+    String text2c = formatDistance(distance2);
+
+    Widget vdiv = SizedBox(
+      height: 40,
+      child: VerticalDivider(
+        width: 2,
+        thickness: 1,
+        color: cs.outline.withValues(alpha: 0.5),
+      ),
+    );
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(children: [Text(widget.previousControl!.name)]),
+            ),
+            const SizedBox(width: 100),
+            Expanded(
+              child: Column(children: [Text(widget.currentControl.name)]),
+            ),
+            const SizedBox(width: 100),
+            Expanded(child: Column(children: [Text(widget.nextControl!.name)])),
+          ],
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: 20),
+            vdiv,
+            Expanded(
+              child: Column(
+                children: [
+                  InfoText(text1c),
+                  InfoText(text1a),
+                  InfoText(text1b),
+                ],
+              ),
+            ),
+            const SizedBox(width: 25),
+            vdiv,
+            const SizedBox(width: 25),
+            Expanded(
+              child: Column(
+                children: [
+                  InfoText(text2c),
+                  InfoText(text2a),
+                  InfoText(text2b),
+                ],
+              ),
+            ),
+            vdiv,
+            const SizedBox(width: 20),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // ── Coarse slider ────────────────────────────────────────────────────────
+
+  Widget _buildSliderSection(ColorScheme cs) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            header,
-            style: TextStyle(
-              fontSize: 11,
-              letterSpacing: 1.1,
-              color: cs.onSurface.withValues(alpha: 0.9),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(minLabel(), style: _boundsStyle(cs)),
-              Text(text1, style: _boundsStyle(cs)),
-              Text(text2, style: _boundsStyle(cs)),
-              Text(maxLabel(), style: _boundsStyle(cs)),
-            ],
-          ),
+          _buildInfoRow(cs),
           const SizedBox(height: 2),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(

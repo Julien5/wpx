@@ -322,11 +322,12 @@ pub fn time_with_controls(
         previous.distance,
     );
     let (t2, d2) = (time_at_control(next, start_time, speed), next.distance);
-    log::trace!("[TP1] 1:{:?},{:.1}", t1, d1);
-    log::trace!("[TP1] 2:{:?},{:.1}", t2, d2);
-    for c in interpolation_points {
-        log::trace!("[TP1] inter:{:?},{:.1}", c.time, c.distance);
+    /*log::trace!("[TP1] 1:{:?},{:.1}", t1, d1);
+       log::trace!("[TP1] 2:{:?},{:.1}", t2, d2);
+        for c in interpolation_points {
+            log::trace!("[TP1] inter:{:?},{:.1}", c.time, c.distance);
     }
+        */
     debug_assert!(d1 < d2);
     debug_assert!(d1 <= distance && distance <= d2 || d2 < distance);
     let fraction = (distance - d1) / (d2 - d1);
@@ -335,7 +336,7 @@ pub fn time_with_controls(
         .expect("time span overflows i64 nanoseconds");
     let offset_ns = (fraction * span_ns as f64).round() as i64;
     let ret = t1 + TimeDelta::nanoseconds(offset_ns);
-    log::info!("[TP1] distance:{:.1} time:{:?}", distance, ret);
+    //log::info!("[TP1] distance:{:.1} time:{:?}", distance, ret);
     ret
 }
 
@@ -365,7 +366,7 @@ pub fn distance_with_controls(
     };
 
     if index_next == 0 {
-        log::info!("next control is start");
+        //log::trace!("next control is start");
         return 0f64;
     }
 
@@ -399,11 +400,11 @@ pub fn distance_with_controls(
     let fraction = offset_ns as f64 / span_ns as f64;
     debug_assert!(fraction >= 0f64);
     let ret = d1 + fraction * (d2 - d1);
-    log::info!(
+    /*log::trace!(
         "[TP2] distance:{:.1} time:{:?}",
         ret / 1000f64,
         current_time
-    );
+    );*/
     ret
 }
 
