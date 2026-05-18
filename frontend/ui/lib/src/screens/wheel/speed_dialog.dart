@@ -175,6 +175,36 @@ void openSpeedDialog({
                         value: SpeedMode.acp,
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: InputDecorator(
+                                decoration: InputDecoration(
+                                  labelText: 'Warning',
+                                  border: OutlineInputBorder(),
+                                  suffixText: '',
+                                  enabled: currentMode == SpeedMode.acp,
+                                ),
+                                child: Text(
+                                  'Very unofficial implementation',
+                                  style: TextStyle(
+                                    color:
+                                        currentMode == SpeedMode.acp
+                                            ? Colors.black
+                                            : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
