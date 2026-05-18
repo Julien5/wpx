@@ -63,6 +63,11 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
+      // Initialize lastConstantSpeed if current speed is constant
+      SpeedMode speedMode = parseSpeedMode(parameters.speed);
+      if (speedMode == SpeedMode.constant) {
+        lastConstantSpeed = parameters.speed;
+      }
     });
   }
 
@@ -199,8 +204,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
     String startDateText = DateFormat('dd/MM').format(startTime!);
     String startTimeText = formatTime(startTime!);
-    Duration duration = Duration(seconds: statistics.durationSeconds.toInt());
-    DateTime endTime = startTime!.add(duration);
+    DateTime endTime = parseDateTime(statistics.endTime);
     String endTimeText = formatTime(endTime);
 
     String pacingPointsText = getPacingPointText(parameters);

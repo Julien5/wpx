@@ -201,7 +201,7 @@ pub struct _SegmentStatistics {
     pub distance_start: f64,
     pub distance_end: f64,
     pub start_time: String,
-    pub duration_seconds: i64,
+    pub end_time: String,
     pub waypoints: Vec<Waypoint>,
     pub controls: Vec<Waypoint>,
 }

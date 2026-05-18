@@ -61,3 +61,178 @@ class SmallCentralWidget extends StatelessWidget {
     );
   }
 }
+
+// ─── Common Dialog Styles ──────────────────────────────────────────────────
+
+/// Common dialog style constants
+class DialogStyles {
+  static const double dialogWidth = 400;
+  static const double borderRadius = 20;
+  static const EdgeInsets headerPadding = EdgeInsets.fromLTRB(20, 18, 20, 14);
+  static const EdgeInsets contentPadding = EdgeInsets.fromLTRB(20, 14, 20, 14);
+  static const EdgeInsets footerPadding = EdgeInsets.fromLTRB(20, 12, 20, 16);
+  static const double buttonSpacing = 8;
+}
+
+/// Small label text for dialog headers and sections (e.g., "SELECT SPEED")
+class DialogSectionLabel extends StatelessWidget {
+  final String text;
+  const DialogSectionLabel(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 11,
+        letterSpacing: 1.1,
+        color: cs.onSurface.withValues(alpha: 0.45),
+      ),
+    );
+  }
+}
+
+/// Main title text for dialogs (e.g., "Speed Mode")
+class DialogTitle extends StatelessWidget {
+  final String text;
+  const DialogTitle(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w500,
+        color: cs.onSurface,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      ),
+    );
+  }
+}
+
+/// Info text widget for displaying small information (e.g., "from start")
+class InfoText extends StatelessWidget {
+  final String text;
+  const InfoText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 11,
+        letterSpacing: 1.1,
+        color: cs.onSurface.withValues(alpha: 0.9),
+      ),
+    );
+  }
+}
+
+/// Common dialog footer with Cancel and Confirm buttons
+class DialogFooter extends StatelessWidget {
+  final VoidCallback onCancel;
+  final VoidCallback onConfirm;
+  
+  const DialogFooter({
+    super.key,
+    required this.onCancel,
+    required this.onConfirm,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: DialogStyles.footerPadding,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            onPressed: onCancel,
+            child: const Text('Cancel'),
+          ),
+          const SizedBox(width: DialogStyles.buttonSpacing),
+          FilledButton(
+            onPressed: onConfirm,
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Standard dialog container with rounded corners and fixed width
+class StandardDialog extends StatelessWidget {
+  final List<Widget> sections;
+  
+  const StandardDialog({
+    super.key,
+    required this.sections,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(DialogStyles.borderRadius),
+      ),
+      child: SizedBox(
+        width: DialogStyles.dialogWidth,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: _intersperse(
+            sections,
+            const Divider(height: 1),
+          ),
+        ),
+      ),
+    );
+  }
+  
+  /// Helper to insert dividers between sections
+  List<Widget> _intersperse(List<Widget> list, Widget separator) {
+    if (list.isEmpty) return list;
+    final result = <Widget>[];
+    for (int i = 0; i < list.length; i++) {
+      result.add(list[i]);
+      if (i < list.length - 1) {
+        result.add(separator);
+      }
+    }
+    return result;
+  }
+}
+
+/// Standard dialog header with small label and main title
+class DialogHeader extends StatelessWidget {
+  final String label;
+  final String title;
+  final List<Widget>? additionalContent;
+  
+  const DialogHeader({
+    super.key,
+    required this.label,
+    required this.title,
+    this.additionalContent,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: DialogStyles.headerPadding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DialogSectionLabel(label),
+          DialogTitle(title),
+          if (additionalContent != null) ...additionalContent!,
+        ],
+      ),
+    );
+  }
+}

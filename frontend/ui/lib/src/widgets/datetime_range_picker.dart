@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/screens/wheel/statistics_widget.dart';
 import 'package:wpx/src/utils/utils.dart';
+import 'package:wpx/src/widgets/small.dart';
 
 String _monthName(int m) =>
     const [
@@ -45,26 +46,6 @@ Future<DateTime?> showDateTimeRangePickerDialog({
           currentControl: current,
         ),
   );
-}
-
-class InfoText extends StatelessWidget {
-  final String text;
-
-  const InfoText(this.text, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 11,
-        letterSpacing: 1.1,
-        color: cs.onSurface.withValues(alpha: 0.9),
-      ),
-    );
-  }
 }
 
 // ─── Dialog widget ─────────────────────────────────────────────────────────
@@ -545,9 +526,6 @@ InfoText fromStartWidget=InfoText("${formatDuration(fromStart)} from start");
       ),
     );
   }
-
-  TextStyle _boundsStyle(ColorScheme cs) =>
-      TextStyle(fontSize: 11, color: cs.onSurface.withValues(alpha: 0.9));
 }
 
 // ─── Day-boundary pip row ──────────────────────────────────────────────────
@@ -645,7 +623,7 @@ class _SpinnerFieldState extends State<_SpinnerField> {
   double _scrollAccum = 0;
   final FocusNode _focus = FocusNode();
   Timer? _commitTimer;
-
+  
   @override
   void dispose() {
     _commitTimer?.cancel();

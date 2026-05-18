@@ -31,7 +31,7 @@ pub struct SegmentStatistics {
     pub distance_start: f64,
     pub distance_end: f64,
     pub start_time: String,
-    pub duration_seconds: i64,
+    pub end_time: String,
     pub waypoints: Vec<Waypoint>,
     pub controls: Vec<Waypoint>,
 }
@@ -75,11 +75,7 @@ impl SegmentData {
             distance_start,
             distance_end,
             start_time: parameters::time_to_iso8601(&self.time_parameters.time(distance_start)),
-            duration_seconds: self
-                .time_parameters
-                .duration(distance_start, distance_end)
-                .as_seconds_f64()
-                .round() as i64,
+            end_time: parameters::time_to_iso8601(&self.time_parameters.time(distance_end)),
             waypoints,
             controls,
         }

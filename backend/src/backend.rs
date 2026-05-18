@@ -349,6 +349,7 @@ impl Backend {
         };
         self.dmut().parameters = parameters.clone();
 
+        // unsupported ?
         if self.d().parameters.segment_overlap > self.d().parameters.segment_length {
             assert!(false);
         }
