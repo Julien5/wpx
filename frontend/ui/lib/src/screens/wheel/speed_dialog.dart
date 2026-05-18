@@ -31,12 +31,14 @@ void openSpeedDialog({
   required String speed,
   required String? initialConstantSpeed,
   required Function(String) onSpeedChanged,
+  required Function(String) onConfirm,
+  required Function(String) onCancel,
 }) {
   SpeedMode initialMode = parseSpeedMode(speed);
   SpeedMode currentMode = initialMode;
-  String constantSpeed = initialConstantSpeed ?? "15";
+  String currentSpeed = initialConstantSpeed ?? "15";
   TextEditingController textController = TextEditingController(
-    text: constantSpeed,
+    text: currentSpeed,
   );
   Timer? debounceTimer;
   final FocusNode textFieldFocusNode = FocusNode(
@@ -65,9 +67,7 @@ void openSpeedDialog({
                     setDialogState(() {
                       currentMode = value;
                     });
-                    String newSpeed = speedModeToString(value, constantSpeed);
-                    debugPrint("mode: $currentMode speed: $newSpeed");
-                    onSpeedChanged(newSpeed);
+                    currentSpeed = speedModeToString(value, currentSpeed);
                   }
                 },
                 child: Column(
@@ -95,7 +95,7 @@ void openSpeedDialog({
                                   ),
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,1}'),
+                                  RegExp(r'^\d*\.?\d{0,3}'),
                                 ),
                               ],
                               decoration: const InputDecoration(
@@ -111,14 +111,14 @@ void openSpeedDialog({
                                     1.0,
                                     100.0,
                                   );
-                                  constantSpeed = clampedValue.toString();
+                                  currentSpeed = clampedValue.toString();
                                   debounceTimer?.cancel();
                                   debounceTimer = Timer(
                                     const Duration(milliseconds: 250),
                                     () {
                                       String newSpeed = speedModeToString(
                                         currentMode,
-                                        constantSpeed,
+                                        currentSpeed,
                                       );
                                       onSpeedChanged(newSpeed);
                                     },
@@ -141,14 +141,22 @@ void openSpeedDialog({
               ),
               const SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK', textAlign: TextAlign.center),
-                ),
-              ),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [ 
+          TextButton(
+            onPressed: () {onCancel(currentSpeed); Navigator.of(context).pop();},
+            child: const Text('Cancel'),
+          ),
+          const SizedBox(width: 8),
+          FilledButton(
+            onPressed: (){onConfirm(currentSpeed);Navigator.of(context).pop();},
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
+    ),
             ],
           );
         },

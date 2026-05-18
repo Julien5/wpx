@@ -31,9 +31,11 @@ Text makeTimeLabel(Waypoint w, FontWeight weight) {
 }
 
 class ControlEditTimeButton extends StatelessWidget {
+  final Parameters parameters;
   final Waypoint? previousControl;
   final Waypoint? nextControl;
   final Waypoint currentControl;
+
 
   final Function(DateTime) onTimeChanged;
   const ControlEditTimeButton({
@@ -41,7 +43,7 @@ class ControlEditTimeButton extends StatelessWidget {
     required this.previousControl,
     this.nextControl,
     required this.currentControl,
-    required this.onTimeChanged,
+    required this.onTimeChanged, required this.parameters,
   });
 
   @override
@@ -53,6 +55,7 @@ class ControlEditTimeButton extends StatelessWidget {
       onPressed: () {
         openControlTimeDialog(
           context: context,
+          parameters: parameters,
           previousControl: previousControl,
           nextControl: nextControl,
           currentControl: currentControl,
@@ -176,6 +179,7 @@ class _DesktopTableState extends State<DesktopTable> {
             Widget timeWidget =
                 isEditableControl
                     ? ControlEditTimeButton(
+                      parameters: parameters,
                       previousControl: previousControl(waypoints, index),
                       nextControl: nextControl(waypoints, index),
                       currentControl: w,

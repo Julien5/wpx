@@ -219,7 +219,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         text: endTimeText,
         callback: () => _selectEndTime(context, endTime),
       );
-      speedText = "${formatKmh(double.parse(parameters.speed), 3)} kmh";
+      speedText = "${formatKmh(double.parse(parameters.speed), 3)} km/h";
     }
 
     Widget table = Table(
@@ -251,12 +251,20 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                     context: context,
                     speed: speed,
                     initialConstantSpeed: lastConstantSpeed,
-                    onSpeedChanged: (newSpeed) {
-                      debugPrint("speed:$newSpeed");
+                    onConfirm: (newSpeed) {
+                      debugPrint("confirm:$newSpeed");
                       setState(() {
                         this.speed = newSpeed;
-                      });
-                      writeModel();
+                      });   
+                      writeModel();   
+                    },
+                    onSpeedChanged: (newSpeed) {
+                      debugPrint("changed:$newSpeed");
+                                          
+                    },
+                    onCancel: (newSpeed) {
+                      debugPrint("cancel:$newSpeed");
+                                          
                     },
                   ),
               text: speedText,

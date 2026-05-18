@@ -66,6 +66,13 @@ impl ControlData {
             }
         }])
     }
+
+    pub fn is_end(&self) -> bool {
+        self.name == "END"
+    }
+    pub fn is_start(&self) -> bool {
+        self.name == "START"
+    }
 }
 
 #[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]

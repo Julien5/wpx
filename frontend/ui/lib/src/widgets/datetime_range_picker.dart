@@ -30,6 +30,7 @@ String _monthName(int m) =>
 /// or null if the user cancelled.
 Future<DateTime?> showDateTimeRangePickerDialog({
   required BuildContext context,
+  required Parameters parameters,
   required Waypoint? previous,
   required Waypoint? next,
   required Waypoint current,
@@ -38,6 +39,7 @@ Future<DateTime?> showDateTimeRangePickerDialog({
     context: context,
     builder:
         (_) => DateTimeRangePickerDialog(
+          parameters: parameters,
           previousControl: previous,
           nextControl: next,
           currentControl: current,
@@ -72,9 +74,10 @@ class DateTimeRangePickerDialog extends StatefulWidget {
     super.key,
     required this.previousControl,
     required this.nextControl,
-    required this.currentControl,
+    required this.currentControl, required this.parameters,
   });
 
+  final Parameters parameters;
   final Waypoint? previousControl;
   final Waypoint? nextControl;
   final Waypoint currentControl;
@@ -246,6 +249,9 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
 
+
+  
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: SizedBox(
@@ -278,6 +284,9 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   // ── Header ──────────────────────────────────────────────────────────────
 
   Widget _buildHeader(ColorScheme cs) {
+      DateTime tourStart=parseDateTime(widget.parameters.startTime);
+    Duration fromStart = _current.difference(tourStart);
+InfoText fromStartWidget=InfoText("${formatDuration(fromStart)} from start");
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
       child: Column(
@@ -291,9 +300,9 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
               color: cs.onSurface.withValues(alpha: 0.45),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
+         Text(
             "${widget.currentControl.name} at ${formatDistance(widget.currentControl.info!.distance)}",
+
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w500,
@@ -301,8 +310,10 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
+          SizedBox(width: 10,),
+          fromStartWidget,
         ],
-      ),
+    ),
     );
   }
 
@@ -334,6 +345,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     );
     return Column(
       children: [
+        
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

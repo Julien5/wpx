@@ -29,7 +29,6 @@ use crate::point_collection::PacketProvider;
 use crate::point_collection::SharedPacketProvider;
 use crate::segment::SegmentData;
 use crate::speed;
-use crate::speed::parse_speed;
 use crate::speed::Speed;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
@@ -55,6 +54,7 @@ pub struct BackendData {
     pub packet_provider: SharedPacketProvider,
 }
 
+use chrono::TimeDelta;
 use tokio_util::sync::CancellationToken;
 
 pub struct Backend {
@@ -227,6 +227,13 @@ impl Backend {
             .iter_mut()
             .find(|c| c.gpxwaypoint_id() == waypoint.id)
         {
+            // do not allow changing time for start and end because
+            // these are determined by self.parameters (start_time and speed).
+            if control.data.as_control().unwrap().is_end()
+                || control.data.as_control().unwrap().is_start()
+            {
+                return false;
+            }
             if let Some(data) = time {
                 let t = parameters::parse_time(&data);
                 control.data.as_control_mut().unwrap().cutoff_time = Some(t);
@@ -333,9 +340,15 @@ impl Backend {
     }
 
     pub fn set_parameters(&mut self, parameters: &Parameters) {
-        let old_speed = parse_speed(&self.d().parameters.speed);
-        let new_speed = parse_speed(&parameters.speed);
+        let old_time_parameters = self.time_parameters();
+        let new_time_parameters = speed::TimeParameters {
+            controls: Vec::new(),
+            start: parameters::parse_time(&parameters.start_time),
+            speed: speed::parse_speed(&parameters.speed),
+            track_distance: self.d().track.total_distance(),
+        };
         self.dmut().parameters = parameters.clone();
+
         if self.d().parameters.segment_overlap > self.d().parameters.segment_length {
             assert!(false);
         }
@@ -348,21 +361,53 @@ impl Backend {
             locked.collection.import_other(&Kind::CutOff, usersteps);
         }
 
-        // remove control time data if the constant speed has changed, otherwise
+        let old_start = old_time_parameters.time(0f64);
+        let new_start = new_time_parameters.time(0f64);
+        let new_end = new_time_parameters.time(self.d().track.total_distance());
+
+        // reset control time
         // we might have t(end) < t(CP) (if the speed gets higher).
-        if let Speed::MPS(oldmps) = old_speed {
-            if let Speed::MPS(newmps) = new_speed {
-                // at less drastic measure would be to only reset the time
-                // on controls which time are after the time of the last control.
-                if newmps > oldmps {
-                    let mut locked = self.d().packet_provider.write().unwrap();
-                    let mut controls = locked.collection.get_vector(&Kind::Controls);
-                    for c in &mut controls {
-                        c.data.as_control_mut().unwrap().cutoff_time = None;
+        // at less drastic measure would be to only reset the time
+        // on controls which time are after the time of the last control.
+        {
+            let mut locked = self.d().packet_provider.write().unwrap();
+            let mut controls = locked.collection.get_vector(&Kind::Controls);
+
+            // compute delta
+            let mut delta_from_start: BTreeMap<usize, TimeDelta> = BTreeMap::new();
+            for c in &mut controls {
+                match c.data.as_control().unwrap().cutoff_time {
+                    Some(t) => {
+                        let index = c.track_projections.first().unwrap().track_index;
+                        debug_assert!(t >= old_start);
+                        delta_from_start.insert(index, t - old_start);
                     }
-                    locked.collection.import_other(&Kind::Controls, controls);
-                }
+                    None => {}
+                };
             }
+
+            // apply delta
+            for c in &mut controls {
+                let index = c.track_projections.first().unwrap().track_index;
+                let cdata = c.data.as_control().unwrap();
+                let new_cutoff = match cdata.cutoff_time {
+                    Some(_) => {
+                        debug_assert!(delta_from_start.contains_key(&index));
+                        // the END control time cannot be set.
+                        debug_assert!(!cdata.is_end());
+                        let delta = delta_from_start[&index];
+                        let candidate = new_start + delta;
+                        if candidate < new_end {
+                            Some(candidate)
+                        } else {
+                            None
+                        }
+                    }
+                    None => None,
+                };
+                c.data.as_control_mut().unwrap().cutoff_time = new_cutoff;
+            }
+            locked.collection.import_other(&Kind::Controls, controls);
         }
     }
 
