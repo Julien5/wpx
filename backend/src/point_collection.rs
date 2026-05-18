@@ -613,12 +613,13 @@ fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {
         .first()
         .unwrap()
         .distance_on_track_to_projection;
-    let time = control.data.as_control().unwrap().cutoff_time.clone();
-    let last_control = control.name().contains("END");
+    let cdata = control.data.as_control().unwrap();
+    let time = cdata.cutoff_time.clone();
+    let is_end = cdata.is_end();
     speed::ControlSpeedData {
         distance,
         time,
-        last_control,
+        is_end,
     }
 }
 

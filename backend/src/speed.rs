@@ -161,7 +161,7 @@ fn time_at_control_distance(distance: f64, start_time: &DateTime, speed: &Speed)
 pub struct ControlSpeedData {
     pub distance: f64,
     pub time: Option<DateTime>,
-    pub last_control: bool,
+    pub is_end: bool,
 }
 
 impl ControlSpeedData {
@@ -171,7 +171,7 @@ impl ControlSpeedData {
             ret.push(ControlSpeedData {
                 distance: km * 1000f64,
                 time: Some(*start + TimeDelta::seconds((hours * 3600f64).round() as i64)),
-                last_control: false,
+                is_end: false,
             });
         }
         ret
@@ -179,7 +179,7 @@ impl ControlSpeedData {
 }
 
 fn time_at_control(control: &ControlSpeedData, start_time: &DateTime, speed: &Speed) -> DateTime {
-    if control.last_control {
+    if control.is_end {
         match speed {
             Speed::ACP => {
                 let duration = duration_acp_last(control.distance);
@@ -255,13 +255,13 @@ fn acp_interpolation_controls(
     let end = ControlSpeedData {
         distance: end_distance,
         time: Some(*start_time + closest_acp.1),
-        last_control: true,
+        is_end: true,
     };
     ret.push(end);
 
     // one before END (if there is one)
     let mut copy = controls.clone();
-    copy.retain(|c| !c.last_control && c.distance > 0f64);
+    copy.retain(|c| !c.is_end && c.distance > 0f64);
     copy.sort_by(|a, b| a.distance.total_cmp(&b.distance));
     if !copy.is_empty() {
         let prelastc = copy.last().unwrap();
@@ -269,7 +269,7 @@ fn acp_interpolation_controls(
         let prelast = ControlSpeedData {
             distance: prelastc.distance,
             time: Some(*start_time + duration_acp(prelastc.distance)),
-            last_control: false,
+            is_end: false,
         };
         ret.push(prelast);
     }
@@ -281,7 +281,7 @@ fn acp_interpolation_controls(
     ret.push(ControlSpeedData {
         distance: 0f64,
         time: Some(*start_time),
-        last_control: true,
+        is_end: true,
     });
     ret.sort_by(|a, b| a.distance.total_cmp(&b.distance));
     ret
@@ -458,11 +458,11 @@ impl TimeParameters {
             all.push(ControlSpeedData {
                 distance: 0f64,
                 time: Some(time_at_control_distance(0f64, &self.start, &self.speed)),
-                last_control: false,
+                is_end: false,
             });
         }
         // add END if needed
-        if all.iter().find(|c| c.last_control).is_none() {
+        if all.iter().find(|c| c.is_end).is_none() {
             all.push(ControlSpeedData {
                 distance: self.track_distance,
                 time: Some(time_at_control_distance(
@@ -470,7 +470,7 @@ impl TimeParameters {
                     &self.start,
                     &self.speed,
                 )),
-                last_control: true,
+                is_end: true,
             });
         }
         all.sort_by(|a, b| a.distance.total_cmp(&b.distance));
@@ -808,7 +808,7 @@ mod tests {
                 controls: vec![ControlSpeedData {
                     distance: 1_100_000f64,
                     time: None,
-                    last_control: false,
+                    is_end: false,
                 }],
                 start: start.clone(),
                 speed: parse_speed("ACP"),
@@ -855,12 +855,12 @@ mod tests {
         let start = ControlSpeedData {
             distance: 0f64,
             time: None,
-            last_control: false,
+            is_end: false,
         };
         let end = ControlSpeedData {
             distance: 400_000f64,
             time: None,
-            last_control: true,
+            is_end: true,
         };
         let controls = vec![start, end.clone()];
         let distance = 20_000f64;
@@ -887,12 +887,12 @@ mod tests {
         let start = ControlSpeedData {
             distance: 0f64,
             time: None,
-            last_control: false,
+            is_end: false,
         };
         let end = ControlSpeedData {
             distance: 400_000f64,
             time: None,
-            last_control: true,
+            is_end: true,
         };
         let controls = vec![start.clone(), end.clone()];
         let start_time = parameters::parse_time(&"2026-04-29T00:00:00");
