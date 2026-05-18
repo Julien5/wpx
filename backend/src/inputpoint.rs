@@ -112,7 +112,7 @@ impl OSMData {
     }
     pub fn description(&self) -> String {
         self.tags
-            .get("name")
+            .get("description")
             .map(|s| s.trim().to_string())
             .or_else(|| {
                 self.tags
