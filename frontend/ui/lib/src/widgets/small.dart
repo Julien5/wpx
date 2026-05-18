@@ -136,7 +136,7 @@ class InfoText extends StatelessWidget {
 class DialogFooter extends StatelessWidget {
   final VoidCallback onCancel;
   final VoidCallback onConfirm;
-  
+
   const DialogFooter({
     super.key,
     required this.onCancel,
@@ -150,15 +150,9 @@ class DialogFooter extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          TextButton(
-            onPressed: onCancel,
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: onCancel, child: const Text('Cancel')),
           const SizedBox(width: DialogStyles.buttonSpacing),
-          FilledButton(
-            onPressed: onConfirm,
-            child: const Text('Confirm'),
-          ),
+          FilledButton(onPressed: onConfirm, child: const Text('Confirm')),
         ],
       ),
     );
@@ -168,11 +162,8 @@ class DialogFooter extends StatelessWidget {
 /// Standard dialog container with rounded corners and fixed width
 class StandardDialog extends StatelessWidget {
   final List<Widget> sections;
-  
-  const StandardDialog({
-    super.key,
-    required this.sections,
-  });
+
+  const StandardDialog({super.key, required this.sections});
 
   @override
   Widget build(BuildContext context) {
@@ -185,15 +176,12 @@ class StandardDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: _intersperse(
-            sections,
-            const Divider(height: 1),
-          ),
+          children: _intersperse(sections, const Divider(height: 1)),
         ),
       ),
     );
   }
-  
+
   /// Helper to insert dividers between sections
   List<Widget> _intersperse(List<Widget> list, Widget separator) {
     if (list.isEmpty) return list;
@@ -211,9 +199,9 @@ class StandardDialog extends StatelessWidget {
 /// Standard dialog header with small label and main title
 class DialogHeader extends StatelessWidget {
   final String label;
-  final String title;
+  final String? title;
   final List<Widget>? additionalContent;
-  
+
   const DialogHeader({
     super.key,
     required this.label,
@@ -229,7 +217,7 @@ class DialogHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DialogSectionLabel(label),
-          DialogTitle(title),
+          if (title != null) DialogTitle(title!),
           if (additionalContent != null) ...additionalContent!,
         ],
       ),
