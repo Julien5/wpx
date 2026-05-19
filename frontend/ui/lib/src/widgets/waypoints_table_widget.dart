@@ -36,14 +36,14 @@ class ControlEditTimeButton extends StatelessWidget {
   final Waypoint? nextControl;
   final Waypoint currentControl;
 
-
   final Function(DateTime) onTimeChanged;
   const ControlEditTimeButton({
     super.key,
     required this.previousControl,
     this.nextControl,
     required this.currentControl,
-    required this.onTimeChanged, required this.parameters,
+    required this.onTimeChanged,
+    required this.parameters,
   });
 
   @override
@@ -92,9 +92,16 @@ class _DesktopTableState extends State<DesktopTable> {
     if (index <= 0) {
       return null;
     }
+    int startControlIndex = waypoints.indexWhere((waypoint) {
+      return waypoint.origin == Kind.controls;
+    });
+
     for (int i = index - 1; i >= 0; --i) {
-      if (waypoints[i].origin == Kind.controls) {
-        return waypoints[i];
+      Waypoint candidate = waypoints[i];
+      if (candidate.origin == Kind.controls) {
+        if (candidate.hasCustomTime || i == startControlIndex) {
+          return candidate;
+        }
       }
     }
     return null;
@@ -104,9 +111,17 @@ class _DesktopTableState extends State<DesktopTable> {
     if (index >= (waypoints.length - 1)) {
       return null;
     }
+
+    int endControlIndex = waypoints.lastIndexWhere((waypoint) {
+      return waypoint.origin == Kind.controls;
+    });
+
     for (int i = index + 1; i < waypoints.length; ++i) {
-      if (waypoints[i].origin == Kind.controls) {
-        return waypoints[i];
+      Waypoint candidate = waypoints[i];
+      if (candidate.origin == Kind.controls) {
+        if (candidate.hasCustomTime || i == endControlIndex) {
+          return candidate;
+        }
       }
     }
     return null;
