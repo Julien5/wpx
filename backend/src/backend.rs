@@ -35,10 +35,10 @@ use crate::track::SharedTrack;
 use crate::track::Track;
 use crate::waypoint;
 use crate::waypoint::ExportParameters;
+use crate::waypoint::FlatWaypoints;
 use crate::waypoint::Waypoint;
 use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
-use crate::waypoint::WaypointsMap;
 use crate::wheel;
 
 pub type Segment = crate::segment::Segment;
@@ -470,18 +470,23 @@ impl Backend {
 
     pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
         let projections = InputPoint::flatten_projections(&points);
-        let mut map = WaypointsMap::new();
+        let mut list = FlatWaypoints::new();
         for (index, projection) in projections {
             let w = points[index].waypoint(&projection);
-            map.insert(projection.clone(), w);
+            list.push((projection.clone(), w));
         }
-        debug_assert!(points.len() <= map.len());
+        debug_assert!(
+            points.len() <= list.len(),
+            "points:{} != map:{}",
+            points.len(),
+            list.len()
+        );
         let export_parameters = ExportParameters {
             parameters: self.d().parameters.clone(),
             time_parameters: self.time_parameters(),
         };
-        WaypointInfo::make_waypoint_infos(&mut map, &self.d().track, &export_parameters);
-        map.iter().map(|(_proj, w)| w.clone()).collect()
+        WaypointInfo::make_waypoint_infos(&mut list, &self.d().track, &export_parameters);
+        list.iter().map(|(_proj, w)| w.clone()).collect()
     }
 
     pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {

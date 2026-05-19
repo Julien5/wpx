@@ -416,7 +416,9 @@ impl InputPoint {
     }
 
     pub fn flatten_projections(points: &[InputPoint]) -> Vec<(usize, TrackProjection)> {
-        let result: Vec<(usize, TrackProjection)> = points
+        // return a (index,projection) vector, sorted by projections, that can be used to
+        // get the points in order of their projections on the track.
+        let mut result: Vec<(usize, TrackProjection)> = points
             .iter()
             .enumerate()
             .flat_map(|(idx, point)| {
@@ -426,6 +428,12 @@ impl InputPoint {
                     .map(move |proj| (idx, proj.clone()))
             })
             .collect();
+        // the index does not matter for the sort.
+        result.sort_by(|(_indexa, proja), (_indexb, projb)| {
+            proja
+                .track_floating_index
+                .total_cmp(&projb.track_floating_index)
+        });
         assert!(result.len() >= points.len());
         result
     }

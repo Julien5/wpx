@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 use crate::backend::Segment;
 use crate::inputpoint::InputPoint;
 use crate::mercator::DateTime;
@@ -61,7 +59,7 @@ pub struct Waypoint {
 }
 
 pub type Waypoints = Vec<Waypoint>;
-pub type WaypointsMap = BTreeMap<TrackProjection, Waypoint>;
+pub type FlatWaypoints = Vec<(TrackProjection, Waypoint)>;
 
 impl Waypoint {
     pub fn create(wgs: WGS84Point, euc: &MercatorPoint, indx: usize, kind: Kind) -> Waypoint {
@@ -163,7 +161,7 @@ impl WaypointInfo {
         ret
     }
     pub fn make_waypoint_infos(
-        waypoints: &mut WaypointsMap,
+        waypoints: &mut FlatWaypoints,
         track: &track::Track,
         parameters: &ExportParameters,
     ) {
