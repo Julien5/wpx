@@ -171,7 +171,7 @@ void openSpeedDialog({
                       ),
                       const SizedBox(height: 8),
                       RadioListTile<SpeedMode>(
-                        title: const Text("ACP"),
+                        title: const Text("Audax Club Parisien Rules"),
                         value: SpeedMode.acp,
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
