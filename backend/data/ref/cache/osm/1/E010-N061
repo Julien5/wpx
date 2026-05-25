@@ -1,0 +1,1045 @@
+{
+  "tiles": {
+    "107,610": [
+      {
+        "id": "1769566972",
+        "wgs84": [
+          9.6445817,
+          48.0169016,
+          0.0
+        ],
+        "euc": [
+          1073629.9237581247,
+          6109667.119639774
+        ],
+        "tags": {
+          "name": "Am Schorren",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1779486971",
+        "wgs84": [
+          9.6371234,
+          47.9838983,
+          0.0
+        ],
+        "euc": [
+          1072799.6695999412,
+          6104176.503646077
+        ],
+        "tags": {
+          "name": "Burg",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "206936330",
+        "wgs84": [
+          9.6190657,
+          47.9617323,
+          0.0
+        ],
+        "euc": [
+          1070789.4956310436,
+          6100490.812711397
+        ],
+        "tags": {
+          "name": "Ebisweiler",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "207155725",
+        "wgs84": [
+          9.6971551,
+          47.9715029,
+          0.0
+        ],
+        "euc": [
+          1079482.3678753958,
+          6102115.241558947
+        ],
+        "tags": {
+          "name": "Lippertsweiler",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "208200378",
+        "wgs84": [
+          9.6664019,
+          48.0161761,
+          0.0
+        ],
+        "euc": [
+          1076058.9373111322,
+          6109546.383579019
+        ],
+        "tags": {
+          "name": "Kleinwinnaden",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "240115565",
+        "wgs84": [
+          9.6830362,
+          48.0178524,
+          0.0
+        ],
+        "euc": [
+          1077910.6591168346,
+          6109825.352186615
+        ],
+        "tags": {
+          "name": "Dunzenhausen",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Bad Schussenried-Ingoldingen",
+          "openGeoDB:community_identification_number": "08426014",
+          "openGeoDB:is_in": "Bad Schussenried,Biberach,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "13989",
+          "openGeoDB:layer": "9",
+          "openGeoDB:license_plate_code": "BC",
+          "openGeoDB:loc_id": "20",
+          "openGeoDB:location": "district",
+          "openGeoDB:name": "Dunzenhausen",
+          "openGeoDB:postal_codes": "88427",
+          "openGeoDB:sort_name": "DUNZENHAUSEN",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "245162376",
+        "wgs84": [
+          9.6801934,
+          47.9649835,
+          0.0
+        ],
+        "euc": [
+          1077594.2000684075,
+          6101031.312759028
+        ],
+        "tags": {
+          "name": "Haslach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "245162380",
+        "wgs84": [
+          9.6767144,
+          47.9776926,
+          0.0
+        ],
+        "euc": [
+          1077206.9195599377,
+          6103144.480403473
+        ],
+        "tags": {
+          "name": "Laimbach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "268261285",
+        "wgs84": [
+          9.6819217,
+          48.0077632,
+          0.0
+        ],
+        "euc": [
+          1077786.5935443456,
+          6108146.45193896
+        ],
+        "tags": {
+          "name": "Olzreute",
+          "place": "hamlet",
+          "wikidata": "Q48977869"
+        }
+      },
+      {
+        "id": "268261287",
+        "wgs84": [
+          9.6855844,
+          48.0114649,
+          0.0
+        ],
+        "euc": [
+          1078194.323443274,
+          6108762.397716966
+        ],
+        "tags": {
+          "name": "Lauhaus",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "272489591",
+        "wgs84": [
+          9.6124004,
+          47.9669638,
+          0.0
+        ],
+        "euc": [
+          1070047.5178290592,
+          6101360.547025915
+        ],
+        "tags": {
+          "name": "Oberweiler",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "309656896",
+        "wgs84": [
+          9.6284749,
+          47.9844426,
+          0.0
+        ],
+        "euc": [
+          1071836.9229838157,
+          6104267.027999057
+        ],
+        "tags": {
+          "name": "Fünfhäuser",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "310600976",
+        "wgs84": [
+          9.6242924,
+          48.0016439,
+          0.0
+        ],
+        "euc": [
+          1071371.3292135727,
+          6107128.325627971
+        ],
+        "tags": {
+          "name": "Hopferbach",
+          "place": "village"
+        }
+      },
+      {
+        "id": "313291159",
+        "wgs84": [
+          9.6843539,
+          47.9917436,
+          0.0
+        ],
+        "euc": [
+          1078057.344809853,
+          6105481.374009902
+        ],
+        "tags": {
+          "name": "Enzisweiler",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "339394331",
+        "wgs84": [
+          9.6659505,
+          47.9640869,
+          0.0
+        ],
+        "euc": [
+          1076008.687692988,
+          6100882.252907962
+        ],
+        "tags": {
+          "name": "Geblisberg",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "339394332",
+        "wgs84": [
+          9.6683473,
+          47.9700332,
+          0.0
+        ],
+        "euc": [
+          1076275.4982485215,
+          6101870.874279924
+        ],
+        "tags": {
+          "name": "Spiegler",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "418832730",
+        "wgs84": [
+          9.6439779,
+          47.9769527,
+          0.0
+        ],
+        "euc": [
+          1073562.7090495839,
+          6103021.441482294
+        ],
+        "tags": {
+          "name": "Otterswang",
+          "place": "village",
+          "postal_code": "88427",
+          "wikidata": "Q47492797"
+        }
+      },
+      {
+        "id": "60951713",
+        "wgs84": [
+          9.6245777,
+          47.9691755,
+          0.0
+        ],
+        "euc": [
+          1071403.088664296,
+          6101728.267562632
+        ],
+        "tags": {
+          "name": "Atzenberg",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "60958022",
+        "wgs84": [
+          9.654175,
+          47.9908279,
+          0.0
+        ],
+        "euc": [
+          1074697.8450291518,
+          6105329.059884112
+        ],
+        "tags": {
+          "name": "Lufthütte",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "8764029291",
+        "wgs84": [
+          9.6412379,
+          48.0018092,
+          0.0
+        ],
+        "euc": [
+          1073257.6936448102,
+          6107155.82657848
+        ],
+        "tags": {
+          "name": "Zellerhof",
+          "place": "hamlet"
+        }
+      }
+    ]
+  },
+  "chunks": {
+    "10,61": [
+      {
+        "id": "1699831805",
+        "wgs84": [
+          9.7262175,
+          48.2828519,
+          0.0
+        ],
+        "euc": [
+          1082717.5794446263,
+          6154040.978160971
+        ],
+        "tags": {
+          "ele": "515",
+          "name": "Ehingen (Donau)",
+          "name:als": "Eegne",
+          "name:ar": "إيهنغن",
+          "name:fa": "انینگن",
+          "name:hy": "Էհինգեն",
+          "name:ka": "ეჰინგენი",
+          "name:ru": "Эинген",
+          "name:sr": "Ехинген",
+          "name:uk": "Еїнґен",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Ehingen (Donau)",
+          "openGeoDB:community_identification_number": "08425033",
+          "openGeoDB:license_plate_code": "UL",
+          "openGeoDB:loc_id": "16005",
+          "openGeoDB:telephone_area_code": "07391",
+          "place": "town",
+          "population": "24786",
+          "postal_code": "89584",
+          "wikidata": "Q158523",
+          "wikipedia": "de:Ehingen (Donau)"
+        }
+      },
+      {
+        "id": "174509748",
+        "wgs84": [
+          9.376547,
+          48.5545979,
+          0.0
+        ],
+        "euc": [
+          1043792.437439197,
+          6199621.145131776
+        ],
+        "tags": {
+          "name": "Neuffen",
+          "name:ru": "Нойффен",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Neuffen",
+          "openGeoDB:community_identification_number": "08116046",
+          "openGeoDB:is_in": "Esslingen,Stuttgart,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "370",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "ES",
+          "openGeoDB:loc_id": "21441",
+          "openGeoDB:name": "Neuffen",
+          "openGeoDB:population": "6251",
+          "openGeoDB:postal_codes": "72639",
+          "openGeoDB:sort_name": "NEUFFEN",
+          "openGeoDB:telephone_area_code": "07025",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.5564017",
+          "opengeodb:lon": "9.37583",
+          "place": "town",
+          "population": "6251",
+          "wikidata": "Q32181160"
+        }
+      },
+      {
+        "id": "240036637",
+        "wgs84": [
+          9.1134689,
+          48.2892852,
+          0.0
+        ],
+        "euc": [
+          1014506.717308335,
+          6155117.231385727
+        ],
+        "tags": {
+          "name": "Burladingen",
+          "name:prefix": "Stadt",
+          "name:ru": "Бурладинген",
+          "place": "town",
+          "population": "12999",
+          "wikidata": "Q56475100"
+        }
+      },
+      {
+        "id": "240061968",
+        "wgs84": [
+          9.2448375,
+          48.307755,
+          0.0
+        ],
+        "euc": [
+          1029130.6029665602,
+          6158207.873815982
+        ],
+        "tags": {
+          "name": "Trochtelfingen",
+          "openGeoDB:auto_update": "population,place,is_in",
+          "openGeoDB:community_identification_number": "08415073",
+          "openGeoDB:is_in": "Reutlingen,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "380",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "RT",
+          "openGeoDB:loc_id": "25105",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Trochtelfingen (Hohenzollern)",
+          "openGeoDB:population": "6598",
+          "openGeoDB:postal_codes": "72818",
+          "openGeoDB:sort_name": "TROCHTELFINGEN",
+          "openGeoDB:telephone_area_code": "07124",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "6598",
+          "wikidata": "Q82285"
+        }
+      },
+      {
+        "id": "240067104",
+        "wgs84": [
+          9.2831201,
+          48.5397247,
+          0.0
+        ],
+        "euc": [
+          1033392.2025048028,
+          6197120.135003173
+        ],
+        "tags": {
+          "ele": "350",
+          "name": "Metzingen",
+          "name:de": "Metzingen",
+          "name:ru": "Метцинген",
+          "name:uk": "Метцинґен",
+          "name:zh": "梅青根",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Metzingen",
+          "openGeoDB:community_identification_number": "08415050",
+          "openGeoDB:license_plate_code": "RT",
+          "openGeoDB:loc_id": "20893",
+          "openGeoDB:telephone_area_code": "07123",
+          "place": "town",
+          "population": "21889",
+          "wikidata": "Q82881",
+          "wikipedia": "de:Metzingen"
+        }
+      },
+      {
+        "id": "240087144",
+        "wgs84": [
+          9.053596,
+          48.5203263,
+          0.0
+        ],
+        "euc": [
+          1007841.6965680185,
+          6193859.291653317
+        ],
+        "tags": {
+          "capital": "5",
+          "name": "Tübingen",
+          "name:ar": "توبينغن",
+          "name:be": "Цюбінген",
+          "name:de": "Tübingen",
+          "name:el": "Τύμπιγκεν",
+          "name:es": "Tubinga",
+          "name:he": "טיבינגן",
+          "name:it": "Tubinga",
+          "name:lt": "Tiubingenas",
+          "name:lv": "Tībingene",
+          "name:pl": "Tybinga",
+          "name:prefix": "Universitätsstadt",
+          "name:pt": "Tubinga",
+          "name:ru": "Тюбинген",
+          "name:uk": "Тюбінґен",
+          "name:zh": "蒂宾根",
+          "official_name": "Universitätsstadt Tübingen",
+          "place": "town",
+          "population": "91239",
+          "source:population": "https://www.tuebingen.de/1370.html 02/04/2024",
+          "wikidata": "Q3806",
+          "wikipedia": "de:Tübingen"
+        }
+      },
+      {
+        "id": "240099666",
+        "wgs84": [
+          9.4748796,
+          48.1534412,
+          0.0
+        ],
+        "euc": [
+          1054738.7723995754,
+          6132420.051748761
+        ],
+        "tags": {
+          "ele": "540",
+          "name": "Riedlingen",
+          "name:ru": "Ридлинген",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Riedlingen",
+          "openGeoDB:community_identification_number": "08426097",
+          "openGeoDB:license_plate_code": "BC",
+          "openGeoDB:loc_id": "23098",
+          "openGeoDB:telephone_area_code": "07371",
+          "place": "town",
+          "population": "10384",
+          "postal_code": "88499",
+          "wikidata": "Q505967",
+          "wikipedia": "de:Riedlingen"
+        }
+      },
+      {
+        "id": "240102059",
+        "wgs84": [
+          9.3321246,
+          48.0498964,
+          0.0
+        ],
+        "euc": [
+          1038847.3584913817,
+          6115159.835893292
+        ],
+        "tags": {
+          "name": "Mengen",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsverband Mengen",
+          "openGeoDB:community_identification_number": "08437076",
+          "openGeoDB:is_in": "Sigmaringen,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "383",
+          "openGeoDB:license_plate_code": "SIG",
+          "openGeoDB:loc_id": "20823",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Mengen (Württemberg)",
+          "openGeoDB:population": "10175",
+          "openGeoDB:postal_codes": "88512",
+          "openGeoDB:sort_name": "MENGEN",
+          "openGeoDB:telephone_area_code": "07572",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "10175",
+          "postal_code": "88512",
+          "wikidata": "Q82279"
+        }
+      },
+      {
+        "id": "240105533",
+        "wgs84": [
+          9.2584259,
+          48.4863794,
+          0.0
+        ],
+        "euc": [
+          1030643.2567352557,
+          6188155.86960555
+        ],
+        "tags": {
+          "name": "Eningen unter Achalm",
+          "name:ru": "Энинген-унтер-Ахальм",
+          "place": "town",
+          "population": "10890",
+          "short_name": "Eningen",
+          "wikidata": "Q31996146"
+        }
+      },
+      {
+        "id": "240106869",
+        "wgs84": [
+          9.2165039,
+          48.0869139,
+          0.0
+        ],
+        "euc": [
+          1025976.5210422198,
+          6121326.410270104
+        ],
+        "tags": {
+          "ele": "580",
+          "name": "Sigmaringen",
+          "name:prefix": "Stadt",
+          "name:ru": "Сигмаринген",
+          "place": "town",
+          "population": "15593",
+          "postal_code": "72488",
+          "wikidata": "Q82858"
+        }
+      },
+      {
+        "id": "240109639",
+        "wgs84": [
+          9.2254982,
+          48.4656748,
+          0.0
+        ],
+        "euc": [
+          1026977.761938262,
+          6184679.1618090775
+        ],
+        "tags": {
+          "ele": "426",
+          "name": "Pfullingen",
+          "name:ru": "Пфуллинген",
+          "place": "town",
+          "population": "17584",
+          "postal_code": "72793",
+          "wikidata": "Q82053",
+          "wikipedia": "de:Pfullingen"
+        }
+      },
+      {
+        "id": "240118826",
+        "wgs84": [
+          9.4947894,
+          48.4128592,
+          0.0
+        ],
+        "euc": [
+          1056955.1211973715,
+          6175816.806903324
+        ],
+        "tags": {
+          "name": "Münsingen",
+          "name:ru": "Мюнзинген",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Münsingen",
+          "openGeoDB:community_identification_number": "08415053",
+          "openGeoDB:is_in": "Reutlingen,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "380",
+          "openGeoDB:license_plate_code": "RT",
+          "openGeoDB:loc_id": "21193",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Münsingen (Württemberg)",
+          "openGeoDB:population": "14497",
+          "openGeoDB:postal_codes": "72525",
+          "openGeoDB:sort_name": "MUENSINGEN",
+          "openGeoDB:telephone_area_code": "07381",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "14497",
+          "wikidata": "Q557809"
+        }
+      },
+      {
+        "id": "2614678751",
+        "wgs84": [
+          9.0602912,
+          48.4069119,
+          0.0
+        ],
+        "euc": [
+          1008587.0028227776,
+          6174819.438388565
+        ],
+        "tags": {
+          "ele": "477",
+          "name": "Mössingen",
+          "name:de": "Mössingen",
+          "name:ru": "Мёссинген",
+          "name:uk": "Мессінґен",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Mössingen",
+          "openGeoDB:community_identification_number": "08416025",
+          "openGeoDB:is_in_loc_id": "385",
+          "openGeoDB:license_plate_code": "TÜ",
+          "openGeoDB:loc_id": "21045",
+          "openGeoDB:telephone_area_code": "07473",
+          "place": "town",
+          "population": "19554",
+          "postal_code": "72116",
+          "wikidata": "Q525575",
+          "wikipedia": "de:Mössingen"
+        }
+      },
+      {
+        "id": "27421831",
+        "wgs84": [
+          9.6861474,
+          48.4896773,
+          0.0
+        ],
+        "euc": [
+          1078256.9963165906,
+          6188709.782629813
+        ],
+        "tags": {
+          "name": "Laichingen",
+          "name:ar": "لايشنغن",
+          "name:fa": "لایشنگن",
+          "name:hy": "Լայխինգեն",
+          "name:ka": "ლაიხინგენი",
+          "name:prefix": "Stadt",
+          "name:ru": "Лайхинген",
+          "name:sr": "Лајхинген",
+          "name:swg": "Loechenge",
+          "name:zh": "莱欣根",
+          "place": "town",
+          "population": "10968",
+          "wikidata": "Q515438",
+          "wikipedia": "de:Laichingen"
+        }
+      },
+      {
+        "id": "27427605",
+        "wgs84": [
+          9.4781135,
+          48.2751679,
+          0.0
+        ],
+        "euc": [
+          1055098.768500852,
+          6152755.667813486
+        ],
+        "tags": {
+          "ele": "661",
+          "name": "Hayingen",
+          "name:sr": "Хајлинген",
+          "name:uk": "Гаїнген",
+          "place": "town",
+          "population": "2141",
+          "website": "https://www.hayingen.de/",
+          "wikidata": "Q82453",
+          "wikipedia": "de:Hayingen"
+        }
+      },
+      {
+        "id": "31372616",
+        "wgs84": [
+          9.7899938,
+          48.0984413,
+          0.0
+        ],
+        "euc": [
+          1089817.1246853054,
+          6123247.612755844
+        ],
+        "tags": {
+          "ele": "533",
+          "name": "Biberach an der Riß",
+          "name:de": "Biberach an der Riß",
+          "name:ru": "Биберах-на-Рисе",
+          "name:uk": "Біберах",
+          "official_name:uk": "Біберах-ам-Ріс",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Biberach an der Riß",
+          "openGeoDB:community_identification_number": "08426021",
+          "openGeoDB:is_in_loc_id": "367",
+          "openGeoDB:license_plate_code": "BC",
+          "openGeoDB:loc_id": "14449",
+          "openGeoDB:telephone_area_code": "07351",
+          "place": "town",
+          "population": "31419",
+          "postal_code": "88400",
+          "wikidata": "Q16069",
+          "wikipedia": "de:Biberach an der Riß"
+        }
+      },
+      {
+        "id": "31985630",
+        "wgs84": [
+          9.2114144,
+          48.4919508,
+          0.0
+        ],
+        "euc": [
+          1025409.9604938276,
+          6189091.659109352
+        ],
+        "tags": {
+          "alt_name:ar": "ريوتلنجن",
+          "ele": "382",
+          "name": "Reutlingen",
+          "name:ar": "رويتلينغن",
+          "name:el": "Ρόιτλινγκεν",
+          "name:fr": "Reutlingen",
+          "name:ko": "로이틀링겐",
+          "name:la": "Reutlingen",
+          "name:ml": "റോയിറ്റ്ലിങ്കൻ",
+          "name:nds": "Reutlingen",
+          "name:ru": "Ройтлинген",
+          "name:sr": "Ројтлинген",
+          "name:uk": "Ройтлінґен",
+          "place": "city",
+          "population": "112099",
+          "wikidata": "Q3085",
+          "wikipedia": "de:Reutlingen"
+        }
+      },
+      {
+        "id": "34032963",
+        "wgs84": [
+          9.5010309,
+          48.0158071,
+          0.0
+        ],
+        "euc": [
+          1057649.9217991577,
+          6109484.976089626
+        ],
+        "tags": {
+          "ele": "587",
+          "name": "Bad Saulgau",
+          "name:ru": "Бад-Заульгау",
+          "place": "town",
+          "population": "17011",
+          "postal_code": "88348",
+          "wikidata": "Q138822880"
+        }
+      },
+      {
+        "id": "34818701",
+        "wgs84": [
+          9.6097541,
+          48.0655836,
+          0.0
+        ],
+        "euc": [
+          1069752.933060573,
+          6117772.552583064
+        ],
+        "tags": {
+          "name": "Bad Buchau",
+          "name:prefix": "Stadt",
+          "place": "town",
+          "population": "4070",
+          "wikidata": "Q496489"
+        }
+      },
+      {
+        "id": "34818702",
+        "wgs84": [
+          9.6561098,
+          48.0047363,
+          0.0
+        ],
+        "euc": [
+          1074913.2259799386,
+          6107642.822616881
+        ],
+        "tags": {
+          "name": "Bad Schussenried",
+          "place": "town",
+          "population": "8477",
+          "postal_code": "88427",
+          "website": "https://www.bad-schussenried.de/de/startseite",
+          "wikidata": "Q131905554"
+        }
+      },
+      {
+        "id": "59976044",
+        "wgs84": [
+          9.3978845,
+          48.4937953,
+          0.0
+        ],
+        "euc": [
+          1046167.7170739984,
+          6189401.489665509
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "08415078",
+          "name": "Bad Urach",
+          "name:ru": "Бад-Урах",
+          "place": "town",
+          "population": "12807",
+          "postal_code": "72574",
+          "wikidata": "Q83032"
+        }
+      },
+      {
+        "id": "60023924",
+        "wgs84": [
+          9.2157336,
+          48.2493445,
+          0.0
+        ],
+        "euc": [
+          1025890.7716384619,
+          6148437.577737992
+        ],
+        "tags": {
+          "name": "Gammertingen",
+          "name:uk": "Гаммертінген",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsverband Gammertingen",
+          "openGeoDB:community_identification_number": "08437031",
+          "openGeoDB:is_in": "Sigmaringen,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "383",
+          "openGeoDB:license_plate_code": "SIG",
+          "openGeoDB:loc_id": "16818",
+          "openGeoDB:name": "Gammertingen",
+          "openGeoDB:population": "6849",
+          "openGeoDB:postal_codes": "72501",
+          "openGeoDB:sort_name": "GAMMERTINGEN",
+          "openGeoDB:telephone_area_code": "07574",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.246882",
+          "opengeodb:lon": "9.2233775",
+          "place": "town",
+          "population": "6312",
+          "website": "https://www.gammertingen.de/",
+          "wikidata": "Q83088",
+          "wikipedia": "de:Gammertingen"
+        }
+      },
+      {
+        "id": "60199325",
+        "wgs84": [
+          9.6441788,
+          48.2358225,
+          0.0
+        ],
+        "euc": [
+          1073585.0731352842,
+          6146177.350459069
+        ],
+        "tags": {
+          "name": "Munderkingen",
+          "name:als": "Mõndergenge",
+          "name:ar": "موندركينغن",
+          "name:fa": "موندرکینگن",
+          "name:prefix": "Stadt",
+          "name:ru": "Мундеркинген",
+          "name:sr": "Мундеркинген",
+          "name:zh": "蒙德尔金根",
+          "place": "town",
+          "population": "5142",
+          "wikidata": "Q515163",
+          "wikipedia": "de:Munderkingen"
+        }
+      },
+      {
+        "id": "75528205",
+        "wgs84": [
+          9.1122006,
+          47.9939249,
+          0.0
+        ],
+        "euc": [
+          1014365.5307981619,
+          6105844.214211473
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "08437078",
+          "name": "Meßkirch",
+          "name:uk": "Месскірх",
+          "place": "town",
+          "population": "8659",
+          "postal_code": "88605",
+          "wikidata": "Q82724"
+        }
+      },
+      {
+        "id": "75681664",
+        "wgs84": [
+          9.7847091,
+          48.4121233,
+          0.0
+        ],
+        "euc": [
+          1089228.83457231,
+          6175693.389369226
+        ],
+        "tags": {
+          "loc_name": "Blautopfhausen",
+          "name": "Blaubeuren",
+          "name:als": "Blaubeira",
+          "name:ar": "بلاوبويرن",
+          "name:fa": "بلوابویرن",
+          "name:ru": "Блаубойрен",
+          "name:sr": "Блаубојрен",
+          "name:zh": "布劳博伊伦",
+          "openGeoDB:auto_update": "population",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Blaubeuren",
+          "openGeoDB:community_identification_number": "08425020",
+          "openGeoDB:is_in": "Alb-Donau-Kreis,Tübingen,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "607",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "UL",
+          "openGeoDB:loc_id": "14590",
+          "openGeoDB:name": "Blaubeuren",
+          "openGeoDB:population": "11845",
+          "openGeoDB:postal_codes": "89143",
+          "openGeoDB:sort_name": "BLAUBEUREN",
+          "openGeoDB:telephone_area_code": "07344",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.4069294",
+          "opengeodb:lon": "9.7890498",
+          "place": "town",
+          "population": "11845",
+          "wikidata": "Q505955",
+          "wikipedia": "de:Blaubeuren"
+        }
+      }
+    ]
+  }
+}

@@ -5,14 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:wpx/src/models/futurerenderer.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/models/stackviewscontroller.dart';
-import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/widgets/trackview.dart';
 
 class SimpleTrackView extends StatefulWidget {
   final RendererParameters rendererParameters;
   const SimpleTrackView({super.key, required this.rendererParameters});
 
-  static SimpleTrackView make(Set<Kind> kinds, TrackData trackData) {
+  static SimpleTrackView make(Kinds kinds, TrackData trackData) {
     developer.log("[SimpleTrackView make] $trackData");
     RendererParameters parameters = RendererParameters(
       kinds: kinds,

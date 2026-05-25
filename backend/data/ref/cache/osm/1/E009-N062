@@ -1,0 +1,4761 @@
+{
+  "tiles": {
+    "90,624": [
+      {
+        "id": "20603511",
+        "wgs84": [
+          8.1118983,
+          48.7972825,
+          0.0
+        ],
+        "euc": [
+          903012.3881228215,
+          6240534.214388996
+        ],
+        "tags": {
+          "name": "Hügelsheim",
+          "place": "village"
+        }
+      },
+      {
+        "id": "28902711",
+        "wgs84": [
+          8.1421337,
+          48.8209175,
+          0.0
+        ],
+        "euc": [
+          906378.1774547526,
+          6244529.289223635
+        ],
+        "tags": {
+          "name": "Iffezheim",
+          "openGeoDB:auto_update": "population",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Rastatt",
+          "openGeoDB:community_identification_number": "08216023",
+          "openGeoDB:is_in": "Rastatt,Karlsruhe,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "364",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "RA",
+          "openGeoDB:loc_id": "18779",
+          "openGeoDB:name": "Iffezheim",
+          "openGeoDB:population": "4909",
+          "openGeoDB:postal_codes": "76473",
+          "openGeoDB:sort_name": "IFFEZHEIM",
+          "openGeoDB:telephone_area_code": "07229",
+          "openGeoDB:type": "Gemeinde",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.8224657",
+          "opengeodb:lon": "8.1413115",
+          "place": "village",
+          "population": "4909",
+          "postal_code": "76473"
+        }
+      },
+      {
+        "id": "28932251",
+        "wgs84": [
+          8.1357373,
+          48.8455231,
+          0.0
+        ],
+        "euc": [
+          905666.1334638424,
+          6248690.428689825
+        ],
+        "tags": {
+          "name": "Wintersdorf",
+          "place": "village"
+        }
+      },
+      {
+        "id": "97968582",
+        "wgs84": [
+          8.0856866,
+          48.8237291,
+          0.0
+        ],
+        "euc": [
+          900094.5150259956,
+          6245004.665376913
+        ],
+        "tags": {
+          "name": "Neuhaeusel",
+          "name:de": "Neuhäusel",
+          "place": "village",
+          "population": "390",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      }
+    ],
+    "90,625": [
+      {
+        "id": "26694724",
+        "wgs84": [
+          8.1067978,
+          48.8920496,
+          0.0
+        ],
+        "euc": [
+          902444.6030600305,
+          6256564.280309003
+        ],
+        "tags": {
+          "name": "Seltz",
+          "name:de": "Selz",
+          "place": "village",
+          "population": "3135",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "28932252",
+        "wgs84": [
+          8.1548745,
+          48.8607565,
+          0.0
+        ],
+        "euc": [
+          907796.4768230513,
+          6251267.627277521
+        ],
+        "tags": {
+          "name": "Ottersdorf",
+          "place": "village"
+        }
+      },
+      {
+        "id": "28932253",
+        "wgs84": [
+          8.1563625,
+          48.8846536,
+          0.0
+        ],
+        "euc": [
+          907962.1202253519,
+          6255312.138327625
+        ],
+        "tags": {
+          "name": "Plittersdorf",
+          "place": "village"
+        }
+      },
+      {
+        "id": "97968888",
+        "wgs84": [
+          8.0988935,
+          48.9097061,
+          0.0
+        ],
+        "euc": [
+          901564.7004089534,
+          6259554.272937341
+        ],
+        "tags": {
+          "name": "Schaffhouse-près-Seltz",
+          "name:de": "Schaffhausen",
+          "name:vmf": "Schofhof",
+          "place": "village",
+          "population": "552",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      }
+    ],
+    "90,626": [
+      {
+        "id": "97968594",
+        "wgs84": [
+          8.1262948,
+          48.9549618,
+          0.0
+        ],
+        "euc": [
+          904614.9991720269,
+          6267222.806124528
+        ],
+        "tags": {
+          "name": "Neewiller-près-Lauterbourg",
+          "name:de": "Nehweiler",
+          "place": "village",
+          "population": "662",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "97968601",
+        "wgs84": [
+          8.1484455,
+          48.9196671,
+          0.0
+        ],
+        "euc": [
+          907080.8038167414,
+          6261241.557959544
+        ],
+        "tags": {
+          "name": "Munchhausen",
+          "name:de": "Münchhausen",
+          "place": "village",
+          "population": "812",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "97968621",
+        "wgs84": [
+          8.1531464,
+          48.931255,
+          0.0
+        ],
+        "euc": [
+          907604.1056110117,
+          6263204.845614436
+        ],
+        "tags": {
+          "name": "Mothern",
+          "name:vmf": "Modere",
+          "place": "village",
+          "population": "1915",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "97969208",
+        "wgs84": [
+          8.1028449,
+          48.9354309,
+          0.0
+        ],
+        "euc": [
+          902004.5682448735,
+          6263912.461935595
+        ],
+        "tags": {
+          "name": "Wintzenbach",
+          "name:de": "Winzenbach",
+          "place": "village",
+          "population": "528",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      }
+    ],
+    "90,627": [
+      {
+        "id": "240049589",
+        "wgs84": [
+          8.1381589,
+          48.9820168,
+          0.0
+        ],
+        "euc": [
+          905935.7047427475,
+          6271810.571905051
+        ],
+        "tags": {
+          "name": "Scheibenhardt",
+          "place": "village",
+          "population": "693",
+          "wikidata": "Q657728",
+          "wikipedia": "de:Scheibenhardt"
+        }
+      },
+      {
+        "id": "320945497",
+        "wgs84": [
+          8.1718733,
+          49.0207771,
+          0.0
+        ],
+        "euc": [
+          909688.7745831482,
+          6278387.568778893
+        ],
+        "tags": {
+          "name": "Büchelberg",
+          "place": "village",
+          "postal_code": "76744",
+          "wikidata": "Q1020310",
+          "wikipedia": "de:Büchelberg (Wörth)"
+        }
+      },
+      {
+        "id": "60268100",
+        "wgs84": [
+          8.0920497,
+          48.9933743,
+          0.0
+        ],
+        "euc": [
+          900802.8520778622,
+          6273737.226112361
+        ],
+        "tags": {
+          "name": "Forsthaus Salmbacher Passage",
+          "place": "hamlet",
+          "postal_code": "76779"
+        }
+      },
+      {
+        "id": "8142654643",
+        "wgs84": [
+          8.1615691,
+          48.9748442,
+          0.0
+        ],
+        "euc": [
+          908541.7162861159,
+          6270594.058495971
+        ],
+        "tags": {
+          "name": "Porte de France",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "97968718",
+        "wgs84": [
+          8.1037078,
+          48.9733424,
+          0.0
+        ],
+        "euc": [
+          902100.6258334792,
+          6270339.3669085475
+        ],
+        "tags": {
+          "name": "Niederlauterbach",
+          "place": "village",
+          "population": "945",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "97969027",
+        "wgs84": [
+          8.1376453,
+          48.9776565,
+          0.0
+        ],
+        "euc": [
+          905878.5310522759,
+          6271071.019573131
+        ],
+        "tags": {
+          "name": "Scheibenhard",
+          "name:de": "Scheibenhardt",
+          "name:pfl": "Schaiwert",
+          "name:uk": "Шебенар",
+          "place": "village",
+          "population": "864",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      }
+    ],
+    "91,620": [
+      {
+        "id": "122383129",
+        "wgs84": [
+          8.2018027,
+          48.5750723,
+          0.0
+        ],
+        "euc": [
+          913020.5001508964,
+          6203065.230745468
+        ],
+        "tags": {
+          "name": "Hinterseebach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1806392753",
+        "wgs84": [
+          8.2408274,
+          48.5713636,
+          0.0
+        ],
+        "euc": [
+          917364.7098832567,
+          6202441.271181594
+        ],
+        "tags": {
+          "ele": "950",
+          "name": "Kapellenbuckel",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "1950454234",
+        "wgs84": [
+          8.2515477,
+          48.5633578,
+          0.0
+        ],
+        "euc": [
+          918558.0882204077,
+          6201094.514394632
+        ],
+        "tags": {
+          "ele": "1014",
+          "name": "Pfälzerkopf",
+          "natural": "peak",
+          "wikidata": "Q30609052"
+        }
+      },
+      {
+        "id": "203853380",
+        "wgs84": [
+          8.2021233,
+          48.6057023,
+          0.0
+        ],
+        "euc": [
+          913056.1891796446,
+          6208220.237973359
+        ],
+        "tags": {
+          "ele": "1164",
+          "name": "Hornisgrinde",
+          "natural": "peak",
+          "wikidata": "Q650402",
+          "wikipedia": "de:Hornisgrinde"
+        }
+      },
+      {
+        "id": "2120545962",
+        "wgs84": [
+          8.19589,
+          48.5889,
+          0.0
+        ],
+        "euc": [
+          912362.301397683,
+          6205392.0359175475
+        ],
+        "tags": {
+          "ele": "934",
+          "name": "Bustert",
+          "natural": "peak",
+          "wikidata": "Q30609472"
+        }
+      },
+      {
+        "id": "2120545966",
+        "wgs84": [
+          8.26232,
+          48.57669,
+          0.0
+        ],
+        "euc": [
+          919757.2551710801,
+          6203337.410365628
+        ],
+        "tags": {
+          "ele": "990",
+          "name": "Wiesberg",
+          "natural": "peak",
+          "wikidata": "Q30508599"
+        }
+      },
+      {
+        "id": "292152474",
+        "wgs84": [
+          8.2004057,
+          48.5673063,
+          0.0
+        ],
+        "euc": [
+          912864.9868222581,
+          6201758.714831325
+        ],
+        "tags": {
+          "name": "Kernhof",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "297356515",
+        "wgs84": [
+          8.2332277,
+          48.5703514,
+          0.0
+        ],
+        "euc": [
+          916518.7151490749,
+          6202270.984453942
+        ],
+        "tags": {
+          "ele": "1054",
+          "historic": "boundary_stone",
+          "name": "Seekopf",
+          "natural": "peak",
+          "wikidata": "Q835657"
+        }
+      },
+      {
+        "id": "3267274802",
+        "wgs84": [
+          8.2029819,
+          48.6134953,
+          0.0
+        ],
+        "euc": [
+          913151.7680944398,
+          6209532.293197743
+        ],
+        "tags": {
+          "ele": "1135",
+          "name": "Kleine Grinde",
+          "natural": "peak",
+          "ref:komoot.com": "highlight/3898673",
+          "wikidata": "Q93975179"
+        }
+      },
+      {
+        "id": "4072001339",
+        "wgs84": [
+          8.1828673,
+          48.5619856,
+          0.0
+        ],
+        "euc": [
+          910912.6210649294,
+          6200863.700693355
+        ],
+        "tags": {
+          "inscription": "\"gestiftet von Mitgliedern der AV Sektion Pforzheim im März 1975\"",
+          "name": "Karlsruher Grat",
+          "natural": "peak",
+          "summit:cross": "yes",
+          "summit:register": "no"
+        }
+      },
+      {
+        "id": "4560842681",
+        "wgs84": [
+          8.2312692,
+          48.6061561,
+          0.0
+        ],
+        "euc": [
+          916300.6959263562,
+          6208296.635688536
+        ],
+        "tags": {
+          "ele": "967",
+          "name": "Philippenkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "4860734265",
+        "wgs84": [
+          8.2217279,
+          48.561259,
+          0.0
+        ],
+        "euc": [
+          915238.5632688503,
+          6200741.4839932555
+        ],
+        "tags": {
+          "ele": "915",
+          "fixme": "position estimated, fix position, seperate pass from saddle as necessary",
+          "mountain_pass": "yes",
+          "name": "Ruhestein",
+          "natural": "saddle",
+          "wikidata": "Q1409975",
+          "wikipedia": "de:Ruhestein"
+        }
+      },
+      {
+        "id": "497236714",
+        "wgs84": [
+          8.1885692,
+          48.5600921,
+          0.0
+        ],
+        "euc": [
+          911547.3536694836,
+          6200545.210943371
+        ],
+        "tags": {
+          "name": "Falkenschrofen",
+          "natural": "peak",
+          "summit:cross": "yes"
+        }
+      },
+      {
+        "id": "5325698233",
+        "wgs84": [
+          8.2499063,
+          48.6100579,
+          0.0
+        ],
+        "euc": [
+          918375.3684082195,
+          6208953.536218323
+        ],
+        "tags": {
+          "alt_name": "Hundsbach-Viehläger",
+          "is_in": "Hundsbach; Forbach",
+          "name": "Viehläger",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "5325919264",
+        "wgs84": [
+          8.2572233,
+          48.6061775,
+          0.0
+        ],
+        "euc": [
+          919189.893122354,
+          6208300.238418368
+        ],
+        "tags": {
+          "alt_name": "Hundsbach-Biberach",
+          "is_in": "Hundsbach; Forbach",
+          "name": "Biberach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "5418374763",
+        "wgs84": [
+          8.2159685,
+          48.6054065,
+          0.0
+        ],
+        "euc": [
+          914597.4297935758,
+          6208170.440096676
+        ],
+        "tags": {
+          "ele": "1091",
+          "name": "Obergrind",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "5795385580",
+        "wgs84": [
+          8.2524655,
+          48.5921425,
+          0.0
+        ],
+        "euc": [
+          918660.2572490576,
+          6205937.747786423
+        ],
+        "tags": {
+          "name": "Hinterlangenbach",
+          "place": "hamlet",
+          "wikidata": "Q123466301"
+        }
+      },
+      {
+        "id": "7253187401",
+        "wgs84": [
+          8.2587259,
+          48.6142893,
+          0.0
+        ],
+        "euc": [
+          919357.16178922,
+          6209665.985028114
+        ],
+        "tags": {
+          "ele": "940",
+          "name": "Kleiner Hauerskopf",
+          "natural": "peak",
+          "wikidata": "Q30609108"
+        }
+      },
+      {
+        "id": "7253374763",
+        "wgs84": [
+          8.2456711,
+          48.6156261,
+          0.0
+        ],
+        "euc": [
+          917903.9081008119,
+          6209891.076980603
+        ],
+        "tags": {
+          "ele": "988",
+          "name": "Großer Hauerskopf",
+          "natural": "peak",
+          "wikidata": "Q31542085"
+        }
+      },
+      {
+        "id": "727446683",
+        "wgs84": [
+          8.2173377,
+          48.5956193,
+          0.0
+        ],
+        "euc": [
+          914749.8484403698,
+          6206522.931190583
+        ],
+        "tags": {
+          "ele": "958",
+          "mountain_pass": "yes",
+          "name": "Seibelseckle",
+          "natural": "saddle",
+          "wikidata": "Q1772359",
+          "wikipedia": "de:Seibelseckle"
+        }
+      },
+      {
+        "id": "7989160758",
+        "wgs84": [
+          8.1885512,
+          48.6060128,
+          0.0
+        ],
+        "euc": [
+          911545.3499186491,
+          6208272.510906165
+        ],
+        "tags": {
+          "name": "Brandkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "7989160759",
+        "wgs84": [
+          8.188974,
+          48.6129855,
+          0.0
+        ],
+        "euc": [
+          911592.4157993565,
+          6209446.455395333
+        ],
+        "tags": {
+          "name": "Zimmerplatzkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "8262409248",
+        "wgs84": [
+          8.1765318,
+          48.5796948,
+          0.0
+        ],
+        "euc": [
+          910207.3564310085,
+          6203842.994042745
+        ],
+        "tags": {
+          "name": "Sommerseite",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "906943119",
+        "wgs84": [
+          8.1976876,
+          48.5969425,
+          0.0
+        ],
+        "euc": [
+          912562.4093143329,
+          6206745.650778752
+        ],
+        "tags": {
+          "ele": "1123",
+          "name": "Katzenkopf",
+          "natural": "peak",
+          "ref:komoot.com": "highlight/104015"
+        }
+      },
+      {
+        "id": "9266706486",
+        "wgs84": [
+          8.2535648,
+          48.5811357,
+          0.0
+        ],
+        "euc": [
+          918782.6307652867,
+          6204085.44863383
+        ],
+        "tags": {
+          "ele": "959",
+          "name": "Falzköpfle",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "956996788",
+        "wgs84": [
+          8.2127076,
+          48.5582324,
+          0.0
+        ],
+        "euc": [
+          914234.428066048,
+          6200232.418012258
+        ],
+        "tags": {
+          "ele": "1056",
+          "name": "Vogelskopf",
+          "natural": "peak",
+          "wikidata": "Q31294243"
+        }
+      },
+      {
+        "id": "957035363",
+        "wgs84": [
+          8.226609,
+          48.5784725,
+          0.0
+        ],
+        "euc": [
+          915781.9248353614,
+          6203637.32783409
+        ],
+        "tags": {
+          "ele": "1093",
+          "name": "Altsteigerskopf",
+          "natural": "peak",
+          "wikidata": "Q82910600"
+        }
+      },
+      {
+        "id": "957042687",
+        "wgs84": [
+          8.2272635,
+          48.5829938,
+          0.0
+        ],
+        "euc": [
+          915854.7834420857,
+          6204398.114035642
+        ],
+        "tags": {
+          "ele": "1090",
+          "name": "Geißkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "957044313",
+        "wgs84": [
+          8.2203004,
+          48.5907295,
+          0.0
+        ],
+        "euc": [
+          915079.654695743,
+          6205699.935965312
+        ],
+        "tags": {
+          "ele": "1057",
+          "name": "Schwarzkopf",
+          "natural": "peak",
+          "ref:komoot.com": "highlight/1327260",
+          "wikidata": "Q30609080"
+        }
+      }
+    ],
+    "91,623": [
+      {
+        "id": "12810661153",
+        "wgs84": [
+          8.1852503,
+          48.7680667,
+          0.0
+        ],
+        "euc": [
+          911177.8954114898,
+          6235598.405543598
+        ],
+        "tags": {
+          "name": "Winden",
+          "place": "village"
+        }
+      },
+      {
+        "id": "164184198",
+        "wgs84": [
+          8.2644344,
+          48.7538447,
+          0.0
+        ],
+        "euc": [
+          919992.6291024135,
+          6233196.73547419
+        ],
+        "tags": {
+          "name": "Eckhöfe",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "204878410",
+        "wgs84": [
+          8.188165,
+          48.7805403,
+          0.0
+        ],
+        "euc": [
+          911502.3583313049,
+          6237705.383164193
+        ],
+        "tags": {
+          "name": "Obere Breite",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "208180790",
+        "wgs84": [
+          8.2445968,
+          48.7456015,
+          0.0
+        ],
+        "euc": [
+          917784.3175718527,
+          6231805.016968455
+        ],
+        "tags": {
+          "name": "Gunzenbach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "32573623",
+        "wgs84": [
+          8.1787874,
+          48.7360832,
+          0.0
+        ],
+        "euc": [
+          910458.4486744418,
+          6230198.304332438
+        ],
+        "tags": {
+          "name": "Varnhalt",
+          "place": "village",
+          "wikidata": "Q2510898",
+          "wikipedia": "de:Varnhalt"
+        }
+      },
+      {
+        "id": "34589817",
+        "wgs84": [
+          8.2243535,
+          48.7888389,
+          0.0
+        ],
+        "euc": [
+          915530.8437238772,
+          6239107.430904782
+        ],
+        "tags": {
+          "name": "Balg",
+          "place": "village"
+        }
+      },
+      {
+        "id": "34806317",
+        "wgs84": [
+          8.2157186,
+          48.7755065,
+          0.0
+        ],
+        "euc": [
+          914569.6110528265,
+          6236855.036044724
+        ],
+        "tags": {
+          "name": "Ooswinkel",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "34806318",
+        "wgs84": [
+          8.1959254,
+          48.7803771,
+          0.0
+        ],
+        "euc": [
+          912366.242107657,
+          6237677.81286286
+        ],
+        "tags": {
+          "name": "Cité",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "34845461",
+        "wgs84": [
+          8.2218596,
+          48.7705336,
+          0.0
+        ],
+        "euc": [
+          915253.224045788,
+          6236015.060328406
+        ],
+        "tags": {
+          "name": "Oosscheuern",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "39527445",
+        "wgs84": [
+          8.2022485,
+          48.7526525,
+          0.0
+        ],
+        "euc": [
+          913070.1263798919,
+          6232995.439469831
+        ],
+        "tags": {
+          "ele": "525",
+          "name": "Fremersberg",
+          "name:ru": "Гора Fremersberg",
+          "natural": "peak",
+          "wikidata": "Q1455188"
+        }
+      },
+      {
+        "id": "544248628",
+        "wgs84": [
+          8.2521196,
+          48.7778577,
+          0.0
+        ],
+        "euc": [
+          918621.7518371923,
+          6237252.207709128
+        ],
+        "tags": {
+          "ele": "569",
+          "name": "Battert",
+          "name:ru": "Гора Баттерт",
+          "natural": "peak",
+          "note": "ele aus wikipedia",
+          "summit:cross": "no",
+          "wikidata": "Q810946"
+        }
+      },
+      {
+        "id": "544248632",
+        "wgs84": [
+          8.2299624,
+          48.7829044,
+          0.0
+        ],
+        "euc": [
+          916155.2236157877,
+          6238104.774036634
+        ],
+        "tags": {
+          "ele": "375",
+          "name": "Hardberg",
+          "natural": "peak",
+          "note": "ele aus wikipedia",
+          "summit:cross": "yes",
+          "summit:register": "yes",
+          "wikidata": "Q835690"
+        }
+      },
+      {
+        "id": "8235281282",
+        "wgs84": [
+          8.1796804,
+          48.7472839,
+          0.0
+        ],
+        "euc": [
+          910557.8569797203,
+          6232089.0419055335
+        ],
+        "tags": {
+          "name": "Ebenung",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "8616981516",
+        "wgs84": [
+          8.24709,
+          48.7412622,
+          0.0
+        ],
+        "euc": [
+          918061.8593262985,
+          6231072.494634279
+        ],
+        "tags": {
+          "name": "Leisberg",
+          "natural": "peak",
+          "wikidata": "Q31565730"
+        }
+      }
+    ],
+    "91,624": [
+      {
+        "id": "27547436",
+        "wgs84": [
+          8.232069,
+          48.8256695,
+          0.0
+        ],
+        "euc": [
+          916389.7292550927,
+          6245332.757431122
+        ],
+        "tags": {
+          "name": "Förch",
+          "place": "village"
+        }
+      },
+      {
+        "id": "285260826",
+        "wgs84": [
+          8.2176427,
+          48.8412218,
+          0.0
+        ],
+        "euc": [
+          914783.8008850617,
+          6247962.873312531
+        ],
+        "tags": {
+          "name": "Niederbühl",
+          "place": "village"
+        }
+      },
+      {
+        "id": "29923759",
+        "wgs84": [
+          8.1951676,
+          48.8088064,
+          0.0
+        ],
+        "euc": [
+          912281.8841975338,
+          6242481.8887263145
+        ],
+        "tags": {
+          "name": "Sandweier",
+          "place": "village",
+          "wikidata": "Q2221399",
+          "wikipedia": "de:Sandweier"
+        }
+      },
+      {
+        "id": "649339617",
+        "wgs84": [
+          8.2218408,
+          48.8058205,
+          0.0
+        ],
+        "euc": [
+          915251.1312393611,
+          6241977.193627949
+        ],
+        "tags": {
+          "name": "Haueneberstein",
+          "place": "village",
+          "wikidata": "Q1486284",
+          "wikipedia": "de:Haueneberstein"
+        }
+      }
+    ],
+    "91,626": [
+      {
+        "id": "32444078",
+        "wgs84": [
+          8.2380728,
+          48.9516939,
+          0.0
+        ],
+        "euc": [
+          917058.0692139175,
+          6266668.830796962
+        ],
+        "tags": {
+          "alt_name": "Au;Au a.Rh.",
+          "name": "Au am Rhein",
+          "place": "village"
+        }
+      },
+      {
+        "id": "34006666",
+        "wgs84": [
+          8.2521617,
+          48.9378506,
+          0.0
+        ],
+        "euc": [
+          918626.4383877547,
+          6264322.513020544
+        ],
+        "tags": {
+          "name": "Würmersheim",
+          "place": "village",
+          "population": "2548",
+          "postal_code": "76448",
+          "wikidata": "Q1839962",
+          "wikipedia": "de:Würmersheim"
+        }
+      },
+      {
+        "id": "5832496534",
+        "wgs84": [
+          8.210126,
+          48.9306923,
+          0.0
+        ],
+        "euc": [
+          913947.045668616,
+          6263109.499268016
+        ],
+        "tags": {
+          "name": "Elchesheim-Illingen",
+          "place": "village",
+          "population": "3300",
+          "postal_code": "76477",
+          "wikidata": "Q80502",
+          "wikipedia": "de:Elchesheim-Illingen"
+        }
+      },
+      {
+        "id": "81767247",
+        "wgs84": [
+          8.2539859,
+          48.9126152,
+          0.0
+        ],
+        "euc": [
+          918829.5074028599,
+          6260047.008047097
+        ],
+        "tags": {
+          "alt_name": "Bietigheim (Baden)",
+          "name": "Bietigheim",
+          "name:prefix": "Gemeinde",
+          "name:uk": "Бітігайм (Баден)",
+          "place": "village",
+          "population": "6076",
+          "wikidata": "Q550649",
+          "wikipedia": "de:Bietigheim"
+        }
+      }
+    ],
+    "91,627": [
+      {
+        "id": "240033741",
+        "wgs84": [
+          8.2475747,
+          48.988922,
+          0.0
+        ],
+        "euc": [
+          918115.815883486,
+          6272981.89818672
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "07334021",
+          "name": "Neuburg am Rhein",
+          "place": "village",
+          "population": "2549",
+          "short_name": "Neuburg",
+          "wikidata": "Q570888",
+          "wikipedia": "de:Neuburg am Rhein"
+        }
+      },
+      {
+        "id": "240045834",
+        "wgs84": [
+          8.247413,
+          49.0196679,
+          0.0
+        ],
+        "euc": [
+          918097.8155218248,
+          6278199.284286874
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "07334008",
+          "name": "Hagenbach",
+          "place": "village",
+          "population": "5420",
+          "wikidata": "Q541669",
+          "wikipedia": "de:Hagenbach"
+        }
+      },
+      {
+        "id": "26695882",
+        "wgs84": [
+          8.1767166,
+          48.9751103,
+          0.0
+        ],
+        "euc": [
+          910227.9282729073,
+          6270639.187430023
+        ],
+        "tags": {
+          "name": "Lauterbourg",
+          "name:de": "Lauterburg",
+          "name:ru": "Лотербур",
+          "place": "village",
+          "population": "2339",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "33990697",
+        "wgs84": [
+          8.2018479,
+          48.9840852,
+          0.0
+        ],
+        "euc": [
+          913025.5317918803,
+          6272161.416732758
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "07334002",
+          "name": "Berg (Pfalz)",
+          "place": "village",
+          "population": "2169",
+          "short_name": "Berg",
+          "website": "https://berg-pfalz.de/",
+          "wikidata": "Q681063",
+          "wikipedia": "de:Berg (Pfalz)"
+        }
+      },
+      {
+        "id": "38115686",
+        "wgs84": [
+          8.1832055,
+          48.9792949,
+          0.0
+        ],
+        "euc": [
+          910950.2693167157,
+          6271348.901704067
+        ],
+        "tags": {
+          "name": "Neulauterburg",
+          "place": "hamlet"
+        }
+      }
+    ],
+    "91,628": [
+      {
+        "id": "860433496",
+        "wgs84": [
+          8.2003888,
+          49.0545261,
+          0.0
+        ],
+        "euc": [
+          912863.1055228637,
+          6284118.401773261
+        ],
+        "tags": {
+          "name": "Langenberg",
+          "place": "hamlet"
+        }
+      }
+    ],
+    "92,620": [
+      {
+        "id": "11002356683",
+        "wgs84": [
+          8.3173,
+          48.59382,
+          0.0
+        ],
+        "euc": [
+          925877.6007748941,
+          6206220.084326031
+        ],
+        "tags": {
+          "ele": "707",
+          "name": "Hauerskopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "11002356684",
+        "wgs84": [
+          8.35224,
+          48.6026,
+          0.0
+        ],
+        "euc": [
+          929767.1037832112,
+          6207697.98083828
+        ],
+        "tags": {
+          "ele": "619",
+          "name": "Tauchert",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "122429607",
+        "wgs84": [
+          8.2787672,
+          48.6155394,
+          0.0
+        ],
+        "euc": [
+          921588.1491000553,
+          6209876.478152136
+        ],
+        "tags": {
+          "name": "Hundsbach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1950470787",
+        "wgs84": [
+          8.2674312,
+          48.5594278,
+          0.0
+        ],
+        "euc": [
+          920326.2313524227,
+          6200433.477438345
+        ],
+        "tags": {
+          "name": "Sübleskopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "1950478207",
+        "wgs84": [
+          8.3111612,
+          48.5610857,
+          0.0
+        ],
+        "euc": [
+          925194.2326848126,
+          6200712.3345771795
+        ],
+        "tags": {
+          "ele": "953",
+          "name": "Dürrenberg",
+          "natural": "peak",
+          "wikidata": "Q30792729"
+        }
+      },
+      {
+        "id": "1950478215",
+        "wgs84": [
+          8.3228556,
+          48.5637703,
+          0.0
+        ],
+        "euc": [
+          926496.0473379453,
+          6201163.901023089
+        ],
+        "tags": {
+          "name": "Überzwercher Berg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "2120529711",
+        "wgs84": [
+          8.293,
+          48.60408,
+          0.0
+        ],
+        "euc": [
+          923172.5371486177,
+          6207947.127647441
+        ],
+        "tags": {
+          "ele": "994",
+          "name": "Hintere Langeck",
+          "natural": "peak",
+          "wikidata": "Q30737887"
+        }
+      },
+      {
+        "id": "2120529713",
+        "wgs84": [
+          8.27884,
+          48.57584,
+          0.0
+        ],
+        "euc": [
+          921596.2531589852,
+          6203194.395941632
+        ],
+        "tags": {
+          "ele": "992",
+          "name": "Leinkopf",
+          "natural": "peak",
+          "wikidata": "Q31318068"
+        }
+      },
+      {
+        "id": "2120545964",
+        "wgs84": [
+          8.3409,
+          48.57865,
+          0.0
+        ],
+        "euc": [
+          928504.7407576154,
+          6203667.19396743
+        ],
+        "tags": {
+          "ele": "938",
+          "name": "Großhahnberg",
+          "natural": "peak",
+          "wikidata": "Q30657388"
+        }
+      },
+      {
+        "id": "295845625",
+        "wgs84": [
+          8.2805047,
+          48.587009,
+          0.0
+        ],
+        "euc": [
+          921781.5667153085,
+          6205073.797296658
+        ],
+        "tags": {
+          "alt_name": "Mittlerer Langenbach",
+          "is_in": "Schönmünz; Baiersbronn",
+          "name": "Mittellangenbach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "295845627",
+        "wgs84": [
+          8.2956322,
+          48.5863755,
+          0.0
+        ],
+        "euc": [
+          923465.5523122838,
+          6204967.187497184
+        ],
+        "tags": {
+          "name": "Vorderlangenbach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "295845634",
+        "wgs84": [
+          8.3177941,
+          48.5869462,
+          0.0
+        ],
+        "euc": [
+          925932.6037352952,
+          6205063.228814874
+        ],
+        "tags": {
+          "is_in": "Schönmünz; Baiersbronn",
+          "name": "Zwickgabel",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4559301620",
+        "wgs84": [
+          8.3134197,
+          48.6088439,
+          0.0
+        ],
+        "euc": [
+          925445.6477547692,
+          6208749.143767042
+        ],
+        "tags": {
+          "ele": "954",
+          "name": "Hohekopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "493581272",
+        "wgs84": [
+          8.3105641,
+          48.5823426,
+          0.0
+        ],
+        "euc": [
+          925127.76381686,
+          6204288.534281849
+        ],
+        "tags": {
+          "is_in": "Schönmünz; Baiersbronn",
+          "name": "Leimiß",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "5038321381",
+        "wgs84": [
+          8.2984967,
+          48.576639,
+          0.0
+        ],
+        "euc": [
+          923784.426993661,
+          6203328.8294323785
+        ],
+        "tags": {
+          "ele": "935",
+          "name": "Kleinleinkopf",
+          "natural": "peak",
+          "wikidata": "Q30609155"
+        }
+      },
+      {
+        "id": "5038717749",
+        "wgs84": [
+          8.3470228,
+          48.5850607,
+          0.0
+        ],
+        "euc": [
+          929186.3277358447,
+          6204745.928045741
+        ],
+        "tags": {
+          "ele": "899",
+          "name": "Kleinhahnberg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "8824579186",
+        "wgs84": [
+          8.2871854,
+          48.5993739,
+          0.0
+        ],
+        "euc": [
+          922525.2588374512,
+          6207154.916596932
+        ],
+        "tags": {
+          "ele": "998.6",
+          "name": "Diebaukopf",
+          "natural": "peak",
+          "wikidata": "Q30609792"
+        }
+      }
+    ],
+    "92,621": [
+      {
+        "id": "11002356412",
+        "wgs84": [
+          8.27866,
+          48.6288,
+          0.0
+        ],
+        "euc": [
+          921576.2156506423,
+          6212109.632580949
+        ],
+        "tags": {
+          "ele": "964",
+          "name": "Vorderer Ochsenkopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "11014696759",
+        "wgs84": [
+          8.33965,
+          48.66715,
+          0.0
+        ],
+        "euc": [
+          928365.591394124,
+          6218571.277890508
+        ],
+        "tags": {
+          "ele": "710",
+          "name": "Hailert",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "11040477257",
+        "wgs84": [
+          8.3238,
+          48.6283,
+          0.0
+        ],
+        "euc": [
+          926601.1774650507,
+          6212025.419319468
+        ],
+        "tags": {
+          "ele": "679",
+          "name": "Schwenkkopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "11048683904",
+        "wgs84": [
+          8.34221,
+          48.6288,
+          0.0
+        ],
+        "euc": [
+          928650.5692905546,
+          6212109.632580949
+        ],
+        "tags": {
+          "comment": "Laut LGL, www.lgl-bw.de (1:25.000) kein Bergame nur Name für Ebene",
+          "ele": "673",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "11048693605",
+        "wgs84": [
+          8.33308,
+          48.6302,
+          0.0
+        ],
+        "euc": [
+          927634.2223396122,
+          6212345.434152333
+        ],
+        "tags": {
+          "ele": "692",
+          "name": "Paternoster",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000) LGL & hist.MesstischKarten"
+        }
+      },
+      {
+        "id": "122437513",
+        "wgs84": [
+          8.3235538,
+          48.6349766,
+          0.0
+        ],
+        "euc": [
+          926573.7706064172,
+          6213150.004671352
+        ],
+        "tags": {
+          "name": "Erbersbronn",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "123730904",
+        "wgs84": [
+          8.2752536,
+          48.6687895,
+          0.0
+        ],
+        "euc": [
+          921197.0169372038,
+          6218847.629118216
+        ],
+        "tags": {
+          "ele": "1002",
+          "name": "Badener Höhe",
+          "natural": "peak",
+          "wikidata": "Q798922"
+        }
+      },
+      {
+        "id": "1347608304",
+        "wgs84": [
+          8.3392519,
+          48.6320111,
+          0.0
+        ],
+        "euc": [
+          928321.2751048391,
+          6212650.486877123
+        ],
+        "tags": {
+          "is_in": "Forbach",
+          "name": "Trabronn",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1680215742",
+        "wgs84": [
+          8.2739275,
+          48.6323134,
+          0.0
+        ],
+        "euc": [
+          921049.396160463,
+          6212701.405860055
+        ],
+        "tags": {
+          "ele": "1005",
+          "name": "Mittlerer Ochsenkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "2120483908",
+        "wgs84": [
+          8.30498,
+          48.64422,
+          0.0
+        ],
+        "euc": [
+          924506.1446483212,
+          6214707.179359052
+        ],
+        "tags": {
+          "ele": "993",
+          "name": "Nägeliskopf",
+          "natural": "peak",
+          "wikidata": "Q31300921"
+        }
+      },
+      {
+        "id": "2120529714",
+        "wgs84": [
+          8.31588,
+          48.61745,
+          0.0
+        ],
+        "euc": [
+          925719.5270979678,
+          6210198.197016366
+        ],
+        "tags": {
+          "ele": "941",
+          "name": "Vordere Langeck",
+          "natural": "peak",
+          "wikidata": "Q31293874"
+        }
+      },
+      {
+        "id": "2481436693",
+        "wgs84": [
+          8.290268,
+          48.6654294,
+          0.0
+        ],
+        "euc": [
+          922868.4122997705,
+          6218281.266258551
+        ],
+        "tags": {
+          "ele": "1002",
+          "name": "Seekopf",
+          "natural": "peak",
+          "summit:cross": "no",
+          "summit:register": "no",
+          "wikidata": "Q1124685",
+          "wikipedia": "de:Seekopf (Forbach)"
+        }
+      },
+      {
+        "id": "3319088456",
+        "wgs84": [
+          8.3496034,
+          48.6394222,
+          0.0
+        ],
+        "euc": [
+          929473.5988137857,
+          6213898.889992358
+        ],
+        "tags": {
+          "name": "Raumünzach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "615102682",
+        "wgs84": [
+          8.2687302,
+          48.6425269,
+          0.0
+        ],
+        "euc": [
+          920470.8353709631,
+          6214421.93261138
+        ],
+        "tags": {
+          "ele": "1054",
+          "name": "Hoher Ochsenkopf",
+          "natural": "peak",
+          "wikidata": "Q1623922"
+        }
+      },
+      {
+        "id": "655350860",
+        "wgs84": [
+          8.2656906,
+          48.6588316,
+          0.0
+        ],
+        "euc": [
+          920132.4686467478,
+          6217169.281574116
+        ],
+        "tags": {
+          "name": "Herrenwies",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "7533292714",
+        "wgs84": [
+          8.3429468,
+          48.6561848,
+          0.0
+        ],
+        "euc": [
+          928732.5894913712,
+          6216723.234228189
+        ],
+        "tags": {
+          "ele": "755",
+          "name": "Lachsberg",
+          "natural": "peak",
+          "wikidata": "Q31323308"
+        }
+      },
+      {
+        "id": "8695136138",
+        "wgs84": [
+          8.342391,
+          48.6456651,
+          0.0
+        ],
+        "euc": [
+          928670.7181183882,
+          6214950.6516287085
+        ],
+        "tags": {
+          "name": "Schneidersköpfle",
+          "natural": "peak",
+          "note": "Position estimated"
+        }
+      }
+    ],
+    "92,622": [
+      {
+        "id": "10286757485",
+        "wgs84": [
+          8.3257663,
+          48.711239,
+          0.0
+        ],
+        "euc": [
+          926820.0649797973,
+          6226005.974538233
+        ],
+        "tags": {
+          "ele": "714",
+          "name": "Hohberg",
+          "natural": "peak",
+          "old_name": "Hochberg",
+          "source": "LGL, www.lgl-bw.de"
+        }
+      },
+      {
+        "id": "122470582",
+        "wgs84": [
+          8.3426229,
+          48.6931033,
+          0.0
+        ],
+        "euc": [
+          928696.5331083032,
+          6222946.976200724
+        ],
+        "tags": {
+          "name": "Bermersbach",
+          "place": "village",
+          "postal_code": "76596"
+        }
+      },
+      {
+        "id": "122476299",
+        "wgs84": [
+          8.3127472,
+          48.7273378,
+          0.0
+        ],
+        "euc": [
+          925370.7853972107,
+          6228722.327270819
+        ],
+        "tags": {
+          "name": "Schmalbach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "2120477127",
+        "wgs84": [
+          8.29674,
+          48.69317,
+          0.0
+        ],
+        "euc": [
+          923588.8720441845,
+          6222958.224653834
+        ],
+        "tags": {
+          "ele": "909",
+          "name": "Eierkuchenberg",
+          "natural": "peak",
+          "wikidata": "Q30781599"
+        }
+      },
+      {
+        "id": "2120517845",
+        "wgs84": [
+          8.27871,
+          48.71266,
+          0.0
+        ],
+        "euc": [
+          921581.7816251819,
+          6226245.705086004
+        ],
+        "tags": {
+          "ele": "652",
+          "name": "Steinberg",
+          "natural": "peak",
+          "wikidata": "Q31519251"
+        }
+      },
+      {
+        "id": "2124192067",
+        "wgs84": [
+          8.287,
+          48.72223,
+          0.0
+        ],
+        "euc": [
+          922504.6202038581,
+          6227860.393313779
+        ],
+        "tags": {
+          "ele": "506",
+          "name": "Öserstein",
+          "natural": "peak",
+          "wikidata": "Q31564213"
+        }
+      },
+      {
+        "id": "240085277",
+        "wgs84": [
+          8.353855,
+          48.729678,
+          0.0
+        ],
+        "euc": [
+          929946.8847608422,
+          6229117.261924063
+        ],
+        "tags": {
+          "ele": "228",
+          "name": "Weisenbach",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Gernsbach",
+          "openGeoDB:community_identification_number": "08216059",
+          "openGeoDB:license_plate_code": "RA",
+          "openGeoDB:loc_id": "25853",
+          "openGeoDB:population": "2656",
+          "openGeoDB:telephone_area_code": "07224",
+          "place": "village"
+        }
+      },
+      {
+        "id": "3163583444",
+        "wgs84": [
+          8.33746,
+          48.70917,
+          0.0
+        ],
+        "euc": [
+          928121.8017092868,
+          6225656.93491691
+        ],
+        "tags": {
+          "ele": "667",
+          "name": "Hartkopf",
+          "natural": "peak",
+          "wikidata": "Q30621441"
+        }
+      },
+      {
+        "id": "3163583446",
+        "wgs84": [
+          8.29026,
+          48.73344,
+          0.0
+        ],
+        "euc": [
+          922867.5217438441,
+          6229752.179590391
+        ],
+        "tags": {
+          "ele": "443",
+          "name": "Kuchenberg",
+          "natural": "peak",
+          "wikidata": "Q31564180"
+        }
+      },
+      {
+        "id": "3163583447",
+        "wgs84": [
+          8.33772,
+          48.71339,
+          0.0
+        ],
+        "euc": [
+          928150.7447768928,
+          6226368.862750163
+        ],
+        "tags": {
+          "ele": "684",
+          "name": "Maienplatz",
+          "natural": "peak",
+          "wikidata": "Q31310089"
+        }
+      },
+      {
+        "id": "3163583448",
+        "wgs84": [
+          8.30708,
+          48.69915,
+          0.0
+        ],
+        "euc": [
+          924739.915578987,
+          6223966.7672219975
+        ],
+        "tags": {
+          "ele": "869",
+          "name": "Ruberg",
+          "natural": "peak",
+          "wikidata": "Q31345139"
+        }
+      },
+      {
+        "id": "3292737414",
+        "wgs84": [
+          8.3371472,
+          48.7060909,
+          0.0
+        ],
+        "euc": [
+          928086.9809725666,
+          6225137.518327636
+        ],
+        "tags": {
+          "ele": "610",
+          "name": "Kleines Matterhorn",
+          "natural": "peak",
+          "wikidata": "Q108226134"
+        }
+      },
+      {
+        "id": "5041932168",
+        "wgs84": [
+          8.3270394,
+          48.6973374,
+          0.0
+        ],
+        "euc": [
+          926961.7858235263,
+          6223661.054859765
+        ],
+        "tags": {
+          "name": "Riedkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "5176418863",
+        "wgs84": [
+          8.3201023,
+          48.7073988,
+          0.0
+        ],
+        "euc": [
+          926189.5513839442,
+          6225358.145459463
+        ],
+        "tags": {
+          "ele": "690",
+          "mountain_pass": "yes",
+          "name": "Rote Lache",
+          "natural": "saddle",
+          "wikipedia": "de:Rote Lache (Pass)"
+        }
+      },
+      {
+        "id": "5653375909",
+        "wgs84": [
+          8.3349222,
+          48.6807993,
+          0.0
+        ],
+        "euc": [
+          927839.2951055514,
+          6220872.254042274
+        ],
+        "tags": {
+          "direction": "180",
+          "ele": "694.6",
+          "name": "Repperstein",
+          "natural": "peak",
+          "source:ele": "Deutsche Grundkarte (Baden)",
+          "viewpoint": "yes"
+        }
+      },
+      {
+        "id": "5835157705",
+        "wgs84": [
+          8.2999203,
+          48.6853523,
+          0.0
+        ],
+        "euc": [
+          923942.9014207545,
+          6221639.92984268
+        ],
+        "tags": {
+          "ele": "946",
+          "name": "Immenstein",
+          "natural": "peak",
+          "source:position": "LGL,www.lgl-bw.de"
+        }
+      },
+      {
+        "id": "693555885",
+        "wgs84": [
+          8.3164404,
+          48.6782827,
+          0.0
+        ],
+        "euc": [
+          925781.9105406083,
+          6220447.96295011
+        ],
+        "tags": {
+          "ele": "989",
+          "name": "Streitmannskopf",
+          "natural": "peak",
+          "summit:cross": "yes",
+          "summit:register": "yes"
+        }
+      },
+      {
+        "id": "8538042435",
+        "wgs84": [
+          8.3073788,
+          48.680203,
+          0.0
+        ],
+        "euc": [
+          924773.177842836,
+          6220771.71776281
+        ],
+        "tags": {
+          "ele": "980",
+          "name": "Streitmannskopf (West)",
+          "natural": "peak"
+        }
+      }
+    ],
+    "92,623": [
+      {
+        "id": "1629705595",
+        "wgs84": [
+          8.3295119,
+          48.7842542,
+          0.0
+        ],
+        "euc": [
+          927237.0232645127,
+          6238332.81758214
+        ],
+        "tags": {
+          "ele": "205",
+          "loc_name": "Sauberg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "171652961",
+        "wgs84": [
+          8.2710473,
+          48.7787163,
+          0.0
+        ],
+        "euc": [
+          920728.7737630801,
+          6237397.249599941
+        ],
+        "tags": {
+          "name": "Ebersteinburg",
+          "place": "village"
+        }
+      },
+      {
+        "id": "171691717",
+        "wgs84": [
+          8.3124105,
+          48.7806615,
+          0.0
+        ],
+        "euc": [
+          925333.3041246606,
+          6237725.858225395
+        ],
+        "tags": {
+          "name": "Selbach",
+          "place": "village"
+        }
+      },
+      {
+        "id": "171814339",
+        "wgs84": [
+          8.3017172,
+          48.7468858,
+          0.0
+        ],
+        "euc": [
+          924142.931413761,
+          6232021.833291468
+        ],
+        "tags": {
+          "ele": "382",
+          "mountain_pass": "yes",
+          "name": "Nachtigall",
+          "natural": "saddle"
+        }
+      },
+      {
+        "id": "171988326",
+        "wgs84": [
+          8.3056623,
+          48.7659,
+          0.0
+        ],
+        "euc": [
+          924582.0979368894,
+          6235232.470859726
+        ],
+        "tags": {
+          "name": "Staufenberg",
+          "place": "village"
+        }
+      },
+      {
+        "id": "2120517844",
+        "wgs84": [
+          8.2859986,
+          48.7564613,
+          0.0
+        ],
+        "euc": [
+          922393.1448657776,
+          6233638.549843592
+        ],
+        "tags": {
+          "ele": "623",
+          "name": "Kleiner Staufenberg",
+          "natural": "peak",
+          "summit:cross": "yes",
+          "wikidata": "Q31534264"
+        }
+      },
+      {
+        "id": "2179937919",
+        "wgs84": [
+          8.3478522,
+          48.7375509,
+          0.0
+        ],
+        "euc": [
+          929278.6561215085,
+          6230446.035891078
+        ],
+        "tags": {
+          "name": "Hilpertsau",
+          "place": "village"
+        }
+      },
+      {
+        "id": "2179937932",
+        "wgs84": [
+          8.3468197,
+          48.7445874,
+          0.0
+        ],
+        "euc": [
+          929163.7187472645,
+          6231633.819892025
+        ],
+        "tags": {
+          "name": "Obertsrot",
+          "place": "village"
+        }
+      },
+      {
+        "id": "2179937963",
+        "wgs84": [
+          8.3474812,
+          48.7557362,
+          0.0
+        ],
+        "euc": [
+          929237.3565904243,
+          6233516.113999282
+        ],
+        "tags": {
+          "name": "Scheuern",
+          "place": "village"
+        }
+      },
+      {
+        "id": "2681565546",
+        "wgs84": [
+          8.3439379,
+          48.7824292,
+          0.0
+        ],
+        "euc": [
+          928842.9182386965,
+          6238024.492274465
+        ],
+        "tags": {
+          "name": "Hörden",
+          "place": "village"
+        }
+      },
+      {
+        "id": "3163583445",
+        "wgs84": [
+          8.3106,
+          48.74054,
+          0.0
+        ],
+        "euc": [
+          925131.7601865794,
+          6230950.5853419425
+        ],
+        "tags": {
+          "ele": "559",
+          "name": "Hummelsberg",
+          "natural": "peak",
+          "wikidata": "Q31564164"
+        }
+      },
+      {
+        "id": "32131183",
+        "wgs84": [
+          8.2739541,
+          48.7403672,
+          0.0
+        ],
+        "euc": [
+          921052.357258918,
+          6230921.416499288
+        ],
+        "tags": {
+          "name": "Oberbeuern",
+          "place": "village"
+        }
+      },
+      {
+        "id": "34094611",
+        "wgs84": [
+          8.2683622,
+          48.7384373,
+          0.0
+        ],
+        "euc": [
+          920429.8697983512,
+          6230595.653929696
+        ],
+        "tags": {
+          "name": "Seelach",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3791837793",
+        "wgs84": [
+          8.3482667,
+          48.7777,
+          0.0
+        ],
+        "euc": [
+          929324.7980504422,
+          6237225.567976267
+        ],
+        "tags": {
+          "ele": "210",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "3791837794",
+        "wgs84": [
+          8.3522333,
+          48.7789667,
+          0.0
+        ],
+        "euc": [
+          929766.357942623,
+          6237439.549728819
+        ],
+        "tags": {
+          "ele": "234",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "427093173",
+        "wgs84": [
+          8.2802548,
+          48.7645613,
+          0.0
+        ],
+        "euc": [
+          921753.7479745592,
+          6235006.385262209
+        ],
+        "tags": {
+          "direction": "135-315",
+          "ele": "669",
+          "name": "Merkur",
+          "natural": "peak",
+          "tourism": "viewpoint",
+          "wheelchair": "no",
+          "wikidata": "Q1921853",
+          "wikipedia": "de:Merkur (Berg)"
+        }
+      },
+      {
+        "id": "727753318",
+        "wgs84": [
+          8.3501051,
+          48.787067,
+          0.0
+        ],
+        "euc": [
+          929529.4478023167,
+          6238808.049088493
+        ],
+        "tags": {
+          "name": "Scheibenberg",
+          "natural": "peak",
+          "wikidata": "Q31333083"
+        }
+      }
+    ],
+    "92,624": [
+      {
+        "id": "1312216219",
+        "wgs84": [
+          8.3461065,
+          48.8311605,
+          0.0
+        ],
+        "euc": [
+          929084.3256864307,
+          6246261.270654592
+        ],
+        "tags": {
+          "ele": "409.1",
+          "name": "Haubenkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "1312216289",
+        "wgs84": [
+          8.3460963,
+          48.8407368,
+          0.0
+        ],
+        "euc": [
+          929083.1902276245,
+          6247880.84055561
+        ],
+        "tags": {
+          "ele": "385",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "1312216331",
+        "wgs84": [
+          8.333689,
+          48.8421977,
+          0.0
+        ],
+        "euc": [
+          927702.0159095053,
+          6248127.939157942
+        ],
+        "tags": {
+          "ele": "533",
+          "name": "Eichelberg",
+          "natural": "peak",
+          "summit:register": "yes",
+          "wikidata": "Q31548459"
+        }
+      },
+      {
+        "id": "1315391180",
+        "wgs84": [
+          8.3465301,
+          48.8454231,
+          0.0
+        ],
+        "euc": [
+          929131.4806227308,
+          6248673.513201599
+        ],
+        "tags": {
+          "ele": "357",
+          "name": "Hausenberg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "1315391223",
+        "wgs84": [
+          8.3542354,
+          48.8423896,
+          0.0
+        ],
+        "euc": [
+          929989.2306951403,
+          6248160.397919111
+        ],
+        "tags": {
+          "ele": "366",
+          "name": "Kühlrück",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "293340270",
+        "wgs84": [
+          8.3120577,
+          48.8347823,
+          0.0
+        ],
+        "euc": [
+          925294.0306083086,
+          6246873.762918008
+        ],
+        "tags": {
+          "name": "Winkel",
+          "place": "village"
+        }
+      },
+      {
+        "id": "297829548",
+        "wgs84": [
+          8.279587,
+          48.8266744,
+          0.0
+        ],
+        "euc": [
+          921679.4088186075,
+          6245502.675692294
+        ],
+        "tags": {
+          "name": "Oberndorf",
+          "place": "village"
+        }
+      },
+      {
+        "id": "29923123",
+        "wgs84": [
+          8.3514195,
+          48.8183266,
+          0.0
+        ],
+        "euc": [
+          929675.7661410155,
+          6244091.251914376
+        ],
+        "tags": {
+          "name": "Michelbach",
+          "place": "village"
+        }
+      },
+      {
+        "id": "443099187",
+        "wgs84": [
+          8.2987573,
+          48.8477848,
+          0.0
+        ],
+        "euc": [
+          923813.4368529618,
+          6249073.015308635
+        ],
+        "tags": {
+          "name": "Niederweier",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "447548621",
+        "wgs84": [
+          8.3072091,
+          48.8465049,
+          0.0
+        ],
+        "euc": [
+          924754.2869252485,
+          6248856.506747075
+        ],
+        "tags": {
+          "name": "Oberweier",
+          "place": "village"
+        }
+      },
+      {
+        "id": "4868232717",
+        "wgs84": [
+          8.2774684,
+          48.8072802,
+          0.0
+        ],
+        "euc": [
+          921443.5673454129,
+          6242223.917303961
+        ],
+        "tags": {
+          "ele": "297",
+          "name": "Dürrenberg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "60012048",
+        "wgs84": [
+          8.2843093,
+          48.8386718,
+          0.0
+        ],
+        "euc": [
+          922205.0928499806,
+          6247531.575955547
+        ],
+        "tags": {
+          "name": "Bischweier",
+          "openGeoDB:auto_update": "population",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsverband Nachbarschaftsverband Bischweier-Kuppenheim",
+          "openGeoDB:community_identification_number": "08216006",
+          "openGeoDB:is_in_loc_id": "364",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "RA",
+          "openGeoDB:loc_id": "14554",
+          "openGeoDB:name": "Bischweier",
+          "openGeoDB:population": "3146",
+          "openGeoDB:postal_codes": "76476",
+          "openGeoDB:sort_name": "BISCHWEIER",
+          "openGeoDB:telephone_area_code": "07222",
+          "openGeoDB:type": "Gemeinde",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.8384811",
+          "opengeodb:lon": "8.2844528",
+          "place": "village",
+          "population": "3146"
+        }
+      }
+    ],
+    "92,627": [
+      {
+        "id": "13524211838",
+        "wgs84": [
+          8.3351922,
+          49.0206143,
+          0.0
+        ],
+        "euc": [
+          927869.3513680656,
+          6278359.933540222
+        ],
+        "tags": {
+          "alt_name": "Energieberg",
+          "disused": "yes",
+          "name": "Windmühlenberg",
+          "natural": "peak",
+          "note": "recultivated",
+          "wikidata": "Q21000154",
+          "wikipedia": "de:Windmühlenberg (Karlsruhe)"
+        }
+      },
+      {
+        "id": "7184669918",
+        "wgs84": [
+          8.2959844,
+          48.9772751,
+          0.0
+        ],
+        "euc": [
+          923504.7590369411,
+          6271006.333234367
+        ],
+        "tags": {
+          "name": "Dammfeldsiedlung",
+          "place": "hamlet"
+        }
+      }
+    ],
+    "92,628": [
+      {
+        "id": "17651838",
+        "wgs84": [
+          8.2869901,
+          49.0344882,
+          0.0
+        ],
+        "euc": [
+          922503.5181408993,
+          6280715.347321401
+        ],
+        "tags": {
+          "name": "Maximiliansau",
+          "place": "village",
+          "wikidata": "Q668042",
+          "wikipedia": "de:Maximiliansau"
+        }
+      },
+      {
+        "id": "17652684",
+        "wgs84": [
+          8.3104443,
+          49.0362712,
+          0.0
+        ],
+        "euc": [
+          925114.4277418628,
+          6281018.100232839
+        ],
+        "tags": {
+          "name": "Maxau",
+          "place": "hamlet",
+          "wikidata": "Q1913735",
+          "wikipedia": "de:Maxau"
+        }
+      }
+    ],
+    "93,620": [
+      {
+        "id": "10286628180",
+        "wgs84": [
+          8.370299,
+          48.5918995,
+          0.0
+        ],
+        "euc": [
+          931777.422467447,
+          6205896.849738588
+        ],
+        "tags": {
+          "ele": "681",
+          "name": "Eckköpfle",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de",
+          "wikidata": "Q31559453"
+        }
+      },
+      {
+        "id": "10286628181",
+        "wgs84": [
+          8.3660951,
+          48.6000009,
+          0.0
+        ],
+        "euc": [
+          931309.4464601013,
+          6207260.459673431
+        ],
+        "tags": {
+          "ele": "615",
+          "name": "Stuhlberg",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de",
+          "wikidata": "Q31302578"
+        }
+      },
+      {
+        "id": "102972282",
+        "wgs84": [
+          8.3960852,
+          48.5575644,
+          0.0
+        ],
+        "euc": [
+          934647.9291209404,
+          6200120.066311574
+        ],
+        "tags": {
+          "name": "Röt",
+          "place": "village",
+          "postal_code": "72270"
+        }
+      },
+      {
+        "id": "102974178",
+        "wgs84": [
+          8.4019961,
+          48.5691391,
+          0.0
+        ],
+        "euc": [
+          935305.9274990704,
+          6202067.038535007
+        ],
+        "tags": {
+          "name": "Schönegründ",
+          "place": "village",
+          "postal_code": "72270"
+        }
+      },
+      {
+        "id": "102975907",
+        "wgs84": [
+          8.3870525,
+          48.5871856,
+          0.0
+        ],
+        "euc": [
+          933642.4135564519,
+          6205103.517014871
+        ],
+        "tags": {
+          "name": "Huzenbach",
+          "place": "village"
+        }
+      },
+      {
+        "id": "2120545965",
+        "wgs84": [
+          8.37583,
+          48.56562,
+          0.0
+        ],
+        "euc": [
+          932393.1305710246,
+          6201475.046034012
+        ],
+        "tags": {
+          "ele": "866",
+          "name": "Röter Kopf",
+          "natural": "peak",
+          "wikidata": "Q31346474"
+        }
+      },
+      {
+        "id": "248051563",
+        "wgs84": [
+          8.4397051,
+          48.5843344,
+          0.0
+        ],
+        "euc": [
+          939503.674177394,
+          6204623.706038938
+        ],
+        "tags": {
+          "name": "Schorrental",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "25831270",
+        "wgs84": [
+          8.3658269,
+          48.6075035,
+          0.0
+        ],
+        "euc": [
+          931279.5905726705,
+          6208523.475964339
+        ],
+        "tags": {
+          "name": "Schönmünzach",
+          "place": "village",
+          "wikidata": "Q112195002",
+          "wikipedia": "de:Schönmünzach"
+        }
+      },
+      {
+        "id": "272866715",
+        "wgs84": [
+          8.3863101,
+          48.599634,
+          0.0
+        ],
+        "euc": [
+          933559.7699664871,
+          6207198.6991399955
+        ],
+        "tags": {
+          "name": "Schwarzenberg",
+          "place": "village",
+          "wikidata": "Q112195015",
+          "wikipedia": "de:Schwarzenberg (Baiersbronn)"
+        }
+      },
+      {
+        "id": "459589325",
+        "wgs84": [
+          8.4356939,
+          48.6019712,
+          0.0
+        ],
+        "euc": [
+          939057.149435924,
+          6207592.129322649
+        ],
+        "tags": {
+          "name": "Urnagold",
+          "place": "hamlet",
+          "postal_code": "72297"
+        }
+      },
+      {
+        "id": "5038717750",
+        "wgs84": [
+          8.3680702,
+          48.5785625,
+          0.0
+        ],
+        "euc": [
+          931529.313586367,
+          6203652.471212537
+        ],
+        "tags": {
+          "ele": "876.7",
+          "name": "Lieberg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "691214401",
+        "wgs84": [
+          8.4216888,
+          48.5970072,
+          0.0
+        ],
+        "euc": [
+          937498.1088354151,
+          6206756.541162138
+        ],
+        "tags": {
+          "name": "Besenfeld",
+          "place": "village",
+          "postal_code": "72297"
+        }
+      }
+    ],
+    "93,621": [
+      {
+        "id": "10286628179",
+        "wgs84": [
+          8.3960571,
+          48.6530074,
+          0.0
+        ],
+        "euc": [
+          934644.8010432492,
+          6216187.799374082
+        ],
+        "tags": {
+          "ele": "922",
+          "name": "Schramberg",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de",
+          "wikidata": "Q31323907"
+        }
+      },
+      {
+        "id": "10995852017",
+        "wgs84": [
+          8.4298,
+          48.6547,
+          0.0
+        ],
+        "euc": [
+          938401.0434891375,
+          6216473.021155629
+        ],
+        "tags": {
+          "ele": "867",
+          "name": "Süßenkopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:50.000)",
+          "wikidata": "Q31301659"
+        }
+      },
+      {
+        "id": "11013062577",
+        "wgs84": [
+          8.37451,
+          48.6389,
+          0.0
+        ],
+        "euc": [
+          932246.1888431774,
+          6213810.91916225
+        ],
+        "tags": {
+          "ele": "859",
+          "name": "Gissübelkopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "11013096044",
+        "wgs84": [
+          8.434301,
+          48.62189,
+          0.0
+        ],
+        "euc": [
+          938902.0925171981,
+          6210945.87921613
+        ],
+        "tags": {
+          "ele": "840",
+          "name": "Seekopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)",
+          "wikidata": "Q31319914"
+        }
+      },
+      {
+        "id": "11013098239",
+        "wgs84": [
+          8.36298,
+          48.64375,
+          0.0
+        ],
+        "euc": [
+          930962.6751143311,
+          6214627.994670018
+        ],
+        "tags": {
+          "ele": "673",
+          "name": "Zugkopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "11013104922",
+        "wgs84": [
+          8.36942,
+          48.64643,
+          0.0
+        ],
+        "euc": [
+          931679.5726350396,
+          6215079.525768591
+        ],
+        "tags": {
+          "ele": "657",
+          "name": "Hesselbacher Kopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "3287432290",
+        "wgs84": [
+          8.3765831,
+          48.6750207,
+          0.0
+        ],
+        "euc": [
+          932476.965279541,
+          6219898.031232075
+        ],
+        "tags": {
+          "ele": "689",
+          "name": "Kipf",
+          "natural": "peak",
+          "source:ele": "LGL-BW"
+        }
+      },
+      {
+        "id": "3287432348",
+        "wgs84": [
+          8.3677514,
+          48.6722447,
+          0.0
+        ],
+        "euc": [
+          931493.8249327019,
+          6219430.060977735
+        ],
+        "tags": {
+          "ele": "533",
+          "name": "Eckkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "459604526",
+        "wgs84": [
+          8.4376406,
+          48.6275768,
+          0.0
+        ],
+        "euc": [
+          939273.8550886513,
+          6211903.614734317
+        ],
+        "tags": {
+          "name": "Poppeltal",
+          "place": "hamlet",
+          "wikidata": "Q20979069"
+        }
+      },
+      {
+        "id": "9746981830",
+        "wgs84": [
+          8.3809828,
+          48.6614206,
+          0.0
+        ],
+        "euc": [
+          932966.7376431841,
+          6217605.610935589
+        ],
+        "tags": {
+          "ele": "712.5",
+          "name": "Sanberg",
+          "natural": "peak",
+          "source:ele": "LGL-BW,www.lgl-bw.de",
+          "source:position": "LGL-BW, www.lgl-bw.de",
+          "wikidata": "Q31338806"
+        }
+      }
+    ],
+    "93,622": [
+      {
+        "id": "10286757486",
+        "wgs84": [
+          8.3770146,
+          48.7285767,
+          0.0
+        ],
+        "euc": [
+          932524.9996398184,
+          6228931.403069449
+        ],
+        "tags": {
+          "ele": "514",
+          "name": "Großer Schöllkopf",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de",
+          "wikidata": "Q31564247"
+        }
+      },
+      {
+        "id": "10749416397",
+        "wgs84": [
+          8.3990744,
+          48.7220247,
+          0.0
+        ],
+        "euc": [
+          934980.6853428197,
+          6227825.751061813
+        ],
+        "tags": {
+          "ele": "666.6",
+          "name": "Hoheck",
+          "natural": "peak",
+          "wikidata": "Q30612917"
+        }
+      },
+      {
+        "id": "10996160180",
+        "wgs84": [
+          8.38871,
+          48.72203,
+          0.0
+        ],
+        "euc": [
+          933826.9256124418,
+          6227826.645380226
+        ],
+        "tags": {
+          "ele": "554",
+          "name": "Barbaumköpfle",
+          "natural": "peak",
+          "source": "LGL, www.lgl-bw.de (1:25.000)"
+        }
+      },
+      {
+        "id": "113319091",
+        "wgs84": [
+          8.4319912,
+          48.7063108,
+          0.0
+        ],
+        "euc": [
+          938644.9667573639,
+          6225174.612434091
+        ],
+        "tags": {
+          "name": "Kaltenbronn",
+          "place": "hamlet",
+          "wikidata": "Q1722662",
+          "wikipedia": "de:Kaltenbronn (Gernsbach)"
+        }
+      },
+      {
+        "id": "11730317442",
+        "wgs84": [
+          8.3600857,
+          48.7217568,
+          0.0
+        ],
+        "euc": [
+          930640.4831121282,
+          6227780.545919853
+        ],
+        "tags": {
+          "name": "Au im Murgtal",
+          "place": "village"
+        }
+      },
+      {
+        "id": "117587103",
+        "wgs84": [
+          8.4248967,
+          48.7142435,
+          0.0
+        ],
+        "euc": [
+          937855.2106299307,
+          6226512.858257775
+        ],
+        "tags": {
+          "ele": "933",
+          "mountain_pass": "yes",
+          "name": "Schwarzmiss",
+          "natural": "saddle"
+        }
+      },
+      {
+        "id": "122461284",
+        "wgs84": [
+          8.364313,
+          48.6850731,
+          0.0
+        ],
+        "euc": [
+          931111.0639955584,
+          6221592.852272381
+        ],
+        "tags": {
+          "name": "Gausbach",
+          "place": "village"
+        }
+      },
+      {
+        "id": "13309836681",
+        "wgs84": [
+          8.3664724,
+          48.7166078,
+          0.0
+        ],
+        "euc": [
+          931351.4473039773,
+          6226911.756285211
+        ],
+        "tags": {
+          "alt_name": "Siedlung Neudorf;Weisenbach-Neudorf",
+          "name": "Neudorf",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "2179937958",
+        "wgs84": [
+          8.3913685,
+          48.7299258,
+          0.0
+        ],
+        "euc": [
+          934122.8684787159,
+          6229159.081993082
+        ],
+        "tags": {
+          "name": "Reichental",
+          "place": "village"
+        }
+      },
+      {
+        "id": "240094927",
+        "wgs84": [
+          8.3594916,
+          48.6790385,
+          0.0
+        ],
+        "euc": [
+          930574.3482026478,
+          6220575.3863001345
+        ],
+        "tags": {
+          "name": "Forbach",
+          "name:prefix": "Gemeinde",
+          "place": "village",
+          "population": "5589",
+          "website": "https://www.forbach.de/"
+        }
+      },
+      {
+        "id": "2681565547",
+        "wgs84": [
+          8.3621455,
+          48.7028213,
+          0.0
+        ],
+        "euc": [
+          930869.7789992641,
+          6224586.000883969
+        ],
+        "tags": {
+          "ele": "275",
+          "name": "Langenbrand",
+          "place": "village",
+          "population": "812",
+          "postal_code": "76596"
+        }
+      },
+      {
+        "id": "2709415324",
+        "wgs84": [
+          8.359203,
+          48.7313163,
+          0.0
+        ],
+        "euc": [
+          930542.2213976049,
+          6229393.754121113
+        ],
+        "tags": {
+          "comment": "Laut LGL, www.lgl-bw.de (1:25.000) liegt der Kl.Schölkopf 800m Nordwestlich und ist 337m hoch",
+          "ele": "387",
+          "name": "Kleiner Schöllkopf",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "3860550355",
+        "wgs84": [
+          8.3958377,
+          48.6939907,
+          0.0
+        ],
+        "euc": [
+          934620.3775469692,
+          6223096.630753119
+        ],
+        "tags": {
+          "ele": "970",
+          "name": "Hoher Draberg",
+          "natural": "peak",
+          "source": "WMS ATKIS Digitale Topokarte 1:10.000 LGL-BW",
+          "wikidata": "Q30795862"
+        }
+      },
+      {
+        "id": "705548359",
+        "wgs84": [
+          8.3832227,
+          48.7107039,
+          0.0
+        ],
+        "euc": [
+          933216.082170612,
+          6225915.701967811
+        ],
+        "tags": {
+          "alt_name": "Hohe Schar",
+          "ele": "710.1",
+          "name": "Hohe Schaar",
+          "natural": "peak",
+          "wikidata": "Q30699427"
+        }
+      },
+      {
+        "id": "8297037581",
+        "wgs84": [
+          8.4372256,
+          48.6975757,
+          0.0
+        ],
+        "euc": [
+          939227.657499972,
+          6223701.245810196
+        ],
+        "tags": {
+          "ele": "970",
+          "name": "Hahnenstein",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "8297049327",
+        "wgs84": [
+          8.4358948,
+          48.7332577,
+          0.0
+        ],
+        "euc": [
+          939079.5135216244,
+          6229721.411485395
+        ],
+        "tags": {
+          "ele": "945",
+          "name": "Grandloh",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "834477539",
+        "wgs84": [
+          8.4164926,
+          48.7078,
+          0.0
+        ],
+        "euc": [
+          936919.6704973552,
+          6225425.824263967
+        ],
+        "tags": {
+          "ele": "989",
+          "name": "Hohloh",
+          "natural": "peak",
+          "source:position": "LGL,www.lgl-bw.de",
+          "wikidata": "Q1624072"
+        }
+      },
+      {
+        "id": "9038374819",
+        "wgs84": [
+          8.3833477,
+          48.6983538,
+          0.0
+        ],
+        "euc": [
+          933229.9971069611,
+          6223832.479105386
+        ],
+        "tags": {
+          "ele": "647.6",
+          "name": "Forkel",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "9082487059",
+        "wgs84": [
+          8.3749336,
+          48.6889193,
+          0.0
+        ],
+        "euc": [
+          932293.3437794776,
+          6222241.405867228
+        ],
+        "tags": {
+          "ele": "597",
+          "name": "Ringberg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "9082526681",
+        "wgs84": [
+          8.3664047,
+          48.6940615,
+          0.0
+        ],
+        "euc": [
+          931343.9109744508,
+          6223108.57085131
+        ],
+        "tags": {
+          "ele": "535",
+          "name": "Tennetberg",
+          "natural": "peak",
+          "note": "position estimated"
+        }
+      },
+      {
+        "id": "9082621755",
+        "wgs84": [
+          8.3592589,
+          48.6986833,
+          0.0
+        ],
+        "euc": [
+          930548.4441571401,
+          6223888.05274179
+        ],
+        "tags": {
+          "ele": "447",
+          "name": "Spitzenstein",
+          "natural": "peak",
+          "note": "position estimated"
+        }
+      },
+      {
+        "id": "9114939322",
+        "wgs84": [
+          8.3734901,
+          48.6951693,
+          0.0
+        ],
+        "euc": [
+          932132.6540945173,
+          6223295.3984728735
+        ],
+        "tags": {
+          "ele": "607",
+          "natural": "peak",
+          "source:ele": "Deutsche Grundkarte Baden"
+        }
+      },
+      {
+        "id": "9169009765",
+        "wgs84": [
+          8.3752877,
+          48.7205345,
+          0.0
+        ],
+        "euc": [
+          932332.7620111672,
+          6227574.299460363
+        ],
+        "tags": {
+          "ele": "491.4",
+          "name": "Schlechtauberg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "9177138865",
+        "wgs84": [
+          8.3580355,
+          48.7113568,
+          0.0
+        ],
+        "euc": [
+          930412.2558921035,
+          6226025.847791437
+        ],
+        "tags": {
+          "ele": "446.4",
+          "natural": "peak",
+          "note": "Emisauberg?"
+        }
+      },
+      {
+        "id": "9617085238",
+        "wgs84": [
+          8.3913347,
+          48.6835464,
+          0.0
+        ],
+        "euc": [
+          934119.105879927,
+          6221335.430932916
+        ],
+        "tags": {
+          "fixme": "name, noname?, Draberg?",
+          "natural": "peak"
+        }
+      }
+    ]
+  },
+  "chunks": {
+    "9,62": [
+      {
+        "id": "106350141",
+        "wgs84": [
+          8.6958614,
+          48.6617473,
+          0.0
+        ],
+        "euc": [
+          968018.8630568831,
+          6217660.671934166
+        ],
+        "tags": {
+          "name": "Neubulach",
+          "name:prefix": "Stadt",
+          "place": "town",
+          "population": "5796",
+          "wikidata": "Q541843",
+          "wikipedia": "de:Neubulach"
+        }
+      },
+      {
+        "id": "1088527333",
+        "wgs84": [
+          8.7471226,
+          48.6233179,
+          0.0
+        ],
+        "euc": [
+          973725.2337383353,
+          6211186.347114886
+        ],
+        "tags": {
+          "name": "Wildberg",
+          "name:ru": "Вильдберг",
+          "place": "town",
+          "population": "9941",
+          "postal_code": "72218",
+          "wikidata": "Q264503"
+        }
+      },
+      {
+        "id": "122658025",
+        "wgs84": [
+          8.4382557,
+          48.7990507,
+          0.0
+        ],
+        "euc": [
+          939342.3277074381,
+          6240833.031876159
+        ],
+        "tags": {
+          "name": "Bad Herrenalb",
+          "name:ru": "Бад-Херренальб",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Bad Herrenalb",
+          "openGeoDB:community_identification_number": "08235033",
+          "openGeoDB:is_in": "Calw,Karlsruhe,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "574",
+          "openGeoDB:license_plate_code": "CW",
+          "openGeoDB:loc_id": "13925",
+          "openGeoDB:name": "Bad Herrenalb",
+          "openGeoDB:population": "7478",
+          "openGeoDB:postal_codes": "76332",
+          "openGeoDB:sort_name": "BAD HERRENALB",
+          "openGeoDB:telephone_area_code": "07083",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.7988438",
+          "opengeodb:lon": "8.438198",
+          "place": "town",
+          "population": "7478",
+          "website": "https://www.badherrenalb.de/",
+          "wikidata": "Q374242",
+          "wikipedia": "de:Bad Herrenalb"
+        }
+      },
+      {
+        "id": "1616465172",
+        "wgs84": [
+          8.8619207,
+          48.8058986,
+          0.0
+        ],
+        "euc": [
+          986504.4997743706,
+          6241990.394185363
+        ],
+        "tags": {
+          "name": "Heimsheim",
+          "openGeoDB:auto_update": "population",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Heckengäu",
+          "openGeoDB:community_identification_number": "08236025",
+          "openGeoDB:is_in": "Enzkreis,Karlsruhe,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "577",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "PF",
+          "openGeoDB:loc_id": "18100",
+          "openGeoDB:name": "Heimsheim",
+          "openGeoDB:population": "5233",
+          "openGeoDB:postal_codes": "71296",
+          "openGeoDB:sort_name": "HEIMSHEIM",
+          "openGeoDB:telephone_area_code": "07033",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.8077421",
+          "opengeodb:lon": "8.8651314",
+          "place": "town",
+          "population": "5233",
+          "wikidata": "Q80675",
+          "wikipedia": "de:Heimsheim"
+        }
+      },
+      {
+        "id": "1616490862",
+        "wgs84": [
+          8.9347008,
+          48.7648163,
+          0.0
+        ],
+        "euc": [
+          994606.3434462539,
+          6235049.450329317
+        ],
+        "tags": {
+          "ele": "409",
+          "name": "Renningen",
+          "name:de": "Renningen",
+          "name:fa": "رنینگن",
+          "name:ru": "Реннинген",
+          "name:sr": "Ренинген",
+          "place": "town",
+          "population": "18700",
+          "wikidata": "Q550676",
+          "wikipedia": "de:Renningen"
+        }
+      },
+      {
+        "id": "1621903329",
+        "wgs84": [
+          8.8707147,
+          48.7501041,
+          0.0
+        ],
+        "euc": [
+          987483.4433764067,
+          6232565.173036231
+        ],
+        "tags": {
+          "ele": "406",
+          "name": "Weil der Stadt",
+          "name:prefix": "Keplerstadt",
+          "old_name": "Freie Reichsstadt Weil",
+          "place": "town",
+          "population": "18415",
+          "postal_code": "71263",
+          "wikidata": "Q505147",
+          "wikipedia": "de:Weil der Stadt"
+        }
+      },
+      {
+        "id": "170822396",
+        "wgs84": [
+          8.3379924,
+          48.7636394,
+          0.0
+        ],
+        "euc": [
+          928181.0682061849,
+          6234850.69420267
+        ],
+        "tags": {
+          "ele": "174",
+          "name": "Gernsbach",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Gernsbach",
+          "openGeoDB:community_identification_number": "08216017",
+          "openGeoDB:license_plate_code": "RA",
+          "openGeoDB:loc_id": "16970",
+          "openGeoDB:telephone_area_code": "07224",
+          "place": "town",
+          "population": "14307",
+          "wikidata": "Q520119"
+        }
+      },
+      {
+        "id": "171728979",
+        "wgs84": [
+          8.3201799,
+          48.8030291,
+          0.0
+        ],
+        "euc": [
+          926198.1897764297,
+          6241505.401287417
+        ],
+        "tags": {
+          "ele": "141",
+          "name": "Gaggenau",
+          "name:uk": "Ґаґґенау",
+          "openGeoDB:community_identification_number": "08216015",
+          "openGeoDB:is_in_loc_id": "364",
+          "openGeoDB:license_plate_code": "RA",
+          "openGeoDB:loc_id": "16796",
+          "openGeoDB:telephone_area_code": "07225",
+          "place": "town",
+          "population": "28546",
+          "postal_code": "76571",
+          "wikidata": "Q504451",
+          "wikipedia": "de:Gaggenau"
+        }
+      },
+      {
+        "id": "17652682",
+        "wgs84": [
+          8.4076347,
+          48.9414188,
+          0.0
+        ],
+        "euc": [
+          935933.6135798574,
+          6264927.229326253
+        ],
+        "tags": {
+          "ele": "133",
+          "name": "Ettlingen",
+          "name:ru": "Эттлинген",
+          "name:sr": "Етлинген",
+          "name:uk": "Еттлінґен",
+          "openGeoDB:community_identification_number": "08215017",
+          "openGeoDB:is_in_loc_id": "585",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "KA",
+          "openGeoDB:loc_id": "16376",
+          "openGeoDB:telephone_area_code": "07243",
+          "place": "town",
+          "population": "38819",
+          "postal_code": "76275",
+          "source": "Historic \"Altstadt\" drawn by using geodata from 2010 and maps from 16th to 18th century for visualization",
+          "wikidata": "Q14893",
+          "wikipedia": "de:Ettlingen"
+        }
+      },
+      {
+        "id": "240028325",
+        "wgs84": [
+          8.8702368,
+          48.5963819,
+          0.0
+        ],
+        "euc": [
+          987430.2437917566,
+          6206651.290482884
+        ],
+        "tags": {
+          "ele": "460",
+          "name": "Herrenberg",
+          "name:ru": "Херренберг",
+          "name:uk": "Герренберґ",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Herrenberg",
+          "openGeoDB:community_identification_number": "08115021",
+          "openGeoDB:is_in_loc_id": "368",
+          "openGeoDB:license_plate_code": "BB",
+          "openGeoDB:loc_id": "18235",
+          "openGeoDB:name": "Herrenberg (im Gäu)",
+          "openGeoDB:telephone_area_code": "07032",
+          "place": "town",
+          "population": "30373",
+          "postal_code": "71083",
+          "website": "https://www.herrenberg.de/",
+          "wikidata": "Q16100",
+          "wikipedia": "de:Herrenberg"
+        }
+      },
+      {
+        "id": "240046032",
+        "wgs84": [
+          8.7025509,
+          48.890934,
+          0.0
+        ],
+        "euc": [
+          968763.5347905448,
+          6256375.397490734
+        ],
+        "tags": {
+          "alt_name:ar": "بفورتسهايم",
+          "ele": "261",
+          "name": "Pforzheim",
+          "name:ar": "فورتسهايم",
+          "name:el": "Πφορτζχάιμ",
+          "name:ja": "プフォルツハイム",
+          "name:ko": "포르츠하임",
+          "name:la": "Phorca",
+          "name:ml": "ഫോർസ്ഹൈം",
+          "name:sr": "Пфорцхајм",
+          "name:uk": "Пфорцгайм",
+          "name:zh": "普福尔茨海姆",
+          "openGeoDB:community_identification_number": "08231000",
+          "openGeoDB:is_in_loc_id": "353",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "PF",
+          "openGeoDB:loc_id": "22432",
+          "openGeoDB:postal_codes": "75175,75172,75173,75177,75179,75180,75181",
+          "openGeoDB:telephone_area_code": "07231",
+          "place": "city",
+          "population": "117754",
+          "postal_code": "75175,75172,75173,75177,75179,75180,75181",
+          "ref:LOCODE": "DEPFO",
+          "wikidata": "Q3046",
+          "wikipedia": "de:Pforzheim"
+        }
+      },
+      {
+        "id": "240046519",
+        "wgs84": [
+          8.2156228,
+          49.1463456,
+          0.0
+        ],
+        "euc": [
+          914558.9466456085,
+          6299729.760561732
+        ],
+        "tags": {
+          "ele": "129",
+          "name": "Herxheim bei Landau/Pfalz",
+          "place": "town",
+          "population": "10397",
+          "postal_code": "76863",
+          "wikidata": "Q201065",
+          "wikipedia": "de:Herxheim bei Landau/Pfalz"
+        }
+      },
+      {
+        "id": "240047588",
+        "wgs84": [
+          8.6014741,
+          48.5851784,
+          0.0
+        ],
+        "euc": [
+          957511.7168835311,
+          6204765.73480647
+        ],
+        "tags": {
+          "name": "Altensteig",
+          "name:prefix": "Stadt",
+          "name:ru": "Альтенстайг",
+          "place": "town",
+          "population": "11180",
+          "wikidata": "Q157967",
+          "wikipedia": "de:Altensteig"
+        }
+      },
+      {
+        "id": "240052366",
+        "wgs84": [
+          8.2667399,
+          49.0543232,
+          0.0
+        ],
+        "euc": [
+          920249.2761884371,
+          6284083.936211602
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "07334501",
+          "last_checked": "2020-04-30",
+          "name": "Wörth am Rhein",
+          "place": "town",
+          "population": "18123",
+          "short_name": "Wörth",
+          "website": "https://www.woerth.de/sv_woerth/",
+          "wikidata": "Q522165",
+          "wikipedia": "de:Wörth am Rhein"
+        }
+      },
+      {
+        "id": "240065155",
+        "wgs84": [
+          8.2040452,
+          48.8584568,
+          0.0
+        ],
+        "euc": [
+          913270.1341090002,
+          6250878.511963399
+        ],
+        "tags": {
+          "ele": "123",
+          "name": "Rastatt",
+          "name:de": "Rastatt",
+          "name:sr": "Раштат",
+          "name:uk": "Раштат",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Rastatt",
+          "openGeoDB:community_identification_number": "08216043",
+          "openGeoDB:license_plate_code": "RA",
+          "openGeoDB:loc_id": "22813",
+          "openGeoDB:telephone_area_code": "07222",
+          "place": "town",
+          "population": "47110",
+          "postal_code": "76437",
+          "wikidata": "Q6874",
+          "wikipedia": "de:Rastatt"
+        }
+      },
+      {
+        "id": "240080944",
+        "wgs84": [
+          8.3097117,
+          48.968549,
+          0.0
+        ],
+        "euc": [
+          925032.8750829076,
+          6269526.501293567
+        ],
+        "tags": {
+          "ele": "116",
+          "name": "Rheinstetten",
+          "name:de": "Rheinstetten",
+          "name:ru": "Райнштеттен",
+          "name:uk": "Райнштеттен",
+          "openGeoDB:community_identification_number": "08215108",
+          "openGeoDB:is_in_loc_id": "585",
+          "openGeoDB:license_plate_code": "KA",
+          "openGeoDB:loc_id": "23065",
+          "openGeoDB:name": "Rheinstetten (Baden)",
+          "openGeoDB:postal_codes": "76287",
+          "openGeoDB:telephone_area_code": "07242",
+          "place": "town",
+          "population": "20074",
+          "wikidata": "Q520595",
+          "wikipedia": "de:Rheinstetten"
+        }
+      },
+      {
+        "id": "240084473",
+        "wgs84": [
+          8.550301,
+          48.7502439,
+          0.0
+        ],
+        "euc": [
+          951815.1534492178,
+          6232588.776005033
+        ],
+        "tags": {
+          "ele": "425",
+          "name": "Bad Wildbad",
+          "name:ru": "Бад-Вильдбад",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Bad Wildbad",
+          "openGeoDB:community_identification_number": "08235079",
+          "openGeoDB:license_plate_code": "CW",
+          "openGeoDB:loc_id": "14010",
+          "openGeoDB:telephone_area_code": "07081",
+          "place": "town",
+          "population": "10393",
+          "wikidata": "Q502755",
+          "wikipedia": "de:Bad Wildbad"
+        }
+      },
+      {
+        "id": "240084980",
+        "wgs84": [
+          8.5886312,
+          48.8464524,
+          0.0
+        ],
+        "euc": [
+          956082.0517952222,
+          6248847.625937431
+        ],
+        "tags": {
+          "name": "Neuenbürg",
+          "name:prefix": "Stadt",
+          "place": "town",
+          "population": "7720",
+          "wikidata": "Q80759"
+        }
+      },
+      {
+        "id": "240099245",
+        "wgs84": [
+          8.239959,
+          48.7610716,
+          0.0
+        ],
+        "euc": [
+          917268.0400374518,
+          6234417.057567551
+        ],
+        "tags": {
+          "heritage": "1",
+          "heritage:operator": "whc",
+          "heritage:ref": "1613",
+          "heritage:website": "https://whc.unesco.org/en/list/1613/",
+          "name": "Baden-Baden",
+          "name:ar": "بادن بادن",
+          "name:bg": "Баден-Баден",
+          "name:el": "Μπάντεν-Μπάντεν",
+          "name:fa": "بادن-بادن",
+          "name:gsw": "Bade-Bade",
+          "name:he": "באדן-באדן",
+          "name:hy": "Բադեն-Բադեն",
+          "name:ja": "バーデン・バーデン",
+          "name:ka": "ბადენ-ბადენი",
+          "name:ko": "바덴바덴",
+          "name:la": "Aquae",
+          "name:ru": "Баден-Баден",
+          "name:sr": "Баден-Баден",
+          "name:uk": "Баден-Баден",
+          "name:yi": "באדען-באדען",
+          "name:zh": "巴登-巴登",
+          "openGeoDB:community_identification_number": "08211000",
+          "openGeoDB:license_plate_code": "BAD",
+          "openGeoDB:loc_id": "13902",
+          "openGeoDB:postal_codes": "76532,76530,76534",
+          "openGeoDB:telephone_area_code": "07221",
+          "place": "town",
+          "population": "54454",
+          "ref:whc": "1613-008",
+          "whc:criteria": "(ii)(iii)",
+          "whc:inscription_date": "2021",
+          "wikidata": "Q4100",
+          "wikipedia": "de:Baden-Baden"
+        }
+      },
+      {
+        "id": "240101743",
+        "wgs84": [
+          8.1970699,
+          49.0809754,
+          0.0
+        ],
+        "euc": [
+          912493.64726487,
+          6288612.41099516
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "07334013",
+          "name": "Kandel",
+          "place": "town",
+          "population": "8351",
+          "wikidata": "Q22957",
+          "wikipedia": "de:Kandel (Pfalz)"
+        }
+      },
+      {
+        "id": "240110556",
+        "wgs84": [
+          8.9568316,
+          48.9321398,
+          0.0
+        ],
+        "euc": [
+          997069.9328331016,
+          6263354.772165443
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "08118073",
+          "ele": "217",
+          "email": "info@vaihingen.de",
+          "fax": "+49 7042 18-200",
+          "name": "Vaihingen an der Enz",
+          "name:de": "Vaihingen an der Enz",
+          "name:prefix": "Stadt",
+          "name:uk": "Фаїнґен",
+          "official_name:uk": "Фаїнґен-ан-дер-Енц",
+          "phone": "+49 7042 18-0",
+          "place": "town",
+          "population": "29350",
+          "postal_code": "71665",
+          "website": "https://www.vaihingen.de/",
+          "wikidata": "Q61928",
+          "wikipedia": "de:Vaihingen an der Enz"
+        }
+      },
+      {
+        "id": "240114360",
+        "wgs84": [
+          8.3357173,
+          48.8792567,
+          0.0
+        ],
+        "euc": [
+          927927.8052326813,
+          6254398.560616874
+        ],
+        "tags": {
+          "name": "Malsch",
+          "name:prefix": "Gemeinde",
+          "place": "town",
+          "population": "14483",
+          "wikidata": "Q545164"
+        }
+      },
+      {
+        "id": "240114391",
+        "wgs84": [
+          8.4719091,
+          48.9292997,
+          0.0
+        ],
+        "euc": [
+          943088.6070589005,
+          6262873.535660207
+        ],
+        "tags": {
+          "name": "Waldbronn",
+          "place": "town",
+          "population": "12284",
+          "wikidata": "Q542533",
+          "wikipedia": "de:Waldbronn"
+        }
+      },
+      {
+        "id": "240120188",
+        "wgs84": [
+          8.134423,
+          48.6945066,
+          0.0
+        ],
+        "euc": [
+          905519.8262570928,
+          6223183.635327798
+        ],
+        "tags": {
+          "ele": "138",
+          "name": "Bühl",
+          "name:als": "Bihl",
+          "name:ar": "بيول",
+          "name:fa": "بول",
+          "name:ru": "Бюль",
+          "name:sr": "Бил",
+          "name:uk": "Бюль",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Bühl",
+          "openGeoDB:community_identification_number": "08216007",
+          "openGeoDB:is_in_loc_id": "364",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "RA",
+          "openGeoDB:loc_id": "15118",
+          "openGeoDB:telephone_area_code": "07223",
+          "place": "town",
+          "population": "28566",
+          "postal_code": "77815",
+          "wikidata": "Q505534",
+          "wikipedia": "de:Bühl"
+        }
+      },
+      {
+        "id": "240120582",
+        "wgs84": [
+          8.4034195,
+          49.0068705,
+          0.0
+        ],
+        "euc": [
+          935464.3796622657,
+          6276027.254524556
+        ],
+        "tags": {
+          "alt_name:ur": "کارلسروئے",
+          "capital": "5",
+          "de:amtlicher_gemeindeschluessel": "08212000",
+          "ele": "114",
+          "name": "Karlsruhe",
+          "name:als": "Karlsrueh",
+          "name:ar": "كارلسروه",
+          "name:az": "Karlsruye",
+          "name:bg": "Карлсруе",
+          "name:cv": "Карлсруэ",
+          "name:el": "Καρλσρούη",
+          "name:fa": "کارلسروهه",
+          "name:fr": "Carlsruhe",
+          "name:he": "קארלסרוהה",
+          "name:ja": "カールスルーエ",
+          "name:ka": "კარლსრუე",
+          "name:ko": "카를스루에",
+          "name:la": "Carolsruha",
+          "name:lv": "Karlsrūe",
+          "name:mk": "Карлсруе",
+          "name:ml": "കാൾസ്റൂഹെ",
+          "name:pfl": "Kallsruh",
+          "name:ru": "Карлсруэ",
+          "name:sr": "Карлсруе",
+          "name:uk": "Карлсруе",
+          "name:ur": "کالسروئے",
+          "name:zh": "卡尔斯鲁厄",
+          "name:zh-Hant": "卡爾斯魯厄",
+          "place": "city",
+          "population": "283959",
+          "ref:LOCODE": "DEKAE",
+          "wikidata": "Q1040"
+        }
+      },
+      {
+        "id": "240124432",
+        "wgs84": [
+          8.7068077,
+          49.0366265,
+          0.0
+        ],
+        "euc": [
+          969237.3995989535,
+          6281078.431372171
+        ],
+        "tags": {
+          "ele": "176",
+          "name": "Bretten",
+          "name:prefix": "Große Kreisstadt;Melanchthonstadt",
+          "name:uk": "Бреттен",
+          "place": "town",
+          "population": "28589",
+          "postal_code": "75015",
+          "website": "https://www.bretten.de/",
+          "wikidata": "Q495428",
+          "wikipedia": "de:Bretten"
+        }
+      },
+      {
+        "id": "240126331",
+        "wgs84": [
+          8.5980244,
+          49.124118,
+          0.0
+        ],
+        "euc": [
+          957127.6980361416,
+          6295947.923048715
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "08215009",
+          "name": "Bruchsal",
+          "name:pfl": "Brusel",
+          "name:uk": "Брухзаль",
+          "place": "town",
+          "population": "42911",
+          "website": "https://www.bruchsal.de/",
+          "wikidata": "Q7059",
+          "wikipedia": "de:Bruchsal"
+        }
+      },
+      {
+        "id": "26595210",
+        "wgs84": [
+          8.7397624,
+          48.7142691,
+          0.0
+        ],
+        "euc": [
+          972905.9000221986,
+          6226517.177317179
+        ],
+        "tags": {
+          "admin_level": "6",
+          "ele": "347",
+          "name": "Calw",
+          "name:ru": "Кальв",
+          "name:uk": "Кальв",
+          "openGeoDB:community_identification_number": "08235",
+          "openGeoDB:is_in_loc_id": "160",
+          "openGeoDB:license_plate_code": "CW",
+          "openGeoDB:loc_id": "574",
+          "openGeoDB:type": "Landkreis",
+          "place": "town",
+          "population": "22374",
+          "postal_code": "75365",
+          "wikidata": "Q487921",
+          "wikipedia": "de:Calw"
+        }
+      },
+      {
+        "id": "26595247",
+        "wgs84": [
+          8.7321279,
+          48.7712716,
+          0.0
+        ],
+        "euc": [
+          972056.0313697372,
+          6236139.71112274
+        ],
+        "tags": {
+          "ele": "320",
+          "name": "Bad Liebenzell",
+          "name:be": "Бад-Лібенцэль",
+          "name:fa": "باد لیبن‌زل",
+          "name:kk": "Бад-Либенцелль",
+          "name:prefix": "Stadt",
+          "name:ru": "Бад-Либенцелль",
+          "name:sr": "Бад Либенцел",
+          "name:zh": "巴德利本策尔",
+          "place": "town",
+          "population": "8996",
+          "postal_code": "75378",
+          "wikidata": "Q522349",
+          "wikipedia": "de:Bad Liebenzell"
+        }
+      },
+      {
+        "id": "27356634",
+        "wgs84": [
+          8.2704865,
+          48.9328266,
+          0.0
+        ],
+        "euc": [
+          920666.3457926434,
+          6263471.150076741
+        ],
+        "tags": {
+          "ele": "119",
+          "name": "Durmersheim",
+          "name:sr": "Дурмерсхајм",
+          "name:uk": "Дурмерсгайм",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsverband Durmersheim",
+          "openGeoDB:community_identification_number": "08216009",
+          "openGeoDB:is_in_loc_id": "364",
+          "openGeoDB:license_plate_code": "RA",
+          "openGeoDB:loc_id": "15893",
+          "openGeoDB:telephone_area_code": "07245",
+          "openGeoDB:type": "Gemeinde",
+          "place": "town",
+          "population": "11954",
+          "postal_code": "76448",
+          "wikidata": "Q81858",
+          "wikipedia": "de:Durmersheim"
+        }
+      },
+      {
+        "id": "29922566",
+        "wgs84": [
+          8.2545743,
+          48.8272323,
+          0.0
+        ],
+        "euc": [
+          918895.0077912426,
+          6245597.012318929
+        ],
+        "tags": {
+          "name": "Kuppenheim",
+          "name:prefix": "Stadt",
+          "place": "town",
+          "population": "8224",
+          "population:date": "2024-12-31",
+          "source:population": "Statistisches Landesamt Baden-Württemberg"
+        }
+      },
+      {
+        "id": "30960702",
+        "wgs84": [
+          8.8413323,
+          48.9466697,
+          0.0
+        ],
+        "euc": [
+          984212.6095701222,
+          6265817.197772531
+        ],
+        "tags": {
+          "ele": "240",
+          "name": "Mühlacker",
+          "name:prefix": "Große Kreisstadt",
+          "name:uk": "Мюлаккер",
+          "place": "town",
+          "population": "24931",
+          "postal_code": "75417",
+          "website": "https://www.muehlacker.de",
+          "wikidata": "Q80670",
+          "wikipedia": "de:Mühlacker"
+        }
+      },
+      {
+        "id": "35344151",
+        "wgs84": [
+          8.90956,
+          49.1369473,
+          0.0
+        ],
+        "euc": [
+          991807.6823921185,
+          6298130.512638347
+        ],
+        "tags": {
+          "ele": "199",
+          "name": "Eppingen",
+          "name:uk": "Еппінґен",
+          "place": "town",
+          "population": "20919",
+          "postal_code": "75031",
+          "wikidata": "Q506450",
+          "wikipedia": "de:Eppingen"
+        }
+      },
+      {
+        "id": "41165078",
+        "wgs84": [
+          8.9453257,
+          48.8081226,
+          0.0
+        ],
+        "euc": [
+          995789.1019039834,
+          6242366.306010859
+        ],
+        "tags": {
+          "name": "Rutesheim",
+          "name:de": "Rutesheim",
+          "name:fa": "روتسهایم",
+          "name:ru": "Рутесхайм",
+          "name:sr": "Рутесхајм",
+          "note": "Stadt seit 2008",
+          "openGeoDB:auto_update": "population",
+          "openGeoDB:community_identification_number": "08115042",
+          "openGeoDB:is_in": "Böblingen,Stuttgart,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "368",
+          "openGeoDB:license_plate_code": "BB",
+          "openGeoDB:loc_id": "23440",
+          "openGeoDB:name": "Rutesheim",
+          "openGeoDB:population": "10112",
+          "openGeoDB:postal_codes": "71277",
+          "openGeoDB:sort_name": "RUTESHEIM",
+          "openGeoDB:telephone_area_code": "07152",
+          "openGeoDB:type": "Gemeinde",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.8084782",
+          "opengeodb:lon": "8.9482057",
+          "place": "town",
+          "population": "10112",
+          "postal_code": "71277",
+          "wikidata": "Q538643",
+          "wikipedia": "de:Rutesheim"
+        }
+      },
+      {
+        "id": "59768680",
+        "wgs84": [
+          8.7579461,
+          49.0239269,
+          0.0
+        ],
+        "euc": [
+          974930.1002469362,
+          6278922.263936931
+        ],
+        "tags": {
+          "name": "Knittlingen",
+          "name:prefix": "Stadt;Fauststadt",
+          "place": "town",
+          "population": "7656"
+        }
+      },
+      {
+        "id": "60044456",
+        "wgs84": [
+          8.8021324,
+          49.0626654,
+          0.0
+        ],
+        "euc": [
+          979848.8966629751,
+          6285501.098114577
+        ],
+        "tags": {
+          "name": "Oberderdingen",
+          "name:prefix": "Stadt",
+          "place": "town",
+          "population": "11804",
+          "reg_name": "Derdingen"
+        }
+      },
+      {
+        "id": "60219642",
+        "wgs84": [
+          8.8038083,
+          48.9986948,
+          0.0
+        ],
+        "euc": [
+          980035.4569975954,
+          6274639.931776412
+        ],
+        "tags": {
+          "name": "Maulbronn",
+          "name:de": "Maulbronn",
+          "name:uk": "Маульбронн",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Maulbronn",
+          "openGeoDB:community_identification_number": "08236038",
+          "openGeoDB:is_in": "Enzkreis,Karlsruhe,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "577",
+          "openGeoDB:license_plate_code": "PF",
+          "openGeoDB:loc_id": "20725",
+          "openGeoDB:name": "Maulbronn",
+          "openGeoDB:population": "6766",
+          "openGeoDB:postal_codes": "75433",
+          "openGeoDB:sort_name": "MAULBRONN",
+          "openGeoDB:telephone_area_code": "07043",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.9986948",
+          "opengeodb:lon": "8.8038083",
+          "place": "town",
+          "population": "6766",
+          "postal_code": "75433",
+          "website": "https://www.maulbronn.de",
+          "wikidata": "Q80560",
+          "wikipedia": "de:Maulbronn"
+        }
+      }
+    ]
+  }
+}

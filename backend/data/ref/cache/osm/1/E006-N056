@@ -1,0 +1,2348 @@
+{
+  "tiles": {
+    "63,560": [
+      {
+        "id": "11115030258",
+        "wgs84": [
+          5.6607954,
+          44.9003295,
+          0.0
+        ],
+        "euc": [
+          630156.8614129054,
+          5605844.030088058
+        ],
+        "tags": {
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "11646994043",
+        "wgs84": [
+          5.7211721,
+          44.908152,
+          0.0
+        ],
+        "euc": [
+          636877.9649126837,
+          5607073.46955619
+        ],
+        "tags": {
+          "alt_name": "Le Sénépi",
+          "ele": "1769",
+          "name": "Le Sénépy",
+          "natural": "peak",
+          "wikidata": "Q7666046"
+        }
+      },
+      {
+        "id": "1340308615",
+        "wgs84": [
+          5.6721467,
+          44.8957811,
+          0.0
+        ],
+        "euc": [
+          631420.4823487471,
+          5605129.248254957
+        ],
+        "tags": {
+          "name": "Herbelon",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "34055199",
+        "wgs84": [
+          5.6886466,
+          44.9148368,
+          0.0
+        ],
+        "euc": [
+          633257.2428148871,
+          5608124.23263014
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Marcieu",
+          "place": "village",
+          "population": "69",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Marcieu"
+        }
+      },
+      {
+        "id": "34055205",
+        "wgs84": [
+          5.72242,
+          44.8744,
+          0.0
+        ],
+        "euc": [
+          637016.8805052445,
+          5601769.962045191
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "ele:unknown": "675",
+          "name": "Mayres-Savel",
+          "place": "village",
+          "population": "90",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Mayres-Savel"
+        }
+      },
+      {
+        "id": "34055319",
+        "wgs84": [
+          5.73419,
+          44.8722,
+          0.0
+        ],
+        "euc": [
+          638327.1109118814,
+          5601424.380421319
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Saint-Arey",
+          "place": "village",
+          "population": "75",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Saint-Arey"
+        }
+      },
+      {
+        "id": "370900135",
+        "wgs84": [
+          5.7370621,
+          44.9137612,
+          0.0
+        ],
+        "euc": [
+          638646.8316213888,
+          5607955.154136151
+        ],
+        "tags": {
+          "ele": "1617",
+          "name": "Serre de l'Horizon",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "4379779966",
+        "wgs84": [
+          5.673416,
+          44.8728245,
+          0.0
+        ],
+        "euc": [
+          631561.7801784109,
+          5601522.477134961
+        ],
+        "tags": {
+          "ele": "700",
+          "lwn_name": "Pas du Berlioz",
+          "mountain_pass": "yes",
+          "name": "Pas du Berlioz",
+          "natural": "saddle",
+          "network:type": "node_network",
+          "network:wikidata": "Q137260842",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "4386344763",
+        "wgs84": [
+          5.6615135,
+          44.8907819,
+          0.0
+        ],
+        "euc": [
+          630236.799939244,
+          5604343.688341573
+        ],
+        "tags": {
+          "name": "Le Puy",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4388107949",
+        "wgs84": [
+          5.6707808,
+          44.9075605,
+          0.0
+        ],
+        "euc": [
+          631268.4310562726,
+          5606980.499382485
+        ],
+        "tags": {
+          "ele": "560",
+          "name": "Sous Jullière",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4404592589",
+        "wgs84": [
+          5.7484245,
+          44.8703887,
+          0.0
+        ],
+        "euc": [
+          639911.6882035782,
+          5601139.866702435
+        ],
+        "tags": {
+          "name": "La Beaume",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4404766591",
+        "wgs84": [
+          5.698699,
+          44.8902548,
+          0.0
+        ],
+        "euc": [
+          634376.2708641373,
+          5604260.865342545
+        ],
+        "tags": {
+          "name": "Chateaubois",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4404766592",
+        "wgs84": [
+          5.7052383,
+          44.8801029,
+          0.0
+        ],
+        "euc": [
+          635104.2224102819,
+          5602665.849671576
+        ],
+        "tags": {
+          "alt_name": "Cléau",
+          "name": "Cléaux",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4408643470",
+        "wgs84": [
+          5.6924736,
+          44.9001424,
+          0.0
+        ],
+        "euc": [
+          633683.2625061527,
+          5605814.626176135
+        ],
+        "tags": {
+          "name": "Mignanne",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "38217B051V"
+        }
+      },
+      {
+        "id": "4408643471",
+        "wgs84": [
+          5.6895044,
+          44.9211386,
+          0.0
+        ],
+        "euc": [
+          633352.7326740894,
+          5609114.905048761
+        ],
+        "tags": {
+          "name": "Rouac",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4410522507",
+        "wgs84": [
+          5.6888741,
+          44.9035231,
+          0.0
+        ],
+        "euc": [
+          633282.5679990425,
+          5606345.938661167
+        ],
+        "tags": {
+          "name": "Les Champs",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4410522508",
+        "wgs84": [
+          5.6881178,
+          44.8827632,
+          0.0
+        ],
+        "euc": [
+          633198.3770681554,
+          5603083.795465336
+        ],
+        "tags": {
+          "name": "Savel",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4415551357",
+        "wgs84": [
+          5.7384469,
+          44.8744468,
+          0.0
+        ],
+        "euc": [
+          638800.9868522392,
+          5601777.313652333
+        ],
+        "tags": {
+          "name": "Le Mas",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4419262011",
+        "wgs84": [
+          5.7421696,
+          44.8785078,
+          0.0
+        ],
+        "euc": [
+          639215.3959206154,
+          5602415.261135596
+        ],
+        "tags": {
+          "name": "Pellenfrey",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4419440599",
+        "wgs84": [
+          5.6937853,
+          44.922189,
+          0.0
+        ],
+        "euc": [
+          633829.2802822264,
+          5609280.043404091
+        ],
+        "tags": {
+          "name": "Les Arnauds",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "669944166",
+        "wgs84": [
+          5.6875687,
+          44.8683043,
+          0.0
+        ],
+        "euc": [
+          633137.2515357609,
+          5600812.466312753
+        ],
+        "tags": {
+          "name": "Le Villarnet",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "763554821",
+        "wgs84": [
+          5.6666232,
+          44.9086555,
+          0.0
+        ],
+        "euc": [
+          630805.6091413504,
+          5607152.608910942
+        ],
+        "tags": {
+          "name": "Jullière",
+          "place": "hamlet",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre ; mise à jour : 2010"
+        }
+      },
+      {
+        "id": "8042603745",
+        "wgs84": [
+          5.7379102,
+          44.9186103,
+          0.0
+        ],
+        "euc": [
+          638741.2416815305,
+          5608717.431418775
+        ],
+        "tags": {
+          "name": "tête de Chame rousse",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "9079801322",
+        "wgs84": [
+          5.6596217,
+          44.9196317,
+          0.0
+        ],
+        "euc": [
+          630026.2057265613,
+          5608878.003440249
+        ],
+        "tags": {
+          "ele": "693",
+          "name": "Pié Rond",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "9079831604",
+        "wgs84": [
+          5.7346425,
+          44.8812315,
+          0.0
+        ],
+        "euc": [
+          638377.4829814653,
+          5602843.155743808
+        ],
+        "tags": {
+          "name": "Serre Chauvet",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "9079835633",
+        "wgs84": [
+          5.6612287,
+          44.8825822,
+          0.0
+        ],
+        "euc": [
+          630205.0961482661,
+          5603055.358891017
+        ],
+        "tags": {
+          "name": "Baraton",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "9079845840",
+        "wgs84": [
+          5.7404273,
+          44.8816267,
+          0.0
+        ],
+        "euc": [
+          639021.4439718063,
+          5602905.243540791
+        ],
+        "tags": {
+          "name": "Genevray",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "9081776946",
+        "wgs84": [
+          5.7444504,
+          44.9020956,
+          0.0
+        ],
+        "euc": [
+          639469.2934152166,
+          5606121.588243832
+        ],
+        "tags": {
+          "name": "Le Devès",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      }
+    ],
+    "63,561": [
+      {
+        "id": "11646994040",
+        "wgs84": [
+          5.7448414,
+          44.9294156,
+          0.0
+        ],
+        "euc": [
+          639512.8193361169,
+          5610416.253242143
+        ],
+        "tags": {
+          "ele": "1560",
+          "name": "Pierre Plantée",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "1368705222",
+        "wgs84": [
+          5.6782862,
+          44.9889941,
+          0.0
+        ],
+        "euc": [
+          632103.9283624723,
+          5619788.998867884
+        ],
+        "tags": {
+          "name": "Les Silvains",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1380562052",
+        "wgs84": [
+          5.7340941,
+          44.9387741,
+          0.0
+        ],
+        "euc": [
+          638316.4353727143,
+          5611887.86577173
+        ],
+        "tags": {
+          "name": "Les Signaraux",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "2044807497",
+        "wgs84": [
+          5.7038651,
+          44.9757038,
+          0.0
+        ],
+        "euc": [
+          634951.3584855244,
+          5617697.357393441
+        ],
+        "tags": {
+          "name": "Les Blais",
+          "place": "hamlet",
+          "population": "100"
+        }
+      },
+      {
+        "id": "21055612",
+        "wgs84": [
+          5.7210122,
+          44.9641201,
+          0.0
+        ],
+        "euc": [
+          636860.1649261058,
+          5615874.697787329
+        ],
+        "tags": {
+          "name": "Le Mollard",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "2627377522",
+        "wgs84": [
+          5.6638242,
+          44.9857428,
+          0.0
+        ],
+        "euc": [
+          630494.02588662,
+          5619277.261031345
+        ],
+        "tags": {
+          "name": "Les Condamines",
+          "place": "hamlet",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre ; mise à jour : 2011"
+        }
+      },
+      {
+        "id": "313972801",
+        "wgs84": [
+          5.7272585,
+          44.9745846,
+          0.0
+        ],
+        "euc": [
+          637555.4998614478,
+          5617521.238645864
+        ],
+        "tags": {
+          "name": "Le Majeuil",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "34054974",
+        "wgs84": [
+          5.6857167,
+          44.9546841,
+          0.0
+        ],
+        "euc": [
+          632931.0878388118,
+          5614390.24416506
+        ],
+        "tags": {
+          "addr:postcode": "38650",
+          "name": "Avignonet",
+          "name:oc": "Avinhonet",
+          "place": "village",
+          "population": "202",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213800238",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "34055112",
+        "wgs84": [
+          5.7452701,
+          44.9624037,
+          0.0
+        ],
+        "euc": [
+          639560.5420018199,
+          5615604.658829438
+        ],
+        "tags": {
+          "addr:postcode": "38770",
+          "name": "La Motte-d'Aveillans",
+          "place": "village",
+          "population": "1717",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213802655",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "34055113",
+        "wgs84": [
+          5.7189041,
+          44.9487088,
+          0.0
+        ],
+        "euc": [
+          636625.4923075645,
+          5613450.3475228315
+        ],
+        "tags": {
+          "addr:postcode": "38770",
+          "name": "La Motte-Saint-Martin",
+          "place": "village",
+          "population": "453",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:La Motte-Saint-Martin"
+        }
+      },
+      {
+        "id": "34055227",
+        "wgs84": [
+          5.7017388,
+          44.9656674,
+          0.0
+        ],
+        "euc": [
+          634714.6598522507,
+          5616118.139389
+        ],
+        "tags": {
+          "addr:postcode": "38770",
+          "name": "Monteynard",
+          "place": "village",
+          "population": "498",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Monteynard"
+        }
+      },
+      {
+        "id": "34055359",
+        "wgs84": [
+          5.6597782,
+          44.9832607,
+          0.0
+        ],
+        "euc": [
+          630043.6272268704,
+          5618886.610840638
+        ],
+        "tags": {
+          "name": "Saint-Martin-de-la-Cluze",
+          "name:oc": "Sant Martin de Clusa",
+          "place": "village",
+          "population": "747",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213801152",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q676474"
+        }
+      },
+      {
+        "id": "3560449768",
+        "wgs84": [
+          5.7246904,
+          44.9588921,
+          0.0
+        ],
+        "euc": [
+          637269.6202771416,
+          5615052.208584458
+        ],
+        "tags": {
+          "name": "La Faurie",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "38265B044D"
+        }
+      },
+      {
+        "id": "3705331904",
+        "wgs84": [
+          5.7264167,
+          44.9566303,
+          0.0
+        ],
+        "euc": [
+          637461.7911140979,
+          5614696.39667522
+        ],
+        "tags": {
+          "name": "Les Béthoux",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "5075881956",
+        "wgs84": [
+          5.6700396,
+          44.9788435,
+          0.0
+        ],
+        "euc": [
+          631185.9210496965,
+          5618191.442960396
+        ],
+        "tags": {
+          "name": "Les Veaux",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "5075881972",
+        "wgs84": [
+          5.6704473,
+          44.9730128,
+          0.0
+        ],
+        "euc": [
+          631231.3060060929,
+          5617273.903984886
+        ],
+        "tags": {
+          "name": "Magelines",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "7229062791",
+        "wgs84": [
+          5.7162273,
+          44.9561852,
+          0.0
+        ],
+        "euc": [
+          636327.5122946091,
+          5614626.378041685
+        ],
+        "tags": {
+          "name": "Le Vivier",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "7554603860",
+        "wgs84": [
+          5.6701443,
+          44.9622505,
+          0.0
+        ],
+        "euc": [
+          631197.5762003826,
+          5615580.5564673655
+        ],
+        "tags": {
+          "name": "Les Cattiers",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "8496366939",
+        "wgs84": [
+          5.6928306,
+          44.9754184,
+          0.0
+        ],
+        "euc": [
+          633723.003564366,
+          5617652.446156862
+        ],
+        "tags": {
+          "ele": "882",
+          "name": "Le Chateau",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "874148244",
+        "wgs84": [
+          5.6971362,
+          44.9747702,
+          0.0
+        ],
+        "euc": [
+          634202.3007639255,
+          5617550.444662188
+        ],
+        "tags": {
+          "name": "Les Liorats",
+          "place": "hamlet",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre ; mise à jour :2010"
+        }
+      },
+      {
+        "id": "9079703014",
+        "wgs84": [
+          5.6653012,
+          44.9866306,
+          0.0
+        ],
+        "euc": [
+          630658.4447745217,
+          5619416.993287664
+        ],
+        "tags": {
+          "name": "Côte Ber",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "9105609698",
+        "wgs84": [
+          5.67975,
+          44.9356066,
+          0.0
+        ],
+        "euc": [
+          632266.8778330956,
+          5611389.753472571
+        ],
+        "tags": {
+          "name": "Les Adrets",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "9105614520",
+        "wgs84": [
+          5.6901761,
+          44.9582263,
+          0.0
+        ],
+        "euc": [
+          633427.5059760553,
+          5614947.4677303545
+        ],
+        "tags": {
+          "name": "Le Château",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "911145223",
+        "wgs84": [
+          5.7205232,
+          44.9499295,
+          0.0
+        ],
+        "euc": [
+          636805.7296951078,
+          5613642.351992577
+        ],
+        "tags": {
+          "name": "Treffort",
+          "place": "hamlet",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre ; mise à jour :2009"
+        }
+      },
+      {
+        "id": "911145416",
+        "wgs84": [
+          5.7182637,
+          44.9497026,
+          0.0
+        ],
+        "euc": [
+          636554.2033056604,
+          5613606.662477261
+        ],
+        "tags": {
+          "name": "La Molière",
+          "place": "hamlet",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre ; mise à jour :2009"
+        }
+      },
+      {
+        "id": "915776290",
+        "wgs84": [
+          5.7312908,
+          44.9599308,
+          0.0
+        ],
+        "euc": [
+          638004.3734441735,
+          5615215.614924385
+        ],
+        "tags": {
+          "name": "Les Buttarias",
+          "place": "hamlet"
+        }
+      }
+    ],
+    "64,560": [
+      {
+        "id": "1116038356",
+        "wgs84": [
+          5.807507,
+          44.8999574,
+          0.0
+        ],
+        "euc": [
+          646488.7220183718,
+          5605785.552386165
+        ],
+        "tags": {
+          "name": "Le Crozet",
+          "place": "hamlet",
+          "population": "50",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011"
+        }
+      },
+      {
+        "id": "1116038455",
+        "wgs84": [
+          5.8162413,
+          44.9023064,
+          0.0
+        ],
+        "euc": [
+          647461.0198468075,
+          5606154.7178883385
+        ],
+        "tags": {
+          "name": "Le Pont Haut",
+          "place": "hamlet",
+          "population": "50",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011"
+        }
+      },
+      {
+        "id": "1649108056",
+        "wgs84": [
+          5.8060475,
+          44.9209339,
+          0.0
+        ],
+        "euc": [
+          646326.251221559,
+          5609082.723544471
+        ],
+        "tags": {
+          "name": "Villaret Reynaud",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1699718907",
+        "wgs84": [
+          5.7772476,
+          44.8812146,
+          0.0
+        ],
+        "euc": [
+          643120.2610186618,
+          5602840.5006830515
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Cognet",
+          "place": "village",
+          "population": "37",
+          "population:date": "2021",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Cognet"
+        }
+      },
+      {
+        "id": "264157075",
+        "wgs84": [
+          5.8172476,
+          44.8958489,
+          0.0
+        ],
+        "euc": [
+          647573.0406503928,
+          5605139.902621369
+        ],
+        "tags": {
+          "name": "Charlaix",
+          "place": "hamlet",
+          "population": "50"
+        }
+      },
+      {
+        "id": "26697841",
+        "wgs84": [
+          5.7871983,
+          44.9038429,
+          0.0
+        ],
+        "euc": [
+          644227.9678756985,
+          5606396.200204975
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "La Mure",
+          "place": "village",
+          "population": "4917",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213802697",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q631622",
+          "wikipedia": "fr:La Mure"
+        }
+      },
+      {
+        "id": "2966308536",
+        "wgs84": [
+          5.8216089,
+          44.9146649,
+          0.0
+        ],
+        "euc": [
+          648058.5383455895,
+          5608097.210668775
+        ],
+        "tags": {
+          "name": "Roizon Le Bas",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "2966308537",
+        "wgs84": [
+          5.823203,
+          44.9181727,
+          0.0
+        ],
+        "euc": [
+          648235.992745863,
+          5608648.638169813
+        ],
+        "tags": {
+          "name": "Roizon Le Haut",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3317651827",
+        "wgs84": [
+          5.7688271,
+          44.8674144,
+          0.0
+        ],
+        "euc": [
+          642182.895246437,
+          5600672.691759326
+        ],
+        "tags": {
+          "name": "Les Rives",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3317651828",
+        "wgs84": [
+          5.7765304,
+          44.8672775,
+          0.0
+        ],
+        "euc": [
+          643040.4226798649,
+          5600651.189381874
+        ],
+        "tags": {
+          "name": "La Jargne",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3317651829",
+        "wgs84": [
+          5.7709943,
+          44.8715964,
+          0.0
+        ],
+        "euc": [
+          642424.1468468843,
+          5601329.567699773
+        ],
+        "tags": {
+          "name": "La Loubière",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "34055287",
+        "wgs84": [
+          5.797845,
+          44.8890607,
+          0.0
+        ],
+        "euc": [
+          645413.1530983272,
+          5604073.239724347
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Ponsonnas",
+          "place": "village",
+          "population": "291",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Ponsonnas"
+        }
+      },
+      {
+        "id": "34055296",
+        "wgs84": [
+          5.7645219,
+          44.8932012,
+          0.0
+        ],
+        "euc": [
+          641703.6425746739,
+          5604723.841660078
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Prunières",
+          "place": "village",
+          "population": "372",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "34055377",
+        "wgs84": [
+          5.8238,
+          44.8749,
+          0.0
+        ],
+        "euc": [
+          648302.4504818666,
+          5601848.505165814
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Saint-Pierre-de-Méaroz",
+          "name:oc": "Sant Pèire de Mearòtz",
+          "place": "village",
+          "population": "109",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213804446",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Saint-Pierre-de-Méaroz"
+        }
+      },
+      {
+        "id": "34055434",
+        "wgs84": [
+          5.8077463,
+          44.913403,
+          0.0
+        ],
+        "euc": [
+          646515.3607725187,
+          5607898.8477387605
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Sousville",
+          "place": "village",
+          "population": "145",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Sousville"
+        }
+      },
+      {
+        "id": "34055436",
+        "wgs84": [
+          5.7814435,
+          44.9180779,
+          0.0
+        ],
+        "euc": [
+          643587.3464700814,
+          5608633.735130992
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Susville",
+          "place": "village",
+          "population": "1162",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213804990",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "4419262012",
+        "wgs84": [
+          5.7704488,
+          44.9006111,
+          0.0
+        ],
+        "euc": [
+          642363.4220646565,
+          5605888.285434652
+        ],
+        "tags": {
+          "name": "Simane",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "467377276",
+        "wgs84": [
+          5.768955,
+          44.9229982,
+          0.0
+        ],
+        "euc": [
+          642197.1330093095,
+          5609407.263624787
+        ],
+        "tags": {
+          "name": "Versenat",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "4849869905",
+        "wgs84": [
+          5.8376589,
+          44.9029124,
+          0.0
+        ],
+        "euc": [
+          649845.2161728216,
+          5606249.958434782
+        ],
+        "tags": {
+          "name": "Le Bas Servioz",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "503127934",
+        "wgs84": [
+          5.7621967,
+          44.9221778,
+          0.0
+        ],
+        "euc": [
+          641444.8024946813,
+          5609278.282583158
+        ],
+        "tags": {
+          "name": "La Sausie",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "550180",
+        "wgs84": [
+          5.8242747,
+          44.88899,
+          0.0
+        ],
+        "euc": [
+          648355.2938441462,
+          5604062.130951751
+        ],
+        "tags": {
+          "name": "Les Terrasses",
+          "place": "hamlet",
+          "population": "200"
+        }
+      },
+      {
+        "id": "550199",
+        "wgs84": [
+          5.8340619,
+          44.8756567,
+          0.0
+        ],
+        "euc": [
+          649444.7999644381,
+          5601967.3736224845
+        ],
+        "tags": {
+          "name": "Les Égâts",
+          "place": "hamlet",
+          "population": "20"
+        }
+      },
+      {
+        "id": "5600818090",
+        "wgs84": [
+          5.7745299,
+          44.9102249,
+          0.0
+        ],
+        "euc": [
+          642817.728038533,
+          5607399.289234645
+        ],
+        "tags": {
+          "ele": "1209",
+          "name": "Le Cimon",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "6777958211",
+        "wgs84": [
+          5.8291107,
+          44.8846788,
+          0.0
+        ],
+        "euc": [
+          648893.6349016224,
+          5603384.757312769
+        ],
+        "tags": {
+          "name": "Chardenot",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "7637467512",
+        "wgs84": [
+          5.7617743,
+          44.901046,
+          0.0
+        ],
+        "euc": [
+          641397.7811417703,
+          5605956.633340047
+        ],
+        "tags": {
+          "ele": "1163",
+          "name": "Le Somme",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "9441757369",
+        "wgs84": [
+          5.804024,
+          44.8678785,
+          0.0
+        ],
+        "euc": [
+          646100.9962319388,
+          5600745.586613031
+        ],
+        "tags": {
+          "name": "Hameau des Bailles",
+          "place": "hamlet"
+        }
+      }
+    ],
+    "64,561": [
+      {
+        "id": "1133717506",
+        "wgs84": [
+          5.7546531,
+          44.9534054,
+          0.0
+        ],
+        "euc": [
+          640605.0527839331,
+          5614189.100287224
+        ],
+        "tags": {
+          "ele": "964",
+          "mountain_pass": "yes",
+          "name": "Col de La Festinière",
+          "natural": "saddle"
+        }
+      },
+      {
+        "id": "13277596059",
+        "wgs84": [
+          5.8390116,
+          44.9338858,
+          0.0
+        ],
+        "euc": [
+          649995.7980480175,
+          5611119.1567364065
+        ],
+        "tags": {
+          "name": "Les Bertrands",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "13277600422",
+        "wgs84": [
+          5.8319303,
+          44.9460412,
+          0.0
+        ],
+        "euc": [
+          649207.5113378632,
+          5613030.773691731
+        ],
+        "tags": {
+          "name": "Les Touches",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "13277600499",
+        "wgs84": [
+          5.815468,
+          44.9546112,
+          0.0
+        ],
+        "euc": [
+          647374.9364845771,
+          5614378.77662557
+        ],
+        "tags": {
+          "name": "Jadin",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1649108052",
+        "wgs84": [
+          5.8082555,
+          44.9301399,
+          0.0
+        ],
+        "euc": [
+          646572.0446572305,
+          5610530.13995829
+        ],
+        "tags": {
+          "name": "Ser-Bouvet",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1952528465",
+        "wgs84": [
+          5.8332624,
+          44.9288355,
+          0.0
+        ],
+        "euc": [
+          649355.800031549,
+          5610325.0411285665
+        ],
+        "tags": {
+          "name": "Le Freynet",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "2044489650",
+        "wgs84": [
+          5.7696366,
+          44.9362112,
+          0.0
+        ],
+        "euc": [
+          642273.0083742342,
+          5611484.8290764745
+        ],
+        "tags": {
+          "name": "Les Moutières",
+          "place": "hamlet",
+          "population": "20"
+        }
+      },
+      {
+        "id": "2044807487",
+        "wgs84": [
+          5.7547448,
+          44.9532774,
+          0.0
+        ],
+        "euc": [
+          640615.2607812389,
+          5614168.965696767
+        ],
+        "tags": {
+          "name": "La Festinière",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "2204823638",
+        "wgs84": [
+          5.7875955,
+          44.9612777,
+          0.0
+        ],
+        "euc": [
+          644272.1839774415,
+          5615427.511116595
+        ],
+        "tags": {
+          "name": "Les Bruneaux",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "2204867828",
+        "wgs84": [
+          5.7858574,
+          44.9448396,
+          0.0
+        ],
+        "euc": [
+          644078.6995704938,
+          5612841.78624068
+        ],
+        "tags": {
+          "alt_name": "Sersigaud",
+          "name": "Ser Sigaud",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "264157045",
+        "wgs84": [
+          5.7753563,
+          44.9286134,
+          0.0
+        ],
+        "euc": [
+          642909.7224657246,
+          5610290.119444447
+        ],
+        "tags": {
+          "name": "Le Villaret",
+          "place": "hamlet",
+          "population": "500"
+        }
+      },
+      {
+        "id": "26679387",
+        "wgs84": [
+          5.7578009,
+          44.9494963,
+          0.0
+        ],
+        "euc": [
+          640955.4642770523,
+          5613574.213296016
+        ],
+        "tags": {
+          "name": "Le Collet",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "26679524",
+        "wgs84": [
+          5.7641879,
+          44.9416675,
+          0.0
+        ],
+        "euc": [
+          641666.4618647489,
+          5612342.897877294
+        ],
+        "tags": {
+          "name": "Le Crey",
+          "place": "hamlet",
+          "population": "500"
+        }
+      },
+      {
+        "id": "3299972243",
+        "wgs84": [
+          5.7852786,
+          44.9496937,
+          0.0
+        ],
+        "euc": [
+          644014.2678492225,
+          5613605.262582883
+        ],
+        "tags": {
+          "name": "Perouzat",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3299984661",
+        "wgs84": [
+          5.7723396,
+          44.9568004,
+          0.0
+        ],
+        "euc": [
+          642573.9049578484,
+          5614723.15523152
+        ],
+        "tags": {
+          "name": "Feyteny",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3299984912",
+        "wgs84": [
+          5.7775549,
+          44.9595638,
+          0.0
+        ],
+        "euc": [
+          643154.4694981826,
+          5615157.878833326
+        ],
+        "tags": {
+          "name": "Le Bourg",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3299985789",
+        "wgs84": [
+          5.7723192,
+          44.9643313,
+          0.0
+        ],
+        "euc": [
+          642571.6340402362,
+          5615907.926164198
+        ],
+        "tags": {
+          "name": "Lespinasse",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3299994446",
+        "wgs84": [
+          5.7735896,
+          44.9480877,
+          0.0
+        ],
+        "euc": [
+          642713.05432134,
+          5613352.655982855
+        ],
+        "tags": {
+          "name": "Le Mas Briançon",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3300009128",
+        "wgs84": [
+          5.7585616,
+          44.9585602,
+          0.0
+        ],
+        "euc": [
+          641040.1450136987,
+          5614999.9953212775
+        ],
+        "tags": {
+          "name": "Putteville",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "34055238",
+        "wgs84": [
+          5.8263683,
+          44.9351234,
+          0.0
+        ],
+        "euc": [
+          648588.352330071,
+          5611313.76919093
+        ],
+        "tags": {
+          "name": "Nantes-en-Rattier",
+          "nat_name": "Nantes-en-Ratier",
+          "note": "'Ratier' avec un 't' officiellement mais pas sur terrain. Résolution similaire à Vers-sur-Selle (80)",
+          "place": "village",
+          "population": "465",
+          "population:date": "2021",
+          "postal_code": "38350",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "34055244",
+        "wgs84": [
+          5.7531769,
+          44.9883987,
+          0.0
+        ],
+        "euc": [
+          640440.7229516242,
+          5619695.283810311
+        ],
+        "tags": {
+          "addr:postcode": "38144",
+          "name": "Notre-Dame-de-Vaulx",
+          "place": "village",
+          "population": "522",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213802804",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Notre-Dame-de-Vaulx"
+        }
+      },
+      {
+        "id": "34055280",
+        "wgs84": [
+          5.7782634,
+          44.9564031,
+          0.0
+        ],
+        "euc": [
+          643233.3393574096,
+          5614660.655799589
+        ],
+        "tags": {
+          "addr:postcode": "38119",
+          "name": "Pierre-Châtel",
+          "place": "village",
+          "population": "1496",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213803042",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "34055346",
+        "wgs84": [
+          5.8156065,
+          44.9428548,
+          0.0
+        ],
+        "euc": [
+          647390.354234052,
+          5612529.625885453
+        ],
+        "tags": {
+          "addr:postcode": "38350",
+          "name": "Saint-Honoré",
+          "place": "village",
+          "population": "809",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Saint-Honoré (Isère)"
+        }
+      },
+      {
+        "id": "34055393",
+        "wgs84": [
+          5.7722554,
+          44.9891848,
+          0.0
+        ],
+        "euc": [
+          642564.5318567236,
+          5619819.014964676
+        ],
+        "tags": {
+          "addr:postcode": "38119",
+          "name": "Saint-Théoffrey",
+          "place": "village",
+          "population": "586",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213804628",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "34055468",
+        "wgs84": [
+          5.8052185,
+          44.978896,
+          0.0
+        ],
+        "euc": [
+          646233.9673636913,
+          5618199.704964511
+        ],
+        "tags": {
+          "addr:postcode": "38119",
+          "name": "Villard-Saint-Christophe",
+          "place": "village",
+          "population": "400",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213805526",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1149960",
+          "wikipedia": "fr:Villard-Saint-Christophe"
+        }
+      },
+      {
+        "id": "3635632290",
+        "wgs84": [
+          5.7733867,
+          44.9826112,
+          0.0
+        ],
+        "euc": [
+          642690.467596658,
+          5618784.390797574
+        ],
+        "tags": {
+          "name": "La Croix des Théneaux",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3635632493",
+        "wgs84": [
+          5.7938677,
+          44.9724496,
+          0.0
+        ],
+        "euc": [
+          644970.4020875951,
+          5617185.28183947
+        ],
+        "tags": {
+          "name": "Les Troussiers",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "3635632495",
+        "wgs84": [
+          5.8208904,
+          44.9704749,
+          0.0
+        ],
+        "euc": [
+          647978.5552914544,
+          5616874.560464191
+        ],
+        "tags": {
+          "alt_name": "La Chaud",
+          "name": "Saint-Honoré 1500",
+          "place": "hamlet",
+          "wikidata": "Q124541062"
+        }
+      },
+      {
+        "id": "470316783",
+        "wgs84": [
+          5.7829917,
+          44.9831634,
+          0.0
+        ],
+        "euc": [
+          643759.6913057275,
+          5618871.297433265
+        ],
+        "tags": {
+          "name": "Les Théneaux",
+          "place": "village",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2009"
+        }
+      },
+      {
+        "id": "470316920",
+        "wgs84": [
+          5.8070169,
+          44.9543426,
+          0.0
+        ],
+        "euc": [
+          646434.164335934,
+          5614336.524609902
+        ],
+        "tags": {
+          "name": "Fugières",
+          "place": "village",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2009"
+        }
+      },
+      {
+        "id": "470316921",
+        "wgs84": [
+          5.7953998,
+          44.9417244,
+          0.0
+        ],
+        "euc": [
+          645140.9546794395,
+          5612351.846516279
+        ],
+        "tags": {
+          "name": "Tord",
+          "place": "village",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2009"
+        }
+      },
+      {
+        "id": "685294532",
+        "wgs84": [
+          5.8138303,
+          44.9639059,
+          0.0
+        ],
+        "euc": [
+          647192.628554505,
+          5615840.997541416
+        ],
+        "tags": {
+          "name": "Combalberte",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "685294537",
+        "wgs84": [
+          5.823165,
+          44.9622151,
+          0.0
+        ],
+        "euc": [
+          648231.7626052129,
+          5615574.98713176
+        ],
+        "tags": {
+          "name": "Comboursière",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "8914173588",
+        "wgs84": [
+          5.762309,
+          44.9308424,
+          0.0
+        ],
+        "euc": [
+          641457.3036734975,
+          5610640.600281133
+        ],
+        "tags": {
+          "ele": "1200",
+          "name": "rocher Siéroux",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "9081682694",
+        "wgs84": [
+          5.811241,
+          44.9659125,
+          0.0
+        ],
+        "euc": [
+          646904.3889969939,
+          5616156.702349473
+        ],
+        "tags": {
+          "name": "Champ Raud",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      },
+      {
+        "id": "9105610421",
+        "wgs84": [
+          5.7624044,
+          44.9870361,
+          0.0
+        ],
+        "euc": [
+          641467.9235529192,
+          5619480.816298623
+        ],
+        "tags": {
+          "ele": "1124",
+          "name": "Le Crey",
+          "natural": "peak",
+          "source": "IGN - 2021-06"
+        }
+      }
+    ]
+  },
+  "chunks": {
+    "6,56": [
+      {
+        "id": "1704314483",
+        "wgs84": [
+          5.75448,
+          45.1836683,
+          0.0
+        ],
+        "euc": [
+          640585.7833800769,
+          5650482.794911535
+        ],
+        "tags": {
+          "name": "Saint-Martin-d'Hères",
+          "place": "town",
+          "population": "38454",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q243868",
+          "wikipedia": "fr:Saint-Martin-d'Hères"
+        }
+      },
+      {
+        "id": "26686589",
+        "wgs84": [
+          5.7357819,
+          45.1875602,
+          0.0
+        ],
+        "euc": [
+          638504.3204092752,
+          5651097.489488071
+        ],
+        "tags": {
+          "addr:postcode": "38000;38100",
+          "capital": "6",
+          "name": "Grenoble",
+          "name:ar": "غرونوبل",
+          "name:be": "Грэнобль",
+          "name:el": "Γκρενόμπλ",
+          "name:eo": "Grenoblo",
+          "name:hi": "ग्रेनोब्ल",
+          "name:hu": "Grenoble",
+          "name:ja": "グルノーブル",
+          "name:kn": "ಗ್ರೇನೋಬ್ಲ್",
+          "name:ko": "그르노블",
+          "name:la": "Cularone",
+          "name:lb": "Grenobel",
+          "name:lt": "Grenoblis",
+          "name:ml": "ഗ്രനോബ്ൾ",
+          "name:oc": "Grenoble",
+          "name:ru": "Гренобль",
+          "name:sr": "Гренобл",
+          "name:th": "เกรอนอบล์",
+          "name:uk": "Гренобль",
+          "name:zh": "格勒诺布尔",
+          "name:zh-Hans": "格勒诺布尔",
+          "name:zh-Hant": "格勒諾布爾",
+          "old_name:it": "Granopoli",
+          "place": "city",
+          "population": "157477",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213801855",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1289",
+          "wikipedia": "fr:Grenoble"
+        }
+      },
+      {
+        "id": "26691404",
+        "wgs84": [
+          5.718687,
+          45.1481694,
+          0.0
+        ],
+        "euc": [
+          636601.3248461133,
+          5644877.965256696
+        ],
+        "tags": {
+          "addr:postcode": "38130",
+          "name": "Échirolles",
+          "name:el": "Εσιρόλ",
+          "name:ja": "エシロル",
+          "name:ko": "에시롤",
+          "name:ru": "Эшироль",
+          "name:uk": "Ешироль",
+          "name:zh": "埃希罗勒",
+          "place": "town",
+          "population": "36849",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213801517",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q211134",
+          "wikipedia": "fr:Échirolles"
+        }
+      },
+      {
+        "id": "26691472",
+        "wgs84": [
+          5.681781,
+          45.2325079,
+          0.0
+        ],
+        "euc": [
+          632492.9677188967,
+          5658199.66821323
+        ],
+        "tags": {
+          "addr:postcode": "38120",
+          "name": "Saint-Égrève",
+          "name:ja": "サン＝テグレーヴ",
+          "name:ru": "Сент-Эгрев",
+          "name:uk": "Сент-Егрев",
+          "name:zh": "圣埃格雷沃",
+          "place": "town",
+          "population": "16995",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213803828",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1069745"
+        }
+      },
+      {
+        "id": "26691717",
+        "wgs84": [
+          5.6869624,
+          45.1950183,
+          0.0
+        ],
+        "euc": [
+          633069.758528493,
+          5652275.554373201
+        ],
+        "tags": {
+          "addr:postcode": "38600",
+          "name": "Fontaine",
+          "place": "town",
+          "population": "22891",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213801699",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q838235",
+          "wikipedia": "fr:Fontaine (Isère)"
+        }
+      },
+      {
+        "id": "26691919",
+        "wgs84": [
+          5.6899617,
+          45.1790768,
+          0.0
+        ],
+        "euc": [
+          633403.6390772292,
+          5649757.658122472
+        ],
+        "tags": {
+          "addr:postcode": "38170",
+          "name": "Seyssinet-Pariset",
+          "place": "town",
+          "population": "11753",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213804859",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1081604",
+          "wikipedia": "fr:Seyssinet-Pariset"
+        }
+      },
+      {
+        "id": "26692144",
+        "wgs84": [
+          5.6978136,
+          45.1236837,
+          0.0
+        ],
+        "euc": [
+          634277.7085869889,
+          5641014.015268641
+        ],
+        "tags": {
+          "addr:postcode": "38800",
+          "loc_name": "Pont-de-Claix",
+          "name": "Le Pont-de-Claix",
+          "name:el": "Λε Πον-ντε-Κλαι",
+          "name:ja": "ル=ポン=ド=クレ",
+          "name:ru": "Ле Пон-де-Кле",
+          "name:uk": "Ле Пон-де-Кле",
+          "name:zh": "勒蓬德克莱",
+          "place": "town",
+          "population": "10805",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213803174",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q688457",
+          "wikipedia": "fr:Pont-de-Claix"
+        }
+      },
+      {
+        "id": "26692364",
+        "wgs84": [
+          5.5910751,
+          45.3631386,
+          0.0
+        ],
+        "euc": [
+          622395.6331189511,
+          5678872.5482941205
+        ],
+        "tags": {
+          "addr:postcode": "38500",
+          "name": "Voiron",
+          "name:ja": "ヴォワロン",
+          "name:ko": "부아롱",
+          "name:ru": "Вуарон",
+          "name:uk": "Вуарон",
+          "name:zh": "瓦龙",
+          "place": "town",
+          "population": "20891",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213805633",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q238205"
+        }
+      },
+      {
+        "id": "26694905",
+        "wgs84": [
+          5.74812,
+          45.1524,
+          0.0
+        ],
+        "euc": [
+          639877.7914186317,
+          5645545.740486878
+        ],
+        "tags": {
+          "addr:postcode": "38320",
+          "name": "Eybens",
+          "place": "town",
+          "population": "10095",
+          "population:date": "2022",
+          "ref:FR:SIREN": "213801582",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1002915",
+          "wikipedia": "fr:Eybens"
+        }
+      },
+      {
+        "id": "26695485",
+        "wgs84": [
+          5.6630254,
+          45.2066503,
+          0.0
+        ],
+        "euc": [
+          630405.1038773744,
+          5654113.227442129
+        ],
+        "tags": {
+          "addr:postcode": "38360",
+          "name": "Sassenage",
+          "name:ja": "サスナージュ",
+          "name:ru": "Саснаж",
+          "name:uk": "Сассенаж",
+          "name:zh": "萨瑟纳日",
+          "place": "town",
+          "population": "11660",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213804743",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q694818"
+        }
+      },
+      {
+        "id": "285985177",
+        "wgs84": [
+          5.778361,
+          45.2097372,
+          0.0
+        ],
+        "euc": [
+          643244.2041397111,
+          5654600.972187462
+        ],
+        "tags": {
+          "addr:postcode": "38240",
+          "name": "Meylan",
+          "name:el": "Μελά",
+          "name:ja": "メラン",
+          "name:ka": "მელანი",
+          "name:ru": "Мелан",
+          "name:uk": "Мейлан",
+          "name:zh": "梅朗",
+          "place": "town",
+          "population": "18573",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213802291",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q632175",
+          "wikipedia": "fr:Meylan"
+        }
+      }
+    ]
+  }
+}

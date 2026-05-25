@@ -1,6 +1,5 @@
 #![allow(non_snake_case)]
 
-use std::collections::HashSet;
 use std::path::Path;
 
 use chrono::TimeDelta;
@@ -11,9 +10,9 @@ use tracks::math::IntegerSize2D;
 use tracks::mercator::DateTime;
 use tracks::parameters;
 use tracks::parameters::{parse_time, RenderFunction};
-use tracks::point_collection;
 use tracks::point_collection::onekind;
 use tracks::point_collection::Kind;
+use tracks::point_collection::{self, Kinds};
 use tracks::waypoint::Waypoint;
 
 /// Reads a GPX files and generates a PDF feuille de route and cutoff points.
@@ -104,25 +103,25 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
     let start_time = parameters::parse_time(&backend.get_parameters().start_time);
     let map_size = IntegerSize2D::new(400, 400);
     let profile_size = IntegerSize2D::new(1400, 300);
-    let waypoints = backend.get_waypoints(&segment, onekind(Kind::GPXWaypoints));
+    let waypoints = backend.get_waypoints(&segment, &onekind(Kind::GPXWaypoints));
     display_table(&waypoints, &start_time);
 
-    let controls = backend.get_waypoints(&segment, onekind(Kind::Controls));
+    let controls = backend.get_waypoints(&segment, &onekind(Kind::Controls));
     display_table(&controls, &start_time);
 
     backend.make_control_at_waypoint(&waypoints[5], true);
-    let controls = backend.get_waypoints(&segment, onekind(Kind::Controls));
+    let controls = backend.get_waypoints(&segment, &onekind(Kind::Controls));
     backend.set_control_time(&controls[1], &Some("2026-04-12T20:00:00".into()));
-    let controls = backend.get_waypoints(&segment, onekind(Kind::Controls));
+    let controls = backend.get_waypoints(&segment, &onekind(Kind::Controls));
     display_table(&controls, &start_time);
-    let waypoints = backend.get_waypoints(&segment, onekind(Kind::GPXWaypoints));
+    let waypoints = backend.get_waypoints(&segment, &onekind(Kind::GPXWaypoints));
     display_table(&waypoints, &start_time);
 
     let ret = backend.render_segment_map_profile(
         &segment,
         &map_size,
         &profile_size,
-        HashSet::from([
+        Kinds::from([
             Kind::Cities,
             Kind::Villages,
             Kind::Hamlets,
@@ -255,7 +254,7 @@ async fn main() -> anyhow::Result<()> {
     }
     let _ = backend.load_controls();
 
-    let kinds: HashSet<Kind> = args.kinds.into_iter().collect();
+    let kinds: Kinds = args.kinds.into_iter().collect();
     let track_segment = backend.trackSegment();
 
     let mut parameters = backend.get_parameters();
@@ -334,7 +333,7 @@ async fn main() -> anyhow::Result<()> {
     }
 
     {
-        let points = backend.get_waypoints(&track_segment, kinds.clone());
+        let points = backend.get_waypoints(&track_segment, &kinds);
         println!("* found {} points", points.len());
         for point in &points {
             let time = parse_time(&point.get_info().time);

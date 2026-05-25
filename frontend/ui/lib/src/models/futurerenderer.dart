@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpx/src/log.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/utils/utils.dart';
@@ -15,7 +16,7 @@ class FutureRenderer with ChangeNotifier {
   final bridge.Bridge _backend;
   final List<TrackData> clients;
 
-  final Set<bridge.Kind> _kinds;
+  final List<bridge.Kind> _kinds;
 
   Future<List<bridge.RenderOutput>>? _future;
 
@@ -30,9 +31,9 @@ class FutureRenderer with ChangeNotifier {
     required bridge.Bridge bridge,
     required bridge.Segment segment,
     required this.clients,
-    required Set<Kind> kinds,
+    required Kinds kinds,
     required this.name,
-  }) : _kinds = <Kind>{},
+  }) : _kinds = [],
        _segment = segment,
        _backend = bridge {
     developer.log("[CREATE FUTURE RENDERER ($segment) ($clients) ($_kinds)]");
@@ -60,9 +61,9 @@ class FutureRenderer with ChangeNotifier {
     return _segment;
   }
 
-  void setKinds(Set<bridge.Kind> newkinds) {
+  void setKinds(Kinds newkinds) {
     debugPrint("SET KINDS $name: ${newkinds.length} (old:${_kinds.length})");
-    if (setEquals(_kinds, newkinds)) {
+    if (setEquals(_kinds.toSet(), newkinds.toSet())) {
       return;
     }
     _kinds
@@ -152,7 +153,7 @@ class FutureRenderer with ChangeNotifier {
 
     for (bridge.RenderOutput output in values) {
       TrackData d = output.renderInput.function;
-      Set<Kind> k = output.renderInput.kinds;
+      Kinds k = output.renderInput.kinds;
 
       debugPrint("($name)found value for $d and $k");
       _results[d] = output;

@@ -1,0 +1,1395 @@
+{
+  "tiles": {
+    "93,609": [
+      {
+        "id": "1434811350",
+        "wgs84": [
+          8.4286064,
+          47.9379893,
+          0.0
+        ],
+        "euc": [
+          938268.1725449266,
+          6096544.657131182
+        ],
+        "tags": {
+          "ele": "776",
+          "name": "Triberg",
+          "natural": "peak"
+        }
+      },
+      {
+        "id": "1826467643",
+        "wgs84": [
+          8.3551426,
+          47.9228915,
+          0.0
+        ],
+        "euc": [
+          930090.2197371878,
+          6094036.301391059
+        ],
+        "tags": {
+          "name": "Weiler",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "1827049441",
+        "wgs84": [
+          8.3637526,
+          47.9016677,
+          0.0
+        ],
+        "euc": [
+          931048.6805529179,
+          6090511.40668818
+        ],
+        "tags": {
+          "name": "Dittishausen",
+          "place": "village",
+          "postal_code": "79843",
+          "wikidata": "Q47516642"
+        }
+      },
+      {
+        "id": "366926694",
+        "wgs84": [
+          8.3585739,
+          47.9335954,
+          0.0
+        ],
+        "euc": [
+          930472.1903059467,
+          6095814.576924407
+        ],
+        "tags": {
+          "name": "Unterbränd",
+          "place": "village",
+          "wikidata": "Q47516628",
+          "wikipedia": "de:Unterbränd"
+        }
+      },
+      {
+        "id": "414077273",
+        "wgs84": [
+          8.4027647,
+          47.929242,
+          0.0
+        ],
+        "euc": [
+          935391.4876596942,
+          6095091.287282502
+        ],
+        "tags": {
+          "name": "Waldhausen",
+          "place": "village"
+        }
+      },
+      {
+        "id": "5327192114",
+        "wgs84": [
+          8.417847,
+          47.924385,
+          0.0
+        ],
+        "euc": [
+          937070.4416156856,
+          6094284.399564911
+        ],
+        "tags": {
+          "ele": "775",
+          "natural": "peak",
+          "source": "https://de.wikipedia.org/wiki/Ruine_Dellingen"
+        }
+      },
+      {
+        "id": "6324754130",
+        "wgs84": [
+          8.4381847,
+          47.9520165,
+          0.0
+        ],
+        "euc": [
+          939334.4240235919,
+          6098875.799369466
+        ],
+        "tags": {
+          "name": "Bruggen",
+          "place": "village",
+          "postal_code": "78199",
+          "wikipedia": "de:Bruggen (Bräunlingen)"
+        }
+      },
+      {
+        "id": "6339748096",
+        "wgs84": [
+          8.3637878,
+          47.9576901,
+          0.0
+        ],
+        "euc": [
+          931052.598998994,
+          6099818.859257558
+        ],
+        "tags": {
+          "name": "Mistelbrunn",
+          "place": "village"
+        }
+      }
+    ],
+    "94,609": [
+      {
+        "id": "1314627898",
+        "wgs84": [
+          8.5111203,
+          47.9130192,
+          0.0
+        ],
+        "euc": [
+          947453.5778762938,
+          6092396.508575898
+        ],
+        "tags": {
+          "name": "Eichhöfe",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "6492207915",
+        "wgs84": [
+          8.4583988,
+          47.9477015,
+          0.0
+        ],
+        "euc": [
+          941584.6473424362,
+          6098158.633875295
+        ],
+        "tags": {
+          "ele": "820",
+          "name": "Schellenberg",
+          "natural": "peak",
+          "source": "Top50 LGL BW",
+          "wikidata": "Q31332554"
+        }
+      }
+    ]
+  },
+  "chunks": {
+    "9,60": [
+      {
+        "id": "100967525",
+        "wgs84": [
+          8.690503,
+          47.3898617,
+          0.0
+        ],
+        "euc": [
+          967422.3686974163,
+          6005943.222941107
+        ],
+        "tags": {
+          "ele": "475",
+          "is_in": "Zürich",
+          "name": "Volketswil",
+          "name:de": "Volketswil",
+          "name:gsw": "Voletschwil",
+          "openGeoDB:auto_update": "population",
+          "openGeoDB:community_identification_number": "G0199",
+          "openGeoDB:is_in": "Bezirk Uster,Zürich,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78524",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "32311",
+          "openGeoDB:name": "Volketswil",
+          "openGeoDB:population": "18437",
+          "openGeoDB:postal_codes": "8604",
+          "openGeoDB:sort_name": "VOLKETSWIL",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "47.3893141",
+          "opengeodb:lon": "8.6908127",
+          "place": "town",
+          "population": "18437",
+          "postal_code": "8604",
+          "website": "https://www.volketswil.ch/",
+          "wikidata": "Q69754",
+          "wikipedia": "de:Volketswil"
+        }
+      },
+      {
+        "id": "101790038",
+        "wgs84": [
+          8.3640342,
+          47.4182444,
+          0.0
+        ],
+        "euc": [
+          931080.0281215253,
+          6010611.420729775
+        ],
+        "tags": {
+          "ele": "417",
+          "image": "https://images.app.goo.gl/MHpoK9ikeDeEGgqa6",
+          "name": "Spreitenbach",
+          "place": "town",
+          "population": "12482",
+          "population:date": "31.12.2023",
+          "postal_code": "8957",
+          "source:population": "www.spreitenbach.ch",
+          "website": "https://www.spreitenbach.ch/",
+          "wikidata": "Q64210",
+          "wikipedia": "de:Spreitenbach"
+        }
+      },
+      {
+        "id": "1078304916",
+        "wgs84": [
+          8.5647892,
+          47.4326312,
+          0.0
+        ],
+        "euc": [
+          953427.9724957289,
+          6012978.627004996
+        ],
+        "tags": {
+          "name": "Glattbrugg",
+          "name:de": "Glattbrugg",
+          "name:gsw": "Glaprugg",
+          "place": "town",
+          "wikidata": "Q22702084"
+        }
+      },
+      {
+        "id": "1378949424",
+        "wgs84": [
+          8.7291498,
+          47.4991723,
+          0.0
+        ],
+        "euc": [
+          971724.5107942058,
+          6023935.7372663915
+        ],
+        "tags": {
+          "ele": "439",
+          "name": "Winterthur",
+          "name:ar": "فينترتور",
+          "name:be": "Вінтэртур",
+          "name:de": "Winterthur",
+          "name:eo": "Vinterturo",
+          "name:fr": "Winterthour",
+          "name:gsw": "Wintertur",
+          "name:ko": "빈터투어",
+          "name:lt": "Vintertūras",
+          "name:ru": "Винтертур",
+          "name:sr": "Винтертур",
+          "name:uk": "Вінтертур",
+          "name:zh-Hans": "温特图尔",
+          "name:zh-Hant": "溫特圖爾",
+          "openGeoDB:community_identification_number": "G0230",
+          "openGeoDB:license_plate_code": "ZH",
+          "openGeoDB:loc_id": "32322",
+          "openGeoDB:postal_codes": "8400–8411, 8310, 8352, 8482",
+          "place": "city",
+          "population": "108044",
+          "population:date": "2013",
+          "short_name:gsw": "Winti",
+          "website": "https://stadt.winterthur.ch/",
+          "wikidata": "Q9125",
+          "wikipedia": "de:Winterthur"
+        }
+      },
+      {
+        "id": "1378978126",
+        "wgs84": [
+          8.5407118,
+          47.5172321,
+          0.0
+        ],
+        "euc": [
+          950747.6885881029,
+          6026911.982176952
+        ],
+        "tags": {
+          "ele": "428",
+          "name": "Bülach",
+          "name:de": "Bülach",
+          "name:gsw": "Büli",
+          "name:lt": "Biulachas",
+          "name:uk": "Бюлах",
+          "place": "town",
+          "population": "19342",
+          "postal_code": "8180",
+          "website": "https://www.buelach.ch/",
+          "wikidata": "Q9093",
+          "wikipedia": "de:Bülach"
+        }
+      },
+      {
+        "id": "1599381299",
+        "wgs84": [
+          8.8963347,
+          47.5561915,
+          0.0
+        ],
+        "euc": [
+          990335.4487305302,
+          6033335.959922294
+        ],
+        "tags": {
+          "admin_centre:4": "yes",
+          "ele": "417",
+          "name": "Frauenfeld",
+          "name:be": "Фраўэнфельд",
+          "name:gsw": "Frauäfäld",
+          "name:ko": "프라우엔펠트",
+          "name:ru": "Фрауэнфельд",
+          "name:uk": "Фрауенфельд",
+          "place": "town",
+          "population": "24864",
+          "website": "https://www.frauenfeld.ch/",
+          "wikidata": "Q68120",
+          "wikipedia": "de:Frauenfeld"
+        }
+      },
+      {
+        "id": "1622603483",
+        "wgs84": [
+          8.2107236,
+          47.9167956,
+          0.0
+        ],
+        "euc": [
+          914013.5701963139,
+          6093023.733111912
+        ],
+        "tags": {
+          "name": "Neustadt im Schwarzwald",
+          "name:ru": "Нойштадт",
+          "place": "town",
+          "population": "9150",
+          "population:date": "2024-06-30",
+          "postal_code": "79822",
+          "source:population": "https://www.titisee-neustadt.de/unsere-stadt/stadt-titisee-neustadt/zahlen-fakten",
+          "wikidata": "Q47520111"
+        }
+      },
+      {
+        "id": "1638836825",
+        "wgs84": [
+          8.5919985,
+          47.4166195,
+          0.0
+        ],
+        "euc": [
+          956456.8979165705,
+          6010344.100091193
+        ],
+        "tags": {
+          "ele": "431",
+          "name": "Wallisellen",
+          "name:de": "Wallisellen",
+          "name:gsw": "Walisele",
+          "place": "town",
+          "population": "15603",
+          "postal_code": "8304",
+          "website": "https://www.wallisellen.ch/",
+          "wikidata": "Q69374",
+          "wikipedia": "de:Wallisellen"
+        }
+      },
+      {
+        "id": "1934228457",
+        "wgs84": [
+          8.1821873,
+          47.3873136,
+          0.0
+        ],
+        "euc": [
+          910836.9238111901,
+          6005524.251395225
+        ],
+        "tags": {
+          "ele": "407",
+          "name": "Lenzburg",
+          "place": "town",
+          "population": "10179",
+          "postal_code": "5600",
+          "website": "https://www.lenzburg.ch",
+          "wikidata": "Q69433",
+          "wikipedia": "de:Lenzburg"
+        }
+      },
+      {
+        "id": "201035269",
+        "wgs84": [
+          8.2022783,
+          47.8682042,
+          0.0
+        ],
+        "euc": [
+          913073.4437007176,
+          6084956.650397376
+        ],
+        "tags": {
+          "name": "Lenzkirch",
+          "name:prefix": "Gemeinde",
+          "name:uk": "Ленцкірх",
+          "place": "town",
+          "population": "5114",
+          "website": "http://www.lenzkirch-schwarzwald.de/lenzkirch/",
+          "wikidata": "Q521265"
+        }
+      },
+      {
+        "id": "240025182",
+        "wgs84": [
+          8.5410422,
+          47.3744489,
+          0.0
+        ],
+        "euc": [
+          950784.4685478611,
+          6003409.281270209
+        ],
+        "tags": {
+          "admin_centre:4": "yes",
+          "ele": "408",
+          "name": "Zürich",
+          "name:af": "Zürich",
+          "name:als": "Zürich",
+          "name:am": "ዙሪክ",
+          "name:an": "Zúrich",
+          "name:ar": "زيورخ",
+          "name:arc": "ܬܣܝܪܝܟ",
+          "name:arz": "زوريخ",
+          "name:az": "Sürix",
+          "name:bar": "Zirich",
+          "name:be": "Цюрых",
+          "name:be-tarask": "Цюрых",
+          "name:bg": "Цюрих",
+          "name:bn": "জুরিখ",
+          "name:br": "Zürich",
+          "name:bs": "Zürich",
+          "name:ca": "Zúric",
+          "name:ce": "Цуьрих",
+          "name:cs": "Curych",
+          "name:cv": "Цюрих",
+          "name:cy": "Zürich",
+          "name:da": "Zürich",
+          "name:de": "Zürich",
+          "name:el": "Ζυρίχη",
+          "name:en": "Zurich",
+          "name:eo": "Zuriko",
+          "name:es": "Zúrich",
+          "name:et": "Zürich",
+          "name:eu": "Zürich",
+          "name:fa": "زوریخ",
+          "name:fi": "Zürich",
+          "name:fj": "Zuriki",
+          "name:fr": "Zurich",
+          "name:frp": "Tsurique",
+          "name:frr": "Zürich",
+          "name:fur": "Zurich",
+          "name:fy": "Zürich",
+          "name:ga": "Zürich",
+          "name:gd": "Zürich",
+          "name:gl": "Zúric",
+          "name:gsw": "Züri",
+          "name:he": "ציריך",
+          "name:hi": "ज़्यूरिख़",
+          "name:hr": "Zürich",
+          "name:hsb": "Zürich",
+          "name:ht": "Zirik",
+          "name:hu": "Zürich",
+          "name:hy": "Ցյուրիխ",
+          "name:ia": "Zurich",
+          "name:id": "Zürich",
+          "name:ie": "Zúrich",
+          "name:ilo": "Zürich",
+          "name:io": "Zürich",
+          "name:is": "Zürich",
+          "name:it": "Zurigo",
+          "name:ja": "チューリッヒ",
+          "name:jv": "Zürich",
+          "name:ka": "ციურიხი",
+          "name:kk": "Цюрих",
+          "name:kn": "ಝ್ಯೂರಿಖ್",
+          "name:ko": "취리히",
+          "name:ku": "Zurîx",
+          "name:la": "Turicum",
+          "name:lb": "Zürech",
+          "name:li": "Zeurich",
+          "name:lmo": "Zürigh",
+          "name:ln": "Tsúri",
+          "name:lt": "Ciurichas",
+          "name:lv": "Cīrihe",
+          "name:mk": "Цирих",
+          "name:ml": "സൂറിച്ച്",
+          "name:mn": "Цюрих",
+          "name:mr": "झ्युरिक",
+          "name:ms": "Zürich",
+          "name:mt": "Zurich",
+          "name:my": "ဇူးရစ်ချ်မြို့",
+          "name:na": "Zürich",
+          "name:nah": "Zurich",
+          "name:nan": "Zürich",
+          "name:nds": "Zürich",
+          "name:nl": "Zürich",
+          "name:nn": "Zürich",
+          "name:no": "Zürich",
+          "name:nv": "Beʼekʼid Hóneezíbąąh",
+          "name:oc": "Zuric",
+          "name:os": "Цюрих",
+          "name:pa": "ਜ਼ਿਊਰਿਖ",
+          "name:pdc": "Zurich",
+          "name:pfl": "Zirich",
+          "name:pl": "Zurych",
+          "name:pms": "Zurigh",
+          "name:pnb": "زیورچ",
+          "name:ps": "څوریخ",
+          "name:pt": "Zurique",
+          "name:qu": "Zürich",
+          "name:rm": "Turitg",
+          "name:rn": "Zurich",
+          "name:ro": "Zürich",
+          "name:ru": "Цюрих",
+          "name:scn": "Zurìcu",
+          "name:sd": "زيورخ",
+          "name:sh": "Zürich",
+          "name:sk": "Zürich",
+          "name:sl": "Zürich",
+          "name:sq": "Cyrihu",
+          "name:sr": "Цирих",
+          "name:sv": "Zürich",
+          "name:sw": "Zürich",
+          "name:ta": "சூரிக்",
+          "name:tg": "Тсюрих",
+          "name:th": "ซูริก",
+          "name:tl": "Zürich",
+          "name:tr": "Zürih",
+          "name:tt": "Tsürix",
+          "name:ug": "سيۇرىخ",
+          "name:uk": "Цюрих",
+          "name:ur": "زیورخ",
+          "name:uz": "Syurix",
+          "name:vec": "Zurigo",
+          "name:vi": "Zürich",
+          "name:vo": "Zürich",
+          "name:war": "Zürich",
+          "name:wo": "Zurich",
+          "name:wuu": "苏黎世",
+          "name:yi": "ציריך",
+          "name:yo": "Zürich",
+          "name:yue": "蘇黎世",
+          "name:zh": "蘇黎世",
+          "name:zh-Hans": "苏黎世",
+          "name:zh-Hant": "蘇黎世",
+          "openGeoDB:license_plate_code": "ZH",
+          "openGeoDB:loc_id": "32325",
+          "openGeoDB:postal_codes": "8000–8099",
+          "place": "city",
+          "population": "443037",
+          "population:date": "2022-12-31",
+          "website": "https://www.stadt-zuerich.ch/",
+          "wikidata": "Q72",
+          "wikipedia": "de:Zürich"
+        }
+      },
+      {
+        "id": "240027618",
+        "wgs84": [
+          8.3446627,
+          47.8839004,
+          0.0
+        ],
+        "euc": [
+          928923.6026056235,
+          6087561.686112782
+        ],
+        "tags": {
+          "name": "Löffingen",
+          "name:prefix": "Stadt",
+          "name:ru": "Лёффинген",
+          "place": "town",
+          "population": "7962",
+          "wikidata": "Q527610"
+        }
+      },
+      {
+        "id": "240028752",
+        "wgs84": [
+          8.2085662,
+          47.4824633,
+          0.0
+        ],
+        "euc": [
+          913773.4095268765,
+          6021183.015058753
+        ],
+        "tags": {
+          "ele": "352",
+          "name": "Brugg",
+          "openGeoDB:auto_update": "population,name,is_in",
+          "openGeoDB:community_identification_number": "G4095",
+          "openGeoDB:is_in": "Bezirk Brugg,Aargau,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78625",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "AG",
+          "openGeoDB:loc_id": "79421",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Brugg",
+          "openGeoDB:population": "11092",
+          "openGeoDB:postal_codes": "5200, 5201, 5222",
+          "openGeoDB:sort_name": "BRUGG",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "11092",
+          "postal_code": "5200, 5201, 5222",
+          "website": "https://www.stadt-brugg.ch",
+          "wikidata": "Q64099",
+          "wikipedia": "de:Brugg"
+        }
+      },
+      {
+        "id": "240029982",
+        "wgs84": [
+          8.6299131,
+          47.4435706,
+          0.0
+        ],
+        "euc": [
+          960677.531882201,
+          6014779.030705616
+        ],
+        "tags": {
+          "ele": "460",
+          "name": "Bassersdorf",
+          "place": "town",
+          "population": "11561",
+          "postal_code": "8303",
+          "website": "https://www.bassersdorf.ch/",
+          "wikidata": "Q69734",
+          "wikipedia": "de:Bassersdorf"
+        }
+      },
+      {
+        "id": "240042255",
+        "wgs84": [
+          8.4959257,
+          47.9534194,
+          0.0
+        ],
+        "euc": [
+          945762.1227414863,
+          6099108.978311173
+        ],
+        "tags": {
+          "name": "Donaueschingen",
+          "name:ru": "Донауэшинген",
+          "name:uk": "Донауешинґен",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Donaueschingen",
+          "openGeoDB:community_identification_number": "08326012",
+          "openGeoDB:license_plate_code": "VS",
+          "openGeoDB:loc_id": "15743",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:telephone_area_code": "0771",
+          "place": "town",
+          "population": "21434",
+          "postal_code": "78166",
+          "wikidata": "Q83062",
+          "wikipedia": "de:Donaueschingen"
+        }
+      },
+      {
+        "id": "240052003",
+        "wgs84": [
+          8.5861477,
+          47.4525133,
+          0.0
+        ],
+        "euc": [
+          955805.5898398369,
+          6016251.09616862
+        ],
+        "tags": {
+          "ele": "435",
+          "name": "Kloten",
+          "name:de": "Kloten",
+          "name:gsw": "Chlote",
+          "place": "town",
+          "population": "18412",
+          "postal_code": "8302",
+          "website": "https://www.kloten.ch/",
+          "wikidata": "Q68165",
+          "wikipedia": "de:Kloten"
+        }
+      },
+      {
+        "id": "240060887",
+        "wgs84": [
+          8.9702755,
+          47.7372802,
+          0.0
+        ],
+        "euc": [
+          998566.5009353774,
+          6063258.382600778
+        ],
+        "tags": {
+          "ele": "404",
+          "name": "Radolfzell am Bodensee",
+          "name:ru": "Радольфцелль",
+          "name:uk": "Радольфцелль",
+          "place": "town",
+          "population": "31.734",
+          "postal_code": "78315",
+          "short_name": "Radolfzell",
+          "wikipedia": "de:Radolfzell am Bodensee"
+        }
+      },
+      {
+        "id": "240068610",
+        "wgs84": [
+          8.6869714,
+          47.4283137,
+          0.0
+        ],
+        "euc": [
+          967029.2327837307,
+          6012268.156944284
+        ],
+        "tags": {
+          "admin_level": "9",
+          "ele": "516",
+          "name": "Effretikon",
+          "name:de": "Effretikon",
+          "name:gsw": "Effretike",
+          "place": "town",
+          "population": "16693",
+          "postal_code": "8307",
+          "website": "https://www.ilef.ch/",
+          "wikidata": "Q22698735"
+        }
+      },
+      {
+        "id": "240069216",
+        "wgs84": [
+          8.8453483,
+          47.729588,
+          0.0
+        ],
+        "euc": [
+          984659.668645148,
+          6061985.239223
+        ],
+        "tags": {
+          "name": "Rielasingen-Worblingen",
+          "name:prefix": "Gemeinde",
+          "name:ru": "Рилазинген-Ворблинген",
+          "place": "town",
+          "population": "11938",
+          "wikidata": "Q62010"
+        }
+      },
+      {
+        "id": "240095542",
+        "wgs84": [
+          8.6594228,
+          47.8166011,
+          0.0
+        ],
+        "euc": [
+          963962.5366596633,
+          6076397.8456450915
+        ],
+        "tags": {
+          "ele": "643",
+          "name": "Tengen",
+          "name:ru": "Тенген",
+          "place": "town",
+          "population": "4719",
+          "postal_code": "78250",
+          "website": "https://www.tengen.de/pb/home.html",
+          "wikidata": "Q520054",
+          "wikipedia": "de:Tengen"
+        }
+      },
+      {
+        "id": "240098854",
+        "wgs84": [
+          8.6491814,
+          47.922968,
+          0.0
+        ],
+        "euc": [
+          962822.469226653,
+          6094049.009292195
+        ],
+        "tags": {
+          "name": "Geisingen",
+          "name:prefix": "Stadt",
+          "name:ru": "Гайзинген",
+          "place": "town",
+          "population": "6119",
+          "wikidata": "Q506571"
+        }
+      },
+      {
+        "id": "240102020",
+        "wgs84": [
+          8.3415473,
+          47.8190186,
+          0.0
+        ],
+        "euc": [
+          928576.797864006,
+          6076798.618188132
+        ],
+        "tags": {
+          "name": "Bonndorf im Schwarzwald",
+          "name:uk": "Бонндорф",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Bonndorf im Schwarzwald",
+          "openGeoDB:community_identification_number": "08337022",
+          "openGeoDB:is_in_loc_id": "570",
+          "openGeoDB:license_plate_code": "WT",
+          "openGeoDB:loc_id": "14756",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:postal_codes": "79848",
+          "openGeoDB:sort_name": "BONNDORF",
+          "openGeoDB:telephone_area_code": "07703",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "6876",
+          "wikidata": "Q178703"
+        }
+      },
+      {
+        "id": "240102157",
+        "wgs84": [
+          8.7704457,
+          47.8532383,
+          0.0
+        ],
+        "euc": [
+          976321.5493540558,
+          6082473.554284778
+        ],
+        "tags": {
+          "name": "Engen",
+          "name:prefix": "Stadt",
+          "name:ru": "Энген",
+          "place": "town",
+          "population": "10168",
+          "postal_code": "78234",
+          "website": "https://www.engen.de",
+          "wikidata": "Q515527"
+        }
+      },
+      {
+        "id": "240112180",
+        "wgs84": [
+          8.5779983,
+          47.4322671,
+          0.0
+        ],
+        "euc": [
+          954898.4027815665,
+          6012918.7099545915
+        ],
+        "tags": {
+          "ele": "459",
+          "name": "Opfikon",
+          "name:de": "Opfikon",
+          "name:gsw": "Opfike",
+          "name:ru": "Опфикон",
+          "place": "town",
+          "population": "18482",
+          "postal_code": "8152",
+          "website": "https://www.opfikon.ch/",
+          "wikidata": "Q64224",
+          "wikipedia": "de:Opfikon"
+        }
+      },
+      {
+        "id": "240116226",
+        "wgs84": [
+          8.448329,
+          47.9300645,
+          0.0
+        ],
+        "euc": [
+          940463.6823340461,
+          6095227.935746119
+        ],
+        "tags": {
+          "name": "Bräunlingen",
+          "name:prefix": "Stadt",
+          "name:ru": "Бройнлинген",
+          "place": "town",
+          "population": "6200",
+          "postal_code": "78199"
+        }
+      },
+      {
+        "id": "240117878",
+        "wgs84": [
+          8.8348709,
+          47.7617515,
+          0.0
+        ],
+        "euc": [
+          983493.3298123105,
+          6067309.902328202
+        ],
+        "tags": {
+          "alt_name": "Singen (Hohentwiel)",
+          "ele": "429",
+          "name": "Singen (Hohentwiel)",
+          "name:ar": "زينغن",
+          "name:ru": "Зинген",
+          "name:uk": "Зінґен",
+          "name:zh": "辛根",
+          "place": "town",
+          "population": "45717",
+          "postal_code": "78224",
+          "website": "https://www.in-singen.de/",
+          "wikidata": "Q6979",
+          "wikipedia": "de:Singen (Hohentwiel)"
+        }
+      },
+      {
+        "id": "240119097",
+        "wgs84": [
+          8.4892187,
+          47.9269484,
+          0.0
+        ],
+        "euc": [
+          945015.5029167358,
+          6094710.244760373
+        ],
+        "tags": {
+          "int_name": "Huefingen",
+          "name": "Hüfingen",
+          "name:ru": "Хюфинген",
+          "old_name": "Brigobanne",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Donaueschingen",
+          "openGeoDB:community_identification_number": "08326027",
+          "openGeoDB:is_in": "Schwarzwald-Baar-Kreis,Freiburg,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "561",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "VS",
+          "openGeoDB:loc_id": "18708",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Hüfingen",
+          "openGeoDB:population": "7792",
+          "openGeoDB:postal_codes": "78183",
+          "openGeoDB:sort_name": "HUEFINGEN",
+          "openGeoDB:telephone_area_code": "0771",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "7792",
+          "wikidata": "Q83132"
+        }
+      },
+      {
+        "id": "240122718",
+        "wgs84": [
+          8.8519587,
+          47.8441308,
+          0.0
+        ],
+        "euc": [
+          985395.535007088,
+          6080962.81662653
+        ],
+        "tags": {
+          "name": "Aach",
+          "name:ru": "Аах",
+          "openGeoDB:auto_update": "population,place,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Engen",
+          "openGeoDB:community_identification_number": "08335001",
+          "openGeoDB:is_in": "Konstanz,Freiburg,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "340",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "KN",
+          "openGeoDB:loc_id": "13350",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Aach (Hegau)",
+          "openGeoDB:population": "2195",
+          "openGeoDB:postal_codes": "78267",
+          "openGeoDB:sort_name": "AACH",
+          "openGeoDB:telephone_area_code": "07774",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "2195",
+          "postal_code": "78267",
+          "website": "https://www.aach.de",
+          "wikidata": "Q62158",
+          "wikipedia": "de:Aach (Hegau)"
+        }
+      },
+      {
+        "id": "246629666",
+        "wgs84": [
+          8.4680435,
+          47.4317645,
+          0.0
+        ],
+        "euc": [
+          942658.2904352901,
+          6012836.0017382745
+        ],
+        "tags": {
+          "ele": "442",
+          "name": "Regensdorf",
+          "name:de": "Regensdorf",
+          "name:gsw": "Rägischtorf",
+          "place": "town",
+          "population": "18010",
+          "postal_code": "8105",
+          "website": "https://www.regensdorf.ch/",
+          "wikidata": "Q64205",
+          "wikipedia": "de:Regensdorf"
+        }
+      },
+      {
+        "id": "26659685",
+        "wgs84": [
+          8.6185666,
+          47.3969942,
+          0.0
+        ],
+        "euc": [
+          959414.445279915,
+          6007116.092538254
+        ],
+        "tags": {
+          "ele": "437",
+          "int_name": "Dubendorf",
+          "is_in": "Zürich,Schweiz,Europe",
+          "name": "Dübendorf",
+          "name:de": "Dübendorf",
+          "name:gsw": "Dübedorf",
+          "name:uk": "Дюбендорф",
+          "openGeoDB:community_identification_number": "G0191",
+          "openGeoDB:is_in_loc_id": "78524",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "32220",
+          "place": "town",
+          "population": "32469",
+          "population:date": "2024-12-31",
+          "postal_code": "8600",
+          "short_name:gsw": "Dübi",
+          "source:population": "wikipedia",
+          "wikidata": "Q64082",
+          "wikipedia": "de:Dübendorf"
+        }
+      },
+      {
+        "id": "281028926",
+        "wgs84": [
+          8.2745787,
+          47.6349548,
+          0.0
+        ],
+        "euc": [
+          921121.8874128675,
+          6046337.769139957
+        ],
+        "tags": {
+          "name": "Tiengen",
+          "name:gsw": "Düenge",
+          "name:ru": "Тинген",
+          "name:uk": "Тінґен",
+          "openGeoDB:is_in": "Waldshut,Freiburg,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:license_plate_code": "WT",
+          "openGeoDB:postal_codes": "79761",
+          "openGeoDB:telephone_area_code": "07741",
+          "place": "town",
+          "population": "23674",
+          "wikidata": "Q47501199"
+        }
+      },
+      {
+        "id": "28902503",
+        "wgs84": [
+          8.6197347,
+          47.6811644,
+          0.0
+        ],
+        "euc": [
+          959544.4775771108,
+          6053974.917148456
+        ],
+        "tags": {
+          "ele": "410",
+          "name": "Neuhausen am Rheinfall",
+          "name:ru": "Нойхаузен-ам-Райнфалль",
+          "name:uk": "Нойгаузен-ам-Райнфалль",
+          "official_name": "Neuhausen am Rheinfall",
+          "place": "town",
+          "population": "11834",
+          "population:date": "2024-12-31",
+          "postal_code": "8212",
+          "short_name": "Neuhausen",
+          "source:population": "wikipedia",
+          "website": "https://www.neuhausen.ch/",
+          "wikidata": "Q69372",
+          "wikipedia": "de:Neuhausen am Rheinfall"
+        }
+      },
+      {
+        "id": "29011774",
+        "wgs84": [
+          8.634513,
+          47.6960491,
+          0.0
+        ],
+        "euc": [
+          961189.590407901,
+          6056436.379928563
+        ],
+        "tags": {
+          "admin_centre:4": "yes",
+          "ele": "403",
+          "name": "Schaffhausen",
+          "name:da": "Schaffhausen",
+          "name:de": "Schaffhausen",
+          "name:eo": "Ŝafhaŭzo",
+          "name:es": "Escafusa",
+          "name:fr": "Schaffhouse",
+          "name:gsw": "Schafuuse",
+          "name:he": "שפהאוזן",
+          "name:it": "Sciaffusa",
+          "name:ja": "シャフハウゼン",
+          "name:ko": "샤프하우젠",
+          "name:la": "Scafusa",
+          "name:lmo": "Sciafüsa",
+          "name:lt": "Šafhauzenas",
+          "name:lv": "Šafhauzene",
+          "name:pl": "Szafuza",
+          "name:rm": "Schaffusa",
+          "name:ru": "Шаффхаузен",
+          "name:sr": "Шафхаузен",
+          "name:uk": "Шаффгаузен",
+          "name:zh": "沙夫豪森",
+          "place": "town",
+          "population": "35927",
+          "postal_code": "8200",
+          "website": "https://www.stadt-schaffhausen.ch/",
+          "wikidata": "Q9009",
+          "wikipedia": "de:Schaffhausen"
+        }
+      },
+      {
+        "id": "29094003",
+        "wgs84": [
+          8.131426,
+          47.7602106,
+          0.0
+        ],
+        "euc": [
+          905186.2017431853,
+          6067054.731482585
+        ],
+        "tags": {
+          "name": "St. Blasien",
+          "name:prefix": "Stadt",
+          "name:ru": "Санкт-Блазиен",
+          "place": "town",
+          "population": "4080",
+          "website": "https://www.stblasien.de/",
+          "wikidata": "Q145008",
+          "wikipedia": "de:St. Blasien"
+        }
+      },
+      {
+        "id": "296480705",
+        "wgs84": [
+          8.4030765,
+          47.4050746,
+          0.0
+        ],
+        "euc": [
+          935426.1970769234,
+          6008445.02681412
+        ],
+        "tags": {
+          "ele": "388",
+          "name": "Dietikon",
+          "name:de": "Dietikon",
+          "name:gsw": "Diedike",
+          "name:uk": "Дітікон",
+          "place": "town",
+          "population": "27904",
+          "population:date": "2022-01-01",
+          "postal_code": "8953",
+          "source:population": "https://www.dietikon.ch/",
+          "website": "https://www.dietikon.ch/",
+          "wikidata": "Q64070",
+          "wikipedia": "de:Dietikon"
+        }
+      },
+      {
+        "id": "30000143",
+        "wgs84": [
+          8.4444861,
+          47.3965147,
+          0.0
+        ],
+        "euc": [
+          940035.8926628766,
+          6007037.238493545
+        ],
+        "tags": {
+          "ele": "394",
+          "name": "Schlieren",
+          "name:gsw": "Schliere",
+          "place": "town",
+          "population": "18414",
+          "postal_code": "8952",
+          "website": "https://www.schlieren.ch/",
+          "wikidata": "Q69148",
+          "wikipedia": "de:Schlieren"
+        }
+      },
+      {
+        "id": "330910113",
+        "wgs84": [
+          8.7255432,
+          47.4088363,
+          0.0
+        ],
+        "euc": [
+          971323.0259187109,
+          6009063.76028959
+        ],
+        "tags": {
+          "admin_level": "9",
+          "ele": "516",
+          "name": "Illnau",
+          "name:de": "Illnau",
+          "name:gsw": "Ilau",
+          "place": "town",
+          "population": "16117",
+          "postal_code": "8308",
+          "website": "https://www.ilef.ch/",
+          "wikipedia": "de:Illnau"
+        }
+      },
+      {
+        "id": "3444507166",
+        "wgs84": [
+          8.534081,
+          47.8401424,
+          0.0
+        ],
+        "euc": [
+          950009.5513085509,
+          6080301.310673211
+        ],
+        "tags": {
+          "ele": "704",
+          "name": "Blumberg",
+          "name:ru": "Блумберг",
+          "place": "town",
+          "postal_code": "78176"
+        }
+      },
+      {
+        "id": "61158271",
+        "wgs84": [
+          8.3086822,
+          47.4736827,
+          0.0
+        ],
+        "euc": [
+          924918.271667136,
+          6019736.807091126
+        ],
+        "tags": {
+          "ele": "381",
+          "name": "Baden",
+          "name:de": "Baden",
+          "name:gsw": "Bade",
+          "name:lt": "Badenas",
+          "name:ru": "Баден",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:community_identification_number": "G4021",
+          "openGeoDB:is_in": "Bezirk Baden,Aargau,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78623",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "30450",
+          "openGeoDB:name": "Baden",
+          "openGeoDB:population": "19168",
+          "openGeoDB:postal_codes": "5400-5406",
+          "openGeoDB:sort_name": "BADEN",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "47.4737136",
+          "opengeodb:lon": "8.3087078",
+          "place": "town",
+          "population": "19168",
+          "postal_code": "5400-5406",
+          "website": "https://www.baden.ch/",
+          "wikidata": "Q63939",
+          "wikipedia": "de:Baden AG"
+        }
+      },
+      {
+        "id": "61168838",
+        "wgs84": [
+          8.3266114,
+          47.465839,
+          0.0
+        ],
+        "euc": [
+          926914.1410814668,
+          6018445.115489403
+        ],
+        "tags": {
+          "contact:phone": "+41 56 437 71 11",
+          "contact:website": "https://www.wettingen.ch",
+          "ele": "395",
+          "name": "Wettingen",
+          "name:gsw": "Wettige",
+          "name:uk": "Веттінґен",
+          "openGeoDB:is_in_loc_id": "78623",
+          "openGeoDB:loc_id": "30551",
+          "place": "town",
+          "population": "21000",
+          "postal_code": "5430",
+          "wikidata": "Q27576",
+          "wikipedia": "de:Wettingen"
+        }
+      },
+      {
+        "id": "6318331880",
+        "wgs84": [
+          8.2120605,
+          47.6246179,
+          0.0
+        ],
+        "euc": [
+          914162.3932235555,
+          6044630.294678835
+        ],
+        "tags": {
+          "name": "Waldshut",
+          "name:uk": "Вальдсгут",
+          "place": "town",
+          "wikidata": "Q47501200"
+        }
+      }
+    ]
+  }
+}

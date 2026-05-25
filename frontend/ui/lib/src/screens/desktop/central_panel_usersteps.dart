@@ -21,7 +21,7 @@ class CentralWidget extends StatelessWidget {
         Expanded(
           child: GraphicsPadding(child: TrackView(trackData: TrackData.map)),
         ),
-        Expanded(child: GPXTable(kinds: {Kind.cutOff})),
+        Expanded(child: GPXTable(kinds: [Kind.cutOff])),
       ],
     );
 
@@ -50,7 +50,7 @@ class CentralPanelUserSteps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Set<Kind> kinds = allkinds();
+    Kinds kinds = allkinds();
     kinds.add(Kind.cutOff);
     return CentralPanelContent(
       width: width,

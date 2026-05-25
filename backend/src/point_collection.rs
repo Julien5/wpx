@@ -3,6 +3,7 @@ use crate::{
     speed::{self, TimeParameters},
 };
 use clap::ValueEnum;
+use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashSet};
 
 use crate::{
@@ -91,7 +92,8 @@ impl RenderResult {
                     return false;
                 }
                 if is_osm(&point.kind()) {
-                    return seen.insert(point.map_id());
+                    let good = seen.insert(point.map_id());
+                    return good;
                 }
                 true
             });
@@ -341,8 +343,9 @@ impl PacketProvider {
     }
 }
 
-#[derive(ValueEnum, Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[derive(ValueEnum, Debug, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
 #[value(rename_all = "PascalCase")]
+#[serde(rename_all = "snake_case")]
 pub enum Kind {
     Cities,
     Controls,
@@ -367,10 +370,10 @@ pub fn is_osm(kind: &Kind) -> bool {
     }
 }
 
-pub type Kinds = HashSet<Kind>;
+pub type Kinds = Vec<Kind>;
 
 pub fn allkinds() -> Kinds {
-    HashSet::from([
+    Vec::from([
         Kind::CutOff,
         Kind::GPXWaypoints,
         Kind::Cities,
@@ -381,7 +384,7 @@ pub fn allkinds() -> Kinds {
     ])
 }
 pub fn onekind(kind: Kind) -> Kinds {
-    HashSet::from([kind])
+    Vec::from([kind])
 }
 
 #[derive(Clone)]

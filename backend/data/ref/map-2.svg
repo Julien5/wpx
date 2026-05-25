@@ -17,14 +17,14 @@
 <circle cx="214.9023865051522" cy="329.0583691537977" fill="Gray" id="18/wp/circle" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g>
-<circle cx="262.5239739882736" cy="311.0339054653159" fill="Black" id="18/wp/circle" r="5"/>
-<circle cx="262.5239739882736" cy="311.0339054653159" fill="white" id="18/wp/circle-little-white" r="3.5"/>
-<circle cx="262.5239739882736" cy="311.0339054653159" fill="black" id="18/wp/circle-little-white" r="2.5"/>
+<circle cx="262.5239739882736" cy="311.0339054653159" fill="Black" id="19/wp/circle" r="5"/>
+<circle cx="262.5239739882736" cy="311.0339054653159" fill="white" id="19/wp/circle-little-white" r="3.5"/>
+<circle cx="262.5239739882736" cy="311.0339054653159" fill="black" id="19/wp/circle-little-white" r="2.5"/>
 </g>
 <g transform="translate(262.5239739882736 311.0339054653159)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="82.53381578947369" x="4" y="-14"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="86.53381578947369" x="2" y="-16"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="18/wp/text" text-anchor="start" x="4.000" y="-4.000">
+<text font-size="14.0" font-style="normal" font-weight="bold" id="19/wp/text" text-anchor="start" x="4.000" y="-4.000">
 Kuppenheim
 </text>
 </g>

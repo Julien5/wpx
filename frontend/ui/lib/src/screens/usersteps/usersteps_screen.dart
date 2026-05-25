@@ -40,7 +40,7 @@ class _TextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Set<Kind> usersteps = {Kind.cutOff};
+    Kinds usersteps = [Kind.cutOff];
     SegmentModel model = Provider.of<SegmentModel>(context);
     Provider.of<ParameterModel>(context);
     List<Waypoint> waypoints = model.someWaypoints(usersteps);
@@ -57,7 +57,7 @@ class UserStepsScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    Set<Kind> usersteps = {Kind.cutOff};
+    Kinds usersteps = [Kind.cutOff];
 
     List<Widget> midChilren = [
       _TextWidget(),

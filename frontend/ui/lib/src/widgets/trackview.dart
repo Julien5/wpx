@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/futurerenderer.dart';
-import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/widgets/future_rendering_widget.dart';
 
 class RendererParameters {
-  final Set<Kind> kinds;
+  final Kinds kinds;
   final TrackData trackData;
   const RendererParameters({required this.kinds, required this.trackData});
 }

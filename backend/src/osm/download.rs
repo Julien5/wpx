@@ -1,14 +1,9 @@
 use reqwest::Client;
-use serde_json::Value;
 
 use crate::{
     error::{GenericResult, TrackError},
     event::{self},
-    inputpoint::{InputPoint, InputPointData, InputPoints, OSMData, Tags},
-    mercator,
     osm::DownloadSideData,
-    track_projection::TrackProjections,
-    wgs84point::WGS84Point,
 };
 
 use log;
@@ -50,14 +45,14 @@ async fn handle_response(response: reqwest::Response) -> GenericResult<String> {
     }
 }
 
-async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<String> {
+pub async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<String> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
     // let url = "https://overpass.private.coffee/api/interpreter";
     let client = Client::new();
     let request = client
         .post(url)
-        .header("User-Agent", "jbo/WPX")
+        .header("User-Agent", "julien5/WPX")
         .header("Accept", "*/*")
         .header("Accept-Language", "en-US,en;q=0.5")
         .header("Accept-Encoding", "gzip, deflate, br, zstd")
@@ -67,7 +62,7 @@ async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<Stri
         )
         .header("Origin", "https://overpass-turbo.eu")
         .header("Connection", "keep-alive")
-        .header("Referer", "https://overpass-turbo.eu/")
+        .header("Referer", "-")
         .header("Sec-Fetch-Dest", "empty")
         .header("Sec-Fetch-Mode", "cors")
         .header("Sec-Fetch-Site", "cross-site")
@@ -100,127 +95,4 @@ async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<Stri
             Err(e.into())
         }
     }*/
-}
-
-/*
-
-Grabener Höhe is tourism = viewpoint.
-To get it: node["tourism"="viewpoint"]({{bbox}});
-*/
-
-pub async fn all(bbox: &str, side: &DownloadSideData<'_>) -> GenericResult<String> {
-    if use_disk() {
-        //let data = std::fs::read_to_string("data/ref/overpass/dl.txt").unwrap();
-        //let data = std::fs::read_to_string("/tmp/dl.data").unwrap();
-        match std::fs::read_to_string("/tmp/dl.data") {
-            Ok(bytes) => {
-                return Ok(bytes);
-            }
-            Err(_) => {}
-        }
-    }
-    let timeout = 250;
-    let header = format!("[out:json][timeout:{}]", timeout);
-    let mut reqs = Vec::new();
-    reqs.push(format!("node[\"mountain_pass\"=\"yes\"]{}", bbox));
-    reqs.push(format!("node[\"natural\"=\"peak\"]{}", bbox));
-    reqs.push(format!("nwr[\"place\"=\"city\"]{}", bbox));
-    reqs.push(format!("nwr[\"place\"=\"town\"]{}", bbox));
-    reqs.push(format!("nwr[\"place\"=\"village\"]{}", bbox));
-    reqs.push(format!("nwr[\"place\"=\"hamlet\"]{}", bbox));
-    let body = reqs.join(";");
-    let footer = "out geom".to_string();
-    let request = format!("{};({};);{};", header, body, footer);
-    event::send_worker(&side.logger, &format!("{}", "send request"));
-    dl_worker(&request, side).await
-    //Err(TrackError::OSMDownloadCancelled.into())
-}
-
-fn read_f64(map: &serde_json::Map<String, Value>, name: &str) -> f64 {
-    map.get(name).unwrap().as_f64().unwrap()
-}
-
-fn read_tags(tags: &serde_json::Value) -> Tags {
-    let mut ret = Tags::new();
-    let map = tags.as_object().unwrap();
-    for (k, v) in map {
-        match v.as_str() {
-            Some(text) => {
-                ret.insert(k.to_string(), text.to_string());
-            }
-            None => {}
-        }
-    }
-    ret
-}
-
-fn read_download_element(
-    element: &serde_json::Value,
-    projection: &mercator::WebMercatorProjection,
-) -> Result<InputPoint, String> {
-    assert!(element.is_object());
-    let map = element.as_object().unwrap();
-    match map.get("type") {
-        Some(value) => {
-            if value != "node" {
-                return Err(format!("found {} (no node)", value));
-            }
-        }
-        None => {
-            return Err(format!("no city"));
-        }
-    }
-    let lat = read_f64(map, "lat");
-    let lon = read_f64(map, "lon");
-    let tags = read_tags(map.get("tags").unwrap());
-    let wgs = WGS84Point::new_lonlat(&lon, &lat);
-    let euclidean = projection.project(&wgs);
-    let ret = InputPoint {
-        wgs84: wgs,
-        euclidean,
-        data: InputPointData::OSM(OSMData { tags: tags }),
-        track_projections: TrackProjections::new(),
-    };
-    Ok(ret)
-}
-
-fn read_downloaded_elements(elements: &serde_json::Value) -> InputPoints {
-    assert!(elements.is_array());
-    let mut ret = Vec::new();
-    let projection = mercator::WebMercatorProjection::make();
-    for e in elements.as_array().unwrap() {
-        match read_download_element(e, &projection) {
-            Ok(point) => ret.push(point),
-            Err(_msg) => {
-                //log::info!("{} with {}", msg, e);
-            }
-        }
-    }
-    InputPoints { points: ret }
-}
-
-pub fn parse_osm_content(content: &[u8]) -> serde_json::Result<InputPoints> {
-    let json: serde_json::Value = serde_json::from_slice(content)?;
-    assert!(json.is_object());
-    //assert!(json.as_object().unwrap().len() == 1);
-    let mut ret = Vec::new();
-    let map = json.as_object().unwrap();
-    ret.extend(read_downloaded_elements(map.get("elements").unwrap()).points);
-    Ok(InputPoints { points: ret })
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{math::Point2D, track::WGS84BoundingBox};
-
-    use super::*;
-    #[test]
-    fn download() {
-        //let bbox = "(47.86,9.66,48.17,10.80)";
-        let _bbox = WGS84BoundingBox::minmax(Point2D::new(47.86, 9.66), Point2D::new(48.17, 10.80));
-        let _place = "village";
-        let _json = ""; //dl(&bbox, place).unwrap();
-        let json = ""; //dl_passes(&bbox).unwrap();
-        log::info!("ret={}", json);
-    }
 }

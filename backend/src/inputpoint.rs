@@ -78,6 +78,7 @@ impl ControlData {
 #[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct OSMData {
     pub tags: Tags,
+    pub osmid: String,
 }
 
 impl OSMData {
@@ -527,7 +528,7 @@ impl InputPointMap {
         serde_json::to_string(&entries)
     }
 
-    pub fn from_vector(points: &Vec<InputPoint>) -> InputPointMap {
+    pub fn from_points(points: &[InputPoint]) -> InputPointMap {
         let mut ret = InputPointMap::new();
         for w in points {
             ret.insert_point(&w);

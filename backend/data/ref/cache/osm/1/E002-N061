@@ -1,0 +1,246 @@
+{
+  "tiles": {},
+  "chunks": {
+    "2,61": [
+      {
+        "id": "26691400",
+        "wgs84": [
+          2.6335912,
+          48.5381859,
+          0.0
+        ],
+        "euc": [
+          293170.03134164633,
+          6196861.419297087
+        ],
+        "tags": {
+          "addr:postcode": "77350",
+          "name": "Le Mée-sur-Seine",
+          "name:fa": "لومه سور سن",
+          "name:ja": "ル・メ＝シュル＝セーヌ",
+          "name:kk": "Ле-Ме-сюр-Сен",
+          "name:ru": "Ле-Ме-сюр-Сен",
+          "name:uk": "Ле-Ме-сюр-Сен",
+          "place": "town",
+          "population": "20207",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217702851",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1058178",
+          "wikipedia": "fr:Le Mée-sur-Seine"
+        }
+      },
+      {
+        "id": "26692092",
+        "wgs84": [
+          2.6608169,
+          48.539927,
+          0.0
+        ],
+        "euc": [
+          296200.7824021367,
+          6197154.147927156
+        ],
+        "tags": {
+          "addr:postcode": "77000",
+          "capital": "6",
+          "name": "Melun",
+          "name:ar": "مولن",
+          "name:el": "Μελέν",
+          "name:fa": "مولن",
+          "name:hi": "मेलुन",
+          "name:hy": "Մելյոն",
+          "name:ja": "ムラン",
+          "name:kk": "Мелен",
+          "name:ko": "믈룅",
+          "name:ru": "Мелён",
+          "name:uk": "Мелен",
+          "name:zh": "默伦",
+          "place": "town",
+          "population": "42367",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217702885",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q41139",
+          "wikipedia": "fr:Melun"
+        }
+      },
+      {
+        "id": "26692528",
+        "wgs84": [
+          2.5273471,
+          48.5361215,
+          0.0
+        ],
+        "euc": [
+          281342.99222985667,
+          6196514.34775009
+        ],
+        "tags": {
+          "addr:postcode": "77310",
+          "name": "Saint-Fargeau-Ponthierry",
+          "name:el": "Σαιν-Φαρζώ-Ποντιερί",
+          "name:ja": "サン＝ファルジョー＝ポンティエリー",
+          "name:ko": "생-파르조-퐁티에리",
+          "name:uk": "Сен-Фаржо-Понтьєррі",
+          "name:zh": "圣法尔若蓬蒂耶里",
+          "place": "town",
+          "population": "14516",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q271845",
+          "wikipedia": "fr:Saint-Fargeau-Ponthierry"
+        }
+      },
+      {
+        "id": "26692529",
+        "wgs84": [
+          2.1614464,
+          48.4344621,
+          0.0
+        ],
+        "euc": [
+          240611.11262495432,
+          6179440.617951632
+        ],
+        "tags": {
+          "addr:postcode": "91150",
+          "capital": "7",
+          "name": "Étampes",
+          "name:br": "Etampez",
+          "name:el": "Ετάμπ",
+          "name:ja": "エタンプ",
+          "name:ko": "에탕프",
+          "name:oc": "Estampas",
+          "name:ru": "Этамп",
+          "name:uk": "Етамп",
+          "name:zh": "埃唐普",
+          "old_name:it": "Stampa",
+          "place": "town",
+          "population": "26529",
+          "population:date": "2021",
+          "source:name:br": "proper translation",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q205584",
+          "wikipedia": "fr:Étampes"
+        }
+      },
+      {
+        "id": "26695336",
+        "wgs84": [
+          2.6831642,
+          48.5255542,
+          0.0
+        ],
+        "euc": [
+          298688.4724587413,
+          6194737.971227958
+        ],
+        "tags": {
+          "addr:postcode": "77000",
+          "name": "Vaux-le-Pénil",
+          "name:el": "Βω-λε-Πενίλ",
+          "name:ja": "ヴォ＝ル＝ペニル",
+          "name:ru": "Во-ле-Пениль",
+          "name:uk": "Во-ле-Пеній",
+          "name:zh": "沃勒佩尼勒",
+          "place": "town",
+          "population": "11174",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q242983",
+          "wikipedia": "fr:Vaux-le-Pénil"
+        }
+      },
+      {
+        "id": "26695763",
+        "wgs84": [
+          2.0153689,
+          48.5288442,
+          0.0
+        ],
+        "euc": [
+          224349.83970859987,
+          6195290.984657121
+        ],
+        "tags": {
+          "addr:postcode": "91410",
+          "name": "Dourdan",
+          "name:el": "Ντουρντάν",
+          "name:hi": "डोरडान",
+          "name:hy": "Դուրդան",
+          "name:ja": "ドゥロゥダン",
+          "name:ru": "Дурдан",
+          "name:uk": "Дурдан",
+          "name:zh": "杜尔当",
+          "place": "town",
+          "population": "11279",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q646609"
+        }
+      },
+      {
+        "id": "26695783",
+        "wgs84": [
+          2.2544871,
+          48.1738051,
+          0.0
+        ],
+        "euc": [
+          250968.355972004,
+          6135818.672239715
+        ],
+        "tags": {
+          "capital": "7",
+          "name": "Pithiviers",
+          "name:el": "Πιτιβιέ",
+          "name:hy": "Պիտովիե",
+          "name:ja": "ピティヴィエ",
+          "name:ko": "삐띠비에",
+          "name:ru": "Питивье",
+          "name:uk": "Пітів'є",
+          "name:zh": "皮蒂维耶",
+          "place": "town",
+          "population": "9094",
+          "population:date": "2021",
+          "postal_code": "45300",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q217159",
+          "wikipedia": "fr:Pithiviers"
+        }
+      },
+      {
+        "id": "331848744",
+        "wgs84": [
+          2.6347018,
+          48.5150876,
+          0.0
+        ],
+        "euc": [
+          293293.66276812134,
+          6192978.887829956
+        ],
+        "tags": {
+          "addr:postcode": "77190",
+          "name": "Dammarie-les-Lys",
+          "name:el": "Νταμαρί-λε-Λις",
+          "name:fa": "دمری للیس",
+          "name:ja": "ダンマリー＝レ＝リス",
+          "name:kk": "Даммари-ле-Ли",
+          "name:ko": "다마리레리",
+          "name:ru": "Даммари-ле-Ли",
+          "name:uk": "Даммарі-ле-Лі",
+          "name:zh": "达马里莱利斯",
+          "place": "town",
+          "population": "22845",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217701523",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q245095",
+          "wikipedia": "fr:Dammarie-les-Lys"
+        }
+      }
+    ]
+  }
+}

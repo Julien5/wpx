@@ -74,7 +74,7 @@ class UserStepsTableScaffold extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8), // Rounded corners
             ),
-            child: GPXTable(kinds: {Kind.cutOff}),
+            child: GPXTable(kinds: [Kind.cutOff]),
           ),
         ),
         Divider(),

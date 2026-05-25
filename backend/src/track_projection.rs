@@ -126,6 +126,7 @@ where
     best_idx
 }
 
+#[derive(Clone)]
 pub struct ProjectionTrees {
     total_tree: locate::IndexedPointsTree,
     graphics_tree: locate::IndexedPointsTree,

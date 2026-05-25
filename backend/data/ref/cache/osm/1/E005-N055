@@ -1,0 +1,262 @@
+{
+  "tiles": {},
+  "chunks": {
+    "5,55": [
+      {
+        "id": "26691414",
+        "wgs84": [
+          4.6976609,
+          44.3778474,
+          0.0
+        ],
+        "euc": [
+          522941.21930747124,
+          5524102.349422977
+        ],
+        "tags": {
+          "addr:postcode": "26700",
+          "name": "Pierrelatte",
+          "name:ca": "Pèiralata",
+          "name:en": "Pierrelatte",
+          "name:fr": "Pierrelatte",
+          "name:ja": "ピエールラット",
+          "name:oc": "Pèiralata",
+          "name:uk": "П’єррлатт",
+          "name:zh": "皮耶尔雷拉特",
+          "place": "town",
+          "population": "13799",
+          "population:date": "2021",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "website": "https://www.ville-pierrelatte.fr/",
+          "wikidata": "Q324027",
+          "wikipedia": "fr:Pierrelatte"
+        }
+      },
+      {
+        "id": "26691933",
+        "wgs84": [
+          4.7484092,
+          44.2803882,
+          0.0
+        ],
+        "euc": [
+          528590.4942220956,
+          5508935.929093079
+        ],
+        "tags": {
+          "award:fleurs": "2",
+          "name": "Bollène",
+          "name:ja": "ボレーヌ",
+          "name:oc": "Abolena",
+          "name:ru": "Боллен",
+          "name:uk": "Боллен",
+          "name:zh": "博莱讷",
+          "place": "town",
+          "population": "13605",
+          "population:date": "2021",
+          "postal_code": "84500",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q331579",
+          "wikipedia": "fr:Bollène"
+        }
+      },
+      {
+        "id": "26691936",
+        "wgs84": [
+          4.5986733,
+          44.7352708,
+          0.0
+        ],
+        "euc": [
+          511921.970080623,
+          5579941.128982957
+        ],
+        "tags": {
+          "addr:postcode": "07000",
+          "capital": "6",
+          "name": "Privas",
+          "name:el": "Πριβά",
+          "name:hy": "Պրիվա",
+          "name:ja": "プリヴァ",
+          "name:ko": "프리바",
+          "name:oc": "Privàs",
+          "name:ru": "Прива",
+          "name:th": "พรีวา",
+          "name:uk": "Прива",
+          "name:zh": "普里瓦",
+          "place": "town",
+          "population": "8541",
+          "population:date": "2021",
+          "ref:FR:SIREN": "210701868",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "website": "https://www.mairie-privas.fr/",
+          "wikidata": "Q193060",
+          "wikipedia": "fr:Privas"
+        }
+      },
+      {
+        "id": "26692095",
+        "wgs84": [
+          4.750318,
+          44.5579391,
+          0.0
+        ],
+        "euc": [
+          528802.9808661217,
+          5552194.459283602
+        ],
+        "tags": {
+          "addr:postcode": "26200",
+          "name": "Montélimar",
+          "name:br": "Montelaimar",
+          "name:ca": "Montelaimar",
+          "name:el": "Μοντελιμάρ",
+          "name:fa": "مونتلیمر",
+          "name:fr": "Montélimar",
+          "name:ja": "モンテリマール",
+          "name:mzn": "مونتلیمر",
+          "name:oc": "Montelaimar",
+          "name:ru": "Монтелимар",
+          "name:sr": "Монтелимар",
+          "name:uk": "Монтелімар",
+          "name:zh": "蒙特利馬爾",
+          "place": "town",
+          "population": "40399",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212601983",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q234270",
+          "wikipedia": "fr:Montélimar"
+        }
+      },
+      {
+        "id": "26695375",
+        "wgs84": [
+          5.075737,
+          44.2407641,
+          0.0
+        ],
+        "euc": [
+          565028.458240578,
+          5502776.89474298
+        ],
+        "tags": {
+          "addr:postcode": "84110",
+          "name": "Vaison-la-Romaine",
+          "name:ja": "ヴェゾン＝ラ＝ロメーヌ",
+          "name:oc": "Vaison",
+          "name:ru": "Везон-ла-Ромен",
+          "name:uk": "Везон-ла-Ромен",
+          "name:zh": "韦松拉罗迈讷",
+          "place": "town",
+          "population": "5929",
+          "population:date": "2021",
+          "ref:FR:SIREN": "218401370",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q504887",
+          "wikipedia": "fr:Vaison-la-Romaine"
+        }
+      },
+      {
+        "id": "26695844",
+        "wgs84": [
+          4.9906089,
+          44.3851455,
+          0.0
+        ],
+        "euc": [
+          555552.0414963791,
+          5525239.08143923
+        ],
+        "tags": {
+          "addr:postcode": "84600",
+          "name": "Valréas",
+          "name:el": "Βαλρεάς",
+          "name:ja": "ヴァルレアス",
+          "name:oc": "Vauriaç",
+          "name:ru": "Вальреас",
+          "name:tr": "Velriya",
+          "name:uk": "Вальреас",
+          "name:zh": "瓦尔雷阿斯",
+          "place": "town",
+          "population": "9346",
+          "population:date": "2021",
+          "ref:FR:SIREN": "218401388",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q478921",
+          "wikipedia": "fr:Valréas"
+        }
+      },
+      {
+        "id": "26696677",
+        "wgs84": [
+          4.6456631,
+          44.2538589,
+          0.0
+        ],
+        "euc": [
+          517152.85068910074,
+          5504811.846431607
+        ],
+        "tags": {
+          "addr:postcode": "30130",
+          "name": "Pont-Saint-Esprit",
+          "name:el": "Πον-Σαιντ-Εσπρί",
+          "name:ja": "ポン＝サン＝テスプリ",
+          "name:ko": "퐁생테스프리",
+          "name:oc": "Lo Pònt de Sant Esperit",
+          "name:ru": "Пон-Сент-Эспри",
+          "name:uk": "Пон-Сент-Еспрі",
+          "name:zh": "蓬圣埃斯普里",
+          "place": "town",
+          "population": "10600",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213002025",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q243074"
+        }
+      },
+      {
+        "id": "26696780",
+        "wgs84": [
+          5.1408743,
+          44.3611931,
+          0.0
+        ],
+        "euc": [
+          572279.5093082268,
+          5521508.85183179
+        ],
+        "tags": {
+          "capital": "7",
+          "name": "Nyons",
+          "name:el": "Νιόνς",
+          "name:hy": "Նոն",
+          "name:ja": "ニヨン",
+          "name:ko": "니옹",
+          "name:oc": "Niom",
+          "name:ru": "Ньон",
+          "name:uk": "Ніон",
+          "name:zh": "尼永斯",
+          "place": "town",
+          "population": "6771",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212602205",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "website": "https://www.nyons.com/",
+          "wikidata": "Q209810",
+          "wikipedia": "fr:Nyons",
+          "wikipedia:oc": "oc:Niom"
+        }
+      }
+    ]
+  }
+}

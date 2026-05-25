@@ -1,0 +1,1038 @@
+{
+  "tiles": {},
+  "chunks": {
+    "11,61": [
+      {
+        "id": "1628636302",
+        "wgs84": [
+          10.3052357,
+          48.3711004,
+          0.0
+        ],
+        "euc": [
+          1147173.5906286642,
+          6168816.27599243
+        ],
+        "tags": {
+          "name": "Ichenhausen",
+          "name:als": "Ichahausa",
+          "name:ar": "إشنهاوزن",
+          "name:de": "Ichenhausen",
+          "name:fa": "ایشن‌هاوزن",
+          "name:hy": "Իխենհաուզեն",
+          "name:ru": "Ихенхаузен",
+          "name:uk": "Іхенгаузен",
+          "name:zh": "伊兴豪森",
+          "place": "town",
+          "population": "8529",
+          "wikidata": "Q503202",
+          "wikipedia": "de:Ichenhausen"
+        }
+      },
+      {
+        "id": "1683130862",
+        "wgs84": [
+          10.6403492,
+          48.0625736,
+          0.0
+        ],
+        "euc": [
+          1184478.2548066156,
+          6117271.172761462
+        ],
+        "tags": {
+          "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "name": "Türkheim",
+          "name:als": "Tirke",
+          "name:fa": "تورکهایم",
+          "name:ru": "Тюркхайм",
+          "name:sr": "Тиркхајм",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Türkheim",
+          "openGeoDB:community_identification_number": "09778203",
+          "openGeoDB:is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "475",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "MN",
+          "openGeoDB:loc_id": "25137",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Türkheim, Wertach",
+          "openGeoDB:population": "6644",
+          "openGeoDB:postal_codes": "86842",
+          "openGeoDB:sort_name": "TUERKHEIM",
+          "openGeoDB:telephone_area_code": "08245",
+          "openGeoDB:type": "Markt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "6998",
+          "wikidata": "Q552257",
+          "wikipedia": "de:Türkheim"
+        }
+      },
+      {
+        "id": "1685809860",
+        "wgs84": [
+          10.4882504,
+          48.0464164,
+          0.0
+        ],
+        "euc": [
+          1167546.693840348,
+          6114580.346758144
+        ],
+        "tags": {
+          "name": "Mindelheim",
+          "name:als": "Mindelhoi",
+          "name:ar": "ميندلهايم",
+          "name:de": "Mindelheim",
+          "name:fa": "میندلهایم",
+          "name:hy": "Մինդելհայմ",
+          "name:ka": "მინდელჰაიმი",
+          "name:la": "Mindelhemium",
+          "name:ru": "Миндельхайм",
+          "name:sr": "Минделхајм",
+          "name:zh": "明德尔海姆",
+          "place": "town",
+          "population": "15108",
+          "website": "https://www.mindelheim.de",
+          "wikidata": "Q518579",
+          "wikipedia": "de:Mindelheim"
+        }
+      },
+      {
+        "id": "1699831958",
+        "wgs84": [
+          9.9912458,
+          48.3984968,
+          0.0
+        ],
+        "euc": [
+          1112220.3948464333,
+          6173408.416445953
+        ],
+        "tags": {
+          "name": "Ulm",
+          "name:ar": "أولم",
+          "name:be": "Ульм",
+          "name:bg": "Улм",
+          "name:bn": "উল্‌ম",
+          "name:ce": "Ульм",
+          "name:cv": "Ульм",
+          "name:de": "Ulm",
+          "name:dsb": "Ulm",
+          "name:el": "Ουλμ",
+          "name:en": "Ulm",
+          "name:fa": "اولم",
+          "name:fr": "Ulm",
+          "name:he": "אולם",
+          "name:hi": "ऊल्म",
+          "name:hy": "Ուլմ",
+          "name:it": "Ulmo",
+          "name:ja": "ウルム",
+          "name:ka": "ულმი",
+          "name:kk": "Ульм",
+          "name:ko": "울름",
+          "name:ky": "Ульм",
+          "name:la": "Ulma",
+          "name:lt": "Ulmas",
+          "name:lv": "Ulma",
+          "name:mk": "Улм",
+          "name:ml": "ഉൽമ്",
+          "name:mr": "उल्म",
+          "name:nl": "Ulm",
+          "name:os": "Ульм",
+          "name:ro": "Ulm",
+          "name:ru": "Ульм",
+          "name:sr": "Улм",
+          "name:ta": "உல்ம்",
+          "name:tg": "Улм",
+          "name:th": "อุล์ม",
+          "name:tt": "Ульм",
+          "name:uk": "Ульм",
+          "name:ur": "اولم",
+          "name:zh": "乌尔姆",
+          "name:zh-Hant": "烏爾姆",
+          "place": "city",
+          "population": "121648",
+          "ref:LOCODE": "DEULM",
+          "website": "http://www.ulm.de/ulm/",
+          "wikidata": "Q3012",
+          "wikimedia_commons": "Category:Ulm",
+          "wikipedia": "de:Ulm"
+        }
+      },
+      {
+        "id": "171650377",
+        "wgs84": [
+          10.2766213,
+          48.4555244,
+          0.0
+        ],
+        "euc": [
+          1143988.250191309,
+          6182975.228982305
+        ],
+        "tags": {
+          "ele": "446",
+          "name": "Günzburg",
+          "name:als": "Genzburg",
+          "name:ar": "غونتسبورغ",
+          "name:azb": "قونتسبورق",
+          "name:bar": "Günzburg",
+          "name:be": "Гюнцбург",
+          "name:de": "Günzburg",
+          "name:es": "Gunzburgo",
+          "name:fa": "گونتسبورگ",
+          "name:fr": "Guntzbourg",
+          "name:la": "Guntia",
+          "name:pt": "Gunzburgo",
+          "name:ru": "Гюнцбург",
+          "name:sr": "Гинцбург",
+          "name:th": "กึนทซ์บวร์ค",
+          "name:uk": "Ґюнцбурґ",
+          "name:ur": "گونتسبورگ",
+          "place": "town",
+          "population": "21028",
+          "postal_code": "89312",
+          "wikidata": "Q32518590"
+        }
+      },
+      {
+        "id": "240027364",
+        "wgs84": [
+          10.4071961,
+          48.4317081,
+          0.0
+        ],
+        "euc": [
+          1158523.7704377428,
+          6178978.558394934
+        ],
+        "tags": {
+          "ele": "462",
+          "name": "Burgau",
+          "name:als": "Burga",
+          "name:ru": "Бургау",
+          "name:sr": "Бургау",
+          "name:zh": "布尔高",
+          "openGeoDB:community_identification_number": "09774121",
+          "openGeoDB:license_plate_code": "GZ",
+          "openGeoDB:loc_id": "15175",
+          "openGeoDB:telephone_area_code": "08222",
+          "place": "town",
+          "population": "8399",
+          "population:date": "01.09.2024",
+          "source:population": "https://www.burgau.de/Leben-Arbeiten/Stadtportrait/Zahlen-Daten",
+          "wikidata": "Q505896",
+          "wikipedia": "de:Burgau"
+        }
+      },
+      {
+        "id": "240035515",
+        "wgs84": [
+          10.1053373,
+          48.222924,
+          0.0
+        ],
+        "euc": [
+          1124921.002530274,
+          6144021.8989595035
+        ],
+        "tags": {
+          "ele": "513",
+          "is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "name": "Illertissen",
+          "name:als": "Dissa",
+          "name:ar": "إلرتيسن",
+          "name:fa": "ایلرتیسن",
+          "name:hy": "Իլերթիսեն",
+          "name:ru": "Иллертиссен",
+          "name:sr": "Илертисен",
+          "name:zh": "伊莱尔蒂森",
+          "openGeoDB:community_identification_number": "09775129",
+          "openGeoDB:is_in_loc_id": "266",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "NU",
+          "openGeoDB:loc_id": "18802",
+          "openGeoDB:telephone_area_code": "07303",
+          "place": "town",
+          "population": "16775",
+          "postal_code": "89257",
+          "wikidata": "Q503295",
+          "wikipedia": "de:Illertissen"
+        }
+      },
+      {
+        "id": "240036844",
+        "wgs84": [
+          10.1808016,
+          47.9863099,
+          0.0
+        ],
+        "euc": [
+          1133321.6499793448,
+          6104577.592160668
+        ],
+        "tags": {
+          "ele": "601",
+          "name": "Memmingen",
+          "name:bar": "Memmingen",
+          "name:ja": "メミンゲン",
+          "name:ko": "메밍겐",
+          "name:ml": "മെമ്മിങ്കൻ",
+          "name:ru": "Мемминген",
+          "name:sr": "Меминген",
+          "name:uk": "Меммінґен",
+          "name:zh": "梅明根",
+          "place": "town",
+          "population": "45343",
+          "postal_code": "87700",
+          "wikidata": "Q138823489"
+        }
+      },
+      {
+        "id": "240043070",
+        "wgs84": [
+          10.7776154,
+          48.3546523,
+          0.0
+        ],
+        "euc": [
+          1199758.6582937434,
+          6166060.458798649
+        ],
+        "tags": {
+          "ele": "485",
+          "name": "Diedorf",
+          "name:als": "Diadorf",
+          "name:de": "Diedorf",
+          "name:fa": "دیدورف",
+          "name:hy": "Դիդորֆ",
+          "name:ru": "Дидорф",
+          "name:sr": "Дидорф",
+          "name:zh": "迪多夫",
+          "openGeoDB:community_identification_number": "09772130",
+          "openGeoDB:license_plate_code": "A",
+          "openGeoDB:loc_id": "15574",
+          "openGeoDB:telephone_area_code": "08238",
+          "place": "town",
+          "population": "10229",
+          "postal_code": "86420",
+          "start_date": "1056",
+          "website": "https://www.markt-diedorf.de/",
+          "wikidata": "Q506614",
+          "wikipedia": "de:Diedorf"
+        }
+      },
+      {
+        "id": "240046109",
+        "wgs84": [
+          10.0471189,
+          48.3251884,
+          0.0
+        ],
+        "euc": [
+          1118440.159887475,
+          6161126.116643513
+        ],
+        "tags": {
+          "ele": "486",
+          "is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "name": "Senden",
+          "name:als": "Senda",
+          "name:ru": "Зенден",
+          "name:sr": "Зенден",
+          "name:uk": "Зенден",
+          "openGeoDB:community_identification_number": "09775152",
+          "openGeoDB:license_plate_code": "NU",
+          "openGeoDB:loc_id": "24200",
+          "openGeoDB:telephone_area_code": "07307",
+          "place": "town",
+          "population": "22332",
+          "postal_code": "89250",
+          "website": "https://www.stadt-senden.de/",
+          "wikidata": "Q502627",
+          "wikipedia": "de:Senden (Bayern)"
+        }
+      },
+      {
+        "id": "240048870",
+        "wgs84": [
+          10.1210951,
+          48.4995693,
+          0.0
+        ],
+        "euc": [
+          1126675.1528022962,
+          6190371.452283086
+        ],
+        "tags": {
+          "name": "Langenau",
+          "name:ar": "لانغناو",
+          "name:ka": "ლანგენაუ",
+          "name:prefix": "Stadt",
+          "name:ru": "Лангенау",
+          "name:sr": "Лангенау",
+          "name:zh": "兰格瑙",
+          "place": "town",
+          "population": "14244",
+          "wikidata": "Q559520",
+          "wikipedia": "de:Langenau"
+        }
+      },
+      {
+        "id": "240052220",
+        "wgs84": [
+          10.2540507,
+          48.143242,
+          0.0
+        ],
+        "euc": [
+          1141475.7024924105,
+          6130718.369506338
+        ],
+        "tags": {
+          "name": "Babenhausen",
+          "place": "town",
+          "wikidata": "Q566620"
+        }
+      },
+      {
+        "id": "240059139",
+        "wgs84": [
+          10.0700937,
+          48.2111094,
+          0.0
+        ],
+        "euc": [
+          1120997.7029245521,
+          6142048.053124355
+        ],
+        "tags": {
+          "name": "Dietenheim",
+          "name:ar": "ديتنهايم",
+          "name:de": "Dietenheim",
+          "name:en": "Dietenheim",
+          "name:fa": "دیتنهایم",
+          "name:ru": "Дитенхайм",
+          "name:sr": "Дитенхајм",
+          "name:swg": "Diadahõẽ",
+          "name:uk": "Дітенгайм",
+          "name:zh": "迪滕海姆",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Dietenheim",
+          "openGeoDB:community_identification_number": "08425028",
+          "openGeoDB:is_in_loc_id": "607",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "UL",
+          "openGeoDB:loc_id": "15607",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:postal_codes": "89165",
+          "openGeoDB:sort_name": "DIETENHEIM",
+          "openGeoDB:telephone_area_code": "07347",
+          "openGeoDB:type": "Stadt",
+          "place": "town",
+          "population": "6622",
+          "wikidata": "Q206649",
+          "wikipedia": "de:Dietenheim"
+        }
+      },
+      {
+        "id": "240067808",
+        "wgs84": [
+          9.8913803,
+          48.3274603,
+          0.0
+        ],
+        "euc": [
+          1101103.4182386177,
+          6161506.492043157
+        ],
+        "tags": {
+          "ele": "529",
+          "name": "Erbach",
+          "name:als": "Ärrbach",
+          "name:ar": "إرباخ",
+          "name:fa": "ارباخ",
+          "name:hy": "Էրբախ",
+          "name:ka": "ერბახი",
+          "name:ru": "Эрбах",
+          "name:sr": "Ербах",
+          "openGeoDB:community_identification_number": "08425039",
+          "openGeoDB:license_plate_code": "UL",
+          "openGeoDB:loc_id": "16249",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:telephone_area_code": "07305",
+          "place": "town",
+          "population": "13224",
+          "wikidata": "Q505920",
+          "wikipedia": "de:Erbach (Donau)"
+        }
+      },
+      {
+        "id": "240077484",
+        "wgs84": [
+          10.3678266,
+          48.5534351,
+          0.0
+        ],
+        "euc": [
+          1154141.177744957,
+          6199425.587446633
+        ],
+        "tags": {
+          "name": "Gundelfingen an der Donau",
+          "name:als": "Gundelfinga",
+          "name:ru": "Гундельфинген-ан-дер-Донау",
+          "name:sr": "Гунделфинген на Дунаву",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Gundelfingen an der Donau",
+          "openGeoDB:community_identification_number": "09773136",
+          "openGeoDB:is_in": "Dillingen an der Donau,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "482",
+          "openGeoDB:license_plate_code": "DLG",
+          "openGeoDB:loc_id": "17686",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Gundelfingen an der Donau",
+          "openGeoDB:population": "7854",
+          "openGeoDB:postal_codes": "89423",
+          "openGeoDB:sort_name": "GUNDELFINGEN",
+          "openGeoDB:telephone_area_code": "09073",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "7854",
+          "wikidata": "Q509648",
+          "wikipedia": "de:Gundelfingen an der Donau"
+        }
+      },
+      {
+        "id": "240086658",
+        "wgs84": [
+          10.2213539,
+          48.4487175,
+          0.0
+        ],
+        "euc": [
+          1137835.9113658408,
+          6181832.755435994
+        ],
+        "tags": {
+          "is_in": "Günzburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "name": "Leipheim",
+          "name:als": "Leiba",
+          "name:ar": "لايبهايم",
+          "name:fa": "لایپهایم",
+          "name:ru": "Лайпхайм",
+          "name:sr": "Лајпхајм",
+          "name:zh": "莱普海姆",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "09774155",
+          "openGeoDB:is_in": "Günzburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "245",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "GZ",
+          "openGeoDB:loc_id": "20110",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Leipheim",
+          "openGeoDB:population": "6800",
+          "openGeoDB:postal_codes": "89340",
+          "openGeoDB:sort_name": "LEIPHEIM",
+          "openGeoDB:telephone_area_code": "09132",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "6800",
+          "wikidata": "Q504354",
+          "wikimedia_commons": "Category:Leipheim",
+          "wikipedia": "de:Leipheim"
+        }
+      },
+      {
+        "id": "240089975",
+        "wgs84": [
+          10.6554555,
+          48.2902043,
+          0.0
+        ],
+        "euc": [
+          1186159.8804303864,
+          6155271.002474301
+        ],
+        "tags": {
+          "name": "Fischach",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "09772141",
+          "openGeoDB:is_in": "Augsburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "479",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "A",
+          "openGeoDB:loc_id": "16507",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Fischach, Schwaben",
+          "openGeoDB:population": "4678",
+          "openGeoDB:postal_codes": "86850",
+          "openGeoDB:sort_name": "FISCHACH",
+          "openGeoDB:telephone_area_code": "08236",
+          "openGeoDB:type": "Markt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "4678"
+        }
+      },
+      {
+        "id": "240095854",
+        "wgs84": [
+          9.9187625,
+          48.4159247,
+          0.0
+        ],
+        "euc": [
+          1104151.590799417,
+          6176330.940065583
+        ],
+        "tags": {
+          "de:amtlicher_gemeindeschluessel": "08425141",
+          "name": "Blaustein",
+          "name:als": "Blauschdoi",
+          "name:hy": "Բլաուշտայն",
+          "name:ru": "Блауштайн",
+          "name:sr": "Блауштајн",
+          "name:zh": "布劳斯泰因",
+          "place": "town",
+          "population": "15113",
+          "wikidata": "Q535646",
+          "wikipedia": "de:Blaustein"
+        }
+      },
+      {
+        "id": "240105080",
+        "wgs84": [
+          10.0832982,
+          48.2833039,
+          0.0
+        ],
+        "euc": [
+          1122467.621140732,
+          6154116.590673007
+        ],
+        "tags": {
+          "ele": "499",
+          "is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "name": "Vöhringen",
+          "name:als": "Vehrenge",
+          "name:ru": "Фёринген",
+          "name:sr": "Феринген",
+          "openGeoDB:community_identification_number": "09775162",
+          "openGeoDB:license_plate_code": "NU",
+          "openGeoDB:loc_id": "25432",
+          "openGeoDB:telephone_area_code": "07306",
+          "place": "town",
+          "population": "13084",
+          "wikidata": "Q534593",
+          "wikipedia": "de:Vöhringen (Iller)"
+        }
+      },
+      {
+        "id": "240110473",
+        "wgs84": [
+          10.3631004,
+          48.2430587,
+          0.0
+        ],
+        "euc": [
+          1153615.0595675698,
+          6147386.820338112
+        ],
+        "tags": {
+          "addr:country": "DE",
+          "name": "Krumbach (Schwaben)",
+          "name:als": "Krombach",
+          "name:ar": "كرومباخ",
+          "name:fa": "کرومباخ",
+          "name:hy": "Կրումբախ",
+          "name:ru": "Крумбах",
+          "name:sr": "Крумбах",
+          "place": "town",
+          "population": "12729",
+          "website": "https://www.krumbach.de/",
+          "wikidata": "Q504803",
+          "wikipedia": "de:Krumbach (Schwaben)"
+        }
+      },
+      {
+        "id": "240118822",
+        "wgs84": [
+          10.4682347,
+          48.2829292,
+          0.0
+        ],
+        "euc": [
+          1165318.556308477,
+          6154053.909191374
+        ],
+        "tags": {
+          "ele": "499",
+          "name": "Thannhausen",
+          "name:als": "Deahausa",
+          "name:ar": "تانهاوزن",
+          "name:de": "Thannhausen",
+          "name:fa": "تان‌هاوزن",
+          "name:ru": "Таннхаузен",
+          "name:sr": "Танхаузен",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Thannhausen",
+          "openGeoDB:community_identification_number": "09774185",
+          "openGeoDB:license_plate_code": "GZ",
+          "openGeoDB:loc_id": "24928",
+          "openGeoDB:telephone_area_code": "08281",
+          "place": "town",
+          "population": "5955",
+          "postal_code": "86470",
+          "wikidata": "Q266156",
+          "wikipedia": "de:Thannhausen (Schwaben)"
+        }
+      },
+      {
+        "id": "31372618",
+        "wgs84": [
+          9.8837005,
+          48.2300738,
+          0.0
+        ],
+        "euc": [
+          1100248.5068132235,
+          6145216.625597154
+        ],
+        "tags": {
+          "ele": "528",
+          "name": "Laupheim",
+          "name:als": "Laoba",
+          "name:ar": "لاوبهايم",
+          "name:fa": "لاوپهایم",
+          "name:hy": "Լաուպհայմ",
+          "name:ka": "ლაუპჰაიმი",
+          "name:ru": "Лаупхайм",
+          "name:sr": "Лаупхајм",
+          "name:uk": "Лаупгайм",
+          "name:zh": "劳普海姆",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Laupheim",
+          "openGeoDB:community_identification_number": "08426070",
+          "openGeoDB:is_in_loc_id": "367",
+          "openGeoDB:license_plate_code": "BC",
+          "openGeoDB:loc_id": "20022",
+          "openGeoDB:telephone_area_code": "07392",
+          "place": "town",
+          "population": "20213",
+          "postal_code": "88471",
+          "wikidata": "Q574314",
+          "wikipedia": "de:Laupheim"
+        }
+      },
+      {
+        "id": "31372619",
+        "wgs84": [
+          9.9512104,
+          48.0711222,
+          0.0
+        ],
+        "euc": [
+          1107763.6745047283,
+          6118695.201388321
+        ],
+        "tags": {
+          "name": "Ochsenhausen",
+          "name:prefix": "Stadt",
+          "place": "town",
+          "population": "8985",
+          "wikidata": "Q522526"
+        }
+      },
+      {
+        "id": "320828778",
+        "wgs84": [
+          10.5964024,
+          48.3996568,
+          0.0
+        ],
+        "euc": [
+          1179586.119408622,
+          6173602.9083389025
+        ],
+        "tags": {
+          "name": "Zusmarshausen",
+          "name:als": "Zomerhouse",
+          "name:de": "Zusmarshausen",
+          "name:hy": "Ցուսմարսհաուզեն",
+          "name:ru": "Цусмарсхаузен",
+          "name:zh": "楚斯马尔斯豪森",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:community_identification_number": "09772223",
+          "openGeoDB:is_in": "Augsburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "479",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "A",
+          "openGeoDB:loc_id": "26684",
+          "openGeoDB:name": "Zusmarshausen",
+          "openGeoDB:population": "6348",
+          "openGeoDB:postal_codes": "86441",
+          "openGeoDB:sort_name": "ZUSMARSHAUSEN",
+          "openGeoDB:telephone_area_code": "08291",
+          "openGeoDB:type": "Markt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.4001807",
+          "opengeodb:lon": "10.5965586",
+          "place": "town",
+          "population": "6348",
+          "wikidata": "Q230860",
+          "wikipedia": "de:Zusmarshausen"
+        }
+      },
+      {
+        "id": "34557695",
+        "wgs84": [
+          10.7282761,
+          48.0373762,
+          0.0
+        ],
+        "euc": [
+          1194266.232541647,
+          6113075.1568041025
+        ],
+        "tags": {
+          "is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "name": "Buchloe",
+          "name:als": "Buechloe",
+          "name:ar": "بوشلو",
+          "name:fa": "بوشلو",
+          "name:ja": "ブーフローエ",
+          "name:ru": "Бухлоэ",
+          "name:sr": "Бухло",
+          "name:zh": "布洛埃",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Buchloe",
+          "openGeoDB:community_identification_number": "09777121",
+          "openGeoDB:is_in": "Ostallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "274",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "OAL",
+          "openGeoDB:loc_id": "15097",
+          "openGeoDB:name": "Buchloe",
+          "openGeoDB:population": "11983",
+          "openGeoDB:postal_codes": "86807",
+          "openGeoDB:sort_name": "BUCHLOE",
+          "openGeoDB:telephone_area_code": "08241",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.0367322",
+          "opengeodb:lon": "10.7281583",
+          "place": "town",
+          "population": "11983",
+          "wikidata": "Q265110",
+          "wikipedia": "de:Buchloe"
+        }
+      },
+      {
+        "id": "39694054",
+        "wgs84": [
+          10.7578121,
+          48.1805562,
+          0.0
+        ],
+        "euc": [
+          1197554.165021717,
+          6136945.690793136
+        ],
+        "tags": {
+          "name": "Schwabmünchen",
+          "name:als": "Mingkchinga",
+          "name:ar": "شفابمونشن",
+          "name:fa": "شوابمونشن",
+          "name:hy": "Շվաբմյունխեն",
+          "name:ru": "Швабмюнхен",
+          "name:zh": "施瓦布明兴",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:community_identification_number": "09772200",
+          "openGeoDB:is_in": "Augsburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "479",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "A",
+          "openGeoDB:loc_id": "23992",
+          "openGeoDB:name": "Schwabmünchen",
+          "openGeoDB:population": "13153",
+          "openGeoDB:postal_codes": "86830",
+          "openGeoDB:sort_name": "SCHWABMUENCHEN",
+          "openGeoDB:telephone_area_code": "08232",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.1830446",
+          "opengeodb:lon": "10.7581579",
+          "place": "town",
+          "population": "13153",
+          "wikidata": "Q509676",
+          "wikipedia": "de:Schwabmünchen"
+        }
+      },
+      {
+        "id": "470319784",
+        "wgs84": [
+          10.5926373,
+          48.0048187,
+          0.0
+        ],
+        "euc": [
+          1179166.9903938363,
+          6107656.532310501
+        ],
+        "tags": {
+          "is_in": "Unterallgäu,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "name": "Bad Wörishofen",
+          "name:als": "Werishofe",
+          "name:ar": "باد فوريسهوفن",
+          "name:fa": "باد وریسهوفن",
+          "name:ru": "Бад-Вёрисхофен",
+          "name:sr": "Бад Верисхофен",
+          "name:zh": "巴特沃里斯霍芬",
+          "openGeoDB:community_identification_number": "09778116",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "MN",
+          "openGeoDB:loc_id": "14015",
+          "openGeoDB:telephone_area_code": "08247",
+          "place": "town",
+          "population": "13925",
+          "postal_code": "86825",
+          "wikidata": "Q504579",
+          "wikipedia": "de:Bad Wörishofen"
+        }
+      },
+      {
+        "id": "61205988",
+        "wgs84": [
+          10.0005211,
+          48.3953489,
+          0.0
+        ],
+        "euc": [
+          1113252.916519388,
+          6172880.644800659
+        ],
+        "tags": {
+          "alt_name:uk": "Новий Ульм",
+          "ele": "471",
+          "name": "Neu-Ulm",
+          "name:als": "Neu-Ulm",
+          "name:ar": "نوي-أولم",
+          "name:bar": "Nei-Ulm",
+          "name:be": "Горад Ной-Ульм",
+          "name:es": "Nuevo Ulm",
+          "name:fa": "نوی-اولم",
+          "name:fr": "Nouvelle-Ulm",
+          "name:gsw": "Nei-Ulm",
+          "name:he": "נוי-אולם",
+          "name:it": "Nuova Ulma",
+          "name:ja": "ノイウルム",
+          "name:kk": "Ной-Ульм",
+          "name:ko": "노이울름",
+          "name:la": "Nova Ulma",
+          "name:ru": "Ной-Ульм",
+          "name:sr": "Ној-Улм",
+          "name:th": "น็อย-อุล์ม",
+          "name:uk": "Ной-Ульм",
+          "name:zh": "新乌尔姆",
+          "place": "town",
+          "population": "62610",
+          "source:population": "http://nu.neu-ulm.de/de/stadt-politik/stadtinfo/neu-ulm-in-zahlen/einwohnerzahlen-flaeche/",
+          "website": "https://nu.neu-ulm.de/",
+          "wikidata": "Q4120",
+          "wikipedia": "de:Neu-Ulm",
+          "wikipedia:en": "Neu-Ulm"
+        }
+      },
+      {
+        "id": "621427293",
+        "wgs84": [
+          10.5909932,
+          48.3485454,
+          0.0
+        ],
+        "euc": [
+          1178983.970019023,
+          6165037.497188799
+        ],
+        "tags": {
+          "name": "Dinkelscherben",
+          "name:als": "Dinggelscherba",
+          "name:fa": "دینکلشربن",
+          "name:hy": "Դինկելշերբեն",
+          "name:ru": "Динкельшербен",
+          "name:sr": "Динкелшербен",
+          "name:zh": "丁克尔舍尔本",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:community_identification_number": "09772131",
+          "openGeoDB:is_in": "Augsburg,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "479",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "A",
+          "openGeoDB:loc_id": "15640",
+          "openGeoDB:name": "Dinkelscherben",
+          "openGeoDB:population": "6647",
+          "openGeoDB:postal_codes": "86424",
+          "openGeoDB:sort_name": "DINKELSCHERBEN",
+          "openGeoDB:telephone_area_code": "08292",
+          "openGeoDB:type": "Markt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.3476997",
+          "opengeodb:lon": "10.5905872",
+          "place": "town",
+          "population": "6647",
+          "postal_code": "86424",
+          "website": "https://www.dinkelscherben.info/",
+          "wikidata": "Q503971",
+          "wikipedia": "de:Dinkelscherben"
+        }
+      },
+      {
+        "id": "95112963",
+        "wgs84": [
+          10.1601492,
+          48.3044877,
+          0.0
+        ],
+        "euc": [
+          1131022.6353276856,
+          6157661.059030841
+        ],
+        "tags": {
+          "is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "name": "Weißenhorn",
+          "name:als": "Weissahoara",
+          "name:ar": "فايسنهورن",
+          "name:fa": "واینهورن",
+          "name:hy": "Վայսենհորն",
+          "name:ru": "Вайсенхорн",
+          "name:sr": "Вајсенхорн",
+          "name:zh": "魏森霍尔恩",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:community_identification_number": "09775164",
+          "openGeoDB:is_in": "Neu-Ulm,Schwaben,Bayern,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "266",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "NU",
+          "openGeoDB:loc_id": "25876",
+          "openGeoDB:name": "Weißenhorn",
+          "openGeoDB:population": "13264",
+          "openGeoDB:postal_codes": "89264",
+          "openGeoDB:sort_name": "WEISSENHORN",
+          "openGeoDB:telephone_area_code": "07309",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "48.3048923",
+          "opengeodb:lon": "10.1567256",
+          "place": "town",
+          "population": "13252",
+          "postal_code": "89264",
+          "wikidata": "Q519677",
+          "wikipedia": "de:Weißenhorn"
+        }
+      }
+    ]
+  }
+}

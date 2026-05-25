@@ -1,0 +1,497 @@
+{
+  "tiles": {},
+  "chunks": {
+    "8,63": [
+      {
+        "id": "1701700293",
+        "wgs84": [
+          7.6087847,
+          49.1996961,
+          0.0
+        ],
+        "euc": [
+          847006.0383596509,
+          6308813.82355301
+        ],
+        "tags": {
+          "name": "Pirmasens",
+          "name:ja": "ピルマゼンス",
+          "name:uk": "Пірмазенс",
+          "place": "town",
+          "population": "40101",
+          "website": "https://www.pirmasens.de/",
+          "wikidata": "Q14849",
+          "wikipedia": "de:Pirmasens"
+        }
+      },
+      {
+        "id": "240027638",
+        "wgs84": [
+          7.7723649,
+          49.5008961,
+          0.0
+        ],
+        "euc": [
+          865215.7029275128,
+          6360284.339518431
+        ],
+        "tags": {
+          "name": "Otterberg",
+          "place": "town",
+          "population": "5256"
+        }
+      },
+      {
+        "id": "240031974",
+        "wgs84": [
+          7.6700779,
+          49.706647,
+          0.0
+        ],
+        "euc": [
+          853829.1661727411,
+          6395626.41648674
+        ],
+        "tags": {
+          "name": "Meisenheim",
+          "place": "town",
+          "population": "2936",
+          "postal_code": "55590",
+          "wikidata": "Q520103",
+          "wikipedia": "de:Meisenheim"
+        }
+      },
+      {
+        "id": "240037148",
+        "wgs84": [
+          7.8206451,
+          49.6290332,
+          0.0
+        ],
+        "euc": [
+          870590.2302069102,
+          6382277.0745547535
+        ],
+        "tags": {
+          "name": "Rockenhausen",
+          "place": "town",
+          "population": "5749"
+        }
+      },
+      {
+        "id": "240041906",
+        "wgs84": [
+          7.5918264,
+          49.6500535,
+          0.0
+        ],
+        "euc": [
+          845118.2490389313,
+          6385890.401045835
+        ],
+        "tags": {
+          "name": "Lauterecken",
+          "place": "town",
+          "population": "2274",
+          "wikidata": "Q240283",
+          "wikipedia": "de:Lauterecken"
+        }
+      },
+      {
+        "id": "240045920",
+        "wgs84": [
+          8.0732258,
+          49.5589556,
+          0.0
+        ],
+        "euc": [
+          898707.3851151187,
+          6370242.196514631
+        ],
+        "tags": {
+          "name": "Eisenberg (Pfalz)",
+          "place": "town",
+          "population": "9777",
+          "wikidata": "Q486603",
+          "wikipedia": "de:Eisenberg (Pfalz)"
+        }
+      },
+      {
+        "id": "240063385",
+        "wgs84": [
+          7.3136563,
+          49.7107134,
+          0.0
+        ],
+        "euc": [
+          814152.4951530172,
+          6396326.412802051
+        ],
+        "tags": {
+          "name": "Idar-Oberstein",
+          "name:uk": "Ідар-Оберштайн",
+          "place": "town",
+          "population": "28323",
+          "postal_code": "55743",
+          "wikidata": "Q16119",
+          "wikipedia": "de:Idar-Oberstein"
+        }
+      },
+      {
+        "id": "240066321",
+        "wgs84": [
+          7.3687796,
+          49.1875373,
+          0.0
+        ],
+        "euc": [
+          820288.792839862,
+          6306742.666384164
+        ],
+        "tags": {
+          "name": "Hornbach",
+          "name:sr": "Хорнбах",
+          "note": "place=town, weil überregionale Bedeutung, Wallfahrtsort und städt. Struktur",
+          "place": "town",
+          "population": "1667"
+        }
+      },
+      {
+        "id": "240070139",
+        "wgs84": [
+          7.3361918,
+          49.6157577,
+          0.0
+        ],
+        "euc": [
+          816661.135537789,
+          6379995.859207517
+        ],
+        "tags": {
+          "name": "Baumholder",
+          "place": "town",
+          "population": "4017",
+          "postal_code": "55774",
+          "wikidata": "Q541832",
+          "wikipedia": "de:Baumholder"
+        }
+      },
+      {
+        "id": "240073481",
+        "wgs84": [
+          7.7787577,
+          49.1506716,
+          0.0
+        ],
+        "euc": [
+          865927.3461682558,
+          6300465.989947196
+        ],
+        "tags": {
+          "name": "Dahn",
+          "place": "town",
+          "population": "4772"
+        }
+      },
+      {
+        "id": "240085039",
+        "wgs84": [
+          8.0107385,
+          49.6644306,
+          0.0
+        ],
+        "euc": [
+          891751.3306980721,
+          6388362.6800690275
+        ],
+        "tags": {
+          "name": "Kirchheimbolanden",
+          "place": "town",
+          "population": "8010"
+        }
+      },
+      {
+        "id": "240093234",
+        "wgs84": [
+          7.7689951,
+          49.4432174,
+          0.0
+        ],
+        "euc": [
+          864840.5785074375,
+          6350403.4861089075
+        ],
+        "tags": {
+          "name": "Kaiserslautern",
+          "name:ar": "كايزرسلوترن",
+          "name:el": "Καιζερλάουτερν",
+          "name:ja": "カイザースラウテルン",
+          "name:ko": "카이저슬라우테른",
+          "name:ml": "കൈസർസ്ലൗട്ടേൺ",
+          "name:ru": "Кайзерслаутерн",
+          "name:sr": "Кајзерслаутерн",
+          "name:uk": "Кайзерслаутерн",
+          "name:zh": "凯撒斯劳滕",
+          "place": "city",
+          "population": "97162",
+          "ref:LOCODE": "DEKLT",
+          "wikidata": "Q3758",
+          "wikipedia": "de:Kaiserslautern"
+        }
+      },
+      {
+        "id": "240095638",
+        "wgs84": [
+          7.2548948,
+          49.347299,
+          0.0
+        ],
+        "euc": [
+          807611.1948947683,
+          6333997.5484821405
+        ],
+        "tags": {
+          "ele": "262",
+          "name": "Bexbach",
+          "openGeoDB:community_identification_number": "10045111",
+          "openGeoDB:license_plate_code": "HOM",
+          "openGeoDB:loc_id": "14445",
+          "openGeoDB:postal_codes": "66450",
+          "openGeoDB:telephone_area_code": "06826",
+          "place": "town",
+          "population": "17757",
+          "wikidata": "Q504022",
+          "wikipedia": "de:Bexbach"
+        }
+      },
+      {
+        "id": "240102787",
+        "wgs84": [
+          7.7719699,
+          49.7268361,
+          0.0
+        ],
+        "euc": [
+          865171.7317286493,
+          6399102.3759922655
+        ],
+        "tags": {
+          "name": "Obermoschel",
+          "place": "town",
+          "population": "1205"
+        }
+      },
+      {
+        "id": "240109819",
+        "wgs84": [
+          7.606534,
+          49.5829885,
+          0.0
+        ],
+        "euc": [
+          846755.4915817223,
+          6374367.573542936
+        ],
+        "tags": {
+          "name": "Wolfstein",
+          "place": "town",
+          "population": "2019",
+          "postal_code": "67752",
+          "wikidata": "Q529194",
+          "wikipedia": "de:Wolfstein"
+        }
+      },
+      {
+        "id": "240119037",
+        "wgs84": [
+          7.9682264,
+          49.2027254,
+          0.0
+        ],
+        "euc": [
+          887018.9053735194,
+          6309329.920516229
+        ],
+        "tags": {
+          "ele": "179",
+          "name": "Annweiler am Trifels",
+          "place": "town",
+          "population": "6987",
+          "postal_code": "76855",
+          "wikidata": "Q22953",
+          "wikipedia": "de:Annweiler am Trifels"
+        }
+      },
+      {
+        "id": "240122738",
+        "wgs84": [
+          7.4008479,
+          49.5399844,
+          0.0
+        ],
+        "euc": [
+          823858.6196664679,
+          6366987.121288998
+        ],
+        "tags": {
+          "name": "Kusel",
+          "place": "town",
+          "population": "5183",
+          "website": "https://kusel.de/",
+          "wikidata": "Q22937",
+          "wikipedia": "de:Kusel"
+        }
+      },
+      {
+        "id": "240125262",
+        "wgs84": [
+          7.3409031,
+          49.32146,
+          0.0
+        ],
+        "euc": [
+          817185.5950547634,
+          6329583.501618705
+        ],
+        "tags": {
+          "ele": "233",
+          "name": "Homburg",
+          "name:de": "Homburg",
+          "name:fr": "Hombourg",
+          "name:uk": "Гомбурґ",
+          "openGeoDB:community_identification_number": "10045114",
+          "openGeoDB:license_plate_code": "HOM",
+          "openGeoDB:loc_id": "18634",
+          "openGeoDB:telephone_area_code": "06841",
+          "openGeoDB:type": "Kreisstadt",
+          "place": "town",
+          "population": "42040",
+          "postal_code": "66424",
+          "website": "https://www.homburg.de/",
+          "wikidata": "Q7040",
+          "wikipedia": "de:Homburg"
+        }
+      },
+      {
+        "id": "25553522",
+        "wgs84": [
+          7.3641981,
+          49.248655,
+          0.0
+        ],
+        "euc": [
+          819778.7825927928,
+          6317158.74920047
+        ],
+        "tags": {
+          "name": "Zweibrücken",
+          "name:ar": "تسفايبروكن",
+          "name:be": "Цвайбрукен",
+          "name:de": "Zweibrücken",
+          "name:es": "Dos Puentes",
+          "name:fa": "تسوایبروکن",
+          "name:fr": "Deux-Ponts",
+          "name:ja": "ツヴァイブリュッケン",
+          "name:sr": "Цвајбрикен",
+          "name:uk": "Цвайбрюккен",
+          "place": "town",
+          "population": "34084",
+          "postal_code": "66482",
+          "wikidata": "Q16017",
+          "wikipedia": "de:Zweibrücken"
+        }
+      },
+      {
+        "id": "25553755",
+        "wgs84": [
+          7.5543118,
+          49.4518819,
+          0.0
+        ],
+        "euc": [
+          840942.1428696178,
+          6351887.046544846
+        ],
+        "tags": {
+          "name": "Ramstein-Miesenbach",
+          "name:sr": "Рамштајн-Мизенбах",
+          "place": "town",
+          "population": "8107",
+          "postal_code": "66877",
+          "wikidata": "Q22867",
+          "wikipedia": "de:Ramstein-Miesenbach"
+        }
+      },
+      {
+        "id": "50598795",
+        "wgs84": [
+          7.2599036,
+          49.2370918,
+          0.0
+        ],
+        "euc": [
+          808168.7719602538,
+          6315187.083877711
+        ],
+        "tags": {
+          "name": "Blieskastel",
+          "openGeoDB:community_identification_number": "10045112",
+          "openGeoDB:license_plate_code": "HOM",
+          "openGeoDB:loc_id": "14603",
+          "openGeoDB:telephone_area_code": "06842",
+          "place": "town",
+          "population": "23020",
+          "postal_code": "66440",
+          "wikidata": "Q523709",
+          "wikipedia": "de:Blieskastel"
+        }
+      },
+      {
+        "id": "50604128",
+        "wgs84": [
+          7.3351606,
+          49.3876652,
+          0.0
+        ],
+        "euc": [
+          816546.342878883,
+          6340897.902363752
+        ],
+        "tags": {
+          "name": "Waldmohr",
+          "place": "town",
+          "population": "5194",
+          "wikidata": "Q552671",
+          "wikipedia": "de:Waldmohr"
+        }
+      },
+      {
+        "id": "54146973",
+        "wgs84": [
+          7.5722301,
+          49.4143311,
+          0.0
+        ],
+        "euc": [
+          842936.798901499,
+          6345459.384313891
+        ],
+        "tags": {
+          "name": "Landstuhl",
+          "openGeoDB:combination_of_public_administration": "Verbandsgemeinde Landstuhl",
+          "openGeoDB:community_identification_number": "07335022",
+          "openGeoDB:is_in_loc_id": "219",
+          "openGeoDB:license_plate_code": "KL",
+          "openGeoDB:loc_id": "19895",
+          "openGeoDB:telephone_area_code": "06371",
+          "openGeoDB:type": "Sickingenstadt",
+          "place": "town",
+          "population": "8956",
+          "postal_code": "66849",
+          "wikidata": "Q22950",
+          "wikipedia": "de:Landstuhl"
+        }
+      }
+    ]
+  }
+}

@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/models/stackviewscontroller.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/widgets/simpletrackview.dart';
@@ -109,7 +110,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
 }
 
 class SegmentGraphics extends StatefulWidget {
-  final Set<Kind> kinds;
+  final Kinds kinds;
   const SegmentGraphics({super.key, required this.kinds});
 
   @override
@@ -178,7 +179,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
 }
 
 class TrackGraphicsRow extends StatelessWidget {
-  final Set<Kind> kinds;
+  final Kinds kinds;
 
   const TrackGraphicsRow({super.key, required this.kinds});
 

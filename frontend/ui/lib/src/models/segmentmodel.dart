@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
-typedef Kinds = Set<bridge.Kind>;
+typedef Kinds = List<bridge.Kind>;
 
 class SegmentModel extends ChangeNotifier {
   final bridge.Segment segment;
@@ -33,7 +33,7 @@ class SegmentModel extends ChangeNotifier {
   }
 
   List<bridge.Waypoint> tableWaypoints() {
-    return someWaypoints({bridge.Kind.gpxWaypoints, bridge.Kind.controls});
+    return someWaypoints([bridge.Kind.gpxWaypoints, bridge.Kind.controls]);
   }
 
   void makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) {

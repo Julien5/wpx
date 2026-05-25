@@ -2,7 +2,6 @@
 
 use flutter_rust_bridge::frb;
 
-use std::collections::HashSet;
 use tracks::parameters;
 
 // must be exported for mirroring Segment.
@@ -80,8 +79,10 @@ pub enum _Kind {
     CutOff,
 }
 
+pub type Kinds = Vec<Kind>;
+
 #[frb(sync)]
-pub fn allkinds() -> HashSet<Kind> {
+pub fn allkinds() -> Kinds {
     tracks::point_collection::allkinds()
 }
 
@@ -95,7 +96,7 @@ pub enum _RenderFunction {
 
 #[frb(mirror(RenderInput))]
 pub struct _RenderInput {
-    pub kinds: HashSet<Kind>,
+    pub kinds: Kinds,
     pub function: RenderFunction,
     pub size: (i32, i32),
 }
@@ -229,6 +230,13 @@ pub fn demo_bytes() -> Vec<u8> {
     include_bytes!("../../../../../backend/data/ref/sample.gpx").to_vec()
 }
 
+fn dedup(k: &Kinds) -> Kinds {
+    let mut k2 = k.clone();
+    k2.sort();
+    k2.dedup();
+    k2
+}
+
 use tracks::backend;
 impl Bridge {
     #[frb(sync)]
@@ -277,12 +285,12 @@ impl Bridge {
         self.backend.load_ordered(parts)
     }
 
-    pub async fn generateZip(&mut self, kinds: &HashSet<Kind>) -> Vec<u8> {
-        self.backend.generateZip(kinds).await
+    pub async fn generateZip(&mut self, kinds: &Kinds) -> Vec<u8> {
+        self.backend.generateZip(&dedup(&kinds)).await
     }
     #[frb(sync)]
-    pub fn get_waypoints(&self, segment: &Segment, kinds: HashSet<Kind>) -> Vec<Waypoint> {
-        self.backend.get_waypoints(&segment._impl, kinds)
+    pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
+        self.backend.get_waypoints(&segment._impl, &dedup(&kinds))
     }
     #[frb(sync)]
     pub fn get_parameters(&mut self) -> Parameters {

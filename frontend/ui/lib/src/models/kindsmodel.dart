@@ -3,7 +3,7 @@ import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 
 class KindsModel with ChangeNotifier {
-  Kinds kinds = {
+  Kinds kinds = [
     Kind.controls,
     Kind.gpxWaypoints,
     Kind.cutOff,
@@ -11,13 +11,13 @@ class KindsModel with ChangeNotifier {
     Kind.hamlets,
     Kind.mountains,
     Kind.villages,
-  };
-  static final Kinds osmKinds = {
+  ];
+  static final Kinds osmKinds = [
     Kind.cities,
     Kind.hamlets,
     Kind.mountains,
     Kind.villages,
-  };
+  ];
 
   bool? osmIsLoaded;
 
@@ -64,7 +64,7 @@ class KindsModel with ChangeNotifier {
   }
 
   void addOSM() {
-    if (kinds.containsAll(osmKinds)) {
+    if (kinds.toSet().containsAll(osmKinds)) {
       return;
     }
     for (Kind k in {Kind.cities, Kind.hamlets, Kind.mountains, Kind.villages}) {
@@ -74,7 +74,7 @@ class KindsModel with ChangeNotifier {
   }
 
   void removeOSM() {
-    if (kinds.intersection(osmKinds).isEmpty) {
+    if (kinds.toSet().intersection(osmKinds.toSet()).isEmpty) {
       return;
     }
     for (Kind k in osmKinds) {

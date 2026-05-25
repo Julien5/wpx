@@ -63,7 +63,7 @@ function pdf() {
 	export CARGO_PROFILE_RELEASE_DEBUG=true
 	rm -Rf /tmp/wpx
 	mkdir /tmp/wpx
-	time cargo ${cmd} ${mode} -- \
+	time cargo ${cmd} ${mode} --bin wpx -- \
 		 --output /tmp/wpx/route.zip \
 		 --start-time "2026-04-10T00:00:00" \
 		 --speed ACP \
@@ -105,7 +105,7 @@ function unit-tests() {
 	# export RUST_LOG=trace
 	export RUST_BACKTRACE=1
 	rm -Rf /tmp/graphs/
-	2>&1 cargo test $@ -- --nocapture
+	2>&1 cargo test $@ -- --nocapture # --test-threads=1
 }
 
 function performance-test() {

@@ -209,7 +209,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
     String pacingPointsText = getPacingPointText(parameters);
 
-    List<Waypoint> controlPoints = segmentModel.someWaypoints({Kind.controls});
+    List<Waypoint> controlPoints = segmentModel.someWaypoints([Kind.controls]);
     String controlPointsText = "${controlPoints.length}";
 
     bridge.Bridge backend = getBackend(ctx);
@@ -259,16 +259,14 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                       debugPrint("confirm:$newSpeed");
                       setState(() {
                         this.speed = newSpeed;
-                      });   
-                      writeModel();   
+                      });
+                      writeModel();
                     },
                     onSpeedChanged: (newSpeed) {
                       debugPrint("changed:$newSpeed");
-                                          
                     },
                     onCancel: (newSpeed) {
                       debugPrint("cancel:$newSpeed");
-                                          
                     },
                   ),
               text: speedText,

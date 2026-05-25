@@ -1,0 +1,294 @@
+{
+  "tiles": {},
+  "chunks": {
+    "5,56": [
+      {
+        "id": "1666887097",
+        "wgs84": [
+          4.6675475,
+          45.2399639,
+          0.0
+        ],
+        "euc": [
+          519589.01095341716,
+          5659378.332567584
+        ],
+        "tags": {
+          "addr:postcode": "07100",
+          "name": "Annonay",
+          "name:el": "Ανοναί",
+          "name:fr": "Annonay",
+          "name:hy": "Անոնե",
+          "name:ja": "アノネー",
+          "name:ko": "아노네",
+          "name:oc": "Anonai",
+          "name:ru": "Анноне",
+          "name:uk": "Анноне",
+          "name:zh": "阿诺奈",
+          "old_name:it": "Annonai",
+          "place": "town",
+          "population": "16873",
+          "population:date": "2021",
+          "ref:FR:SIREN": "210700100",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q238366"
+        }
+      },
+      {
+        "id": "26691972",
+        "wgs84": [
+          4.8953847,
+          44.9528222,
+          0.0
+        ],
+        "euc": [
+          544951.7320411823,
+          5614097.362423278
+        ],
+        "tags": {
+          "addr:postcode": "26500",
+          "name": "Bourg-lès-Valence",
+          "name:oc": "Lo Borg de Valença",
+          "place": "town",
+          "population": "19581",
+          "population:date": "2021",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "website": "https://www.bourg-les-valence.fr/",
+          "wikidata": "Q269430",
+          "wikipedia": "fr:Bourg-lès-Valence"
+        }
+      },
+      {
+        "id": "26692008",
+        "wgs84": [
+          5.0528681,
+          45.0458886,
+          0.0
+        ],
+        "euc": [
+          562482.7039375758,
+          5628748.602373106
+        ],
+        "tags": {
+          "addr:postcode": "26100",
+          "loc_name": "Romans",
+          "name": "Romans-sur-Isère",
+          "name:ca": "Romans d'Isèra",
+          "name:fr": "Romans-sur-Isère",
+          "name:hy": "Ռոման սյուր Իզեր",
+          "name:ja": "ロマン＝シュル＝イゼール",
+          "name:ko": "로망쉬르이제르",
+          "name:oc": "Romans d'Isèra",
+          "name:ru": "Роман-сюр-Изер",
+          "name:uk": "Роман-сюр-Ізер",
+          "name:zh": "伊泽尔河畔罗芒",
+          "place": "town",
+          "population": "32911",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212602817",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q239078"
+        }
+      },
+      {
+        "id": "26692215",
+        "wgs84": [
+          4.8920811,
+          44.9332277,
+          0.0
+        ],
+        "euc": [
+          544583.9769713978,
+          5611015.672296801
+        ],
+        "tags": {
+          "addr:postcode": "26000",
+          "alt_name": "Valence-sur-Rhône",
+          "capital": "6",
+          "name": "Valence",
+          "name:ar": "فالانس",
+          "name:be": "Валанс",
+          "name:br": "Valença",
+          "name:ca": "Valença",
+          "name:fa": "ولانس",
+          "name:fr": "Valence",
+          "name:hi": "वलांस",
+          "name:hy": "Վալանս",
+          "name:ja": "ヴァランス",
+          "name:ko": "발랑스",
+          "name:la": "Valentia",
+          "name:lt": "Valansas",
+          "name:lv": "Valansa",
+          "name:ml": "വലാൻസ്",
+          "name:mzn": "ولانس",
+          "name:oc": "Valença",
+          "name:ru": "Валанс",
+          "name:sr": "Валанс",
+          "name:uk": "Валанс",
+          "name:zh": "瓦朗斯",
+          "name:zh-Hans": "瓦朗斯",
+          "name:zh-Hant": "瓦朗斯",
+          "place": "city",
+          "population": "64483",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212603625",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "website": "http://www.mairie-valence.com/",
+          "wikidata": "Q8848",
+          "wikipedia": "fr:Valence (Drôme)"
+        }
+      },
+      {
+        "id": "26692254",
+        "wgs84": [
+          4.5098046,
+          45.4748298,
+          0.0
+        ],
+        "euc": [
+          502029.1516491628,
+          5696586.055542687
+        ],
+        "tags": {
+          "addr:postcode": "42400",
+          "name": "Saint-Chamond",
+          "name:el": "Σαιν-Σαμόν",
+          "name:eo": "Sankta Chamond",
+          "name:hy": "Սեն-Շամոն",
+          "name:ja": "サン＝シャモン",
+          "name:ko": "생샤몽",
+          "name:ru": "Сен-Шамон",
+          "name:uk": "Сен-Шамон",
+          "name:zh": "圣沙蒙",
+          "old_name:1793-1794": "Vallée Rousseau",
+          "place": "town",
+          "population": "35068",
+          "population:date": "2021",
+          "ref:FR:SIREN": "214202079",
+          "source:population": "INSEE 2024",
+          "website": "https://www.saint-chamond.fr/",
+          "wikidata": "Q235739",
+          "wikipedia": "fr:Saint-Chamond"
+        }
+      },
+      {
+        "id": "26692598",
+        "wgs84": [
+          4.8708275,
+          44.932545,
+          0.0
+        ],
+        "euc": [
+          542218.0370418737,
+          5610908.3208271
+        ],
+        "tags": {
+          "addr:postcode": "07500",
+          "name": "Guilherand-Granges",
+          "name:oc": "Guilharand e Las Granjas",
+          "place": "town",
+          "population": "11203",
+          "population:date": "2021",
+          "ref:FR:SIREN": "210701025",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q274292",
+          "wikipedia": "fr:Guilherand-Granges"
+        }
+      },
+      {
+        "id": "26694382",
+        "wgs84": [
+          4.8774936,
+          44.8753434,
+          0.0
+        ],
+        "euc": [
+          542960.1038994507,
+          5601918.157776109
+        ],
+        "tags": {
+          "addr:postcode": "26800",
+          "name": "Portes-lès-Valence",
+          "name:fr": "Portes-lès-Valence",
+          "name:ja": "ポルト=レ=ヴァロンス",
+          "name:oc": "Pòrtas de Valença",
+          "name:uk": "Порт-ле-Валанс",
+          "name:zh": "波特莱瓦朗斯",
+          "place": "town",
+          "population": "10422",
+          "population:date": "2021",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q864138",
+          "wikipedia": "fr:Portes-lès-Valence"
+        }
+      },
+      {
+        "id": "26697826",
+        "wgs84": [
+          4.832852,
+          45.0675156,
+          0.0
+        ],
+        "euc": [
+          537990.6237192538,
+          5632156.705415659
+        ],
+        "tags": {
+          "addr:postcode": "07300",
+          "capital": "7",
+          "loc_name": "Tournon",
+          "name": "Tournon-sur-Rhône",
+          "name:el": "Τουρνόν-συρ-Ρον",
+          "name:fr": "Tournon-sur-Rhône",
+          "name:hy": "Տուրնոն սյուր Ռոն",
+          "name:ja": "トゥルノン＝シュル＝ローヌ",
+          "name:oc": "Tornon",
+          "name:ru": "Турнон-сюр-Рон",
+          "name:uk": "Турнон-сюр-Рон",
+          "name:zh": "罗讷河畔图尔农",
+          "place": "town",
+          "population": "11191",
+          "population:date": "2021",
+          "ref:FR:SIREN": "210703245",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "website": "http://www.ville-tournon-sur-rhone.fr/",
+          "wikidata": "Q213155",
+          "wikipedia": "fr:Tournon-sur-Rhône"
+        }
+      },
+      {
+        "id": "26698404",
+        "wgs84": [
+          5.0520015,
+          45.0354375,
+          0.0
+        ],
+        "euc": [
+          562386.2344668544,
+          5627102.121638576
+        ],
+        "tags": {
+          "addr:postcode": "26300",
+          "name": "Bourg-de-Péage",
+          "name:oc": "Lo Peatge",
+          "place": "town",
+          "population": "9578",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212600571",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "website": "https://www.bourgdepeage.com/",
+          "wikidata": "Q240363",
+          "wikipedia": "fr:Bourg-de-Péage"
+        }
+      }
+    ]
+  }
+}

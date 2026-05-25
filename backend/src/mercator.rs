@@ -33,6 +33,9 @@ impl MercatorPoint {
         let dy = self.1 - other.1;
         dx * dx + dy * dy
     }
+    pub fn shift(&self, dx: f64, dy: f64) -> Self {
+        Self(self.0 + dx, self.1 + dy)
+    }
 }
 
 pub struct WebMercatorProjection {
@@ -77,11 +80,14 @@ impl WebMercatorProjection {
 pub type EuclideanBoundingBox = super::bbox::BoundingBox;
 
 impl EuclideanBoundingBox {
-    pub fn unproject(&self) -> WGS84BoundingBox {
-        let proj = WebMercatorProjection::make();
+    pub fn unproject_with(&self, proj: &WebMercatorProjection) -> WGS84BoundingBox {
         let min = proj.unproject(&MercatorPoint::from_point2d(&self.get_min()));
         let max = proj.unproject(&MercatorPoint::from_point2d(&self.get_max()));
         WGS84BoundingBox::minmax(min.point2d(), max.point2d())
+    }
+    pub fn unproject(&self) -> WGS84BoundingBox {
+        let proj = WebMercatorProjection::make();
+        self.unproject_with(&proj)
     }
 }
 

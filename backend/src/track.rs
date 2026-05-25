@@ -1,5 +1,3 @@
-use std::collections::BTreeSet;
-
 use geo::SimplifyIdx;
 
 use super::wgs84point::WGS84Point;
@@ -12,6 +10,7 @@ use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
 use crate::parameters::TrackPart;
 use crate::tile;
+use crate::tile::Chunks;
 use crate::tile::Tiles;
 use crate::track_projection::ProjectionTrees;
 use crate::track_projection::Resolution;
@@ -19,6 +18,7 @@ use crate::track_projection::TrackProjection;
 
 use super::elevation;
 
+#[derive(Clone)]
 pub struct Simplified {
     pub xy: Vec<usize>,
     pub xypoints: Vec<MercatorPoint>,
@@ -56,6 +56,7 @@ impl Simplified {
     }
 }
 
+#[derive(Clone)]
 pub struct Track {
     pub wgs84: Vec<WGS84Point>,
     pub smooth_elevation: Vec<f64>,
@@ -82,21 +83,27 @@ impl Track {
         self.trees.parts()
     }
 
-    pub fn tiles(&self, start: f64, end: f64) -> Tiles {
+    pub fn boxes(&self, start: f64, end: f64) -> (Tiles, Chunks) {
         let range = self.subrange(start, end);
-        let mut boxes = BTreeSet::new();
+        let mut tiles = Tiles::new();
+        let mut chunks = Chunks::new();
+        let tiles_margin = 1000f64;
+        let chunks_margin = 50_000f64;
         for k in range.start..range.end {
             let e = &self.euclidean[k];
-            boxes.insert(tile::Tile::for_point(&e));
+            tiles.insert(tile::Tile::for_point(&e));
+            tiles.insert(tile::Tile::for_point(&e.shift(0f64, tiles_margin)));
+            tiles.insert(tile::Tile::for_point(&e.shift(0f64, -tiles_margin)));
+            tiles.insert(tile::Tile::for_point(&e.shift(tiles_margin, 0f64)));
+            tiles.insert(tile::Tile::for_point(&e.shift(-tiles_margin, 0f64)));
+
+            chunks.insert(tile::Chunk::for_point(&e));
+            chunks.insert(tile::Chunk::for_point(&e.shift(0f64, chunks_margin)));
+            chunks.insert(tile::Chunk::for_point(&e.shift(0f64, -chunks_margin)));
+            chunks.insert(tile::Chunk::for_point(&e.shift(chunks_margin, 0f64)));
+            chunks.insert(tile::Chunk::for_point(&e.shift(-chunks_margin, 0f64)));
         }
-        // we need to enlarge to make sure we dont miss points that are close to the track,
-        // but not in a box on the track.
-        for b in boxes.clone() {
-            for n in tile::neighbors(&b) {
-                boxes.insert(n);
-            }
-        }
-        boxes
+        (tiles, chunks)
     }
 
     pub fn wgs84_bounding_box(&self) -> WGS84BoundingBox {

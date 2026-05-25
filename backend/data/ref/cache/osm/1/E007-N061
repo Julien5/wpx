@@ -1,0 +1,185 @@
+{
+  "tiles": {},
+  "chunks": {
+    "7,61": [
+      {
+        "id": "1661170566",
+        "wgs84": [
+          6.8776965,
+          48.0705772,
+          0.0
+        ],
+        "euc": [
+          765621.6722106799,
+          6118604.408047996
+        ],
+        "tags": {
+          "name": "Gérardmer",
+          "name:ja": "ジェラールメ",
+          "name:ru": "Жерарме",
+          "name:uk": "Жерарме",
+          "name:zh": "热拉尔梅",
+          "old_name:de": "Gerdsee",
+          "place": "town",
+          "population": "7833",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q461219",
+          "wikipedia": "fr:Gérardmer"
+        }
+      },
+      {
+        "id": "26692047",
+        "wgs84": [
+          6.9474449,
+          48.2872305,
+          0.0
+        ],
+        "euc": [
+          773386.0285823254,
+          6154773.477434446
+        ],
+        "tags": {
+          "alt_name:de": "Sankt Diedolt",
+          "capital": "7",
+          "name": "Saint-Dié-des-Vosges",
+          "name:el": "Σαιν-Ντιέ-ντε-Βοζ",
+          "name:fr": "Saint-Dié-des-Vosges",
+          "name:hy": "Սեն Դյե դե Վոժ",
+          "name:ja": "サン＝ディエ＝デ＝ヴォージュ",
+          "name:ko": "생디에데보주",
+          "name:ru": "Сен-Дье-де-Вож",
+          "name:uk": "Сен-Дьє-де-Вож",
+          "name:zh": "孚日圣迪耶",
+          "old_name:de": "Sankt Didel",
+          "place": "town",
+          "population": "19319",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q34427",
+          "wikipedia": "fr:Saint-Dié-des-Vosges"
+        }
+      },
+      {
+        "id": "26695307",
+        "wgs84": [
+          6.5912615,
+          48.0158951,
+          0.0
+        ],
+        "euc": [
+          733735.8738653085,
+          6109499.620654236
+        ],
+        "tags": {
+          "name": "Remiremont",
+          "name:el": "Ρεμιρεμόν",
+          "name:ja": "ルミルモン",
+          "name:ko": "르미르몽",
+          "name:ru": "Ремирмон",
+          "name:uk": "Ремірмон",
+          "name:zh": "勒米尔蒙",
+          "old_name:de": "Romberg",
+          "place": "town",
+          "population": "7611",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q504853",
+          "wikipedia": "fr:Remiremont"
+        }
+      },
+      {
+        "id": "26695800",
+        "wgs84": [
+          7.1371568,
+          48.0408618,
+          0.0
+        ],
+        "euc": [
+          794504.6606877497,
+          6113655.476625564
+        ],
+        "tags": {
+          "name": "Munster",
+          "name:de": "Münster im Elsass",
+          "name:gsw": "Menschter",
+          "name:ja": "ミュンステール",
+          "name:ko": "묑스테르",
+          "name:ru": "Мюнстер",
+          "name:uk": "Мюнстер",
+          "name:zh": "曼斯泰",
+          "place": "town",
+          "population": "4707",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q149419",
+          "wikipedia": "fr:Munster (Haut-Rhin)"
+        }
+      },
+      {
+        "id": "26697793",
+        "wgs84": [
+          6.2933856,
+          48.3725412,
+          0.0
+        ],
+        "euc": [
+          700576.4803577204,
+          6169057.719002677
+        ],
+        "tags": {
+          "name": "Charmes",
+          "name:ja": "シャルム",
+          "name:ru": "Шарм",
+          "name:uk": "Шарм",
+          "name:zh": "沙尔姆",
+          "place": "town",
+          "population": "4557",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q206523",
+          "wikipedia": "fr:Charmes (Vosges)"
+        }
+      },
+      {
+        "id": "88208282",
+        "wgs84": [
+          6.4503643,
+          48.1747684,
+          0.0
+        ],
+        "euc": [
+          718051.2693071106,
+          6135979.4750267165
+        ],
+        "tags": {
+          "alt_name:de": "Spinneln",
+          "capital": "6",
+          "name": "Épinal",
+          "name:ar": "إبينال-1",
+          "name:br": "Epinal",
+          "name:el": "Επινάλ",
+          "name:fa": "اپینال",
+          "name:fr": "Épinal",
+          "name:hi": "एपीनल",
+          "name:hy": "Էպինալ",
+          "name:ja": "エピナル",
+          "name:ka": "ეპინალი",
+          "name:ko": "에피날",
+          "name:ru": "Эпиналь",
+          "name:uk": "Епіналь",
+          "name:ur": "ایپینال",
+          "name:zh": "埃皮纳勒",
+          "old_name:de": "Spinal",
+          "old_name:it": "Spinale",
+          "place": "town",
+          "population": "32285",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q173695",
+          "wikipedia": "fr:Épinal"
+        }
+      }
+    ]
+  }
+}

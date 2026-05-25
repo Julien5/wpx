@@ -257,7 +257,7 @@ class _DesktopTableState extends State<DesktopTable> {
 }
 
 class GPXTable extends StatelessWidget {
-  final Set<Kind> kinds;
+  final Kinds kinds;
 
   const GPXTable({super.key, required this.kinds});
 

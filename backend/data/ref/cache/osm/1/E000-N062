@@ -1,0 +1,102 @@
+{
+  "tiles": {},
+  "chunks": {
+    "0,62": [
+      {
+        "id": "1500107705",
+        "wgs84": [
+          0.2255168,
+          49.1460831,
+          0.0
+        ],
+        "euc": [
+          25104.415341328517,
+          6299685.088517086
+        ],
+        "tags": {
+          "addr:postcode": "14100",
+          "capital": "7",
+          "capital:INSEE": "zone d'emploi",
+          "name": "Lisieux",
+          "name:el": "Λιζιέ",
+          "name:fr": "Lisieux",
+          "name:hy": "Լիզիե",
+          "name:it": "Lesovio",
+          "name:ja": "リジュー",
+          "name:ka": "ლიზია",
+          "name:ko": "리지외",
+          "name:la": "Noviomagus Lexoviorum",
+          "name:ru": "Лизьё",
+          "name:uk": "Лізьє",
+          "name:zh": "利雪",
+          "place": "town",
+          "population": "19807",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q188743",
+          "wikipedia": "fr:Lisieux"
+        }
+      },
+      {
+        "id": "26692214",
+        "wgs84": [
+          0.5989157,
+          49.0902278,
+          0.0
+        ],
+        "euc": [
+          66670.990752097,
+          6290185.054329735
+        ],
+        "tags": {
+          "addr:postcode": "27300",
+          "capital": "7",
+          "name": "Bernay",
+          "name:ja": "ベルネー",
+          "name:ko": "베르네",
+          "name:ru": "Берне",
+          "name:uk": "Берне",
+          "name:zh": "貝爾奈",
+          "old_name:it": "Bernai",
+          "place": "town",
+          "population": "9622",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212700561",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q18105",
+          "wikipedia": "fr:Bernay (Eure)"
+        }
+      },
+      {
+        "id": "26697311",
+        "wgs84": [
+          0.6278039,
+          48.7651713,
+          0.0
+        ],
+        "euc": [
+          69886.81046603124,
+          6235109.404022143
+        ],
+        "tags": {
+          "addr:postcode": "61300",
+          "capital:INSEE": "zone d'emploi",
+          "name": "L'Aigle",
+          "name:el": "Λ'Αιγκλ",
+          "name:ja": "レーグル",
+          "name:ru": "Л’Эгль",
+          "name:uk": "Л'Егль",
+          "name:zh": "莱格勒",
+          "place": "town",
+          "population": "7824",
+          "population:date": "2021",
+          "ref:FR:SIREN": "216102145",
+          "source:population": "INSEE 2024",
+          "website": "http://www.ville-laigle.fr",
+          "wikidata": "Q500588",
+          "wikipedia": "fr:L'Aigle"
+        }
+      }
+    ]
+  }
+}

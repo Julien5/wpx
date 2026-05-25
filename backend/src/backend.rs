@@ -306,6 +306,7 @@ impl Backend {
         let track_parts = self.load_track_parts(contents)?;
         self.load_ordered(&track_parts)
     }
+
     pub fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
         let mut f = std::fs::File::open(filename).unwrap();
         let mut buffer = Vec::new();
@@ -412,14 +413,14 @@ impl Backend {
         }
     }
 
-    pub fn get_points(&self, segment: &Segment, kinds: Kinds) -> Vec<InputPoint> {
+    pub fn get_points(&self, segment: &Segment, kinds: &Kinds) -> Vec<InputPoint> {
         let mut points = Vec::new();
         let range = self.d().track.subrange(segment.start, segment.end);
         if kinds.is_empty() {
             return Vec::new();
         }
 
-        for kind in &kinds {
+        for kind in kinds {
             let kpoints = self
                 .d()
                 .packet_provider
@@ -489,7 +490,7 @@ impl Backend {
         list.iter().map(|(_proj, w)| w.clone()).collect()
     }
 
-    pub fn get_waypoints(&self, segment: &Segment, kinds: Kinds) -> Vec<Waypoint> {
+    pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
         self.export_points(&self.get_points(&segment, kinds))
     }
 
@@ -580,6 +581,10 @@ impl Backend {
         let start = 0f64;
         let end = self.d().track.total_distance();
         Segment { id: -1, start, end }
+    }
+
+    pub fn track(&self) -> Track {
+        (*self.d().track).clone()
     }
 
     pub fn render_segment_simple(
@@ -722,7 +727,7 @@ mod tests {
         backend::Backend,
         math::IntegerSize2D,
         parameters::{ProfileIndication, RenderFunction},
-        point_collection::{self, Kind},
+        point_collection::{self, Kind, Kinds},
         wheel,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
@@ -829,8 +834,8 @@ mod tests {
         let controls = seg.controls();
         let len = controls.len();
         assert!(len > 0);
-        let kinds = std::collections::HashSet::from([Kind::Controls]);
-        let waypoints = backend.get_waypoints(&fseg, kinds);
+        let kinds = Kinds::from([Kind::Controls]);
+        let waypoints = backend.get_waypoints(&fseg, &kinds);
         assert!(!waypoints.is_empty());
         for waypoint in waypoints {
             log::info!("gpx name={}", waypoint.info.unwrap().gpx_name);

@@ -1,6 +1,4 @@
-use std::collections::HashSet;
-
-use crate::{error::RenderError, mercator::DateTime, point_collection::Kind, waypoint::Waypoint};
+use crate::{error::RenderError, mercator::DateTime, point_collection::Kinds, waypoint::Waypoint};
 
 #[derive(Clone, PartialOrd, Ord, PartialEq, Eq, Debug, Default)]
 pub enum RenderFunction {
@@ -14,7 +12,7 @@ pub enum RenderFunction {
 
 #[derive(Clone, PartialEq, Eq, Debug, Default)]
 pub struct RenderInput {
-    pub kinds: HashSet<Kind>,
+    pub kinds: Kinds,
     pub function: RenderFunction,
     pub size: (i32, i32),
 }

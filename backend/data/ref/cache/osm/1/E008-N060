@@ -1,0 +1,1366 @@
+{
+  "tiles": {},
+  "chunks": {
+    "8,60": [
+      {
+        "id": "107200959",
+        "wgs84": [
+          7.6944741,
+          47.5192013,
+          0.0
+        ],
+        "euc": [
+          856544.9387340319,
+          6027236.567163831
+        ],
+        "tags": {
+          "ele": "296",
+          "name": "Pratteln",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:community_identification_number": "G2831",
+          "openGeoDB:is_in": "Bezirk Liestal,Basel-Landschaft,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78590",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "30865",
+          "openGeoDB:name": "Pratteln",
+          "openGeoDB:population": "15323",
+          "openGeoDB:postal_codes": "4133",
+          "openGeoDB:sort_name": "PRATTELN",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "47.5201777",
+          "opengeodb:lon": "7.693098",
+          "place": "town",
+          "population": "15323",
+          "postal_code": "4133",
+          "website": "https://www.pratteln.ch/",
+          "wikidata": "Q64679",
+          "wikipedia": "de:Pratteln"
+        }
+      },
+      {
+        "id": "1384879294",
+        "wgs84": [
+          7.354445,
+          47.3615882,
+          0.0
+        ],
+        "euc": [
+          818693.0724671369,
+          6001295.4844089225
+        ],
+        "tags": {
+          "admin_centre:4": "yes",
+          "ele": "435",
+          "name": "Delémont",
+          "name:de": "Delsberg",
+          "name:fr": "Delémont",
+          "name:ko": "들레몽",
+          "name:lt": "Delemonas",
+          "name:ru": "Делемон",
+          "name:uk": "Делемон",
+          "place": "town",
+          "population": "11809",
+          "postal_code": "2800",
+          "website": "https://www.delemont.ch/",
+          "wikidata": "Q63896",
+          "wikipedia": "fr:Delémont"
+        }
+      },
+      {
+        "id": "1587796681",
+        "wgs84": [
+          7.7077606,
+          47.8405127,
+          0.0
+        ],
+        "euc": [
+          858023.9851484568,
+          6080362.725554495
+        ],
+        "tags": {
+          "ele": "337",
+          "name": "Sulzburg",
+          "name:fr": "Soultzbourg",
+          "name:gsw": "Sulzburg",
+          "name:prefix": "Stadt",
+          "name:ru": "Зульцбург",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Müllheim-Badenweiler",
+          "openGeoDB:community_identification_number": "08315111",
+          "openGeoDB:license_plate_code": "FR",
+          "openGeoDB:loc_id": "24771",
+          "openGeoDB:telephone_area_code": "07634",
+          "place": "town",
+          "population": "2640",
+          "postal_code": "79295",
+          "wikidata": "Q505849"
+        }
+      },
+      {
+        "id": "1668873366",
+        "wgs84": [
+          7.6479737,
+          47.5816927,
+          0.0
+        ],
+        "euc": [
+          851368.5378843483,
+          6037543.414840462
+        ],
+        "tags": {
+          "ele": "278",
+          "is_in": "Kanton Basel-Stadt,Basel-Stadt,Schweiz,Europe",
+          "name": "Riehen",
+          "name:gsw": "Rieche",
+          "name:ru": "Риэн",
+          "openGeoDB:community_identification_number": "G2703",
+          "openGeoDB:is_in_loc_id": "78587",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "35773",
+          "place": "town",
+          "population": "20970",
+          "postal_code": "4125",
+          "website": "https://www.riehen.ch/",
+          "wikidata": "Q5262",
+          "wikipedia": "de:Riehen"
+        }
+      },
+      {
+        "id": "1776602020",
+        "wgs84": [
+          8.0601696,
+          47.5604617,
+          0.0
+        ],
+        "euc": [
+          897253.9755794235,
+          6034040.359442008
+        ],
+        "tags": {
+          "alt_name": "Gross Laufenburg",
+          "ele": "307",
+          "name": "Laufenburg",
+          "name:gsw": "Laufeburg",
+          "place": "town",
+          "population": "3620",
+          "postal_code": "5080, 5085",
+          "website": "https://www.laufenburg.ch/",
+          "wikidata": "Q69191",
+          "wikipedia": "de:Laufenburg AG"
+        }
+      },
+      {
+        "id": "224261548",
+        "wgs84": [
+          7.8933977,
+          47.7861792,
+          0.0
+        ],
+        "euc": [
+          878689.0125927968,
+          6071356.104736482
+        ],
+        "tags": {
+          "is_in": "Lörrach,Freiburg,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "name": "Schönau im Schwarzwald",
+          "name:uk": "Шенау-ім-Шварцвальд",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsverband Schönau im Schwarzwald",
+          "openGeoDB:community_identification_number": "08336079",
+          "openGeoDB:is_in": "Lörrach,Freiburg,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "349",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "LÖ",
+          "openGeoDB:loc_id": "23851",
+          "openGeoDB:name": "Schönau im Schwarzwald",
+          "openGeoDB:population": "2523",
+          "openGeoDB:postal_codes": "79677",
+          "openGeoDB:sort_name": "SCHOENAU",
+          "openGeoDB:telephone_area_code": "07673",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "47.7849476",
+          "opengeodb:lon": "7.8947346",
+          "place": "town",
+          "population": "2523",
+          "wikidata": "Q61731",
+          "wikipedia": "de:Schönau im Schwarzwald"
+        }
+      },
+      {
+        "id": "240023861",
+        "wgs84": [
+          7.5910891,
+          47.4935369,
+          0.0
+        ],
+        "euc": [
+          845036.1731783693,
+          6023007.2360852305
+        ],
+        "tags": {
+          "ele": "303",
+          "name": "Reinach",
+          "name:gsw": "Riinech",
+          "name:ru": "Райнах",
+          "official_name": "Reinach (BL)",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "G2773",
+          "openGeoDB:is_in": "Bezirk Arlesheim,Basel-Landschaft,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78588",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "BL",
+          "openGeoDB:loc_id": "79215",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Reinach (BL)",
+          "openGeoDB:population": "18839",
+          "openGeoDB:postal_codes": "4153",
+          "openGeoDB:sort_name": "REINACH",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "18839",
+          "postal_code": "4153",
+          "website": "https://www.reinach-bl.ch/",
+          "wikidata": "Q69747",
+          "wikipedia": "de:Reinach BL"
+        }
+      },
+      {
+        "id": "240030673",
+        "wgs84": [
+          7.7329262,
+          47.883211,
+          0.0
+        ],
+        "euc": [
+          860825.4069259639,
+          6087447.25257293
+        ],
+        "tags": {
+          "alt_name": "Staufen i. Br.;Staufen;Staufen/Br.;Staufen i.Br.",
+          "name": "Staufen im Breisgau",
+          "name:de": "Staufen im Breisgau",
+          "name:gsw": "Staufe im Brisgau",
+          "name:prefix": "Stadt",
+          "name:ru": "Штауфен-им-Брайсгау",
+          "place": "town",
+          "population": "7756",
+          "website": "https://www.staufen.de/",
+          "wikidata": "Q528062",
+          "wikipedia": "de:Staufen im Breisgau"
+        }
+      },
+      {
+        "id": "240042433",
+        "wgs84": [
+          7.9410556,
+          47.5527459,
+          0.0
+        ],
+        "euc": [
+          883994.2657530736,
+          6032767.625817642
+        ],
+        "tags": {
+          "ele": "291",
+          "name": "Bad Säckingen",
+          "name:gsw": "Bad Säckige",
+          "name:ru": "Бад-Зекинген",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Säckingen",
+          "openGeoDB:community_identification_number": "08337096",
+          "openGeoDB:is_in_loc_id": "570",
+          "openGeoDB:license_plate_code": "WT",
+          "openGeoDB:loc_id": "13979",
+          "openGeoDB:telephone_area_code": "07761",
+          "place": "town",
+          "population": "16673",
+          "postal_code": "79713",
+          "website": "https://www.bad-saeckingen.de/",
+          "wikidata": "Q522362"
+        }
+      },
+      {
+        "id": "240042762",
+        "wgs84": [
+          7.7861959,
+          47.5605924,
+          0.0
+        ],
+        "euc": [
+          866755.3628046745,
+          6034061.92023164
+        ],
+        "tags": {
+          "alt_name": "Rheinfelden",
+          "ele": "280",
+          "name": "Rheinfelden (Baden)",
+          "name:gsw": "Badisch-Rhyfälde",
+          "name:prefix": "Große Kreisstadt",
+          "name:ru": "Райнфельден (Баден)",
+          "name:uk": "Райнфельден",
+          "place": "town",
+          "population": "32245",
+          "postal_code": "79618",
+          "wikidata": "Q16077",
+          "wikipedia": "de:Rheinfelden (Baden)"
+        }
+      },
+      {
+        "id": "240043171",
+        "wgs84": [
+          7.6477401,
+          47.525113,
+          0.0
+        ],
+        "euc": [
+          851342.5336512991,
+          6028211.071121317
+        ],
+        "tags": {
+          "ele": "292",
+          "name": "Muttenz",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "G2770",
+          "openGeoDB:is_in": "Bezirk Arlesheim,Basel-Landschaft,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78588",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "30862",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Muttenz",
+          "openGeoDB:population": "17370",
+          "openGeoDB:postal_codes": "4132",
+          "openGeoDB:sort_name": "MUTTENZ",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "17370",
+          "postal_code": "4132",
+          "website": "https://www.muttenz.ch/",
+          "wikidata": "Q66191",
+          "wikipedia": "de:Muttenz"
+        }
+      },
+      {
+        "id": "240047825",
+        "wgs84": [
+          7.8431299,
+          47.560991,
+          0.0
+        ],
+        "euc": [
+          873093.2266934987,
+          6034127.675198444
+        ],
+        "tags": {
+          "ele": "310",
+          "name": "Möhlin",
+          "name:gsw": "Möhli",
+          "place": "town",
+          "population": "11006",
+          "postal_code": "4313",
+          "website": "https://www.moehlin.ch/",
+          "wikidata": "Q69126",
+          "wikipedia": "de:Möhlin"
+        }
+      },
+      {
+        "id": "240052258",
+        "wgs84": [
+          7.570077,
+          47.53656,
+          0.0
+        ],
+        "euc": [
+          842697.116905872,
+          6030098.344295812
+        ],
+        "tags": {
+          "ele": "292",
+          "name": "Binningen",
+          "name:lt": "Biningenas",
+          "name:ru": "Биннинген",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "G2765",
+          "openGeoDB:is_in": "Bezirk Arlesheim,Basel-Landschaft,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78588",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "30837",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Binningen",
+          "openGeoDB:population": "13977",
+          "openGeoDB:postal_codes": "4102",
+          "openGeoDB:sort_name": "BINNINGEN",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "14905",
+          "postal_code": "4102",
+          "website": "https://www.binningen.ch/",
+          "wikidata": "Q69621",
+          "wikipedia": "de:Binningen"
+        }
+      },
+      {
+        "id": "240053183",
+        "wgs84": [
+          7.6257276,
+          47.8099613,
+          0.0
+        ],
+        "euc": [
+          848892.1133602122,
+          6075297.197265034
+        ],
+        "tags": {
+          "ele": "267",
+          "name": "Müllheim im Markgräflerland",
+          "name:gsw": "Mülle",
+          "name:ru": "Мюльхайм",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Müllheim-Badenweiler",
+          "openGeoDB:community_identification_number": "08315074",
+          "openGeoDB:is_in_loc_id": "331",
+          "openGeoDB:license_plate_code": "FR",
+          "openGeoDB:loc_id": "21171",
+          "openGeoDB:telephone_area_code": "07631",
+          "place": "town",
+          "population": "18454",
+          "postal_code": "79379",
+          "website": "https://www.muellheim.de/",
+          "wikidata": "Q505468",
+          "wikipedia": "de:Müllheim im Markgräflerland"
+        }
+      },
+      {
+        "id": "240053350",
+        "wgs84": [
+          8.079534,
+          47.373166,
+          0.0
+        ],
+        "euc": [
+          899409.6107269408,
+          6003198.399463961
+        ],
+        "tags": {
+          "ele": "397",
+          "name": "Suhr",
+          "place": "town",
+          "population": "10130",
+          "postal_code": "5034",
+          "website": "https://www.suhr.ch/",
+          "wikidata": "Q65195",
+          "wikipedia": "de:Suhr"
+        }
+      },
+      {
+        "id": "240069687",
+        "wgs84": [
+          7.7922905,
+          47.5543859,
+          0.0
+        ],
+        "euc": [
+          867433.8105732631,
+          6033038.130772831
+        ],
+        "tags": {
+          "ele": "274",
+          "is_in": "Bezirk Rheinfelden,Aargau,Schweiz,Europe",
+          "name": "Rheinfelden",
+          "name:gsw": "Rhyfelde",
+          "openGeoDB:auto_update": "population,name,is_in",
+          "openGeoDB:community_identification_number": "G4258",
+          "openGeoDB:is_in": "Bezirk Rheinfelden,Aargau,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78630",
+          "openGeoDB:loc_id": "30516",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Rheinfelden",
+          "openGeoDB:population": "13360",
+          "openGeoDB:postal_codes": "4310",
+          "openGeoDB:sort_name": "RHEINFELDEN",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "13360",
+          "postal_code": "4310",
+          "website": "https://www.rheinfelden.ch/",
+          "wikidata": "Q269667",
+          "wikipedia": "de:Rheinfelden AG"
+        }
+      },
+      {
+        "id": "240089992",
+        "wgs84": [
+          7.5980395,
+          47.4682447,
+          0.0
+        ],
+        "euc": [
+          845809.888167179,
+          6018841.262936658
+        ],
+        "tags": {
+          "ele": "315",
+          "name": "Aesch BL",
+          "official_name": "Aesch (BL)",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "G2761",
+          "openGeoDB:is_in": "Bezirk Arlesheim,Basel-Landschaft,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78588",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "BL",
+          "openGeoDB:loc_id": "79212",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Aesch (BL)",
+          "openGeoDB:population": "10211",
+          "openGeoDB:postal_codes": "4147",
+          "openGeoDB:sort_name": "AESCH",
+          "openGeoDB:type": "Gemeinde",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "10211",
+          "postal_code": "4147",
+          "website": "https://www.aesch.bl.ch/",
+          "wikidata": "Q68367",
+          "wikipedia": "de:Aesch BL"
+        }
+      },
+      {
+        "id": "240090661",
+        "wgs84": [
+          7.6590315,
+          47.8735052,
+          0.0
+        ],
+        "euc": [
+          852599.4865496423,
+          6085836.347977066
+        ],
+        "tags": {
+          "name": "Heitersheim",
+          "name:gsw": "Heidersche",
+          "name:prefix": "Stadt",
+          "name:ru": "Хайтерсхайм",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Heitersheim",
+          "openGeoDB:community_identification_number": "08315050",
+          "openGeoDB:is_in": "Breisgau-Hochschwarzwald,Freiburg,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "331",
+          "openGeoDB:license_plate_code": "FR",
+          "openGeoDB:loc_id": "18123",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Heitersheim",
+          "openGeoDB:population": "5833",
+          "openGeoDB:postal_codes": "79423",
+          "openGeoDB:sort_name": "HEITERSHEIM",
+          "openGeoDB:telephone_area_code": "07634",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "5833",
+          "wikidata": "Q505862",
+          "wikipedia": "de:Heitersheim"
+        }
+      },
+      {
+        "id": "240092445",
+        "wgs84": [
+          7.9046417,
+          47.6286078,
+          0.0
+        ],
+        "euc": [
+          879940.6889472763,
+          6045289.316115651
+        ],
+        "tags": {
+          "name": "Wehr",
+          "name:gsw": "Wäär",
+          "name:ru": "Вер (Баден)",
+          "place": "town",
+          "wikidata": "Q527922"
+        }
+      },
+      {
+        "id": "240095825",
+        "wgs84": [
+          7.6304739,
+          47.5542152,
+          0.0
+        ],
+        "euc": [
+          849420.4690593643,
+          6033009.974770884
+        ],
+        "tags": {
+          "ele": "259",
+          "name": "Birsfelden",
+          "name:ru": "Бирсфельден",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "G2766",
+          "openGeoDB:is_in": "Bezirk Arlesheim,Basel-Landschaft,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78588",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "30838",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Birsfelden",
+          "openGeoDB:population": "10277",
+          "openGeoDB:postal_codes": "4127",
+          "openGeoDB:sort_name": "BIRSFELDEN",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "10277",
+          "website": "https://www.birsfelden.ch/",
+          "wikidata": "Q64665",
+          "wikipedia": "de:Birsfelden"
+        }
+      },
+      {
+        "id": "240105036",
+        "wgs84": [
+          7.6174515,
+          47.5187909,
+          0.0
+        ],
+        "euc": [
+          847970.8221224578,
+          6027168.919562054
+        ],
+        "tags": {
+          "ele": "297",
+          "name": "Münchenstein",
+          "name:lt": "Miunchenštainas",
+          "place": "town",
+          "population": "11688",
+          "postal_code": "4142",
+          "website": "https://www.muenchenstein.ch/",
+          "wikidata": "Q69030",
+          "wikipedia": "de:Münchenstein"
+        }
+      },
+      {
+        "id": "240111401",
+        "wgs84": [
+          7.5574673,
+          47.4992969,
+          0.0
+        ],
+        "euc": [
+          841293.411522816,
+          6023956.267768746
+        ],
+        "tags": {
+          "ele": "306",
+          "name": "Therwil",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "G2775",
+          "openGeoDB:is_in": "Bezirk Arlesheim,Basel-Landschaft,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78588",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "30873",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Therwil",
+          "openGeoDB:population": "10007",
+          "openGeoDB:postal_codes": "4106",
+          "openGeoDB:sort_name": "THERWIL",
+          "openGeoDB:type": "Gemeinde",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "10007",
+          "postal_code": "4106",
+          "website": "https://www.therwil.ch/",
+          "wikidata": "Q66595",
+          "wikipedia": "de:Therwil"
+        }
+      },
+      {
+        "id": "240112605",
+        "wgs84": [
+          7.5365611,
+          47.5510799,
+          0.0
+        ],
+        "euc": [
+          838966.1439843938,
+          6032492.84103688
+        ],
+        "tags": {
+          "ele": "287",
+          "name": "Allschwil",
+          "place": "town",
+          "population": "20249",
+          "postal_code": "4123",
+          "website": "https://www.allschwil.ch/",
+          "wikidata": "Q64727",
+          "wikipedia": "de:Allschwil"
+        }
+      },
+      {
+        "id": "240114149",
+        "wgs84": [
+          7.5527853,
+          47.5136942,
+          0.0
+        ],
+        "euc": [
+          840772.213666922,
+          6026328.857575869
+        ],
+        "tags": {
+          "ele": "316",
+          "name": "Oberwil BL",
+          "official_name": "Oberwil (BL)",
+          "openGeoDB:auto_update": "population,place,name,is_in",
+          "openGeoDB:community_identification_number": "G2771",
+          "openGeoDB:is_in": "Bezirk Arlesheim,Basel-Landschaft,Schweiz,Europe",
+          "openGeoDB:is_in_loc_id": "78588",
+          "openGeoDB:layer": "6",
+          "openGeoDB:license_plate_code": "BL",
+          "openGeoDB:loc_id": "79214",
+          "openGeoDB:location": "political_structure",
+          "openGeoDB:name": "Oberwil (BL)",
+          "openGeoDB:population": "11105",
+          "openGeoDB:postal_codes": "4104",
+          "openGeoDB:sort_name": "OBERWIL",
+          "openGeoDB:type": "Gemeinde",
+          "openGeoDB:version": "0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "place": "town",
+          "population": "11105",
+          "postal_code": "4104",
+          "website": "https://www.oberwil.ch/",
+          "wikidata": "Q69724",
+          "wikipedia": "de:Oberwil BL"
+        }
+      },
+      {
+        "id": "26686568",
+        "wgs84": [
+          7.3389937,
+          47.7467233,
+          0.0
+        ],
+        "euc": [
+          816973.0416190426,
+          6064821.576320784
+        ],
+        "tags": {
+          "alt_name:eo": "Miluzo",
+          "capital": "7",
+          "name": "Mulhouse",
+          "name:ar": "ميلوز",
+          "name:cs": "Mylhúzy",
+          "name:de": "Mülhausen",
+          "name:el": "Μυλούζη",
+          "name:eo": "Mulhaŭzo",
+          "name:gsw": "Milhüsa",
+          "name:hi": "मुलहॉउस",
+          "name:hu": "Mulhouse",
+          "name:hy": "Մյուլուզ",
+          "name:ja": "ミュルーズ",
+          "name:ka": "მიულუზი",
+          "name:kn": "ಮುಲ್ಹೂಸ್",
+          "name:ko": "뮐루즈",
+          "name:la": "Mulhusia",
+          "name:lt": "Miulūzas",
+          "name:ml": "മൂലുസ്",
+          "name:oc": "Mülhausen",
+          "name:pl": "Miluza",
+          "name:ru": "Мюлуз",
+          "name:sr": "Милуз",
+          "name:th": "มูว์ลูซ",
+          "name:uk": "Мюлуз",
+          "name:zh": "米卢斯",
+          "old_name:nl": "Mulhuizen",
+          "place": "city",
+          "population": "106341",
+          "population:date": "2021",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q79815",
+          "wikipedia": "fr:Mulhouse"
+        }
+      },
+      {
+        "id": "26691485",
+        "wgs84": [
+          7.2402432,
+          47.8091086,
+          0.0
+        ],
+        "euc": [
+          805980.1862434616,
+          6075155.859397722
+        ],
+        "tags": {
+          "name": "Wittelsheim",
+          "name:gsw": "Wittelsa",
+          "place": "town",
+          "population": "10334",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Wittelsheim"
+        }
+      },
+      {
+        "id": "26691624",
+        "wgs84": [
+          7.3386856,
+          47.7923002,
+          0.0
+        ],
+        "euc": [
+          816938.7440839293,
+          6072370.284633963
+        ],
+        "tags": {
+          "name": "Kingersheim",
+          "place": "town",
+          "population": "13178",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q124126",
+          "wikipedia": "fr:Kingersheim"
+        }
+      },
+      {
+        "id": "26691795",
+        "wgs84": [
+          7.3373681,
+          47.8080799,
+          0.0
+        ],
+        "euc": [
+          816792.0806548093,
+          6074985.352032114
+        ],
+        "tags": {
+          "name": "Wittenheim",
+          "name:gsw": "Wettena",
+          "name:ja": "ヴィッテンハイム",
+          "name:ko": "비트나임",
+          "name:ru": "Виттенайм",
+          "name:uk": "Віттенайм",
+          "name:zh": "维特奈姆",
+          "place": "town",
+          "population": "15262",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q659533",
+          "wikipedia": "fr:Wittenheim"
+        }
+      },
+      {
+        "id": "26691914",
+        "wgs84": [
+          7.3968786,
+          47.7441969,
+          0.0
+        ],
+        "euc": [
+          823416.7592116623,
+          6064403.332843349
+        ],
+        "tags": {
+          "name": "Rixheim",
+          "place": "town",
+          "population": "13795",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "26692074",
+        "wgs84": [
+          7.3682858,
+          47.7492477,
+          0.0
+        ],
+        "euc": [
+          820233.8232753084,
+          6065239.508976983
+        ],
+        "tags": {
+          "name": "Riedisheim",
+          "place": "town",
+          "population": "12163",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "26692124",
+        "wgs84": [
+          7.3471832,
+          47.7815801,
+          0.0
+        ],
+        "euc": [
+          817884.6925888942,
+          6070594.16489188
+        ],
+        "tags": {
+          "name": "Illzach",
+          "name:ja": "イルザック",
+          "name:ru": "Ильзак",
+          "name:uk": "Ільзак",
+          "name:zh": "伊尔扎克",
+          "place": "town",
+          "population": "14829",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q274610",
+          "wikipedia": "fr:Illzach"
+        }
+      },
+      {
+        "id": "26692442",
+        "wgs84": [
+          7.2113271,
+          47.9094629,
+          0.0
+        ],
+        "euc": [
+          802761.2607157342,
+          6091805.882428873
+        ],
+        "tags": {
+          "name": "Guebwiller",
+          "name:de": "Gebweiler",
+          "name:gsw": "Gawiller",
+          "name:hy": "Գեբվիլեր",
+          "name:ja": "ゲブヴィレール",
+          "name:ko": "게브빌레르",
+          "name:ru": "Гебвиллер",
+          "name:uk": "Гебвіллер",
+          "name:zh": "盖布维莱尔",
+          "place": "town",
+          "population": "11137",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q209814"
+        }
+      },
+      {
+        "id": "26692502",
+        "wgs84": [
+          7.5615765,
+          47.5860467,
+          0.0
+        ],
+        "euc": [
+          841750.8455743837,
+          6038261.988144719
+        ],
+        "tags": {
+          "name": "Saint-Louis",
+          "name:de": "Sankt Ludwig",
+          "name:el": "Σαιν-Λουί",
+          "name:gsw": "Sä-Louis",
+          "name:hi": "सेन्ट लुईस",
+          "name:hy": "Սեն Լուի",
+          "name:ja": "サン＝ルイ",
+          "name:ka": "სენ-ლუი",
+          "name:ko": "생루이",
+          "name:ru": "Сен-Луи",
+          "name:uk": "Сен-Луї",
+          "name:zh": "圣路易",
+          "place": "town",
+          "population": "22698",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q384516"
+        }
+      },
+      {
+        "id": "26695615",
+        "wgs84": [
+          7.3025075,
+          47.7697441,
+          0.0
+        ],
+        "euc": [
+          812911.4164140612,
+          6068633.586798519
+        ],
+        "tags": {
+          "name": "Pfastatt",
+          "name:gsw": "Pfàscht",
+          "name:ja": "ファスタット",
+          "name:ru": "Фастат",
+          "name:uk": "фастат",
+          "name:zh": "法斯塔特",
+          "place": "town",
+          "population": "10237",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q148497",
+          "wikipedia": "fr:Pfastatt"
+        }
+      },
+      {
+        "id": "27284711",
+        "wgs84": [
+          7.5878261,
+          47.5581077,
+          0.0
+        ],
+        "euc": [
+          844672.9376799109,
+          6033652.043487097
+        ],
+        "tags": {
+          "admin_centre:4": "yes",
+          "ele": "260",
+          "name": "Basel",
+          "name:ar": "بازل",
+          "name:be": "Базэль",
+          "name:ca": "Basilea",
+          "name:cs": "Basilej",
+          "name:de": "Basel",
+          "name:en": "Basel",
+          "name:es": "Basilea",
+          "name:fr": "Bâle",
+          "name:gsw": "Basel",
+          "name:hu": "Bázel",
+          "name:it": "Basilea",
+          "name:kn": "ಬಸೇಲ್",
+          "name:ko": "바젤",
+          "name:la": "Basilea",
+          "name:ml": "ബാസൽ",
+          "name:nl": "Bazel",
+          "name:pl": "Bazylea",
+          "name:ru": "Базель",
+          "name:sk": "Bazilej",
+          "name:sr": "Базел",
+          "name:uk": "Базель",
+          "name:zh": "巴塞尔",
+          "name:zh-Hans": "巴塞尔",
+          "name:zh-Hant": "巴塞爾",
+          "openGeoDB:community_identification_number": "G2701",
+          "openGeoDB:loc_id": "30836",
+          "openGeoDB:postal_codes": "4075,4088,4087,4086,4085,4084,4083,4080,4039,4070,4091,4059,4058,4057,4056,4055,4054,4053,4052,4051,4032,4031,4030,4025,4024,4020,4019,4018,4017,4016,4015,4013,4012,4011,4010,4009,4008,4007,4005,4004,4003,4002,4001,4000,4006,4028,4040,4023,4027",
+          "place": "city",
+          "population": "174491",
+          "population:date": "2015",
+          "website": "https://www.bs.ch/",
+          "wikidata": "Q78",
+          "wikipedia": "de:Basel"
+        }
+      },
+      {
+        "id": "27357709",
+        "wgs84": [
+          7.6610865,
+          47.714697,
+          0.0
+        ],
+        "euc": [
+          852828.2481032223,
+          6059521.149814545
+        ],
+        "tags": {
+          "ele": "352",
+          "name": "Kandern",
+          "name:gsw": "Chander",
+          "name:ru": "Кандерн",
+          "name:sr": "Кандерн",
+          "place": "town",
+          "population": "4000",
+          "postal_code": "79400",
+          "wikidata": "Q61661"
+        }
+      },
+      {
+        "id": "27358183",
+        "wgs84": [
+          7.6607218,
+          47.6120896,
+          0.0
+        ],
+        "euc": [
+          852787.6498849301,
+          6042561.291943984
+        ],
+        "tags": {
+          "ele": "294",
+          "name": "Lörrach",
+          "name:gsw": "Lörrech",
+          "name:ru": "Лёррах",
+          "name:sr": "Лерах",
+          "name:uk": "Леррах",
+          "place": "town",
+          "population": "48307",
+          "website": "https://www.loerrach.de/",
+          "wikidata": "Q6855",
+          "wikipedia": "de:Lörrach"
+        }
+      },
+      {
+        "id": "27386700",
+        "wgs84": [
+          7.7347783,
+          47.4839723,
+          0.0
+        ],
+        "euc": [
+          861031.5817548622,
+          6021431.57911288
+        ],
+        "tags": {
+          "admin_centre:4": "yes",
+          "ele": "327",
+          "name": "Liestal",
+          "name:ko": "리스탈",
+          "name:lt": "Listalis",
+          "name:ru": "Листаль",
+          "name:uk": "Лісталь",
+          "openGeoDB:community_identification_number": "G2829",
+          "openGeoDB:is_in_loc_id": "78590",
+          "openGeoDB:layer": "6",
+          "openGeoDB:loc_id": "30859",
+          "place": "town",
+          "population": "13807",
+          "postal_code": "4410",
+          "website": "https://www.liestal.ch/",
+          "wikidata": "Q68972",
+          "wikipedia": "de:Liestal"
+        }
+      },
+      {
+        "id": "27386718",
+        "wgs84": [
+          7.6116133,
+          47.5932802,
+          0.0
+        ],
+        "euc": [
+          847320.9166713086,
+          6039455.919099235
+        ],
+        "tags": {
+          "alt_name:uk": "Вайль-на-Рейні",
+          "contact:website": "http://www.weil-am-rhein.de",
+          "ele": "279",
+          "name": "Weil am Rhein",
+          "name:fr": "Wil-sur-le-Rhin",
+          "name:gsw": "Wiil am Rhy",
+          "name:ru": "Вайль-на-Рейне",
+          "name:sr": "Вајл ам Рајн",
+          "name:uk": "Вайль-ам-Райн",
+          "openGeoDB:is_in_loc_id": "25811",
+          "openGeoDB:loc_id": "81875",
+          "place": "town",
+          "population": "30000",
+          "wikidata": "Q61909",
+          "wikipedia": "de:Weil am Rhein"
+        }
+      },
+      {
+        "id": "28424917",
+        "wgs84": [
+          7.8216997,
+          47.6500525,
+          0.0
+        ],
+        "euc": [
+          870707.6277419006,
+          6048832.251262426
+        ],
+        "tags": {
+          "ele": "373",
+          "name": "Schopfheim",
+          "name:gsw": "Schopfe",
+          "name:ru": "Шопфхайм",
+          "name:sr": "Шопфхајм",
+          "openGeoDB:loc_id": "23938",
+          "place": "town",
+          "wikidata": "Q61734"
+        }
+      },
+      {
+        "id": "29381503",
+        "wgs84": [
+          7.8476208,
+          47.7054471,
+          0.0
+        ],
+        "euc": [
+          873593.1513947021,
+          6057990.876419616
+        ],
+        "tags": {
+          "name": "Zell im Wiesental",
+          "name:ru": "Целль (Визенталь)",
+          "openGeoDB:auto_update": "population,is_in",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Zell im Wiesental",
+          "openGeoDB:community_identification_number": "08336103",
+          "openGeoDB:is_in": "Lörrach,Freiburg,Baden-Württemberg,Bundesrepublik Deutschland,Europe",
+          "openGeoDB:is_in_loc_id": "349",
+          "openGeoDB:license_plate_code": "LÖ",
+          "openGeoDB:loc_id": "26567",
+          "openGeoDB:name": "Zell im Wiesental",
+          "openGeoDB:population": "6067",
+          "openGeoDB:postal_codes": "79669",
+          "openGeoDB:sort_name": "ZELL",
+          "openGeoDB:telephone_area_code": "07625",
+          "openGeoDB:type": "Stadt",
+          "openGeoDB:version": "0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/",
+          "opengeodb:lat": "47.7053564",
+          "opengeodb:lon": "7.8475065",
+          "place": "town",
+          "population": "6067",
+          "wikidata": "Q61618"
+        }
+      },
+      {
+        "id": "29764663",
+        "wgs84": [
+          7.9452378,
+          47.8303378,
+          0.0
+        ],
+        "euc": [
+          884459.8261274691,
+          6078675.360613732
+        ],
+        "tags": {
+          "name": "Todtnau",
+          "name:prefix": "Stadt",
+          "name:ru": "Тодтнау",
+          "place": "town",
+          "population": "5077",
+          "website": "https://stadt.todtnau.de",
+          "wikidata": "Q61665",
+          "wikipedia": "de:Todtnau"
+        }
+      },
+      {
+        "id": "2976597909",
+        "wgs84": [
+          8.0599414,
+          47.5671976,
+          0.0
+        ],
+        "euc": [
+          897228.5724716245,
+          6035151.610238299
+        ],
+        "tags": {
+          "alt_name": "Kleinlaufenburg;Laufenburg;Klein-Laufenburg",
+          "ele": "337",
+          "name": "Laufenburg (Baden)",
+          "name:gsw": "Laufeburg",
+          "name:ru": "Лауфенбург",
+          "openGeoDB:community_identification_number": "08337066",
+          "openGeoDB:is_in_loc_id": "570",
+          "openGeoDB:license_plate_code": "WT",
+          "openGeoDB:loc_id": "20015",
+          "openGeoDB:telephone_area_code": "07763",
+          "place": "town",
+          "population": "9029",
+          "postal_code": "79725",
+          "wikidata": "Q539801",
+          "wikipedia": "de:Laufenburg (Baden)"
+        }
+      },
+      {
+        "id": "29886774",
+        "wgs84": [
+          8.0444448,
+          47.3927146,
+          0.0
+        ],
+        "euc": [
+          895503.4988505977,
+          6006412.335287239
+        ],
+        "tags": {
+          "admin_centre:4": "yes",
+          "ele": "381",
+          "name": "Aarau",
+          "name:ko": "아라우",
+          "name:lt": "Arau",
+          "name:ru": "Арау",
+          "name:uk": "Аарау",
+          "openGeoDB:community_identification_number": "G4001",
+          "openGeoDB:loc_id": "30444",
+          "openGeoDB:postal_codes": "5000, 5001, 5004, 5032",
+          "openGeoDB:type": "Stadt",
+          "place": "town",
+          "population": "21191",
+          "postal_code": "5000, 5001, 5004, 5032",
+          "website": "https://www.aarau.ch/",
+          "wikidata": "Q14274",
+          "wikipedia": "de:Aarau"
+        }
+      },
+      {
+        "id": "303602726",
+        "wgs84": [
+          7.5627871,
+          47.8155916,
+          0.0
+        ],
+        "euc": [
+          841885.6089499382,
+          6076230.496511458
+        ],
+        "tags": {
+          "alt_name": "Neuenburg;Neuenburg/Rh.;Neuenburg a.Rh.;Neuenburg (Rhein)",
+          "ele": "230",
+          "name": "Neuenburg am Rhein",
+          "name:fr": "Neuchâtel-sur-le-Rhin",
+          "name:gsw": "Neieburg am Rhi",
+          "name:prefix": "Stadt",
+          "name:ru": "Нойенбург-на-Рейне",
+          "openGeoDB:community_identification_number": "08315076",
+          "openGeoDB:is_in_loc_id": "331",
+          "openGeoDB:license_plate_code": "FR",
+          "openGeoDB:loc_id": "21392",
+          "openGeoDB:postal_codes": "79389–79395",
+          "openGeoDB:telephone_area_code": "07631",
+          "place": "town",
+          "population": "11710",
+          "website": "https://www.neuenburg.de/",
+          "wikidata": "Q509783",
+          "wikipedia": "de:Neuenburg am Rhein"
+        }
+      },
+      {
+        "id": "30976307",
+        "wgs84": [
+          7.6999845,
+          47.9159087,
+          0.0
+        ],
+        "euc": [
+          857158.3536560992,
+          6092876.423247097
+        ],
+        "tags": {
+          "ele": "233",
+          "name": "Bad Krozingen",
+          "name:fr": "Krotzingue-les-Bains",
+          "name:gsw": "Bad Chrotzige",
+          "name:prefix": "Stadt",
+          "name:ru": "Бад-Кроцинген",
+          "name:sr": "Бад Кроцинген",
+          "name:uk": "Бад-Кроцінген",
+          "openGeoDB:combination_of_public_administration": "Verwaltungsgemeinschaft Bad Krozingen",
+          "openGeoDB:community_identification_number": "08315006",
+          "openGeoDB:is_in_loc_id": "331",
+          "openGeoDB:license_plate_code": "FR",
+          "openGeoDB:loc_id": "13944",
+          "openGeoDB:telephone_area_code": "07633",
+          "place": "town",
+          "population": "17448",
+          "postal_code": "79189",
+          "wikidata": "Q496391",
+          "wikipedia": "de:Bad Krozingen"
+        }
+      }
+    ]
+  }
+}

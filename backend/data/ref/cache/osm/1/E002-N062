@@ -1,0 +1,7208 @@
+{
+  "tiles": {
+    "20,621": [
+      {
+        "id": "13226771233",
+        "wgs84": [
+          1.8811704,
+          48.6181743,
+          0.0
+        ],
+        "euc": [
+          209410.93102337877,
+          6210320.162396137
+        ],
+        "tags": {
+          "name": "Saint-Remy des Landes",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "5308664136",
+        "wgs84": [
+          1.7988878,
+          48.6463362,
+          0.0
+        ],
+        "euc": [
+          200251.27389023214,
+          6215063.721774927
+        ],
+        "tags": {
+          "name": "Bergerie Nationale",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "602463105",
+        "wgs84": [
+          1.8751421,
+          48.6699302,
+          0.0
+        ],
+        "euc": [
+          208739.86373702963,
+          6219039.908802055
+        ],
+        "tags": {
+          "addr:postcode": "78125",
+          "name": "Vieille-Église-en-Yvelines",
+          "name:el": "Βιέιγ-Εγκλίζ-αν-Ιβλίν",
+          "name:ja": "ヴィエイユ＝エグリーズ＝アン＝イブリーヌ",
+          "name:uk": "В'єй-Егліз-ан-Івлін",
+          "name:zh": "伊夫林地区维埃耶埃格利斯",
+          "place": "village",
+          "population": "612",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q639971"
+        }
+      }
+    ]
+  },
+  "chunks": {
+    "2,62": [
+      {
+        "id": "10554437812",
+        "wgs84": [
+          2.1217888,
+          48.829839,
+          0.0
+        ],
+        "euc": [
+          236196.44878687095,
+          6246037.799287554
+        ],
+        "tags": {
+          "addr:postcode": "78150",
+          "name": "Le Chesnay-Rocquencourt",
+          "name:el": "Λε Σεναί-Ροκανκούρ",
+          "name:ja": "ル・シェネ＝ロカンクール",
+          "name:ko": "르셰네‑로캉쿠르",
+          "name:uk": "Ле-Шене-Роканкур",
+          "name:zh": "勒舍奈-罗康库尔",
+          "place": "town",
+          "population": "31057",
+          "population:date": "2020",
+          "wikidata": "Q59326653"
+        }
+      },
+      {
+        "id": "1256720911",
+        "wgs84": [
+          2.4818087,
+          48.6137734,
+          0.0
+        ],
+        "euc": [
+          276273.68073031626,
+          6209579.11877466
+        ],
+        "tags": {
+          "addr:postcode": "91100",
+          "name": "Corbeil-Essonnes",
+          "name:el": "Κορμπέιγ-Εσόν",
+          "name:hy": "Կորբեյ-Էսոն",
+          "name:ja": "コルベイユ＝エソンヌ",
+          "name:ko": "코르베유에손",
+          "name:ru": "Корбей-Эсон",
+          "name:uk": "Корбей-Ессонн",
+          "name:zh": "科尔贝伊-埃松",
+          "place": "town",
+          "population": "52683",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q208812"
+        }
+      },
+      {
+        "id": "1358669038",
+        "wgs84": [
+          2.2890454,
+          48.9105948,
+          0.0
+        ],
+        "euc": [
+          254815.3683306852,
+          6259704.795380129
+        ],
+        "tags": {
+          "addr:postcode": "92600",
+          "name": "Asnières-sur-Seine",
+          "name:ar": "أنيار سور سين",
+          "name:el": "Ανιέρ-συρ-Σεν",
+          "name:fr": "Asnières-sur-Seine",
+          "name:hy": "Անյեր սյուր Սեն",
+          "name:ja": "アニエール＝シュル＝セーヌ",
+          "name:ka": "ანიერ-სიურ-სენი",
+          "name:ko": "아니에르쉬르센",
+          "name:ru": "Аньер-сюр-Сен",
+          "name:uk": "Аньєр-сюр-Сен",
+          "name:zh": "塞纳河畔阿涅爾",
+          "place": "town",
+          "population": "89662",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q191415",
+          "wikipedia": "fr:Asnières-sur-Seine"
+        }
+      },
+      {
+        "id": "1363278030",
+        "wgs84": [
+          2.2368863,
+          48.8841522,
+          0.0
+        ],
+        "euc": [
+          249009.0438784498,
+          6255227.258066091
+        ],
+        "tags": {
+          "addr:postcode": "92800",
+          "name": "Puteaux",
+          "name:ar": "بوتو",
+          "name:el": "Πυτώ",
+          "name:fr": "Puteaux",
+          "name:hy": "Պյուտո",
+          "name:ja": "ピュトー",
+          "name:ko": "퓌토",
+          "name:ru": "Пюто",
+          "name:uk": "Пюто",
+          "name:zh": "皮托",
+          "place": "town",
+          "population": "43672",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q234743",
+          "wikipedia": "fr:Puteaux"
+        }
+      },
+      {
+        "id": "1391379638",
+        "wgs84": [
+          2.3872525,
+          48.8122302,
+          0.0
+        ],
+        "euc": [
+          265747.73269496934,
+          6243060.63735282
+        ],
+        "tags": {
+          "addr:postcode": "94200",
+          "name": "Ivry-sur-Seine",
+          "name:ar": "إيفري سور سين",
+          "name:el": "Ιβρί-συρ-Σεν",
+          "name:hi": "ईवर्य-सुर-सेनी",
+          "name:hy": "Իվրի սյուր Սեն",
+          "name:ja": "イヴリー＝シュル＝セーヌ",
+          "name:ko": "이브리쉬르센",
+          "name:ru": "Иври-сюр-Сен",
+          "name:uk": "Іврі-сюр-Сен",
+          "name:zh": "塞纳河畔伊夫里",
+          "place": "town",
+          "population": "64001",
+          "population:date": "2021",
+          "short_name": "Ivry-sur-S.",
+          "source:addr:postcode": "source of postcode is from galichon.com/INSEE",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q193877",
+          "wikipedia": "fr:Ivry-sur-Seine"
+        }
+      },
+      {
+        "id": "1391681447",
+        "wgs84": [
+          2.4396714,
+          48.8474508,
+          0.0
+        ],
+        "euc": [
+          271582.97795091284,
+          6249016.515158193
+        ],
+        "tags": {
+          "name": "Vincennes",
+          "name:ar": "فانسن",
+          "name:el": "Βανσέν",
+          "name:eo": "Vinceno",
+          "name:hy": "Վենսեն",
+          "name:ja": "ヴァンセンヌ",
+          "name:ko": "뱅센",
+          "name:ru": "Венсен",
+          "name:uk": "Венсенн",
+          "name:zh": "万塞讷",
+          "place": "town",
+          "population": "48798",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "1393686792",
+        "wgs84": [
+          2.4019804,
+          48.8965023,
+          0.0
+        ],
+        "euc": [
+          267387.23502342356,
+          6257318.211254972
+        ],
+        "tags": {
+          "addr:postcode": "93500",
+          "name": "Pantin",
+          "name:ar": "بانتان",
+          "name:el": "Παντέν",
+          "name:hy": "Պանտեն",
+          "name:ja": "パンタン",
+          "name:ko": "팡탱",
+          "name:ru": "Пантен",
+          "name:uk": "Пантен",
+          "name:zh": "庞坦",
+          "place": "town",
+          "population": "60800",
+          "population:date": "2021",
+          "source:addr:postcode": "source of postcode is from galichon.com/INSEE",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q209086",
+          "wikipedia": "fr:Pantin"
+        }
+      },
+      {
+        "id": "1393686793",
+        "wgs84": [
+          2.334267,
+          48.911729,
+          0.0
+        ],
+        "euc": [
+          259849.41381554236,
+          6259896.902965046
+        ],
+        "tags": {
+          "name": "Saint-Ouen-sur-Seine",
+          "name:ar": "سانت أوين سور سين",
+          "name:hy": "Սենտ Ուեն սյուր Սեն",
+          "name:ja": "サン＝トゥアン＝シュル＝セーヌ",
+          "name:ko": "생투앙쉬르센",
+          "name:ru": "Сант-Уан",
+          "name:uk": "Сент-Уан",
+          "name:zh": "塞纳河畔圣旺",
+          "place": "town",
+          "population": "53207",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q208889"
+        }
+      },
+      {
+        "id": "1394052528",
+        "wgs84": [
+          2.5460722,
+          48.910939,
+          0.0
+        ],
+        "euc": [
+          283427.46082690975,
+          6259763.094540739
+        ],
+        "tags": {
+          "addr:postcode": "93390",
+          "name": "Clichy-sous-Bois",
+          "name:ar": "كليشي سو بوا",
+          "name:hy": "Կլիշի սու Բուա",
+          "name:ja": "クリシー＝ス＝ボワ",
+          "name:ko": "클리시수부아",
+          "name:ru": "Клиши-су-Буа",
+          "name:uk": "Кліші-су-Буа",
+          "name:zh": "克利希苏布瓦",
+          "place": "town",
+          "population": "29735",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q206931",
+          "wikipedia": "fr:Clichy-sous-Bois"
+        }
+      },
+      {
+        "id": "1395462998",
+        "wgs84": [
+          2.2630238,
+          48.8003835,
+          0.0
+        ],
+        "euc": [
+          251918.65706905897,
+          6241058.275772602
+        ],
+        "tags": {
+          "addr:postcode": "92140",
+          "name": "Clamart",
+          "name:ar": "كلامار",
+          "name:el": "Κλαμάρ",
+          "name:fr": "Clamart",
+          "name:hy": "Կլամար",
+          "name:ja": "クラマール",
+          "name:ko": "클라마르",
+          "name:ru": "Кламар",
+          "name:uk": "Кламар",
+          "name:zh": "克拉马",
+          "place": "town",
+          "population": "54491",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219200235",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q194160",
+          "wikipedia": "fr:Clamart"
+        }
+      },
+      {
+        "id": "1401985476",
+        "wgs84": [
+          2.2234971,
+          49.0265888,
+          0.0
+        ],
+        "euc": [
+          247518.56495232045,
+          6279374.161883715
+        ],
+        "tags": {
+          "addr:postcode": "95150",
+          "name": "Taverny",
+          "name:el": "Ταβερνί",
+          "name:hy": "Տավեռնի",
+          "name:ja": "タヴェルニー",
+          "name:ko": "타베르니",
+          "name:ru": "Таверни",
+          "name:uk": "Таверні",
+          "name:zh": "塔韦尼",
+          "place": "town",
+          "population": "27025",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q275589"
+        }
+      },
+      {
+        "id": "1684032319",
+        "wgs84": [
+          2.0509674,
+          48.7586786,
+          0.0
+        ],
+        "euc": [
+          228312.64660160427,
+          6234012.960198494
+        ],
+        "tags": {
+          "addr:postcode": "78960",
+          "name": "Voisins-le-Bretonneux",
+          "name:el": "Βουαζέν-λε-Μπρετονέ",
+          "name:ja": "ボアザン＝ル＝ブルトヌー",
+          "name:uk": "Вуазен-ле-Бретонне",
+          "name:zh": "瓦桑勒布勒托讷",
+          "place": "town",
+          "population": "10721",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q83450"
+        }
+      },
+      {
+        "id": "17807753",
+        "wgs84": [
+          2.3483915,
+          48.8534951,
+          0.0
+        ],
+        "euc": [
+          261421.74596325192,
+          6250039.040108085
+        ],
+        "tags": {
+          "admin_level": "2",
+          "alt_name:vi": "Ba Lê",
+          "capital": "yes",
+          "capital_ISO3166-1": "yes",
+          "contact:website": "http://www.paris.fr",
+          "importance": "international",
+          "is_capital": "country",
+          "loc_name": "Paname",
+          "loc_name:fr": "Paname",
+          "name": "Paris",
+          "name:af": "Parys",
+          "name:am": "ፓሪስ",
+          "name:an": "París",
+          "name:ar": "باريس",
+          "name:arc": "ܦܐܪܝܣ",
+          "name:arz": "باريس",
+          "name:as": "পেৰিছ",
+          "name:ast": "París",
+          "name:av": "Париж",
+          "name:ba": "Париж",
+          "name:bat-smg": "Parīžios",
+          "name:be": "Парыж",
+          "name:be-tarask": "Парыж",
+          "name:bg": "Париж",
+          "name:bh": "पैरिस",
+          "name:bn": "প্যারিস",
+          "name:bo": "ཕ་རི།",
+          "name:br": "Pariz",
+          "name:bs": "Pariz",
+          "name:ca": "París",
+          "name:cdo": "Bă-là̤",
+          "name:ce": "Париж",
+          "name:ckb": "پاریس",
+          "name:co": "Parighji",
+          "name:cs": "Paříž",
+          "name:csb": "Pariz",
+          "name:cu": "Парижь",
+          "name:cv": "Париш",
+          "name:de": "Paris",
+          "name:diq": "Paris",
+          "name:el": "Παρίσι",
+          "name:eml": "Parì",
+          "name:en": "Paris",
+          "name:en:pronunciation": "ˈpæɹ.ɪs",
+          "name:eo": "Parizo",
+          "name:es": "París",
+          "name:et": "Pariis",
+          "name:eu": "Paris",
+          "name:ext": "París",
+          "name:fa": "پاریس",
+          "name:ff": "Pari",
+          "name:fi": "Pariisi",
+          "name:fj": "Parisi",
+          "name:fr": "Paris",
+          "name:fr:pronunciation": "paʁi",
+          "name:fur": "Parîs",
+          "name:fy": "Parys",
+          "name:ga": "Páras",
+          "name:gan": "巴黎",
+          "name:gd": "Parais",
+          "name:gl": "París",
+          "name:gn": "Parĩ",
+          "name:gu": "પૅરિસ",
+          "name:gv": "Paarys",
+          "name:ha": "Pariis",
+          "name:hak": "Pâ-lì-sṳ",
+          "name:haw": "Palika",
+          "name:he": "פריז",
+          "name:hi": "पैरिस",
+          "name:hr": "Pariz",
+          "name:ht": "Pari",
+          "name:hu": "Párizs",
+          "name:hy": "Փարիզ",
+          "name:is": "París",
+          "name:it": "Parigi",
+          "name:iu": "ᐱᐅᕆᔅ",
+          "name:ja": "パリ",
+          "name:jbo": "paris",
+          "name:ka": "პარიზი",
+          "name:kk": "Париж",
+          "name:km": "ប៉ារីស",
+          "name:kn": "ಪ್ಯಾರಿಸ್",
+          "name:ko": "파리",
+          "name:koi": "Париж",
+          "name:krc": "Париж",
+          "name:ks": "پیرِس",
+          "name:ku": "Parîs",
+          "name:kv": "Париж",
+          "name:ky": "Париж",
+          "name:la": "Lutetia",
+          "name:lb": "Paräis",
+          "name:lez": "Париж",
+          "name:li": "Paries",
+          "name:lij": "Pariggi",
+          "name:ln": "Pari",
+          "name:lo": "ປາຣີ",
+          "name:lt": "Paryžius",
+          "name:lv": "Parīze",
+          "name:lzh": "巴黎",
+          "name:mhr": "Париж",
+          "name:mi": "Parī",
+          "name:mk": "Париз",
+          "name:ml": "പാരിസ്",
+          "name:mn": "Парис",
+          "name:mr": "पॅरिस",
+          "name:mrj": "Париж",
+          "name:mt": "Pariġi",
+          "name:my": "ပါရီမြို့",
+          "name:myv": "Париж ош",
+          "name:mzn": "پاریس",
+          "name:nan": "Pa-lí",
+          "name:nap": "Parigge",
+          "name:nds": "Paris",
+          "name:nds-nl": "Paries",
+          "name:ne": "पेरिस",
+          "name:nl": "Parijs",
+          "name:no": "Paris",
+          "name:nv": "Wótʼááh Yíʼáhí",
+          "name:oc": "París",
+          "name:om": "Paaris",
+          "name:or": "ପ୍ୟାରିସ",
+          "name:os": "Париж",
+          "name:pa": "ਪੈਰਿਸ",
+          "name:pl": "Paryż",
+          "name:pnb": "پیرس",
+          "name:pronunciation": "paʁi",
+          "name:ps": "پاريس",
+          "name:pt": "Paris",
+          "name:ro": "Paris",
+          "name:roa-rup": "Parij",
+          "name:roa-tara": "Parigge",
+          "name:ru": "Париж",
+          "name:rue": "Паріж",
+          "name:sah": "Париж",
+          "name:sc": "Parigi",
+          "name:scn": "Pariggi",
+          "name:sd": "پيرس",
+          "name:sh": "Pariz",
+          "name:si": "පැරිස්",
+          "name:sk": "Paríž",
+          "name:sl": "Pariz",
+          "name:sm": "Parisi",
+          "name:so": "Baariis",
+          "name:sq": "Parisi",
+          "name:sr": "Париз",
+          "name:sv": "Paris",
+          "name:szl": "Paryż",
+          "name:ta": "பாரிஸ்",
+          "name:te": "పారిస్",
+          "name:tet": "París",
+          "name:tg": "Париж",
+          "name:th": "ปารีส",
+          "name:tk": "Pariž",
+          "name:tl": "Paris",
+          "name:to": "Palesi",
+          "name:tr": "Paris",
+          "name:tt": "Париж",
+          "name:tzl": "Parighi",
+          "name:udm": "Париж",
+          "name:ug": "پارىژ",
+          "name:uk": "Париж",
+          "name:ur": "پیرس",
+          "name:uz": "Parij",
+          "name:vec": "Parixe",
+          "name:vep": "Pariž",
+          "name:vi": "Paris",
+          "name:vls": "Parys",
+          "name:vro": "Pariis",
+          "name:wal": "Paariise",
+          "name:wo": "Pari",
+          "name:xmf": "პარიზი",
+          "name:yi": "פאריז",
+          "name:yo": "Parisi",
+          "name:yue": "巴黎",
+          "name:za": "Bahliz",
+          "name:zh": "巴黎",
+          "name:zh-Latn-pinyin": "Bālí",
+          "name:zu": "IParisi",
+          "old_name": "Lutèce",
+          "old_name:fr": "Lutèce",
+          "old_name:vi": "Ba Lê",
+          "place": "city",
+          "population": "2133111",
+          "population:date": "2021",
+          "rank": "0",
+          "ref:FR:SIREN": "217500016",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q90",
+          "wikipedia": "fr:Paris"
+        }
+      },
+      {
+        "id": "249861413",
+        "wgs84": [
+          2.0942792,
+          48.8990413,
+          0.0
+        ],
+        "euc": [
+          233134.0941229443,
+          6257748.144675423
+        ],
+        "tags": {
+          "addr:postcode": "78100",
+          "capital": "7",
+          "name": "Saint-Germain-en-Laye",
+          "name:el": "Σαιν-Ζερμαίν-αν-Λαι",
+          "name:hy": "Սեն-Ժերմեն-ան-Լե",
+          "name:ja": "サン＝ジェルマン＝アン＝レー",
+          "name:ka": "სენ-ჟერმენ-ან-ლე",
+          "name:ko": "생제르맹앙레",
+          "name:ru": "Сен-Жермен-ан-Ле",
+          "name:th": "แซ็ง-แฌร์แม็ง-อ็อง-แล",
+          "name:uk": "Сен-Жермен-ан-Ле",
+          "name:zh": "圣日耳曼昂莱",
+          "place": "town",
+          "population": "44380",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q185075"
+        }
+      },
+      {
+        "id": "26686593",
+        "wgs84": [
+          2.240206,
+          48.8356649,
+          0.0
+        ],
+        "euc": [
+          249378.59119203623,
+          6247023.028469451
+        ],
+        "tags": {
+          "addr:postcode": "92100",
+          "capital": "7",
+          "name": "Boulogne-Billancourt",
+          "name:ar": "بولون-بيانكور",
+          "name:azb": "بولونی-بیانکور",
+          "name:el": "Μπουλόν-Μπιγιανκούρ",
+          "name:fa": "بولونی-بیانکور",
+          "name:fr": "Boulogne-Billancourt",
+          "name:hi": "बौळयूँ-बिल्लांकोर्ट",
+          "name:hy": "Բուլոն Բիյանկուր",
+          "name:ja": "ブローニュ＝ビヤンクール",
+          "name:ka": "ბულონ-ბიანკური",
+          "name:ko": "불로뉴비양쿠르",
+          "name:lt": "Bulonė-Bijankūras",
+          "name:mzn": "بولونی بیانکور",
+          "name:pnb": "بولون-بلانکور",
+          "name:ru": "Булонь-Бийанкур",
+          "name:th": "บูลอญ-บีย็องกูร์",
+          "name:uk": "Булонь-Біянкур",
+          "name:zh": "布洛涅-比扬古",
+          "place": "city",
+          "population": "119808",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q172455",
+          "wikipedia": "fr:Boulogne-Billancourt"
+        }
+      },
+      {
+        "id": "26691384",
+        "wgs84": [
+          2.023607,
+          48.799856,
+          0.0
+        ],
+        "euc": [
+          225266.90080570395,
+          6240969.127281331
+        ],
+        "tags": {
+          "addr:postcode": "78390",
+          "name": "Bois-d'Arcy",
+          "name:ja": "ボワ＝ダルシー",
+          "name:ko": "부아다르시",
+          "name:ru": "Буа-д'Арси",
+          "name:uk": "Буа-д'Арсі",
+          "name:zh": "布瓦达尔西",
+          "place": "town",
+          "population": "15435",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217800739",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q83417",
+          "wikipedia": "fr:Bois-d'Arcy (Yvelines)"
+        }
+      },
+      {
+        "id": "26691387",
+        "wgs84": [
+          2.4500537,
+          48.9863555,
+          0.0
+        ],
+        "euc": [
+          272738.73030017584,
+          6272546.524877589
+        ],
+        "tags": {
+          "addr:postcode": "95500",
+          "name": "Gonesse",
+          "name:el": "Γκονές",
+          "name:hy": "Գոնես",
+          "name:ja": "ゴネス",
+          "name:ko": "고네스",
+          "name:ru": "Гонесс",
+          "name:uk": "Гонесс",
+          "name:zh": "戈内斯",
+          "place": "town",
+          "population": "25963",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q271659"
+        }
+      },
+      {
+        "id": "26691390",
+        "wgs84": [
+          2.3366502,
+          48.8064996,
+          0.0
+        ],
+        "euc": [
+          260114.71042600085,
+          6242091.976627415
+        ],
+        "tags": {
+          "addr:postcode": "94110",
+          "name": "Arcueil",
+          "name:ar": "أركوي",
+          "name:el": "Αρκέιγ",
+          "name:en": "Arcueil",
+          "name:fr": "Arcueil",
+          "name:hy": "Արկեյ",
+          "name:ja": "アルクイユ",
+          "name:ka": "არკიუეი",
+          "name:ko": "아르케이",
+          "name:ro": "Arcueil",
+          "name:ru": "Аркей",
+          "name:uk": "Аркей",
+          "name:zh": "阿尔克伊",
+          "place": "town",
+          "population": "21557",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400033",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q467132",
+          "wikipedia": "fr:Arcueil"
+        }
+      },
+      {
+        "id": "26691391",
+        "wgs84": [
+          2.5937073,
+          48.6272298,
+          0.0
+        ],
+        "euc": [
+          288730.17590279644,
+          6211845.172058885
+        ],
+        "tags": {
+          "addr:postcode": "77550",
+          "name": "Moissy-Cramayel",
+          "name:el": "Μουασί-Κραμαγιέλ",
+          "name:hy": "Մուասի-Կրամայել",
+          "name:ja": "モワシー＝クラマイエル",
+          "name:ru": "Муасси-Крамайель",
+          "name:uk": "Муассі-Крамаєль",
+          "name:zh": "穆瓦西-克拉马耶勒",
+          "place": "town",
+          "population": "18248",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217702968",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q839530",
+          "wikipedia": "fr:Moissy-Cramayel"
+        }
+      },
+      {
+        "id": "26691394",
+        "wgs84": [
+          2.343561,
+          48.9728571,
+          0.0
+        ],
+        "euc": [
+          260884.01716297495,
+          6270257.066093493
+        ],
+        "tags": {
+          "addr:postcode": "95360",
+          "name": "Montmagny",
+          "name:el": "Μονμανί",
+          "name:fr": "Montmagny",
+          "name:ja": "モンマニー",
+          "name:ru": "Монманьи",
+          "name:uk": "Монманьї",
+          "name:zh": "蒙马尼",
+          "place": "town",
+          "population": "14775",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219504271",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q249754"
+        }
+      },
+      {
+        "id": "26691406",
+        "wgs84": [
+          2.5347541,
+          48.9636566,
+          0.0
+        ],
+        "euc": [
+          282167.5356981624,
+          6268696.927818667
+        ],
+        "tags": {
+          "addr:postcode": "93420",
+          "name": "Villepinte",
+          "name:ar": "فيلبانت",
+          "name:el": "Βιλπέντ",
+          "name:ja": "ヴィルパント",
+          "name:ko": "빌팽트",
+          "name:ru": "Вильпент",
+          "name:uk": "Вільпент",
+          "name:zh": "维勒潘特",
+          "place": "town",
+          "population": "38725",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q241064"
+        }
+      },
+      {
+        "id": "26691417",
+        "wgs84": [
+          2.1573695,
+          48.8897044,
+          0.0
+        ],
+        "euc": [
+          240157.2741929392,
+          6256167.218155404
+        ],
+        "tags": {
+          "name": "Chatou",
+          "name:el": "Σατού",
+          "name:hy": "Շատու",
+          "name:ja": "シャトゥー",
+          "name:ko": "샤투",
+          "name:ru": "Шату",
+          "name:uk": "Шату",
+          "name:zh": "沙图",
+          "place": "town",
+          "population": "29649",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q240752"
+        }
+      },
+      {
+        "id": "26691419",
+        "wgs84": [
+          2.3483549,
+          48.8153656,
+          0.0
+        ],
+        "euc": [
+          261417.6716698889,
+          6243590.670399547
+        ],
+        "tags": {
+          "addr:postcode": "94250",
+          "name": "Gentilly",
+          "name:ar": "جانتيي",
+          "name:el": "Ζαντιγί",
+          "name:hy": "Ժանտիլի",
+          "name:ja": "ジャンティイ",
+          "name:ko": "줭띠이",
+          "name:ru": "Жантий",
+          "name:uk": "Жантії",
+          "name:zh": "让蒂伊",
+          "place": "town",
+          "population": "19048",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400371",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q640102",
+          "wikipedia": "fr:Gentilly (Val-de-Marne)"
+        }
+      },
+      {
+        "id": "26691430",
+        "wgs84": [
+          2.65265,
+          48.8515,
+          0.0
+        ],
+        "euc": [
+          295291.6472527771,
+          6249701.51185509
+        ],
+        "tags": {
+          "addr:postcode": "77200",
+          "capital": "7",
+          "name": "Torcy",
+          "name:el": "Τορσί",
+          "name:hy": "Թորսի",
+          "name:ja": "トルシー",
+          "name:ko": "토르시",
+          "name:ru": "Торси",
+          "name:uk": "Торсі",
+          "name:zh": "托尔西",
+          "place": "town",
+          "population": "22444",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q12423"
+        }
+      },
+      {
+        "id": "26691432",
+        "wgs84": [
+          2.2453842,
+          48.7144587,
+          0.0
+        ],
+        "euc": [
+          249955.025779262,
+          6226549.1654193
+        ],
+        "tags": {
+          "addr:postcode": "91120",
+          "capital": "7",
+          "name": "Palaiseau",
+          "name:ar": "باليزو",
+          "name:el": "Παλαιζώ",
+          "name:fa": "پلزو",
+          "name:fr": "Palaiseau",
+          "name:hy": "Պալեզո",
+          "name:ja": "パレゾー",
+          "name:ko": "팔레조",
+          "name:ru": "Палезо",
+          "name:th": "ปาแลโซ",
+          "name:uk": "Палезо",
+          "name:zh": "帕莱索",
+          "place": "town",
+          "population": "34893",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219104775",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q205580",
+          "wikipedia": "fr:Palaiseau"
+        }
+      },
+      {
+        "id": "26691434",
+        "wgs84": [
+          2.2958034,
+          48.753613,
+          0.0
+        ],
+        "euc": [
+          255567.66544946615,
+          6233157.613908981
+        ],
+        "tags": {
+          "addr:postcode": "92160",
+          "capital": "7",
+          "name": "Antony",
+          "name:ar": "أنتوني",
+          "name:el": "Αντονί",
+          "name:fr": "Antony",
+          "name:hi": "एंटोनी",
+          "name:hy": "Անտոնի",
+          "name:ja": "アントニー",
+          "name:ko": "앙토니",
+          "name:uk": "Антоні",
+          "name:zh": "安东尼",
+          "place": "town",
+          "population": "63232",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q205592",
+          "wikipedia": "fr:Antony"
+        }
+      },
+      {
+        "id": "26691435",
+        "wgs84": [
+          2.5060144,
+          48.8608712,
+          0.0
+        ],
+        "euc": [
+          278968.246928611,
+          6251287.03528856
+        ],
+        "tags": {
+          "addr:postcode": "93360",
+          "name": "Neuilly-Plaisance",
+          "name:ar": "نويي بلايزانس",
+          "name:el": "Νεγί-Πλαιζάνς",
+          "name:ja": "ヌイイ＝プレザンス",
+          "name:ru": "Нёйи-Плезанс",
+          "name:uk": "Неї-Плезанс",
+          "name:zh": "讷伊-普莱桑斯",
+          "place": "town",
+          "population": "21415",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q685597"
+        }
+      },
+      {
+        "id": "26691437",
+        "wgs84": [
+          2.5290045,
+          48.8565557,
+          0.0
+        ],
+        "euc": [
+          281527.49315389746,
+          6250556.854319655
+        ],
+        "tags": {
+          "addr:postcode": "93330",
+          "name": "Neuilly-sur-Marne",
+          "name:ar": "نويي-سور-مارن",
+          "name:el": "Νεγί-συρ-Μαρν",
+          "name:hy": "Նոյի սյուր Մառն",
+          "name:ja": "ヌイイ＝シュル＝マルヌ",
+          "name:ko": "뇌이쉬르마른",
+          "name:ru": "Нёйи-сюр-Марн",
+          "name:uk": "Неї-сюр-Марн",
+          "name:zh": "马恩河畔讷伊",
+          "place": "town",
+          "population": "37531",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q220906"
+        }
+      },
+      {
+        "id": "26691444",
+        "wgs84": [
+          2.1730571,
+          48.7995951,
+          0.0
+        ],
+        "euc": [
+          241903.60983670776,
+          6240925.035037575
+        ],
+        "tags": {
+          "addr:postcode": "78220",
+          "name": "Viroflay",
+          "name:el": "Βιροφλαί",
+          "name:hi": "विरोफ्ले",
+          "name:ja": "ヴィロフレー",
+          "name:ko": "비호플레",
+          "name:ru": "Вирофле",
+          "name:uk": "Вірофле",
+          "name:zh": "维罗夫莱",
+          "place": "town",
+          "population": "16960",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217806868",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q83432",
+          "wikipedia": "fr:Viroflay"
+        }
+      },
+      {
+        "id": "26691446",
+        "wgs84": [
+          2.3821895,
+          48.9146078,
+          0.0
+        ],
+        "euc": [
+          265184.12211308297,
+          6260384.525542134
+        ],
+        "tags": {
+          "name": "Aubervilliers",
+          "name:ar": "أوبارفيلييه",
+          "name:el": "Ωμπερβιλιέ",
+          "name:hy": "Օբերվիլիե",
+          "name:ja": "オーベルヴィリエ",
+          "name:ka": "ობერვილიე",
+          "name:ko": "오베르빌리에",
+          "name:ru": "Обервилье",
+          "name:uk": "Обервільє",
+          "name:zh": "欧贝维利耶",
+          "place": "town",
+          "population": "90071",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q205632"
+        }
+      },
+      {
+        "id": "26691475",
+        "wgs84": [
+          2.0610573,
+          48.9821445,
+          0.0
+        ],
+        "euc": [
+          229435.84913175929,
+          6271832.232131394
+        ],
+        "tags": {
+          "addr:postcode": "78570",
+          "name": "Andrésy",
+          "name:el": "Αντρεζί",
+          "name:ko": "앙드레지",
+          "name:uk": "Андрезі",
+          "name:zh": "昂德雷西",
+          "place": "town",
+          "population": "13230",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1419026"
+        }
+      },
+      {
+        "id": "26691478",
+        "wgs84": [
+          2.3888044,
+          48.7079878,
+          0.0
+        ],
+        "euc": [
+          265920.48941273143,
+          6225457.5046076095
+        ],
+        "tags": {
+          "addr:postcode": "91200",
+          "name": "Athis-Mons",
+          "name:el": "Ατίς-Μονς",
+          "name:gcf": "Atis mons",
+          "name:hy": "Աթիս-Մոնս",
+          "name:ja": "アティス＝モンス",
+          "name:ko": "아티스몽스",
+          "name:ru": "Атис-Монс",
+          "name:uk": "Атіс-Монс",
+          "name:zh": "阿蒂斯蒙斯",
+          "place": "town",
+          "population": "36222",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q244289"
+        }
+      },
+      {
+        "id": "26691480",
+        "wgs84": [
+          2.2303498,
+          48.986025,
+          0.0
+        ],
+        "euc": [
+          248281.40402687955,
+          6272490.46148546
+        ],
+        "tags": {
+          "alt_name": "Franconville",
+          "name": "Franconville-la-Garenne",
+          "name:el": "Φρανκονβίλ",
+          "name:hy": "Ֆրանկոնվիլ",
+          "name:ja": "フランコンヴィル",
+          "name:ko": "프랑콩빌",
+          "name:ru": "Франконвиль",
+          "name:uk": "Франконвіль",
+          "name:zh": "弗朗孔维尔",
+          "place": "town",
+          "population": "37520",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q237333"
+        }
+      },
+      {
+        "id": "26691483",
+        "wgs84": [
+          2.1853699,
+          48.8437486,
+          0.0
+        ],
+        "euc": [
+          243274.2644629472,
+          6248390.268369473
+        ],
+        "tags": {
+          "addr:postcode": "92380",
+          "name": "Garches",
+          "name:ar": "كارشز",
+          "name:el": "Γκαρς",
+          "name:hy": "Գարշ",
+          "name:ja": "ギャルシュ",
+          "name:ko": "가르슈",
+          "name:ru": "Гарш",
+          "name:uk": "Гарш",
+          "name:zh": "加尔什",
+          "place": "town",
+          "population": "17898",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q246199"
+        }
+      },
+      {
+        "id": "26691484",
+        "wgs84": [
+          2.3825154,
+          48.9565669,
+          0.0
+        ],
+        "euc": [
+          265220.4011351325,
+          6267494.916417918
+        ],
+        "tags": {
+          "name": "Stains",
+          "name:ar": "ستين",
+          "name:el": "Σταιν",
+          "name:ja": "スタン",
+          "name:ko": "스탱",
+          "name:ru": "Стен",
+          "name:uk": "Стен",
+          "name:zh": "斯坦",
+          "place": "town",
+          "population": "40359",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q258878"
+        }
+      },
+      {
+        "id": "26691488",
+        "wgs84": [
+          2.6200032,
+          48.8457347,
+          0.0
+        ],
+        "euc": [
+          291657.42210074735,
+          6248726.221974272
+        ],
+        "tags": {
+          "addr:postcode": "77186",
+          "name": "Noisiel",
+          "name:el": "Νουαζιέλ",
+          "name:ja": "ノワジエル",
+          "name:ko": "누와시엘",
+          "name:uk": "Нуазьєль",
+          "name:zh": "努瓦谢勒",
+          "place": "town",
+          "population": "15461",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q900479"
+        }
+      },
+      {
+        "id": "26691489",
+        "wgs84": [
+          2.30551,
+          48.9026,
+          0.0
+        ],
+        "euc": [
+          256648.19921880012,
+          6258350.782482607
+        ],
+        "tags": {
+          "addr:postcode": "92110",
+          "alt_name": "Clichy-la-Garenne",
+          "alt_name:fr": "Clichy-la-Garenne",
+          "name": "Clichy",
+          "name:ar": "كليشي",
+          "name:el": "Κλισί",
+          "name:fr": "Clichy",
+          "name:hy": "Կլիշի",
+          "name:ja": "クリシー",
+          "name:ko": "클리시",
+          "name:ru": "Клиши",
+          "name:uk": "Кліші",
+          "name:zh": "克利希",
+          "old_name": "Clichy-sur-Seine",
+          "old_name:fr": "Clichy-sur-Seine",
+          "place": "town",
+          "population": "64849",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q201982",
+          "wikipedia": "fr:Clichy"
+        }
+      },
+      {
+        "id": "26691498",
+        "wgs84": [
+          2.0388736,
+          49.0527528,
+          0.0
+        ],
+        "euc": [
+          226966.37094384857,
+          6283817.18533587
+        ],
+        "tags": {
+          "addr:postcode": "95000;95800",
+          "capital": "6",
+          "name": "Cergy",
+          "name:ar": "سيرجي",
+          "name:el": "Σερζί",
+          "name:hy": "Սերժի",
+          "name:ja": "セルジー",
+          "name:ko": "세르지",
+          "name:ru": "Сержи",
+          "name:uk": "Сержі",
+          "name:zh": "塞尔吉",
+          "place": "town",
+          "population": "68348",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219501277",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q193903",
+          "wikipedia": "fr:Cergy"
+        }
+      },
+      {
+        "id": "26691509",
+        "wgs84": [
+          2.4631476,
+          48.9385489,
+          0.0
+        ],
+        "euc": [
+          274196.3365806739,
+          6264440.853151832
+        ],
+        "tags": {
+          "addr:postcode": "93150",
+          "name": "Le Blanc-Mesnil",
+          "name:ar": "لو بلان مينيل",
+          "name:el": "Λε Μπλαν-Μενίλ",
+          "name:hy": "Լը Բլան Մենիլ",
+          "name:ja": "ル・ブラン＝メニル",
+          "name:ko": "르블랑메닐",
+          "name:ru": "Ле-Блан-Мениль",
+          "name:uk": "Ле-Блан-Меніль",
+          "name:zh": "勒布朗梅尼勒",
+          "place": "town",
+          "population": "58257",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q208313"
+        }
+      },
+      {
+        "id": "26691522",
+        "wgs84": [
+          2.590549,
+          48.8783804,
+          0.0
+        ],
+        "euc": [
+          288378.5955550241,
+          6254250.231401187
+        ],
+        "tags": {
+          "addr:postcode": "77500",
+          "name": "Chelles",
+          "name:hi": "शैल्",
+          "name:hy": "Շել",
+          "name:ja": "シェル",
+          "name:ko": "셸",
+          "name:ru": "Шелль",
+          "name:uk": "Шель",
+          "name:zh": "谢勒",
+          "place": "town",
+          "population": "54309",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q272916",
+          "wikipedia": "fr:Chelles"
+        }
+      },
+      {
+        "id": "26691530",
+        "wgs84": [
+          2.0698106,
+          48.9606321,
+          0.0
+        ],
+        "euc": [
+          230410.26203052004,
+          6268184.123096536
+        ],
+        "tags": {
+          "addr:postcode": "78260",
+          "name": "Achères",
+          "name:ja": "アシェール",
+          "name:ka": "აშერი",
+          "name:ru": "Ашер",
+          "name:uk": "Ашер",
+          "name:zh": "阿谢尔",
+          "place": "town",
+          "population": "21368",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q245504"
+        }
+      },
+      {
+        "id": "26691533",
+        "wgs84": [
+          2.2653844,
+          48.7467819,
+          0.0
+        ],
+        "euc": [
+          252181.4378590256,
+          6232004.292622984
+        ],
+        "tags": {
+          "addr:postcode": "91370",
+          "description": "Verrières-le-Buisson est une commune française située à quatorze kilomètres au sud-ouest de Paris dans le département de l’Essonne en région Île-de-France.",
+          "name": "Verrières-le-Buisson",
+          "name:el": "Βεριέρ-λε-Μπουισόν",
+          "name:ja": "ヴェリエール=ル=ビュイッソン",
+          "name:ko": "베히에흐-르-뷰이쏭",
+          "name:ru": "Веррьер-ле-Бюиссон",
+          "name:uk": "Верр'єр-ле-Бюїссон",
+          "name:zh": "韦里耶尔勒比松",
+          "old_name:cassini": "Verrières",
+          "place": "town",
+          "population": "14597",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "website": "https://www.verrieres-le-buisson.fr/",
+          "wikidata": "Q747799",
+          "wikipedia": "fr:Verrières-le-Buisson"
+        }
+      },
+      {
+        "id": "26691534",
+        "wgs84": [
+          2.2619632,
+          48.7811049,
+          0.0
+        ],
+        "euc": [
+          251800.5916171236,
+          6237800.764934956
+        ],
+        "tags": {
+          "description": "Le Plessis-Robinson est une commune française du département des Hauts-de-Seine en région Île-de-France, dans l'arrondissement d'Antony, au sud-ouest de Paris.",
+          "name": "Le Plessis-Robinson",
+          "name:ar": "لو بليسيس روبنسون",
+          "name:el": "Λε Πλεσί-Ρομπενσόν",
+          "name:ja": "ル・プレシ＝ロバンソン",
+          "name:ko": "르플레시로뱅송",
+          "name:ru": "Ле-Плесси-Робинсон",
+          "name:uk": "Ле-Плессі-Робенсон",
+          "name:zh": "勒普莱西罗班松",
+          "place": "town",
+          "population": "29228",
+          "population:date": "2021",
+          "postal_code": "92350",
+          "ref:FR:SIREN": "219200607",
+          "source:population": "INSEE 2024",
+          "website": "https://www.plessis-robinson.com/",
+          "wikidata": "Q259107",
+          "wikipedia": "fr:Le Plessis-Robinson"
+        }
+      },
+      {
+        "id": "26691539",
+        "wgs84": [
+          2.1900052,
+          48.7809496,
+          0.0
+        ],
+        "euc": [
+          243790.26369862125,
+          6237774.528928233
+        ],
+        "tags": {
+          "addr:postcode": "78140",
+          "name": "Vélizy-Villacoublay",
+          "name:el": "Βελιζί-Βιλακουμπλαί",
+          "name:ja": "ヴェリジー＝ヴィラクブレー",
+          "name:ko": "벨리지빌라쿠블레",
+          "name:ru": "Велизи-Виллакубле",
+          "name:uk": "Велізі-Віллакубле",
+          "name:zh": "韦利济-维拉库布莱",
+          "place": "town",
+          "population": "22713",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q387447"
+        }
+      },
+      {
+        "id": "26691542",
+        "wgs84": [
+          2.0949768,
+          48.9938791,
+          0.0
+        ],
+        "euc": [
+          233211.75059972177,
+          6273822.869152196
+        ],
+        "tags": {
+          "addr:postcode": "78700",
+          "name": "Conflans-Sainte-Honorine",
+          "name:el": "Κονφλάν-Σαιντ-Ονορίν",
+          "name:hy": "Կոնֆլան Սենտ Օնորին",
+          "name:ja": "コンフラン＝サントノリーヌ",
+          "name:ko": "콩플랑생토노린",
+          "name:uk": "Конфлан-Сент-Онорин",
+          "name:zh": "孔夫朗-圣奥诺里讷",
+          "place": "town",
+          "population": "35926",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q212507"
+        }
+      },
+      {
+        "id": "26691543",
+        "wgs84": [
+          2.632722,
+          48.8384157,
+          0.0
+        ],
+        "euc": [
+          293073.27244024875,
+          6247488.261383318
+        ],
+        "tags": {
+          "name": "Lognes",
+          "name:el": "Λόνι",
+          "name:ja": "ローニュ",
+          "name:ko": "로니으",
+          "name:ru": "Лонь",
+          "name:uk": "Лонь",
+          "name:zh": "洛涅",
+          "place": "town",
+          "population": "14650",
+          "population:date": "2021",
+          "postal_code": "77185",
+          "ref:FR:SIREN": "217702588",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q268281",
+          "wikipedia": "fr:Lognes"
+        }
+      },
+      {
+        "id": "26691548",
+        "wgs84": [
+          2.4347044,
+          48.5666645,
+          0.0
+        ],
+        "euc": [
+          271030.0540401427,
+          6201650.750344467
+        ],
+        "tags": {
+          "addr:postcode": "91540",
+          "name": "Mennecy",
+          "name:el": "Μενεσί",
+          "name:ja": "メネシー",
+          "name:ko": "메네시",
+          "name:uk": "Меннесі",
+          "name:zh": "梅讷西",
+          "place": "town",
+          "population": "15711",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1165781"
+        }
+      },
+      {
+        "id": "26691553",
+        "wgs84": [
+          2.2480799,
+          49.0212001,
+          0.0
+        ],
+        "euc": [
+          250255.10973059337,
+          6278459.373292122
+        ],
+        "tags": {
+          "addr:postcode": "95320",
+          "name": "Saint-Leu-la-Forêt",
+          "place": "town",
+          "population": "15979",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "26691560",
+        "wgs84": [
+          2.3458417,
+          48.6794572,
+          0.0
+        ],
+        "euc": [
+          261137.9035256272,
+          6220645.977433558
+        ],
+        "tags": {
+          "addr:postcode": "91600",
+          "name": "Savigny-sur-Orge",
+          "name:el": "Σαβινί-συρ-Ορζ",
+          "name:ja": "サヴィニー＝シュル＝オルジュ",
+          "name:ko": "사비니쉬르오르주",
+          "name:ru": "Савиньи-сюр-Орж",
+          "name:uk": "Савіньї-сюр-Орж",
+          "name:zh": "奥尔日河畔萨维尼",
+          "place": "town",
+          "population": "37371",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q243956"
+        }
+      },
+      {
+        "id": "26691568",
+        "wgs84": [
+          2.1347291,
+          48.894254,
+          0.0
+        ],
+        "euc": [
+          237636.9563935832,
+          6256937.52081603
+        ],
+        "tags": {
+          "addr:postcode": "78110",
+          "name": "Le Vésinet",
+          "name:el": "Λε Βεζινέ",
+          "name:hy": "Լե Վեզինե",
+          "name:ja": "ル・ヴェジネ",
+          "name:ko": "르베지네",
+          "name:ru": "Ле-Везине",
+          "name:uk": "Ле-Везіне",
+          "name:zh": "勒韦西内",
+          "place": "town",
+          "population": "15646",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q641607"
+        }
+      },
+      {
+        "id": "26691570",
+        "wgs84": [
+          2.4309703,
+          48.8012045,
+          0.0
+        ],
+        "euc": [
+          270614.37592957146,
+          6241197.028180595
+        ],
+        "tags": {
+          "addr:postcode": "94700",
+          "name": "Maisons-Alfort",
+          "name:ar": "ميزون ألفور",
+          "name:el": "Μαιζόν-Αλφόρ",
+          "name:hy": "Մեզոն-Ալֆոր",
+          "name:ja": "メゾン＝アルフォール",
+          "name:ko": "메종알포르",
+          "name:ru": "Мезонз-Альфор",
+          "name:uk": "Мезонз-Альфор",
+          "name:zh": "迈松阿尔福",
+          "place": "town",
+          "population": "58068",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q208314",
+          "wikipedia": "fr:Maisons-Alfort"
+        }
+      },
+      {
+        "id": "26691576",
+        "wgs84": [
+          2.187457,
+          48.699184,
+          0.0
+        ],
+        "euc": [
+          243506.59937218187,
+          6223972.50175304
+        ],
+        "tags": {
+          "addr:postcode": "91400",
+          "name": "Orsay",
+          "name:el": "Ορσαί",
+          "name:hy": "Օրսե",
+          "name:ja": "オルセー",
+          "name:ko": "오르세",
+          "name:uk": "Орсе",
+          "name:zh": "奥赛",
+          "place": "town",
+          "population": "16007",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q372281"
+        }
+      },
+      {
+        "id": "26691580",
+        "wgs84": [
+          2.5193322,
+          48.8352872,
+          0.0
+        ],
+        "euc": [
+          280450.7776430977,
+          6246959.151421092
+        ],
+        "tags": {
+          "addr:postcode": "94360",
+          "name": "Bry-sur-Marne",
+          "name:ar": "بري سور مارن",
+          "name:el": "Μπρι-συρ-Μαρν",
+          "name:hy": "Բրի-սյուր-Մարն",
+          "name:ja": "ブリィ＝シュール＝マルヌ",
+          "name:ko": "브히-쓔흐-마흔느",
+          "name:ru": "Бри-сюр-Марн",
+          "name:uk": "Брі-сюр-Марн",
+          "name:zh": "马恩河畔布里",
+          "place": "town",
+          "population": "17400",
+          "population:date": "2021",
+          "short_name": "Bry-sur-M.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q369954",
+          "wikipedia": "fr:Bry-sur-Marne"
+        }
+      },
+      {
+        "id": "26691584",
+        "wgs84": [
+          2.3068482,
+          48.9699732,
+          0.0
+        ],
+        "euc": [
+          256797.16696137973,
+          6269768.009219758
+        ],
+        "tags": {
+          "addr:postcode": "95880",
+          "name": "Enghien-les-Bains",
+          "name:el": "Ανγκέν-λε-Μπαιν",
+          "name:hy": "Անգեն լե Բեն",
+          "name:ja": "アンギャン＝レ＝バン",
+          "name:ru": "Ангьен-ле-Бэн",
+          "name:uk": "Анг'ян-ле-Бен",
+          "name:zh": "昂甘莱班",
+          "place": "town",
+          "population": "11440",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q255105"
+        }
+      },
+      {
+        "id": "26691585",
+        "wgs84": [
+          2.499789,
+          48.934231,
+          0.0
+        ],
+        "euc": [
+          278275.23857062653,
+          6263709.129927853
+        ],
+        "tags": {
+          "addr:postcode": "93600",
+          "name": "Aulnay-sous-Bois",
+          "name:ar": "أولنيه سو بوا",
+          "name:el": "Ωλναί-σου-Μπουά",
+          "name:hy": "Օնե սու Բուա",
+          "name:ja": "オルネー＝スー＝ボワ",
+          "name:ko": "올네수부아",
+          "name:ru": "Ольне-су-Буа",
+          "name:uk": "Ольне-су-Буа",
+          "name:zh": "欧奈苏布瓦",
+          "place": "town",
+          "population": "86135",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q192773",
+          "wikipedia": "fr:Aulnay-sous-Bois"
+        }
+      },
+      {
+        "id": "26691586",
+        "wgs84": [
+          2.2071267,
+          48.8924273,
+          0.0
+        ],
+        "euc": [
+          245696.22036023828,
+          6256628.229848149
+        ],
+        "tags": {
+          "addr:postcode": "92000",
+          "capital": "6",
+          "name": "Nanterre",
+          "name:ar": "نانتير",
+          "name:el": "Ναντέρ",
+          "name:fr": "Nanterre",
+          "name:hi": "नैनटेरे",
+          "name:hy": "Նանտեր",
+          "name:ja": "ナンテール郡",
+          "name:ko": "낭테르",
+          "name:ru": "Нантер",
+          "name:uk": "Нантер",
+          "name:zh": "楠泰尔",
+          "place": "town",
+          "population": "97351",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q170507",
+          "wikipedia": "fr:Nanterre"
+        }
+      },
+      {
+        "id": "26691588",
+        "wgs84": [
+          2.0706084,
+          48.7709414,
+          0.0
+        ],
+        "euc": [
+          230499.07272027488,
+          6236083.938955482
+        ],
+        "tags": {
+          "addr:postcode": "78280",
+          "name": "Guyancourt",
+          "name:el": "Γκουιγιανκούρ",
+          "name:ja": "ギュイヤンクール",
+          "name:ko": "기앙쿠르",
+          "name:ru": "Гвианкур",
+          "name:uk": "Гіянкур",
+          "name:zh": "吉扬库尔",
+          "place": "town",
+          "population": "29406",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217802974",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q237303",
+          "wikipedia": "fr:Guyancourt"
+        }
+      },
+      {
+        "id": "26691592",
+        "wgs84": [
+          2.3145039,
+          48.9525181,
+          0.0
+        ],
+        "euc": [
+          257649.3955870458,
+          6266808.545991
+        ],
+        "tags": {
+          "addr:postcode": "93800",
+          "name": "Épinay-sur-Seine",
+          "name:ar": "ابيني-سور-سين",
+          "name:el": "Επιναί-συρ-Σεν",
+          "name:fr": "Épinay-sur-Seine",
+          "name:hy": "Էպինե սյուր Սեն",
+          "name:ja": "エピネー＝シュル＝セーヌ",
+          "name:ko": "에피네쉬르센",
+          "name:ru": "Эпине-сюр-Сен",
+          "name:uk": "Епіне-сюр-Сен",
+          "name:zh": "塞纳河畔埃皮奈",
+          "place": "town",
+          "population": "53489",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q206961",
+          "wikipedia": "fr:Épinay-sur-Seine"
+        }
+      },
+      {
+        "id": "26691596",
+        "wgs84": [
+          2.1701573,
+          48.681708,
+          0.0
+        ],
+        "euc": [
+          241580.80557730547,
+          6221025.463302724
+        ],
+        "tags": {
+          "addr:postcode": "91940",
+          "name": "Les Ulis",
+          "name:el": "Λεζ Υλίς",
+          "name:ja": "レ・ジュリス",
+          "name:ko": "레윌리스",
+          "name:ru": "Лез-Юлис",
+          "name:th": "เลซูว์ลิส",
+          "name:uk": "Лез-Юліс",
+          "name:zh": "莱叙利斯",
+          "place": "town",
+          "population": "25253",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q216844",
+          "wikipedia": "fr:Les Ulis"
+        }
+      },
+      {
+        "id": "26691597",
+        "wgs84": [
+          2.6719421,
+          48.7620904,
+          0.0
+        ],
+        "euc": [
+          297439.23400111,
+          6234589.104530423
+        ],
+        "tags": {
+          "addr:postcode": "77330",
+          "name": "Ozoir-la-Ferrière",
+          "name:el": "Οζουάρ-λα-Φεριέρ",
+          "name:ja": "オゾワール＝ラ＝フェリエール",
+          "name:ko": "오주아르라페리에르",
+          "name:ru": "Озуар-ла-Ферьер",
+          "name:uk": "Озуар-ла-Ферр'єр",
+          "name:zh": "奥祖瓦尔-拉费里耶尔",
+          "place": "town",
+          "population": "20692",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q274588"
+        }
+      },
+      {
+        "id": "26691602",
+        "wgs84": [
+          2.6166737,
+          48.6904522,
+          0.0
+        ],
+        "euc": [
+          291286.7838561511,
+          6222499.900200691
+        ],
+        "tags": {
+          "addr:postcode": "77170",
+          "name": "Brie-Comte-Robert",
+          "name:el": "Μπρι-Κοντ-Ρομπέρ",
+          "name:hy": "Բրի-Կոմտ-Ռոբեր",
+          "name:ja": "ブリー＝コント＝ロベル",
+          "name:ko": "브히꽁뜨호베흐",
+          "name:ru": "Бри-Конт-Робер",
+          "name:uk": "Брі-Конт-Робер",
+          "name:zh": "布里孔特罗贝尔",
+          "place": "town",
+          "population": "19213",
+          "population:date": "2021",
+          "short_name": "Brie-Cte-Robert",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q250399"
+        }
+      },
+      {
+        "id": "26691604",
+        "wgs84": [
+          2.3880847,
+          49.0074999,
+          0.0
+        ],
+        "euc": [
+          265840.37277520745,
+          6276134.06594562
+        ],
+        "tags": {
+          "addr:postcode": "95400",
+          "name": "Villiers-le-Bel",
+          "name:el": "Βιλιέ-λε-Μπελ",
+          "name:hy": "Վիլե լե Բել",
+          "name:ja": "ヴィリエ＝ル＝ベル",
+          "name:ko": "빌리에르벨",
+          "name:uk": "Вільє-ле-Бель",
+          "name:zh": "维利耶勒贝勒",
+          "place": "town",
+          "population": "28836",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q236136"
+        }
+      },
+      {
+        "id": "26691605",
+        "wgs84": [
+          2.6068064,
+          48.8009132,
+          0.0
+        ],
+        "euc": [
+          290188.36104464665,
+          6241147.797011442
+        ],
+        "tags": {
+          "addr:postcode": "77340",
+          "name": "Pontault-Combault",
+          "name:el": "Ποντώ-Κομπώ",
+          "name:hy": "Պոնտո-Կոմբո",
+          "name:ja": "ポントー＝コンボー",
+          "name:ko": "퐁토콩보",
+          "name:ru": "Понто-Комбо",
+          "name:uk": "Понто-Комбо",
+          "name:zh": "蓬托-孔博",
+          "place": "town",
+          "population": "38258",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q717049"
+        }
+      },
+      {
+        "id": "26691610",
+        "wgs84": [
+          2.3469255,
+          48.7714153,
+          0.0
+        ],
+        "euc": [
+          261258.55158974903,
+          6236163.982771005
+        ],
+        "tags": {
+          "addr:postcode": "94550",
+          "name": "Chevilly-Larue",
+          "name:ar": "شيفيلي لارو",
+          "name:el": "Σεβιγί-Λαρύ",
+          "name:ja": "シュヴィイ＝ラリュ",
+          "name:ko": "슈빌리 라휴",
+          "name:ru": "Шевильи-Ларю",
+          "name:uk": "Шевії-Ларю",
+          "name:zh": "谢维利拉吕厄",
+          "place": "town",
+          "population": "20326",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q258757",
+          "wikipedia": "fr:Chevilly-Larue"
+        }
+      },
+      {
+        "id": "26691621",
+        "wgs84": [
+          2.415796,
+          48.8795658,
+          0.0
+        ],
+        "euc": [
+          268925.1805804271,
+          6254450.881858288
+        ],
+        "tags": {
+          "name": "Les Lilas",
+          "name:ar": "ليه ليلا",
+          "name:el": "Λε Λιλά",
+          "name:ja": "レ・リラ",
+          "name:ko": "레릴라",
+          "name:ru": "Ле-Лила",
+          "name:uk": "Ле-Ліла",
+          "name:zh": "莱利拉",
+          "place": "town",
+          "population": "23469",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q256004",
+          "wikipedia": "fr:Les Lilas"
+        }
+      },
+      {
+        "id": "26691622",
+        "wgs84": [
+          2.3367599,
+          48.7022956,
+          0.0
+        ],
+        "euc": [
+          260126.92217414087,
+          6224497.32893988
+        ],
+        "tags": {
+          "addr:city": "Morangis",
+          "addr:postcode": "91420",
+          "name": "Morangis",
+          "name:el": "Μορανζίς",
+          "name:uk": "Моранжис",
+          "name:zh": "莫朗日斯",
+          "place": "town",
+          "population": "13211",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1365599"
+        }
+      },
+      {
+        "id": "26691623",
+        "wgs84": [
+          2.4083576,
+          48.6851514,
+          0.0
+        ],
+        "euc": [
+          268097.1416801104,
+          6221606.054874108
+        ],
+        "tags": {
+          "addr:postcode": "91210",
+          "name": "Draveil",
+          "name:hy": "Դրավեյ",
+          "name:ja": "ドラヴェイユ",
+          "name:ka": "დრავეილი",
+          "name:ko": "드라베이",
+          "name:ru": "Дравей",
+          "name:uk": "Дравей",
+          "name:zh": "德拉韦伊",
+          "place": "town",
+          "population": "29173",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q242524",
+          "wikipedia": "fr:Draveil"
+        }
+      },
+      {
+        "id": "26691627",
+        "wgs84": [
+          2.3275141,
+          48.9756423,
+          0.0
+        ],
+        "euc": [
+          259097.6844261645,
+          6270729.412101599
+        ],
+        "tags": {
+          "addr:postcode": "95170",
+          "name": "Deuil-la-Barre",
+          "name:el": "Ντέιγ-λα-Μπαρ",
+          "name:hy": "Դյոյ լա Բառ",
+          "name:ja": "ドゥイユ＝ラ＝バール",
+          "name:ko": "되이라바르",
+          "name:ru": "Дёй-ла-Барр",
+          "name:uk": "Дей-ла-Барр",
+          "name:zh": "德伊-拉巴尔",
+          "place": "town",
+          "population": "22510",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q271654"
+        }
+      },
+      {
+        "id": "26691640",
+        "wgs84": [
+          2.5589558,
+          48.9802035,
+          0.0
+        ],
+        "euc": [
+          284861.656618494,
+          6271503.009464828
+        ],
+        "tags": {
+          "addr:postcode": "93290",
+          "name": "Tremblay-en-France",
+          "name:ar": "تريمبلي أون فرانس",
+          "name:el": "Τραμπλαί-αν-Φρανς",
+          "name:hy": "Տրամբլե ան Ֆրանս",
+          "name:ja": "トランブレ＝アン＝フランス",
+          "name:ko": "트랑블레앙프랑스",
+          "name:ru": "Трамбле-ан-Франс",
+          "name:uk": "Трамбле-ан-Франс",
+          "name:zh": "法兰西地区特朗布莱",
+          "place": "town",
+          "population": "37271",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q242497"
+        }
+      },
+      {
+        "id": "26691645",
+        "wgs84": [
+          2.4809129,
+          48.7489857,
+          0.0
+        ],
+        "euc": [
+          276173.9607304636,
+          6232376.351649867
+        ],
+        "tags": {
+          "addr:postcode": "94450",
+          "name": "Limeil-Brévannes",
+          "name:ar": "ليمي بريفان",
+          "name:el": "Λιμέιγ-Μπρεβάν",
+          "name:ja": "リメイユ＝ブレバンヌ",
+          "name:ko": "리메이유브레반",
+          "name:uk": "Лімей-Бреванн",
+          "name:zh": "利梅伊-布雷瓦讷",
+          "place": "town",
+          "population": "27999",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400447",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q549536",
+          "wikipedia": "fr:Limeil-Brévannes"
+        }
+      },
+      {
+        "id": "26691648",
+        "wgs84": [
+          2.5076181,
+          48.881886,
+          0.0
+        ],
+        "euc": [
+          279146.7699959962,
+          6254843.631567603
+        ],
+        "tags": {
+          "name": "Villemomble",
+          "name:ar": "فيلمومبل",
+          "name:el": "Βιλμόμπλ",
+          "name:ja": "ヴィルモンブル",
+          "name:ko": "빌몽블",
+          "name:ru": "Вильмомбль",
+          "name:uk": "Вільмомбль",
+          "name:zh": "维勒蒙布勒",
+          "place": "town",
+          "population": "30332",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q244716"
+        }
+      },
+      {
+        "id": "26691656",
+        "wgs84": [
+          2.149134,
+          48.9076492,
+          0.0
+        ],
+        "euc": [
+          239240.5025265112,
+          6259205.8983602775
+        ],
+        "tags": {
+          "name": "Montesson",
+          "name:el": "Μοντεσόν",
+          "name:ja": "モンテソン",
+          "name:ru": "Монтессон",
+          "name:uk": "Монтессон",
+          "name:zh": "蒙泰松",
+          "place": "town",
+          "population": "14511",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q830293"
+        }
+      },
+      {
+        "id": "26691662",
+        "wgs84": [
+          2.5034999,
+          48.9082988,
+          0.0
+        ],
+        "euc": [
+          278688.3340690113,
+          6259315.918749407
+        ],
+        "tags": {
+          "addr:postcode": "93320",
+          "name": "Les Pavillons-sous-Bois",
+          "name:ar": "ليه بافيلون سو بوا",
+          "name:el": "Λε Παβιγιόν-σου-Μπουά",
+          "name:ja": "レ・パヴィヨン＝スー＝ボワ",
+          "name:ko": "레파비용수부아",
+          "name:uk": "Ле-Павійон-су-Буа",
+          "name:zh": "莱帕维永苏布瓦",
+          "place": "town",
+          "population": "24165",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q498043"
+        }
+      },
+      {
+        "id": "26691670",
+        "wgs84": [
+          2.4077003,
+          48.7350308,
+          0.0
+        ],
+        "euc": [
+          268023.97137881204,
+          6230020.675281781
+        ],
+        "tags": {
+          "addr:postcode": "94290",
+          "name": "Villeneuve-le-Roi",
+          "name:ar": "فيلنوف لو روا",
+          "name:el": "Βιλνέβ-λε-Ρουά",
+          "name:hy": "Վիլնյով լը Ռուա",
+          "name:ja": "ヴィルヌーヴ＝ル＝ロワ",
+          "name:ru": "Вильнёв-ле-Руа",
+          "name:uk": "Вільнев-ле-Руа",
+          "name:zh": "鲁瓦新城",
+          "place": "town",
+          "population": "21129",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q669715",
+          "wikipedia": "fr:Villeneuve-le-Roi"
+        }
+      },
+      {
+        "id": "26691672",
+        "wgs84": [
+          2.0381228,
+          48.7698937,
+          0.0
+        ],
+        "euc": [
+          226882.79227016095,
+          6235906.980451924
+        ],
+        "tags": {
+          "addr:postcode": "78180",
+          "name": "Montigny-le-Bretonneux",
+          "name:ar": "مونتيني لو بريتانيو",
+          "name:el": "Μοντινί-λε-Μπρετονέ",
+          "name:hy": "Մոնտինի լը Բրետոնո",
+          "name:ja": "モンティニー＝ル＝ブルトンヌー",
+          "name:ko": "몽티니르브르토뇌",
+          "name:ru": "Монтиньи-ле-Бретонне",
+          "name:uk": "Монтіньї-ле-Бретонне",
+          "name:zh": "蒙蒂尼勒布勒托讷",
+          "place": "town",
+          "population": "31777",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q240798"
+        }
+      },
+      {
+        "id": "26691678",
+        "wgs84": [
+          2.6396951,
+          48.8733776,
+          0.0
+        ],
+        "euc": [
+          293849.5143814994,
+          6253403.469110686
+        ],
+        "tags": {
+          "addr:postcode": "77360",
+          "name": "Vaires-sur-Marne",
+          "name:el": "Βαιρ-συρ-Μαρν",
+          "name:ja": "ベール＝シュル＝マルヌ",
+          "name:ko": "베르-쉬르-마른",
+          "name:ru": "Вэр-сюр-Марн",
+          "name:uk": "Вер-сюр-Марн",
+          "name:zh": "马恩河畔韦尔",
+          "place": "town",
+          "population": "13518",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q675577"
+        }
+      },
+      {
+        "id": "26691713",
+        "wgs84": [
+          2.2674892,
+          48.9148269,
+          0.0
+        ],
+        "euc": [
+          252415.7431232473,
+          6260421.638720956
+        ],
+        "tags": {
+          "addr:postcode": "92270",
+          "name": "Bois-Colombes",
+          "name:ar": "بوا كولومب",
+          "name:el": "Μπουά-Κολόμπ",
+          "name:fr": "Bois-Colombes",
+          "name:hy": "Բուա-Կոլոմբ",
+          "name:ja": "ボワ＝コロンブ",
+          "name:ko": "부아콜롱브",
+          "name:ru": "Буа-Коломб",
+          "name:zh": "布瓦科隆布",
+          "place": "town",
+          "population": "29765",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q212566"
+        }
+      },
+      {
+        "id": "26691715",
+        "wgs84": [
+          2.2465748,
+          48.9069349,
+          0.0
+        ],
+        "euc": [
+          250087.5627650004,
+          6259084.921618529
+        ],
+        "tags": {
+          "addr:postcode": "92250",
+          "name": "La Garenne-Colombes",
+          "name:ar": "لا غارن كولمب",
+          "name:el": "Λα Γκαρέν-Κολόμπ",
+          "name:hy": "Լա Գրեն Կոլոմբ",
+          "name:ja": "ラ・ガレンヌ＝コロンブ",
+          "name:ko": "라가렌콜롱브",
+          "name:ru": "Ла Гарен-Коломб",
+          "name:uk": "Ла-Гаренн-Коломб",
+          "name:zh": "拉加雷讷科隆布",
+          "place": "town",
+          "population": "29932",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q236658"
+        }
+      },
+      {
+        "id": "26691719",
+        "wgs84": [
+          2.3197111,
+          48.9891693,
+          0.0
+        ],
+        "euc": [
+          258229.05843950453,
+          6273023.850596397
+        ],
+        "tags": {
+          "addr:postcode": "95160",
+          "name": "Montmorency",
+          "name:el": "Μονμορανσί",
+          "name:hy": "Մոնմորանսի",
+          "name:ja": "モンモランシー",
+          "name:ka": "მონმორანსი",
+          "name:ko": "몽모랑시",
+          "name:ru": "Монморанси",
+          "name:uk": "Монморансі",
+          "name:zh": "蒙莫朗西",
+          "place": "town",
+          "population": "21870",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q316891"
+        }
+      },
+      {
+        "id": "26691722",
+        "wgs84": [
+          2.4875193,
+          48.8716626,
+          0.0
+        ],
+        "euc": [
+          276909.38181444036,
+          6253113.211689163
+        ],
+        "tags": {
+          "addr:postcode": "93110",
+          "name": "Rosny-sous-Bois",
+          "name:ar": "روني سو بوا",
+          "name:el": "Ρονί-σου-Μπουά",
+          "name:hy": "Ռոնի սու Բուա",
+          "name:ja": "ロニー＝スー＝ボワ",
+          "name:ko": "로니수부아",
+          "name:ru": "Рони-су-Буа",
+          "name:uk": "Роні-су-Буа",
+          "name:zh": "罗尼苏布瓦",
+          "place": "town",
+          "population": "45655",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q275547"
+        }
+      },
+      {
+        "id": "26691728",
+        "wgs84": [
+          2.2897124,
+          48.7997756,
+          0.0
+        ],
+        "euc": [
+          254889.6184310443,
+          6240955.539612583
+        ],
+        "tags": {
+          "addr:postcode": "92320",
+          "name": "Châtillon",
+          "name:ar": "شاتيون",
+          "name:el": "Σατιγιόν",
+          "name:fr": "Châtillon",
+          "name:hi": "छटिल्लों",
+          "name:hy": "Շատիյոն",
+          "name:ja": "シャティヨン",
+          "name:ko": "샤티용",
+          "name:ru": "Шатийон",
+          "name:uk": "Шатійон",
+          "name:zh": "沙蒂永",
+          "place": "town",
+          "population": "36777",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219200201",
+          "source:population": "INSEE 2024",
+          "survey:date": "2022-04-19",
+          "wikidata": "Q212947",
+          "wikipedia": "fr:Châtillon (Hauts-de-Seine)"
+        }
+      },
+      {
+        "id": "26691737",
+        "wgs84": [
+          2.0461549,
+          48.8106578,
+          0.0
+        ],
+        "euc": [
+          227776.92155216157,
+          6242794.838783547
+        ],
+        "tags": {
+          "addr:postcode": "78330",
+          "name": "Fontenay-le-Fleury",
+          "name:ja": "フォントネー＝ル＝フルーリー",
+          "name:ko": "퐁트네르플뢰리",
+          "name:uk": "Фонтене-ле-Флері",
+          "name:zh": "丰特奈勒弗勒里",
+          "place": "town",
+          "population": "13455",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q243331"
+        }
+      },
+      {
+        "id": "26691745",
+        "wgs84": [
+          2.2568296,
+          48.9717267,
+          0.0
+        ],
+        "euc": [
+          251229.12187918727,
+          6270065.367486792
+        ],
+        "tags": {
+          "name": "Sannois",
+          "name:el": "Σανουά",
+          "name:hy": "Սանուա",
+          "name:ja": "サノワ",
+          "name:ko": "사누아",
+          "name:ru": "Саннуа",
+          "name:uk": "Саннуа",
+          "name:zh": "萨努瓦",
+          "place": "town",
+          "population": "26768",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q259216"
+        }
+      },
+      {
+        "id": "26691748",
+        "wgs84": [
+          2.3568948,
+          48.9973824,
+          0.0
+        ],
+        "euc": [
+          262368.3289893143,
+          6274417.253724173
+        ],
+        "tags": {
+          "addr:postcode": "95350",
+          "name": "Saint-Brice-sous-Forêt",
+          "place": "town",
+          "population": "15209",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "26691760",
+        "wgs84": [
+          2.39164,
+          48.7876,
+          0.0
+        ],
+        "euc": [
+          266236.14696082484,
+          6238898.104135768
+        ],
+        "tags": {
+          "addr:postcode": "94400",
+          "name": "Vitry-sur-Seine",
+          "name:ar": "فيتري سور سين",
+          "name:el": "Βιτρί-συρ-Σεν",
+          "name:hy": "Վիտրի սյուր Սեն",
+          "name:ja": "ヴィトリー＝シュル＝セーヌ",
+          "name:ko": "비트리쉬르센",
+          "name:ru": "Витри-сюр-Сен",
+          "name:uk": "Вітрі-сюр-Сен",
+          "name:zh": "塞纳河畔维特里",
+          "place": "town",
+          "population": "96205",
+          "population:date": "2021",
+          "short_name": "Vitry-sur-S.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q72248",
+          "wikipedia": "fr:Vitry-sur-Seine"
+        }
+      },
+      {
+        "id": "26691761",
+        "wgs84": [
+          2.2695658,
+          48.884683,
+          0.0
+        ],
+        "euc": [
+          252646.90917782855,
+          6255317.115377751
+        ],
+        "tags": {
+          "addr:postcode": "92200",
+          "name": "Neuilly-sur-Seine",
+          "name:ar": "نويي سور سين",
+          "name:el": "Νεϊγί-συρ-Σεν",
+          "name:fr": "Neuilly-sur-Seine",
+          "name:hy": "Նյոյի սյուր Սեն",
+          "name:ja": "ヌイイ＝シュル＝セーヌ",
+          "name:ka": "ნეიი-სიურ-სენი",
+          "name:ko": "뇌이쉬르센",
+          "name:ru": "Нёйи-сюр-Сен",
+          "name:th": "เนอยี-ซูร์-แซน",
+          "name:uk": "Неї-сюр-Сен",
+          "name:zh": "塞纳河畔讷伊",
+          "place": "town",
+          "population": "59267",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q48958",
+          "wikipedia": "fr:Neuilly-sur-Seine"
+        }
+      },
+      {
+        "id": "26691764",
+        "wgs84": [
+          2.2385432,
+          48.8126688,
+          0.0
+        ],
+        "euc": [
+          249193.48914274515,
+          6243134.779804149
+        ],
+        "tags": {
+          "addr:postcode": "92190;92360",
+          "name": "Meudon",
+          "name:ar": "مودون",
+          "name:el": "Μεντόν",
+          "name:fr": "Meudon",
+          "name:hy": "Մեդոն",
+          "name:ja": "ムードン",
+          "name:ka": "მიოდონი",
+          "name:ko": "뫼동",
+          "name:ru": "Мёдон",
+          "name:uk": "Медон",
+          "name:zh": "默东",
+          "place": "town",
+          "population": "46342",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q234735",
+          "wikipedia": "fr:Meudon"
+        }
+      },
+      {
+        "id": "26691775",
+        "wgs84": [
+          2.4668077,
+          48.8183717,
+          0.0
+        ],
+        "euc": [
+          274603.77704892633,
+          6244098.876670627
+        ],
+        "tags": {
+          "addr:postcode": "94340",
+          "name": "Joinville-le-Pont",
+          "name:ar": "جوينفيل لو بون",
+          "name:el": "Ζουενβίλ-λε-Πον",
+          "name:ja": "ジョアンヴィル＝ル＝ポン",
+          "name:ko": "주앵빌르퐁",
+          "name:ru": "Жуанвиль-ле-Пон",
+          "name:uk": "Жуенвіль-ле-Пон",
+          "name:zh": "茹安维尔勒蓬",
+          "place": "town",
+          "population": "20413",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q609134",
+          "wikipedia": "fr:Joinville-le-Pont"
+        }
+      },
+      {
+        "id": "26691778",
+        "wgs84": [
+          2.5524906,
+          48.8492238,
+          0.0
+        ],
+        "euc": [
+          284141.9538466173,
+          6249316.4439191045
+        ],
+        "tags": {
+          "addr:postcode": "93160",
+          "name": "Noisy-le-Grand",
+          "name:ar": "نوازي لو غران",
+          "name:el": "Νουαζί-λε-Γκραν",
+          "name:hy": "Նուազի-լե-Գրան",
+          "name:ja": "ノワジー＝ル＝グラン",
+          "name:ko": "누아지르그랑",
+          "name:ru": "Нуази-ле-Гран",
+          "name:th": "นัวซีเลอกร็อง",
+          "name:uk": "Нуазі-ле-Гран",
+          "name:zh": "大努瓦西",
+          "place": "town",
+          "population": "70374",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q207605",
+          "wikipedia": "fr:Noisy-le-Grand"
+        }
+      },
+      {
+        "id": "26691783",
+        "wgs84": [
+          2.0672138,
+          48.799708,
+          0.0
+        ],
+        "euc": [
+          230121.18757682812,
+          6240944.115171635
+        ],
+        "tags": {
+          "name": "Saint-Cyr-l'École",
+          "name:el": "Σαιν-Σιρ-λ'Εκόλ",
+          "name:ja": "サン＝シール＝レコール",
+          "name:ko": "쎙 씨흐 레꼴르",
+          "name:ru": "Сен-Сир-Леколь",
+          "name:uk": "Сен-Сір-л'Еколь",
+          "name:zh": "圣西尔莱科勒",
+          "place": "town",
+          "population": "20971",
+          "population:date": "2021",
+          "postal_code": "78210",
+          "ref:FR:SIREN": "217805456",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q112683"
+        }
+      },
+      {
+        "id": "26691793",
+        "wgs84": [
+          1.8554319,
+          48.9591392,
+          0.0
+        ],
+        "euc": [
+          206545.73430959607,
+          6267931.012995754
+        ],
+        "tags": {
+          "addr:postcode": "78410",
+          "name": "Aubergenville",
+          "name:ar": "أوبيرجينفيل",
+          "name:el": "Ομπερζονβίλ",
+          "name:ja": "オーベルジャンヴィル",
+          "name:ko": "오베르장빌",
+          "name:ru": "Обержанвиль",
+          "name:uk": "Обержанвіль",
+          "name:zh": "欧贝让维尔",
+          "place": "town",
+          "population": "12317",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q687036"
+        }
+      },
+      {
+        "id": "26691794",
+        "wgs84": [
+          2.316085,
+          48.7795178,
+          0.0
+        ],
+        "euc": [
+          257825.40283393904,
+          6237532.647920273
+        ],
+        "tags": {
+          "addr:postcode": "92340",
+          "name": "Bourg-la-Reine",
+          "name:ar": "بور لا رين",
+          "name:el": "Μπουρ-λα-Ρεν",
+          "name:hy": "Բուլ-լա-Ռեն",
+          "name:ja": "ブール＝ラ＝レーヌ",
+          "name:ka": "ბურგ-ლა-რენი",
+          "name:ko": "부르라렌",
+          "name:ru": "Бур-ла-Рен",
+          "name:uk": "Бур-ла-Рен",
+          "name:zh": "拉雷讷堡",
+          "place": "town",
+          "population": "20810",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q249852"
+        }
+      },
+      {
+        "id": "26691799",
+        "wgs84": [
+          2.136145,
+          48.8478753,
+          0.0
+        ],
+        "euc": [
+          237794.57366059735,
+          6249088.324546027
+        ],
+        "tags": {
+          "name": "La Celle-Saint-Cloud",
+          "name:el": "Λα Σελ-Σαιν-Κλου",
+          "name:ja": "ラ・セル＝サン＝クルー",
+          "name:ko": "라셀생클루",
+          "name:ru": "Ла-Сель-Сен-Клу",
+          "name:uk": "Ла-Сель-Сен-Клу",
+          "name:zh": "拉塞勒圣克卢",
+          "place": "town",
+          "population": "20476",
+          "population:date": "2021",
+          "postal_code": "78170",
+          "ref:FR:SIREN": "217801265",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q367553"
+        }
+      },
+      {
+        "id": "26691805",
+        "wgs84": [
+          2.3019814,
+          48.8211559,
+          0.0
+        ],
+        "euc": [
+          256255.397263587,
+          6244569.596082985
+        ],
+        "tags": {
+          "addr:postcode": "92240",
+          "name": "Malakoff",
+          "name:ar": "مالاكوف",
+          "name:el": "Μαλακόφ",
+          "name:fr": "Malakoff",
+          "name:hy": "Մալակոֆ",
+          "name:ja": "マラコフ",
+          "name:ko": "말라코프",
+          "name:ru": "Малакоф",
+          "name:uk": "Малакофф",
+          "name:zh": "马拉科夫",
+          "place": "town",
+          "population": "30292",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219200466",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q253721"
+        }
+      },
+      {
+        "id": "26691807",
+        "wgs84": [
+          2.4159739,
+          48.8432434,
+          0.0
+        ],
+        "euc": [
+          268944.98431783926,
+          6248304.8146966165
+        ],
+        "tags": {
+          "name": "Saint-Mandé",
+          "name:ar": "سان ماندي",
+          "name:el": "Σαιν-Μαντέ",
+          "name:hy": "Սեն-Մանդե",
+          "name:ja": "サン＝マンデ",
+          "name:ko": "생망데",
+          "name:ru": "Сен-Манде",
+          "name:uk": "Сен-Манде",
+          "name:zh": "圣芒代",
+          "place": "town",
+          "population": "21195",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q18102"
+        }
+      },
+      {
+        "id": "26691812",
+        "wgs84": [
+          2.4258354,
+          48.9351403,
+          0.0
+        ],
+        "euc": [
+          270042.7614762971,
+          6263863.217148869
+        ],
+        "tags": {
+          "addr:postcode": "93350",
+          "name": "Le Bourget",
+          "name:ar": "لو بورجيه",
+          "name:el": "Λε Μπουρζέ",
+          "name:hy": "Լե Բուրժե",
+          "name:ja": "ル・ブルジェ",
+          "name:ko": "르부르제",
+          "name:ru": "Ле-Бурже",
+          "name:uk": "Ле-Бурже",
+          "name:zh": "勒布尔歇",
+          "place": "town",
+          "population": "14832",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q272906"
+        }
+      },
+      {
+        "id": "26691822",
+        "wgs84": [
+          2.2766735,
+          48.730158,
+          0.0
+        ],
+        "euc": [
+          253438.1347225399,
+          6229198.269508723
+        ],
+        "tags": {
+          "addr:postcode": "91300",
+          "name": "Massy",
+          "name:ar": "ماسي",
+          "name:el": "Μασί",
+          "name:hy": "Մասսի",
+          "name:ja": "マシー",
+          "name:ko": "마시",
+          "name:ru": "Масси",
+          "name:uk": "Массі",
+          "name:zh": "马西",
+          "old_name:cassini": "Maßy",
+          "place": "town",
+          "population": "50962",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219103777",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q274249",
+          "wikipedia": "fr:Massy (Essonne)"
+        }
+      },
+      {
+        "id": "26691830",
+        "wgs84": [
+          2.166162,
+          48.9898588,
+          0.0
+        ],
+        "euc": [
+          241136.05081573903,
+          6273140.819696297
+        ],
+        "tags": {
+          "addr:postcode": "95220",
+          "name": "Herblay-sur-Seine",
+          "name:el": "Ερμπλαί-συρ-Σεν",
+          "name:hy": "Էրբլե սյուր Սեն",
+          "name:ja": "エルブレ＝シュル＝セーヌ",
+          "name:ko": "에르블레쉬르센",
+          "name:ru": "Эрбле-сюр-Сен",
+          "name:uk": "Ербле-сюр-Сен",
+          "name:zh": "塞纳河畔埃尔布莱",
+          "old_name": "Herblay",
+          "place": "town",
+          "population": "31605",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q318078"
+        }
+      },
+      {
+        "id": "26691836",
+        "wgs84": [
+          2.1868998,
+          48.9229416,
+          0.0
+        ],
+        "euc": [
+          243444.57215191185,
+          6261796.296120121
+        ],
+        "tags": {
+          "addr:postcode": "78800",
+          "name": "Houilles",
+          "name:el": "Ούιγ",
+          "name:hy": "Ույ",
+          "name:ja": "ウイユ",
+          "name:ko": "우일",
+          "name:ru": "Уй",
+          "name:uk": "Уй",
+          "name:zh": "乌耶",
+          "place": "town",
+          "population": "33449",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q273930"
+        }
+      },
+      {
+        "id": "26691837",
+        "wgs84": [
+          2.5732616,
+          48.8091528,
+          0.0
+        ],
+        "euc": [
+          286454.1709898844,
+          6242540.441320534
+        ],
+        "tags": {
+          "addr:postcode": "94420",
+          "name": "Le Plessis-Trévise",
+          "name:ar": "لو بليسي تريفيز",
+          "name:el": "Λε Πλεσί-Τρεβίζ",
+          "name:ja": "ル・プレシ＝トレヴィズ",
+          "name:uk": "Ле-Плессі-Тревіз",
+          "name:zh": "勒普莱西特雷维斯",
+          "old_name": "Le Plessis",
+          "place": "town",
+          "population": "20218",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400595",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q259352",
+          "wikipedia": "fr:Le Plessis-Trévise"
+        }
+      },
+      {
+        "id": "26691856",
+        "wgs84": [
+          2.2561602,
+          48.8953328,
+          0.0
+        ],
+        "euc": [
+          251154.60461205023,
+          6257120.185069737
+        ],
+        "tags": {
+          "addr:postcode": "92400",
+          "name": "Courbevoie",
+          "name:ar": "كوربفوا",
+          "name:el": "Κουρμπεβουά",
+          "name:fr": "Courbevoie",
+          "name:hy": "Կուրբևուա",
+          "name:ja": "クールブヴォア",
+          "name:ka": "კურბევუა",
+          "name:ko": "쿠르브부아",
+          "name:ru": "Курбевуа",
+          "name:uk": "Курбевуа",
+          "name:zh": "库尔伯瓦",
+          "place": "town",
+          "population": "81516",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q189715",
+          "wikipedia": "fr:Courbevoie"
+        }
+      },
+      {
+        "id": "26691858",
+        "wgs84": [
+          2.5298854,
+          48.917335,
+          0.0
+        ],
+        "euc": [
+          281625.55449333723,
+          6260846.495428911
+        ],
+        "tags": {
+          "addr:postcode": "93190",
+          "name": "Livry-Gargan",
+          "name:el": "Λιβρί-Γκαργκάν",
+          "name:hy": "Լիվրի-Գարգան",
+          "name:ja": "リヴリー＝ガルガン",
+          "name:ko": "리브리가르강",
+          "name:ru": "Ливри-Гарган",
+          "name:uk": "Ліврі-Гарган",
+          "name:zh": "利夫里加尔冈",
+          "place": "town",
+          "population": "46028",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q180005"
+        }
+      },
+      {
+        "id": "26691869",
+        "wgs84": [
+          2.2940122,
+          48.9254221,
+          0.0
+        ],
+        "euc": [
+          255368.26997755724,
+          6262216.545712815
+        ],
+        "tags": {
+          "addr:postcode": "92230",
+          "name": "Gennevilliers",
+          "name:ar": "جينيفيلييه",
+          "name:el": "Ζενβιλιέ",
+          "name:hy": "Ժենվիլյե",
+          "name:ja": "ジュヌヴィリエ",
+          "name:ko": "젠빌리에",
+          "name:ru": "Женвилье",
+          "name:uk": "Женнвільє",
+          "name:zh": "热讷维利耶",
+          "place": "town",
+          "population": "49410",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q221968"
+        }
+      },
+      {
+        "id": "26691871",
+        "wgs84": [
+          2.0910817,
+          49.0192178,
+          0.0
+        ],
+        "euc": [
+          232778.1500511329,
+          6278122.881904666
+        ],
+        "tags": {
+          "addr:postcode": "95610",
+          "name": "Éragny-sur-Oise",
+          "name:el": "Ερανί",
+          "name:ja": "エラニー",
+          "name:ko": "에라니",
+          "name:ru": "Эраньи",
+          "name:uk": "Ераньї",
+          "name:zh": "埃拉尼",
+          "old_name": "Éragny",
+          "place": "town",
+          "population": "18468",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219502184",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q645656"
+        }
+      },
+      {
+        "id": "26691876",
+        "wgs84": [
+          2.2886619,
+          48.7790592,
+          0.0
+        ],
+        "euc": [
+          254772.677305966,
+          6237455.175828205
+        ],
+        "tags": {
+          "addr:postcode": "92330",
+          "name": "Sceaux",
+          "name:ar": "سو",
+          "name:el": "Σω",
+          "name:hy": "Սո",
+          "name:ja": "ソー",
+          "name:ka": "სო",
+          "name:ko": "소",
+          "name:ru": "Со",
+          "name:uk": "Со",
+          "name:zh": "索镇",
+          "place": "town",
+          "population": "20488",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q370498"
+        }
+      },
+      {
+        "id": "26691879",
+        "wgs84": [
+          2.3896123,
+          48.9267236,
+          0.0
+        ],
+        "euc": [
+          266010.42442934326,
+          6262437.055915058
+        ],
+        "tags": {
+          "addr:postcode": "93120",
+          "name": "La Courneuve",
+          "name:ar": "لا كورنوف",
+          "name:el": "Λα Κουρνέβ",
+          "name:ja": "ラ・クールヌーヴ",
+          "name:ko": "라쿠르뇌브",
+          "name:ru": "Ла-Курнёв",
+          "name:uk": "Ла-Курнев",
+          "name:zh": "拉库尔讷沃",
+          "place": "town",
+          "population": "47160",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q244725"
+        }
+      },
+      {
+        "id": "26691881",
+        "wgs84": [
+          2.0341747,
+          48.9437694,
+          0.0
+        ],
+        "euc": [
+          226443.29178856,
+          6265325.617991292
+        ],
+        "tags": {
+          "addr:postcode": "78955",
+          "name": "Carrières-sous-Poissy",
+          "name:el": "Καριέρ-σου-Πουασί",
+          "name:uk": "Карр'єр-су-Пуассі",
+          "name:zh": "卡里耶尔苏普瓦西",
+          "place": "town",
+          "population": "18316",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q399815"
+        }
+      },
+      {
+        "id": "26691883",
+        "wgs84": [
+          2.4040111,
+          48.8830565,
+          0.0
+        ],
+        "euc": [
+          267613.29151337745,
+          6255041.773787002
+        ],
+        "tags": {
+          "addr:postcode": "93310",
+          "loc_name": "Le Pré Saint-Gervais",
+          "name": "Le Pré-Saint-Gervais",
+          "name:ar": "لو بري سان جيرفيه",
+          "name:el": "Λε Πρε-Σαιν-Ζερβαί",
+          "name:ja": "ル・プレ・サン・ジェルヴェ",
+          "name:ko": "르프레생제르베",
+          "name:uk": "Ле-Пре-Сен-Жерве",
+          "name:zh": "勒普雷圣热尔韦",
+          "place": "town",
+          "population": "16865",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q175999"
+        }
+      },
+      {
+        "id": "26691894",
+        "wgs84": [
+          2.2255727,
+          48.8709053,
+          0.0
+        ],
+        "euc": [
+          247749.619687411,
+          6252985.044625368
+        ],
+        "tags": {
+          "addr:postcode": "92150",
+          "name": "Suresnes",
+          "name:ar": "سوريسن",
+          "name:el": "Συρέν",
+          "name:fr": "Suresnes",
+          "name:hy": "Սյուրեն",
+          "name:ja": "シュレンヌ",
+          "name:ko": "쉬렌",
+          "name:ru": "Сюрен",
+          "name:uk": "Сюрен",
+          "name:zh": "叙雷讷",
+          "place": "town",
+          "population": "49104",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219200730",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q193929",
+          "wikipedia": "fr:Suresnes"
+        }
+      },
+      {
+        "id": "26691909",
+        "wgs84": [
+          2.5406696,
+          48.8262055,
+          0.0
+        ],
+        "euc": [
+          282826.0461459501,
+          6245423.389097844
+        ],
+        "tags": {
+          "addr:postcode": "94350",
+          "admin_level": "8",
+          "capital": "8",
+          "name": "Villiers-sur-Marne",
+          "name:ar": "فيلييه سور مارن",
+          "name:el": "Βιλιέ-συρ-Μαρν",
+          "name:ja": "ヴィリエ＝シュル＝マルヌ",
+          "name:ko": "빌리에쉬르마른",
+          "name:ru": "Вилье-Сюр-Марн",
+          "name:uk": "Вільє-сюр-Марн",
+          "name:zh": "马恩河畔维利耶",
+          "place": "town",
+          "population": "30669",
+          "population:date": "2021",
+          "short_name": "Villiers-sur-M.",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre;mise à jour : 2011",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q258636",
+          "wikipedia": "fr:Villiers-sur-Marne"
+        }
+      },
+      {
+        "id": "26691923",
+        "wgs84": [
+          2.1989225,
+          48.9959113,
+          0.0
+        ],
+        "euc": [
+          244782.93299387212,
+          6274167.65563672
+        ],
+        "tags": {
+          "addr:postcode": "95370",
+          "name": "Montigny-lès-Cormeilles",
+          "name:el": "Μοντινί-λε-Κορμέιγ",
+          "name:ru": "Монтиньи-ле-Кормей",
+          "name:uk": "Монтіньї-ле-Кормей",
+          "name:zh": "蒙蒂尼莱科尔梅耶",
+          "place": "town",
+          "population": "22603",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1458741"
+        }
+      },
+      {
+        "id": "26691924",
+        "wgs84": [
+          1.909928,
+          48.9931578,
+          0.0
+        ],
+        "euc": [
+          212612.21241181545,
+          6273700.495557895
+        ],
+        "tags": {
+          "addr:postcode": "78130",
+          "name": "Les Mureaux",
+          "name:el": "Λε Μυρώ",
+          "name:hy": "Լե Մյուրո",
+          "name:ja": "レ・ミュロー",
+          "name:ko": "레뮈로",
+          "name:ru": "Ле-Мюро",
+          "name:uk": "Ле-Мюро",
+          "name:zh": "莱米罗",
+          "place": "town",
+          "population": "33977",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q317433"
+        }
+      },
+      {
+        "id": "26691925",
+        "wgs84": [
+          2.3373021,
+          48.7790514,
+          0.0
+        ],
+        "euc": [
+          260187.279602049,
+          6237453.858166819
+        ],
+        "tags": {
+          "capital": "7",
+          "name": "L'Haÿ-les-Roses",
+          "name:ar": "لاي لو روز",
+          "name:el": "Λ'Άι-λε-Ροζ",
+          "name:hy": "Լ՛Այ լե Ռոզ",
+          "name:ja": "ライ＝レ＝ローズ",
+          "name:ko": "라이레로즈",
+          "name:ru": "Л’Аи-ле-Роз",
+          "name:uk": "Л'Аї-ле-Роз",
+          "name:zh": "拉伊莱罗斯",
+          "place": "town",
+          "population": "31392",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q128643",
+          "wikipedia": "fr:L'Haÿ-les-Roses"
+        }
+      },
+      {
+        "id": "26691931",
+        "wgs84": [
+          2.1882897,
+          48.8086297,
+          0.0
+        ],
+        "euc": [
+          243599.29511216536,
+          6242452.020973914
+        ],
+        "tags": {
+          "addr:postcode": "92370",
+          "name": "Chaville",
+          "name:ar": "شافيل",
+          "name:el": "Σαβίλ",
+          "name:fr": "Chaville",
+          "name:hi": "चैविल",
+          "name:hy": "Շավիլ",
+          "name:ja": "シャヴィル",
+          "name:ko": "샤빌르",
+          "name:ru": "Шавиль",
+          "name:uk": "Шавіль",
+          "name:zh": "沙维尔",
+          "place": "town",
+          "population": "19991",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q494125",
+          "wikipedia": "fr:Chaville"
+        }
+      },
+      {
+        "id": "26691935",
+        "wgs84": [
+          2.2840639,
+          48.9703664,
+          0.0
+        ],
+        "euc": [
+          254260.8302872985,
+          6269834.687107178
+        ],
+        "tags": {
+          "addr:postcode": "95210",
+          "name": "Saint-Gratien",
+          "name:el": "Σαιν-Γκρασιέν",
+          "name:hy": "Սեն Գրատիան",
+          "name:ja": "サン＝グラティアン",
+          "name:ko": "생그라티앙",
+          "name:ru": "Сен-Гратьян",
+          "name:uk": "Сен-Гратьян",
+          "name:zh": "圣格拉蒂安",
+          "place": "town",
+          "population": "20866",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q275384"
+        }
+      },
+      {
+        "id": "26691937",
+        "wgs84": [
+          2.5660399,
+          48.8992679,
+          0.0
+        ],
+        "euc": [
+          285650.2550232226,
+          6257786.51632104
+        ],
+        "tags": {
+          "name": "Montfermeil",
+          "name:ar": "مونفرماي",
+          "name:el": "Μονφερμέιγ",
+          "name:hy": "Մոնֆերմել",
+          "name:ja": "モンフェルメイユ",
+          "name:ko": "몽페르메유",
+          "name:ru": "Монфермей",
+          "name:uk": "Монфермей",
+          "name:zh": "蒙费梅伊",
+          "place": "town",
+          "population": "27980",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q237367"
+        }
+      },
+      {
+        "id": "26691938",
+        "wgs84": [
+          2.4420702,
+          48.8176111,
+          0.0
+        ],
+        "euc": [
+          271850.0111454277,
+          6243970.288018425
+        ],
+        "tags": {
+          "addr:postcode": "94410",
+          "alt_name": "Charenton-Saint-Maurice",
+          "name": "Saint-Maurice",
+          "name:ar": "سان موريس",
+          "name:el": "Σαιν-Μωρίς",
+          "name:hy": "Սեն Մորիս",
+          "name:ja": "サン＝モーリス",
+          "name:ka": "სენ-მორისი",
+          "name:ko": "생모리스",
+          "name:uk": "Сен-Морис",
+          "name:zh": "圣莫里斯",
+          "place": "town",
+          "population": "14603",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q274327",
+          "wikipedia": "fr:Saint-Maurice (Val-de-Marne)"
+        }
+      },
+      {
+        "id": "26691943",
+        "wgs84": [
+          2.4197113,
+          48.8051624,
+          0.0
+        ],
+        "euc": [
+          269361.02978273004,
+          6241865.96157841
+        ],
+        "tags": {
+          "addr:postcode": "94140",
+          "name": "Alfortville",
+          "name:ar": "ألفورفيل",
+          "name:el": "Αλφορβίλ",
+          "name:hy": "Ալֆորվիլլ",
+          "name:ja": "アルフォールヴィル",
+          "name:ko": "알포르빌",
+          "name:lt": "Alforvilis",
+          "name:ru": "Альфорвилль",
+          "name:uk": "Альфорвіль",
+          "name:zh": "阿尔福维尔",
+          "place": "town",
+          "population": "45046",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400025",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q233909",
+          "wikipedia": "fr:Alfortville"
+        }
+      },
+      {
+        "id": "26691950",
+        "wgs84": [
+          2.4733628,
+          49.0323168,
+          0.0
+        ],
+        "euc": [
+          275333.48744302534,
+          6280346.6588504845
+        ],
+        "tags": {
+          "addr:postcode": "95190",
+          "name": "Goussainville",
+          "name:el": "Γκουσαινβίλ",
+          "name:hy": "Գուսենվիլ",
+          "name:ja": "グッサンヴィル",
+          "name:ko": "구생빌",
+          "name:ru": "Гуссенвиль",
+          "name:uk": "Гуссенвіль",
+          "name:zh": "古桑维尔",
+          "place": "town",
+          "population": "30693",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q240946"
+        }
+      },
+      {
+        "id": "26691955",
+        "wgs84": [
+          2.2481797,
+          48.9479069,
+          0.0
+        ],
+        "euc": [
+          250266.21941577457,
+          6266026.902878623
+        ],
+        "tags": {
+          "addr:postcode": "95100",
+          "capital": "7",
+          "name": "Argenteuil",
+          "name:ar": "أرجنتوي",
+          "name:el": "Αρζαντέιγ",
+          "name:hi": "अरझोनतोई",
+          "name:hy": "Արժանտյո",
+          "name:ja": "アルジャントゥイユ",
+          "name:ka": "არჟანტეი",
+          "name:ko": "아르장퇴유",
+          "name:ru": "Аржантёй",
+          "name:th": "อาร์ฌ็องเตย",
+          "name:uk": "Аржантей",
+          "name:zh": "阿让特伊",
+          "place": "city",
+          "population": "107221",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219500188",
+          "source": "http://wiki.openstreetmap.org/index.php/Fr:Map_Features#Toponymie_.28place.29 says that place with more dan 100000 is city.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q181946",
+          "wikipedia": "fr:Argenteuil (Val-d'Oise)"
+        }
+      },
+      {
+        "id": "26691970",
+        "wgs84": [
+          2.1585037,
+          48.9409016,
+          0.0
+        ],
+        "euc": [
+          240283.53275939697,
+          6264839.574813461
+        ],
+        "tags": {
+          "addr:postcode": "78500",
+          "name": "Sartrouville",
+          "name:el": "Σαρτρουβίλ",
+          "name:hy": "Սարտրուվիլ",
+          "name:ja": "サルトルーヴィル",
+          "name:ko": "사르트루빌",
+          "name:ru": "Сартровиль",
+          "name:uk": "Сартрувіль",
+          "name:zh": "萨特鲁维尔",
+          "place": "town",
+          "population": "51220",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q209101"
+        }
+      },
+      {
+        "id": "26691974",
+        "wgs84": [
+          2.134529,
+          48.7018823,
+          0.0
+        ],
+        "euc": [
+          237614.68136347548,
+          6224427.616608447
+        ],
+        "tags": {
+          "addr:postcode": "91190",
+          "alt_name": "Gif",
+          "name": "Gif-sur-Yvette",
+          "name:el": "Ζιφ-συρ-Ιβέτ",
+          "name:ja": "ジフ＝シュル＝イヴェット",
+          "name:ko": "지프쉬르이베트",
+          "name:ru": "Жиф-сюр-Иветт",
+          "name:uk": "Жиф-сюр-Іветт",
+          "name:zh": "伊韦特河畔日夫",
+          "place": "town",
+          "population": "22352",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q208851",
+          "wikipedia": "fr:Gif-sur-Yvette"
+        }
+      },
+      {
+        "id": "26691976",
+        "wgs84": [
+          2.1998877,
+          48.9759637,
+          0.0
+        ],
+        "euc": [
+          244890.37856638577,
+          6270783.920480667
+        ],
+        "tags": {
+          "addr:postcode": "95240",
+          "name": "Cormeilles-en-Parisis",
+          "name:el": "Κορμέιγ-αν-Παριζί",
+          "name:hy": "Կորմեյ-ան-Պարիզի",
+          "name:ja": "コルメイユ＝ザン＝パリジ",
+          "name:ko": "코르메유장파리지",
+          "name:ru": "Кормей-ан-Паризи",
+          "name:uk": "Кормей-ан-Паризі",
+          "name:zh": "帕里西地区科尔梅耶",
+          "place": "town",
+          "population": "26741",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q841957"
+        }
+      },
+      {
+        "id": "26691978",
+        "wgs84": [
+          2.3259129,
+          48.6407872,
+          0.0
+        ],
+        "euc": [
+          258919.4396575062,
+          6214128.844855234
+        ],
+        "tags": {
+          "addr:postcode": "91700",
+          "name": "Sainte-Geneviève-des-Bois",
+          "name:el": "Σαιντ-Ζενεβιέβ-ντε-Μπουά",
+          "name:hy": "Սենտ Ժենևիև դը Բուա",
+          "name:ja": "サント＝ジュヌヴィエーヴ＝デ＝ボワ",
+          "name:ko": "생트준비에브데부아",
+          "name:ru": "Сент-Женевьев-де-Буа",
+          "name:uk": "Сент-Женев'єв-де-Буа",
+          "name:zh": "圣热讷维耶沃-德布瓦",
+          "place": "town",
+          "population": "35846",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219105491",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q234719",
+          "wikipedia": "fr:Sainte-Geneviève-des-Bois (Essonne)"
+        }
+      },
+      {
+        "id": "26691982",
+        "wgs84": [
+          2.4916592,
+          48.8387639,
+          0.0
+        ],
+        "euc": [
+          277370.2333743754,
+          6247547.153019067
+        ],
+        "tags": {
+          "addr:postcode": "94130",
+          "capital": "7",
+          "name": "Nogent-sur-Marne",
+          "name:ar": "نوجان سور مارن",
+          "name:el": "Νοζάν-συρ-Μαρν",
+          "name:hy": "Նոժան սյուր Մարն",
+          "name:ja": "ノジャン＝シュル＝マルヌ",
+          "name:ko": "노장쉬르마른",
+          "name:ru": "Ножан-сюр-Марн",
+          "name:uk": "Ножан-сюр-Марн",
+          "name:zh": "马恩河畔诺让",
+          "place": "town",
+          "population": "33472",
+          "population:date": "2021",
+          "short_name": "Nogent-sur-M.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q212274",
+          "wikipedia": "fr:Nogent-sur-Marne"
+        }
+      },
+      {
+        "id": "26691985",
+        "wgs84": [
+          2.391024,
+          48.7643664,
+          0.0
+        ],
+        "euc": [
+          266167.57415449613,
+          6234973.470187764
+        ],
+        "tags": {
+          "addr:postcode": "94320",
+          "name": "Thiais",
+          "name:ar": "ثيه",
+          "name:el": "Τιαί",
+          "name:gcf": "Tyè",
+          "name:ja": "ティエ",
+          "name:ko": "티에",
+          "name:ru": "Тие",
+          "name:uk": "Тьє",
+          "name:zh": "蒂艾",
+          "place": "town",
+          "population": "31097",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q316452",
+          "wikipedia": "fr:Thiais"
+        }
+      },
+      {
+        "id": "26691992",
+        "wgs84": [
+          2.4749347,
+          48.8490721,
+          0.0
+        ],
+        "euc": [
+          275508.47055060323,
+          6249290.781240233
+        ],
+        "tags": {
+          "name": "Fontenay-sous-Bois",
+          "name:ar": "فونتوني سو بوا",
+          "name:el": "Φοντεναί-σου-Μπουά",
+          "name:hy": "Ֆոնտենե-սու-Բուա",
+          "name:ja": "フォントネー＝スー＝ボワ",
+          "name:ko": "퐁트네수부아",
+          "name:lt": "Fontenė-sous-Boisas",
+          "name:ru": "Фонтене-су-Буа",
+          "name:uk": "Фонтене-су-Буа",
+          "name:zh": "丰特奈苏布瓦",
+          "place": "town",
+          "population": "51812",
+          "population:date": "2021",
+          "short_name": "Fontenay-ss-B.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q193899"
+        }
+      },
+      {
+        "id": "26691997",
+        "wgs84": [
+          2.510611,
+          48.8137847,
+          0.0
+        ],
+        "euc": [
+          279479.93809999136,
+          6243323.418299564
+        ],
+        "tags": {
+          "addr:postcode": "94500",
+          "name": "Champigny-sur-Marne",
+          "name:ar": "شامبيني سور مارن",
+          "name:el": "Σαμπινί-συρ-Μαρν",
+          "name:hy": "Շամպինյի սյուր Մառն",
+          "name:ja": "シャンピニー＝シュル＝マルヌ",
+          "name:ko": "샹피니쉬르마른",
+          "name:ru": "Шампиньи-сюр-Марн",
+          "name:uk": "Шампіньї-сюр-Марн",
+          "name:zh": "马恩河畔尚皮尼",
+          "place": "town",
+          "population": "77724",
+          "population:date": "2021",
+          "short_name": "Champigny-sur-M.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q192378",
+          "wikipedia": "fr:Champigny-sur-Marne"
+        }
+      },
+      {
+        "id": "26692000",
+        "wgs84": [
+          2.273457,
+          48.8250508,
+          0.0
+        ],
+        "euc": [
+          253080.07558040335,
+          6245228.143315103
+        ],
+        "tags": {
+          "addr:postcode": "92130",
+          "name": "Issy-les-Moulineaux",
+          "name:ar": "إيسي ليه مولينو",
+          "name:el": "Ισί-λε-Μουλινώ",
+          "name:fr": "Issy-les-Moulineaux",
+          "name:hy": "Իսի լե Մուլինո",
+          "name:ja": "イシー＝レ＝ムリノー",
+          "name:ko": "이시레몰리노",
+          "name:ru": "Исси-ле-Мулино",
+          "name:uk": "Іссі-ле-Муліно",
+          "name:zh": "伊西莱穆利诺",
+          "place": "town",
+          "population": "68580",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q135265",
+          "wikipedia": "fr:Issy-les-Moulineaux"
+        }
+      },
+      {
+        "id": "26692001",
+        "wgs84": [
+          2.4530731,
+          48.7771486,
+          0.0
+        ],
+        "euc": [
+          273074.8483706771,
+          6237132.422478789
+        ],
+        "tags": {
+          "capital": "6",
+          "name": "Créteil",
+          "name:ar": "كريتيل",
+          "name:el": "Κρετέιγ",
+          "name:fa": "کرتی",
+          "name:gcf": "Krétèy",
+          "name:he": "קרטיי",
+          "name:hi": "क्रेतेय",
+          "name:hy": "Կրեթեյ",
+          "name:ja": "クレテイユ",
+          "name:ka": "კრეტეი",
+          "name:ko": "크레테유",
+          "name:lt": "Kretėjus",
+          "name:pnb": "کریٹیل",
+          "name:ru": "Кретей",
+          "name:sr": "Кретеј",
+          "name:uk": "Кретей",
+          "name:zh": "克雷泰伊",
+          "place": "town",
+          "population": "92989",
+          "population:date": "2021",
+          "postal_code": "94000",
+          "ref:FR:SIREN": "219400280",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q46135",
+          "wikipedia": "fr:Créteil"
+        }
+      },
+      {
+        "id": "26692002",
+        "wgs84": [
+          2.5124717,
+          48.7479193,
+          0.0
+        ],
+        "euc": [
+          279687.0702765104,
+          6232196.313426553
+        ],
+        "tags": {
+          "addr:postcode": "94470",
+          "name": "Boissy-Saint-Léger",
+          "name:ar": "بواسي سان ليجه",
+          "name:el": "Μπουασί-Σαιν-Λεζέ",
+          "name:ja": "ボワシー＝サン＝レジェ",
+          "name:uk": "Буассі-Сен-Леже",
+          "name:zh": "布瓦西圣莱热",
+          "place": "town",
+          "population": "17570",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400041",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q747729",
+          "wikipedia": "fr:Boissy-Saint-Léger"
+        }
+      },
+      {
+        "id": "26692004",
+        "wgs84": [
+          2.2953297,
+          48.6943793,
+          0.0
+        ],
+        "euc": [
+          255514.9334066774,
+          6223162.166583661
+        ],
+        "tags": {
+          "addr:postcode": "91160",
+          "name": "Longjumeau",
+          "name:el": "Λονζυμώ",
+          "name:fr": "Longjumeau",
+          "name:hy": "Լոնժյումո",
+          "name:ja": "ロンジュモー",
+          "name:ko": "롱쥐모",
+          "name:ru": "Лонжюмо",
+          "name:uk": "Лонжюмо",
+          "name:zh": "隆瑞莫",
+          "place": "town",
+          "population": "20620",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219103454",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q219045",
+          "wikipedia": "fr:Longjumeau"
+        }
+      },
+      {
+        "id": "26692005",
+        "wgs84": [
+          2.6183971,
+          48.9839674,
+          0.0
+        ],
+        "euc": [
+          291478.63186658424,
+          6272141.434945125
+        ],
+        "tags": {
+          "addr:postcode": "77290",
+          "name": "Mitry-Mory",
+          "name:el": "Μιτρί-Μορί",
+          "name:ja": "ミトリー モリー",
+          "name:ko": "미트리-모리",
+          "name:uk": "Мітрі-Морі",
+          "name:zh": "米特里-莫里",
+          "place": "town",
+          "population": "20627",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q917734"
+        }
+      },
+      {
+        "id": "26692012",
+        "wgs84": [
+          2.4159508,
+          48.8198479,
+          0.0
+        ],
+        "euc": [
+          268942.4128376019,
+          6244348.4517478375
+        ],
+        "tags": {
+          "addr:postcode": "94220",
+          "name": "Charenton-le-Pont",
+          "name:ar": "شارنتون لو بونت",
+          "name:el": "Σαραντόν-λε-Πον",
+          "name:hy": "Շարանտոն լը Պոն",
+          "name:ja": "シャラントン＝ル＝ポン",
+          "name:ka": "შარანტონ-ლე-პონი",
+          "name:ko": "샤랑통르퐁",
+          "name:ru": "Шарантон-ле-Пон",
+          "name:uk": "Шарантон-ле-Пон",
+          "name:zh": "沙朗通勒蓬",
+          "place": "town",
+          "population": "29445",
+          "population:date": "2021",
+          "short_name": "Charenton",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q212793",
+          "wikipedia": "fr:Charenton-le-Pont"
+        }
+      },
+      {
+        "id": "26692014",
+        "wgs84": [
+          2.1802832,
+          48.87778,
+          0.0
+        ],
+        "euc": [
+          242708.015609129,
+          6254148.604622077
+        ],
+        "tags": {
+          "addr:postcode": "92500",
+          "name": "Rueil-Malmaison",
+          "name:ar": "روي-مالميزون",
+          "name:el": "Ρυέιγ-Μαλμαιζόν",
+          "name:fr": "Rueil-Malmaison",
+          "name:hy": "Ռյուեյ-Մալմեզոն",
+          "name:ja": "リュエイユ＝マルメゾン",
+          "name:ko": "뤼에유말메종",
+          "name:ru": "Рюэй-Мальмезон",
+          "name:uk": "Рюей-Мальмезон",
+          "name:zh": "吕埃-马尔迈松",
+          "place": "town",
+          "population": "78186",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q193920",
+          "wikipedia": "fr:Rueil-Malmaison"
+        }
+      },
+      {
+        "id": "26692028",
+        "wgs84": [
+          2.3227967,
+          48.7546687,
+          0.0
+        ],
+        "euc": [
+          258572.54586029623,
+          6233335.865851513
+        ],
+        "tags": {
+          "addr:postcode": "94260",
+          "name": "Fresnes",
+          "name:ar": "فرين",
+          "name:el": "Φρεν",
+          "name:hy": "Ֆրեն",
+          "name:ja": "フレンヌ",
+          "name:ko": "프렌",
+          "name:ru": "Френ",
+          "name:uk": "Френ",
+          "name:zh": "弗雷讷",
+          "place": "town",
+          "population": "28780",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400348",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q270345",
+          "wikipedia": "fr:Fresnes (Val-de-Marne)"
+        }
+      },
+      {
+        "id": "26692029",
+        "wgs84": [
+          2.219344,
+          48.8437412,
+          0.0
+        ],
+        "euc": [
+          247056.24397510695,
+          6248389.016666538
+        ],
+        "tags": {
+          "addr:postcode": "92210",
+          "name": "Saint-Cloud",
+          "name:ar": "سان كلو",
+          "name:el": "Σαιν-Κλου",
+          "name:fr": "Saint-Cloud",
+          "name:hy": "Սեն Կլու",
+          "name:ja": "サン＝クルー",
+          "name:ko": "생클루",
+          "name:lt": "Sen Klu",
+          "name:ru": "Сен-Клу",
+          "name:uk": "Сен-Клу",
+          "name:zh": "圣克卢",
+          "place": "town",
+          "population": "29727",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219200649",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q189153",
+          "wikipedia": "fr:Saint-Cloud"
+        }
+      },
+      {
+        "id": "26692030",
+        "wgs84": [
+          2.4516055,
+          48.8897751,
+          0.0
+        ],
+        "euc": [
+          272911.47588598885,
+          6256179.187989854
+        ],
+        "tags": {
+          "addr:postcode": "93130",
+          "name": "Noisy-le-Sec",
+          "name:ar": "نوازي لو سيك",
+          "name:el": "Νουαζί-λε-Σεκ",
+          "name:ja": "ノワジー＝ル＝セック",
+          "name:ko": "누아지르세크",
+          "name:ru": "Нуази-ле-Сек",
+          "name:uk": "Нуазі-ле-Сек",
+          "name:zh": "努瓦西勒塞克",
+          "place": "town",
+          "population": "46094",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q370224"
+        }
+      },
+      {
+        "id": "26692033",
+        "wgs84": [
+          1.945148,
+          48.7618735,
+          0.0
+        ],
+        "euc": [
+          216532.88487755452,
+          6234552.475865185
+        ],
+        "tags": {
+          "addr:postcode": "78310",
+          "name": "Maurepas",
+          "name:el": "Μωρεπά",
+          "name:ja": "モールパ",
+          "name:uk": "Морепа",
+          "name:zh": "莫尔帕",
+          "place": "town",
+          "population": "18611",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q94477"
+        }
+      },
+      {
+        "id": "26692035",
+        "wgs84": [
+          1.9476363,
+          48.817399,
+          0.0
+        ],
+        "euc": [
+          216809.88116649544,
+          6243934.430289639
+        ],
+        "tags": {
+          "addr:postcode": "78370",
+          "name": "Plaisir",
+          "name:el": "Πλαιζίρ",
+          "name:ja": "プレジール",
+          "name:ko": "플레지르",
+          "name:ru": "Плезир",
+          "name:uk": "Плезір",
+          "name:zh": "普莱西尔",
+          "place": "town",
+          "population": "31375",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q372218"
+        }
+      },
+      {
+        "id": "26692040",
+        "wgs84": [
+          2.2775316,
+          48.7670404,
+          0.0
+        ],
+        "euc": [
+          253533.65797758964,
+          6235425.071427003
+        ],
+        "tags": {
+          "addr:postcode": "92290",
+          "name": "Châtenay-Malabry",
+          "name:ar": "شاتني مالابري",
+          "name:el": "Σατεναί-Μαλαμπρί",
+          "name:hy": "Շատնե-Մալաբրի",
+          "name:ja": "シャトネ＝マラブリー",
+          "name:ka": "შატნე-მალაბრი",
+          "name:ko": "샤트네말라브리",
+          "name:ru": "Шатне-Малабри",
+          "name:uk": "Шатне-Малабрі",
+          "name:zh": "沙特奈马拉布里",
+          "place": "town",
+          "population": "34898",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q200945"
+        }
+      },
+      {
+        "id": "26692041",
+        "wgs84": [
+          2.4452231,
+          48.906387,
+          0.0
+        ],
+        "euc": [
+          272200.9903679499,
+          6258992.128226844
+        ],
+        "tags": {
+          "addr:postcode": "93000",
+          "capital": "6",
+          "name": "Bobigny",
+          "name:ar": "بوبيني",
+          "name:el": "Μπομπινί",
+          "name:hy": "Բոբինյի",
+          "name:ja": "ボビニー",
+          "name:ko": "보비니",
+          "name:ru": "Бобиньи",
+          "name:uk": "Бобіньї",
+          "name:zh": "博比尼",
+          "place": "town",
+          "population": "55056",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q154724",
+          "wikipedia": "fr:Bobigny"
+        }
+      },
+      {
+        "id": "26692049",
+        "wgs84": [
+          2.3278097,
+          49.0285536,
+          0.0
+        ],
+        "euc": [
+          259130.5904676429,
+          6279707.7320271
+        ],
+        "tags": {
+          "addr:postcode": "95330",
+          "name": "Domont",
+          "name:el": "Ντομόν",
+          "name:hy": "Դոմոն",
+          "name:ja": "ドモン",
+          "name:ru": "Домон",
+          "name:uk": "Домон",
+          "name:zh": "多蒙",
+          "place": "town",
+          "population": "16078",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1166602"
+        }
+      },
+      {
+        "id": "26692051",
+        "wgs84": [
+          2.3002885,
+          48.9875044,
+          0.0
+        ],
+        "euc": [
+          256066.94449762307,
+          6272741.418031528
+        ],
+        "tags": {
+          "addr:postcode": "95230",
+          "name": "Soisy-sous-Montmorency",
+          "name:el": "Σουαζί-σου-Μονμορανσί",
+          "name:hy": "Սուազի սու Մոնմորանսի",
+          "name:ja": "ソワジー＝ス＝モンモレンシー",
+          "name:ko": "수아지수몽모랑시",
+          "name:ru": "Суази-су-Монморанси",
+          "name:uk": "Суазі-су-Монморансі",
+          "name:zh": "苏瓦西苏蒙莫朗西",
+          "place": "town",
+          "population": "18008",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q839549"
+        }
+      },
+      {
+        "id": "26692053",
+        "wgs84": [
+          2.3075288,
+          48.6099887,
+          0.0
+        ],
+        "euc": [
+          256872.93100681363,
+          6208941.885379805
+        ],
+        "tags": {
+          "addr:postcode": "91220",
+          "name": "Brétigny-sur-Orge",
+          "name:el": "Μπρετινί-συρ-Ορζ",
+          "name:ja": "ブレティニー＝シュル＝オルジュ",
+          "name:ko": "브레티니쉬르오르주",
+          "name:ru": "Бретиньи-сюр-Орж",
+          "name:uk": "Бретіньї-сюр-Орж",
+          "name:zh": "奥尔日河畔布雷蒂尼",
+          "place": "town",
+          "population": "27106",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q837748"
+        }
+      },
+      {
+        "id": "26692072",
+        "wgs84": [
+          2.0965935,
+          48.8681762,
+          0.0
+        ],
+        "euc": [
+          233391.7208204872,
+          6252523.182024344
+        ],
+        "tags": {
+          "addr:postcode": "78160",
+          "name": "Marly-le-Roi",
+          "name:el": "Μαρλί-λε-Ρουά",
+          "name:hy": "Մարլի-լե-Ռուա",
+          "name:ja": "マルリー＝ル＝ロワ",
+          "name:ka": "მარლი-ლე-რუა",
+          "name:ko": "마를리르루아",
+          "name:ru": "Марли-ле-Руа",
+          "name:uk": "Марлі-ле-Руа",
+          "name:zh": "马尔利勒鲁瓦",
+          "place": "town",
+          "population": "16531",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q656505"
+        }
+      },
+      {
+        "id": "26692090",
+        "wgs84": [
+          2.5298164,
+          48.937634,
+          0.0
+        ],
+        "euc": [
+          281617.8734484725,
+          6264285.806393697
+        ],
+        "tags": {
+          "addr:postcode": "93270",
+          "name": "Sevran",
+          "name:ar": "سيفرون",
+          "name:el": "Σεβράν",
+          "name:hy": "Սևրան",
+          "name:ja": "スヴラン",
+          "name:ko": "세브랑",
+          "name:ru": "Севран",
+          "name:uk": "Севран",
+          "name:zh": "塞夫朗",
+          "place": "town",
+          "population": "51845",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q387630"
+        }
+      },
+      {
+        "id": "26692097",
+        "wgs84": [
+          2.4151151,
+          48.6538754,
+          0.0
+        ],
+        "euc": [
+          268849.38313914597,
+          6216334.065758225
+        ],
+        "tags": {
+          "addr:postcode": "91130",
+          "name": "Ris-Orangis",
+          "name:el": "Ρις-Ορανζίς",
+          "name:ja": "リ＝ゾランジス",
+          "name:ko": "리조랑지스",
+          "name:ru": "Ри-Оранжи",
+          "name:uk": "Рис-Оранжис",
+          "name:zh": "里斯-奥朗日斯",
+          "place": "town",
+          "population": "29825",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219105210",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q274237"
+        }
+      },
+      {
+        "id": "26692098",
+        "wgs84": [
+          2.0205773,
+          49.0300763,
+          0.0
+        ],
+        "euc": [
+          224929.63614444752,
+          6279966.254552672
+        ],
+        "tags": {
+          "addr:postcode": "95490",
+          "name": "Vauréal",
+          "name:el": "Βωρεάλ",
+          "name:ja": "ヴォレアル",
+          "name:ru": "Вореаль",
+          "name:uk": "Вореаль",
+          "name:zh": "沃雷阿勒",
+          "place": "town",
+          "population": "16034",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1456036"
+        }
+      },
+      {
+        "id": "26692110",
+        "wgs84": [
+          1.949352,
+          48.7681182,
+          0.0
+        ],
+        "euc": [
+          217000.87201684943,
+          6235607.103587841
+        ],
+        "tags": {
+          "addr:postcode": "78990",
+          "name": "Élancourt",
+          "name:el": "Ελανκούρ",
+          "name:ja": "エランクール",
+          "name:ko": "엘랑쿠르",
+          "name:ru": "Эланкур",
+          "name:uk": "Еланкур",
+          "name:zh": "埃朗库尔",
+          "place": "town",
+          "population": "26082",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q240546"
+        }
+      },
+      {
+        "id": "26692119",
+        "wgs84": [
+          2.399024,
+          48.9703841,
+          0.0
+        ],
+        "euc": [
+          267058.1300808423,
+          6269837.688641945
+        ],
+        "tags": {
+          "addr:postcode": "95140",
+          "name": "Garges-lès-Gonesse",
+          "name:el": "Γκαρζ-λε-Γκονές",
+          "name:hy": "Գարժ լե Գոնես",
+          "name:ja": "ガルジュ＝レ＝ゴネス",
+          "name:ko": "가르주레고네스",
+          "name:ru": "Гарж-ле-Гонесс",
+          "name:uk": "Гарж-ле-Гонесс",
+          "name:zh": "加尔日莱戈内斯",
+          "place": "town",
+          "population": "42841",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q244271"
+        }
+      },
+      {
+        "id": "26692127",
+        "wgs84": [
+          2.4289667,
+          48.6241665,
+          0.0
+        ],
+        "euc": [
+          270391.3361978181,
+          6211329.260246718
+        ],
+        "tags": {
+          "addr:postcode": "91000",
+          "name": "Évry",
+          "name:el": "Εβρί",
+          "name:ja": "エヴリー",
+          "name:ko": "에브리",
+          "name:ru": "Эври",
+          "place": "town",
+          "population": "66177",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219102282",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q192393",
+          "wikipedia": "fr:Évry"
+        }
+      },
+      {
+        "id": "26692132",
+        "wgs84": [
+          2.4172117,
+          48.6998552,
+          0.0
+        ],
+        "euc": [
+          269082.7755835432,
+          6224085.708935319
+        ],
+        "tags": {
+          "addr:postcode": "91270",
+          "name": "Vigneux-sur-Seine",
+          "name:el": "Βινιέ-συρ-Σεν",
+          "name:ja": "ヴィニュー＝シュル＝セーヌ",
+          "name:ko": "비뇌쉬르센",
+          "name:ru": "Винье-сюр-Сен",
+          "name:uk": "Віньє-сюр-Сен",
+          "name:zh": "塞纳河畔维尼厄",
+          "place": "town",
+          "population": "31050",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q842037"
+        }
+      },
+      {
+        "id": "26692145",
+        "wgs84": [
+          2.2585679,
+          48.9917676,
+          0.0
+        ],
+        "euc": [
+          251422.6285500332,
+          6273464.643394286
+        ],
+        "tags": {
+          "addr:postcode": "95120",
+          "name": "Ermont",
+          "name:el": "Ερμόν",
+          "name:hy": "Էրմոն",
+          "name:ja": "エルモン",
+          "name:ko": "에르몽",
+          "name:ru": "Эрмон",
+          "name:uk": "Ермон",
+          "name:zh": "埃尔蒙",
+          "place": "town",
+          "population": "28987",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219502192",
+          "source:population": "INSEE 2024",
+          "website": "https://www.ermont.fr/",
+          "wikidata": "Q239123",
+          "wikipedia": "fr:Ermont"
+        }
+      },
+      {
+        "id": "26692146",
+        "wgs84": [
+          2.3340758,
+          48.7945413,
+          0.0
+        ],
+        "euc": [
+          259828.12952890265,
+          6240070.985297177
+        ],
+        "tags": {
+          "addr:postcode": "94230",
+          "name": "Cachan",
+          "name:ar": "كاشان",
+          "name:fa": "کشان",
+          "name:fr": "Cachan",
+          "name:ja": "カシャン",
+          "name:ko": "카샹",
+          "name:ru": "Кашан",
+          "name:sr": "Кашан",
+          "name:uk": "Кашан",
+          "name:zh": "卡尚",
+          "place": "town",
+          "population": "30592",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400165",
+          "source:population": "INSEE 2024",
+          "website": "https://www.ville-cachan.fr/",
+          "wikidata": "Q209005",
+          "wikipedia": "fr:Cachan"
+        }
+      },
+      {
+        "id": "26692149",
+        "wgs84": [
+          2.5221284,
+          48.7711323,
+          0.0
+        ],
+        "euc": [
+          280762.0492032538,
+          6236116.182722774
+        ],
+        "tags": {
+          "addr:postcode": "94370",
+          "name": "Sucy-en-Brie",
+          "name:ar": "سوسي أن بري",
+          "name:el": "Συσί-αν-Μπρι",
+          "name:ja": "シュシー＝アン＝ブリ",
+          "name:ko": "쉬시앙브리",
+          "name:uk": "Сюсі-ан-Брі",
+          "name:zh": "布里地区叙西",
+          "place": "town",
+          "population": "27622",
+          "population:date": "2021",
+          "short_name": "Sucy-en-B.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q363916",
+          "wikipedia": "fr:Sucy-en-Brie"
+        }
+      },
+      {
+        "id": "26692150",
+        "wgs84": [
+          2.4173658,
+          48.8688199,
+          0.0
+        ],
+        "euc": [
+          269099.9299170744,
+          6252632.117116828
+        ],
+        "tags": {
+          "addr:postcode": "93170",
+          "name": "Bagnolet",
+          "name:ar": "باينوليه",
+          "name:el": "Μπανιολέ",
+          "name:hi": "बैग्नोलेट",
+          "name:hy": "Բանյոլե",
+          "name:ja": "バニョレ",
+          "name:ko": "바뇰레",
+          "name:ru": "Баньоле",
+          "name:uk": "Баньоле",
+          "name:zh": "巴尼奥莱",
+          "place": "town",
+          "population": "39366",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q208943",
+          "wikipedia": "fr:Bagnolet"
+        }
+      },
+      {
+        "id": "26692153",
+        "wgs84": [
+          2.2105491,
+          48.9250016,
+          0.0
+        ],
+        "euc": [
+          246077.2001855292,
+          6262145.302576954
+        ],
+        "tags": {
+          "addr:postcode": "95870",
+          "name": "Bezons",
+          "name:el": "Μπεζόν",
+          "name:hy": "Բեզոն",
+          "name:ja": "ブゾン",
+          "name:ko": "브종",
+          "name:uk": "Безон",
+          "name:zh": "伯宗",
+          "place": "town",
+          "population": "32017",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q238429"
+        }
+      },
+      {
+        "id": "26692186",
+        "wgs84": [
+          2.2186324,
+          49.1125294,
+          0.0
+        ],
+        "euc": [
+          246977.02902545847,
+          6293976.893364303
+        ],
+        "tags": {
+          "addr:postcode": "95290",
+          "name": "L'Isle-Adam",
+          "name:el": "Λ'Ιλ-Αντάμ",
+          "name:hy": "Լ'Իլ Ադամ",
+          "name:ja": "リスル＝アダン",
+          "name:ko": "릴라당",
+          "name:ru": "Л’Иль-Адам",
+          "name:uk": "Л'Іль-Адам",
+          "name:zh": "利勒亚当",
+          "place": "town",
+          "population": "11846",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q911450"
+        }
+      },
+      {
+        "id": "26692188",
+        "wgs84": [
+          2.1779083,
+          48.9134112,
+          0.0
+        ],
+        "euc": [
+          242443.64295044407,
+          6260181.837269494
+        ],
+        "tags": {
+          "addr:postcode": "78420",
+          "name": "Carrières-sur-Seine",
+          "name:el": "Καριέρ-συρ-Σεν",
+          "name:ja": "キャリエール＝シュル＝セーヌ",
+          "name:uk": "Карр'єр-сюр-Сен",
+          "name:zh": "塞纳河畔卡里耶尔",
+          "place": "town",
+          "population": "15038",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q399827"
+        }
+      },
+      {
+        "id": "26692198",
+        "wgs84": [
+          2.5155626,
+          48.8986666,
+          0.0
+        ],
+        "euc": [
+          280031.14769060333,
+          6257684.694679258
+        ],
+        "tags": {
+          "capital": "7",
+          "name": "Le Raincy",
+          "name:ar": "لو رينسي",
+          "name:el": "Λε Ραινσί",
+          "name:hy": "Լե Ռեյնսի",
+          "name:ja": "ル・ランシー",
+          "name:ko": "르랭시",
+          "name:ru": "Ле-Ренси",
+          "name:uk": "Ле-Ренсі",
+          "name:zh": "勒兰西",
+          "place": "town",
+          "population": "14877",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q259203"
+        }
+      },
+      {
+        "id": "26692201",
+        "wgs84": [
+          2.3527728,
+          48.6641415,
+          0.0
+        ],
+        "euc": [
+          261909.47004826443,
+          6218064.193823089
+        ],
+        "tags": {
+          "addr:postcode": "91390",
+          "name": "Morsang-sur-Orge",
+          "name:el": "Μορσάν-συρ-Ορζ",
+          "name:ja": "モルサン＝シュル＝オルジュ",
+          "name:ko": "모르상쉬르오르주",
+          "name:uk": "Морсан-сюр-Орж",
+          "name:zh": "奥尔日河畔莫尔桑",
+          "place": "town",
+          "population": "20785",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q990453"
+        }
+      },
+      {
+        "id": "26692213",
+        "wgs84": [
+          1.9871825,
+          48.8214478,
+          0.0
+        ],
+        "euc": [
+          221212.1440133044,
+          6244618.948576633
+        ],
+        "tags": {
+          "addr:postcode": "78340",
+          "name": "Les Clayes-sous-Bois",
+          "name:el": "Λε Κλαι-σου-Μπουά",
+          "name:uk": "Ле-Кле-су-Буа",
+          "name:zh": "莱克莱苏布瓦",
+          "place": "town",
+          "population": "17237",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q491948"
+        }
+      },
+      {
+        "id": "26692216",
+        "wgs84": [
+          2.4412184,
+          48.8623357,
+          0.0
+        ],
+        "euc": [
+          271755.18920317,
+          6251534.842442666
+        ],
+        "tags": {
+          "addr:postcode": "93100",
+          "name": "Montreuil",
+          "name:ar": "مونتروي",
+          "name:bg": "Монтрьой",
+          "name:el": "Μοντρέιγ",
+          "name:eo": "Montrojlo",
+          "name:gcf": "Montrèy",
+          "name:hi": "मोनथाईय",
+          "name:hy": "Մոնթրեյ",
+          "name:ja": "モントルイユ",
+          "name:ka": "მონტრეი",
+          "name:ko": "몽트뢰유",
+          "name:ru": "Монтрёй",
+          "name:th": "มงเทรย",
+          "name:uk": "Монтрей",
+          "name:zh": "蒙特勒伊",
+          "old_name": "Montreuil-sous-Bois",
+          "place": "city",
+          "population": "111455",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q193370"
+        }
+      },
+      {
+        "id": "26692219",
+        "wgs84": [
+          2.5076601,
+          48.8406252,
+          0.0
+        ],
+        "euc": [
+          279151.44541460945,
+          6247861.964676952
+        ],
+        "tags": {
+          "addr:postcode": "94170",
+          "name": "Le Perreux-sur-Marne",
+          "name:ar": "لو بيرو سور مارن",
+          "name:el": "Λε Περέ-συρ-Μαρν",
+          "name:ja": "ル・ペルー＝シュル＝マルヌ",
+          "name:ko": "르페뢰쉬르마른",
+          "name:uk": "Ле-Перре-сюр-Марн",
+          "name:zh": "马恩河畔勒佩勒",
+          "place": "town",
+          "population": "34213",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400587",
+          "short_name": "Le Perreux-sur-M.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q990408",
+          "wikipedia": "fr:Le Perreux-sur-Marne"
+        }
+      },
+      {
+        "id": "26692231",
+        "wgs84": [
+          2.4605107,
+          48.7038873,
+          0.0
+        ],
+        "euc": [
+          273902.79821540107,
+          6224765.810256395
+        ],
+        "tags": {
+          "addr:postcode": "91230",
+          "name": "Montgeron",
+          "name:el": "Μονζερόν",
+          "name:ja": "モンジュロン",
+          "name:ko": "몽주롱",
+          "name:ru": "Монжерон",
+          "name:uk": "Монжерон",
+          "name:zh": "蒙热龙",
+          "place": "town",
+          "population": "23800",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219104213",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q242569"
+        }
+      },
+      {
+        "id": "26692250",
+        "wgs84": [
+          2.3570028,
+          48.8125893,
+          0.0
+        ],
+        "euc": [
+          262380.35149432,
+          6243121.340802805
+        ],
+        "tags": {
+          "addr:postcode": "94270",
+          "name": "Le Kremlin-Bicêtre",
+          "name:ar": "لي كرملين-بيسيتر",
+          "name:el": "Λε Κρεμλέν-Μπισέτρ",
+          "name:ja": "ル・クルムラン＝ビセートル",
+          "name:ko": "르크레믈랭비세트르",
+          "name:ru": "Ле-Кремлен-Бисетр",
+          "name:uk": "Ле-Кремлен-Бісетр",
+          "name:zh": "勒克雷姆兰-比塞特尔",
+          "place": "town",
+          "population": "24380",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400439",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q135104",
+          "wikipedia": "fr:Le Kremlin-Bicêtre"
+        }
+      },
+      {
+        "id": "26692257",
+        "wgs84": [
+          2.4202824,
+          48.9892126,
+          0.0
+        ],
+        "euc": [
+          269424.60434392205,
+          6273031.196106452
+        ],
+        "tags": {
+          "addr:postcode": "95400",
+          "name": "Arnouville",
+          "old_name": "Arnouville-lès-Gonesse",
+          "place": "town",
+          "population": "14585",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219500196",
+          "source:name": "Décret n° 2010-772 du 8 juillet 2010 portant changement du nom de communes",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q249043",
+          "wikipedia": "fr:Arnouville"
+        }
+      },
+      {
+        "id": "26692274",
+        "wgs84": [
+          2.6176193,
+          48.939344,
+          0.0
+        ],
+        "euc": [
+          291392.0475666452,
+          6264575.599888164
+        ],
+        "tags": {
+          "addr:postcode": "77270",
+          "name": "Villeparisis",
+          "name:el": "Βιλπαριζί",
+          "name:ja": "ヴィルパリジ",
+          "name:ko": "빌파리지",
+          "name:ru": "Вильпаризис",
+          "name:uk": "Вільпаризі",
+          "name:zh": "维勒帕里西",
+          "place": "town",
+          "population": "26822",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q387433"
+        }
+      },
+      {
+        "id": "26692277",
+        "wgs84": [
+          2.3027478,
+          48.6302735,
+          0.0
+        ],
+        "euc": [
+          256340.71252133095,
+          6212357.8139155805
+        ],
+        "tags": {
+          "addr:postcode": "91240",
+          "name": "Saint-Michel-sur-Orge",
+          "name:el": "Σαιν-Μισέλ-συρ-Ορζ",
+          "name:hy": "Սեն-Միշել-սյուր-Օրժ",
+          "name:ja": "サン＝ミシェル＝シュル＝オルジュ",
+          "name:ko": "생미셸쉬르오르주",
+          "name:ru": "Сен-Мишель-сюр-Орж",
+          "name:uk": "Сен-Мішель-сюр-Орж",
+          "name:zh": "奥尔日河畔圣米歇尔",
+          "place": "town",
+          "population": "21437",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q275562",
+          "wikipedia": "fr:Saint-Michel-sur-Orge"
+        }
+      },
+      {
+        "id": "26692281",
+        "wgs84": [
+          2.6027219,
+          48.8526892,
+          0.0
+        ],
+        "euc": [
+          289733.6765845015,
+          6249902.697443744
+        ],
+        "tags": {
+          "addr:postcode": "77420",
+          "name": "Champs-sur-Marne",
+          "name:el": "Σαν-συρ-Μαρν",
+          "name:ja": "シャン＝シュル＝マルヌ",
+          "name:ka": "შან-სიურ-მარნი",
+          "name:ko": "샹쉬르마른",
+          "name:ru": "Шан-сюр-Марн",
+          "name:uk": "Шам-сюр-Марн",
+          "name:zh": "马恩河畔尚",
+          "place": "town",
+          "population": "25695",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q242536"
+        }
+      },
+      {
+        "id": "26692288",
+        "wgs84": [
+          2.2870373,
+          48.7911052,
+          0.0
+        ],
+        "euc": [
+          254591.82766122324,
+          6239490.3623977145
+        ],
+        "tags": {
+          "addr:postcode": "92260",
+          "name": "Fontenay-aux-Roses",
+          "name:ar": "فونتناي أوروز",
+          "name:el": "Φοντεναί-ω-Ροζ",
+          "name:hy": "Ֆոնտենե Օ Ռոզ",
+          "name:ja": "フォントネー＝オー＝ローズ",
+          "name:ka": "ფონტენე-ო-როზი",
+          "name:ko": "퐁트네오로즈",
+          "name:ru": "Фонтене-о-Роз",
+          "name:uk": "Фонтене-о-Роз",
+          "name:zh": "丰特奈欧罗斯",
+          "place": "town",
+          "population": "24772",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q269166",
+          "wikipedia": "fr:Fontenay-aux-Roses"
+        }
+      },
+      {
+        "id": "26692291",
+        "wgs84": [
+          2.4879753,
+          48.716811,
+          0.0
+        ],
+        "euc": [
+          276960.14350224205,
+          6226946.040490934
+        ],
+        "tags": {
+          "name": "Yerres",
+          "name:el": "Γιέρ",
+          "name:ja": "イエール",
+          "name:ko": "예르",
+          "name:ru": "Йер",
+          "name:uk": "Єрр",
+          "name:zh": "耶尔",
+          "place": "town",
+          "population": "28699",
+          "population:date": "2021",
+          "postal_code": "91330",
+          "ref:FR:SIREN": "219106911",
+          "source:population": "INSEE 2024",
+          "website": "https://www.yerres.fr/",
+          "wikidata": "Q319933"
+        }
+      },
+      {
+        "id": "26692295",
+        "wgs84": [
+          2.3439698,
+          48.9611722,
+          0.0
+        ],
+        "euc": [
+          260929.5245708113,
+          6268275.694904134
+        ],
+        "tags": {
+          "addr:postcode": "93430",
+          "name": "Villetaneuse",
+          "name:ar": "فيلتانوز",
+          "name:el": "Βιλτανέζ",
+          "name:ja": "ヴィルタヌーズ",
+          "name:uk": "Вільтанез",
+          "name:zh": "维勒塔讷斯",
+          "place": "town",
+          "population": "12432",
+          "population:date": "2022",
+          "source:population": "INSEE 2025",
+          "wikidata": "Q275353"
+        }
+      },
+      {
+        "id": "26692298",
+        "wgs84": [
+          2.4869009,
+          48.7737116,
+          0.0
+        ],
+        "euc": [
+          276840.5418413338,
+          6236551.848743404
+        ],
+        "tags": {
+          "addr:postcode": "94380",
+          "name": "Bonneuil-sur-Marne",
+          "name:ar": "بونوي سور مارن",
+          "name:el": "Μπονέιγ-συρ-Μαρν",
+          "name:ja": "ボヌーイ＝シュル＝マルヌ",
+          "name:ko": "봉뇌유쉬르마른",
+          "name:uk": "Бонней-сюр-Марн",
+          "name:zh": "马恩河畔博讷伊",
+          "place": "town",
+          "population": "18750",
+          "population:date": "2021",
+          "short_name": "Bonneuil-sur-M.",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q670957",
+          "wikipedia": "fr:Bonneuil-sur-Marne"
+        }
+      },
+      {
+        "id": "26692303",
+        "wgs84": [
+          2.3796245,
+          48.9960813,
+          0.0
+        ],
+        "euc": [
+          264898.58761919825,
+          6274196.498761399
+        ],
+        "tags": {
+          "addr:postcode": "95200",
+          "capital": "7",
+          "name": "Sarcelles",
+          "name:el": "Σαρσέλ",
+          "name:hy": "Սարսել",
+          "name:ja": "サルセル",
+          "name:ko": "사르셀",
+          "name:ru": "Сарсель",
+          "name:uk": "Сарсель",
+          "name:zh": "萨塞勒",
+          "place": "town",
+          "population": "58424",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q107501",
+          "wikipedia": "fr:Sarcelles"
+        }
+      },
+      {
+        "id": "26692309",
+        "wgs84": [
+          2.4358326,
+          48.8852958,
+          0.0
+        ],
+        "euc": [
+          271155.64468965563,
+          6255420.855374343
+        ],
+        "tags": {
+          "addr:postcode": "93230",
+          "name": "Romainville",
+          "name:ar": "رومينفيل",
+          "name:el": "Ρομαινβίλ",
+          "name:ja": "ロマンヴィル",
+          "name:ko": "로맹빌",
+          "name:ru": "Роменвиль",
+          "name:uk": "Роменвіль",
+          "name:zh": "罗曼维尔",
+          "place": "town",
+          "population": "33266",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q372111"
+        }
+      },
+      {
+        "id": "26692383",
+        "wgs84": [
+          2.3580232,
+          48.935773,
+          0.0
+        ],
+        "euc": [
+          262493.9419027255,
+          6263970.434228435
+        ],
+        "tags": {
+          "addr:postcode": "93200",
+          "alt_name:ar": "سان دونيس",
+          "capital": "7",
+          "name": "Saint-Denis",
+          "name:ar": "سان دوني",
+          "name:el": "Σαιν-Ντενί",
+          "name:eo": "Sankta-Denizo",
+          "name:fr": "Saint-Denis",
+          "name:hi": "सेंट डेनिस",
+          "name:hy": "Սեն Դենի",
+          "name:ja": "サン＝ドニ",
+          "name:ka": "სენ-დენი",
+          "name:ko": "생드니",
+          "name:th": "แซ็ง-เดอนี",
+          "name:uk": "Сен-Дені",
+          "name:zh": "圣但尼",
+          "place": "city",
+          "population": "113942",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219300662",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q160506",
+          "wikipedia": "fr:Saint-Denis (Seine-Saint-Denis)"
+        }
+      },
+      {
+        "id": "26692385",
+        "wgs84": [
+          2.03194,
+          49.0116,
+          0.0
+        ],
+        "euc": [
+          226194.52612248433,
+          6276829.900561443
+        ],
+        "tags": {
+          "addr:postcode": "95280",
+          "name": "Jouy-le-Moutier",
+          "name:el": "Ζουί-λε-Μουτιέ",
+          "name:hy": "Ժուի լը Մուտիե",
+          "name:ja": "ジュイ＝ル＝ムティエ",
+          "name:ru": "Жуи-ле-Мутье",
+          "name:uk": "Жуї-ле-Мутьє",
+          "name:zh": "茹伊勒穆捷",
+          "place": "town",
+          "population": "17175",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1458468"
+        }
+      },
+      {
+        "id": "26692387",
+        "wgs84": [
+          2.5358323,
+          48.8853743,
+          0.0
+        ],
+        "euc": [
+          282287.5603731357,
+          6255434.144613929
+        ],
+        "tags": {
+          "name": "Gagny",
+          "name:ar": "غاغني",
+          "name:el": "Γκανί",
+          "name:ja": "ガニー",
+          "name:ko": "가니",
+          "name:ru": "Ганьи",
+          "name:uk": "Ганьї",
+          "name:zh": "加尼",
+          "place": "town",
+          "population": "40189",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q179821"
+        }
+      },
+      {
+        "id": "26692395",
+        "wgs84": [
+          1.9988356,
+          48.7760957,
+          0.0
+        ],
+        "euc": [
+          222509.36117146743,
+          6236954.563706265
+        ],
+        "tags": {
+          "addr:postcode": "78190",
+          "name": "Trappes",
+          "name:el": "Τραπ",
+          "name:hy": "Թրապ",
+          "name:ja": "トラップ",
+          "name:ko": "트라프",
+          "name:ru": "Трапп",
+          "name:uk": "Трапп",
+          "name:zh": "特拉普",
+          "place": "town",
+          "population": "33717",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217806215",
+          "source:population": "INSEE 2024",
+          "website": "https://www.trappes.fr/",
+          "wikidata": "Q363266",
+          "wikipedia": "fr:Trappes"
+        }
+      },
+      {
+        "id": "26692411",
+        "wgs84": [
+          2.4093664,
+          48.7630238,
+          0.0
+        ],
+        "euc": [
+          268209.4407824227,
+          6234746.732873667
+        ],
+        "tags": {
+          "addr:postcode": "94600",
+          "name": "Choisy-le-Roi",
+          "name:ar": "شوازي لو روا",
+          "name:el": "Σουαζί-λε-Ρουά",
+          "name:hy": "Շուազի-լե-Ռուա",
+          "name:ja": "ショワジー＝ル＝ロワ",
+          "name:ka": "შუაზი-ლე-რუა",
+          "name:ko": "슈아시르루아",
+          "name:ru": "Шуази-ле-Руа",
+          "name:uk": "Шуазі-ле-Руа",
+          "name:zh": "舒瓦西勒鲁瓦",
+          "place": "town",
+          "population": "46129",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "website": "http://www.ville-choisy-le-roi.fr/",
+          "wikidata": "Q212987",
+          "wikipedia": "fr:Choisy-le-Roi"
+        }
+      },
+      {
+        "id": "26692429",
+        "wgs84": [
+          2.289259,
+          48.8212037,
+          0.0
+        ],
+        "euc": [
+          254839.14617391865,
+          6244577.677766615
+        ],
+        "tags": {
+          "addr:postcode": "92170",
+          "name": "Vanves",
+          "name:ar": "فانف",
+          "name:el": "Βανβ",
+          "name:fr": "Vanves",
+          "name:hy": "Վանվ",
+          "name:ja": "ヴァンヴ",
+          "name:ko": "방브",
+          "name:ru": "Ванв",
+          "name:uk": "Ванв",
+          "name:zh": "旺沃",
+          "place": "town",
+          "population": "28014",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q234728"
+        }
+      },
+      {
+        "id": "26692436",
+        "wgs84": [
+          2.3633048,
+          48.7921098,
+          0.0
+        ],
+        "euc": [
+          263081.88692529924,
+          6239660.112879549
+        ],
+        "tags": {
+          "addr:postcode": "94800",
+          "name": "Villejuif",
+          "name:ar": "فيلجويف",
+          "name:el": "Βιλζουίφ",
+          "name:gcf": "Viljif",
+          "name:hy": "Վիլժուիֆ",
+          "name:ja": "ヴィルジュイフ",
+          "name:ko": "빌쥐프",
+          "name:ru": "Вильжюиф",
+          "name:uk": "Вільжуїф",
+          "name:zh": "维勒瑞夫",
+          "place": "town",
+          "population": "57753",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400769",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q128466",
+          "wikipedia": "fr:Villejuif"
+        }
+      },
+      {
+        "id": "26692470",
+        "wgs84": [
+          2.4699741,
+          48.7443189,
+          0.0
+        ],
+        "euc": [
+          274956.2590845741,
+          6231588.493170336
+        ],
+        "tags": {
+          "addr:postcode": "94460",
+          "name": "Valenton",
+          "name:ar": "فالنتون",
+          "name:el": "Βαλαντόν",
+          "name:ja": "ヴァラントン",
+          "name:ko": "발랑통",
+          "name:uk": "Валантон",
+          "name:zh": "瓦朗通",
+          "place": "town",
+          "population": "14482",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q243077",
+          "wikipedia": "fr:Valenton"
+        }
+      },
+      {
+        "id": "26692491",
+        "wgs84": [
+          2.1266886,
+          48.8035403,
+          0.0
+        ],
+        "euc": [
+          236741.89202785987,
+          6241591.800499898
+        ],
+        "tags": {
+          "addr:postcode": "78000",
+          "capital": "6",
+          "name": "Versailles",
+          "name:ar": "فرساي",
+          "name:br": "Versailhez",
+          "name:ca": "Versalles",
+          "name:el": "Βερσαλλίες",
+          "name:es": "Versalles",
+          "name:hi": "वर्साइ",
+          "name:hy": "Վերսալ",
+          "name:ja": "ヴェルサイユ",
+          "name:ka": "ვერსალი",
+          "name:ko": "베르사유",
+          "name:pl": "Wersal",
+          "name:pt": "Versalhes",
+          "name:ru": "Версаль",
+          "name:uk": "Версаль",
+          "name:zh": "凡尔赛",
+          "place": "town",
+          "population": "83587",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217806462",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q621",
+          "wikipedia": "fr:Versailles"
+        }
+      },
+      {
+        "id": "26692495",
+        "wgs84": [
+          2.44782,
+          48.7305272,
+          0.0
+        ],
+        "euc": [
+          272490.0759535909,
+          6229260.578368745
+        ],
+        "tags": {
+          "addr:postcode": "94190",
+          "name": "Villeneuve-Saint-Georges",
+          "name:ar": "فيلنوف سان جورج",
+          "name:ja": "ヴィルヌーヴ＝サン＝ジョルジュ",
+          "name:ko": "빌뇌브생조르주",
+          "name:ru": "Вильнёв-Сен-Жорж",
+          "name:uk": "Вільнев-Сен-Жорж",
+          "name:zh": "圣乔治新城",
+          "place": "town",
+          "population": "35492",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q244241",
+          "wikipedia": "fr:Villeneuve-Saint-Georges"
+        }
+      },
+      {
+        "id": "26692496",
+        "wgs84": [
+          2.5044613,
+          48.6979312,
+          0.0
+        ],
+        "euc": [
+          278795.35662746,
+          6223761.203708424
+        ],
+        "tags": {
+          "addr:postcode": "91800",
+          "name": "Brunoy",
+          "name:el": "Μπρυνουά",
+          "name:ja": "ブリュノワ",
+          "name:ko": "브뤼누아",
+          "name:ru": "Брюнуа",
+          "name:uk": "Брюнуа",
+          "name:zh": "布吕努瓦",
+          "place": "town",
+          "population": "25423",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q212541",
+          "wikipedia": "fr:Brunoy"
+        }
+      },
+      {
+        "id": "26692499",
+        "wgs84": [
+          2.1450951,
+          48.9461437,
+          0.0
+        ],
+        "euc": [
+          238790.89423514623,
+          6265728.0424726475
+        ],
+        "tags": {
+          "addr:postcode": "78600",
+          "name": "Maisons-Laffitte",
+          "name:el": "Μαιζόν-Λαφίτ",
+          "name:hy": "Մեզոն-Լաֆիտ",
+          "name:ja": "メゾン＝ラフィット",
+          "name:ka": "მეზონ-ლაფიტი",
+          "name:ko": "메종라피트",
+          "name:ru": "Мезон-Лаффит",
+          "name:uk": "Мезон-Лаффітт",
+          "name:zh": "迈松拉菲特",
+          "place": "town",
+          "population": "23080",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q463951"
+        }
+      },
+      {
+        "id": "26692517",
+        "wgs84": [
+          2.530442,
+          48.7965001,
+          0.0
+        ],
+        "euc": [
+          281687.51492191275,
+          6240401.995828756
+        ],
+        "tags": {
+          "addr:postcode": "94430",
+          "name": "Chennevières-sur-Marne",
+          "name:ar": "تشينيفيير سور مارن",
+          "name:el": "Σενβιέρ-συρ-Μαρν",
+          "name:ja": "シュヌビエール＝シュル＝マルヌ",
+          "name:uk": "Шеннв'єр-сюр-Марн",
+          "name:zh": "马恩河畔谢讷维耶尔",
+          "place": "town",
+          "population": "18367",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400199",
+          "short_name": "Chennevières-sur-M.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1108408",
+          "wikipedia": "fr:Chennevières-sur-Marne"
+        }
+      },
+      {
+        "id": "26692519",
+        "wgs84": [
+          2.1894241,
+          48.8279362,
+          0.0
+        ],
+        "euc": [
+          243725.57594252127,
+          6245716.037928405
+        ],
+        "tags": {
+          "addr:postcode": "92410",
+          "name": "Ville-d'Avray",
+          "name:ar": "فيل دافراي",
+          "name:el": "Βιλ-ντ'Αβραί",
+          "name:fr": "Ville-d'Avray",
+          "name:hy": "Վիլ-դ'Ավրե",
+          "name:ja": "ヴィル＝ダヴレー",
+          "name:ka": "ვილ-დ’ავრე",
+          "name:ko": "빌다브레",
+          "name:ru": "Виль-д’Аврэ",
+          "name:uk": "Віль-д'Авре",
+          "name:zh": "阿夫赖城",
+          "place": "town",
+          "population": "10694",
+          "population:date": "2021",
+          "ref:mhs": "IA00051443",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q456327",
+          "wikipedia": "fr:Ville-d'Avray"
+        }
+      },
+      {
+        "id": "26692521",
+        "wgs84": [
+          2.3860488,
+          48.655886,
+          0.0
+        ],
+        "euc": [
+          265613.73742390145,
+          6216672.880951324
+        ],
+        "tags": {
+          "addr:postcode": "91350",
+          "name": "Grigny",
+          "name:el": "Γκρινί",
+          "name:ja": "グリニー",
+          "name:ko": "그리니",
+          "name:ru": "Гриньи",
+          "name:uk": "Гриньї",
+          "name:zh": "格里尼",
+          "place": "town",
+          "population": "27257",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q238310"
+        }
+      },
+      {
+        "id": "26692523",
+        "wgs84": [
+          2.5483998,
+          48.785641,
+          0.0
+        ],
+        "euc": [
+          283686.5680736802,
+          6238567.11852405
+        ],
+        "tags": {
+          "addr:postcode": "94490",
+          "admin_level": "8",
+          "alt_name": "Ormesson",
+          "capital": "8",
+          "name": "Ormesson-sur-Marne",
+          "name:ar": "أورميسون سور مارن",
+          "name:el": "Ορμεσόν-συρ-Μαρν",
+          "name:ja": "オルメッソン＝シュル＝マルヌ",
+          "name:uk": "Ормессон-сюр-Марн",
+          "name:zh": "马恩河畔奥尔梅松",
+          "old_name": "Amboille",
+          "place": "town",
+          "population": "10540",
+          "population:date": "2021",
+          "short_name": "Ormesson",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q243136",
+          "wikipedia": "fr:Ormesson-sur-Marne"
+        }
+      },
+      {
+        "id": "26692524",
+        "wgs84": [
+          2.5798953,
+          48.5958681,
+          0.0
+        ],
+        "euc": [
+          287192.63109595975,
+          6206564.808491301
+        ],
+        "tags": {
+          "addr:postcode": "77176",
+          "name": "Savigny-le-Temple",
+          "name:el": "Σαβινί-λε-Ταμπλ",
+          "name:hy": "Սավինյի լե Տեմպլ",
+          "name:ja": "サヴィニー＝ル＝タンプル",
+          "name:ko": "사비니르탕플",
+          "name:uk": "Савіньї-ле-Тампль",
+          "name:zh": "萨维尼勒唐普勒",
+          "place": "town",
+          "population": "30510",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q328010",
+          "wikipedia": "fr:Savigny-le-Temple"
+        }
+      },
+      {
+        "id": "26692527",
+        "wgs84": [
+          2.3027323,
+          48.795056,
+          0.0
+        ],
+        "euc": [
+          256338.98706922372,
+          6240157.961337848
+        ],
+        "tags": {
+          "addr:postcode": "92220",
+          "name": "Bagneux",
+          "name:ar": "بانيو",
+          "name:el": "Μπανιέ",
+          "name:fr": "Bagneux",
+          "name:hy": "Բանյո",
+          "name:ja": "バニュー",
+          "name:ko": "바뉴",
+          "name:ru": "Баньё",
+          "name:uk": "Баньє",
+          "name:zh": "巴涅",
+          "place": "town",
+          "population": "43699",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q161884"
+        }
+      },
+      {
+        "id": "26692539",
+        "wgs84": [
+          1.819207,
+          48.6452851,
+          0.0
+        ],
+        "euc": [
+          202513.19688755885,
+          6214886.628073636
+        ],
+        "tags": {
+          "addr:postcode": "78120",
+          "capital": "7",
+          "name": "Rambouillet",
+          "name:ar": "رانبوييه",
+          "name:el": "Ραμπουγιέ",
+          "name:hi": "रामबुये",
+          "name:it": "Rambuglietto",
+          "name:ja": "ランブイエ",
+          "name:ka": "რამბუიე",
+          "name:ko": "랑부예",
+          "name:oc": "Rambolhet",
+          "name:ru": "Рамбуйе",
+          "name:uk": "Рамбує",
+          "name:zh": "朗布依埃",
+          "place": "town",
+          "population": "26816",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q191119",
+          "wikipedia": "fr:Rambouillet"
+        }
+      },
+      {
+        "id": "26692542",
+        "wgs84": [
+          2.5159134,
+          48.6953018,
+          0.0
+        ],
+        "euc": [
+          280070.1985679736,
+          6223317.74453244
+        ],
+        "tags": {
+          "addr:postcode": "91860",
+          "name": "Épinay-sous-Sénart",
+          "place": "town",
+          "population": "11869",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219102159",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "26692567",
+        "wgs84": [
+          2.2881683,
+          48.892956,
+          0.0
+        ],
+        "euc": [
+          254717.73000531044,
+          6256717.746469358
+        ],
+        "tags": {
+          "addr:postcode": "92300",
+          "alt_name": "Levallois",
+          "name": "Levallois-Perret",
+          "name:ar": "لوفالوا-بيري",
+          "name:el": "Λεβαλουά-Περέ",
+          "name:fr": "Levallois-Perret",
+          "name:hy": "Լևալլուա Պերե",
+          "name:ja": "ルヴァロワ＝ペレ",
+          "name:ka": "ლევალუა-პერე",
+          "name:ko": "르발루아페레",
+          "name:ru": "Леваллуа-Перре",
+          "name:uk": "Леваллуа-Перре",
+          "name:zh": "勒瓦卢瓦-佩雷",
+          "place": "town",
+          "population": "68009",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q166640",
+          "wikipedia": "fr:Levallois-Perret"
+        }
+      },
+      {
+        "id": "26692568",
+        "wgs84": [
+          2.3123582,
+          48.7026161,
+          0.0
+        ],
+        "euc": [
+          257410.5373556506,
+          6224551.388860268
+        ],
+        "tags": {
+          "addr:postcode": "91380",
+          "name": "Chilly-Mazarin",
+          "name:el": "Σιγί-Μαζαρέν",
+          "name:ja": "シリー＝マザラン",
+          "name:ko": "쉴리 마자항",
+          "name:ru": "Шили-Мазарен",
+          "name:uk": "Шиї-Мазарен",
+          "name:zh": "希伊-马萨林",
+          "place": "town",
+          "population": "19938",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q247241",
+          "wikipedia": "fr:Chilly-Mazarin"
+        }
+      },
+      {
+        "id": "26692575",
+        "wgs84": [
+          2.2792058,
+          48.9911296,
+          0.0
+        ],
+        "euc": [
+          253720.02906907577,
+          6273356.406725098
+        ],
+        "tags": {
+          "addr:postcode": "95600",
+          "name": "Eaubonne",
+          "name:el": "Ωμπόν",
+          "name:hy": "Օբոն",
+          "name:ja": "オーボンヌ",
+          "name:ko": "오본",
+          "name:ru": "Обонн",
+          "name:uk": "Обонн",
+          "name:zh": "欧博讷",
+          "place": "town",
+          "population": "25373",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q240771"
+        }
+      },
+      {
+        "id": "26692576",
+        "wgs84": [
+          1.9756367,
+          48.9792052,
+          0.0
+        ],
+        "euc": [
+          219926.87143650337,
+          6271333.6878281
+        ],
+        "tags": {
+          "addr:postcode": "78480",
+          "name": "Verneuil-sur-Seine",
+          "name:ja": "ヴェルヌイユ＝シュル＝セーヌ",
+          "name:uk": "Верней-сюр-Сен",
+          "name:zh": "塞纳河畔韦尔讷伊",
+          "place": "town",
+          "population": "15914",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q642326"
+        }
+      },
+      {
+        "id": "26692581",
+        "wgs84": [
+          2.1008067,
+          49.0508845,
+          0.0
+        ],
+        "euc": [
+          233860.73209909743,
+          6283499.843623308
+        ],
+        "tags": {
+          "addr:postcode": "95000;95300",
+          "capital": "7",
+          "name": "Pontoise",
+          "name:el": "Ποντουάζ",
+          "name:hy": "Պոնտուազ",
+          "name:ja": "ポントワーズ",
+          "name:ka": "პონტუაზი",
+          "name:ko": "퐁투아즈",
+          "name:ru": "Понтуаз",
+          "name:th": "ปงตวซ",
+          "name:uk": "Понтуаз",
+          "name:zh": "蓬图瓦兹",
+          "note": "attention : il y a 2 codes postaux : 95000 et 95300",
+          "place": "town",
+          "population": "31327",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219505005",
+          "source:population": "INSEE 2024",
+          "website": "https://www.ville-pontoise.fr/",
+          "wikidata": "Q201352",
+          "wikipedia": "fr:Pontoise"
+        }
+      },
+      {
+        "id": "26692584",
+        "wgs84": [
+          2.3194375,
+          48.8188544,
+          0.0
+        ],
+        "euc": [
+          258198.60142682344,
+          6244180.483970376
+        ],
+        "tags": {
+          "addr:postcode": "92120",
+          "name": "Montrouge",
+          "name:ar": "مونروج",
+          "name:el": "Μονρούζ",
+          "name:fr": "Montrouge",
+          "name:hy": "Մոնրուժ",
+          "name:ja": "モンルージュ",
+          "name:ko": "몽루주",
+          "name:ru": "Монруж",
+          "name:uk": "Монруж",
+          "name:zh": "蒙鲁日",
+          "place": "town",
+          "population": "47657",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219200490",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q241021"
+        }
+      },
+      {
+        "id": "26692590",
+        "wgs84": [
+          2.2543631,
+          48.9227298,
+          0.0
+        ],
+        "euc": [
+          250954.55235514563,
+          6261760.413651056
+        ],
+        "tags": {
+          "addr:postcode": "92700",
+          "name": "Colombes",
+          "name:ar": "كولومب",
+          "name:el": "Κολόμπ",
+          "name:fr": "Colombes",
+          "name:hy": "Կոլոմբ",
+          "name:ja": "コロンブ",
+          "name:ko": "콜롱브",
+          "name:ru": "Коломб",
+          "name:uk": "Коломб",
+          "name:zh": "科隆布",
+          "place": "town",
+          "population": "88870",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q174002",
+          "wikipedia": "fr:Colombes"
+        }
+      },
+      {
+        "id": "26692592",
+        "wgs84": [
+          2.4455201,
+          48.9229803,
+          0.0
+        ],
+        "euc": [
+          272234.0522567154,
+          6261802.852565048
+        ],
+        "tags": {
+          "addr:postcode": "93700",
+          "name": "Drancy",
+          "name:ar": "درانسي",
+          "name:el": "Ντρανσί",
+          "name:hy": "Դրանսի",
+          "name:ja": "ドランシ",
+          "name:ko": "드랑시",
+          "name:ru": "Дранси",
+          "name:uk": "Дрансі",
+          "name:zh": "德朗西",
+          "place": "town",
+          "population": "71363",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q201348"
+        }
+      },
+      {
+        "id": "26692594",
+        "wgs84": [
+          2.0302362,
+          48.9784414,
+          0.0
+        ],
+        "euc": [
+          226004.8599740707,
+          6271204.142020146
+        ],
+        "tags": {
+          "addr:postcode": "78570",
+          "name": "Chanteloup-les-Vignes",
+          "place": "town",
+          "population": "10735",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "26692608",
+        "wgs84": [
+          2.0614598,
+          49.0660487,
+          0.0
+        ],
+        "euc": [
+          229480.6552268036,
+          6286075.916447337
+        ],
+        "tags": {
+          "addr:postcode": "95520",
+          "name": "Osny",
+          "name:el": "Ονί",
+          "name:ja": "オニー",
+          "name:ru": "Они",
+          "name:uk": "Оні",
+          "name:zh": "奥尼",
+          "place": "town",
+          "population": "17277",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q273133"
+        }
+      },
+      {
+        "id": "26692611",
+        "wgs84": [
+          2.2127083,
+          48.8247407,
+          0.0
+        ],
+        "euc": [
+          246317.56123005,
+          6245175.709927749
+        ],
+        "tags": {
+          "addr:postcode": "92310",
+          "name": "Sèvres",
+          "name:ar": "سيفر",
+          "name:el": "Σέβρες",
+          "name:fa": "سور",
+          "name:fr": "Sèvres",
+          "name:hy": "Սևր",
+          "name:ja": "セーヴル",
+          "name:ko": "세브르",
+          "name:mzn": "سور",
+          "name:ru": "Севр",
+          "name:uk": "Севр",
+          "name:zh": "塞夫尔",
+          "place": "town",
+          "population": "22618",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q206493",
+          "wikipedia": "fr:Sèvres"
+        }
+      },
+      {
+        "id": "26692615",
+        "wgs84": [
+          2.3324727,
+          48.9350488,
+          0.0
+        ],
+        "euc": [
+          259649.67325321192,
+          6263847.711709293
+        ],
+        "tags": {
+          "addr:postcode": "92390",
+          "name": "Villeneuve-la-Garenne",
+          "name:ar": "فيلنوف-لا-غارين",
+          "name:el": "Βιλνέβ-λα-Γκαρέν",
+          "name:ja": "ヴィルヌーヴ＝ラ＝ガレンヌ",
+          "name:ko": "빌뇌브라가렌",
+          "name:ru": "Вильнёв-ла-Гаренн",
+          "name:uk": "Вільнев-ла-Гаренн",
+          "name:zh": "拉加雷讷新城",
+          "place": "town",
+          "population": "25371",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q225451"
+        }
+      },
+      {
+        "id": "26692618",
+        "wgs84": [
+          2.6545195,
+          48.7903787,
+          0.0
+        ],
+        "euc": [
+          295499.7590408152,
+          6239367.605481899
+        ],
+        "tags": {
+          "addr:postcode": "77680",
+          "name": "Roissy-en-Brie",
+          "name:el": "Ρουασί-αν-Μπρι",
+          "name:ja": "ロワシー＝アン＝ブリ",
+          "name:ko": "루아시앙브리",
+          "name:uk": "Руассі-ан-Брі",
+          "name:zh": "布里地区鲁瓦西",
+          "place": "town",
+          "population": "23521",
+          "population:date": "2022",
+          "source:population": "INSEE 2025",
+          "wikidata": "Q1058168"
+        }
+      },
+      {
+        "id": "26692632",
+        "wgs84": [
+          2.48291,
+          48.9031,
+          0.0
+        ],
+        "euc": [
+          276396.2768855269,
+          6258435.456981279
+        ],
+        "tags": {
+          "name": "Bondy",
+          "name:ar": "بوندي",
+          "name:el": "Μποντί",
+          "name:hy": "Բոնդի",
+          "name:ja": "ボンディ",
+          "name:ko": "봉디",
+          "name:ru": "Бонди",
+          "name:uk": "Бонді",
+          "name:zh": "邦迪",
+          "place": "town",
+          "population": "52905",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q237394"
+        }
+      },
+      {
+        "id": "26694462",
+        "wgs84": [
+          2.576913,
+          48.8598434,
+          0.0
+        ],
+        "euc": [
+          286860.642978567,
+          6251113.126205778
+        ],
+        "tags": {
+          "addr:country": "FR",
+          "name": "Gournay-sur-Marne",
+          "name:ar": "غورني سور مارن",
+          "name:el": "Γκουρναί-συρ-Μαρν",
+          "name:ja": "グルネ＝シュル＝マルヌ",
+          "name:ko": "구르네쉬르마른",
+          "name:uk": "Гурне-сюр-Марн",
+          "name:zh": "马恩河畔古尔奈",
+          "place": "town",
+          "population": "6882",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q245479",
+          "wikipedia": "fr:Gournay-sur-Marne"
+        }
+      },
+      {
+        "id": "26694592",
+        "wgs84": [
+          2.6883703,
+          48.9460871,
+          0.0
+        ],
+        "euc": [
+          299268.0128597601,
+          6265718.4490115885
+        ],
+        "tags": {
+          "addr:postcode": "77410",
+          "name": "Claye-Souilly",
+          "name:el": "Κλαι-Σουγί",
+          "name:hy": "Կլե Սուի",
+          "name:ja": "クレー＝スイイ",
+          "name:ru": "Клэ-Суйи",
+          "name:uk": "Кле-Суї",
+          "name:zh": "克莱-苏伊",
+          "place": "town",
+          "population": "12282",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1365831"
+        }
+      },
+      {
+        "id": "26694742",
+        "wgs84": [
+          2.505381,
+          48.6137867,
+          0.0
+        ],
+        "euc": [
+          278897.7371631425,
+          6209581.3581920285
+        ],
+        "tags": {
+          "addr:postcode": "91280",
+          "name": "Saint-Pierre-du-Perray",
+          "place": "town",
+          "population": "11680",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q973571",
+          "wikipedia": "fr:Saint-Pierre-du-Perray"
+        }
+      },
+      {
+        "id": "26694803",
+        "wgs84": [
+          2.007049,
+          48.8323013,
+          0.0
+        ],
+        "euc": [
+          223423.6726771489,
+          6246454.189610236
+        ],
+        "tags": {
+          "addr:postcode": "78450",
+          "name": "Villepreux",
+          "name:el": "Βιλπρέ",
+          "name:ja": "ヴィルプルー",
+          "name:ru": "Вильпрё",
+          "name:uk": "Вільпре",
+          "name:zh": "维勒普勒",
+          "place": "town",
+          "population": "11150",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q491492"
+        }
+      },
+      {
+        "id": "26694944",
+        "wgs84": [
+          2.5749323,
+          48.7903338,
+          0.0
+        ],
+        "euc": [
+          286640.1524631527,
+          6239360.018774191
+        ],
+        "tags": {
+          "addr:postcode": "94510",
+          "name": "La Queue-en-Brie",
+          "name:ar": "لا كي أن بري",
+          "name:el": "Λα Κε-αν-Μπρι",
+          "name:ja": "ラ・クー＝アン＝ブリー",
+          "name:uk": "Ла-Ке-ан-Брі",
+          "name:zh": "布里地区拉克",
+          "place": "town",
+          "population": "12081",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400603",
+          "short_name": "La-Queue-en-B.",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q253428",
+          "wikipedia": "fr:La Queue-en-Brie"
+        }
+      },
+      {
+        "id": "26694957",
+        "wgs84": [
+          2.414733,
+          48.9538155,
+          0.0
+        ],
+        "euc": [
+          268806.84796171385,
+          6267028.480893997
+        ],
+        "tags": {
+          "addr:postcode": "93440",
+          "name": "Dugny",
+          "name:ar": "ديوني",
+          "name:el": "Ντυνί",
+          "name:ja": "デュニー",
+          "name:uk": "Дюньї",
+          "name:zh": "迪尼",
+          "place": "town",
+          "population": "11328",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q738458"
+        }
+      },
+      {
+        "id": "26695179",
+        "wgs84": [
+          2.2218373,
+          48.5776619,
+          0.0
+        ],
+        "euc": [
+          247333.79686150176,
+          6203500.937687156
+        ],
+        "tags": {
+          "addr:postcode": "91520",
+          "name": "Égly",
+          "name:el": "Εγκλί",
+          "name:ja": "エグリー",
+          "name:ru": "Эгли",
+          "name:uk": "Еглі",
+          "name:zh": "埃格利",
+          "place": "town",
+          "population": "7078",
+          "population:date": "2022",
+          "source:population": "INSEE 2025",
+          "wikidata": "Q1165689"
+        }
+      },
+      {
+        "id": "26695186",
+        "wgs84": [
+          2.5161998,
+          49.0986649,
+          0.0
+        ],
+        "euc": [
+          280102.0804701368,
+          6291619.3754822
+        ],
+        "tags": {
+          "addr:postcode": "95470",
+          "name": "Fosses",
+          "name:el": "Φος",
+          "name:hy": "Ֆոսս",
+          "name:ja": "フォセ",
+          "name:ru": "Фосс",
+          "name:uk": "Фосс",
+          "name:zh": "福斯",
+          "place": "town",
+          "population": "10249",
+          "population:date": "2022",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q243260"
+        }
+      },
+      {
+        "id": "26695233",
+        "wgs84": [
+          2.6835682,
+          49.0547758,
+          0.0
+        ],
+        "euc": [
+          298733.44553302176,
+          6284160.817199206
+        ],
+        "tags": {
+          "addr:postcode": "77230",
+          "name": "Dammartin-en-Goële",
+          "name:el": "Νταμαρτέν-αν-Γκοέλ",
+          "name:ja": "ダマルタン＝アン＝ゴエル",
+          "name:ru": "Даммартен-ан-Гоэль",
+          "name:uk": "Даммартен-ан-Гоель",
+          "name:zh": "达马尔坦昂戈埃勒",
+          "place": "town",
+          "population": "11272",
+          "population:date": "2021",
+          "ref:FR:SIREN": "217701531",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q250742"
+        }
+      },
+      {
+        "id": "26695677",
+        "wgs84": [
+          2.6021145,
+          48.5624381,
+          0.0
+        ],
+        "euc": [
+          289666.06112579367,
+          6200939.813687286
+        ],
+        "tags": {
+          "addr:postcode": "77240",
+          "name": "Cesson",
+          "name:el": "Σεσόν",
+          "name:ja": "セソン",
+          "name:ru": "Сесон",
+          "name:uk": "Сессон",
+          "name:zh": "塞松",
+          "place": "town",
+          "population": "11140",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q239761",
+          "wikipedia": "fr:Cesson"
+        }
+      },
+      {
+        "id": "26695701",
+        "wgs84": [
+          2.5514783,
+          48.6316608,
+          0.0
+        ],
+        "euc": [
+          284029.2651260873,
+          6212591.4832238965
+        ],
+        "tags": {
+          "addr:postcode": "77127",
+          "name": "Lieusaint",
+          "name:el": "Λιεσαίν",
+          "name:ja": "リュザン",
+          "name:uk": "Льєсен",
+          "name:zh": "略桑",
+          "place": "town",
+          "population": "13808",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1441028"
+        }
+      },
+      {
+        "id": "26695968",
+        "wgs84": [
+          2.5327265,
+          48.7208822,
+          0.0
+        ],
+        "euc": [
+          281941.82429862994,
+          6227632.96858455
+        ],
+        "tags": {
+          "addr:postcode": "94440",
+          "name": "Villecresnes",
+          "name:ar": "فيلكرين",
+          "name:el": "Βιλκρέν",
+          "name:ja": "ビルクレーヌ",
+          "name:ru": "Вилькрен",
+          "name:uk": "Вількрен",
+          "name:zh": "维勒克雷讷",
+          "place": "town",
+          "population": "11642",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219400751",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q751658",
+          "wikipedia": "fr:Villecresnes"
+        }
+      },
+      {
+        "id": "26696266",
+        "wgs84": [
+          2.324446,
+          48.6725622,
+          0.0
+        ],
+        "euc": [
+          258756.1450964616,
+          6219483.582926829
+        ],
+        "tags": {
+          "addr:postcode": "91360",
+          "name": "Épinay-sur-Orge",
+          "place": "town",
+          "population": "10760",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219102167",
+          "source:population": "INSEE 2024",
+          "wikipedia": "fr:Épinay-sur-Orge"
+        }
+      },
+      {
+        "id": "26696299",
+        "wgs84": [
+          2.2257833,
+          48.7423961,
+          0.0
+        ],
+        "euc": [
+          247773.06357217205,
+          6231263.903522344
+        ],
+        "tags": {
+          "addr:postcode": "91430",
+          "name": "Igny",
+          "name:el": "Ινί",
+          "name:ja": "イニー",
+          "name:uk": "Іньї",
+          "name:zh": "伊尼",
+          "place": "town",
+          "population": "10213",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1166034"
+        }
+      },
+      {
+        "id": "26696338",
+        "wgs84": [
+          2.2276489,
+          48.7000046,
+          0.0
+        ],
+        "euc": [
+          247980.741214196,
+          6224110.907521279
+        ],
+        "tags": {
+          "addr:postcode": "91140",
+          "name": "Villebon-sur-Yvette",
+          "name:el": "Βιλμπόν-συρ-Ιβέτ",
+          "name:ja": "ヴィルボン＝シュル＝イヴェット",
+          "name:ru": "Вильбон-сюр-Иветт",
+          "name:uk": "Вільбон-сюр-Іветт",
+          "name:zh": "伊韦特河畔维勒邦",
+          "old_name:cassini": "Vilbon",
+          "place": "town",
+          "population": "10322",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q828625"
+        }
+      },
+      {
+        "id": "26697258",
+        "wgs84": [
+          1.9830623,
+          48.9724604,
+          0.0
+        ],
+        "euc": [
+          220753.4854473379,
+          6270189.791326282
+        ],
+        "tags": {
+          "addr:postcode": "78540",
+          "name": "Vernouillet",
+          "name:el": "Βερνουγιέ",
+          "name:ja": "ヴェルヌイエ",
+          "name:ru": "Вернуэ",
+          "name:uk": "Вернує",
+          "name:zh": "维尔努耶",
+          "place": "town",
+          "population": "10025",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q638911"
+        }
+      },
+      {
+        "id": "26697333",
+        "wgs84": [
+          2.3805119,
+          48.6137157,
+          0.0
+        ],
+        "euc": [
+          264997.37253532815,
+          6209569.40341441
+        ],
+        "tags": {
+          "addr:postcode": "91070",
+          "name": "Bondoufle",
+          "name:el": "Μποντούφλ",
+          "name:ja": "ボンドゥフル",
+          "name:ko": "봉두플",
+          "name:ru": "Бондуфль",
+          "name:uk": "Бондуфль",
+          "name:zh": "邦杜夫勒",
+          "place": "town",
+          "population": "10862",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q675232"
+        }
+      },
+      {
+        "id": "26697346",
+        "wgs84": [
+          2.5096751,
+          49.0449139,
+          0.0
+        ],
+        "euc": [
+          279375.7541885579,
+          6282485.782137976
+        ],
+        "tags": {
+          "addr:postcode": "95380",
+          "name": "Louvres",
+          "name:el": "Λουβρ",
+          "name:ja": "ルーヴル",
+          "name:ru": "Лувр",
+          "name:uk": "Лувр",
+          "name:zh": "卢夫尔",
+          "place": "town",
+          "population": "12083",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q908517"
+        }
+      },
+      {
+        "id": "26698172",
+        "wgs84": [
+          2.2477303,
+          48.5902899,
+          0.0
+        ],
+        "euc": [
+          250216.19243661207,
+          6205625.951421715
+        ],
+        "tags": {
+          "addr:postcode": "91290",
+          "name": "Arpajon",
+          "name:el": "Αρπαζόν",
+          "name:ja": "アルバジャン",
+          "name:ko": "아르파종",
+          "name:ru": "Арпажон",
+          "name:uk": "Арпажон",
+          "name:zh": "阿尔帕容",
+          "place": "town",
+          "population": "11281",
+          "population:date": "2021",
+          "ref:FR:SIREN": "219100211",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q646708",
+          "wikipedia": "fr:Arpajon"
+        }
+      },
+      {
+        "id": "26698592",
+        "wgs84": [
+          2.1557343,
+          49.0232238,
+          0.0
+        ],
+        "euc": [
+          239975.24456159407,
+          6278802.906070713
+        ],
+        "tags": {
+          "addr:postcode": "95480",
+          "name": "Pierrelaye",
+          "name:el": "Πιερλαί",
+          "name:ru": "Пьерле",
+          "name:uk": "П'єррле",
+          "name:zh": "皮埃尔莱",
+          "place": "town",
+          "population": "10230",
+          "population:date": "2022",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1457068"
+        }
+      },
+      {
+        "id": "281385625",
+        "wgs84": [
+          2.0426301,
+          48.9274192,
+          0.0
+        ],
+        "euc": [
+          227384.54261101343,
+          6262554.912206988
+        ],
+        "tags": {
+          "addr:postcode": "78300",
+          "name": "Poissy",
+          "name:el": "Πουασί",
+          "name:hy": "Պուասսի",
+          "name:ja": "ポワシー",
+          "name:ka": "პუასი",
+          "name:ko": "푸아시",
+          "name:ru": "Пуасси",
+          "name:uk": "Пуассі",
+          "name:zh": "普瓦西",
+          "place": "town",
+          "population": "40016",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q457"
+        }
+      },
+      {
+        "id": "311407081",
+        "wgs84": [
+          2.4853015,
+          48.8033057,
+          0.0
+        ],
+        "euc": [
+          276662.497447759,
+          6241552.150047743
+        ],
+        "tags": {
+          "addr:postcode": "94100;94210 (La Varenne)",
+          "admin_level": "8",
+          "capital": "8",
+          "name": "Saint-Maur-des-Fossés",
+          "name:ar": "سان مور ديه فوسيه",
+          "name:el": "Σαιν-Μωρ-ντε-Φοσέ",
+          "name:hy": "Սեն Մոր դե Ֆոսե",
+          "name:ja": "サン＝モール＝デ＝フォッセ",
+          "name:ko": "생모르데포세",
+          "name:ru": "Сен-Мор-де-Фоссе",
+          "name:uk": "Сен-Мор-де-Фоссе",
+          "name:zh": "圣莫尔-德福塞",
+          "place": "town",
+          "population": "75441",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q193313",
+          "wikipedia": "fr:Saint-Maur-des-Fossés"
+        }
+      },
+      {
+        "id": "349075991",
+        "wgs84": [
+          2.564877,
+          48.6646994,
+          0.0
+        ],
+        "euc": [
+          285520.80158737913,
+          6218158.225840065
+        ],
+        "tags": {
+          "addr:postcode": "77380",
+          "name": "Combs-la-Ville",
+          "name:el": "Κομπ-λα-Βιλ",
+          "name:ja": "コン＝ラ＝ヴィル",
+          "name:ko": "콩라빌",
+          "name:uk": "Кон-ла-Віль",
+          "name:zh": "孔布城",
+          "place": "town",
+          "population": "22240",
+          "population:date": "2021",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2009",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q275375",
+          "wikipedia": "fr:Combs-la-Ville"
+        }
+      },
+      {
+        "id": "428787370",
+        "wgs84": [
+          2.402391,
+          48.7431683,
+          0.0
+        ],
+        "euc": [
+          267432.94280634326,
+          6231394.257827048
+        ],
+        "tags": {
+          "addr:postcode": "94310",
+          "name": "Orly",
+          "name:ar": "أورلي",
+          "name:el": "Ορλί",
+          "name:gcf": "Orli",
+          "name:ja": "オルリー",
+          "name:ko": "오를리",
+          "name:ru": "Орли",
+          "name:uk": "Орлі",
+          "name:zh": "奥利",
+          "place": "town",
+          "population": "24482",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q236058",
+          "wikipedia": "fr:Orly"
+        }
+      },
+      {
+        "id": "4407661785",
+        "wgs84": [
+          2.0030818,
+          48.980925,
+          0.0
+        ],
+        "euc": [
+          222982.04599327384,
+          6271625.385172136
+        ],
+        "tags": {
+          "addr:postcode": "78510",
+          "name": "Triel-sur-Seine",
+          "place": "town",
+          "population": "12388",
+          "population:date": "2021",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "479833326",
+        "wgs84": [
+          2.3750351,
+          48.6708729,
+          0.0
+        ],
+        "euc": [
+          264387.69794815156,
+          6219198.816319589
+        ],
+        "tags": {
+          "addr:postcode": "91170",
+          "name": "Viry-Châtillon",
+          "name:el": "Βιρί-Σατιγιόν",
+          "name:ja": "ヴィリー＝シャティヨン",
+          "name:ko": "비리샤티용",
+          "name:ru": "Вири-Шатийон",
+          "name:uk": "Вірі-Шатійон",
+          "name:zh": "维里-沙蒂永",
+          "place": "town",
+          "population": "31045",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q253554"
+        }
+      },
+      {
+        "id": "503412000",
+        "wgs84": [
+          2.1059841,
+          49.044765,
+          0.0
+        ],
+        "euc": [
+          234437.07763073055,
+          6282460.494149491
+        ],
+        "tags": {
+          "addr:postcode": "95310",
+          "name": "Saint-Ouen-l'Aumône",
+          "name:el": "Σαιντ-Ουέν-λ'Ωμόν",
+          "name:hy": "Սենտ Ուան լ'Օմոն",
+          "name:ja": "サン＝トゥアン＝ロモヌ",
+          "name:ko": "생투앙로몬",
+          "name:ru": "Сент-Уан-л'Омон",
+          "name:uk": "Сент-Уан-л'Омон",
+          "name:zh": "圣旺洛莫讷",
+          "place": "town",
+          "population": "25023",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q1022119"
+        }
+      },
+      {
+        "id": "666068733",
+        "wgs84": [
+          2.373809,
+          48.6904063,
+          0.0
+        ],
+        "euc": [
+          264251.20912048995,
+          6222492.159927288
+        ],
+        "tags": {
+          "addr:postcode": "91260",
+          "name": "Juvisy-sur-Orge",
+          "name:el": "Ζυβιζί-συρ-Ορζ",
+          "name:hy": "Ժուվիզի սյուր Օրժ",
+          "name:ja": "ジュヴィジーシュロルジュ",
+          "name:ko": "쥐비지쉬르오르주",
+          "name:ru": "Жювизи-сюр-Орж",
+          "name:uk": "Жувізі-сюр-Орж",
+          "name:zh": "奥尔日河畔瑞维西",
+          "place": "town",
+          "population": "18424",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "website": "http://www.ville-juvisy.fr/",
+          "wikidata": "Q752255",
+          "wikipedia": "fr:Juvisy-sur-Orge"
+        }
+      },
+      {
+        "id": "7194890951",
+        "wgs84": [
+          2.0839562,
+          48.724051,
+          0.0
+        ],
+        "euc": [
+          231984.94301948536,
+          6228167.674422406
+        ],
+        "tags": {
+          "name": "Magny-les-Hameaux",
+          "name:el": "Μανί-λε-Αμώ",
+          "name:ja": "マニー＝レ＝アモー",
+          "name:ru": "Маньи-ле-Амо",
+          "name:uk": "Маньї-ле-Амо",
+          "name:zh": "马尼莱阿莫",
+          "place": "town",
+          "wikidata": "Q76817",
+          "wikipedia": "fr:Magny-les-Hameaux"
+        }
+      },
+      {
+        "id": "731556746",
+        "wgs84": [
+          2.1066273,
+          48.8972505,
+          0.0
+        ],
+        "euc": [
+          234508.67832720873,
+          6257444.903032471
+        ],
+        "tags": {
+          "addr:postcode": "78230",
+          "name": "Le Pecq",
+          "name:zh": "勒佩克",
+          "place": "town",
+          "population": "15832",
+          "population:date": "2021",
+          "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q275366"
+        }
+      },
+      {
+        "id": "9573131673",
+        "wgs84": [
+          2.4381816,
+          48.629966,
+          0.0
+        ],
+        "euc": [
+          271417.13417352905,
+          6212306.021148614
+        ],
+        "tags": {
+          "capital": "6",
+          "name": "Évry-Courcouronnes",
+          "name:el": "Εβρί-Κουρκουρόν",
+          "name:hy": "Էվրի-Կուրկուրոն",
+          "name:ja": "エヴリー＝クールクーロンヌ",
+          "name:ko": "에브리쿠르쿠론",
+          "name:uk": "Еврі-Куркуронн",
+          "name:zh": "埃夫里-库尔库罗讷",
+          "place": "town",
+          "population": "66851",
+          "population:date": "2019",
+          "postal_code": "91000;91080",
+          "source:population": "INSEE 2022",
+          "wikidata": "Q57782245",
+          "wikipedia": "fr:Évry"
+        }
+      }
+    ]
+  }
+}
