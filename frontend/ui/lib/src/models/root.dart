@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:typed_data';
 
@@ -6,30 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
-
-class EventModel extends ChangeNotifier {
-  final bridge.Bridge backend;
-  late Stream<String> _stream;
-  String event = "";
-
-  EventModel({required this.backend}) {
-    _stream = backend.setSink();
-    _stream.listen((data) {
-      developer.log("EventModel.listen:$data");
-      onEvent(data);
-    });
-  }
-
-  void onEvent(String data) {
-    developer.log("onEvent:$data");
-    event = data;
-    notifyListeners();
-  }
-
-  String get() {
-    return event;
-  }
-}
 
 class UserInput {
   List<List<int>>? bytes;

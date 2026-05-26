@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:wpx/src/models/events.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
@@ -253,7 +254,7 @@ class LoadScreenModel extends ChangeNotifier {
   String _lastEvent = "";
 
   void onChanged(RootModel root, EventModel event) {
-    debugPrint("LoadScreenModel::onRootChanged");
+    debugPrint("LoadScreenModel::onChanged");
     _lastEvent = event.get();
     notifyListeners();
   }

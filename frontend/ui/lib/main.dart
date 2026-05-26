@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/events.dart';
 import 'package:wpx/src/models/futurerenderer.dart';
 import 'package:wpx/src/models/kindsmodel.dart';
 import 'package:wpx/src/models/root.dart';

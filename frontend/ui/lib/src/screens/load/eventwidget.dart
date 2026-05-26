@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/events.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 import 'package:wpx/src/widgets/small.dart';
 
@@ -81,28 +82,38 @@ String filterEvent(String? event, Job targetJob, LoadScreenModel model) {
   return "..";
 }
 
-class ProgressInfo {
-  final String taskName;
-  final int current;
-  final int total;
+class OsmEventWidget extends StatefulWidget {
+  final Job target;
+  final String? forcedString;
+  const OsmEventWidget({super.key, required this.target, this.forcedString});
 
-  ProgressInfo({
-    required this.taskName,
-    required this.current,
-    required this.total,
-  });
+  @override
+  State<OsmEventWidget> createState() => _OsmEventWidgetState();
 }
 
-ProgressInfo? filterProgress(String? event) {
-  if (event == null) {
-    return null;
+class _OsmEventWidgetState extends State<OsmEventWidget> {
+  @override
+  Widget build(BuildContext context) {
+    EventModel event = Provider.of<EventModel>(context);
+    OsmStatus progressInfo = event.getOsmEvent();
+
+    if (progressInfo.niceTaskName().isNotEmpty && !progressInfo.done()) {
+      Widget? bar;
+      if (progressInfo.total > 0) {
+        bar = Padding(
+          padding: EdgeInsetsGeometry.fromLTRB(5, 0, 5, 0),
+          child: LinearProgressIndicator(
+            value:
+                progressInfo.current /
+                progressInfo
+                    .total, // Value between 0.0 and 1.0 indicating progress
+            semanticsLabel: progressInfo.niceTaskName(),
+          ),
+        );
+      }
+      Widget label = SmallText(text: progressInfo.niceTaskName());
+      return Column(children: [label, if (bar != null) bar]);
+    }
+    return SmallText(text: progressInfo.niceTaskName());
   }
-  List<String> parts = event.split(":");
-  if (parts.length != 3) {
-    return null;
-  }
-  String taskName = parts[0];
-  int current = int.parse(parts[1]);
-  int total = int.parse(parts[2]);
-  return ProgressInfo(taskName: taskName, current: current, total: total);
 }

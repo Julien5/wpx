@@ -51,7 +51,8 @@ async fn download(req_string: &String, side: &DownloadSideData<'_>) -> GenericRe
                 nretries += 1;
             }
             Ok(content) => {
-                if false {
+                // if debug
+                if cfg!(debug_assertions) {
                     save_resquest_response_for_debug(&hash, &req_string, &content);
                 }
                 return Ok(content.into_bytes());
@@ -88,7 +89,7 @@ pub async fn get_response(
         );
         event::send_worker(
             &side.logger,
-            &format!("download-progress:{}:{}", index, missing.len()),
+            &format!("osm:download-progress:{}:{}", index, missing.len()),
         );
         match download(&missing_req_string, &side).await {
             Ok(data) => {

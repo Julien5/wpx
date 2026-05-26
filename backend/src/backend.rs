@@ -93,7 +93,7 @@ impl Backend {
     }
 
     pub async fn cancel_osm(&self) {
-        self.send("cancel osm data");
+        self.send("osm:cancel");
         {
             // .take() moves the value out and leaves None in its place
             if let Some(token) = self.osm_cancel_token.write().unwrap().take() {
@@ -105,8 +105,6 @@ impl Backend {
     }
 
     pub async fn load_osm(&self) -> Result<(), TrackError> {
-        self.send("download osm data");
-
         /*let tick = tokio::time::Duration::from_millis(1000);
                     for i in 0..5 {
                         self.send(&format!("download {}", i));
@@ -152,14 +150,14 @@ impl Backend {
 
         self.d().track.project_map(&mut osmpoints);
 
-        self.send("sort points");
+        self.send("osm:sort");
         {
             // TODO: osmpoints are sorted per tile.
             // we loose the sorting. Performance loss is okay, but this probably needs cleanup.
             let mut locked = self.d().packet_provider.write().unwrap();
             locked.collection.import_osm(&osmpoints.as_vector());
         }
-
+        self.send("osm:done");
         Ok(())
     }
 
@@ -255,7 +253,7 @@ impl Backend {
     }
 
     pub fn load_track_parts(&self, contents: &Vec<Vec<u8>>) -> Result<Vec<TrackPart>, TrackError> {
-        self.send("read gpx");
+        self.send("gpx:read");
         let gpxdata = gpsdata::GpxData::read_contents(contents)?;
         let parts = gpxdata.track_parts();
         {
@@ -286,23 +284,21 @@ impl Backend {
             .collection
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
-        self.send("compute elevation");
         let data = BackendData {
             track,
             parameters,
             packet_provider: point_collection,
         };
-        self.send("update waypoints");
         self.backend_data = Some(data);
 
         // this updates the collection, too
         self.set_user_step_options(&self.get_parameters().user_steps_options);
-        self.send("content loaded");
+        self.send("gpx:done");
         Ok(())
     }
 
     pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
-        self.send("read gpx");
+        self.send("gpx:read");
         let track_parts = self.load_track_parts(contents)?;
         self.load_ordered(&track_parts)
     }

@@ -19,7 +19,7 @@ async fn read_cache_for_boxes(
     for (index, req_boxes) in req.boxes.iter().enumerate() {
         event::send_worker(
             &logger,
-            &format!("read-cache-progress:{}:{}", index, req.boxes.len()),
+            &format!("osm:read-cache-progress:{}:{}", index, req.boxes.len()),
         );
         for req_chunk in req_boxes.chunks() {
             let filename = req_chunk.basename();
@@ -115,7 +115,7 @@ pub async fn write_cache(req: &Request, response: &Response, logger: &SenderHand
             Ok(bytes) => {
                 event::send_worker(
                     &logger,
-                    &format!("write-cache-progress:{}:{}", index, cached_chunks.len()),
+                    &format!("osm:write-cache-progress:{}:{}", index, cached_chunks.len()),
                 );
                 write_worker(&filename, bytes).await;
             }

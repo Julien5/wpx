@@ -69,7 +69,7 @@ pub async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<
         .header("Priority", "u=0")
         .body(format!("data={}", urlencoding::encode(&req)));
     log::debug!("request={:?}", request);
-    event::send_worker(&side.logger, &format!("{}", "wait for response"));
+    event::send_worker(&side.logger, &format!("{}", "osm:wait-for-response"));
     //let tick = tokio::time::Duration::from_millis(20);
     //tokio::time::sleep(tick).await;
     let future = request.send();

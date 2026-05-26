@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/events.dart';
 import 'package:wpx/src/models/kindsmodel.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
@@ -122,22 +123,22 @@ class _OSMCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    developer.log("OSMCard build ");
+    debugPrint("OSMCard build ");
     LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
 
-    Widget row = EventWidget(target: Job.osm);
+    Widget row = OsmEventWidget(target: Job.osm);
     if (model.hasFailed(Job.osm) != null || model.runningJob() == Job.osm) {
       row = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          EventWidget(target: Job.osm),
-          ElevatedButton(
-            onPressed:
+          OsmEventWidget(target: Job.osm),
+          SmallButton(
+            callback:
                 model.runningJob() == Job.osm
                     ? () => onSkipPressed(model)
                     : null,
-            child: const Text("cancel"),
+            text: "cancel",
           ),
         ],
       );
@@ -289,6 +290,7 @@ class _LoadScreenProviders extends MultiProvider {
               );
             },
             update: (context, root, event, loadscreen) {
+              // does not pass all events
               loadscreen!.onChanged(root, event);
               return loadscreen;
             },
