@@ -64,7 +64,7 @@ pub async fn get_response(
     request: &Request,
     side: &DownloadSideData<'_>,
 ) -> GenericResult<ChunkData> {
-    let (chunk_data, missing_request) = read_cache(request).await;
+    let (chunk_data, missing_request) = read_cache(request, side.logger).await;
     if missing_request.boxes.is_empty() {
         log::trace!("complete cache hit.");
         return Ok(chunk_data);
@@ -113,7 +113,7 @@ pub async fn get_response(
         }
     }
 
-    let (chunk_data, missing) = super::request_cache::read_cache(&request).await;
+    let (chunk_data, missing) = super::request_cache::read_cache(&request, side.logger).await;
     if missing.boxes.is_empty() {
         log::trace!("complete cache hit.");
         return Ok(chunk_data);

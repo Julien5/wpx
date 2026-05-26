@@ -11,10 +11,16 @@ use super::cache::read_worker;
 use super::cache::write_worker;
 use super::request::*;
 
-pub async fn write_cache(req: &Request, response: &Response, logger: &SenderHandlerLock) {
+async fn read_cache_for_boxes(
+    req: &Request,
+    logger: &SenderHandlerLock,
+) -> BTreeMap<Chunk, ChunkData> {
     let mut cached_chunks = BTreeMap::new();
-    // load all necessary chunks from storage
-    for req_boxes in &req.boxes {
+    for (index, req_boxes) in req.boxes.iter().enumerate() {
+        event::send_worker(
+            &logger,
+            &format!("read-cache-progress:{}:{}", index, req.boxes.len()),
+        );
         for req_chunk in req_boxes.chunks() {
             let filename = req_chunk.basename();
             if cached_chunks.contains_key(&req_chunk) {
@@ -22,12 +28,16 @@ pub async fn write_cache(req: &Request, response: &Response, logger: &SenderHand
             }
             match read_worker(&filename).await {
                 Ok(bytes) => match ChunkData::from_string(&bytes) {
-                    Ok(resp) => {
-                        cached_chunks.insert(req_chunk, resp);
+                    Ok(chunk_data) => {
+                        cached_chunks.insert(req_chunk, chunk_data);
                     }
                     Err(e) => {
-                        log::error!("could not read cache chunk: {} because {:?}", filename, e);
-                        panic!("could not read cache chunk: {} because {:?}", filename, e);
+                        log::warn!(
+                            "could not parse data for chunk: {} because {:?}",
+                            filename,
+                            e
+                        );
+                        log::warn!("(this is probably because the format has changed)");
                     }
                 },
                 Err(_e) => {
@@ -36,6 +46,11 @@ pub async fn write_cache(req: &Request, response: &Response, logger: &SenderHand
             }
         }
     }
+    cached_chunks
+}
+
+pub async fn write_cache(req: &Request, response: &Response, logger: &SenderHandlerLock) {
+    let mut cached_chunks = read_cache_for_boxes(req, logger).await;
 
     // fill them with new data
     for req_boxes in &req.boxes {
@@ -115,41 +130,11 @@ pub async fn write_cache(req: &Request, response: &Response, logger: &SenderHand
     }
 }
 
-pub async fn read_cache(req: &Request) -> (ChunkData, Request) {
-    let mut cached_chunks = BTreeMap::new();
-    // load all necessary chunks from storage
+pub async fn read_cache(req: &Request, logger: &SenderHandlerLock) -> (ChunkData, Request) {
+    let mut cached_chunks = read_cache_for_boxes(req, logger).await;
 
-    for req_boxes in &req.boxes {
-        for req_chunk in req_boxes.chunks() {
-            let filename = req_chunk.basename();
-            if cached_chunks.contains_key(&req_chunk) {
-                continue;
-            }
-            match read_worker(&filename).await {
-                Ok(bytes) => match ChunkData::from_string(&bytes) {
-                    Ok(chunk_data) => {
-                        cached_chunks.insert(req_chunk, chunk_data);
-                    }
-                    Err(e) => {
-                        log::warn!(
-                            "could not parse data for chunk: {} because {:?}",
-                            filename,
-                            e
-                        );
-                        log::warn!("this is probably because the format has changed");
-                    }
-                },
-                Err(_e) => {
-                    /*log::info!(
-                        "could not read cache for chunk: {} because {:?}",
-                        filename,
-                        e
-                    );*/
-                }
-            }
-        }
-    }
-
+    // - split the data in chunks and tiles,
+    // - find out the missing chunks and tiles.
     let mut missing_tiles = Boxes::new_tiled();
     let mut missing_chunks = Boxes::new_chunked();
     let mut inplace_tiles = BTreeMap::new();
@@ -177,18 +162,7 @@ pub async fn read_cache(req: &Request) -> (ChunkData, Request) {
                 }
             }
         };
-        log::trace!(
-            "found {} boxes with area:{:.1}km2)",
-            req_boxes.len(),
-            req_boxes.area() / 1_000_000f64
-        );
     }
-    log::trace!(
-        "request total:{} missing: [{} tiles] [{} chunks]",
-        req.boxes.iter().map(|boxes| boxes.len()).sum::<usize>(),
-        missing_tiles.len(),
-        missing_chunks.len(),
-    );
 
     let data = DataPacket {
         tiles: inplace_tiles,
