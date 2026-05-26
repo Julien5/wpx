@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 
+use crate::backend::SenderHandlerLock;
+use crate::event;
 use crate::tile::Chunk;
 use crate::tile::Chunks;
 use crate::tile::Tile;
@@ -9,7 +11,7 @@ use super::cache::read_worker;
 use super::cache::write_worker;
 use super::request::*;
 
-pub async fn write_cache(req: &Request, response: &Response) {
+pub async fn write_cache(req: &Request, response: &Response, logger: &SenderHandlerLock) {
     let mut cached_chunks = BTreeMap::new();
     // load all necessary chunks from storage
     for req_boxes in &req.boxes {
@@ -91,10 +93,15 @@ pub async fn write_cache(req: &Request, response: &Response) {
     }
 
     // write chunks to storage
-    for (chunk, chunk_data) in cached_chunks {
+
+    for (index, (chunk, chunk_data)) in cached_chunks.iter().enumerate() {
         let filename = chunk.basename();
         match chunk_data.as_string() {
             Ok(bytes) => {
+                event::send_worker(
+                    &logger,
+                    &format!("write-cache-progress:{}:{}", index, cached_chunks.len()),
+                );
                 write_worker(&filename, bytes).await;
             }
             Err(e) => {

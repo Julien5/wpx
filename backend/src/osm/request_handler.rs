@@ -2,6 +2,7 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 
 use crate::{
     error::{GenericResult, TrackError},
+    event,
     osm::{download, request::*, request_cache::*, request_parse::parse, DownloadSideData},
 };
 
@@ -13,6 +14,15 @@ fn hash(data: &String) -> String {
     let short_hash = &hex_string[0..4];
     format!("{}", short_hash)
 }
+
+#[cfg(not(target_arch = "wasm32"))]
+fn save_resquest_response_for_debug(hash: &str, req: &str, resp: &str) {
+    std::fs::write(format!("/tmp/request-{}.txt", hash), req).unwrap();
+    std::fs::write(format!("/tmp/response-{}.txt", hash), &resp).unwrap();
+}
+
+#[cfg(target_arch = "wasm32")]
+fn save_resquest_response_for_debug(hash: &str, req: &str, resp: &str) {}
 
 async fn download(req_string: &String, side: &DownloadSideData<'_>) -> GenericResult<Vec<u8>> {
     //log::trace!("download:\n{}\n", req_string);
@@ -32,16 +42,18 @@ async fn download(req_string: &String, side: &DownloadSideData<'_>) -> GenericRe
     loop {
         match download::dl_worker(&req_string, &side).await {
             Err(e) => {
-                // todo: break on cancel
-                log::error!("download failed, error = {}, retry = {}", e, nretries);
-                if nretries > 3 {
+                if let Some(TrackError::OSMDownloadCancelled) = e.downcast_ref::<TrackError>() {
+                    log::info!("user cancelled download");
                     return Err(e.into());
+                } else {
+                    log::error!("download failed, error = {}, retry = {}", e, nretries);
                 }
                 nretries += 1;
             }
             Ok(content) => {
-                std::fs::write(format!("/tmp/request-{}.txt", hash), req_string).unwrap();
-                std::fs::write(format!("/tmp/response-{}.txt", hash), &content).unwrap();
+                if false {
+                    save_resquest_response_for_debug(&hash, &req_string, &content);
+                }
                 return Ok(content.into_bytes());
             }
         }
@@ -59,22 +71,36 @@ pub async fn get_response(
     }
 
     log::trace!("incomplete cache hit.");
-    for (missing_zones, missing_req_string) in missing_request.strings() {
+    let missing = missing_request.strings();
+    for (index, pair) in missing.iter().enumerate() {
+        let (missing_zones, missing_req_string) = pair;
         log::trace!(
-            "request with {} missing tile bboxes",
-            missing_zones.tiles.len()
+            "request[{}/{}] with {} missing tile bboxes",
+            index,
+            missing.len(),
+            missing_zones.tiles.len(),
         );
         log::trace!(
-            "request with {} missing chunk bboxes",
-            missing_zones.chunks.len()
+            "request[{}/{}] with {} missing chunk bboxes",
+            index,
+            missing.len(),
+            missing_zones.chunks.len(),
+        );
+        event::send_worker(
+            &side.logger,
+            &format!("download-progress:{}:{}", index, missing.len()),
         );
         match download(&missing_req_string, &side).await {
             Ok(data) => {
                 log::trace!("response length: {} bytes", data.len());
                 match parse(&data) {
                     Ok(response) => {
-                        let _ =
-                            super::request_cache::write_cache(&missing_request, &response).await;
+                        let _ = super::request_cache::write_cache(
+                            &missing_request,
+                            &response,
+                            &side.logger,
+                        )
+                        .await;
                     }
                     Err(e) => {
                         log::error!("could not parse response: {:?}", e);

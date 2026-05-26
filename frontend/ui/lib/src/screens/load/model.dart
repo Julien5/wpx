@@ -30,8 +30,7 @@ class LoadScreenModel extends ChangeNotifier {
   final RootModel rootModel;
   final EventModel events;
   final UserInput userInput;
-  bool retryOsm = false;
-  int _osmRetryCount = 0;
+
   List<bridge.TrackPart>? _trackParts;
 
   FutureJob? runningFuture;
@@ -125,8 +124,6 @@ class LoadScreenModel extends ChangeNotifier {
     if (_isDisposed) {
       return;
     }
-    retryOsm = true;
-    _osmRetryCount = 0;
     done.clear();
     _failed.clear();
     startJob(Job.parts);
@@ -140,7 +137,6 @@ class LoadScreenModel extends ChangeNotifier {
       debugPrint("running job is not osm");
       return;
     }
-    retryOsm = false;
     backend.cancelOsm();
     runningFuture = null;
   }
@@ -232,23 +228,9 @@ class LoadScreenModel extends ChangeNotifier {
       bridge.TrackError trackError = e;
       if (trackError is bridge.TrackError_OSMDownloadTimeout) {
         developer.log("timeout => retry");
-        if (retryOsm) {
-          Future.delayed(const Duration(seconds: 1), () {
-            _failed.remove(job);
-            startJob(Job.osm);
-            _osmRetryCount += 1;
-          });
-        }
       }
       if (trackError is bridge.TrackError_OSMDownloadFailed) {
         debugPrint("timeout => should not retry");
-        if (retryOsm) {
-          Future.delayed(const Duration(seconds: 1), () {
-            _failed.remove(job);
-            startJob(Job.osm);
-            _osmRetryCount += 1;
-          });
-        }
       }
     }
 
@@ -256,10 +238,6 @@ class LoadScreenModel extends ChangeNotifier {
     _failed[job] = e;
     debugPrint("load notify");
     notifyListeners();
-  }
-
-  int osmRetryCount() {
-    return _osmRetryCount;
   }
 
   int controlsCount() {

@@ -70,19 +70,39 @@ String errorString(Object o) {
 
 String filterEvent(String? event, Job targetJob, LoadScreenModel model) {
   if (model.hasFailed(targetJob) != null) {
-    if (targetJob == Job.osm) {
-      return "${errorString(model.hasFailed(targetJob)!)} (${model.osmRetryCount()})";
-    }
     return errorString(model.hasFailed(targetJob)!);
   }
   if (model.runningFuture != null && model.runningFuture!.job == targetJob) {
-    if (targetJob == Job.osm) {
-      return "${safeLast(event)} (${model.osmRetryCount()})";
-    }
     return safeLast(event);
   }
   if (model.hasDone(targetJob)) {
     return "done";
   }
   return "..";
+}
+
+class ProgressInfo {
+  final String taskName;
+  final int current;
+  final int total;
+
+  ProgressInfo({
+    required this.taskName,
+    required this.current,
+    required this.total,
+  });
+}
+
+ProgressInfo? filterProgress(String? event) {
+  if (event == null) {
+    return null;
+  }
+  List<String> parts = event.split(":");
+  if (parts.length != 3) {
+    return null;
+  }
+  String taskName = parts[0];
+  int current = int.parse(parts[1]);
+  int total = int.parse(parts[2]);
+  return ProgressInfo(taskName: taskName, current: current, total: total);
 }
