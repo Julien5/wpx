@@ -128,23 +128,32 @@ class _OSMCard extends StatelessWidget {
 
     Widget row = OsmEventWidget(target: Job.osm);
     if (model.hasFailed(Job.osm) != null || model.runningJob() == Job.osm) {
+      EdgeInsets valuePadding = const EdgeInsets.fromLTRB(15, 0, 15, 0);
       row = Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           OsmEventWidget(target: Job.osm),
-          SmallButton(
-            callback:
+          SizedBox(height: 5,),
+          OutlinedButton(
+            onPressed:
                 model.runningJob() == Job.osm
                     ? () => onSkipPressed(model)
                     : null,
-            text: "cancel",
+            style: ElevatedButton.styleFrom(
+              padding: valuePadding,
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text("cancel", textAlign: TextAlign.center),
           ),
         ],
       );
     }
 
-    Widget inner = Column(children: [SmallText(text: "OSM"), row]);
+    Widget inner = Column(
+      children: [SmallText(text: "OSM"), row],
+    );
     return Card(elevation: 4, child: inner);
   }
 }
