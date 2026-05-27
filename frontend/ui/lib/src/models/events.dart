@@ -25,6 +25,9 @@ class EventModel extends ChangeNotifier {
     if (data.startsWith("osm:")) {
       osmStatus.update(data);
     }
+    if (data.startsWith("gpx:read")) {
+      osmStatus.reset();
+    }
     notifyListeners();
   }
 
@@ -47,6 +50,14 @@ class OsmStatus {
 
   OsmStatus();
 
+  void reset() {
+    _taskName = "";
+    current = -1;
+    total = -1;
+    downloadCurrent = -1;
+    downloadTotal = -1;
+  }
+
   String niceTaskName() {
     if (_taskName.contains("download")) {
       return "download";
@@ -66,7 +77,7 @@ class OsmStatus {
     if (_taskName.contains("done")) {
       return "done";
     }
-    return "[$_taskName]";
+    return "...";
   }
 
   void update(String event) {
