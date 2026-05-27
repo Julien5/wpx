@@ -142,7 +142,10 @@ impl Request {
                 log::trace!("optim: {:?}", bbox);
             }
             let svg = tiles_debug::paint_svg(&boxes, &o);
-            let _ = tiles_debug::save_debug_svg_incrementally(&svg);
+            // if debug
+            if cfg!(debug_assertions) {
+                let _ = tiles_debug::save_debug_svg_incrementally(&svg);
+            }
             log::trace!(
                 "reduces {} boxes to {} boxes [{:.1}km2 = {:.1}km2]",
                 boxes.len(),
