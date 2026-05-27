@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use chrono::TimeDelta;
 
 use crate::mercator::DateTime;
@@ -34,6 +36,7 @@ For events of 1400 km and greater the total time will be based on
 an average global speed of twelve (12) km per hour.
 
 [2] https://www.randonneursmondiaux.org/files/Rules_2019.pdf
+- from 1200 to 1299 km: 13.33 kph
 - from 1300 to 1899 km: 12 kph
 - from 1900 to 2499 km: 10 kph
 - 2500 km and above: 200 km per day
@@ -73,6 +76,11 @@ fn acp_distance_time_intermediate() -> Vec<(f64, f64)> {
     ]
 }
 
+fn _acp_distance_time_intermediate_beyond_2500km(distance: f64) -> (f64, f64) {
+    let distance_km = distance / 1000.0;
+    (distance_km, 24f64 * distance_km / 200f64)
+}
+
 fn time_delta(seconds: f64) -> TimeDelta {
     let nano = (seconds * 1_000_000_000f64).round() as i64;
     TimeDelta::nanoseconds(nano)
@@ -82,11 +90,11 @@ fn closest_acp_point(distance: f64) -> (f64, TimeDelta) {
     let distance_km = distance / 1000.0;
     let acp_points = acp_distance_time_last();
     let max_acp = acp_points.last().unwrap();
-    // we considere 2550 as 2500, but then
-    if distance_km > max_acp.0 + 50.0 {
-        let days = distance_km / 200f64;
-        return (distance, time_delta(24.0 * days * 3600.0));
+    log::trace!("closest_acp_point-1:{}", distance);
+    if distance_km >= 1300f64 {
+        return (distance_km, duration_acp_above_1300(distance));
     }
+
     let closest = acp_points.iter().copied().min_by(|a, b| {
         (a.0 - distance_km)
             .abs()
@@ -95,6 +103,7 @@ fn closest_acp_point(distance: f64) -> (f64, TimeDelta) {
     });
     match closest {
         Some((km, hours)) => {
+            log::trace!("closest_acp_point-2:{},{}", km, hours);
             return (km * 1000f64, time_delta(hours * 3600.0));
         }
         _ => {
@@ -105,11 +114,25 @@ fn closest_acp_point(distance: f64) -> (f64, TimeDelta) {
 
 fn duration_acp_last(distance: f64) -> TimeDelta {
     let distance_km = distance / 1000.0;
-    // Calculate time in hours based on ACP rules
-    if distance_km > 2250.0 {
-        return time_delta(3600.0 * distance_km / 10f64);
+    if distance_km >= 1300f64 {
+        return duration_acp_above_1300(distance);
     }
     closest_acp_point(distance).1
+}
+
+fn duration_acp_above_1300(distance: f64) -> TimeDelta {
+    let distance_km = distance / 1000.0;
+    debug_assert!(distance_km >= 1300f64);
+    if distance_km > 2500f64 {
+        let days = distance_km / 200f64;
+        return time_delta(24f64 * days * 3600.0);
+    }
+    if distance_km > 1900f64 {
+        let hours = distance_km / 10.0;
+        return time_delta(hours * 3600.0);
+    }
+    let hours = distance_km / 12.0;
+    return time_delta(hours * 3600.0);
 }
 
 // ACP (Audax Club Parisien) control closing time rules:
@@ -120,6 +143,9 @@ fn duration_acp_last(distance: f64) -> TimeDelta {
 // Special case for short distances (0-60 km): T = 1 + (D / 20)
 fn duration_acp(distance: f64) -> TimeDelta {
     let distance_km = distance / 1000.0;
+    if distance_km >= 1300f64 {
+        return duration_acp_above_1300(distance);
+    }
     let time_hours = {
         let mut remain_km = distance_km;
         let mut prev = (0.0, 0.0);
@@ -137,6 +163,12 @@ fn duration_acp(distance: f64) -> TimeDelta {
             }
             prev = (km, hours);
         }
+        log::trace!(
+            "duration_acp({}): remain:{} time_hours:{}",
+            distance,
+            remain_km,
+            time
+        );
         // many happen if distance > 2500km.
         if remain_km > 0.0 {
             // 200 km per day.
@@ -200,7 +232,8 @@ pub struct ControlSpeedData {
 impl ControlSpeedData {
     fn virtual_acp_controls(start: &DateTime) -> Vec<ControlSpeedData> {
         let mut ret = Vec::new();
-        for (km, hours) in acp_distance_time_intermediate() {
+        let acp_points = acp_distance_time_intermediate();
+        for (km, hours) in acp_points.iter() {
             ret.push(ControlSpeedData {
                 distance: km * 1000f64,
                 time: Some(*start + TimeDelta::seconds((hours * 3600f64).round() as i64)),
@@ -210,6 +243,46 @@ impl ControlSpeedData {
         ret
     }
 }
+
+impl PartialOrd for ControlSpeedData {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for ControlSpeedData {
+    fn cmp(&self, other: &Self) -> Ordering {
+        // Compare by distance first (NaN values are sorted last)
+        let dist_order = self
+            .distance
+            .partial_cmp(&other.distance)
+            .unwrap_or_else(|| match (self.distance.is_nan(), other.distance.is_nan()) {
+                (true, false) => Ordering::Greater,
+                (false, true) => Ordering::Less,
+                _ => Ordering::Equal,
+            });
+
+        if dist_order != Ordering::Equal {
+            return dist_order;
+        }
+
+        // Distances are equal — break tie by time (None sorts last)
+        match (&self.time, &other.time) {
+            (Some(a), Some(b)) => a.cmp(b),
+            (Some(_), None) => Ordering::Less,
+            (None, Some(_)) => Ordering::Greater,
+            (None, None) => Ordering::Equal,
+        }
+    }
+}
+
+impl PartialEq for ControlSpeedData {
+    fn eq(&self, other: &Self) -> bool {
+        self.cmp(other) == Ordering::Equal
+    }
+}
+
+impl Eq for ControlSpeedData {}
 
 fn time_at_control(control: &ControlSpeedData, start_time: &DateTime, speed: &Speed) -> DateTime {
     if control.is_end {
@@ -270,7 +343,7 @@ fn acp_interpolation_controls(
             last_control: c.last_control,
         });
     }
-    ret.sort_by(|a, b| a.distance.total_cmp(&b.distance));
+    ret.sort();
     ret
 }
  */
@@ -282,20 +355,35 @@ fn acp_interpolation_controls(
 ) -> Vec<ControlSpeedData> {
     let mut ret = Vec::new();
 
-    let closest_acp = closest_acp_point(end_distance);
+    let closest_to_end_acp = closest_acp_point(end_distance);
 
     // END
-    let end = ControlSpeedData {
-        distance: end_distance,
-        time: Some(*start_time + closest_acp.1),
-        is_end: true,
+    /* For brevets up to 1200 km, the end control has a
+     * fixed ACP time (e.g. 90h, even if distance = 1230km.
+     * For longer brevets, the end control time is not
+     * fixed.
+     */
+    let distance_km = end_distance / 1000.0;
+    let end = if distance_km < 1300.0 {
+        ControlSpeedData {
+            distance: end_distance,
+            time: Some(*start_time + closest_to_end_acp.1),
+            is_end: true,
+        }
+    } else {
+        ControlSpeedData {
+            distance: end_distance,
+            time: Some(*start_time + duration_acp(end_distance)),
+            is_end: true,
+        }
     };
     ret.push(end);
 
     // one before END (if there is one)
     let mut copy = controls.clone();
     copy.retain(|c| !c.is_end && c.distance > 0f64);
-    copy.sort_by(|a, b| a.distance.total_cmp(&b.distance));
+    copy.sort();
+
     if !copy.is_empty() {
         let prelastc = copy.last().unwrap();
         // in ACP mode, ignore the time set by user on that control.
@@ -309,14 +397,17 @@ fn acp_interpolation_controls(
 
     // ACP
     let mut acp = ControlSpeedData::virtual_acp_controls(start_time);
-    acp.retain(|c| c.distance < end_distance && c.distance != closest_acp.0);
+    // exclude the acp point at closest_to_end_acp.
+    // The right point for that is END.
+    acp.retain(|c| c.distance < end_distance && c.distance != closest_to_end_acp.0);
     ret.extend_from_slice(&acp);
+    // the START control
     ret.push(ControlSpeedData {
         distance: 0f64,
         time: Some(*start_time),
-        is_end: true,
+        is_end: false,
     });
-    ret.sort_by(|a, b| a.distance.total_cmp(&b.distance));
+    ret.sort();
     ret
 }
 
@@ -355,12 +446,14 @@ pub fn time_with_controls(
         previous.distance,
     );
     let (t2, d2) = (time_at_control(next, start_time, speed), next.distance);
-    /*log::trace!("[TP1] 1:{:?},{:.1}", t1, d1);
-       log::trace!("[TP1] 2:{:?},{:.1}", t2, d2);
-        for c in interpolation_points {
-            log::trace!("[TP1] inter:{:?},{:.1}", c.time, c.distance);
+    log::trace!("[TP1] previous:{:?}", previous);
+    log::trace!("[TP1] 1:{:?},{:.1}", t1, d1);
+    log::trace!("[TP1] next:{:?}", next);
+    log::trace!("[TP1] 2:{:?},{:.1}", t2, d2);
+    for c in interpolation_points {
+        log::trace!("[TP1] inter:{:?},{:.1}", c.time, c.distance);
     }
-        */
+
     debug_assert!(d1 < d2);
     debug_assert!(d1 <= distance && distance <= d2 || d2 < distance);
     let fraction = (distance - d1) / (d2 - d1);
@@ -369,7 +462,7 @@ pub fn time_with_controls(
         .expect("time span overflows i64 nanoseconds");
     let offset_ns = (fraction * span_ns as f64).round() as i64;
     let ret = t1 + TimeDelta::nanoseconds(offset_ns);
-    //log::info!("[TP1] distance:{:.1} time:{:?}", distance, ret);
+    log::info!("[TP1] distance:{:.1} time:{:?}", distance, ret);
     ret
 }
 
@@ -506,7 +599,7 @@ impl TimeParameters {
                 is_end: true,
             });
         }
-        all.sort_by(|a, b| a.distance.total_cmp(&b.distance));
+        all.sort();
         debug_assert!(all.len() >= 2);
         all.iter().for_each(|c| debug_assert!(c.time.is_some()));
         all
@@ -557,6 +650,7 @@ mod tests {
     use super::*;
 
     const TRACK_DISTANCE_1200: f64 = 1_200_000f64;
+    const TRACK_DISTANCE_3000: f64 = 3_000_000f64;
 
     #[test]
     fn test_constant_speed_mode() {
@@ -752,7 +846,7 @@ mod tests {
         let _ = env_logger::try_init();
         let mut params = Parameters::default();
         params.speed = format!("ACP");
-        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        params.start_time = "2026-04-10T00:00:00+02:00".to_string();
 
         let start = parameters::parse_time(&params.start_time);
         let time_parameters = TimeParameters {
@@ -772,6 +866,36 @@ mod tests {
         assert!(
             (duration_hours - expected).abs() < 0.00001,
             "Expected ~{} hours for 2400km, got {}",
+            expected,
+            duration_hours
+        );
+    }
+
+    #[test]
+    fn test_acp_above_2500km() {
+        let _ = env_logger::try_init();
+        let mut params = Parameters::default();
+        params.speed = format!("ACP");
+        params.start_time = "2026-04-10T00:00:00+02:00".to_string();
+
+        let start = parameters::parse_time(&params.start_time);
+        let time_parameters = TimeParameters {
+            controls: Vec::new(),
+            start: start.clone(),
+            speed: parse_speed("ACP"),
+            track_distance: TRACK_DISTANCE_3000,
+        };
+
+        // 3000 km at 200km/day => 15 days => 360 hours
+        let dist = TRACK_DISTANCE_3000;
+        let time = time_parameters.time(dist);
+        let duration_sec = (time - start).num_seconds();
+        let duration_hours = duration_sec as f64 / 3600.0;
+        let expected = 360.0;
+
+        assert!(
+            (duration_hours - expected).abs() < 0.00001,
+            "Expected ~{} hours for 3000km, got {}",
             expected,
             duration_hours
         );
