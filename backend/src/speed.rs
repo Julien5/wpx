@@ -14,32 +14,50 @@ pub fn mps(_kmh: f64) -> f64 {
 }
 
 /*
-The allocated time for RM sanctioned events of 1200 km is ninety (90) hours. For events of 1400 km and greater the total time will be based on an average global speed of twelve (12) km per hour. It is recommended that all RM sanctioned events be patterned after the PBP and use qualifying brevets to ensure participants are well prepared and non-finishers are minimize
-=> 2200/12 at 2200km
 
-https://en.wikipedia.org/wiki/Randonneuring#Time_limits => 10kmh at 2200km
+[0] https://www.audax-club-parisien.com/wp-content/uploads/2024/01/Rules-for-rider-2024.pdf
+Covers 200-1000 km
+- 13:30 for 200 KM,
+- 20:00 for 300 KM,
+- 27:00 for 400 KM,
+- 40:00 for 600 KM, and
+- 75:00 for 1000 KM.
+Intermediate control times are an advisory to help keep the rider inside the final time limit.
+Closing:
+- 1 hour + 20 km / h (km 1 to 60);
+- 15 km / h (km 61 to 600);
+- 11.428 km / h (km 601 to 1000);
 
-https://web.archive.org/web/20210201125907/http://www.randonneursmondiaux.org/files/Rules_2019.pdf
-=>
-from 1200 to 1299 km: 13.33 kph
-from 1300 to 1899 km: 12 kph
-from 1900 to 2499 km: 10 kph
-2500 km and above: 200 km per day.
- */
+[1] https://www.randonneursmondiaux.org/12-Rules.html?langue=EN
+The allocated time for RM sanctioned events of 1200 km is ninety (90) hours.
+For events of 1400 km and greater the total time will be based on
+an average global speed of twelve (12) km per hour.
+
+[2] https://www.randonneursmondiaux.org/files/Rules_2019.pdf
+- from 1300 to 1899 km: 12 kph
+- from 1900 to 2499 km: 10 kph
+- 2500 km and above: 200 km per day
+
+[3] https://en.wikipedia.org/wiki/Randonneuring#Time_limits => 10kmh at 2200km
+There is some regional variation in these, but the following list is typical:
+1,400 kilometres (870 mi) – 116:40 hours (12 km/h)
+2,200 kilometres (1,400 mi) – 220 hours (10 km/h)
+
+
+*/
 
 fn acp_distance_time_last() -> Vec<(f64, f64)> {
     vec![
         (0.0, 1.0),
         (60.0, 4.0),
-        (200.0, 13.5), // 14.81 kmh
-        (300.0, 20.0), // 15.00 kmh
-        (400.0, 27.0), // 14.81 kmh
-        (600.0, 40.0), // 15.00 kmh
-        (1000.0, 75.0),
-        (1200.0, 90.0),
-        (1400.0, 1400.0 / 12.0),
-        (2200.0, 220.0),
-        (1_000_000.0, 100_000.0),
+        (200.0, 13.5),  // 14.81 kmh
+        (300.0, 20.0),  // 15.00 kmh
+        (400.0, 27.0),  // 14.81 kmh
+        (600.0, 40.0),  // 15.00 kmh
+        (1000.0, 75.0), // 13.333 kmh
+        (1200.0, 90.0), // 13.333 kmh
+        (1900.0, 1900.0 / 12.0),
+        (2500.0, 2500.0 / 10.0),
     ]
 }
 
@@ -47,12 +65,11 @@ fn acp_distance_time_intermediate() -> Vec<(f64, f64)> {
     vec![
         (0.0, 1.0),
         (60.0, 4.0),
-        (600.0, 40.0),
-        (1000.0, 75.0),
-        (1200.0, 90.0),
-        (1400.0, 1400.0 / 12.0),
-        (2200.0, 220.0),
-        (1_000_000.0, 100_000.0),
+        (600.0, 40.0),  // 15.00 kmh
+        (1000.0, 75.0), // 13.333 kmh
+        (1200.0, 90.0), // 13.333 kmh
+        (1900.0, 1900.0 / 12.0),
+        (2500.0, 2500.0 / 10.0),
     ]
 }
 
@@ -63,15 +80,22 @@ fn time_delta(seconds: f64) -> TimeDelta {
 
 fn closest_acp_point(distance: f64) -> (f64, TimeDelta) {
     let distance_km = distance / 1000.0;
-    let closest = acp_distance_time_last().iter().copied().min_by(|a, b| {
+    let acp_points = acp_distance_time_last();
+    let max_acp = acp_points.last().unwrap();
+    // we considere 2550 as 2500, but then
+    if distance_km > max_acp.0 + 50.0 {
+        let days = distance_km / 200f64;
+        return (distance, time_delta(24.0 * days * 3600.0));
+    }
+    let closest = acp_points.iter().copied().min_by(|a, b| {
         (a.0 - distance_km)
             .abs()
             .partial_cmp(&(b.0 - distance_km).abs())
             .unwrap()
     });
     match closest {
-        Some((kms, hours)) => {
-            return (kms * 1000f64, time_delta(hours * 3600.0));
+        Some((km, hours)) => {
+            return (km * 1000f64, time_delta(hours * 3600.0));
         }
         _ => {
             panic!("could not find ACP distance for {}", distance);
@@ -101,17 +125,26 @@ fn duration_acp(distance: f64) -> TimeDelta {
         let mut prev = (0.0, 0.0);
         let mut time = 0f64;
         for (km, hours) in acp_distance_time_intermediate() {
-            let (skm, shours) = (km - prev.0, hours - prev.1);
-            if remain_km >= skm {
-                time += shours;
-                remain_km -= skm;
+            let (delta_km, delta_hours) = (km - prev.0, hours - prev.1);
+            if remain_km >= delta_km {
+                time += delta_hours;
+                remain_km -= delta_km;
             } else {
-                let speed = skm / shours;
+                let speed = delta_km / delta_hours;
                 time += remain_km / speed;
                 remain_km = 0f64;
                 break;
             }
             prev = (km, hours);
+        }
+        // many happen if distance > 2500km.
+        if remain_km > 0.0 {
+            // 200 km per day.
+            let days = distance_km / 200.0;
+            let (delta_km, delta_hours) = (distance_km - prev.0, 24.0 * days - prev.1);
+            let speed = delta_km / delta_hours;
+            time += remain_km / speed;
+            remain_km = 0f64;
         }
         debug_assert_eq!(remain_km, 0f64);
         time
