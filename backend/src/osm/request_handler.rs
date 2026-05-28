@@ -48,6 +48,8 @@ async fn download(req_string: &String, side: &DownloadSideData<'_>) -> GenericRe
                 } else {
                     log::error!("download failed, error = {}, retry = {}", e, nretries);
                 }
+                // sleep between retries, (increase the chance overpass server processes the request)
+                crate::sleep::sleep_ms(500).await;
                 nretries += 1;
             }
             Ok(content) => {

@@ -38,6 +38,7 @@ thiserror = "2.0.18"
 svg2pdf = "0.12"
 indexed_db_futures = "0.6.4"
 pdf-writer = "0.12.1"
+wasmtimer = "0.4.3"
 
 
 

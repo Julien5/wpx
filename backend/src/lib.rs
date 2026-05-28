@@ -29,6 +29,7 @@ mod zipexport;
 //mod project;
 mod render;
 mod segment;
+mod sleep;
 pub mod speed;
 mod svgmap;
 mod track;
