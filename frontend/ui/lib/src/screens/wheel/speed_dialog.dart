@@ -14,22 +14,54 @@ enum SpeedMode { constant, acp }
 */
 
 SpeedMode parseSpeedMode(String speed) {
-  if (speed.toUpperCase() == "ACP") {
+  if (speed.toUpperCase().contains("ACP")) {
     return SpeedMode.acp;
   }
   return SpeedMode.constant;
 }
 
-String speedModeToString(SpeedMode mode, String constantValue) {
+String speedModeToString(SpeedMode mode, List<String> allowedSpeeds, String constantValue) {
   if (mode == SpeedMode.acp) {
-    return "ACP";
+    return acpSpeed(allowedSpeeds);
   }
   return constantValue;
+}
+
+String acpSpeed(List<String> allowedSpeeds) {
+   int acpIndex = allowedSpeeds.indexWhere((element) => element.contains("ACP"));
+   assert(acpIndex>=0);
+  return allowedSpeeds[acpIndex];
+}
+
+String niceACP(List<String> allowedSpeeds) {
+  int acpIndex = allowedSpeeds.indexWhere((element) => element.contains("ACP"));
+  if ( acpIndex<0) {
+    return "[]";
+  }
+  String acpString = acpSpeed(allowedSpeeds);
+  // input = "ACP-300-20.0";
+  
+  // RegExp to match the prefix, capture the integer, and capture the float
+  // \d+ matches digits, \d+\.\d+ matches decimals
+  RegExp regExp = RegExp(r"ACP-(\d+)-(\d+\.\d+)");
+  
+  Match? match = regExp.firstMatch(acpString);
+  
+  if (match != null) {
+    // Extract the captured groups
+    String km = match.group(1)!;
+    String hours = match.group(2)!;
+    
+    // Format into the final string
+    return "$km km, ${hours}h";
+  } 
+  return "[$acpString]";
 }
 
 void openSpeedDialog({
   required BuildContext context,
   required String speed,
+  required List<String> allowedSpeeds,
   required String? initialConstantSpeed,
   required Function(String) onSpeedChanged,
   required Function(String) onConfirm,
@@ -39,6 +71,7 @@ void openSpeedDialog({
   SpeedMode currentMode = initialMode;
   String currentSpeed = speedModeToString(
     initialMode,
+    allowedSpeeds,
     initialConstantSpeed ?? "15.0",
   );
   TextEditingController textController = TextEditingController(
@@ -80,6 +113,7 @@ void openSpeedDialog({
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      String acpString = niceACP(allowedSpeeds);
       return StatefulBuilder(
         builder: (context, setDialogState) {
           return StandardDialog(
@@ -104,7 +138,7 @@ void openSpeedDialog({
                                 ? textController.text
                                 : "15.0";
                       } else {
-                        currentSpeed = "ACP";
+                        currentSpeed = acpSpeed(allowedSpeeds);
                       }
                     }
                   },
@@ -171,7 +205,7 @@ void openSpeedDialog({
                       ),
                       const SizedBox(height: 8),
                       RadioListTile<SpeedMode>(
-                        title: const Text("Audax Club Parisien Rules"),
+                        title: Text("ACP Rules ($acpString)"),
                         value: SpeedMode.acp,
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
@@ -186,13 +220,13 @@ void openSpeedDialog({
                             Expanded(
                               child: InputDecorator(
                                 decoration: InputDecoration(
-                                  labelText: 'Warning',
+                                  labelText: "Warning",
                                   border: OutlineInputBorder(),
                                   suffixText: '',
                                   enabled: currentMode == SpeedMode.acp,
                                 ),
                                 child: Text(
-                                  'Very unofficial implementation',
+                                  'Very unofficial implementation.',
                                   style: TextStyle(
                                     color:
                                         currentMode == SpeedMode.acp

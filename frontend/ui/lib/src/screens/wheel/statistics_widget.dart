@@ -215,7 +215,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     bridge.Bridge backend = getBackend(ctx);
     List<Segment> segments = backend.segments();
     String pagesCountText = PageCountInfo.getPagesCountString(segments.length);
-
+ 
     String speedText = parameters.speed;
     Widget endTimeWidget = SmallText(text: endTimeText);
     if (parseSpeedMode(parameters.speed) == SpeedMode.constant) {
@@ -224,6 +224,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         callback: () => _selectEndTime(context, endTime),
       );
       speedText = "${formatKmh(double.parse(parameters.speed), 3)} km/h";
+    } else {
+      speedText=niceACP(backend.allowedSpeeds());
     }
 
     Widget table = Table(
@@ -254,6 +256,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
                   () => openSpeedDialog(
                     context: context,
                     speed: speed,
+                    allowedSpeeds: backend.allowedSpeeds(),
                     initialConstantSpeed: lastConstantSpeed,
                     onConfirm: (newSpeed) {
                       debugPrint("confirm:$newSpeed");

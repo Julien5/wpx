@@ -126,7 +126,7 @@ fn test_acp_strech() {
     let mut backend = load_test_data(&"data/PBP-simple.gpx");
     let mut parameters = backend.get_parameters();
     parameters.start_time = START_TIME.to_string();
-    parameters.speed = format!("ACP");
+    parameters.speed = format!("ACP-1200-90.0");
     backend.set_parameters(&parameters);
     let result = table(&backend);
     let start_time = parameters::parse_time(&parameters.start_time);

@@ -97,9 +97,10 @@ https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vRU8adejamxip0ue6pMMGgRjPDNr
 mod ACP {
     use super::time_delta;
     use super::ControlSpeedData;
+    use super::ACP_MAX_DISTANCE;
+    use super::LRM;
     use crate::mercator::DateTime;
-    use crate::speed::ACP_MAX_DISTANCE;
-    use crate::speed::LRM;
+    use crate::speed::ACPSpec;
     use chrono::TimeDelta;
 
     fn all_brevets_points() -> Vec<(f64, f64)> {
@@ -125,7 +126,7 @@ mod ACP {
         ]
     }
 
-    fn closest_brevet_point(end_distance: f64) -> (f64, TimeDelta) {
+    pub fn guess_spec(end_distance: f64) -> ACPSpec {
         let distance_km = end_distance / 1000.0;
         let acp_points = all_brevets_points();
         let _max_acp = acp_points.last().unwrap();
@@ -137,7 +138,7 @@ mod ACP {
         });
         match closest {
             Some((km, hours)) => {
-                return (km * 1000f64, time_delta(hours * 3600.0));
+                return ACPSpec { km, hours };
             }
             _ => {
                 panic!("could not find ACP distance for {}", end_distance);
@@ -205,6 +206,7 @@ mod ACP {
         start_time: &DateTime,
         end_distance: f64,
         controls: &Vec<ControlSpeedData>,
+        spec: &ACPSpec,
     ) -> Vec<ControlSpeedData> {
         let mut ret = Vec::new();
         if end_distance > ACP_MAX_DISTANCE {
@@ -217,7 +219,8 @@ mod ACP {
             is_end: false,
         });
 
-        let closest_to_end_acp = closest_brevet_point(end_distance);
+        let spec_duration = time_delta(spec.hours * 3600.0);
+        let spec_distance = spec.km * 1000.0;
 
         // END
         /* For brevets up to 1200 km, the end control has a
@@ -225,7 +228,7 @@ mod ACP {
          */
         let end = ControlSpeedData {
             distance: end_distance,
-            time: Some(*start_time + closest_to_end_acp.1),
+            time: Some(*start_time + spec_duration),
             is_end: true,
         };
         ret.push(end);
@@ -248,8 +251,8 @@ mod ACP {
 
         let mut fixed = fixed_interpolation_controls(start_time);
         // exclude the acp point at closest_to_end_acp.
-        // The right point for that is END (see above).
-        fixed.retain(|c| c.distance < end_distance && c.distance != closest_to_end_acp.0);
+        // The right point for that is END (included above).
+        fixed.retain(|c| c.distance < end_distance && c.distance != spec_distance);
         ret.extend_from_slice(&fixed);
 
         ret.sort();
@@ -483,9 +486,15 @@ pub fn interpolate_distance(
 }
 
 #[derive(Clone, Debug)]
+pub struct ACPSpec {
+    km: f64,    // km
+    hours: f64, // hours
+}
+
+#[derive(Clone, Debug)]
 pub enum Speed {
     MPS(f64),
-    ACP,
+    ACP(ACPSpec),
 }
 
 impl Default for Speed {
@@ -495,13 +504,31 @@ impl Default for Speed {
 }
 
 pub fn parse_speed(data: &str) -> Speed {
-    if data == "ACP" {
-        return Speed::ACP;
+    if data.contains("ACP") {
+        let parts: Vec<&str> = data.split('-').collect();
+        if parts.len() != 3 {
+            log::trace!("parts:{:?}", parts);
+        }
+        debug_assert!(parts.len() == 3);
+        let distance: f64 = parts[1].parse().expect("Failed to parse distance");
+        let time: f64 = parts[2].parse().expect("Failed to parse hours");
+        return Speed::ACP(ACPSpec {
+            km: distance,
+            hours: time,
+        });
     }
     let ok: Option<f64> = data.parse().ok();
     debug_assert!(ok.is_some(), "data={}", data);
     let kmh: f64 = ok.as_ref().unwrap().max(0.1f64);
     Speed::MPS(kmh * 1000.0 / 3600.0)
+}
+
+pub fn allowed_speeds(end_distance: &f64) -> Vec<String> {
+    let mut ret = Vec::new();
+    ret.push(format!("MPS-*"));
+    let spec = ACP::guess_spec(*end_distance);
+    ret.push(format!("ACP-{:.0}-{:.1}", spec.km, spec.hours));
+    ret
 }
 
 #[derive(Clone, Default)]
@@ -521,12 +548,12 @@ impl TimeParameters {
     }
 
     fn interpolation_points(&self) -> Vec<ControlSpeedData> {
-        let ret = match self.speed {
-            Speed::ACP => {
-                ACP::interpolation_controls(&self.start, self.track_distance, &self.controls)
+        let ret = match &self.speed {
+            Speed::ACP(spec) => {
+                ACP::interpolation_controls(&self.start, self.track_distance, &self.controls, &spec)
             }
             Speed::MPS(mps) => {
-                MPS::interpolation_points(&self.controls, self.track_distance, &self.start, mps)
+                MPS::interpolation_points(&self.controls, self.track_distance, &self.start, *mps)
             }
         };
         debug_assert!(ret.is_sorted());
@@ -562,6 +589,10 @@ mod tests {
     const TRACK_DISTANCE_1200: f64 = 1_200_000f64;
     const TRACK_DISTANCE_3000: f64 = 3_000_000f64;
 
+    fn best_guess(end_distance: f64) -> Speed {
+        Speed::ACP(ACP::guess_spec(end_distance))
+    }
+
     #[test]
     fn test_constant_speed_mode() {
         let _ = env_logger::try_init();
@@ -574,7 +605,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
         };
 
@@ -598,7 +629,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
         };
 
@@ -624,7 +655,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
         };
         let dist_300km = 300_000.0;
@@ -647,7 +678,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
         };
 
@@ -675,7 +706,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
         };
 
@@ -702,7 +733,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
         };
 
@@ -730,7 +761,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
         };
 
@@ -762,7 +793,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(2f64 * TRACK_DISTANCE_1200),
             track_distance: 2f64 * TRACK_DISTANCE_1200,
         };
 
@@ -792,7 +823,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(TRACK_DISTANCE_3000),
             track_distance: TRACK_DISTANCE_3000,
         };
 
@@ -833,7 +864,7 @@ mod tests {
             let time_parameters = TimeParameters {
                 controls: Vec::new(),
                 start: start.clone(),
-                speed: parse_speed("ACP"),
+                speed: best_guess(distance),
                 track_distance: distance,
             };
             let time = time_parameters.time(distance);
@@ -878,7 +909,7 @@ mod tests {
                     is_end: false,
                 }],
                 start: start.clone(),
-                speed: parse_speed("ACP"),
+                speed: best_guess(1_250_000f64),
                 track_distance: 1_250_000f64,
             };
             let time = time_parameters.time(distance);
@@ -907,8 +938,8 @@ mod tests {
         let time_parameters = TimeParameters {
             controls: Vec::new(),
             start: start.clone(),
-            speed: parse_speed("ACP"),
-            track_distance: 1_200_000f64,
+            speed: best_guess(TRACK_DISTANCE_1200),
+            track_distance: TRACK_DISTANCE_1200,
         };
         let distance = 1_200_000f64;
         let time_end = start + TimeDelta::hours(90);
@@ -936,7 +967,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls,
             start: start_time.clone(),
-            speed: parse_speed("ACP"),
+            speed: best_guess(end.distance),
             track_distance: end.distance,
         };
 
@@ -967,7 +998,7 @@ mod tests {
         let time_parameters = TimeParameters {
             controls,
             start: start_time,
-            speed: parse_speed("ACP"),
+            speed: best_guess(end.distance),
             track_distance: end.distance,
         };
         let cut_off = time_parameters.time(0f64);

@@ -207,9 +207,13 @@ impl Backend {
         }
     }
 
+    pub fn allowed_speeds(&self) -> Vec<String> {
+        speed::allowed_speeds(&self.d().track.total_distance())
+    }
+
     pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) -> bool {
         match self.time_parameters().speed {
-            Speed::ACP => {
+            Speed::ACP(_) => {
                 return false;
             }
             Speed::MPS(_) => {}

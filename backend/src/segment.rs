@@ -494,10 +494,15 @@ mod tests {
 
         let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
 
+        let allowed_speed = speed::allowed_speeds(&track.total_distance());
+        // take the last one
+        let acp_speed = allowed_speed.last().unwrap();
+        debug_assert!(acp_speed.contains("ACP"));
+
         let time_parameters = speed::TimeParameters {
             controls: controls_speed_data(&controls),
             start: parameters::parse_time(&parameters.start_time),
-            speed: speed::parse_speed(&parameters.speed),
+            speed: speed::parse_speed(&acp_speed),
             track_distance: track.total_distance(),
         };
 
@@ -545,7 +550,6 @@ mod tests {
     ) -> bool {
         let _ = env_logger::try_init();
         let mut parameters = Parameters::default();
-        parameters.speed = "ACP".to_string();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = None;
         parameters.user_steps_options.step_elevation_gain = Some(250f64);

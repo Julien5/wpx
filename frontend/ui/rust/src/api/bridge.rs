@@ -285,6 +285,11 @@ impl Bridge {
         self.backend.load_ordered(parts)
     }
 
+    #[frb(sync)]
+    pub fn allowed_speeds(&self) -> Vec<String> {
+        self.backend.allowed_speeds()
+    }
+
     pub async fn generateZip(&mut self, kinds: &Kinds) -> Vec<u8> {
         self.backend.generateZip(&dedup(&kinds)).await
     }
