@@ -403,6 +403,7 @@ mod tests {
     use super::render;
     use crate::math::IntegerSize2D;
     use crate::speed;
+    use crate::speed::KMHSpec;
     fn create_wheel_model(nmid: usize) -> WheelModel {
         // 1. Define the Control Points
         let control_points = vec![
@@ -482,7 +483,7 @@ mod tests {
         let time_parameters = speed::TimeParameters {
             controls: Vec::new(),
             start: default_date,
-            speed: speed::Speed::MPS(1f64),
+            speed: speed::Speed::KMH(KMHSpec { kmh: 1f64 }),
             track_distance: 200_000f64,
         };
 

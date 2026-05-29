@@ -494,9 +494,9 @@ mod tests {
 
         let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
 
-        let allowed_speed = speed::allowed_speeds(&track.total_distance());
+        let allowed_speed = speed::allowed_speeds(track.total_distance());
         // take the last one
-        let acp_speed = allowed_speed.last().unwrap();
+        let acp_speed = &allowed_speed[1];
         debug_assert!(acp_speed.contains("ACP"));
 
         let time_parameters = speed::TimeParameters {

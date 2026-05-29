@@ -79,7 +79,7 @@ fn test_constant_strech() {
     let mut backend = load_test_data(&"data/PBP-simple.gpx");
     let mut parameters = backend.get_parameters();
     parameters.start_time = START_TIME.to_string();
-    parameters.speed = format!("{}", 28.89);
+    parameters.speed = format!("KMH-{}", 28.89);
     backend.set_parameters(&parameters);
     let start_time = parameters::parse_time(&parameters.start_time);
     let result = table(&backend);

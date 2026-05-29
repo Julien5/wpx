@@ -208,7 +208,7 @@ impl Backend {
     }
 
     pub fn allowed_speeds(&self) -> Vec<String> {
-        speed::allowed_speeds(&self.d().track.total_distance())
+        speed::allowed_speeds(self.d().track.total_distance())
     }
 
     pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) -> bool {
@@ -216,7 +216,10 @@ impl Backend {
             Speed::ACP(_) => {
                 return false;
             }
-            Speed::MPS(_) => {}
+            Speed::LRM(_) => {
+                return false;
+            }
+            Speed::KMH(_) => {}
         }
         let mut controls = self
             .d()

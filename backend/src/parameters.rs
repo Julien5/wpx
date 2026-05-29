@@ -130,7 +130,7 @@ impl Default for Parameters {
         Parameters {
             control_gpx_name_format: "NAME[3]-TIME[%H:%M]-SLOPE[4.1%]".to_string(),
             start_time: time_to_iso8601(&chrono::Local::now()),
-            speed: format!("{:.1}", 15.0),
+            speed: format!("KMH-{:.1}", 15.0),
             segment_length: 110f64 * 1000f64,
             segment_overlap: 10f64 * 1000f64,
             smooth_width: 200f64,
