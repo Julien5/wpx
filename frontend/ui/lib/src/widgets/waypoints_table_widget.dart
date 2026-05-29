@@ -185,7 +185,7 @@ class _DesktopTableState extends State<DesktopTable> {
             final isControl = w.origin == Kind.controls;
             final isEditableControl =
                 isControl &&
-                speedMode == SpeedMode.constant &&
+                speedMode == SpeedMode.kmh &&
                 index != firstControlIndex &&
                 index != lastControlIndex;
             final showCheckbox = isControl || isGpxWaypoint;

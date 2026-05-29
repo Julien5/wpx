@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wpx/src/widgets/small.dart';
 
-enum SpeedMode { constant, acp }
+enum SpeedMode { kmh, acp, lrm }
 
 // Pick speeds relevant to randonneuring.
 /*
@@ -17,45 +17,84 @@ SpeedMode parseSpeedMode(String speed) {
   if (speed.toUpperCase().contains("ACP")) {
     return SpeedMode.acp;
   }
-  return SpeedMode.constant;
-}
-
-String speedModeToString(SpeedMode mode, List<String> allowedSpeeds, String constantValue) {
-  if (mode == SpeedMode.acp) {
-    return acpSpeed(allowedSpeeds);
+  if (speed.toUpperCase().contains("LRM")) {
+    return SpeedMode.lrm;
   }
-  return constantValue;
+  return SpeedMode.kmh;
 }
 
-String acpSpeed(List<String> allowedSpeeds) {
-   int acpIndex = allowedSpeeds.indexWhere((element) => element.contains("ACP"));
-   assert(acpIndex>=0);
-  return allowedSpeeds[acpIndex];
+double parseKMHSpec(String spec) {
+  assert(spec.toUpperCase().contains("KMH"));
+  RegExp regExp = RegExp(r"KMH-(\d+\.\d+)");
+  Match? match = regExp.firstMatch(spec);
+  assert(match != null);
+  String kmh = match!.group(1)!;
+  return double.parse(kmh);
 }
 
-String niceACP(List<String> allowedSpeeds) {
-  int acpIndex = allowedSpeeds.indexWhere((element) => element.contains("ACP"));
-  if ( acpIndex<0) {
-    return "[]";
+String? selectSpec(List<String> specs, SpeedMode mode) {
+  for (String spec in specs) {
+    if (mode == SpeedMode.kmh && spec.contains("KMH")) {
+      return spec;
+    }
+    if (mode == SpeedMode.acp && spec.contains("ACP")) {
+      return spec;
+    }
+    if (mode == SpeedMode.lrm && spec.contains("LRM")) {
+      return spec;
+    }
   }
-  String acpString = acpSpeed(allowedSpeeds);
-  // input = "ACP-300-20.0";
-  
-  // RegExp to match the prefix, capture the integer, and capture the float
-  // \d+ matches digits, \d+\.\d+ matches decimals
-  RegExp regExp = RegExp(r"ACP-(\d+)-(\d+\.\d+)");
-  
-  Match? match = regExp.firstMatch(acpString);
-  
-  if (match != null) {
-    // Extract the captured groups
-    String km = match.group(1)!;
+  return null;
+}
+
+String prettySpeedHeader(String spec) {
+  if (parseSpeedMode(spec) == SpeedMode.acp) {
+    // input = "ACP-300-20.0";
+    RegExp regExp = RegExp(r"ACP-(\d+)-(\d+\.\d+)");
+    Match? match = regExp.firstMatch(spec);
+    assert(match != null);
+    String km = match!.group(1)!;
     String hours = match.group(2)!;
-    
-    // Format into the final string
-    return "$km km, ${hours}h";
-  } 
-  return "[$acpString]";
+    return "ACP: $km km, $hours h";
+  }
+  if (parseSpeedMode(spec) == SpeedMode.lrm) {
+    // input = "LRM-12.0";
+    RegExp regExp = RegExp(r"LRM-(\d+\.\d+)");
+    Match? match = regExp.firstMatch(spec);
+    assert(match != null);
+    String kmh = match!.group(1)!;
+    return "LRM: $kmh kmh";
+  }
+  if (parseSpeedMode(spec) == SpeedMode.kmh) {
+    return "Overall average speed";
+  }
+  return "[$spec]";
+}
+
+String prettySpeed(String spec) {
+  if (parseSpeedMode(spec) == SpeedMode.acp) {
+    // input = "ACP-300-20.0";
+    RegExp regExp = RegExp(r"ACP-(\d+)-(\d+\.\d+)");
+    Match? match = regExp.firstMatch(spec);
+    assert(match != null);
+    String km = match!.group(1)!;
+    String hours = match.group(2)!;
+    //double kmh = double.parse(km) / double.parse(hours);
+    //return "ACP: ${kmh.toStringAsFixed(2)} kmh";
+    return "ACP: $km/$hours";
+  }
+  if (parseSpeedMode(spec) == SpeedMode.lrm) {
+    // input = "LRM-12.0";
+    RegExp regExp = RegExp(r"LRM-(\d+\.\d+)");
+    Match? match = regExp.firstMatch(spec);
+    assert(match != null);
+    String kmh = match!.group(1)!;
+    return "LRM: $kmh kmh";
+  }
+  if (parseSpeedMode(spec) == SpeedMode.kmh) {
+    return "${parseKMHSpec(spec)} kmh";
+  }
+  return "[$spec]";
 }
 
 void openSpeedDialog({
@@ -67,19 +106,18 @@ void openSpeedDialog({
   required Function(String) onConfirm,
   required Function(String) onCancel,
 }) {
-  SpeedMode initialMode = parseSpeedMode(speed);
-  SpeedMode currentMode = initialMode;
-  String currentSpeed = speedModeToString(
-    initialMode,
-    allowedSpeeds,
-    initialConstantSpeed ?? "15.0",
-  );
+  SpeedMode currentMode = parseSpeedMode(speed);
+  String currentSpeed = speed;
+  debugPrint("initial:$initialConstantSpeed");
   TextEditingController textController = TextEditingController(
-    text: initialConstantSpeed ?? "15.0",
+    text:
+        initialConstantSpeed != null
+            ? "${parseKMHSpec(initialConstantSpeed)}"
+            : "15.0",
   );
 
   void adjustSpeed(double delta) {
-    if (currentMode != SpeedMode.constant) return;
+    if (currentMode != SpeedMode.kmh) return;
 
     double currentValue = double.tryParse(textController.text) ?? 15.0;
     double newValue = (currentValue + delta).clamp(1.0, 100.0);
@@ -87,7 +125,18 @@ void openSpeedDialog({
     newValue = (newValue * 10).round() / 10;
 
     textController.text = newValue.toString();
-    currentSpeed = newValue.toString();
+    currentSpeed = "KMH-${newValue.toString()}";
+  }
+
+  void onChanged(String kmh) {
+    if (currentMode != SpeedMode.kmh) return;
+
+    double? currentValue = double.tryParse(kmh);
+    if (currentValue == null) {
+      return;
+    }
+    double newValue = currentValue.clamp(1.0, 100.0);
+    currentSpeed = "KMH-${newValue.toString()}";
   }
 
   final FocusNode textFieldFocusNode = FocusNode(
@@ -113,9 +162,33 @@ void openSpeedDialog({
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      String acpString = niceACP(allowedSpeeds);
       return StatefulBuilder(
         builder: (context, setDialogState) {
+          List<Widget> widgets = [];
+          for (String spec in allowedSpeeds) {
+            if (parseSpeedMode(spec) == SpeedMode.kmh) {
+              (Widget, Widget) kmhWidgets = kmhTile(
+                spec,
+                currentSpeed,
+                adjustSpeed,
+                onChanged,
+                textFieldFocusNode,
+                textController,
+              );
+              widgets.add(kmhWidgets.$1);
+              widgets.add(kmhWidgets.$2);
+            }
+            if (parseSpeedMode(spec) == SpeedMode.acp) {
+              (Widget, Widget) acpWidgets = acpTile(spec, currentMode);
+              widgets.add(acpWidgets.$1);
+              widgets.add(acpWidgets.$2);
+            }
+            if (parseSpeedMode(spec) == SpeedMode.lrm) {
+              (Widget, Widget) acpWidgets = acpTile(spec, currentMode);
+              widgets.add(acpWidgets.$1);
+              widgets.add(acpWidgets.$2);
+            }
+          }
           return StandardDialog(
             sections: [
               // Header
@@ -125,122 +198,30 @@ void openSpeedDialog({
                 padding: DialogStyles.contentPadding,
                 child: RadioGroup<SpeedMode>(
                   groupValue: currentMode,
-                  onChanged: (SpeedMode? value) {
-                    if (value != null) {
+                  onChanged: (SpeedMode? speedMode) {
+                    if (speedMode != null) {
                       setDialogState(() {
-                        currentMode = value;
+                        currentMode = speedMode;
                       });
                       // When switching to constant mode, use the text field value
                       // When switching to ACP, use "ACP"
-                      if (value == SpeedMode.constant) {
+                      if (speedMode == SpeedMode.kmh) {
                         currentSpeed =
                             textController.text.isNotEmpty
-                                ? textController.text
-                                : "15.0";
+                                ? "KMH-${textController.text}"
+                                : "KMH-15.0";
                       } else {
-                        currentSpeed = acpSpeed(allowedSpeeds);
+                        String? selected = selectSpec(allowedSpeeds, speedMode);
+                        if (selected != null) {
+                          currentSpeed = selected;
+                        } else {
+                          debugPrint("bad $allowedSpeeds $speedMode");
+                          assert(false);
+                        }
                       }
                     }
                   },
-                  child: Column(
-                    children: [
-                      RadioListTile<SpeedMode>(
-                        title: const Text("Average speed"),
-                        value: SpeedMode.constant,
-                        controlAffinity: ListTileControlAffinity.leading,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 8.0,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Listener(
-                                onPointerSignal: (event) {
-                                  if (event is PointerScrollEvent &&
-                                      currentMode == SpeedMode.constant) {
-                                    // Scroll up (negative delta) increases speed
-                                    // Scroll down (positive delta) decreases speed
-                                    double delta =
-                                        event.scrollDelta.dy > 0 ? -1 : 1;
-                                    adjustSpeed(delta);
-                                  }
-                                },
-                                child: TextField(
-                                  focusNode: textFieldFocusNode,
-                                  controller: textController,
-                                  enabled: currentMode == SpeedMode.constant,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                      RegExp(r'^\d*\.?\d{0,3}'),
-                                    ),
-                                  ],
-                                  decoration: const InputDecoration(
-                                    labelText: 'Speed (km/h)',
-                                    border: OutlineInputBorder(),
-                                    suffixText: 'km/h',
-                                  ),
-                                  onChanged: (value) {
-                                    if (value.isNotEmpty &&
-                                        double.tryParse(value) != null) {
-                                      double parsedValue = double.parse(value);
-                                      double clampedValue = parsedValue.clamp(
-                                        1.0,
-                                        100.0,
-                                      );
-                                      currentSpeed = clampedValue.toString();
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      RadioListTile<SpeedMode>(
-                        title: Text("ACP Rules ($acpString)"),
-                        value: SpeedMode.acp,
-                        controlAffinity: ListTileControlAffinity.leading,
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 8.0,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: InputDecorator(
-                                decoration: InputDecoration(
-                                  labelText: "Warning",
-                                  border: OutlineInputBorder(),
-                                  suffixText: '',
-                                  enabled: currentMode == SpeedMode.acp,
-                                ),
-                                child: Text(
-                                  'Very unofficial implementation.',
-                                  style: TextStyle(
-                                    color:
-                                        currentMode == SpeedMode.acp
-                                            ? Colors.black
-                                            : Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: Column(children: widgets),
                 ),
               ),
               // Footer
@@ -260,4 +241,92 @@ void openSpeedDialog({
       );
     },
   );
+}
+
+(Widget, Widget) kmhTile(
+  String spec,
+  String currentSpeed,
+  void Function(double) adjustSpeed,
+  void Function(String) onChanged,
+  FocusNode textFieldFocusNode,
+  TextEditingController textController,
+) {
+  Widget header = RadioListTile<SpeedMode>(
+    title: Text(prettySpeedHeader(spec)),
+    value: SpeedMode.kmh,
+    controlAffinity: ListTileControlAffinity.leading,
+  );
+  Widget body = Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    child: Row(
+      children: [
+        Expanded(
+          child: Listener(
+            onPointerSignal: (event) {
+              if (event is PointerScrollEvent &&
+                  parseSpeedMode(currentSpeed) == SpeedMode.kmh) {
+                // Scroll up (negative delta) increases speed
+                // Scroll down (positive delta) decreases speed
+                double delta = event.scrollDelta.dy > 0 ? -1 : 1;
+                adjustSpeed(delta);
+              }
+            },
+            child: TextField(
+              focusNode: textFieldFocusNode,
+              controller: textController,
+              enabled: parseSpeedMode(currentSpeed) == SpeedMode.kmh,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,3}')),
+              ],
+              decoration: const InputDecoration(
+                labelText: 'Speed (km/h)',
+                border: OutlineInputBorder(),
+                suffixText: 'km/h',
+              ),
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+  return (header, body);
+}
+
+(Widget, Widget) acpTile(String spec, SpeedMode currentMode) {
+  Widget header = RadioListTile<SpeedMode>(
+    title: Text(prettySpeedHeader(spec)),
+    value: parseSpeedMode(spec),
+    controlAffinity: ListTileControlAffinity.leading,
+  );
+  Widget body = Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    child: Row(
+      children: [
+        Expanded(
+          child: InputDecorator(
+            decoration: InputDecoration(
+              labelText: "Warning",
+              border: OutlineInputBorder(),
+              suffixText: '',
+              enabled: currentMode == parseSpeedMode(spec),
+            ),
+            child: Text(
+              'Very unofficial implementation.',
+              style: TextStyle(
+                color:
+                    currentMode == parseSpeedMode(spec)
+                        ? Colors.black
+                        : Colors.grey,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+  return (header, body);
 }

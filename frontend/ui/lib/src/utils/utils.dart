@@ -171,7 +171,7 @@ double parseSpeedMps(String speed) {
 
 String speedString(double mps) {
   double kmh = mps * 3600 / 1000;
-  return kmh.toStringAsFixed(3);
+  return "KMH-${kmh.toStringAsFixed(3)}";
 }
 
 DateTime _roundToMinute(DateTime dt) {
@@ -194,7 +194,7 @@ String formatDuration(Duration duration) {
   String negativeSign = duration.isNegative ? '-' : '';
   String twoDigits(int n) => n.toString().padLeft(2, "0");
   String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60).abs());
-  if (duration.inHours==0) {
+  if (duration.inHours == 0) {
     return "$negativeSign$twoDigitMinutes min";
   }
   return "$negativeSign${twoDigits(duration.inHours)} h $twoDigitMinutes min";

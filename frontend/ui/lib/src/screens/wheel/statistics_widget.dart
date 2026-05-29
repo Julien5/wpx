@@ -65,7 +65,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       speed = parameters.speed;
       // Initialize lastConstantSpeed if current speed is constant
       SpeedMode speedMode = parseSpeedMode(parameters.speed);
-      if (speedMode == SpeedMode.constant) {
+      if (speedMode == SpeedMode.kmh) {
         lastConstantSpeed = parameters.speed;
       }
     });
@@ -80,7 +80,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     bridge.Parameters oldParameters = parametersModel.parameters();
     ParameterChanger changer = ParameterChanger(init: oldParameters);
     SpeedMode speedMode = parseSpeedMode(speed!);
-    if (speedMode == SpeedMode.constant) {
+    if (speedMode == SpeedMode.kmh) {
       lastConstantSpeed = speed;
     }
     changer.changeSpeed(speed!);
@@ -215,19 +215,15 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     bridge.Bridge backend = getBackend(ctx);
     List<Segment> segments = backend.segments();
     String pagesCountText = PageCountInfo.getPagesCountString(segments.length);
- 
-    String speedText = parameters.speed;
+
+    String speedText = prettySpeed(parameters.speed);
     Widget endTimeWidget = SmallText(text: endTimeText);
-    if (parseSpeedMode(parameters.speed) == SpeedMode.constant) {
+    if (parseSpeedMode(parameters.speed) == SpeedMode.kmh) {
       endTimeWidget = SmallButton(
         text: endTimeText,
         callback: () => _selectEndTime(context, endTime),
       );
-      speedText = "${formatKmh(double.parse(parameters.speed), 3)} km/h";
-    } else {
-      speedText=niceACP(backend.allowedSpeeds());
     }
-
     Widget table = Table(
       columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
       children: [
