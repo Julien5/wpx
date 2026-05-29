@@ -15,6 +15,50 @@ pub fn mps(_kmh: f64) -> f64 {
     _kmh / 3.6f64
 }
 
+const ACP_MAX_DISTANCE: f64 = 1250_000f64;
+
+#[allow(non_snake_case)]
+mod LRM {
+    use super::time_delta;
+    use crate::{
+        mercator::DateTime,
+        speed::{ControlSpeedData, ACP_MAX_DISTANCE},
+    };
+
+    fn speed(end_distance: f64) -> f64 {
+        debug_assert!(end_distance > ACP_MAX_DISTANCE);
+        let distance_km = end_distance / 1000.0;
+        let kmh = if distance_km > 2500f64 {
+            200.0 / 24.0
+        } else if distance_km > 1900f64 {
+            10.0
+        } else {
+            12.0
+        };
+        return kmh * 1000.0 / 3600.0;
+    }
+
+    pub fn interpolation_points(end_distance: f64, start_time: &DateTime) -> Vec<ControlSpeedData> {
+        let mps = speed(end_distance);
+        let mut all = Vec::new();
+        all.push(ControlSpeedData {
+            distance: 0f64,
+            time: Some(start_time.clone()),
+            is_end: false,
+        });
+        let end_duration = time_delta(end_distance / mps);
+        all.push(ControlSpeedData {
+            distance: end_distance,
+            time: Some(*start_time + end_duration),
+            is_end: true,
+        });
+        all.sort();
+        debug_assert!(all.len() >= 2);
+        all.iter().for_each(|c| debug_assert!(c.time.is_some()));
+        all
+    }
+}
+
 /*
 
 [0] https://www.audax-club-parisien.com/wp-content/uploads/2024/01/Rules-for-rider-2024.pdf
@@ -46,180 +90,213 @@ There is some regional variation in these, but the following list is typical:
 1,400 kilometres (870 mi) – 116:40 hours (12 km/h)
 2,200 kilometres (1,400 mi) – 220 hours (10 km/h)
 
+https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vRU8adejamxip0ue6pMMGgRjPDNrboJp6SWYlf_k7HmhLyXSjEIMqOetBS5MSiRHZ96r9K7nzgtU9uc/pubhtml?gid=1480200001&single=true&pli=1
+ */
 
-*/
+#[allow(non_snake_case)]
+mod ACP {
+    use super::time_delta;
+    use super::ControlSpeedData;
+    use crate::mercator::DateTime;
+    use crate::speed::ACP_MAX_DISTANCE;
+    use crate::speed::LRM;
+    use chrono::TimeDelta;
 
-fn acp_distance_time_last() -> Vec<(f64, f64)> {
-    vec![
-        (0.0, 1.0),
-        (60.0, 4.0),
-        (200.0, 13.5),  // 14.81 kmh
-        (300.0, 20.0),  // 15.00 kmh
-        (400.0, 27.0),  // 14.81 kmh
-        (600.0, 40.0),  // 15.00 kmh
-        (1000.0, 75.0), // 13.333 kmh
-        (1200.0, 90.0), // 13.333 kmh
-        (1900.0, 1900.0 / 12.0),
-        (2500.0, 2500.0 / 10.0),
-    ]
+    fn all_brevets_points() -> Vec<(f64, f64)> {
+        vec![
+            (0.0, 1.0),
+            (60.0, 4.0),
+            (200.0, 13.5),  // 14.81 kmh
+            (300.0, 20.0),  // 15.00 kmh
+            (400.0, 27.0),  // 14.81 kmh
+            (600.0, 40.0),  // 15.00 kmh
+            (1000.0, 75.0), // 13.333 kmh
+            (1200.0, 90.0), // 13.333 kmh
+        ]
+    }
+
+    fn fixed_interpolation_points() -> Vec<(f64, f64)> {
+        vec![
+            (0.0, 1.0),
+            (60.0, 4.0),
+            (600.0, 40.0),  // 15.00 kmh
+            (1000.0, 75.0), // 13.333 kmh
+            (1200.0, 90.0), // 13.333 kmh
+        ]
+    }
+
+    fn closest_brevet_point(end_distance: f64) -> (f64, TimeDelta) {
+        let distance_km = end_distance / 1000.0;
+        let acp_points = all_brevets_points();
+        let _max_acp = acp_points.last().unwrap();
+        let closest = acp_points.iter().copied().min_by(|a, b| {
+            (a.0 - distance_km)
+                .abs()
+                .partial_cmp(&(b.0 - distance_km).abs())
+                .unwrap()
+        });
+        match closest {
+            Some((km, hours)) => {
+                return (km * 1000f64, time_delta(hours * 3600.0));
+            }
+            _ => {
+                panic!("could not find ACP distance for {}", end_distance);
+            }
+        }
+    }
+
+    // ACP (Audax Club Parisien) control closing time rules:
+    // Staggered minimum speeds based on distance segments:
+    //   -    0- 600 km: 15.0 km/h
+    //   -  600-1000 km: 11.428 km/h (8/7 km/h)
+    //   - 1000-1300 km: 13.333 km/h (40/3 km/h)
+    // Special case for short distances (0-60 km): T = 1 + (D / 20)
+    // Note: function used only for the pre-last control.
+    fn duration(distance: f64) -> TimeDelta {
+        debug_assert!(distance <= ACP_MAX_DISTANCE);
+        let distance_km = distance / 1000.0;
+        let time_hours = {
+            let mut remain_km = distance_km;
+            let mut prev = (0.0, 0.0);
+            let mut time = 0f64;
+            for (km, hours) in fixed_interpolation_points() {
+                let (delta_km, delta_hours) = (km - prev.0, hours - prev.1);
+                if remain_km >= delta_km {
+                    time += delta_hours;
+                    remain_km -= delta_km;
+                } else {
+                    let speed = delta_km / delta_hours;
+                    time += remain_km / speed;
+                    remain_km = 0f64;
+                    break;
+                }
+                prev = (km, hours);
+            }
+            // may happen if pre-last control is > 1200km
+            // example: PBP with 1230 km and one control at 1215km.
+            if remain_km > 0.0 {
+                // 200 km per day.
+                let days = distance_km / 200.0;
+                let (delta_km, delta_hours) = (distance_km - prev.0, 24.0 * days - prev.1);
+                let speed = delta_km / delta_hours;
+                time += remain_km / speed;
+                remain_km = 0f64;
+            }
+            debug_assert_eq!(remain_km, 0f64);
+            time
+        };
+        time_delta(time_hours * 3600.0)
+    }
+
+    fn fixed_interpolation_controls(start: &DateTime) -> Vec<ControlSpeedData> {
+        let mut ret = Vec::new();
+        let acp_points = fixed_interpolation_points();
+        for (km, hours) in acp_points.iter() {
+            ret.push(ControlSpeedData {
+                distance: km * 1000f64,
+                time: Some(*start + TimeDelta::seconds((hours * 3600f64).round() as i64)),
+                is_end: false,
+            });
+        }
+        ret
+    }
+
+    pub fn interpolation_controls(
+        start_time: &DateTime,
+        end_distance: f64,
+        controls: &Vec<ControlSpeedData>,
+    ) -> Vec<ControlSpeedData> {
+        let mut ret = Vec::new();
+        if end_distance > ACP_MAX_DISTANCE {
+            return LRM::interpolation_points(end_distance, start_time);
+        }
+        // the START control
+        ret.push(ControlSpeedData {
+            distance: 0f64,
+            time: Some(*start_time),
+            is_end: false,
+        });
+
+        let closest_to_end_acp = closest_brevet_point(end_distance);
+
+        // END
+        /* For brevets up to 1200 km, the end control has a
+         * fixed ACP time (e.g. 90h, even if distance = 1230km).
+         */
+        let end = ControlSpeedData {
+            distance: end_distance,
+            time: Some(*start_time + closest_to_end_acp.1),
+            is_end: true,
+        };
+        ret.push(end);
+
+        // one before END (if there is one)
+        let mut copy = controls.clone();
+        copy.retain(|c| !c.is_end && c.distance > 0f64);
+        copy.sort();
+
+        if !copy.is_empty() {
+            let prelastc = copy.last().unwrap();
+            // in ACP mode, ignore the time set by user on that control.
+            let prelast = ControlSpeedData {
+                distance: prelastc.distance,
+                time: Some(*start_time + duration(prelastc.distance)),
+                is_end: false,
+            };
+            ret.push(prelast);
+        }
+
+        let mut fixed = fixed_interpolation_controls(start_time);
+        // exclude the acp point at closest_to_end_acp.
+        // The right point for that is END (see above).
+        fixed.retain(|c| c.distance < end_distance && c.distance != closest_to_end_acp.0);
+        ret.extend_from_slice(&fixed);
+
+        ret.sort();
+        ret
+    }
 }
 
-fn acp_distance_time_intermediate() -> Vec<(f64, f64)> {
-    vec![
-        (0.0, 1.0),
-        (60.0, 4.0),
-        (600.0, 40.0),  // 15.00 kmh
-        (1000.0, 75.0), // 13.333 kmh
-        (1200.0, 90.0), // 13.333 kmh
-        (1900.0, 1900.0 / 12.0),
-        (2500.0, 2500.0 / 10.0),
-    ]
-}
-
-fn _acp_distance_time_intermediate_beyond_2500km(distance: f64) -> (f64, f64) {
-    let distance_km = distance / 1000.0;
-    (distance_km, 24f64 * distance_km / 200f64)
+#[allow(non_snake_case)]
+mod MPS {
+    use super::time_delta;
+    use super::ControlSpeedData;
+    use crate::mercator::DateTime;
+    pub fn interpolation_points(
+        controls: &Vec<ControlSpeedData>,
+        end_distance: f64,
+        start_time: &DateTime,
+        mps: f64,
+    ) -> Vec<ControlSpeedData> {
+        let mut all = controls.clone();
+        all.retain(|c| c.time.is_some());
+        // add START if needed
+        if all.iter().find(|c| c.distance == 0f64).is_none() {
+            all.push(ControlSpeedData {
+                distance: 0f64,
+                time: Some(start_time.clone()),
+                is_end: false,
+            });
+        }
+        // add END if needed
+        if all.iter().find(|c| c.is_end).is_none() {
+            let end_duration = time_delta(end_distance / mps);
+            all.push(ControlSpeedData {
+                distance: end_distance,
+                time: Some(*start_time + end_duration),
+                is_end: true,
+            });
+        }
+        all.sort();
+        debug_assert!(all.len() >= 2);
+        all.iter().for_each(|c| debug_assert!(c.time.is_some()));
+        all
+    }
 }
 
 fn time_delta(seconds: f64) -> TimeDelta {
     let nano = (seconds * 1_000_000_000f64).round() as i64;
     TimeDelta::nanoseconds(nano)
-}
-
-fn closest_acp_point(distance: f64) -> (f64, TimeDelta) {
-    let distance_km = distance / 1000.0;
-    let acp_points = acp_distance_time_last();
-    let max_acp = acp_points.last().unwrap();
-    log::trace!("closest_acp_point-1:{}", distance);
-    if distance_km >= 1300f64 {
-        return (distance_km, duration_acp_above_1300(distance));
-    }
-
-    let closest = acp_points.iter().copied().min_by(|a, b| {
-        (a.0 - distance_km)
-            .abs()
-            .partial_cmp(&(b.0 - distance_km).abs())
-            .unwrap()
-    });
-    match closest {
-        Some((km, hours)) => {
-            log::trace!("closest_acp_point-2:{},{}", km, hours);
-            return (km * 1000f64, time_delta(hours * 3600.0));
-        }
-        _ => {
-            panic!("could not find ACP distance for {}", distance);
-        }
-    }
-}
-
-fn duration_acp_last(distance: f64) -> TimeDelta {
-    let distance_km = distance / 1000.0;
-    if distance_km >= 1300f64 {
-        return duration_acp_above_1300(distance);
-    }
-    closest_acp_point(distance).1
-}
-
-fn duration_acp_above_1300(distance: f64) -> TimeDelta {
-    let distance_km = distance / 1000.0;
-    debug_assert!(distance_km >= 1300f64);
-    if distance_km > 2500f64 {
-        let days = distance_km / 200f64;
-        return time_delta(24f64 * days * 3600.0);
-    }
-    if distance_km > 1900f64 {
-        let hours = distance_km / 10.0;
-        return time_delta(hours * 3600.0);
-    }
-    let hours = distance_km / 12.0;
-    return time_delta(hours * 3600.0);
-}
-
-// ACP (Audax Club Parisien) control closing time rules:
-// Staggered minimum speeds based on distance segments:
-//   - 0-600 km: 15.0 km/h
-//   - 600-1000 km: 11.428 km/h (8/7 km/h)
-//   - 1000-1300 km: 13.333 km/h (40/3 km/h)
-// Special case for short distances (0-60 km): T = 1 + (D / 20)
-fn duration_acp(distance: f64) -> TimeDelta {
-    let distance_km = distance / 1000.0;
-    if distance_km >= 1300f64 {
-        return duration_acp_above_1300(distance);
-    }
-    let time_hours = {
-        let mut remain_km = distance_km;
-        let mut prev = (0.0, 0.0);
-        let mut time = 0f64;
-        for (km, hours) in acp_distance_time_intermediate() {
-            let (delta_km, delta_hours) = (km - prev.0, hours - prev.1);
-            if remain_km >= delta_km {
-                time += delta_hours;
-                remain_km -= delta_km;
-            } else {
-                let speed = delta_km / delta_hours;
-                time += remain_km / speed;
-                remain_km = 0f64;
-                break;
-            }
-            prev = (km, hours);
-        }
-        log::trace!(
-            "duration_acp({}): remain:{} time_hours:{}",
-            distance,
-            remain_km,
-            time
-        );
-        // many happen if distance > 2500km.
-        if remain_km > 0.0 {
-            // 200 km per day.
-            let days = distance_km / 200.0;
-            let (delta_km, delta_hours) = (distance_km - prev.0, 24.0 * days - prev.1);
-            let speed = delta_km / delta_hours;
-            time += remain_km / speed;
-            remain_km = 0f64;
-        }
-        debug_assert_eq!(remain_km, 0f64);
-        time
-    };
-    time_delta(time_hours * 3600.0)
-}
-
-fn distance_acp(seconds: f64) -> f64 {
-    let time_hours = seconds / 3600.0;
-
-    // Precompute cumulative times at segment boundaries
-    let t_60: f64 = 1.0 + (60.0 / 20.0); // = 4.0 h  (end of short-distance exception)
-    let t_600: f64 = 600.0 / 15.0; // = 40.0 h (end of segment 1)
-    let t_1000: f64 = t_600 + (400.0 / 11.428); // ≈ 75.0 h (end of segment 2)
-
-    let distance_km = if time_hours <= t_60 {
-        // T = 1 + D/20  =>  D = (T - 1) * 20
-        (time_hours - 1.0) * 20.0
-    } else if time_hours <= t_600 {
-        // T = D/15  =>  D = T * 15
-        time_hours * 15.0
-    } else if time_hours <= t_1000 {
-        // T = 40 + (D - 600) / 11.428  =>  D = 600 + (T - 40) * 11.428
-        600.0 + (time_hours - t_600) * 11.428
-    } else {
-        // T = t_1000 + (D - 1000) / 13.333  =>  D = 1000 + (T - t_1000) * 13.333
-        // Clamped at 1300 km per your original logic
-        (1000.0 + (time_hours - t_1000) * 13.333).min(1300.0)
-    };
-
-    distance_km * 1000.0
-}
-
-fn duration_at_control_distance(distance: f64, speed: &Speed) -> TimeDelta {
-    match speed {
-        Speed::ACP => duration_acp(distance),
-        Speed::MPS(mps) => time_delta(distance / mps),
-    }
-}
-
-fn time_at_control_distance(distance: f64, start_time: &DateTime, speed: &Speed) -> DateTime {
-    let delta = duration_at_control_distance(distance, &speed);
-    *start_time + delta
 }
 
 #[derive(Clone, Debug, Default)]
@@ -230,17 +307,8 @@ pub struct ControlSpeedData {
 }
 
 impl ControlSpeedData {
-    fn virtual_acp_controls(start: &DateTime) -> Vec<ControlSpeedData> {
-        let mut ret = Vec::new();
-        let acp_points = acp_distance_time_intermediate();
-        for (km, hours) in acp_points.iter() {
-            ret.push(ControlSpeedData {
-                distance: km * 1000f64,
-                time: Some(*start + TimeDelta::seconds((hours * 3600f64).round() as i64)),
-                is_end: false,
-            });
-        }
-        ret
+    pub fn unwrap_time(&self) -> DateTime {
+        self.time.unwrap().clone()
     }
 }
 
@@ -284,176 +352,67 @@ impl PartialEq for ControlSpeedData {
 
 impl Eq for ControlSpeedData {}
 
-fn time_at_control(control: &ControlSpeedData, start_time: &DateTime, speed: &Speed) -> DateTime {
-    if control.is_end {
-        match speed {
-            Speed::ACP => {
-                let duration = duration_acp_last(control.distance);
-                return *start_time + duration;
-            }
-            _ => {}
-        }
-    }
-    let normal_time = time_at_control_distance(control.distance, start_time, speed);
-    match speed {
-        Speed::ACP => normal_time,
-        Speed::MPS(_) => control.time.unwrap_or(normal_time),
-    }
-}
-/*
- * This version of the interpolation controls do not set points when there are no real controls.
- *  => Brest in 600/13.5 hours.
- */
-/*
-fn acp_interpolation_controls(
-    start_time: &DateTime,
-    end_distance: f64,
-    controls: &Vec<ControlSpeedData>,
-) -> Vec<ControlSpeedData> {
-    let mut ret = Vec::new();
-
-    let closest_acp = closest_acp_point(end_distance);
-    debug_assert!(controls.is_sorted_by(|a, b| a.distance.total_cmp(&b.distance).is_le()));
-    if controls.is_empty() || controls.first().unwrap().distance > 0f64 {
-        // start
-        ret.push(ControlSpeedData {
-            distance: 0f64,
-            time: None,
-            last_control: false,
-        });
-    }
-    if controls.is_empty() || controls.last().unwrap().distance == end_distance {
-        // end
-        ret.push(ControlSpeedData {
-            distance: end_distance,
-            time: None,
-            last_control: true,
-        });
-    }
-
-    for c in controls.iter() {
-        let time = if c.last_control == true {
-            *start_time + closest_acp.1
-        } else {
-            *start_time + duration_acp(c.distance)
-        };
-        ret.push(ControlSpeedData {
-            distance: c.distance,
-            time: Some(time),
-            last_control: c.last_control,
-        });
-    }
-    ret.sort();
-    ret
-}
- */
-
-fn acp_interpolation_controls(
-    start_time: &DateTime,
-    end_distance: f64,
-    controls: &Vec<ControlSpeedData>,
-) -> Vec<ControlSpeedData> {
-    let mut ret = Vec::new();
-
-    let closest_to_end_acp = closest_acp_point(end_distance);
-
-    // END
-    /* For brevets up to 1200 km, the end control has a
-     * fixed ACP time (e.g. 90h, even if distance = 1230km.
-     * For longer brevets, the end control time is not
-     * fixed.
-     */
-    let distance_km = end_distance / 1000.0;
-    let end = if distance_km < 1300.0 {
-        ControlSpeedData {
-            distance: end_distance,
-            time: Some(*start_time + closest_to_end_acp.1),
-            is_end: true,
-        }
-    } else {
-        ControlSpeedData {
-            distance: end_distance,
-            time: Some(*start_time + duration_acp(end_distance)),
-            is_end: true,
-        }
-    };
-    ret.push(end);
-
-    // one before END (if there is one)
-    let mut copy = controls.clone();
-    copy.retain(|c| !c.is_end && c.distance > 0f64);
-    copy.sort();
-
-    if !copy.is_empty() {
-        let prelastc = copy.last().unwrap();
-        // in ACP mode, ignore the time set by user on that control.
-        let prelast = ControlSpeedData {
-            distance: prelastc.distance,
-            time: Some(*start_time + duration_acp(prelastc.distance)),
-            is_end: false,
-        };
-        ret.push(prelast);
-    }
-
-    // ACP
-    let mut acp = ControlSpeedData::virtual_acp_controls(start_time);
-    // exclude the acp point at closest_to_end_acp.
-    // The right point for that is END.
-    acp.retain(|c| c.distance < end_distance && c.distance != closest_to_end_acp.0);
-    ret.extend_from_slice(&acp);
-    // the START control
-    ret.push(ControlSpeedData {
-        distance: 0f64,
-        time: Some(*start_time),
-        is_end: false,
-    });
-    ret.sort();
-    ret
-}
-
-pub fn time_with_controls(
-    interpolation_points: &Vec<ControlSpeedData>,
-    distance: f64,
-    start_time: &DateTime,
-    speed: &Speed,
-) -> DateTime {
+fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64) -> DateTime {
+    // controls must contains START and END.
     debug_assert!(interpolation_points.len() >= 2);
     // controls has to be sorted by distance and time
-    // controls must contains START and END.
-    let next_candidate = interpolation_points
-        .iter()
-        .enumerate()
-        .find(|(_, c)| c.distance >= distance);
-    let (index_next, next) = match next_candidate {
-        Some((index, point)) => (index, point),
-        None => interpolation_points.iter().enumerate().last().unwrap(),
+    debug_assert!(interpolation_points.is_sorted());
+
+    /* There is a somewhat degenerate case in the case of ACP at
+     * start. The interpolations points have two elements at d==0:
+     * 0h and 1h.
+     */
+    let mut equals = interpolation_points.clone();
+    equals.retain(|c| c.distance == distance);
+
+    let (index_next, next) = {
+        if equals.len() > 1 {
+            equals.iter().enumerate().last().unwrap()
+        } else {
+            let larger = interpolation_points
+                .iter()
+                .enumerate()
+                .find(|(_, c)| c.distance >= distance);
+            match larger {
+                Some((index, point)) => (index, point),
+                None => interpolation_points.iter().enumerate().last().unwrap(),
+            }
+        }
     };
+    ////////////////////////////////////////////////////////////////////
+    // log::trace!("next: {:?}", next);								  //
+    // for c in interpolation_points {								  //
+    //     log::trace!("[TP1] inter:{:?},{:.1}", c.time, c.distance); //
+    // }															  //
+    ////////////////////////////////////////////////////////////////////
     if index_next == 0 {
-        return time_at_control(interpolation_points.first().unwrap(), start_time, speed);
+        return interpolation_points.first().unwrap().unwrap_time();
     }
     let previous_candidate = interpolation_points
         .iter()
         .enumerate()
-        .filter(|(index, control)| *index < index_next && control.distance < next.distance)
+        .filter(|(index, control)| *index < index_next && control.distance <= next.distance)
         .last();
     let (_, previous) = match previous_candidate {
         Some((index, point)) => (index, point),
         None => (0, interpolation_points.first().unwrap()),
     };
 
-    let (t1, d1) = (
-        time_at_control(previous, start_time, speed),
-        previous.distance,
-    );
-    let (t2, d2) = (time_at_control(next, start_time, speed), next.distance);
-    log::trace!("[TP1] previous:{:?}", previous);
-    log::trace!("[TP1] 1:{:?},{:.1}", t1, d1);
-    log::trace!("[TP1] next:{:?}", next);
-    log::trace!("[TP1] 2:{:?},{:.1}", t2, d2);
-    for c in interpolation_points {
-        log::trace!("[TP1] inter:{:?},{:.1}", c.time, c.distance);
+    let (t1, d1) = (previous.unwrap_time(), previous.distance);
+    let (t2, d2) = (next.unwrap_time(), next.distance);
+    ///////////////////////////////////////////////////
+    // log::trace!("[TP1] previous:{:?}", previous); //
+    // log::trace!("[TP1] 1:{:?},{:.1}", t1, d1);	 //
+    // log::trace!("[TP1] next:{:?}", next);		 //
+    // log::trace!("[TP1] 2:{:?},{:.1}", t2, d2);	 //
+    ///////////////////////////////////////////////////
+    // This is the "somwhat degenerate" case mentioned above.
+    if d1 == d2 {
+        debug_assert!(d1 == distance);
+        // the *cutoff* corresponds to the maximum time for a given distance.
+        // => t2.
+        return t2;
     }
-
     debug_assert!(d1 < d2);
     debug_assert!(d1 <= distance && distance <= d2 || d2 < distance);
     let fraction = (distance - d1) / (d2 - d1);
@@ -466,25 +425,17 @@ pub fn time_with_controls(
     ret
 }
 
-pub fn distance(duration: &TimeDelta, speed: &Speed) -> f64 {
-    match speed {
-        Speed::ACP => distance_acp(duration.as_seconds_f64()),
-        Speed::MPS(mps) => duration.as_seconds_f64() * mps,
-    }
-}
-
-pub fn distance_with_controls(
+pub fn interpolate_distance(
     interpolation_points: &Vec<ControlSpeedData>,
     start_time: &DateTime,
     duration: &TimeDelta,
-    speed: &Speed,
 ) -> f64 {
     let current_time = *start_time + *duration;
 
     let next_candidate = interpolation_points
         .iter()
         .enumerate()
-        .find(|(_, c)| time_at_control(c, start_time, speed) >= current_time);
+        .find(|(_, c)| c.unwrap_time() >= current_time);
 
     let (index_next, next) = match next_candidate {
         Some((index, point)) => (index, point),
@@ -500,7 +451,7 @@ pub fn distance_with_controls(
         .iter()
         .enumerate()
         .filter(|(index, control)| {
-            *index < index_next && time_at_control(control, start_time, speed) < next.time.unwrap()
+            *index < index_next && control.unwrap_time() < next.time.unwrap()
         })
         .last();
     let (_, previous) = match previous_candidate {
@@ -508,11 +459,8 @@ pub fn distance_with_controls(
         None => (0, interpolation_points.first().unwrap()),
     };
 
-    let (t1, d1) = (
-        time_at_control(previous, start_time, speed),
-        previous.distance,
-    );
-    let (t2, d2) = (time_at_control(next, start_time, speed), next.distance);
+    let (t1, d1) = (previous.unwrap_time(), previous.distance);
+    let (t2, d2) = (next.unwrap_time(), next.distance);
     let span_ns = (t2 - t1)
         .num_nanoseconds()
         .expect("time span overflows i64 nanoseconds");
@@ -571,70 +519,32 @@ impl TimeParameters {
             None => self.time(data.distance),
         }
     }
+
     fn interpolation_points(&self) -> Vec<ControlSpeedData> {
-        let mut all = match self.speed {
+        let ret = match self.speed {
             Speed::ACP => {
-                acp_interpolation_controls(&self.start, self.track_distance, &self.controls)
+                ACP::interpolation_controls(&self.start, self.track_distance, &self.controls)
             }
-            Speed::MPS(_) => self.controls.clone(),
+            Speed::MPS(mps) => {
+                MPS::interpolation_points(&self.controls, self.track_distance, &self.start, mps)
+            }
         };
-        all.retain(|c| c.time.is_some());
-        // add START if needed
-        if all.iter().find(|c| c.distance == 0f64).is_none() {
-            all.push(ControlSpeedData {
-                distance: 0f64,
-                time: Some(time_at_control_distance(0f64, &self.start, &self.speed)),
-                is_end: false,
-            });
-        }
-        // add END if needed
-        if all.iter().find(|c| c.is_end).is_none() {
-            all.push(ControlSpeedData {
-                distance: self.track_distance,
-                time: Some(time_at_control_distance(
-                    self.track_distance,
-                    &self.start,
-                    &self.speed,
-                )),
-                is_end: true,
-            });
-        }
-        all.sort();
-        debug_assert!(all.len() >= 2);
-        all.iter().for_each(|c| debug_assert!(c.time.is_some()));
-        all
+        debug_assert!(ret.is_sorted());
+        debug_assert!(ret.len() >= 2);
+        ret.iter().for_each(|c| debug_assert!(c.time.is_some()));
+        ret
     }
 
     pub fn time(&self, distance: f64) -> DateTime {
-        time_with_controls(
-            &self.interpolation_points(),
-            distance,
-            &self.start,
-            &self.speed,
-        )
+        interpolate_time(&self.interpolation_points(), distance)
     }
     pub fn distance(&self, duration: &TimeDelta) -> f64 {
-        distance_with_controls(
-            &self.interpolation_points(),
-            &self.start,
-            duration,
-            &self.speed,
-        )
+        interpolate_distance(&self.interpolation_points(), &self.start, duration)
     }
     pub fn duration(&self, distance_a: f64, distance_b: f64) -> TimeDelta {
         debug_assert!(distance_a <= distance_b);
-        let ta = time_with_controls(
-            &self.interpolation_points(),
-            distance_a,
-            &self.start,
-            &self.speed,
-        );
-        let tb = time_with_controls(
-            &self.interpolation_points(),
-            distance_b,
-            &self.start,
-            &self.speed,
-        );
+        let ta = interpolate_time(&self.interpolation_points(), distance_a);
+        let tb = interpolate_time(&self.interpolation_points(), distance_b);
         debug_assert!(ta <= tb);
         tb - ta
     }
@@ -945,7 +855,7 @@ mod tests {
         // Test the standard brevet distances with their hard caps
         let mut params = Parameters::default();
         params.speed = format!("ACP");
-        params.start_time = "2026-04-29T10:00:00+02:00".to_string();
+        params.start_time = "2026-04-10T00:00:00+02:00".to_string();
 
         // Test each standard distance
         let test_cases = vec![
@@ -1001,7 +911,7 @@ mod tests {
             track_distance: 1_200_000f64,
         };
         let distance = 1_200_000f64;
-        let time_end = start + duration_acp_last(time_parameters.track_distance);
+        let time_end = start + TimeDelta::hours(90);
         let time = time_parameters.time(distance);
         assert!(time == time_end);
     }
