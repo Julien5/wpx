@@ -548,7 +548,9 @@ pub fn parse_speed(data: &str) -> Speed {
             log::trace!("parts:{:?}", parts);
         }
         debug_assert!(parts.len() == 2);
-        let kmh: f64 = parts[1].parse().expect("Failed to parse LRM kmh");
+        let kmh: f64 = parts[1]
+            .parse()
+            .expect(&format!("Failed to parse LRM kmh: {}", data));
         return Speed::LRM(LRMSpec { kmh });
     }
     if data.contains("KMH") {
@@ -557,7 +559,9 @@ pub fn parse_speed(data: &str) -> Speed {
             log::trace!("parts:{:?}", parts);
         }
         debug_assert!(parts.len() == 2);
-        let kmh: f64 = parts[1].parse().expect("Failed to parse KMH kmh");
+        let kmh: f64 = parts[1]
+            .parse()
+            .expect(&format!("Failed to parse KMH kmh: {}", data));
         return Speed::KMH(KMHSpec { kmh });
     }
     panic!("invalid speed string {}", data)
