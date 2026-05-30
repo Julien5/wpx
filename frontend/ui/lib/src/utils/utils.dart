@@ -169,6 +169,18 @@ String speedSpecFromMPS(double mps) {
   return "KMH-$kmh";
 }
 
+String formatKmh(double kmh, int n) {
+  String result = kmh.toStringAsFixed(n);
+  if (!result.contains('.')) {
+    result = '$result.0';
+  }
+  while (result.endsWith('0') && !result.endsWith('.0')) {
+    result = result.substring(0, result.length - 1);
+  }
+
+  return result;
+}
+
 DateTime _roundToMinute(DateTime dt) {
   if (dt.second >= 30 || dt.millisecond >= 500) {
     return dt

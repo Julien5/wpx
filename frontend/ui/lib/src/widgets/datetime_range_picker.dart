@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
-import 'package:wpx/src/screens/wheel/statistics_widget.dart';
 import 'package:wpx/src/utils/utils.dart';
 import 'package:wpx/src/widgets/small.dart';
 
@@ -55,7 +54,8 @@ class DateTimeRangePickerDialog extends StatefulWidget {
     super.key,
     required this.previousControl,
     required this.nextControl,
-    required this.currentControl, required this.parameters,
+    required this.currentControl,
+    required this.parameters,
   });
 
   final Parameters parameters;
@@ -230,9 +230,6 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
 
-
-  
-
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: SizedBox(
@@ -265,9 +262,11 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   // ── Header ──────────────────────────────────────────────────────────────
 
   Widget _buildHeader(ColorScheme cs) {
-      DateTime tourStart=parseDateTime(widget.parameters.startTime);
+    DateTime tourStart = parseDateTime(widget.parameters.startTime);
     Duration fromStart = _current.difference(tourStart);
-InfoText fromStartWidget=InfoText("${formatDuration(fromStart)} from start");
+    InfoText fromStartWidget = InfoText(
+      "${formatDuration(fromStart)} from start",
+    );
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
       child: Column(
@@ -281,7 +280,7 @@ InfoText fromStartWidget=InfoText("${formatDuration(fromStart)} from start");
               color: cs.onSurface.withValues(alpha: 0.45),
             ),
           ),
-         Text(
+          Text(
             "${widget.currentControl.name} at ${formatDistance(widget.currentControl.info!.distance)}",
 
             style: TextStyle(
@@ -291,10 +290,10 @@ InfoText fromStartWidget=InfoText("${formatDuration(fromStart)} from start");
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
-          SizedBox(width: 10,),
+          SizedBox(width: 10),
           fromStartWidget,
         ],
-    ),
+      ),
     );
   }
 
@@ -326,7 +325,6 @@ InfoText fromStartWidget=InfoText("${formatDuration(fromStart)} from start");
     );
     return Column(
       children: [
-        
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -623,7 +621,7 @@ class _SpinnerFieldState extends State<_SpinnerField> {
   double _scrollAccum = 0;
   final FocusNode _focus = FocusNode();
   Timer? _commitTimer;
-  
+
   @override
   void dispose() {
     _commitTimer?.cancel();

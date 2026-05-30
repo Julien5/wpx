@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wpx/src/utils/utils.dart';
 import 'package:wpx/src/widgets/small.dart';
 
 enum SpeedMode { kmh, acp, lrm }
@@ -102,7 +103,10 @@ String prettySpeed(String spec) {
     List<String> parts = spec.split('-');
     if (parts.length > 1) {
       String kmh = parts[1];
-      return "$kmh kmh";
+      double? d = double.tryParse(kmh);
+      if (d != null) {
+        return "${formatKmh(d, 3)} kmh";
+      }
     }
   }
   return "[$spec]";
