@@ -145,13 +145,115 @@ class _DesktopTableState extends State<DesktopTable> {
       }
     }
     SpeedMode speedMode = parseSpeedMode(parameters.speed);
+    DateTime? currentDate;
+    List<DataRow> rows = [];
+    for (int entryIndex = 0; entryIndex < waypoints.length; entryIndex++) {
+      final entry = MapEntry(entryIndex, waypoints[entryIndex]);
+      final index = entry.key;
+      final w = entry.value;
+
+      // Check if we crossed midnight
+      final waypointDate = parseDateTime(w.info!.time);
+      bool crossedMidnight = false;
+      if (currentDate != null) {
+        crossedMidnight =
+            waypointDate.year != currentDate.year ||
+            waypointDate.month != currentDate.month ||
+            waypointDate.day != currentDate.day;
+      }
+      if (crossedMidnight) {
+        Widget line = Padding(
+          padding: const EdgeInsets.symmetric(vertical: 0.0),
+          child: Container(
+            height: 1,
+            color: const Color.fromARGB(255, 100, 100, 100),
+            child: const SizedBox.expand(),
+          ),
+        );
+        rows.add(
+          DataRow(
+            cells: <DataCell>[
+              DataCell(line),
+              DataCell(
+                Center(
+                  child: Text(
+                    DateFormat('EEEE').format(waypointDate),
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+              DataCell(line),
+              if (widget.editControls) DataCell(line),
+            ],
+          ),
+        );
+      }
+      currentDate = waypointDate;
+
+      final formattedDistance = _formatDistance(w.info!.distance);
+      final description = joinNonEmpty([w.name, w.description]);
+      final isGpxWaypoint = w.origin == Kind.gpxWaypoints;
+      final isControl = w.origin == Kind.controls;
+      final isEditableControl =
+          isControl &&
+          speedMode == SpeedMode.kmh &&
+          index != firstControlIndex &&
+          index != lastControlIndex;
+      final showCheckbox = isControl || isGpxWaypoint;
+      final checkBoxValue = isControl;
+
+      Widget timeWidget =
+          isEditableControl
+              ? ControlEditTimeButton(
+                parameters: parameters,
+                previousControl: previousControl(waypoints, index),
+                nextControl: nextControl(waypoints, index),
+                currentControl: w,
+                onTimeChanged: (DateTime newDateTime) {
+                  SegmentModel segment = Provider.of(context, listen: false);
+                  segment.setControlTime(w, newDateTime);
+                  FutureRenderer renderer = Provider.of(context, listen: false);
+                  renderer.reset();
+                },
+              )
+              : makeTimeLabel(w, FontWeight.normal);
+
+      DataRow row = DataRow(
+        cells: <DataCell>[
+          DataCell(Text(formattedDistance)),
+          DataCell(timeWidget),
+          DataCell(Text(description)),
+          if (widget.editControls)
+            DataCell(
+              showCheckbox
+                  ? Checkbox(
+                    value: checkBoxValue,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        if (value != null) {
+                          makeControlAtWaypoint(w, value);
+                          FutureRenderer renderer = Provider.of(
+                            context,
+                            listen: false,
+                          );
+                          renderer.reset();
+                        }
+                      });
+                    },
+                  )
+                  : const SizedBox.shrink(),
+            ),
+        ],
+      );
+      rows.add(row);
+    }
 
     return DataTable(
       columnSpacing: 15.0,
       horizontalMargin: 10.0,
       headingRowHeight: 32.0,
-      dataRowMinHeight: 28.0,
-      dataRowMaxHeight: 40.0,
+      dataRowMinHeight: 30.0, // this does not seem to change anything.
+      dataRowMaxHeight: 32.0,
       border: const TableBorder(
         verticalInside: BorderSide(width: 0.3, style: BorderStyle.solid),
       ),
@@ -175,72 +277,7 @@ class _DesktopTableState extends State<DesktopTable> {
             numeric: true,
           ),
       ],
-      rows:
-          waypoints.asMap().entries.map((entry) {
-            final index = entry.key;
-            final w = entry.value;
-            final formattedDistance = _formatDistance(w.info!.distance);
-            final description = joinNonEmpty([w.name, w.description]);
-            final isGpxWaypoint = w.origin == Kind.gpxWaypoints;
-            final isControl = w.origin == Kind.controls;
-            final isEditableControl =
-                isControl &&
-                speedMode == SpeedMode.kmh &&
-                index != firstControlIndex &&
-                index != lastControlIndex;
-            final showCheckbox = isControl || isGpxWaypoint;
-            final checkBoxValue = isControl;
-
-            Widget timeWidget =
-                isEditableControl
-                    ? ControlEditTimeButton(
-                      parameters: parameters,
-                      previousControl: previousControl(waypoints, index),
-                      nextControl: nextControl(waypoints, index),
-                      currentControl: w,
-                      onTimeChanged: (DateTime newDateTime) {
-                        SegmentModel segment = Provider.of(
-                          context,
-                          listen: false,
-                        );
-                        segment.setControlTime(w, newDateTime);
-                        FutureRenderer renderer = Provider.of(
-                          context,
-                          listen: false,
-                        );
-                        renderer.reset();
-                      },
-                    )
-                    : makeTimeLabel(w, FontWeight.normal);
-
-            return DataRow(
-              cells: <DataCell>[
-                DataCell(Text(formattedDistance)),
-                DataCell(timeWidget),
-                DataCell(Text(description)),
-                if (widget.editControls)
-                  DataCell(
-                    showCheckbox
-                        ? Checkbox(
-                          value: checkBoxValue,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              if (value != null) {
-                                makeControlAtWaypoint(w, value);
-                                FutureRenderer renderer = Provider.of(
-                                  context,
-                                  listen: false,
-                                );
-                                renderer.reset();
-                              }
-                            });
-                          },
-                        )
-                        : const SizedBox.shrink(),
-                  ),
-              ],
-            );
-          }).toList(),
+      rows: rows,
     );
   }
 

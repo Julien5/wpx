@@ -322,8 +322,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     try {
       return buildWorker(ctx);
     } catch (e, stack) {
-      print("FOUND THE ERROR: $e");
-      print("FOUND THE STACK: $stack");
+      debugPrint("FOUND THE ERROR: $e");
+      debugPrint("FOUND THE STACK: $stack");
       rethrow;
     }
   }
