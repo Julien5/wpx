@@ -438,7 +438,9 @@ fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64)
         .expect("time span overflows i64 nanoseconds");
     let offset_ns = (fraction * span_ns as f64).round() as i64;
     let ret = t1 + TimeDelta::nanoseconds(offset_ns);
-    log::info!("[TP1] distance:{:.1} time:{:?}", distance, ret);
+    //////////////////////////////////////////////////////////////////
+    // log::info!("[TP1] distance:{:.1} time:{:?}", distance, ret); //
+    //////////////////////////////////////////////////////////////////
     ret
 }
 
@@ -592,13 +594,6 @@ pub struct TimeParameters {
 }
 
 impl TimeParameters {
-    pub fn time_at_control_speed_data(&self, data: &ControlSpeedData) -> DateTime {
-        match data.time {
-            Some(t) => t.clone(),
-            None => self.time(data.distance),
-        }
-    }
-
     fn interpolation_points(&self) -> Vec<ControlSpeedData> {
         let ret = match &self.speed {
             Speed::ACP(spec) => {

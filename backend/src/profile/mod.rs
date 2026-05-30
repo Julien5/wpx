@@ -209,14 +209,7 @@ impl ProfileView {
         let all_controls_speed_data = controls_speed_data(&controls);
         let mut times_limits: Vec<_> = all_controls_speed_data
             .iter()
-            .map(|c| {
-                (
-                    c.distance,
-                    self.parameters
-                        .time_parameters
-                        .time_at_control_speed_data(&c),
-                )
-            })
+            .map(|c| (c.distance, self.parameters.time_parameters.time(c.distance)))
             .collect();
 
         times_limits.push((xstart, self.parameters.time_parameters.time(xstart)));
