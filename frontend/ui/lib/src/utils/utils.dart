@@ -164,14 +164,9 @@ String statisticsString(bridge.SegmentStatistics statistics) {
   return "${k1.toStringAsFixed(1)} - ${k2.toStringAsFixed(1)}";
 }
 
-// convert from kmh to mps
-double parseSpeedMps(String speed) {
-  return double.parse(speed) * 1000 / 3600;
-}
-
-String speedString(double mps) {
+String speedSpecFromMPS(double mps) {
   double kmh = mps * 3600 / 1000;
-  return "KMH-${kmh.toStringAsFixed(3)}";
+  return "KMH-$kmh";
 }
 
 DateTime _roundToMinute(DateTime dt) {

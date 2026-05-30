@@ -23,13 +23,24 @@ SpeedMode parseSpeedMode(String speed) {
   return SpeedMode.kmh;
 }
 
-double parseKMHSpec(String spec) {
-  assert(spec.toUpperCase().contains("KMH"));
-  RegExp regExp = RegExp(r"KMH-(\d+\.\d+)");
-  Match? match = regExp.firstMatch(spec);
-  assert(match != null);
-  String kmh = match!.group(1)!;
-  return double.parse(kmh);
+String readKMHSpec(String spec) {
+  List<String> parts = spec.split('-');
+  if (parts.length > 1) {
+    String kmh = parts[1];
+    double? ret = double.tryParse(kmh);
+    if (ret != null) {
+      return kmh;
+    }
+  }
+  return "";
+}
+
+String? makeKMHSpec(String text) {
+  double? kmh = double.tryParse(text);
+  if (kmh == null) {
+    return null;
+  }
+  return "KMH-$kmh";
 }
 
 String? selectSpec(List<String> specs, SpeedMode mode) {
@@ -50,20 +61,19 @@ String? selectSpec(List<String> specs, SpeedMode mode) {
 String prettySpeedHeader(String spec) {
   if (parseSpeedMode(spec) == SpeedMode.acp) {
     // input = "ACP-300-20.0";
-    RegExp regExp = RegExp(r"ACP-(\d+)-(\d+\.\d+)");
-    Match? match = regExp.firstMatch(spec);
-    assert(match != null);
-    String km = match!.group(1)!;
-    String hours = match.group(2)!;
-    return "ACP: $km km, $hours h";
+    List<String> parts = spec.split('-');
+    if (parts.length > 2) {
+      String km = parts[1];
+      String hours = parts[2];
+      return "ACP: $km km, $hours h";
+    }
   }
   if (parseSpeedMode(spec) == SpeedMode.lrm) {
-    // input = "LRM-12.0";
-    RegExp regExp = RegExp(r"LRM-(\d+\.\d+)");
-    Match? match = regExp.firstMatch(spec);
-    assert(match != null);
-    String kmh = match!.group(1)!;
-    return "LRM: $kmh kmh";
+    List<String> parts = spec.split('-');
+    if (parts.length > 1) {
+      String kmh = parts[1];
+      return "LRM: $kmh kmh";
+    }
   }
   if (parseSpeedMode(spec) == SpeedMode.kmh) {
     return "Overall average speed";
@@ -74,25 +84,26 @@ String prettySpeedHeader(String spec) {
 String prettySpeed(String spec) {
   if (parseSpeedMode(spec) == SpeedMode.acp) {
     // input = "ACP-300-20.0";
-    RegExp regExp = RegExp(r"ACP-(\d+)-(\d+\.\d+)");
-    Match? match = regExp.firstMatch(spec);
-    assert(match != null);
-    String km = match!.group(1)!;
-    String hours = match.group(2)!;
-    //double kmh = double.parse(km) / double.parse(hours);
-    //return "ACP: ${kmh.toStringAsFixed(2)} kmh";
-    return "ACP: $km/$hours";
+    List<String> parts = spec.split('-');
+    if (parts.length > 2) {
+      String km = parts[1];
+      String hours = parts[2];
+      return "ACP: $km/$hours";
+    }
   }
   if (parseSpeedMode(spec) == SpeedMode.lrm) {
-    // input = "LRM-12.0";
-    RegExp regExp = RegExp(r"LRM-(\d+\.\d+)");
-    Match? match = regExp.firstMatch(spec);
-    assert(match != null);
-    String kmh = match!.group(1)!;
-    return "LRM: $kmh kmh";
+    List<String> parts = spec.split('-');
+    if (parts.length > 1) {
+      String kmh = parts[1];
+      return "LRM: $kmh kmh";
+    }
   }
   if (parseSpeedMode(spec) == SpeedMode.kmh) {
-    return "${parseKMHSpec(spec)} kmh";
+    List<String> parts = spec.split('-');
+    if (parts.length > 1) {
+      String kmh = parts[1];
+      return "$kmh kmh";
+    }
   }
   return "[$spec]";
 }
@@ -112,31 +123,41 @@ void openSpeedDialog({
   TextEditingController textController = TextEditingController(
     text:
         initialConstantSpeed != null
-            ? "${parseKMHSpec(initialConstantSpeed)}"
+            ? readKMHSpec(initialConstantSpeed)
             : "15.0",
   );
 
-  void adjustSpeed(double delta) {
-    if (currentMode != SpeedMode.kmh) return;
+  void onChanged(String kmh) {
+    if (currentMode != SpeedMode.kmh) {
+      return;
+    }
+    double? currentValue = double.tryParse(kmh);
+    assert(currentValue != null);
+    if (currentValue == null) {
+      return;
+    }
+    double newValue = currentValue.clamp(1.0, 100.0);
+    String? spec = makeKMHSpec(newValue.toString());
+    assert(spec != null);
+    if (spec != null) {
+      currentSpeed = spec;
+    }
+  }
 
-    double currentValue = double.tryParse(textController.text) ?? 15.0;
+  void adjustSpeed(double delta) {
+    if (currentMode != SpeedMode.kmh) {
+      return;
+    }
+    double? currentValue = double.tryParse(textController.text);
+    if (currentValue == null) {
+      return;
+    }
     double newValue = (currentValue + delta).clamp(1.0, 100.0);
     // Round to 1 decimal place
     newValue = (newValue * 10).round() / 10;
 
     textController.text = newValue.toString();
-    currentSpeed = "KMH-${newValue.toString()}";
-  }
-
-  void onChanged(String kmh) {
-    if (currentMode != SpeedMode.kmh) return;
-
-    double? currentValue = double.tryParse(kmh);
-    if (currentValue == null) {
-      return;
-    }
-    double newValue = currentValue.clamp(1.0, 100.0);
-    currentSpeed = "KMH-${newValue.toString()}";
+    onChanged(textController.text);
   }
 
   final FocusNode textFieldFocusNode = FocusNode(
@@ -159,6 +180,7 @@ void openSpeedDialog({
       return KeyEventResult.ignored;
     },
   );
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -203,13 +225,14 @@ void openSpeedDialog({
                       setDialogState(() {
                         currentMode = speedMode;
                       });
-                      // When switching to constant mode, use the text field value
-                      // When switching to ACP, use "ACP"
                       if (speedMode == SpeedMode.kmh) {
-                        currentSpeed =
-                            textController.text.isNotEmpty
-                                ? "KMH-${textController.text}"
-                                : "KMH-15.0";
+                        String? spec = makeKMHSpec(textController.text);
+                        if (spec != null) {
+                          currentSpeed = spec;
+                        } else {
+                          debugPrint("bad input text: ${textController.text}");
+                          assert(false);
+                        }
                       } else {
                         String? selected = selectSpec(allowedSpeeds, speedMode);
                         if (selected != null) {

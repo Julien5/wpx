@@ -24,4 +24,5 @@ fn setup_log() {
 
 pub fn setup() {
     setup_log();
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
 }

@@ -63,6 +63,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
+      debugPrint("parameter speed: ${parameters.speed}");
       // Initialize lastConstantSpeed if current speed is constant
       SpeedMode speedMode = parseSpeedMode(parameters.speed);
       if (speedMode == SpeedMode.kmh) {
@@ -183,20 +184,19 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       double mps = distance / seconds;
       // max at 50kmh
       mps = min(mps, 50000 / 3600);
-      speed = speedString(mps);
+      speed = speedSpecFromMPS(mps);
       writeModel();
     }
   }
 
-  @override
-  Widget build(BuildContext ctx) {
+  Widget buildWorker(BuildContext ctx) {
     SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
     ParameterModel parameterModel = Provider.of<ParameterModel>(context);
     Parameters parameters = parameterModel.parameters();
     bridge.SegmentStatistics statistics = segmentModel.statistics();
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
-    String speed = parameterModel.parameters().speed;
+    speed = parameterModel.parameters().speed;
 
     if (startTime == null) {
       return Text("loading..");
@@ -251,13 +251,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
               callback:
                   () => openSpeedDialog(
                     context: context,
-                    speed: speed,
+                    speed: speed!,
                     allowedSpeeds: backend.allowedSpeeds(),
                     initialConstantSpeed: lastConstantSpeed,
                     onConfirm: (newSpeed) {
                       debugPrint("confirm:$newSpeed");
                       setState(() {
-                        this.speed = newSpeed;
+                        speed = newSpeed;
                       });
                       writeModel();
                     },
@@ -315,5 +315,16 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [Card(elevation: 4, child: table)],
     );
+  }
+
+  @override
+  Widget build(BuildContext ctx) {
+    try {
+      return buildWorker(ctx);
+    } catch (e, stack) {
+      print("FOUND THE ERROR: $e");
+      print("FOUND THE STACK: $stack");
+      rethrow;
+    }
   }
 }
