@@ -49,7 +49,7 @@ class _CentralWidgetState extends State<CentralWidget> {
             child: TrackView(trackData: TrackData.map, svgSize: Size(400, 400)),
           ),
         ),
-        Expanded(child: table!),
+        Expanded(child: Center(child: table!)),
       ],
     );
 
