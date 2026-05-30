@@ -69,7 +69,7 @@ class OsmStatus {
       return "write cache";
     }
     if (_taskName.contains("wait-for-response")) {
-      return "wait response";
+      return "waiting for response";
     }
     if (_taskName.contains("sort")) {
       return "sort";

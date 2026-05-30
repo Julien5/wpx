@@ -27,18 +27,6 @@ class OverviewWidget extends StatefulWidget {
   State<OverviewWidget> createState() => _OverviewWidgetState();
 }
 
-String formatKmh(double kmh, int n) {
-  String result = kmh.toStringAsFixed(n);
-  if (!result.contains('.')) {
-    result = '$result.0';
-  }
-  while (result.endsWith('0') && !result.endsWith('.0')) {
-    result = result.substring(0, result.length - 1);
-  }
-
-  return result;
-}
-
 class _OverviewWidgetState extends State<OverviewWidget> {
   DateTime? startTime;
   DateTime? endTime;

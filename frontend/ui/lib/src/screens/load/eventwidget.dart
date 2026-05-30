@@ -101,7 +101,7 @@ class _OsmEventWidgetState extends State<OsmEventWidget> {
       Widget? bar;
       if (progressInfo.total > 0) {
         bar = Padding(
-          padding: EdgeInsetsGeometry.fromLTRB(5, 0, 5, 0),
+          padding: EdgeInsetsGeometry.fromLTRB(15, 0, 15, 0),
           child: LinearProgressIndicator(
             value:
                 progressInfo.current /
@@ -111,8 +111,19 @@ class _OsmEventWidgetState extends State<OsmEventWidget> {
           ),
         );
       }
-      Widget label = SmallText(text: progressInfo.niceTaskName());
-      return Column(children: [label, if (bar != null) bar]);
+      Widget label = Text(
+        progressInfo.niceTaskName(),
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+      );
+      return Column(
+        children: [
+          SizedBox(height: 10),
+          label,
+          SizedBox(height: 10),
+          if (bar != null) bar,
+        ],
+      );
     }
     return SmallText(text: progressInfo.niceTaskName());
   }
