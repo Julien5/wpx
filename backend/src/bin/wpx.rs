@@ -5,7 +5,6 @@ use std::path::Path;
 use chrono::TimeDelta;
 use clap::Parser;
 use tracks::backend::{Backend, Segment};
-use tracks::error;
 use tracks::math::IntegerSize2D;
 use tracks::mercator::DateTime;
 use tracks::parameters;
@@ -13,7 +12,9 @@ use tracks::parameters::{parse_time, RenderFunction};
 use tracks::point_collection::onekind;
 use tracks::point_collection::Kind;
 use tracks::point_collection::{self, Kinds};
+use tracks::speed::Speed;
 use tracks::waypoint::Waypoint;
+use tracks::{error, speed};
 
 /// Reads a GPX files and generates a PDF feuille de route and cutoff points.
 #[derive(Parser)]
@@ -268,7 +269,19 @@ async fn main() -> anyhow::Result<()> {
         _ => {}
     }
 
-    parameters.speed = args.speed.clone();
+    parameters.speed = match args.speed.parse::<f64>() {
+        Ok(kmh) => speed::format_kmh(kmh),
+        Err(_) => {
+            let allowed = speed::allowed_speeds(track_segment.end);
+            match allowed.iter().find(|spec| spec.contains(&args.speed)) {
+                Some(spec) => {
+                    log::info!("using speed:{}", spec);
+                    spec.clone()
+                }
+                None => args.speed.clone(),
+            }
+        }
+    };
 
     match args.step_distance {
         Some(km) => {
