@@ -27,14 +27,17 @@ mod LRM {
     };
 
     fn speed_kmh(end_distance: f64) -> f64 {
+        // https://www.randonneursmondiaux.org/files/Rules_2019.pdf
         debug_assert!(end_distance >= LRM_MIN_DISTANCE);
         let distance_km = end_distance / 1000.0;
         let kmh = if distance_km >= 2500f64 {
             200.0 / 24.0
         } else if distance_km >= 1900f64 {
             10.0
-        } else {
+        } else if distance_km >= 1300f64 {
             12.0
+        } else {
+            13.33
         };
         kmh
     }
@@ -580,6 +583,7 @@ pub fn allowed_speeds(end_distance: f64) -> Vec<String> {
         ret.push(format!("ACP-{:.0}-{:.1}", spec.km, spec.hours));
     }
     if let Some(spec) = LRM::guess_spec(end_distance) {
+        // five digits to cover 13.33...
         ret.push(format!("LRM-{:.2}", spec.kmh));
     }
     ret
