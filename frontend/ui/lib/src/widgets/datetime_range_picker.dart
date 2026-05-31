@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/utils/utils.dart';
 import 'package:wpx/src/widgets/small.dart';
@@ -549,22 +550,26 @@ class _DayPips extends StatelessWidget {
       final offsetMins = days[i].difference(min).inMinutes;
       pips.add((
         frac: offsetMins / totalMinutes,
-        label: '${days[i].day} ${_monthName(days[i].month)}',
+        label: DateFormat('EEE').format(days[i]),
       ));
     }
 
     return LayoutBuilder(
       builder: (_, constraints) {
-        final w = constraints.maxWidth;
+        final w = constraints.maxWidth - 40;
         return SizedBox(
           height: 20,
           child: Stack(
             children:
                 pips.map((p) {
+                  assert(p.frac <= 1);
                   return Positioned(
-                    left: (p.frac * w - 20).clamp(0, w - 40),
+                    // The centering of the ticks is very clunky and hardcoded
+                    // and does not work with labels of varying width.
+                    left: 20 + (p.frac * w - 9).clamp(0, constraints.maxWidth),
                     top: 0,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
                           width: 1.5,
