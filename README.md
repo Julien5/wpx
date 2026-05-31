@@ -70,11 +70,6 @@ The "flat" segments without elevation data are useful to prevent devices like th
 GPS devices determine the "Next Waypoint" based on geographic proximity. For an out-and-back route (like Paris-Brest-Paris), your device might mistakenly show a point from the return journey while you are still on the outward journey. Loading `cutoff-1.gpx`  at the start, and `cutoff-2.gpx` on the way back works around that problem. 
 But mid-ride file transfers are a gamble you don't want to take with frozen fingers or a dying battery. You can choose your preferred strategy, using either `cutoff-all.gpx` or the separated `cutoff-1.gpx` and `cutoff-2.gpx`.
 
----
-## Known Issues
-
-- OSM download takes too long for very long tracks, like one-way 1000km brevets. 
-
 ----
 
 ## HOW TO BUILD

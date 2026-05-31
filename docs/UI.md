@@ -1,81 +1,96 @@
-# WPX frontend
+# WPX Frontend
 
 ![](./images/overview.png)
 
 ### Set Time Parameters
 
-  - **Start Time:** Set the date and time. An accurate start date helps label the days correctly on the elevation profile for rides passing midnight.
-  - **Speed:** The speed controls the cutoff time computation. It is set to 15.0 kmh by default. 
-  - **End Time:** This can be adjusted to match the official brevet cutoff. This will recalculate the average speed accordingly.
+- **Start Time:** Set the start date and time. An accurate start date ensures that days are labelled correctly on the elevation profile for rides that continue past midnight.
+- **Speed:** The speed parameter controls the cutoff-time calculation. The default value is 15.0 km/h.
+- **End Time:** This can be adjusted to match the official brevet cutoff. The average speed is then recalculated automatically.
 
-*Note: The computed closing times for each control may not perfectly match the official organization times, but they should be very close.*
+*Note: Computed control closing times may not exactly match the official organizer-provided times, but they should be quite close.*
 
-#### Speed/Cutoff times
+#### Speed / Cutoff Times
 
-The cutoff times are computed using the speed parameter. 
-There are two options:
+Cutoff times are calculated using the selected speed model.
+
+Two options are available:
 
 ![](./images/speed-dialog.png)
 
-- User-set overall average speed: this can be set to anything in the range 1-100kmh. 
-- ACP rules: the option is available if the total distance is within a 50-km margin of a nominal brevet distance (200, 300, 400, 600, 1000 and 1200 kilometers). This applies the [ACP (Audax Club Parisien) rules](https://www.audax-club-parisien.com/wp-content/uploads/2024/01/Rules-for-rider-2024.pdf). 
-- LRM rules: available if the total distance is longer than 1200 km. This applies the [LRM (Les Randonneurs Mondiaux) rules](https://www.randonneursmondiaux.org/files/Rules_2019.pdf).
+- **User-defined average speed:** Any value between 1 and 100 km/h can be specified.
+- **ACP rules:** Available when the total distance is within 50 km of a nominal brevet distance (200, 300, 400, 600, 1000, or 1200 km). This option appliesthe [ACP (Audax Club Parisien) rules](https://www.audax-club-parisien.com/wp-content/uploads/2024/01/Rules-for-rider-2024.pdf). 
+- **LRM rules:** Available for rides longer than 1200 km. This option applies the [LRM (Les Randonneurs Mondiaux) rules](https://www.randonneursmondiaux.org/files/Rules_2019.pdf).
 
-#### ACP Rules 
+#### ACP Rules
 
-The ACP rules are valid up to 1000 km, with an extension for the PBP.
+The ACP rules are defined for rides up to 1000 km, with a specific extension for Paris–Brest–Paris (PBP).
+
 They look simple at first sight ("15 kmh up to 600 km") but they are full of surprises. 
-- The start point has a cutoff: one hour after the start time. 
-- The speed in the range 1000-1200 km is 13.33 kmh, larger than in the range 600-1000 kmh. A rider cycling at "ACP speed" is expected to ride *faster* in the last 200 km of PBP.
-- Because the *actual* distance of a brevet mostly differs from its nominal distance, the speed between the last control and the end of the ride is special. 
-Example: Assuming a 630km long brevet (nominal 600km) with a last control at 570 km:
-  - the last control closes after 570/15=38 hours, and
-  - the end of the brevet must be reached after 40 hours.
 
-   Hence, the last 60 kilometers must be covered in 2 hours, at 30kmh. A rider with a 1-hour time-on-hand at the last control would have 1+2=3 hours to cover the last 60 km. 
+- The start control has a closing time of one hour after the official start.
+- The speed used between 1000 km and 1200 km is 13.33 km/h, which is higher than the speed used between 600 km and 1000 km. A rider following the ACP schedule is therefore expected to ride faster during the final 200 km of PBP.
+- Because the actual distance of a brevet usually differs from its nominal distance, the effective speed required between the last control and the finish can be significantly different from the nominal ACP speed.
 
-As you see, the ACP rules may not be appropriate to pace your ride. They may be rather interesting for comparison purposes. 
+Example: Consider a 630 km brevet with a nominal distance of 600 km and a last control at 570 km.
 
-Here is a diagram that summarizes the ACP rule for a 600 km brevet with actual distance 630 km:
+- The final control closes after 570 / 15 = 38 hours.
+- The brevet finish closes after 40 hours.
+
+   The final 60 km must therefore be completed within 2 hours, corresponding to an average speed of 30 km/h. A rider arriving at the final control with one hour in hand would have a total of 3 hours to complete the remaining 60 km.
+
+The following diagram summarizes the ACP rules for a 600 km brevet with an actual distance of 630 km:
+
 ![](./images/ACP-600-diagram.png)
 
-Here is a diagram that summarizes the ACP rule for a 1200 km brevet with actual distance 1230 km:
+The following diagram summarizes the ACP rules for a 1200 km brevet with an actual distance of 1230 km:
+
 ![](./images/ACP-diagram.png)
 
-#### LRM Rules 
+As you see, ACP closing times are not always suitable for pacing strategy. The ACP option may be rather be used for comparison purposes.
 
-The LRM rules are valid for rides longer than 1200 km.
-They are simpler than ACP rules and just define a fixed overall average speed.
-- from 1200 to 1299 km: 13.33 kmh
-- from 1300 to 1899 km: 12 kmh
-- from 1900 to 2499 km: 10 kmh
+#### LRM Rules
+
+The LRM rules apply to rides longer than 1200 km.
+
+They are simpler than the ACP rules and just define a fixed overall average speed:
+
+- 1200-1299 km: 13.33 km/h
+- 1300-1899 km: 12 km/h
+- 1900-2499 km: 10 km/h
 - 2500 km and above: 200 km per day
 
-In a 1200-km brevet with LRM rules, a control point at 600 km would close after 45h.
+For a 1200 km brevet using LRM rules, a control point at 600 km would close after 45 hours.
 
-### Control Custom Cutoff
+### Custom Control Cutoffs
 
-If the speed is a user-set overall average speed (first option), the control times can be set individually. 
+When a user-defined average speed is selected (first option in the speed dialog), individual control closing times can be set. This can be useful when a simpler and more predictable pacing model is preferred over the ACP rules or to model an individual pacing strategy.  Example using a PBP route:
 
-Example on a PBP track: set the speed to 13.35 kmh and adjust the end time to get 90h duration. 
-Then click on control time button:
+1. Set the speed to 13.35 km/h.
+2. Adjust the end time to obtain a total duration of 90 hours.
+3. Click the control-time button:
+
 ![](./images/control-time-button.png)
-This opens the control-time dialog, which allows you to modify the cutoff time: 
+
+This opens the control-time dialog:
+
 ![](./images/control-time-dialog.png)
 
-This is useful for longer brevet if you want a simpler and more predictable pacing than the ACP rules. In the example, the cutoff in Brest is set to 40h, the other controls are automatically spaced evenly. This is simpler and gets you to each control slightly before the official ACP cutoff:
+The dialog allows individual control cutoffs to be modified.
+
+The Brest control is assigned a cutoff of 40 hours, while all other controls are distributed evenly. This results in arrival targets that are slightly earlier than the official ACP closing times:
+
 ![](./images/ACP-simple-diagram.png)
 
-Of source, you may set your control times to fit your own personal strategy.
+Control times can also be customized to match an individual pacing strategy.
 
 ### Choose Point Types
 
-  - **Waypoints:** Original waypoints from the input GPX. If a waypoint matches a control point, it is merged into the control (and not shown as a separate waypoint). Control points can be created from waypoints with the control checkbox in the overview list (only on desktop).
-  - **OSM:** Names of cities, villages, and mountain passes. Only the most important OSM points are shown to keep the table readable (filtered by a minimum distance of 10% of the track/page length).
-  - **Cutoff:** These are shown as dots on the elevation profile and map, but are excluded from the tables.
+- **Waypoints:** Original waypoints from the input GPX file. If a waypoint coincides with a control point, it is merged into the control and is not displayed separately. Waypoints can be converted into controls using the control checkbox in the overview table (only on desktop).
+- **OSM:** Names of cities, villages, and mountain passes are derived from OpenStreetMap data. To maintain readability, only the most significant OSM points are displayed. A minimum spacing of 10% of the track/page length is applied.
+- **Cutoff:** Cutoff markers are displayed on the map and elevation profile but are excluded from the tables.
 
-### PDF
+### PDF Export
 
-  - Since two segments are printed on a single A4 page, you can select the number of pages in increments of 0.5 (e.g., 0.5, 1, 1.5, etc.).
-  - WPX attempts to generate segments covering round distances (like 100km) with a 10% overlap. Due to these constraints, the slider does not offer every page count.
-
+- Because two segments are printed on a single A4 page, the number of pages can be selected in increments of 0.5 (for example: 0.5, 1.0, 1.5, etc.).
+- WPX attempts to generate segments with rounded distances (for example, 100 km) while maintaining approximately 10% overlap between adjacent segments. Due to these constraints, not every page count is available through the slider.
