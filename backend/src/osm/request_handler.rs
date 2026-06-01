@@ -24,6 +24,25 @@ fn save_resquest_response_for_debug(hash: &str, req: &str, resp: &str) {
 #[cfg(target_arch = "wasm32")]
 fn save_resquest_response_for_debug(hash: &str, req: &str, resp: &str) {}
 
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+struct OverpassResponse {
+    // We use Option because 'remark' only exists when there is an error/timeout
+    remark: Option<String>,
+}
+
+fn is_timeout(content: &str) -> bool {
+    // Parse the JSON safely. If it's totally malformed JSON,
+    // it's not a successful timeout message, so we default to false.
+    if let Ok(response) = serde_json::from_str::<OverpassResponse>(content) {
+        if let Some(remark_text) = response.remark {
+            return remark_text.contains("timed out");
+        }
+    }
+    false
+}
+
 async fn download(req_string: &String, side: &DownloadSideData<'_>) -> GenericResult<Vec<u8>> {
     //log::trace!("download:\n{}\n", req_string);
     let hash = hash(&req_string);
@@ -44,22 +63,27 @@ async fn download(req_string: &String, side: &DownloadSideData<'_>) -> GenericRe
             Err(e) => {
                 if let Some(TrackError::OSMDownloadCancelled) = e.downcast_ref::<TrackError>() {
                     log::info!("user cancelled download");
+                    // stop
                     return Err(e.into());
                 } else {
                     log::error!("download failed, error = {}, retry = {}", e, nretries);
                 }
-                // sleep between retries, (increase the chance overpass server processes the request)
-                crate::sleep::sleep_ms(500).await;
-                nretries += 1;
             }
             Ok(content) => {
                 // if debug
                 if cfg!(debug_assertions) {
                     save_resquest_response_for_debug(&hash, &req_string, &content);
                 }
-                return Ok(content.into_bytes());
-            }
+                if is_timeout(&content) {
+                    log::error!("download failed, error = timeout, retry = {}", nretries);
+                } else {
+                    return Ok(content.into_bytes());
+                }
+            } // sleep between retries, (increase the chance overpass server processes the request)
         }
+        event::send_worker(&side.logger, &format!("osm:retry:{}", nretries));
+        crate::sleep::sleep_ms(500).await;
+        nretries += 1;
     }
 }
 

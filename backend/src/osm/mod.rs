@@ -76,8 +76,8 @@ pub async fn download_for_track(
         }
         Err(e) => {
             log::error!("download error: {:?}", e);
-            panic!("download");
-            // Err(e.into()),
+            // panic!("download");
+            Err(e.into())
         }
     }
 }
