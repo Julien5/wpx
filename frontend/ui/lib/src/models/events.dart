@@ -71,7 +71,7 @@ class OsmStatus {
     }
     if (_taskName.contains("wait-for-response")) {
       if (total > 1) {
-        return "waiting for response $current/$total";
+        return "waiting for response ${current + 1}/$total";
       }
       return "waiting for response";
     }
@@ -102,7 +102,7 @@ class OsmStatus {
     debugPrint("onEvent parts: $parts ${parts[0]} ${parts[1]}");
     _taskName = parts[1];
     if (_taskName.contains("progress")) {
-      current = int.parse(parts[2]) + 1;
+      current = int.parse(parts[2]);
       total = int.parse(parts[3]);
       if (_taskName.contains("download")) {
         downloadCurrent = current;
