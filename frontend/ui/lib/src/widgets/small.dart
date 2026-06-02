@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/screen_configuration.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SmallButton extends StatelessWidget {
   final VoidCallback? callback;
@@ -23,6 +24,54 @@ class SmallButton extends StatelessWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(text, textAlign: TextAlign.center),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SmallInfoLink extends StatelessWidget {
+  final String url;
+
+  const SmallInfoLink({super.key, required this.url});
+
+  // Function to handle launching the URL
+  Future<void> _launchURL() async {
+    final Uri uri = Uri.parse(url);
+
+    if (!await launchUrl(
+      uri,
+      mode:
+          LaunchMode
+              .externalApplication, // Forces opening in a new browser tab/app
+    )) {
+      // throw Exception('Could not launch ${link.url}');
+      debugPrint('Could not launch $url');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        style: const TextStyle(color: Colors.black, fontSize: 11),
+        children: [
+          WidgetSpan(
+            alignment:
+                PlaceholderAlignment
+                    .middle, // perfectly aligns the icon vertically
+            child: IconButton(
+              icon: const Icon(Icons.info_outline_rounded),
+              color: Colors.blue,
+              iconSize: 15,
+              padding: EdgeInsets.zero,
+              constraints:
+                  const BoxConstraints(), // Removes default extra padding around the icon
+              tooltip:
+                  'Open documentation', // Desktop hover text / Mobile long-press accessibility
+              onPressed: _launchURL, // Handles both taps and mouse clicks
+            ),
           ),
         ],
       ),
@@ -84,11 +133,7 @@ class DialogSectionLabel extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Text(
       text,
-      style: TextStyle(
-        fontSize: 11,
-        letterSpacing: 1.1,
-        color: cs.onSurface.withValues(alpha: 0.45),
-      ),
+      style: TextStyle(fontSize: 11, letterSpacing: 1.1, color: cs.primary),
     );
   }
 }
@@ -200,12 +245,14 @@ class StandardDialog extends StatelessWidget {
 class DialogHeader extends StatelessWidget {
   final String label;
   final String? title;
+  final String? url;
   final List<Widget>? additionalContent;
 
   const DialogHeader({
     super.key,
     required this.label,
     required this.title,
+    required this.url,
     this.additionalContent,
   });
 
@@ -216,7 +263,12 @@ class DialogHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DialogSectionLabel(label),
+          Row(
+            children: [
+              DialogSectionLabel(label),
+              if (url != null) SmallInfoLink(url: url!),
+            ],
+          ),
           if (title != null) DialogTitle(title!),
           if (additionalContent != null) ...additionalContent!,
         ],

@@ -59,27 +59,50 @@ String? selectSpec(List<String> specs, SpeedMode mode) {
   return null;
 }
 
-String prettySpeedHeader(String spec) {
+class Link {
+  final String text;
+  final String url;
+
+  Link({required this.text, required this.url});
+}
+
+String docsURL(String path) {
+  String hostname = "www.julien5.dev";
+  // hostname = "www.localhost";
+  String root = "https://$hostname/blog/wpx/docs";
+  return "$root/$path";
+}
+
+Link prettySpeedHeader(String spec) {
   if (parseSpeedMode(spec) == SpeedMode.acp) {
     // input = "ACP-300-20.0";
     List<String> parts = spec.split('-');
     if (parts.length > 2) {
       String km = parts[1];
       String hours = parts[2];
-      return "ACP: $km km, $hours h";
+      return Link(
+        text: "ACP: $km km, $hours h",
+        url: docsURL("UI.html#acp-rules"),
+      );
     }
   }
   if (parseSpeedMode(spec) == SpeedMode.lrm) {
     List<String> parts = spec.split('-');
     if (parts.length > 1) {
       String kmh = parts[1];
-      return "LRM: $kmh kmh";
+      return Link(text: "LRM: $kmh kmh", url: docsURL("UI.html#lrm-rules"));
     }
   }
   if (parseSpeedMode(spec) == SpeedMode.kmh) {
-    return "Overall average speed";
+    return Link(
+      text: "Overall average speed",
+      url: docsURL("UI.html#speed--cutoff-times"),
+    );
   }
-  return "[$spec]";
+  return Link(
+    text: "[$spec]",
+    url: "https://www.localhost/blog/wpx/docs/UI.html",
+  );
 }
 
 String prettySpeed(String spec) {
@@ -218,7 +241,11 @@ void openSpeedDialog({
           return StandardDialog(
             sections: [
               // Header
-              DialogHeader(label: 'SELECT SPEED', title: null),
+              DialogHeader(
+                label: 'SELECT SPEED',
+                title: null,
+                url: docsURL("UI.html#speed--cutoff-times"),
+              ),
               // Mode section
               Padding(
                 padding: DialogStyles.contentPadding,
@@ -279,10 +306,11 @@ void openSpeedDialog({
   TextEditingController textController,
 ) {
   Widget header = RadioListTile<SpeedMode>(
-    title: Text(prettySpeedHeader(spec)),
+    title: Text(prettySpeedHeader(spec).text),
     value: SpeedMode.kmh,
     controlAffinity: ListTileControlAffinity.leading,
   );
+
   Widget body = Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
     child: Row(
@@ -325,7 +353,7 @@ void openSpeedDialog({
 
 (Widget, Widget) acpTile(String spec, SpeedMode currentMode) {
   Widget header = RadioListTile<SpeedMode>(
-    title: Text(prettySpeedHeader(spec)),
+    title: Text(prettySpeedHeader(spec).text),
     value: parseSpeedMode(spec),
     controlAffinity: ListTileControlAffinity.leading,
   );
