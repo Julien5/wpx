@@ -136,6 +136,11 @@ pub async fn get_response(
             }
             Err(e) => {
                 log::error!("error:{:?}", e);
+                if let Some(TrackError::OSMDownloadCancelled) = e.downcast_ref::<TrackError>() {
+                    log::info!("user cancelled download");
+                    // stop
+                    return Err(e.into());
+                }
             }
         }
     }

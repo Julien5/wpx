@@ -12,7 +12,6 @@ use tracks::parameters::{parse_time, RenderFunction};
 use tracks::point_collection::onekind;
 use tracks::point_collection::Kind;
 use tracks::point_collection::{self, Kinds};
-use tracks::speed::Speed;
 use tracks::waypoint::Waypoint;
 use tracks::{error, speed};
 

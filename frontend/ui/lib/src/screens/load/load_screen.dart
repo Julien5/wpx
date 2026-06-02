@@ -129,12 +129,17 @@ class _OSMCard extends StatelessWidget {
     Widget row = OsmEventWidget(target: Job.osm);
     if (model.hasFailed(Job.osm) != null || model.runningJob() == Job.osm) {
       EdgeInsets valuePadding = const EdgeInsets.fromLTRB(15, 0, 15, 0);
+      Widget eventWidget = OsmEventWidget(target: Job.osm);
+      if (model.hasFailed(Job.osm) != null) {
+        debugPrint("failure");
+        eventWidget = EventWidget(target: Job.osm);
+      }
       row = Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          OsmEventWidget(target: Job.osm),
-          SizedBox(height: 5,),
+          eventWidget,
+          SizedBox(height: 5),
           OutlinedButton(
             onPressed:
                 model.runningJob() == Job.osm
@@ -151,9 +156,7 @@ class _OSMCard extends StatelessWidget {
       );
     }
 
-    Widget inner = Column(
-      children: [SmallText(text: "OSM"), row],
-    );
+    Widget inner = Column(children: [SmallText(text: "OSM"), row]);
     return Card(elevation: 4, child: inner);
   }
 }
