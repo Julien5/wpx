@@ -1,3 +1,5 @@
+use std::future::Future;
+
 use reqwest::Client;
 
 use crate::{
@@ -45,6 +47,21 @@ async fn handle_response(response: reqwest::Response) -> GenericResult<String> {
     }
 }
 
+#[allow(dead_code)]
+fn fake_request(ms: u64) -> impl Future<Output = Result<reqwest::Response, reqwest::Error>> {
+    async move {
+        // 1. Wait for the specified duration
+        tokio::time::sleep(tokio::time::Duration::from_millis(ms)).await;
+        // 2. Construct and return a simulated reqwest Error.
+        let simulated_error = reqwest::Client::new()
+            .get("") // Invalid empty URL causes an instant builder error
+            .build() // Or we can let the builder fail
+            .unwrap_err();
+
+        Err(simulated_error)
+    }
+}
+
 pub async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<String> {
     log::info!("download:{}", req);
     let url = "https://overpass-api.de/api/interpreter";
@@ -70,9 +87,10 @@ pub async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<
         .body(format!("data={}", urlencoding::encode(&req)));
     log::debug!("request={:?}", request);
     event::send_worker(&side.logger, &format!("{}", "osm:wait-for-response"));
-    //let tick = tokio::time::Duration::from_millis(20);
+    //let tick = tokio::time::Duration::from_millis(750);
     //tokio::time::sleep(tick).await;
     let future = request.send();
+    // let future = fake_request(500);
     tokio::select! {
         response = future => {
             match response {
@@ -84,6 +102,7 @@ pub async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<
             }
         }
         _ = side.cancel_token.cancelled() => {
+            log::trace!("e=cancel");
             return Err(TrackError::OSMDownloadCancelled.into());
         }
     }

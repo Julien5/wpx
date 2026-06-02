@@ -47,6 +47,7 @@ class OsmStatus {
 
   int downloadCurrent = -1;
   int downloadTotal = -1;
+  int retry = -1;
 
   OsmStatus();
 
@@ -70,6 +71,12 @@ class OsmStatus {
     }
     if (_taskName.contains("wait-for-response")) {
       return "waiting for response";
+    }
+    if (_taskName.contains("retry")) {
+      if (retry >= 0) {
+        return "retry #$retry";
+      }
+      return "retry..";
     }
     if (_taskName.contains("sort")) {
       return "sort";
@@ -102,6 +109,10 @@ class OsmStatus {
     if (_taskName.contains("wait")) {
       current = downloadCurrent;
       total = downloadTotal;
+    }
+
+    if (_taskName.contains("retry")) {
+      retry = int.parse(parts[2]) + 1;
     }
     debugPrint("onEvent current=$current total=$total");
   }
