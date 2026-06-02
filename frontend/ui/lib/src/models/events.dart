@@ -70,6 +70,9 @@ class OsmStatus {
       return "write cache";
     }
     if (_taskName.contains("wait-for-response")) {
+      if (total > 1) {
+        return "waiting for response $current/$total";
+      }
       return "waiting for response";
     }
     if (_taskName.contains("retry")) {
@@ -102,7 +105,7 @@ class OsmStatus {
       current = int.parse(parts[2]) + 1;
       total = int.parse(parts[3]);
       if (_taskName.contains("download")) {
-        downloadCurrent = current - 1;
+        downloadCurrent = current;
         downloadTotal = total;
       }
     }
