@@ -74,7 +74,7 @@ class PartsCard extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: enabled,
-              onReorder: onReorder,
+              onReorderItem: onReorder,
               children: children,
             )
             : ListView(
