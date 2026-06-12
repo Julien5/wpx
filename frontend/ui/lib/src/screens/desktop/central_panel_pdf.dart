@@ -46,7 +46,10 @@ class _CentralWidgetState extends State<CentralWidget> {
       children: [
         Expanded(
           child: GraphicsPadding(
-            child: TrackView(trackData: TrackData.map, svgSize: Size(400, 400)),
+            child: TrackView(
+              trackData: RenderFunction.map,
+              svgSize: Size(400, 400),
+            ),
           ),
         ),
         Expanded(child: Center(child: table!)),
@@ -58,7 +61,7 @@ class _CentralWidgetState extends State<CentralWidget> {
         constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
         child: ProfilePadding(
           child: TrackView(
-            trackData: TrackData.profile,
+            trackData: RenderFunction.profile,
             svgSize: Size(1000, 300),
           ),
         ),
@@ -119,7 +122,7 @@ class _CentralPanelPDFState extends State<CentralPanelPDF>
     Widget view = CentralPanelTabView(
       tabController: _tabController!,
       width: widget.width,
-      clients: [TrackData.map, TrackData.profile],
+      clients: [RenderFunction.map, RenderFunction.profile],
       kinds: allkinds(),
       screenFocus: ScreenFocus.settings,
       child: CentralWidget(width: widget.width),

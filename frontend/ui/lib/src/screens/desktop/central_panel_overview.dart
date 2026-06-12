@@ -37,7 +37,9 @@ class _CentralWidgetState extends State<CentralWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: GraphicsPadding(child: TrackView(trackData: TrackData.map)),
+          child: GraphicsPadding(
+            child: TrackView(trackData: RenderFunction.map),
+          ),
         ),
         Expanded(child: Center(child: table!)),
       ],
@@ -46,7 +48,9 @@ class _CentralWidgetState extends State<CentralWidget> {
     List<Widget> children = [
       ConstrainedBox(
         constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
-        child: ProfilePadding(child: TrackView(trackData: TrackData.profile)),
+        child: ProfilePadding(
+          child: TrackView(trackData: RenderFunction.profile),
+        ),
       ),
       Expanded(child: bottom),
     ];
@@ -71,8 +75,6 @@ class CentralPanelOverview extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return CentralPanelContent(
-          width: width,
-          clients: [TrackData.profile, TrackData.map],
           screenFocus: ScreenFocus.overview,
           child: CentralWidget(width: width),
         );

@@ -5,14 +5,18 @@ import 'package:wpx/src/models/futurerenderer.dart';
 
 class StackViewsController extends ChangeNotifier {
   int currentIndex = 0;
-  final List<TrackData> exposed;
-  final Map<TrackData, Size>? sizes;
-  final Map<TrackData, double>? scales;
+  final List<BridgeRenderFunction> exposed;
+  final Map<BridgeRenderFunction, Size>? sizes;
+  final Map<BridgeRenderFunction, double>? scales;
 
   StackViewsController({required this.exposed, this.sizes, this.scales});
 
-  static List<TrackData> wmp() {
-    return [TrackData.wheel, TrackData.map, TrackData.profile];
+  static List<BridgeRenderFunction> wmp() {
+    return [
+      BridgeRenderFunction.wheel,
+      BridgeRenderFunction.map,
+      BridgeRenderFunction.profile,
+    ];
   }
 
   void cycle() {
@@ -24,11 +28,11 @@ class StackViewsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  TrackData currentData() {
+  BridgeRenderFunction currentData() {
     return exposed[currentIndex];
   }
 
-  void changeCurrent(TrackData d) {
+  void changeCurrent(BridgeRenderFunction d) {
     currentIndex = exposed.indexOf(d);
     developer.log("[2]currentIndex:$currentIndex");
     notifyListeners();

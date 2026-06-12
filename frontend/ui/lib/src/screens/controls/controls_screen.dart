@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/screens/controls/controls_table.dart';
@@ -49,9 +50,15 @@ class _ControlsScaffold extends StatelessWidget {
     Kinds control = [Kind.controls];
     return Scaffold(
       appBar: AppBar(title: const Text('Control Points')),
-      body: AdaptiveLayout(
+      body: MobileScaffoldBody(
         topRow: TrackGraphicsRow(kinds: control),
-        midChildren: [_TextWidget(), _ButtonWidget()],
+        midColumn: MidColumn(children: [_TextWidget(), _ButtonWidget()]),
+        screenFocus: ScreenFocus.controls,
+        clients: [
+          RenderFunction.profile,
+          RenderFunction.map,
+          RenderFunction.wheel,
+        ],
       ),
     );
   }

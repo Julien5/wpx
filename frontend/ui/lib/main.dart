@@ -110,7 +110,10 @@ class ApplicationProvider extends StatelessWidget {
           create:
               (_) => StackViewsController(
                 exposed: StackViewsController.wmp(),
-                scales: {TrackData.profile: 1.5, TrackData.map: 1.5},
+                scales: {
+                  BridgeRenderFunction.profile: 1.5,
+                  BridgeRenderFunction.map: 1.5,
+                },
               ),
         ),
         ChangeNotifierProvider(

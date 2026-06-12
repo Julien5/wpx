@@ -34,14 +34,10 @@ class GraphicsPadding extends StatelessWidget {
 }
 
 class CentralPanelContent extends StatefulWidget {
-  final double width;
-  final List<TrackData> clients;
   final ScreenFocus screenFocus;
   final Widget child;
   const CentralPanelContent({
     super.key,
-    required this.width,
-    required this.clients,
     required this.screenFocus,
     required this.child,
   });
@@ -72,7 +68,7 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
         segment: segmentModel.segment,
-        clients: widget.clients,
+        clients: [RenderFunction.profile, RenderFunction.map],
         kinds: kindsModel.kinds,
         name: "${widget.screenFocus}",
       );
@@ -96,13 +92,16 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
   Widget build(BuildContext context) {
     debugPrint("_CentralPanelContentState(${futureRenderer!.clients}) build()");
     assert(futureRenderer != null);
-    return _Provider(futureRenderer: futureRenderer!, child: widget.child);
+    return FutureRendererProvider(
+      futureRenderer: futureRenderer!,
+      child: widget.child,
+    );
   }
 }
 
 class CentralPanelTabView extends StatefulWidget {
   final double width;
-  final List<TrackData> clients;
+  final List<RenderFunction> clients;
   final Kinds kinds;
   final ScreenFocus screenFocus;
   final TabController tabController;
@@ -204,21 +203,6 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
       children.add(provider);
     }
     return TabBarView(controller: widget.tabController, children: children);
-  }
-}
-
-class _Provider extends StatelessWidget {
-  final FutureRenderer futureRenderer;
-  final Widget child;
-
-  const _Provider({required this.futureRenderer, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: futureRenderer)],
-      child: child,
-    );
   }
 }
 

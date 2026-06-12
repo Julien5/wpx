@@ -35,7 +35,7 @@ class _LocalSegmentGraphicsState extends State<LocalSegmentGraphics> {
       bridge: widget.model.backend,
       segment: widget.model.segment,
       kinds: widget.kinds,
-      clients: [TrackData.map, TrackData.profile],
+      clients: [RenderFunction.map, RenderFunction.profile],
       name: "LocalSegmentGraphics",
     );
     futureRenderer!.setVisible(true);
@@ -162,7 +162,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     super.dispose();
   }
 
-  void onButtonPressed(BuildContext context, TrackData data) {
+  void onButtonPressed(BuildContext context, RenderFunction data) {
     StackViewsController model = Provider.of<StackViewsController>(
       context,
       listen: false,
@@ -176,7 +176,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     StackViewsController model = Provider.of<StackViewsController>(context);
     assert(_tabController != null);
 
-    TrackData currentModelData = model.currentData();
+    RenderFunction currentModelData = model.currentData();
 
     Widget buttonColumn = SegmentGraphicsButtonsColumn(
       onButtonPressed: (trackData) => {onButtonPressed(context, trackData)},

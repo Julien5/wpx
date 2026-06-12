@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -41,9 +42,15 @@ class _WheelScaffold extends StatelessWidget {
         ),
         title: const Text('Overview'),
       ),
-      body: AdaptiveLayout(
+      body: MobileScaffoldBody(
         topRow: TrackGraphicsRow(kinds: allkinds()),
-        midChildren: children,
+        midColumn: MidColumn(children: children),
+        screenFocus: ScreenFocus.overview,
+        clients: [
+          RenderFunction.profile,
+          RenderFunction.map,
+          RenderFunction.wheel,
+        ],
       ),
     );
   }

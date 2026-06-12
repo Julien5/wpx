@@ -11,7 +11,7 @@ class SimpleTrackView extends StatefulWidget {
   final RendererParameters rendererParameters;
   const SimpleTrackView({super.key, required this.rendererParameters});
 
-  static SimpleTrackView make(Kinds kinds, TrackData trackData) {
+  static SimpleTrackView make(Kinds kinds, BridgeRenderFunction trackData) {
     developer.log("[SimpleTrackView make] $trackData");
     RendererParameters parameters = RendererParameters(
       kinds: kinds,
@@ -25,8 +25,6 @@ class SimpleTrackView extends StatefulWidget {
 }
 
 class _SimpleTrackViewState extends State<SimpleTrackView> {
-  FutureRenderer? internalRenderer;
-
   @override
   void initState() {
     super.initState();
@@ -36,48 +34,21 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     context.watch<ParameterModel>();
-    SegmentModel segment = Provider.of<SegmentModel>(context, listen: false);
     FutureRenderer? externalRenderer = context.read<FutureRenderer?>();
-    if (externalRenderer == null) {
-      internalRenderer ??= FutureRenderer(
-        bridge: segment.backend,
-        segment: segment.segment,
-        kinds: widget.rendererParameters.kinds,
-        clients: [widget.rendererParameters.trackData],
-        name: "SimpleTrackView",
-      );
-
-      StackViewsController viewSwitch = context.read<StackViewsController>();
-
-      assert(internalRenderer != null);
-      bool visible =
-          (viewSwitch.currentData() == internalRenderer!.clients.first);
-      internalRenderer!.setVisible(visible);
-      internalRenderer!.updateSegment(segment.segment);
-      internalRenderer!.reset();
-      internalRenderer!.start();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    if (internalRenderer != null) {
-      internalRenderer!.dispose();
-    }
+    assert(externalRenderer != null);
   }
 
   @override
   Widget build(BuildContext context) {
     Provider.of<SegmentModel>(context);
-    TrackData data = widget.rendererParameters.trackData;
+    BridgeRenderFunction data = widget.rendererParameters.trackData;
     StackViewsController controller = context.watch<StackViewsController>();
     // honor controller.sizes
     Size? size = controller.sizes != null ? controller.sizes![data] : null;
-    Widget builder = LayoutBuilder(
+    return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         Size maxSize = Size(constraints.maxWidth, constraints.maxHeight);
-        // honor controller.scales (if sizes where not set, sizes have predence)
+        // honor controller.scales (if they are set)
         if (size == null &&
             controller.scales != null &&
             controller.scales![data] != null) {
@@ -87,18 +58,6 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
           trackData: widget.rendererParameters.trackData,
           svgSize: size,
         );
-      },
-    );
-
-    if (internalRenderer == null) {
-      return builder;
-    }
-
-    // use the internal renderer
-    return ChangeNotifierProvider.value(
-      value: internalRenderer!,
-      builder: (context, child) {
-        return builder;
       },
     );
   }

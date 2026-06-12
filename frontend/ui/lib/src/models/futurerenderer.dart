@@ -3,25 +3,26 @@ import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:wpx/src/log.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/utils/utils.dart';
 
-typedef TrackData = bridge.RenderFunction;
+typedef BridgeRenderFunction = bridge.RenderFunction;
 
 class FutureRenderer with ChangeNotifier {
   bridge.Segment _segment;
   final bridge.Bridge _backend;
-  final List<TrackData> clients;
+  final List<BridgeRenderFunction> clients;
 
   final List<bridge.Kind> _kinds;
 
   Future<List<bridge.RenderOutput>>? _future;
 
-  final Map<TrackData, Size?> _sizes = {};
-  final Map<TrackData, RenderOutput> _results = {};
+  final Map<BridgeRenderFunction, Size?> _sizes = {};
+  final Map<BridgeRenderFunction, RenderOutput> _results = {};
 
   bool _visible = false;
   bool _disposed = false;
@@ -73,7 +74,7 @@ class FutureRenderer with ChangeNotifier {
     assert(!done());
   }
 
-  Size getSize(TrackData d) {
+  Size getSize(BridgeRenderFunction d) {
     // this size is passed to the backend for rendering
     developer.log("wanted: $d has: ${_sizes.keys}");
     assert(_sizes.containsKey(d));
@@ -102,7 +103,7 @@ class FutureRenderer with ChangeNotifier {
     }
     if (_sizes.length != clients.length) {
       debugPrint(
-        "[render-request] ($name) ($clients) abort: size is not set for all track data",
+        "[render-request] ($name) ($clients) abort: size is not set for all track data (${_sizes.length} != ${clients.length})",
       );
       return;
     }
@@ -119,7 +120,8 @@ class FutureRenderer with ChangeNotifier {
     log("[render-request-start(($name)):$clients]");
     _results.clear();
     List<bridge.RenderInput> renderInputs = [];
-    for (TrackData d in clients) {
+    for (BridgeRenderFunction d in clients) {
+      assert(_sizes.containsKey(d), "missing size for $d at $name");
       (int, int) sizeParameter = sizeAsTuple(makeFinite(_sizes[d]!));
       renderInputs.add(
         bridge.RenderInput(kinds: _kinds, function: d, size: sizeParameter),
@@ -152,7 +154,7 @@ class FutureRenderer with ChangeNotifier {
     developer.log("[onCompleted ($name)]");
 
     for (bridge.RenderOutput output in values) {
-      TrackData d = output.renderInput.function;
+      BridgeRenderFunction d = output.renderInput.function;
       Kinds k = output.renderInput.kinds;
 
       debugPrint("($name)found value for $d and $k");
@@ -179,9 +181,15 @@ class FutureRenderer with ChangeNotifier {
     start();
   }
 
-  bool setSize(TrackData d, Size newSize) {
+  bool setSize(BridgeRenderFunction d, Size newSize) {
     if (newSize == _sizes[d]) {
       return false;
+    }
+    if (!clients.contains(d)) {
+      assert(
+        false,
+        "setSize for function $d that is not part of this renderer ($name: $clients)",
+      );
     }
     debugPrint("setSize($d,$newSize) old:[${_sizes[d]}]");
     _sizes[d] = newSize;
@@ -195,12 +203,31 @@ class FutureRenderer with ChangeNotifier {
     return _results.length == clients.length && _results.isNotEmpty;
   }
 
-  String result(TrackData d) {
+  String result(BridgeRenderFunction d) {
     assert(done());
     return _results[d]!.svg;
   }
 
-  RenderOutput? renderOutput(TrackData d) {
+  RenderOutput? renderOutput(BridgeRenderFunction d) {
     return _results[d];
+  }
+}
+
+class FutureRendererProvider extends StatelessWidget {
+  final FutureRenderer futureRenderer;
+  final Widget child;
+
+  const FutureRendererProvider({
+    super.key,
+    required this.futureRenderer,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [ChangeNotifierProvider.value(value: futureRenderer)],
+      child: child,
+    );
   }
 }

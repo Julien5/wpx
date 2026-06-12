@@ -2,7 +2,6 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wpx/src/models/futurerenderer.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/models/stackviewscontroller.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -20,15 +19,15 @@ class _SegmentGraphicsButtons extends StatelessWidget {
     this.onPressed,
   });
   final double margin = 8;
-  Image icon(TrackData data) {
+  Image icon(RenderFunction data) {
     String filename = 'assets/icons/png/map.png';
-    if (data == TrackData.wheel) {
+    if (data == RenderFunction.wheel) {
       filename = 'assets/icons/png/clock.png';
-    } else if (data == TrackData.profile) {
+    } else if (data == RenderFunction.profile) {
       filename = 'assets/icons/png/profile.png';
-    } else if (data == TrackData.map) {
+    } else if (data == RenderFunction.map) {
       filename = 'assets/icons/png/map.png';
-    } else if (data == TrackData.wheelPages) {
+    } else if (data == RenderFunction.wheelPages) {
       filename = 'assets/icons/png/clock.png';
     } else {
       assert(false, "no icon for $data");
@@ -61,8 +60,8 @@ class _SegmentGraphicsButtons extends StatelessWidget {
 }
 
 class SegmentGraphicsButtonsColumn extends StatelessWidget {
-  final void Function(TrackData) onButtonPressed;
-  final TrackData selected;
+  final void Function(RenderFunction) onButtonPressed;
+  final RenderFunction selected;
   final double size;
 
   const SegmentGraphicsButtonsColumn({
@@ -80,7 +79,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
     }
     const double buttonSize = 30;
     List<Widget> children = [];
-    for (TrackData data in model.exposed) {
+    for (RenderFunction data in model.exposed) {
       children.add(
         Padding(
           padding: const EdgeInsetsGeometry.fromLTRB(
@@ -118,7 +117,7 @@ class SegmentGraphics extends StatefulWidget {
 }
 
 class _SegmentGraphicsState extends State<SegmentGraphics> {
-  Map<TrackData, Widget> widgets = {};
+  Map<RenderFunction, Widget> widgets = {};
 
   @override
   void didChangeDependencies() {
@@ -132,7 +131,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
       listen: false,
     );
 
-    for (TrackData data in model.exposed) {
+    for (RenderFunction data in model.exposed) {
       widgets[data] = SimpleTrackView.make(widget.kinds, data);
     }
     setState(() {});
@@ -152,7 +151,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
     // is necessary to get rebuild on notifyListeners.
     StackViewsController model = Provider.of<StackViewsController>(context);
     double margin = 8;
-    TrackData currentModelData = model.currentData();
+    RenderFunction currentModelData = model.currentData();
     // I would like to have `visible = widgets[currentModelData]`
     // but then the widget states are disposed.
     // AI says: In Flutter, when you swap a widget out of the build tree,
@@ -183,7 +182,7 @@ class TrackGraphicsRow extends StatelessWidget {
 
   const TrackGraphicsRow({super.key, required this.kinds});
 
-  void onButtonPressed(BuildContext context, TrackData data) {
+  void onButtonPressed(BuildContext context, RenderFunction data) {
     StackViewsController model = Provider.of<StackViewsController>(
       context,
       listen: false,
@@ -196,7 +195,7 @@ class TrackGraphicsRow extends StatelessWidget {
     // Instanciating a Provider.of<Model>(context) (listen=true)
     // is necessary to get rebuild on notifyListeners.
     StackViewsController model = Provider.of<StackViewsController>(context);
-    TrackData currentModelData = model.currentData();
+    RenderFunction currentModelData = model.currentData();
     developer.log("[TrackGraphicsRow] build currentData:$currentModelData");
     Widget buttonColumn = SegmentGraphicsButtonsColumn(
       onButtonPressed: (trackData) => {onButtonPressed(context, trackData)},

@@ -6,12 +6,12 @@ import 'package:wpx/src/widgets/future_rendering_widget.dart';
 
 class RendererParameters {
   final Kinds kinds;
-  final TrackData trackData;
+  final BridgeRenderFunction trackData;
   const RendererParameters({required this.kinds, required this.trackData});
 }
 
 class TrackView extends StatelessWidget {
-  final TrackData trackData;
+  final BridgeRenderFunction trackData;
   final Size? svgSize;
   const TrackView({super.key, required this.trackData, this.svgSize});
 

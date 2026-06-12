@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wpx/src/models/futurerenderer.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -19,7 +18,9 @@ class CentralWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: GraphicsPadding(child: TrackView(trackData: TrackData.map)),
+          child: GraphicsPadding(
+            child: TrackView(trackData: RenderFunction.map),
+          ),
         ),
         Expanded(child: GPXTable(kinds: [Kind.cutOff])),
       ],
@@ -28,7 +29,9 @@ class CentralWidget extends StatelessWidget {
     List<Widget> children = [
       ConstrainedBox(
         constraints: BoxConstraints(minHeight: 275, maxHeight: 275),
-        child: ProfilePadding(child: TrackView(trackData: TrackData.profile)),
+        child: ProfilePadding(
+          child: TrackView(trackData: RenderFunction.profile),
+        ),
       ),
       Expanded(child: bottom),
     ];
@@ -50,11 +53,7 @@ class CentralPanelUserSteps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Kinds kinds = allkinds();
-    kinds.add(Kind.cutOff);
     return CentralPanelContent(
-      width: width,
-      clients: [TrackData.map, TrackData.profile],
       screenFocus: ScreenFocus.usersteps,
       child: CentralWidget(width: width),
     );

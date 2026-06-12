@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -73,9 +74,15 @@ class UserStepsScaffold extends StatelessWidget {
         title: const Text('Cutoff Points'),
       ),
 
-      body: AdaptiveLayout(
+      body: MobileScaffoldBody(
         topRow: TrackGraphicsRow(kinds: usersteps),
-        midChildren: midChilren,
+        midColumn: MidColumn(children: midChilren),
+        screenFocus: ScreenFocus.usersteps,
+        clients: [
+          RenderFunction.profile,
+          RenderFunction.map,
+          RenderFunction.wheel,
+        ],
       ),
     );
   }

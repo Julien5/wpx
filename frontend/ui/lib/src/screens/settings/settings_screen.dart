@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wpx/src/models/futurerenderer.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/models/stackviewscontroller.dart';
@@ -174,7 +173,7 @@ class TopRow extends StatelessWidget {
   Widget build(BuildContext context) {
     context.watch<ParameterModel>();
     return ChangeNotifierProvider(
-      create: (_) => StackViewsController(exposed: [TrackData.wheelPages]),
+      create: (_) => StackViewsController(exposed: [RenderFunction.wheelPages]),
       child: TrackGraphicsRow(kinds: allkinds()),
     );
   }
@@ -188,10 +187,10 @@ class BottomRow extends StatelessWidget {
     return ChangeNotifierProvider(
       create:
           (_) => StackViewsController(
-            exposed: [TrackData.profile, TrackData.map],
+            exposed: [RenderFunction.profile, RenderFunction.map],
             sizes: {
-              TrackData.profile: Size(1000, 300),
-              TrackData.map: Size(400, 400),
+              RenderFunction.profile: Size(1000, 300),
+              RenderFunction.map: Size(400, 400),
             },
           ),
       child: Column(
@@ -233,12 +232,19 @@ class _SettingsScaffoldState extends State<SettingsScaffold> {
         ),
         title: const Text('PDF'),
       ),
-      body: AdaptiveLayout(
+      body: MobileScaffoldBody(
         topRow: TopRow(),
-        midChildren: [
-          SettingsWidget(show: showBottomWidget, onShowPressed: onShowPressed),
-          if (showBottomWidget) BottomRow(),
-        ],
+        midColumn: MidColumn(
+          children: [
+            SettingsWidget(
+              show: showBottomWidget,
+              onShowPressed: onShowPressed,
+            ),
+            if (showBottomWidget) BottomRow(),
+          ],
+        ),
+        screenFocus: ScreenFocus.settings,
+        clients: [RenderFunction.wheelPages],
       ),
     );
   }
