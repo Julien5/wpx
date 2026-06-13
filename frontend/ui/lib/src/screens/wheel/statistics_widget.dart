@@ -14,7 +14,7 @@ import 'package:wpx/src/utils/utils.dart';
 
 class OverviewWidget extends StatefulWidget {
   final void Function()? onPacingPointPressed;
-  final void Function() onControlsPointPressed;
+  final void Function()? onControlsPointPressed;
   final void Function()? onPDFPressed;
   const OverviewWidget({
     super.key,
@@ -276,7 +276,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         TableRow(
           children: [
             SmallText(text: "Control points"),
-            SmallText(text: controlPointsText),
+            if (widget.onControlsPointPressed != null)
+              SmallButton(
+                text: controlPointsText,
+                callback: widget.onControlsPointPressed,
+              )
+            else
+              SmallText(text: controlPointsText),
           ],
         ),
         if (widget.onPacingPointPressed != null)

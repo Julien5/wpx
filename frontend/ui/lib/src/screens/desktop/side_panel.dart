@@ -161,7 +161,7 @@ class _SidePanelState extends State<SidePanel> {
           children: [
             OverviewWidget(
               onPacingPointPressed: null,
-              onControlsPointPressed: () {},
+              onControlsPointPressed: null,
               onPDFPressed: null,
             ),
             Card(elevation: 4, child: KindsRow()),
