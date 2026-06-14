@@ -51,7 +51,19 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
 
   bool isVisible(FociModel fociModel) {
     if (widget.screenFocus == ScreenFocus.overview) {
-      return fociModel.hasOnly(ScreenFocus.overview);
+      // Visible for {overview} or {overview,controls}.
+      if (fociModel.hasOnly(ScreenFocus.overview)) {
+        return true;
+      }
+      if (fociModel.contains(ScreenFocus.controls)) {
+        assert(
+          fociModel.contains(ScreenFocus.overview) &&
+              fociModel.foci.length == 2,
+          "foci:${fociModel.foci}",
+        );
+        return true;
+      }
+      return false;
     }
     return fociModel.contains(widget.screenFocus);
   }
@@ -59,7 +71,6 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    FociModel fociModel = context.watch<FociModel>();
     context.watch<ParameterModel>();
     KindsModel kindsModel = Provider.of(context);
     if (futureRenderer == null) {
@@ -76,7 +87,6 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
       debugPrint("REUSE FUTURE RENDER FOR ${widget.screenFocus}");
     }
     futureRenderer!.setKinds(kindsModel.kinds);
-    futureRenderer!.setVisible(isVisible(fociModel));
     // Needed because futureRenderer does not know the time parameters.
     // Change time parameters => update graphics.
     futureRenderer!.reset();
@@ -90,6 +100,8 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
 
   @override
   Widget build(BuildContext context) {
+    FociModel fociModel = context.watch<FociModel>();
+    futureRenderer!.setVisible(isVisible(fociModel));
     debugPrint("_CentralPanelContentState(${futureRenderer!.clients}) build()");
     assert(futureRenderer != null);
     return FutureRendererProvider(
