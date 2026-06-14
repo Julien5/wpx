@@ -67,9 +67,19 @@ class FociModel extends ChangeNotifier {
     }
     if (f == ScreenFocus.usersteps) {
       foci.remove(ScreenFocus.settings);
+      foci.remove(ScreenFocus.controls);
     }
     if (f == ScreenFocus.settings) {
       foci.remove(ScreenFocus.usersteps);
+      foci.remove(ScreenFocus.controls);
+    }
+    if (f == ScreenFocus.settings) {
+      foci.remove(ScreenFocus.usersteps);
+      foci.remove(ScreenFocus.controls);
+    }
+    if (f == ScreenFocus.controls) {
+      foci.remove(ScreenFocus.usersteps);
+      foci.remove(ScreenFocus.settings);
     }
     foci.add(f);
     notifyListeners();

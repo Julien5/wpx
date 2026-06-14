@@ -4,6 +4,7 @@ import 'package:wpx/src/models/futurerenderer.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
+import 'package:wpx/src/utils/utils.dart';
 import 'package:wpx/src/widgets/trackview.dart';
 import 'package:wpx/src/screens/desktop/central_panel.dart';
 import 'package:wpx/src/widgets/waypoints_table_widget.dart';
@@ -25,14 +26,28 @@ class _CentralWidgetState extends State<CentralWidget> {
     FutureRenderer renderer = Provider.of<FutureRenderer>(context);
     RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
     table ??= Text("no waypoints");
+    SegmentModel segmentModel = Provider.of(context);
+    List<Waypoint> waypoints = getBackend(context).getWaypoints(
+      segment: segmentModel.segment,
+      kinds: [Kind.gpxWaypoints, Kind.controls],
+    );
     if (renderOutput != null) {
-      List<Waypoint> waypoints = decimate(
-        waypoints: renderOutput.waypoints,
+      List<Waypoint> osm =
+          renderOutput.waypoints
+              .where(
+                (waypoint) =>
+                    waypoint.origin != Kind.controls &&
+                    waypoint.origin != Kind.gpxWaypoints,
+              )
+              .toList();
+      waypoints.addAll(osm);
+      waypoints = decimate(
+        waypoints: waypoints,
         segment: renderer.getSegment(),
         n: BigInt.from(renderOutput.waypoints.length),
       );
-      table = DesktopTable(waypoints: waypoints, editControls: true);
     }
+    table = DesktopTable(waypoints: waypoints, editControls: true);
     Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
