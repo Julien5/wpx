@@ -503,26 +503,7 @@ impl PointCollection {
     fn gpxwaypoints(&self) -> Vec<InputPoint> {
         let controls = self.get_vector(&Kind::Controls);
         let waypoints = self.get_vector(&Kind::GPXWaypoints);
-        let mut ret = Vec::new();
-        // filter out waypoints that are rendered as controls,
-        // "projection-aware":
-        // a waypoint may have two projections P1 and P2.
-        // If only P1 is rendered as control, push P2.
-        for w in waypoints {
-            let origin_id = w.gpxwaypoint_id();
-            let matching_control_projections: TrackProjections = controls
-                .iter()
-                .filter(|c| c.control_waypoint_origin_id() == origin_id)
-                .map(|c| c.track_projections.clone())
-                .flatten()
-                .collect();
-            for proj in &w.track_projections {
-                if !projections_contains_fuzzy(&matching_control_projections, &proj) {
-                    ret.push(w.clone_with_proj(proj));
-                }
-            }
-        }
-        ret
+        remove_control_waypoints(&waypoints, &controls)
     }
 
     pub fn range_cut(&mut self, range: &std::ops::Range<usize>) {
@@ -608,6 +589,32 @@ fn projections_contains_fuzzy(
         }
     }
     false
+}
+
+pub fn remove_control_waypoints(
+    waypoints: &Vec<InputPoint>,
+    controls: &Vec<InputPoint>,
+) -> Vec<InputPoint> {
+    let mut ret = Vec::new();
+    // filter out waypoints that are rendered as controls,
+    // "projection-aware":
+    // a waypoint may have two projections P1 and P2.
+    // If only P1 is rendered as control, push P2.
+    for w in waypoints {
+        let origin_id = w.gpxwaypoint_id();
+        let matching_control_projections: TrackProjections = controls
+            .iter()
+            .filter(|c| c.control_waypoint_origin_id() == origin_id)
+            .map(|c| c.track_projections.clone())
+            .flatten()
+            .collect();
+        for proj in &w.track_projections {
+            if !projections_contains_fuzzy(&matching_control_projections, &proj) {
+                ret.push(w.clone_with_proj(proj));
+            }
+        }
+    }
+    ret
 }
 
 fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {

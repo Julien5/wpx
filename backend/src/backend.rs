@@ -23,6 +23,7 @@ use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
 use crate::parameters::UserStepsOptions;
 use crate::point_collection::controls_speed_data;
+use crate::point_collection::remove_control_waypoints;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
@@ -423,7 +424,32 @@ impl Backend {
             return Vec::new();
         }
 
+        // take care of the GPXWaypoints/Control case first.
+        if kinds.contains(&Kind::GPXWaypoints) {
+            let controls = self
+                .d()
+                .packet_provider
+                .read()
+                .unwrap()
+                .collection
+                .get_vector(&Kind::Controls);
+            let mut waypoints = self
+                .d()
+                .packet_provider
+                .read()
+                .unwrap()
+                .collection
+                .get_vector(&Kind::GPXWaypoints);
+            if kinds.contains(&Kind::Controls) {
+                waypoints = remove_control_waypoints(&waypoints, &controls);
+            }
+            points.extend_from_slice(&waypoints);
+        }
+
         for kind in kinds {
+            if *kind == Kind::GPXWaypoints {
+                continue;
+            }
             let kpoints = self
                 .d()
                 .packet_provider
@@ -433,16 +459,6 @@ impl Backend {
                 .get_vector(kind);
             let mut copy = kpoints.clone();
             copy.retain(|w| {
-                if w.kind() == Kind::Controls && kinds.contains(&Kind::GPXWaypoints) {
-                    // When a control point has been created using a GPX waypoint,
-                    // and the waypoint is also going to be in the returned list (not cleanly
-                    // done), then discard this control, show only the GPX waypoint.
-                    // Otherwise, the informations are shown twice (e.g. in tables).
-                    // TODO: ensure that this gpx waypoint is really going to the caller.
-                    if !w.control_waypoint_origin_id().is_empty() {
-                        return false;
-                    }
-                }
                 w.is_close_to_track()
                     && range.contains(&w.track_projections.first().unwrap().track_index)
             });
