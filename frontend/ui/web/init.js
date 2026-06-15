@@ -14,17 +14,33 @@ function percent(n, total) {
     return `${(100 * n / total).toFixed(0)} %`;
 }
 
+function prettyFontName(filename) {
+  // 1. Remove the file extension (e.g., .ttf, .otf, .woff2)
+  let name = filename.replace(/\.[^/.]+$/, "");
+
+  // 2. Replace hyphens and underscores with spaces
+  name = name.replace(/[-_]/g, " ");
+
+  // 3. Insert spaces before capital letters (for PascalCase/CamelCase) 
+  // but avoid splitting consecutive capitals (like "TTF" or "SVG")
+  name = name.replace(/([a-z])([A-Z])/g, '$1 $2');
+  name = name.replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+
+  // 4. Clean up any accidental double spaces and trim edges
+  return name.replace(/\s+/g, ' ').trim();
+}
+
 function pretty(url) {
     const filename = url.split('/').pop();
     if (filename.includes("canvaskit")) return "Flutter engine";
-    if (filename.includes("ttf"))       return "Libertinus fonts";
+    if (filename.includes("ttf"))       return `${prettyFontName(filename)}`;
     if (filename.includes("rust"))      return "Rust code";
     if (filename.includes("dart"))      return "Application";
     return "User interface";
 }
 
 function updateProgressBar(downloadIndex, currentProgress) {
-    const totalProgress = (downloadIndex + currentProgress) / 6;
+    const totalProgress = (downloadIndex + currentProgress) / 4;
     const fill = document.querySelector(".progress-bar-fill");
     if (fill) fill.style.width = (totalProgress * 100) + "%";
 }
@@ -91,8 +107,11 @@ async function download(url, downloadIndex) {
 		await download("https://www.gstatic.com/flutter-canvaskit/c416acfeb8126e097f758c664aaa3da929e27da0/canvaskit.wasm", 1);
         await download("pkg/rust_lib_ui_bg.wasm",                                                                            2);
         await download("assets/fonts/LibertinusSerif-Regular.ttf",                                                      3);
-        await download("assets/fonts/LibertinusSerif-Bold.ttf",                                                         4);
-        await download("assets/fonts/LibertinusSerif-Italic.ttf",                                                       5);
+        await download("assets/fonts/LibertinusSerif-Bold.ttf",                                                         3);
+        await download("assets/fonts/LibertinusSerif-Italic.ttf",                                                       3);
+		await download("assets/fonts/LibertinusSans-Regular.ttf",                                                      3);
+        await download("assets/fonts/LibertinusSans-Bold.ttf",                                                         3);
+        await download("assets/fonts/LibertinusSans-Italic.ttf",                                                       3);
 
         // All done
         updateProgressBar(6, 0);

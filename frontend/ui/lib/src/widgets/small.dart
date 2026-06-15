@@ -158,6 +158,34 @@ class DialogTitle extends StatelessWidget {
   }
 }
 
+TextStyle infoTextStyle(BuildContext context) {
+  final cs = Theme.of(context).colorScheme;
+  ScreenConfiguration screenConfiguration = Provider.of(context);
+  double fontSize = screenConfiguration.mode == DisplayMode.vertical ? 9 : 11;
+  double letterSpacing =
+      screenConfiguration.mode == DisplayMode.vertical ? 0.7 : 1.1;
+  return TextStyle(
+    fontSize: fontSize,
+    letterSpacing: letterSpacing,
+    color: cs.onSurface.withValues(alpha: 0.9),
+  );
+}
+
+TextStyle spinnerTextStyle(BuildContext context) {
+  final cs = Theme.of(context).colorScheme;
+  ScreenConfiguration screenConfiguration = Provider.of(context);
+  double fontSize = screenConfiguration.mode == DisplayMode.vertical ? 12 : 14;
+  double letterSpacing =
+      screenConfiguration.mode == DisplayMode.vertical ? 0.7 : 1.1;
+  return TextStyle(
+    fontSize: fontSize,
+    fontWeight: FontWeight.w500,
+    letterSpacing: letterSpacing,
+    color: cs.onSurface,
+    fontFeatures: const [FontFeature.tabularFigures()],
+  );
+}
+
 /// Info text widget for displaying small information (e.g., "from start")
 class InfoText extends StatelessWidget {
   final String text;
@@ -165,15 +193,7 @@ class InfoText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 11,
-        letterSpacing: 1.1,
-        color: cs.onSurface.withValues(alpha: 0.9),
-      ),
-    );
+    return Text(text, textAlign: TextAlign.left, style: infoTextStyle(context));
   }
 }
 
