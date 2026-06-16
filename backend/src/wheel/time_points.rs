@@ -1,14 +1,10 @@
-use std::time::Duration;
-
-fn nice_interval(total_duration: Duration, n: usize) -> Duration {
-    let total_seconds = total_duration.as_secs_f64();
-
+fn nice_interval(duration: &TimeDelta, n: usize) -> chrono::TimeDelta {
     // Define nice intervals in seconds
     const MINUTE: f64 = 60.0;
     const HOUR: f64 = 3600.0;
     const DAY: f64 = 86400.0;
 
-    let nice_intervals = [
+    let nice_intervals_seconds = [
         1.0 * MINUTE,  // 1 minute
         2.0 * MINUTE,  // 2 minutes
         5.0 * MINUTE,  // 5 minutes
@@ -26,24 +22,26 @@ fn nice_interval(total_duration: Duration, n: usize) -> Duration {
         7.0 * DAY,     // 1 week
     ];
 
-    let target_interval = total_seconds / n as f64;
+    let target_interval_seconds = duration.as_seconds_f64() / n as f64;
 
     // Find the closest nice interval
-    let mut best_interval = nice_intervals[0];
-    let mut best_diff = (target_interval - best_interval).abs();
+    let mut best_interval_seconds = nice_intervals_seconds[0];
+    let mut best_diff = (target_interval_seconds - best_interval_seconds).abs();
 
-    for &interval in &nice_intervals {
-        let diff = (target_interval - interval).abs();
+    for &interval_seconds in &nice_intervals_seconds {
+        let diff = (target_interval_seconds - interval_seconds).abs();
         if diff < best_diff {
             best_diff = diff;
-            best_interval = interval;
+            best_interval_seconds = interval_seconds;
         }
     }
 
-    Duration::from_secs_f64(best_interval)
+    TimeDelta::milliseconds((1000f64 * best_interval_seconds).round() as i64)
 }
 
-use chrono::{Duration as ChronoDuration, TimeDelta, Timelike};
+use std::collections::BTreeSet;
+
+use chrono::{TimeDelta, Timelike};
 use mercator::DateTime;
 
 use crate::{
@@ -51,49 +49,6 @@ use crate::{
     speed::TimeParameters,
     wheel::model::{angle, CirclePoint},
 };
-
-fn generate_time_intervals(
-    start_time: DateTime,
-    duration: Duration,
-    interval: Duration,
-) -> Vec<DateTime> {
-    let mut times = Vec::new();
-
-    // Add start time
-    times.push(start_time);
-
-    // Calculate end time
-    let end_time = start_time + ChronoDuration::from_std(duration).unwrap();
-    use chrono::{Local, TimeZone};
-    let midnight = start_time
-        .date_naive()
-        .and_hms_opt(0, 0, 0)
-        .and_then(|naive_midnight| Local.from_local_datetime(&naive_midnight).single())
-        .expect("Valid midnight");
-
-    let interval_chrono = ChronoDuration::from_std(interval).unwrap();
-
-    // Find the first k such that midnight + k*interval > start_time
-    let mut k = 0;
-    loop {
-        let candidate = midnight + interval_chrono * k;
-
-        if candidate > start_time && candidate < end_time {
-            times.push(candidate);
-        }
-
-        if candidate >= end_time {
-            break;
-        }
-
-        k += 1;
-    }
-
-    // Add end time
-    times.push(end_time);
-
-    times
-}
 
 pub fn format_time(time: &DateTime, force: bool) -> String {
     // per default, to not make text from "12:30"
@@ -111,17 +66,15 @@ pub fn format_time(time: &DateTime, force: bool) -> String {
     }
 }
 
-fn make(times: &Vec<DateTime>, start_time: &DateTime, duration_seconds: f64) -> Vec<CirclePoint> {
+fn make(time_parameters: &TimeParameters, times: &Vec<DateTime>) -> Vec<CirclePoint> {
     let mut ret = Vec::new();
-    let a_start = angle(0.0, duration_seconds);
+    let a_start = angle(0.0, time_parameters.track_distance);
     let a_end = 360.0 - super::constants::ARCANGLE / 2.0;
     for (index, time) in times.iter().enumerate() {
         let force = index == 0 || index == times.len() - 1;
-        let x = time
-            .signed_duration_since(*start_time)
-            .as_seconds_f64()
-            .floor();
-        let a = angle(x, duration_seconds);
+
+        let x = time_parameters.distance(&(*time - time_parameters.start));
+        let a = angle(x, time_parameters.track_distance);
         let margin = 10.0;
         // this condition is needed if we include the start time (or the end time)
         // to ensure no label overlap
@@ -143,18 +96,84 @@ fn make(times: &Vec<DateTime>, start_time: &DateTime, duration_seconds: f64) -> 
 pub fn generate_circle_points(time_parameters: &TimeParameters) -> Vec<CirclePoint> {
     let duration = time_parameters.time(time_parameters.track_distance) - time_parameters.start;
     let duration_seconds = duration.as_seconds_f64();
-    let times = generate_times(time_parameters, &duration, 12);
-    make(&times, &time_parameters.start, duration_seconds)
+    let times = generate_times(time_parameters, 0f64, time_parameters.track_distance, 12);
+    make(&time_parameters, &times)
+}
+
+fn datetime_from_nanos(nanos: i64) -> DateTime {
+    use chrono::TimeZone;
+    chrono::Local
+        .timestamp_opt(nanos / 1_000_000_000, (nanos % 1_000_000_000) as u32)
+        .unwrap()
+}
+
+pub struct SnapResult {
+    pub floor: DateTime,
+    pub ceil: DateTime,
+}
+
+fn snap(time: &DateTime, duration: &TimeDelta) -> SnapResult {
+    let duration_nanos = duration
+        .num_nanoseconds()
+        .expect("duration too large to represent in nanoseconds");
+
+    let timestamp_nanos = time
+        .timestamp_nanos_opt()
+        .expect("datetime out of representable range");
+
+    let floor_nanos = timestamp_nanos.div_euclid(duration_nanos) * duration_nanos;
+    let ceil_nanos = floor_nanos
+        + if timestamp_nanos == floor_nanos {
+            0
+        } else {
+            duration_nanos
+        };
+
+    let floor = datetime_from_nanos(floor_nanos);
+    let ceil = datetime_from_nanos(ceil_nanos);
+
+    debug_assert!(floor <= ceil);
+    debug_assert!((*time - floor).abs().num_milliseconds() <= duration.num_milliseconds());
+    debug_assert!((*time - ceil).abs().num_milliseconds() <= duration.num_milliseconds());
+    SnapResult { floor, ceil }
 }
 
 pub fn generate_times(
     time_parameters: &TimeParameters,
-    duration: &TimeDelta,
+    start: f64,
+    end: f64,
     n: usize,
 ) -> Vec<DateTime> {
-    let duration_seconds = duration.as_seconds_f64();
-    let start_time: DateTime = time_parameters.start;
-    let duration = std::time::Duration::from_secs_f64(duration_seconds);
-    let interval = nice_interval(duration, n);
-    generate_time_intervals(start_time, duration, interval)
+    let mut points = BTreeSet::new();
+    let interval_points = time_parameters.interpolation_points();
+    for window in interval_points.windows(2) {
+        let (prev, next) = (&window[0], &window[1]);
+        let tprev = prev.unwrap_time();
+        if next.distance < start {
+            continue;
+        }
+        if prev.distance > end {
+            continue;
+        }
+        let tnext = next.unwrap_time();
+        let interval_duration = tnext - tprev;
+        let interval_distance = next.distance - prev.distance;
+        let interval_n =
+            (n as f64 * interval_distance / time_parameters.track_distance).ceil() as usize;
+        let interval_delta = nice_interval(&interval_duration, interval_n);
+        debug_assert!(interval_delta.num_seconds() > 0);
+        let mut t = snap(&prev.unwrap_time(), &interval_delta).floor;
+        loop {
+            log::debug!("t={} interval={}", t, interval_delta);
+            if t > next.unwrap_time() {
+                break;
+            }
+            let d = time_parameters.distance(&(t - time_parameters.start));
+            if start <= d && d <= end {
+                points.insert(t);
+            }
+            t += interval_delta;
+        }
+    }
+    points.iter().cloned().collect()
 }

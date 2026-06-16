@@ -6,6 +6,7 @@ use svg::Node;
 
 use crate::bbox::BoundingBox;
 use crate::format::round_time;
+use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
 use crate::label_placement::candidate::Candidate;
@@ -14,14 +15,11 @@ use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::math::Point2D;
-use crate::mercator::DateTime;
 use crate::parameters::ProfileIndication;
 use crate::point_collection::{
     controls_speed_data, Kind, Packets, RenderInputParameters, RenderResult,
 };
-use crate::speed::TimeParameters;
 use crate::track::Track;
-use crate::{gpsdata, speed};
 use crate::{label_placement, wheel};
 use crate::{label_placement::*, parameters};
 use elements::*;
@@ -204,7 +202,6 @@ impl ProfileView {
         let xend = self.bboxview().get_xmax();
 
         let start_time = parameters::parse_time(&self.parameters.parameters.start_time);
-        let speed = speed::parse_speed(&self.parameters.parameters.speed);
 
         let all_controls_speed_data = controls_speed_data(&controls);
         let mut times_limits: Vec<_> = all_controls_speed_data
@@ -216,32 +213,8 @@ impl ProfileView {
         times_limits.push((xend, self.parameters.time_parameters.time(xend)));
         times_limits.sort_by(|a, b| a.0.total_cmp(&b.0));
 
-        let mut times: Vec<DateTime> = Vec::new();
-        for window in times_limits.windows(2) {
-            let (start, end) = (window[0], window[1]);
-            debug_assert!(start.0 <= end.0);
-            if start.0 == end.0 {
-                continue;
-            }
-            let width = end.0 - start.0;
-            let parameters = TimeParameters {
-                controls: all_controls_speed_data.clone(),
-                start: start.1.clone(),
-                speed: speed.clone(),
-                track_distance: self.parameters.time_parameters.track_distance,
-            };
-            let nkm = (0.01 * self.W * width / self.bboxview().width()).ceil() as usize;
-            debug_assert!(start.1 <= end.1, "{:?},{:?}", start, end);
-            let duration = end.1 - start.1;
-            let mut local_times = wheel::time_points::generate_times(&parameters, &duration, nkm);
-            debug_assert!(local_times.len() >= 2);
-            // remove the first and the last element
-            local_times.pop();
-            if !local_times.is_empty() {
-                local_times.remove(0);
-            }
-            times.extend_from_slice(&local_times);
-        }
+        let times =
+            wheel::time_points::generate_times(&self.parameters.time_parameters, xstart, xend, 12);
         let bottom = ProfileGenerator::header_bottom();
         let mut features = Vec::new();
         for (k, time) in times.iter().enumerate() {

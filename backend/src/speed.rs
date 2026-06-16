@@ -372,7 +372,10 @@ impl PartialEq for ControlSpeedData {
 
 impl Eq for ControlSpeedData {}
 
-fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64) -> DateTime {
+fn find_interval_at_distance(
+    interpolation_points: &Vec<ControlSpeedData>,
+    distance: f64,
+) -> (&ControlSpeedData, &ControlSpeedData) {
     // controls must contains START and END.
     debug_assert!(interpolation_points.len() >= 2);
     // controls has to be sorted by distance and time
@@ -382,53 +385,66 @@ fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64)
      * start. The interpolations points have two elements at d==0:
      * 0h and 1h.
      */
-    let mut equals = interpolation_points.clone();
-    equals.retain(|c| c.distance == distance);
+    let equals: Vec<_> = interpolation_points
+        .iter()
+        .filter(|c| c.distance == distance)
+        .collect();
 
-    let (index_next, next) = {
-        if equals.len() > 1 {
-            equals.iter().enumerate().last().unwrap()
-        } else {
-            let larger = interpolation_points
-                .iter()
-                .enumerate()
-                .find(|(_, c)| c.distance >= distance);
-            match larger {
-                Some((index, point)) => (index, point),
-                None => interpolation_points.iter().enumerate().last().unwrap(),
-            }
+    if equals.len() >= 2 {
+        return (equals.first().unwrap(), equals.last().unwrap());
+    }
+
+    let next = {
+        let larger = interpolation_points.iter().find(|c| c.distance >= distance);
+        match larger {
+            Some(point) => point,
+            None => interpolation_points.last().unwrap(),
         }
     };
+
     ////////////////////////////////////////////////////////////////////
     // log::trace!("next: {:?}", next);								  //
     // for c in interpolation_points {								  //
     //     log::trace!("[TP1] inter:{:?},{:.1}", c.time, c.distance); //
     // }															  //
     ////////////////////////////////////////////////////////////////////
-    if index_next == 0 {
-        return interpolation_points.first().unwrap().unwrap_time();
+    if next.distance == 0f64 {
+        return (
+            interpolation_points.first().unwrap(),
+            interpolation_points.first().unwrap(),
+        );
     }
     let previous_candidate = interpolation_points
         .iter()
-        .enumerate()
-        .filter(|(index, control)| *index < index_next && control.distance <= next.distance)
+        .filter(|control| control.distance < next.distance)
         .last();
-    let (_, previous) = match previous_candidate {
-        Some((index, point)) => (index, point),
-        None => (0, interpolation_points.first().unwrap()),
+
+    let previous = match previous_candidate {
+        Some(point) => point,
+        None => interpolation_points.first().unwrap(),
     };
 
+    (previous, next)
+}
+
+fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64) -> DateTime {
+    // controls must contains START and END.
+    debug_assert!(interpolation_points.len() >= 2);
+    // controls has to be sorted by distance and time
+    debug_assert!(interpolation_points.is_sorted());
+    let (previous, next) = find_interval_at_distance(interpolation_points, distance);
     let (t1, d1) = (previous.unwrap_time(), previous.distance);
     let (t2, d2) = (next.unwrap_time(), next.distance);
-    ///////////////////////////////////////////////////
-    // log::trace!("[TP1] previous:{:?}", previous); //
-    // log::trace!("[TP1] 1:{:?},{:.1}", t1, d1);	 //
-    // log::trace!("[TP1] next:{:?}", next);		 //
-    // log::trace!("[TP1] 2:{:?},{:.1}", t2, d2);	 //
-    ///////////////////////////////////////////////////
+
+    log::trace!("[TP ] distance:{:?}", distance); //
+    log::trace!("[TP1] previous:{:?}", previous); //
+    log::trace!("[TP1] 1:{:?},{:.1}", t1, d1); //
+    log::trace!("[TP1] next:{:?}", next); //
+    log::trace!("[TP1] 2:{:?},{:.1}", t2, d2); //
+
     // This is the "somwhat degenerate" case mentioned above.
     if d1 == d2 {
-        debug_assert!(d1 == distance);
+        debug_assert!(d1 == distance, "{}", &format!("{} / {}", d1, distance));
         // the *cutoff* corresponds to the maximum time for a given distance.
         // => t2.
         return t2;
@@ -447,67 +463,56 @@ fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64)
     ret
 }
 
-fn interpolatation_points_at_distance(
-    interpolation_points: &Vec<ControlSpeedData>,
-    start_time: &DateTime,
-    duration: &TimeDelta,
-) -> (usize, usize) {
-    let current_time = *start_time + *duration;
-
+fn find_interval_at_time<'a>(
+    interpolation_points: &'a Vec<ControlSpeedData>,
+    time: &DateTime,
+) -> (&'a ControlSpeedData, &'a ControlSpeedData) {
     let next_candidate = interpolation_points
         .iter()
-        .enumerate()
-        .find(|(_, c)| c.unwrap_time() >= current_time);
+        .find(|c| c.unwrap_time() >= *time);
 
-    let (index_next, next) = match next_candidate {
-        Some((index, point)) => (index, point),
-        None => interpolation_points.iter().enumerate().last().unwrap(),
+    let next = match next_candidate {
+        Some(point) => point,
+        None => interpolation_points.iter().last().unwrap(),
     };
 
-    if index_next == 0 {
-        //log::trace!("next control is start");
-        return (0, 0);
+    if next.distance == 0f64 {
+        return (
+            interpolation_points.first().unwrap(),
+            interpolation_points.first().unwrap(),
+        );
     }
 
     let previous_candidate = interpolation_points
         .iter()
-        .enumerate()
-        .filter(|(index, control)| {
-            *index < index_next && control.unwrap_time() < next.time.unwrap()
-        })
+        .filter(|control| control.unwrap_time() < next.time.unwrap())
         .last();
-    let (index_previous, _) = match previous_candidate {
-        Some((index, point)) => (index, point),
-        None => (0, interpolation_points.first().unwrap()),
+    let previous = match previous_candidate {
+        Some(point) => point,
+        None => interpolation_points.first().unwrap(),
     };
-    (index_previous, index_next)
+    (previous, next)
 }
 
-fn interpolate_distance(
+pub fn interpolate_distance(
     interpolation_points: &Vec<ControlSpeedData>,
     start_time: &DateTime,
     duration: &TimeDelta,
 ) -> f64 {
-    let current_time = *start_time + *duration;
-    let (index_previous, index_next) =
-        interpolatation_points_at_distance(interpolation_points, start_time, duration);
-    if index_next == 0 {
-        //log::trace!("next control is start");
-        return 0f64;
-    }
-
-    let next = &interpolation_points[index_next];
-    let previous = &interpolation_points[index_previous];
-
+    let time = *start_time + *duration;
+    let (previous, next) = find_interval_at_time(interpolation_points, &time);
     let (t1, d1) = (previous.unwrap_time(), previous.distance);
     let (t2, d2) = (next.unwrap_time(), next.distance);
+    debug_assert!(t1 <= t2);
+    if t1 == t2 {
+        return d2;
+    }
     let span_ns = (t2 - t1)
         .num_nanoseconds()
         .expect("time span overflows i64 nanoseconds");
-    debug_assert!(t1 < t2);
-    debug_assert!(t1 <= current_time && current_time <= t2 || current_time > t2);
+    debug_assert!(t1 <= time && time <= t2 || time > t2);
 
-    let offset_ns = (current_time - t1)
+    let offset_ns = (time - t1)
         .num_nanoseconds()
         .expect("time offset overflows i64 nanoseconds");
 
@@ -616,7 +621,7 @@ pub struct TimeParameters {
 }
 
 impl TimeParameters {
-    fn interpolation_points(&self) -> Vec<ControlSpeedData> {
+    pub fn interpolation_points(&self) -> Vec<ControlSpeedData> {
         let ret = match &self.speed {
             Speed::ACP(spec) => {
                 ACP::interpolation_controls(&self.start, self.track_distance, &self.controls, &spec)
@@ -636,9 +641,11 @@ impl TimeParameters {
     pub fn time(&self, distance: f64) -> DateTime {
         interpolate_time(&self.interpolation_points(), distance)
     }
+
     pub fn distance(&self, duration: &TimeDelta) -> f64 {
         interpolate_distance(&self.interpolation_points(), &self.start, duration)
     }
+
     pub fn duration(&self, distance_a: f64, distance_b: f64) -> TimeDelta {
         debug_assert!(distance_a <= distance_b);
         let ta = interpolate_time(&self.interpolation_points(), distance_a);
