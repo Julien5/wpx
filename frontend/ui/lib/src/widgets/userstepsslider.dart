@@ -32,9 +32,9 @@ class UserStepsModel extends ChangeNotifier {
       return null;
     }
     if (options.stepDistance != null) {
-      return (options.stepDistance!/1000).toStringAsFixed(0);
+      return (options.stepDistance! / 1000).toStringAsFixed(0);
     }
-    return "${options.stepElevationGain}";
+    return options.stepElevationGain?.toStringAsFixed(0);
   }
 
   UserStepsModel({required this.parameterModel}) {
@@ -115,7 +115,7 @@ class UserStepsModel extends ChangeNotifier {
       );
     } else if (parameter == SelectedParameter.distance) {
       currentOptions = UserStepsOptions(
-        stepDistance: double.parse(value!)*1000,
+        stepDistance: double.parse(value!) * 1000,
         stepElevationGain: null,
         gpxNameFormat: currentOptions!.gpxNameFormat,
       );
