@@ -1,5 +1,3 @@
-use chrono::TimeDelta;
-
 use crate::{
     backend::Segment,
     controls,
@@ -112,14 +110,14 @@ fn control_name(w: &InputPoint) -> String {
 }
 
 impl WheelModel {
-    pub fn new(time_parameters: &TimeParameters, duration: &TimeDelta) -> Self {
+    pub fn new(time_parameters: &TimeParameters) -> Self {
         Self {
             time_parameters: time_parameters.clone(),
             control_points: Vec::new(),
             mid_points: Vec::new(),
             has_start_control: false,
             has_end_control: false,
-            time_points: time_points::generate_circle_points(time_parameters, duration),
+            time_points: time_points::generate_circle_points(time_parameters),
             outer_arcs: Vec::new(),
         }
     }

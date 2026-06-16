@@ -447,11 +447,11 @@ fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64)
     ret
 }
 
-pub fn interpolate_distance(
+fn interpolatation_points_at_distance(
     interpolation_points: &Vec<ControlSpeedData>,
     start_time: &DateTime,
     duration: &TimeDelta,
-) -> f64 {
+) -> (usize, usize) {
     let current_time = *start_time + *duration;
 
     let next_candidate = interpolation_points
@@ -466,7 +466,7 @@ pub fn interpolate_distance(
 
     if index_next == 0 {
         //log::trace!("next control is start");
-        return 0f64;
+        return (0, 0);
     }
 
     let previous_candidate = interpolation_points
@@ -476,10 +476,28 @@ pub fn interpolate_distance(
             *index < index_next && control.unwrap_time() < next.time.unwrap()
         })
         .last();
-    let (_, previous) = match previous_candidate {
+    let (index_previous, _) = match previous_candidate {
         Some((index, point)) => (index, point),
         None => (0, interpolation_points.first().unwrap()),
     };
+    (index_previous, index_next)
+}
+
+fn interpolate_distance(
+    interpolation_points: &Vec<ControlSpeedData>,
+    start_time: &DateTime,
+    duration: &TimeDelta,
+) -> f64 {
+    let current_time = *start_time + *duration;
+    let (index_previous, index_next) =
+        interpolatation_points_at_distance(interpolation_points, start_time, duration);
+    if index_next == 0 {
+        //log::trace!("next control is start");
+        return 0f64;
+    }
+
+    let next = &interpolation_points[index_next];
+    let previous = &interpolation_points[index_previous];
 
     let (t1, d1) = (previous.unwrap_time(), previous.distance);
     let (t2, d2) = (next.unwrap_time(), next.distance);

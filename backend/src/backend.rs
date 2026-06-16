@@ -653,7 +653,6 @@ impl Backend {
         let data = self.make_segment_data(segment);
         let mut ret = Vec::new();
         let time_parameters = self.time_parameters();
-        let duration = time_parameters.time(segment.end) - time_parameters.time(segment.start);
         for render_input in render_inputs {
             let size = IntegerSize2D::new(render_input.size.0, render_input.size.1);
             data.preload(&render_input.function, &render_input.kinds, &size);
@@ -662,12 +661,12 @@ impl Backend {
                 RenderFunction::Profile => data.render_profile(&size, &render_input.kinds),
                 RenderFunction::Map => data.render_map(&size, &render_input.kinds),
                 RenderFunction::Wheel => {
-                    let mut model = wheel::model::WheelModel::new(&time_parameters, &duration);
+                    let mut model = wheel::model::WheelModel::new(&time_parameters);
                     model.add_points(&data, &render_input.kinds);
                     wheel::render(&size, &model)
                 }
                 RenderFunction::WheelPages => {
-                    let mut model = wheel::model::WheelModel::new(&time_parameters, &duration);
+                    let mut model = wheel::model::WheelModel::new(&time_parameters);
                     model.add_points(&data, &render_input.kinds);
                     model.add_pages(&self.segments());
                     wheel::render(&size, &model)
@@ -829,9 +828,7 @@ mod tests {
         let sgdata = backend.make_segment_data(&track_segment);
         let segments = backend.segments();
         let time_parameters = backend.time_parameters();
-        let duration =
-            time_parameters.time(track_segment.end) - time_parameters.time(track_segment.start);
-        let mut model = wheel::model::WheelModel::new(&time_parameters, &duration);
+        let mut model = wheel::model::WheelModel::new(&time_parameters);
         model.add_pages(&segments);
         model.add_points(&sgdata, &point_collection::allkinds());
         let result = wheel::render(&IntegerSize2D::new(400, 400), &model);

@@ -140,14 +140,11 @@ fn make(times: &Vec<DateTime>, start_time: &DateTime, duration_seconds: f64) -> 
     ret
 }
 
-pub fn generate_circle_points(
-    time_parameters: &TimeParameters,
-    duration: &TimeDelta,
-) -> Vec<CirclePoint> {
+pub fn generate_circle_points(time_parameters: &TimeParameters) -> Vec<CirclePoint> {
+    let duration = time_parameters.time(time_parameters.track_distance) - time_parameters.start;
     let duration_seconds = duration.as_seconds_f64();
-    let start_time: DateTime = time_parameters.start;
-    let times = generate_times(time_parameters, duration, 12);
-    make(&times, &start_time, duration_seconds)
+    let times = generate_times(time_parameters, &duration, 12);
+    make(&times, &time_parameters.start, duration_seconds)
 }
 
 pub fn generate_times(
