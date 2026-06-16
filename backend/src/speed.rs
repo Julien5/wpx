@@ -436,11 +436,11 @@ fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64)
     let (t1, d1) = (previous.unwrap_time(), previous.distance);
     let (t2, d2) = (next.unwrap_time(), next.distance);
 
-    log::trace!("[TP ] distance:{:?}", distance); //
-    log::trace!("[TP1] previous:{:?}", previous); //
-    log::trace!("[TP1] 1:{:?},{:.1}", t1, d1); //
-    log::trace!("[TP1] next:{:?}", next); //
-    log::trace!("[TP1] 2:{:?},{:.1}", t2, d2); //
+    // log::trace!("[TP ] distance:{:?}", distance); //
+    // log::trace!("[TP1] previous:{:?}", previous); //
+    // log::trace!("[TP1] 1:{:?},{:.1}", t1, d1); //
+    // log::trace!("[TP1] next:{:?}", next); //
+    // log::trace!("[TP1] 2:{:?},{:.1}", t2, d2); //
 
     // This is the "somwhat degenerate" case mentioned above.
     if d1 == d2 {

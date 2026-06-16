@@ -11,6 +11,12 @@ class SegmentModel extends ChangeNotifier {
 
   SegmentModel({required this.segment, required this.backend});
 
+  @override
+  void notifyListeners() {
+    debugPrint('=> SegmentModel ($segment) notifies');
+    super.notifyListeners();
+  }
+
   void debug() {
     double length = backend.segmentStatistics(segment: segment).length / 1000;
     developer.log("segment length:$length");

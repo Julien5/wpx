@@ -87,8 +87,10 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
       debugPrint("REUSE FUTURE RENDER FOR ${widget.screenFocus}");
     }
     futureRenderer!.setKinds(kindsModel.kinds);
-    // Needed because futureRenderer does not know the time parameters.
+    // reset() is needed because futureRenderer does not know the time parameters.
     // Change time parameters => update graphics.
+    //
+    // This is not very good because this causes rebuild of the table, which flickers.
     futureRenderer!.reset();
   }
 

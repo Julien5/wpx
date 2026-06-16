@@ -23,6 +23,12 @@ class KindsModel with ChangeNotifier {
 
   KindsModel();
 
+  @override
+  void notifyListeners() {
+    debugPrint('=> KindsModel notifies');
+    super.notifyListeners();
+  }
+
   void addKind(Kind k) {
     if (kinds.contains(k)) {
       return;

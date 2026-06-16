@@ -43,6 +43,14 @@ class FutureRenderer with ChangeNotifier {
   }
 
   @override
+  void notifyListeners() {
+    debugPrint('=> FutureRenderer ($name) notifies.');
+    //debugPrint('STACK:');
+    //debugPrint('from:\n${StackTrace.current}');
+    super.notifyListeners();
+  }
+
+  @override
   void dispose() {
     debugPrint("[renderer dispose ($clients)]");
     _future = null; // Clear the future reference

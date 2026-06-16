@@ -26,7 +26,7 @@ class _CentralWidgetState extends State<CentralWidget> {
     FutureRenderer renderer = Provider.of<FutureRenderer>(context);
     RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
     table ??= Text("no waypoints");
-    SegmentModel segmentModel = Provider.of(context);
+    SegmentModel segmentModel = Provider.of(context, listen: false);
     List<Waypoint> waypoints = getBackend(context).getWaypoints(
       segment: segmentModel.segment,
       kinds: [Kind.gpxWaypoints, Kind.controls],
@@ -46,8 +46,12 @@ class _CentralWidgetState extends State<CentralWidget> {
         segment: renderer.getSegment(),
         n: BigInt.from(renderOutput.waypoints.length),
       );
+      table = DesktopTable(waypoints: waypoints, editControls: true);
+    } else {
+      // build() is also triggered from futureRenderer!.reset() in
+      // see CentralPanelContent, didChangeDependencies.
     }
-    table = DesktopTable(waypoints: waypoints, editControls: true);
+
     Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
