@@ -5,7 +5,6 @@ use crate::{
     point_collection::{Kind, Kinds},
     segment::SegmentData,
     speed::TimeParameters,
-    track::Track,
     wheel::time_points,
 };
 
@@ -88,12 +87,16 @@ pub struct WheelModel {
     pub outer_arcs: Vec<Arc>,
 }
 
-fn angles(point: &InputPoint, track: &Track) -> Vec<f64> {
-    let total = track.total_distance();
+fn angles(time_parameters: &TimeParameters, point: &InputPoint) -> Vec<f64> {
+    let total = time_parameters.time(time_parameters.track_distance) - time_parameters.start;
     point
         .track_projections
         .iter()
-        .map(|proj| angle(proj.distance_on_track_to_projection, total))
+        .map(|proj| {
+            let d =
+                time_parameters.time(proj.distance_on_track_to_projection) - time_parameters.start;
+            angle(d.as_seconds_f64(), total.as_seconds_f64())
+        })
         .collect()
 }
 
@@ -127,7 +130,7 @@ impl WheelModel {
             (self.has_start_control, self.has_end_control) =
                 controls::has_startend_controls(&segment.track, &controls);
             for c in &controls {
-                for a in angles(&c, &segment.track) {
+                for a in angles(&self.time_parameters, &c) {
                     let cp = CirclePoint {
                         angle: a,
                         name: control_name(&c),
@@ -139,7 +142,7 @@ impl WheelModel {
         }
         if kinds.contains(&Kind::CutOff) {
             for c in get_mid_points(segment) {
-                for a in angles(&c, &segment.track) {
+                for a in angles(&self.time_parameters, &c) {
                     let cp = CirclePoint {
                         angle: a,
                         name: c.name(),

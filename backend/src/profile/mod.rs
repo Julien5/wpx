@@ -213,8 +213,12 @@ impl ProfileView {
         times_limits.push((xend, self.parameters.time_parameters.time(xend)));
         times_limits.sort_by(|a, b| a.0.total_cmp(&b.0));
 
-        let times =
-            wheel::time_points::generate_times(&self.parameters.time_parameters, xstart, xend, 12);
+        let times = wheel::time_points::generate_times_uniform_distance(
+            &self.parameters.time_parameters,
+            xstart,
+            xend,
+            12,
+        );
         let bottom = ProfileGenerator::header_bottom();
         let mut features = Vec::new();
         for (k, time) in times.iter().enumerate() {
