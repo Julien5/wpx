@@ -21,6 +21,10 @@ fn nice_interval(duration: &TimeDelta, n: usize) -> chrono::TimeDelta {
         3.0 * DAY,     // 3 days
         7.0 * DAY,     // 1 week
     ];
+    debug_assert!(n > 0);
+    if n == 0 {
+        return duration.clone();
+    }
 
     let target_interval_seconds = duration.as_seconds_f64() / n as f64;
 
@@ -162,6 +166,8 @@ pub fn generate_times_uniform_distance(
     n: usize,
 ) -> Vec<DateTime> {
     let mut points = BTreeSet::new();
+    let total_distance = end - start;
+    debug_assert!(start < end);
     let interval_points = time_parameters.interpolation_points();
     for window in interval_points.windows(2) {
         let (prev, next) = (&window[0], &window[1]);
@@ -172,19 +178,28 @@ pub fn generate_times_uniform_distance(
         if prev.distance > end {
             continue;
         }
+        if next.distance == prev.distance {
+            continue;
+        }
         let tnext = next.unwrap_time();
         let interval_duration = tnext - tprev;
         let interval_distance = next.distance - prev.distance;
-        let interval_n =
-            (n as f64 * interval_distance / time_parameters.track_distance).ceil() as usize;
+        let interval_n = (n as f64 * interval_distance / total_distance).ceil() as usize;
         let interval_delta = nice_interval(&interval_duration, interval_n);
         debug_assert!(interval_delta.num_seconds() > 0);
         let mut t = midnight(&prev.unwrap_time());
+        log::trace!(
+            "add interval: duration:{}h n:{} => delta:{}h",
+            interval_duration.num_hours(),
+            interval_n,
+            interval_delta.num_hours(),
+        );
         loop {
             if t > next.unwrap_time() {
                 break;
             }
             if tprev <= t && t <= tnext {
+                log::trace!("add: {:?}", t);
                 points.insert(t);
             }
             t += interval_delta;

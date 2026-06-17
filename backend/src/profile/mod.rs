@@ -213,11 +213,13 @@ impl ProfileView {
         times_limits.push((xend, self.parameters.time_parameters.time(xend)));
         times_limits.sort_by(|a, b| a.0.total_cmp(&b.0));
 
+        let nkm = (0.01 * self.W).ceil() as usize;
+
         let times = wheel::time_points::generate_times_uniform_distance(
             &self.parameters.time_parameters,
             xstart,
             xend,
-            12,
+            nkm,
         );
         let bottom = ProfileGenerator::header_bottom();
         let mut features = Vec::new();
