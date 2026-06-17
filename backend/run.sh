@@ -67,7 +67,7 @@ function pdf() {
 		 --output /tmp/wpx/route.zip \
 		 --start-time "2026-04-10T00:00:00" \
 		 --speed ACP \
-		 --kinds Controls,CutOff,GPXWaypoints,Cities,Villages \
+		 --kinds Controls,CutOff,GPXWaypoints,Cities,Villages,Mountains \
 		 --debug true \
 		 --step-elevation-gain 100 \
 		 --segment-length $(segment-length ${file}) \
