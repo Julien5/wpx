@@ -1,63 +1,58 @@
 mod filesystem;
 #[cfg(target_arch = "wasm32")]
 mod indexdb;
-
 use crate::error::GenericResult;
-use crate::inputpoint::InputPointMap;
-use crate::tile::Chunk;
-
-#[cfg(not(target_arch = "wasm32"))]
-pub async fn write_worker(filename: &str, data: String) {
-    filesystem::write(filename, data)
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-pub async fn read_worker(filename: &str) -> GenericResult<String> {
-    filesystem::read(&filename)
-}
-
 #[cfg(target_arch = "wasm32")]
-pub async fn write_worker(path: &str, data: String) {
-    indexdb::write(&path, data).await
-}
-
-#[cfg(target_arch = "wasm32")]
-pub async fn read_worker(path: &str) -> GenericResult<String> {
-    match indexdb::read(path).await {
-        Ok(bytes) => Ok(bytes),
-        Err(e) => Err(e.into()),
-    }
-}
+use crate::error::TrackError;
 
 /*
+    $XDG_CONFIG_HOME
+        Where user-specific configurations should be written (analogous to /etc).
+        Should default to $HOME/.config.
+    $XDG_CACHE_HOME
+        Where user-specific non-essential (cached) data should be written (analogous to /var/cache).
+        Should default to $HOME/.cache.
+    $XDG_DATA_HOME
+        Where user-specific data files should be written (analogous to /usr/share).
+        Should default to $HOME/.local/share.
+    $XDG_STATE_HOME
+        Where user-specific state files should be written (analogous to /var/lib).
+        Should default to $HOME/.local/state.
+*/
+
+pub enum Location {
+    UserData,
+    OsmCache,
+}
+
 #[cfg(not(target_arch = "wasm32"))]
-async fn _hit_cache_worker(filename: &str) -> bool {
-    filesystem::hit_cache(filename)
+pub async fn write(b: &Location, filename: &str, data: String) -> GenericResult<()> {
+    filesystem::write(&filesystem::Directory::from_location(b), filename, data)
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub async fn read(b: &Location, filename: &str) -> GenericResult<String> {
+    filesystem::read(&filesystem::Directory::from_location(b), filename)
 }
 
 #[cfg(target_arch = "wasm32")]
-async fn _hit_cache_worker(path: &String) -> bool {
-    indexdb::hit_cache(&path).await
-}
-
-async fn _valid_cache(key: &str) -> bool {
-    match read_worker(key).await {
-        Ok(data) => match InputPointMap::from_string(&data) {
-            Ok(_map) => {
-                return true;
-            }
-            _ => {
-                log::info!("invalid cache at {}", key);
-                return false;
-            }
-        },
-        Err(_) => {
-            panic!("this should not happen");
+pub async fn write(b: &Location, filename: &str, data: String) -> GenericResult<()> {
+    match indexdb::write(&indexdb::Database::from_location(b), filename, data).await {
+        Ok(()) => Ok(()),
+        Err(e) => {
+            log::error!("error: {:?}", e);
+            return Err(TrackError::IOError.into());
         }
     }
 }
 
-async fn _hit_cache(chunk: &Chunk) -> bool {
-    let filename = chunk.basename();
-    return _hit_cache_worker(&filename).await && _valid_cache(&filename).await;
-}*/
+#[cfg(target_arch = "wasm32")]
+pub async fn read(b: &Location, filename: &str) -> GenericResult<String> {
+    match indexdb::read(&indexdb::Database::from_location(b), filename).await {
+        Ok(bytes) => Ok(bytes),
+        Err(e) => {
+            log::error!("error: {:?}", e);
+            Err(TrackError::IOError.into())
+        }
+    }
+}

@@ -71,8 +71,8 @@ class ParameterModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setParameters(bridge.Parameters p) {
-    backend.setParameters(parameters: p);
+  Future<void> setParameters(bridge.Parameters p) async {
+    await backend.setParameters(parameters: p);
     notifyListeners();
   }
 

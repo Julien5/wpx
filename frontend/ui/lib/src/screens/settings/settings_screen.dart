@@ -25,7 +25,7 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
   Timer? _debounceTimer;
   PageCountInfo? _pages;
 
-  void changePageIndex(BuildContext context, int desiredPageIndex) {
+  void changePageIndex(BuildContext context, int desiredPageIndex) async {
     ParameterModel parameters = Provider.of<ParameterModel>(
       context,
       listen: false,
@@ -39,7 +39,7 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
     debugPrint("print input length: $length overlap:$overlap");
     changer.changeSegmentLength(length);
     changer.changeSegmentOverlap(overlap);
-    parameters.setParameters(changer.current());
+    await parameters.setParameters(changer.current());
     Parameters output = parameters.parameters();
     debugPrint(
       "print output length: ${output.segmentLength} overlap:${output.segmentOverlap}",

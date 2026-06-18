@@ -22,6 +22,7 @@ use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
 use crate::parameters::UserStepsOptions;
+use crate::persist;
 use crate::point_collection::controls_speed_data;
 use crate::point_collection::remove_control_waypoints;
 use crate::point_collection::Kind;
@@ -344,7 +345,7 @@ impl Backend {
         self.d().parameters.clone()
     }
 
-    pub fn set_parameters(&mut self, parameters: &Parameters) {
+    pub async fn set_parameters(&mut self, parameters: &Parameters) {
         let old_time_parameters = self.time_parameters();
         let new_time_parameters = speed::TimeParameters {
             controls: Vec::new(),
@@ -414,6 +415,12 @@ impl Backend {
                 c.data.as_control_mut().unwrap().cutoff_time = new_cutoff;
             }
             locked.collection.import_other(&Kind::Controls, controls);
+        }
+        match persist::write_parameters().await {
+            Ok(_) => {}
+            Err(e) => {
+                log::error!("error: {:?}", e);
+            }
         }
     }
 

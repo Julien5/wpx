@@ -217,6 +217,7 @@ pub enum _TrackError {
     OSMDownloadTimeout,
     OSMDownloadCancelled,
     OSMDownloadRunning,
+    IOError,
     Unknown,
 }
 
@@ -301,9 +302,9 @@ impl Bridge {
     pub fn get_parameters(&mut self) -> Parameters {
         self.backend.get_parameters()
     }
-    #[frb(sync)]
-    pub fn set_parameters(&mut self, parameters: &Parameters) {
-        self.backend.set_parameters(parameters);
+
+    pub async fn set_parameters(&mut self, parameters: &Parameters) {
+        self.backend.set_parameters(parameters).await;
     }
 
     #[frb(sync)]

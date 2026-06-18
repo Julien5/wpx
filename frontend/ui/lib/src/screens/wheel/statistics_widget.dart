@@ -60,7 +60,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     });
   }
 
-  void writeModel() {
+  void writeModel() async {
     if (!mounted) return;
     ParameterModel parametersModel = Provider.of<ParameterModel>(
       context,
@@ -75,7 +75,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     changer.changeSpeed(speed!);
     changer.changeStartTime(startTime!);
     bridge.Parameters parameters = changer.current();
-    parametersModel.setParameters(parameters);
+    await parametersModel.setParameters(parameters);
     debugPrint("write speed:${parameters.speed}");
     setState(() {
       startTime = parseDateTime(parameters.startTime);

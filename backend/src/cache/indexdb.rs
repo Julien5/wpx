@@ -1,274 +1,144 @@
-use indexed_db_futures::database::Database;
 use indexed_db_futures::prelude::*;
-use indexed_db_futures::transaction::TransactionMode;
-use std::cell::OnceCell;
+use indexed_db_futures::IdbDatabase;
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::rc::Rc;
+use wasm_bindgen::JsValue;
+use web_sys::DomException;
 
-const DATABASE: &str = "db";
+use crate::cache::Location;
 
-/// Fallback store for files with no leading directory, or an unknown dirname.
-const DEFAULT_STORE: &str = "default";
+/// Represents the distinct databases in your application.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Database {
+    UserData,
+    OsmCache,
+}
 
-/// All object stores that exist in the database.
-/// - Add a new entry here when a new top-level directory is needed.
-/// - Then bump the DB version in `get_db` and add a migration branch.
-const KNOWN_STORES: &[&str] = &["osm", "tiles", "cache"];
-
-// Bump this when KNOWN_STORES changes.
-const DB_VERSION: u8 = 2;
-
-// ---------------------------------------------------------------------------
-// Filename decomposition
-// ---------------------------------------------------------------------------
-
-/// Splits a filename into (store_name, key).
-///
-/// The dirname is looked up in `KNOWN_STORES`:
-///   "osm/1/E009-N060"  -> ("osm",     "1/E009-N060")   known store
-///   "foo/bar"          -> ("default",  "foo/bar")       unknown dirname -> fallback
-///   "bare_file"        -> ("default",  "bare_file")     no slash -> fallback
-///
-/// When falling back to DEFAULT_STORE the full filename is used as the key
-/// to avoid collisions between e.g. "foo/x" and "bar/x" both becoming "x".
-fn split_path(filename: &str) -> (&str, &str) {
-    if let Some(pos) = filename.find('/') {
-        let dir = &filename[..pos];
-        if KNOWN_STORES.contains(&dir) {
-            return (dir, &filename[pos + 1..]);
+impl Database {
+    pub fn from_location(b: &Location) -> Self {
+        match b {
+            Location::UserData => Self::UserData,
+            Location::OsmCache => Self::OsmCache,
         }
     }
-    (DEFAULT_STORE, filename)
+    fn name_version(&self) -> (String, u32) {
+        let name = match self {
+            Database::UserData => format!("{}", "UserData"),
+            Database::OsmCache => format!("{}", "OsmCache"),
+        };
+        let version = match self {
+            Database::UserData => 1,
+            Database::OsmCache => 2,
+        };
+        (name, version)
+    }
+
+    /// Every database needs at least one object store to hold key-value data.
+    /// We use a standard name across all databases for simplicity.
+    fn store_name(&self) -> String {
+        format!("{}", "store")
+    }
 }
 
-// ---------------------------------------------------------------------------
-// Cached database handle
-// ---------------------------------------------------------------------------
-
-// WASM is single-threaded, so a thread_local OnceCell is safe and avoids
-// the Send + Sync requirements that a static would impose on Database.
+// WASM is strictly single-threaded. We use a thread-local RefCell containing a HashMap
+// to cache our open database connections. The `Rc` allows us to cheaply clone the connection
+// without worrying about lifetime issues.
 thread_local! {
-    static DB: OnceCell<Database> = OnceCell::new();
+    static DATABASES: RefCell<HashMap<Database, Rc<IdbDatabase>>> = RefCell::new(HashMap::new());
 }
 
-use thiserror::Error;
-#[derive(Error, Debug, Clone)]
-pub enum Error {
-    #[error("OpenFailed")]
-    OpenFailed,
-}
-
-/// Returns a reference to the cached Database, opening it on the first call.
-///
-/// Because WASM is single-threaded we borrow the OnceCell value inside the
-/// thread_local for the duration of each async operation.  The database
-/// handle stays alive for the lifetime of the page.
-///
-/// Store creation: IndexedDB requires all object stores to be declared
-/// during an `upgradeneeded` event.  Since we derive store names from
-/// directory names at runtime we can't know them all upfront.  The
-/// standard workaround is to open the database WITHOUT specifying stores
-/// in `upgradeneeded` and instead create each store lazily by bumping the
-/// version when a new dirname appears.  However, that requires tracking
-/// which stores exist and re-opening with a new version -- complex and slow.
-///
-/// Simpler alternative chosen here: KNOWN_STORES defines the fixed set of
-/// stores created at version 1.  Unknown dirnames fall through to
-/// DEFAULT_STORE.  To add a new store: push to KNOWN_STORES, bump the
-/// version constant below, and add a migration branch.
-///
-/// If you truly need fully dynamic stores at runtime, replace this function
-/// with one that tracks known stores in localStorage and re-opens with a
-/// bumped version when a new dirname is encountered.
-async fn get_db() -> Result<&'static Database, Error> {
-    // Check if already initialised (fast path -- no async work).
-    let cached = DB.with(|cell| {
-        // SAFETY: we extend the lifetime of the reference to 'static.
-        // This is sound because the OnceCell lives in a thread_local that
-        // exists for the entire page lifetime, and WASM is single-threaded
-        // so there is no concurrent access.
-        cell.get().map(|db| unsafe { &*(db as *const Database) })
-    });
-
-    if let Some(db) = cached {
+async fn get_db(database: &Database) -> Result<Rc<IdbDatabase>, JsValue> {
+    // 1. Check cache
+    let cached_db = DATABASES.with(|dbs| dbs.borrow().get(&database).cloned());
+    if let Some(db) = cached_db {
         return Ok(db);
     }
 
-    // First call: open the database.
-    let db = match Database::open(DATABASE)
-        .with_version(1u8)
-        .with_on_upgrade_needed(|event, db| {
-            let old_version = event.old_version() as u64;
-            let new_version = event.new_version().map(|v| v as u64);
-            log::info!("IDB upgrade: {:?} -> {:?}", old_version, new_version);
+    // 2. Fetch version from your enum
+    let (name, version) = database.name_version();
 
-            match (old_version, new_version) {
-                (0, Some(1)) => {
-                    // Fallback store for bare filenames and unknown dirnames.
-                    db.create_object_store(DEFAULT_STORE)
-                        .with_auto_increment(false)
-                        .build()?;
+    // 3. Initiate open request
+    let mut db_req =
+        IdbDatabase::open_u32(&name, version).map_err(|e: DomException| JsValue::from(e))?;
 
-                    // One store per entry in KNOWN_STORES.
-                    for store_name in KNOWN_STORES {
-                        db.create_object_store(store_name)
-                            .with_auto_increment(false)
-                            .build()?;
-                    }
-                }
-                // Example of how to add a new store in a future version:
-                //
-                // (1, Some(2)) => {
-                //     db.create_object_store("new_store")
-                //         .with_auto_increment(false)
-                //         .build()?;
-                // }
-                _ => {}
+    let local_database = database.clone();
+    // 4. Set the upgrade handler
+    // We clone the enum variant to move it into the closure safely
+    db_req.set_on_upgrade_needed(Some(
+        move |evt: &IdbVersionChangeEvent| -> Result<(), JsValue> {
+            let db = evt.db();
+            let store = local_database.store_name();
+
+            // This logic runs whenever the requested version is higher than the existing version
+            if !db.object_store_names().any(|n| n == store) {
+                db.create_object_store(&store)
+                    .map_err(|e: DomException| JsValue::from(e))?;
             }
-            Ok(())
-        })
-        .await
-    {
-        Ok(db) => db,
-        Err(e) => {
-            log::error!("could not open db: {}", e);
-            return Err(Error::OpenFailed);
-        }
-    };
 
-    // Store in the thread_local and return a 'static reference.
-    DB.with(|cell| {
-        let _ = cell.set(db); // ignore error if another task raced us
-        Ok(unsafe { &*(cell.get().unwrap() as *const Database) })
-    })
+            // FUTURE-PROOFING:
+            // If you ever need complex migrations (e.g., version 1 -> 2),
+            // you can check evt.old_version() here:
+            // let old = evt.old_version();
+            // if old < 2 { /* perform migration logic */ }
+
+            Ok(())
+        },
+    ));
+
+    // 5. Await the result
+    let db: IdbDatabase = db_req.await.map_err(|e: DomException| JsValue::from(e))?;
+    let db = Rc::new(db);
+
+    // 6. Cache
+    DATABASES.with(|dbs| {
+        dbs.borrow_mut().insert(database.clone(), db.clone());
+    });
+
+    Ok(db)
 }
 
-// ---------------------------------------------------------------------------
-// Write
-// ---------------------------------------------------------------------------
+/// Writes a string payload to the specified database under the given key.
+pub async fn write(database: &Database, key: &str, data: String) -> Result<(), JsValue> {
+    log::trace!("db write: {}", key);
+    let db = get_db(database).await?;
+    let store = database.store_name();
 
-async fn awrite(filename: &str, data: String) -> Result<(), Error> {
-    let (store_name, key) = split_path(filename);
-    let db = get_db().await?;
+    // Open a read-write transaction on the specific database
+    let tx = db.transaction_on_one_with_mode(&store, IdbTransactionMode::Readwrite)?;
+    let object_store = tx.object_store(&store)?;
 
-    let transaction = db
-        .transaction(store_name)
-        .with_mode(TransactionMode::Readwrite)
-        .build()
-        .map_err(|e| {
-            log::error!("could not open write transaction: {}", e);
-            Error::OpenFailed
-        })?;
-
-    let store = transaction.object_store(store_name).map_err(|e| {
-        log::error!("could not open store '{}': {}", store_name, e);
-        Error::OpenFailed
-    })?;
-
-    store.put(data).with_key(key).await.map_err(|e| {
-        log::error!(
-            "put failed for key '{}' in store '{}': {}",
-            key,
-            store_name,
-            e
-        );
-        Error::OpenFailed
-    })?;
-
-    // commit() is best-effort: the transaction auto-commits when it goes out
-    // of scope, and some IDB implementations raise InvalidStateError if you
-    // call commit() after the request already settled.
-    if let Err(e) = transaction.commit().await {
-        log::warn!("commit returned an error (likely harmless): {}", e);
-    }
+    // IndexedDB keys and values must be JsValues
+    object_store
+        .put_key_val(&JsValue::from_str(key), &JsValue::from_str(&data))?
+        .await?;
 
     Ok(())
 }
 
-pub async fn write(filename: &str, data: String) {
-    if let Err(e) = awrite(filename, data).await {
-        log::error!("write('{}') failed: {}", filename, e);
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Read
-// ---------------------------------------------------------------------------
-
-async fn aread(filename: &str) -> Result<String, Error> {
-    let (store_name, key) = split_path(filename);
-    let db = get_db().await?;
-
-    let transaction = db
-        .transaction(store_name)
-        .with_mode(TransactionMode::Readonly)
-        .build()
-        .map_err(|e| {
-            log::error!("could not open read transaction: {}", e);
-            Error::OpenFailed
-        })?;
-
-    let store = transaction.object_store(store_name).map_err(|e| {
-        log::error!("could not open store '{}': {}", store_name, e);
-        Error::OpenFailed
-    })?;
-
-    match store.get(key).await.map_err(|e| {
-        log::error!(
-            "get failed for key '{}' in store '{}': {}",
-            key,
-            store_name,
-            e
-        );
-        Error::OpenFailed
-    })? {
-        Some(value) => Ok(value),
-        None => Err(Error::OpenFailed),
-    }
-}
-
-pub async fn read(filename: &str) -> Result<String, Error> {
-    aread(filename).await
-}
-
-// ---------------------------------------------------------------------------
-// Cache hit check
-// ---------------------------------------------------------------------------
-
-async fn ahit_cache(filename: &str) -> bool {
-    let (store_name, key) = split_path(filename);
-    let db = match get_db().await {
-        Ok(db) => db,
-        Err(_) => return false,
-    };
-
-    let transaction = match db
-        .transaction(store_name)
-        .with_mode(TransactionMode::Readonly)
-        .build()
-    {
-        Ok(t) => t,
+/// Reads a string payload from the specified database by its key.
+pub async fn read(database: &Database, key: &str) -> Result<String, JsValue> {
+    log::trace!("db read: {}", key);
+    let db = get_db(database).await?;
+    /*{
+        Ok(d) => d,
         Err(e) => {
-            log::error!("could not open transaction: {}", e);
-            return false;
+            return Err(e);
         }
-    };
+    };*/
+    let store = database.store_name();
 
-    let store = match transaction.object_store(store_name) {
-        Ok(s) => s,
-        Err(e) => {
-            log::error!("could not open store '{}': {}", store_name, e);
-            return false;
+    // Open a read-only transaction (faster than read-write)
+    let tx = db.transaction_on_one_with_mode(&store, IdbTransactionMode::Readonly)?;
+    let object_store = tx.object_store(&store)?;
+
+    let result = object_store.get(&JsValue::from_str(key))?.await?;
+    let ret = match result {
+        Some(jsvalue) => {
+            debug_assert!(jsvalue.is_string());
+            Ok(jsvalue.as_string().unwrap())
         }
+        None => Err(JsValue::from_str("bad")),
     };
-
-    store
-        .get::<String, _, _>(key)
-        .await
-        .ok()
-        .flatten()
-        .is_some()
-}
-
-#[allow(dead_code)]
-pub async fn hit_cache(filename: &str) -> bool {
-    ahit_cache(filename).await
+    ret
 }

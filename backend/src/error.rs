@@ -26,6 +26,9 @@ pub enum TrackError {
     #[error("OSM download running")]
     OSMDownloadRunning,
 
+    #[error("input/output error")]
+    IOError,
+
     #[error("An unknown error occurred")]
     Unknown,
 }
