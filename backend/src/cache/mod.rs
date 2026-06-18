@@ -1,3 +1,7 @@
+mod filesystem;
+#[cfg(target_arch = "wasm32")]
+mod indexdb;
+
 use crate::error::GenericResult;
 use crate::inputpoint::InputPointMap;
 use crate::tile::Chunk;
@@ -32,22 +36,22 @@ fn cache_path(filename: &str) -> String {
 
 #[cfg(not(target_arch = "wasm32"))]
 pub async fn write_worker(filename: &str, data: String) {
-    super::filesystem::write(&cache_path(filename), data)
+    filesystem::write(&cache_path(filename), data)
 }
 
 #[cfg(not(target_arch = "wasm32"))]
 pub async fn read_worker(filename: &str) -> GenericResult<String> {
-    super::filesystem::read(&cache_path(filename))
+    filesystem::read(&cache_path(filename))
 }
 
 #[cfg(target_arch = "wasm32")]
 pub async fn write_worker(path: &str, data: String) {
-    super::indexdb::write(&path, data).await
+    indexdb::write(&path, data).await
 }
 
 #[cfg(target_arch = "wasm32")]
 pub async fn read_worker(path: &str) -> GenericResult<String> {
-    match super::indexdb::read(path).await {
+    match indexdb::read(path).await {
         Ok(bytes) => Ok(bytes),
         Err(e) => Err(e.into()),
     }
@@ -55,12 +59,12 @@ pub async fn read_worker(path: &str) -> GenericResult<String> {
 
 #[cfg(not(target_arch = "wasm32"))]
 async fn _hit_cache_worker(filename: &str) -> bool {
-    super::filesystem::hit_cache(&cache_path(filename))
+    filesystem::hit_cache(&cache_path(filename))
 }
 
 #[cfg(target_arch = "wasm32")]
 async fn _hit_cache_worker(path: &String) -> bool {
-    super::indexdb::hit_cache(&path).await
+    indexdb::hit_cache(&path).await
 }
 
 async fn _valid_cache(key: &str) -> bool {

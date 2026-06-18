@@ -7,9 +7,9 @@ use crate::tile::Chunks;
 use crate::tile::Tile;
 use crate::tile::Tiles;
 
-use super::cache::read_worker;
-use super::cache::write_worker;
 use super::request::*;
+use crate::cache::read_worker;
+use crate::cache::write_worker;
 
 async fn read_cache_for_boxes(
     req: &Request,

@@ -143,7 +143,7 @@ async fn aread(filename: &str) -> Result<String, Error> {
 async fn ahit_cache(filename: &str) -> bool {
     let db = match opendb().await {
         Ok(db) => db,
-        Err(e) => {
+        Err(_e) => {
             return false;
         }
     };
