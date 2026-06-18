@@ -188,19 +188,12 @@ pub fn generate_times_uniform_distance(
         let interval_delta = nice_interval(&interval_duration, interval_n);
         debug_assert!(interval_delta.num_seconds() > 0);
         let mut t = midnight(&prev.unwrap_time());
-        log::trace!(
-            "add interval: duration:{}h n:{} => delta:{}h",
-            interval_duration.num_hours(),
-            interval_n,
-            interval_delta.num_hours(),
-        );
         loop {
             if t > next.unwrap_time() {
                 break;
             }
             let pos = time_parameters.distance(&(t - time_parameters.start));
             if tprev <= t && t <= tnext && start <= pos && pos <= end {
-                log::trace!("add: {:?}", t);
                 points.insert(t);
             }
             t += interval_delta;
