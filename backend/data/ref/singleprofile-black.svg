@@ -1,61 +1,8 @@
 <svg height="400" width="1420" xmlns="http://www.w3.org/2000/svg">
 <g font-size="18" id="world" shape-rendering="crispEdges">
 <g id="BG"/>
-<g id="SB" transform="translate(71 360)">
-<text text-anchor="middle" x="0" y="17">
-0
-</text>
-<text text-anchor="middle" x="245" y="17">
-20
-</text>
-<text text-anchor="middle" x="490" y="17">
-40
-</text>
-<text text-anchor="middle" x="735" y="17">
-60
-</text>
-<text text-anchor="middle" x="980" y="17">
-80
-</text>
-<text text-anchor="middle" x="1225" y="17">
-100
-</text>
-</g>
+<g id="SB" transform="translate(71 360)"/>
 <g id="SD" transform="translate(71 0)">
-<path d="M0,0 L1347.5,0" stroke="black" stroke-width="3"/>
-<path d="M0,0 L0,358.5" stroke="black" stroke-width="3"/>
-<path d="M0,358.5 L1347.5,358.5" stroke="black" stroke-width="3"/>
-<path d="M1347.5,0 L1347.5,358.5" stroke="black" stroke-width="3"/>
-<path d="M0,358.5 L1347.5,358.5" stroke="black" stroke-width="1"/>
-<path d="M0,20 L0,358.5" stroke="black" stroke-width="1"/>
-<path d="M245,20 L245,358.5" stroke="black" stroke-width="1"/>
-<path d="M490,20 L490,358.5" stroke="black" stroke-width="1"/>
-<path d="M735,20 L735,358.5" stroke="black" stroke-width="1"/>
-<path d="M980,20 L980,358.5" stroke="black" stroke-width="1"/>
-<path d="M1225,20 L1225,358.5" stroke="black" stroke-width="1"/>
-<path d="M122.5,20 L122.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M367.5,20 L367.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M612.5,20 L612.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M857.5,20 L857.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M1102.5,20 L1102.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M1347.5,20 L1347.5,320.5" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,338.5 L1347.5,338.5" stroke="black" stroke-width="1"/>
-<path d="M0,292.7143 L1347.5,292.7143" stroke="black" stroke-width="1"/>
-<path d="M0,246.92857 L1347.5,246.92857" stroke="black" stroke-width="1"/>
-<path d="M0,201.14285 L1347.5,201.14285" stroke="black" stroke-width="1"/>
-<path d="M0,155.35715 L1347.5,155.35715" stroke="black" stroke-width="1"/>
-<path d="M0,109.57143 L1347.5,109.57143" stroke="black" stroke-width="1"/>
-<path d="M0,63.785713 L1347.5,63.785713" stroke="black" stroke-width="1"/>
-<path d="M0,18 L1347.5,18" stroke="black" stroke-width="1"/>
-<path d="M0,315.60715 L1347.5,315.60715" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,269.82144 L1347.5,269.82144" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,224.03572 L1347.5,224.03572" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,178.25 L1347.5,178.25" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,132.46428 L1347.5,132.46428" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,86.67857 L1347.5,86.67857" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,40.892857 L1347.5,40.892857" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,-4.892857 L1347.5,-4.892857" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
-<path d="M0,20 L1347.5,20" stroke="black" stroke-width="3"/>
 <text font-size="14" text-anchor="end" x="112.5" y="352.5">
 0.6%
 </text>
@@ -299,28 +246,6 @@ START
 <path d="M0.00,22.00 L0.00,150.87" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>
 </g>
 </g>
-<g id="SL" transform="translate(0 0)">
-<text text-anchor="end" x="66" y="297.71428571428567">
-100
-</text>
-<text text-anchor="end" x="66" y="251.9285714285714">
-300
-</text>
-<text text-anchor="end" x="66" y="206.1428571428571">
-500
-</text>
-<text text-anchor="end" x="66" y="160.35714285714283">
-700
-</text>
-<text text-anchor="end" x="66" y="114.57142857142856">
-900
-</text>
-<text text-anchor="end" x="66" y="68.78571428571428">
-1100
-</text>
-<text text-anchor="end" x="66" y="23">
-1300
-</text>
-</g>
+<g id="SL" transform="translate(0 0)"/>
 </g>
 </svg>

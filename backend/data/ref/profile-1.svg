@@ -56,6 +56,37 @@
 <path d="M0,40.892857 L1347.5,40.892857" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M0,-4.892857 L1347.5,-4.892857" stroke="black" stroke-dasharray="1.0,2.5,5.0,5.0,10.0,5.0"/>
 <path d="M0,20 L1347.5,20" stroke="black" stroke-width="3"/>
+<g>
+<path d="M45.9375,20 L45.9375,16" stroke="black" stroke-width="5"/>
+<path d="M91.875,20 L91.875,13" stroke="black" stroke-width="1"/>
+<path d="M137.8125,20 L137.8125,10" stroke="black" stroke-width="1"/>
+<path d="M183.75,20 L183.75,13" stroke="black" stroke-width="1"/>
+<path d="M229.6875,20 L229.6875,16" stroke="black" stroke-width="5"/>
+<path d="M275.625,20 L275.625,13" stroke="black" stroke-width="1"/>
+<path d="M321.5625,20 L321.5625,10" stroke="black" stroke-width="1"/>
+<path d="M367.5,20 L367.5,13" stroke="black" stroke-width="1"/>
+<path d="M413.4375,20 L413.4375,16" stroke="black" stroke-width="5"/>
+<path d="M459.375,20 L459.375,13" stroke="black" stroke-width="1"/>
+<path d="M505.3125,20 L505.3125,10" stroke="black" stroke-width="1"/>
+<path d="M551.25,20 L551.25,13" stroke="black" stroke-width="1"/>
+<path d="M597.1875,20 L597.1875,16" stroke="black" stroke-width="5"/>
+<path d="M643.125,20 L643.125,13" stroke="black" stroke-width="1"/>
+<path d="M689.0625,20 L689.0625,10" stroke="black" stroke-width="1"/>
+<path d="M735,20 L735,13" stroke="black" stroke-width="1"/>
+<path d="M780.9375,20 L780.9375,16" stroke="black" stroke-width="5"/>
+<path d="M826.875,20 L826.875,13" stroke="black" stroke-width="1"/>
+<path d="M872.8125,20 L872.8125,10" stroke="black" stroke-width="1"/>
+<path d="M918.75,20 L918.75,13" stroke="black" stroke-width="1"/>
+<path d="M964.6875,20 L964.6875,16" stroke="black" stroke-width="5"/>
+<path d="M1010.625,20 L1010.625,13" stroke="black" stroke-width="1"/>
+<path d="M1056.5625,20 L1056.5625,10" stroke="black" stroke-width="1"/>
+<path d="M1102.5,20 L1102.5,13" stroke="black" stroke-width="1"/>
+<path d="M1148.4375,20 L1148.4375,16" stroke="black" stroke-width="5"/>
+<path d="M1194.375,20 L1194.375,13" stroke="black" stroke-width="1"/>
+<path d="M1240.3125,20 L1240.3125,10" stroke="black" stroke-width="1"/>
+<path d="M1286.25,20 L1286.25,13" stroke="black" stroke-width="1"/>
+<path d="M1332.1875,20 L1332.1875,16" stroke="black" stroke-width="5"/>
+</g>
 <text font-size="14" text-anchor="end" x="112.5" y="352.5">
 4.0%
 </text>

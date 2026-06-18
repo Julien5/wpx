@@ -198,7 +198,8 @@ pub fn generate_times_uniform_distance(
             if t > next.unwrap_time() {
                 break;
             }
-            if tprev <= t && t <= tnext {
+            let pos = time_parameters.distance(&(t - time_parameters.start));
+            if tprev <= t && t <= tnext && start <= pos && pos <= end {
                 log::trace!("add: {:?}", t);
                 points.insert(t);
             }

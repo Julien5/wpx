@@ -2,6 +2,7 @@
 mod elements;
 mod ticks;
 
+use chrono::Timelike;
 use svg::Node;
 
 use crate::bbox::BoundingBox;
@@ -15,14 +16,18 @@ use crate::label_placement::features::*;
 use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::math::Point2D;
+use crate::mercator::DateTime;
 use crate::parameters::ProfileIndication;
-use crate::point_collection::{
-    controls_speed_data, Kind, Packets, RenderInputParameters, RenderResult,
-};
+use crate::point_collection::{Kind, Packets, RenderInputParameters, RenderResult};
 use crate::track::Track;
 use crate::{label_placement, wheel};
 use crate::{label_placement::*, parameters};
 use elements::*;
+
+pub struct TimeTicks {
+    labels: Vec<PointFeature>,
+    ticks: Vec<(DateTime, Point2D)>,
+}
 
 pub struct ProfileModel {
     pub polylines: Vec<Polyline>,
@@ -57,18 +62,6 @@ fn fix_margins(bbox: &ProfileBoundingBox, free_height: f64) -> ProfileBoundingBo
     ret.set_ymin(ticks.first().unwrap().clone());
     ret.set_ymax(ticks.last().unwrap().clone());
     ret
-}
-
-fn controls(features: &Vec<PointFeature>) -> Vec<InputPoint> {
-    let mut ret = Vec::new();
-    for feature in features {
-        if let Some(f) = feature.input_point() {
-            ret.push(f);
-        } else {
-            continue;
-        }
-    }
-    Vec::new()
 }
 
 impl ProfileView {
@@ -193,66 +186,10 @@ impl ProfileView {
         }
     }
 
-    fn add_time_ticks(
-        &mut self,
-        controls: &Vec<InputPoint>,
-        pacing_points: &Vec<InputPoint>,
-    ) -> (Vec<PointFeature>, Vec<Point2D>) {
-        let xstart = self.bboxview().get_xmin();
-        let xend = self.bboxview().get_xmax();
-
-        let start_time = parameters::parse_time(&self.parameters.parameters.start_time);
-
-        let all_controls_speed_data = controls_speed_data(&controls);
-        let mut times_limits: Vec<_> = all_controls_speed_data
-            .iter()
-            .map(|c| (c.distance, self.parameters.time_parameters.time(c.distance)))
-            .collect();
-
-        times_limits.push((xstart, self.parameters.time_parameters.time(xstart)));
-        times_limits.push((xend, self.parameters.time_parameters.time(xend)));
-        times_limits.sort_by(|a, b| a.0.total_cmp(&b.0));
-
-        let nkm = (0.01 * self.W).ceil() as usize;
-
-        let times = wheel::time_points::generate_times_uniform_distance(
-            &self.parameters.time_parameters,
-            xstart,
-            xend,
-            nkm,
-        );
+    fn cutoffs_dots(&mut self, cutoff_points: &Vec<InputPoint>) -> Vec<Point2D> {
         let bottom = ProfileGenerator::header_bottom();
-        let mut features = Vec::new();
-        for (k, time) in times.iter().enumerate() {
-            let duration = *time - start_time;
-            let x = self.parameters.time_parameters.distance(&duration);
-            let xd = self.toSD(&Point2D::new(x, 0f64)).x;
-            if xd > self.WD() {
-                break;
-            }
-            let mut time_str = wheel::time_points::format_time(&time, false);
-            // if it is "9", print "9h", otherwise ("09:30", "Fri") dont change.
-            if time_str.trim().parse::<i32>().is_ok() {
-                time_str = format!("{}h", time_str);
-            }
-            let label = Label::new(&time_str, FONTSIZE, &"normal", &"normal");
-            let feature = PointFeature {
-                circle: PointFeatureDrawing {
-                    group: svg::node::element::Group::new(),
-                    center: Point2D::new(xd, bottom - self.frame_stroke_width),
-                },
-                label,
-                input_point: None,
-                link: None,
-                xmlid: k, // TODO: remove this
-                hardness: 0,
-            };
-            features.push(feature);
-        }
-
-        let mut centers = Vec::new();
-
-        for point in pacing_points {
+        let mut ret = Vec::new();
+        for point in cutoff_points {
             assert!(point.track_projections.len() == 1);
             let x = point
                 .track_projections
@@ -265,10 +202,58 @@ impl ProfileView {
             }
             // give the stroke some more width to avoid rendering
             // right at the edge of control point labels
-            centers.push(Point2D::new(xd, bottom));
+            ret.push(Point2D::new(xd, bottom + 8f64));
+        }
+        ret
+    }
+
+    fn compute_time_ticks(&mut self) -> TimeTicks {
+        let xstart = self.bboxview().get_xmin();
+        let xend = self.bboxview().get_xmax();
+
+        let start_time = parameters::parse_time(&self.parameters.parameters.start_time);
+        let nkm = (0.02 * self.W).ceil() as usize;
+        let times = wheel::time_points::generate_times_uniform_distance(
+            &self.parameters.time_parameters,
+            xstart,
+            xend,
+            nkm,
+        );
+        let bottom = ProfileGenerator::header_bottom();
+        let mut time_features = Vec::new();
+        let mut ticks = Vec::new();
+        for (k, time) in times.iter().enumerate() {
+            let duration = *time - start_time;
+            let x = self.parameters.time_parameters.distance(&duration);
+            let xd = self.toSD(&Point2D::new(x, 0f64)).x;
+            if xd > self.WD() {
+                break;
+            }
+            let mut time_str = wheel::time_points::format_time(&time, false);
+            // if it is "9", print "9h", otherwise ("09:30", "Fri") dont change.
+            if time_str.trim().parse::<i32>().is_ok() {
+                time_str = format!("{}h", time_str);
+            }
+            ticks.push((time.clone(), Point2D::new(xd, bottom)));
+            let label = Label::new(&time_str, FONTSIZE, &"normal", &"normal");
+            let feature = PointFeature {
+                circle: PointFeatureDrawing {
+                    group: svg::node::element::Group::new(),
+                    center: Point2D::new(xd, bottom - self.frame_stroke_width),
+                },
+                label,
+                input_point: None,
+                link: None,
+                xmlid: k, // TODO: remove this
+                hardness: 0,
+            };
+            time_features.push(feature);
         }
 
-        (features, centers)
+        TimeTicks {
+            labels: time_features,
+            ticks,
+        }
     }
 
     fn add_numeric_slope(
@@ -454,6 +439,37 @@ impl ProfileView {
             Point2D::new(0f64, ProfileGenerator::header_bottom()),
             Point2D::new(self.WD(), ProfileGenerator::header_bottom()),
         ));
+
+        let time_ticks = self.compute_time_ticks();
+        let mut points_group = elements::Group::new();
+        // something we cannot do well here is hiding the ticks
+        // that collide with control labels.
+        for tick_stroke in time_ticks.ticks {
+            let width = if tick_stroke.0.minute() == 0 {
+                5
+            } else if tick_stroke.0.minute() == 30 {
+                1
+            } else if tick_stroke.0.minute() % 15 == 0 {
+                1
+            } else {
+                1
+            };
+            let length = if tick_stroke.0.minute() == 0 {
+                4
+            } else if tick_stroke.0.minute() == 30 {
+                10
+            } else if tick_stroke.0.minute() % 15 == 0 {
+                7
+            } else {
+                2
+            };
+            points_group.append(stroke(
+                &format!("{}", width),
+                tick_stroke.1,
+                tick_stroke.1 + Point2D::new(0f64, -length as f64),
+            ));
+        }
+        self.SD.append(points_group);
     }
 
     pub fn render_model(&mut self) {
@@ -474,7 +490,7 @@ impl ProfileView {
     }
 
     pub fn add_packets(&mut self, packets: &Packets, track: &Track) {
-        let features = self.make_features(packets, track);
+        let features = self.place_packets(packets, track);
         // the userstep-based time line and time points are rendered
         // in the foreground => do not render them here.
         self.model = Some(ProfileModel {
@@ -513,7 +529,7 @@ impl ProfileView {
 
     fn userstep_dot(box_center: &Point2D, w: &InputPoint, k: usize) -> PointFeature {
         assert!(w.kind() == Kind::CutOff);
-        let center = *box_center + Point2D::new(0f64, 8f64);
+        let center = *box_center;
         let circle = draw_for_profile(&center, &format!("user-step"), w);
         let mut label = drawings::make_label_text(&w);
         label.id = format!("{}/user-step/text", k);
@@ -541,12 +557,11 @@ impl ProfileView {
             }
         }
 
-        let (_time_features, usersteps_centers) =
-            self.add_time_ticks(&controls(&background_features), usersteps);
+        let cutoff_dots = self.cutoffs_dots(usersteps);
 
         let mut points = Vec::new();
         points.extend_from_slice(&background_features);
-        for (index, center) in usersteps_centers.iter().enumerate() {
+        for (index, center) in cutoff_dots.iter().enumerate() {
             let w = &usersteps[index];
             points.push(Self::userstep_dot(&center, w, index));
         }
@@ -557,7 +572,7 @@ impl ProfileView {
         });
     }
 
-    fn make_features(&mut self, packets: &Packets, track: &Track) -> Features {
+    fn place_packets(&mut self, packets: &Packets, track: &Track) -> Features {
         // make sure to cover the whole bounding box.
         // => start before, end after
         let range = self.range(track);
@@ -636,23 +651,11 @@ impl ProfileView {
             feature_packets.push(PointFeatures::make(feature_packet));
         }
 
-        let mut pacing_points = Vec::new();
-        let mut controls = Vec::new();
-
-        for packet in packets {
-            if packet.points.is_empty() {
-                continue;
-            }
-            if packet.points.first().unwrap().kind() == Kind::CutOff {
-                pacing_points = packet.points.clone();
-            }
-            if packet.points.first().unwrap().kind() == Kind::Controls {
-                controls = packet.points.clone();
-            }
-        }
-
-        let (time_packet, _time_boxes) = self.add_time_ticks(&controls, &pacing_points);
-        feature_packets.push(PointFeatures::make(time_packet));
+        // The time ticks are incorporated in the background because label placement is involved.
+        // The background cache lookup is sensitive to the time parameters.
+        // time parameters change => background is re-computed.
+        let time_ticks = self.compute_time_ticks();
+        feature_packets.push(PointFeatures::make(time_ticks.labels));
 
         let (results, obstacles) = label_placement::place_labels(
             &feature_packets,
@@ -899,7 +902,9 @@ pub fn profile_background(
     let profile_bbox =
         ProfileBoundingBox::from_track(track, &parameters.drange.start, &parameters.drange.end);
     let mut view = ProfileView::init(&profile_bbox, parameters, debug_dir);
-    view.add_canvas();
+    // add_canvas is useless for the background since only the rendered point features are
+    // used in profile_foreground
+    // view.add_canvas();
     view.add_packets(packets, track);
     view.render_model();
     view.render_document()
