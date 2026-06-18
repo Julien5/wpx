@@ -18,6 +18,7 @@ pub mod mercator;
 pub mod osm;
 pub mod parameters;
 mod pdf;
+mod persist;
 pub mod point_collection;
 mod profile;
 mod split_ambiguity;

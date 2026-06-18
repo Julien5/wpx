@@ -11,6 +11,40 @@ use super::request::*;
 use crate::cache::read_worker;
 use crate::cache::write_worker;
 
+use std::env;
+static OSM_CACHE_SCHEME_VERSION: usize = 1;
+
+#[cfg(test)]
+fn cache_dir() -> String {
+    env::var("CACHE_DIR")
+        .unwrap_or_else(|_| format!("data/ref/cache/osm/{}", OSM_CACHE_SCHEME_VERSION))
+}
+
+#[cfg(all(not(test), not(target_arch = "wasm32")))]
+fn cache_dir() -> String {
+    env::var("CACHE_DIR").unwrap_or_else(|_| {
+        let standart_cache_dir = dirs::cache_dir()
+            .unwrap()
+            .as_os_str()
+            .to_str()
+            .unwrap()
+            .to_string();
+        return format!(
+            "{}/{}/osm/{}",
+            standart_cache_dir, "WPX", OSM_CACHE_SCHEME_VERSION
+        );
+    })
+}
+
+#[cfg(all(not(test), target_arch = "wasm32"))]
+fn cache_dir() -> String {
+    return format!("osm-{}", OSM_CACHE_SCHEME_VERSION);
+}
+
+fn cache_path(filename: &str) -> String {
+    format!("{}/{}", cache_dir(), filename)
+}
+
 async fn read_cache_for_boxes(
     req: &Request,
     logger: &SenderHandlerLock,
@@ -26,7 +60,7 @@ async fn read_cache_for_boxes(
             if cached_chunks.contains_key(&req_chunk) {
                 continue;
             }
-            match read_worker(&filename).await {
+            match read_worker(&cache_path(&filename)).await {
                 Ok(bytes) => match ChunkData::from_string(&bytes) {
                     Ok(chunk_data) => {
                         cached_chunks.insert(req_chunk, chunk_data);
@@ -117,7 +151,7 @@ pub async fn write_cache(req: &Request, response: &Response, logger: &SenderHand
                     &logger,
                     &format!("osm:write-cache-progress:{}:{}", index, cached_chunks.len()),
                 );
-                write_worker(&filename, bytes).await;
+                write_worker(&cache_path(&filename), bytes).await;
             }
             Err(e) => {
                 log::error!(
