@@ -305,7 +305,7 @@ async fn main() -> anyhow::Result<()> {
         _ => {}
     }
 
-    let _ = backend.set_parameters(&parameters).await;
+    backend.set_parameters(&parameters);
 
     match args.performance_test {
         Some(enabled) => {

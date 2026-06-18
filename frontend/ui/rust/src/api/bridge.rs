@@ -303,8 +303,9 @@ impl Bridge {
         self.backend.get_parameters()
     }
 
-    pub async fn set_parameters(&mut self, parameters: &Parameters) {
-        self.backend.set_parameters(parameters).await;
+    #[frb(sync)]
+    pub fn set_parameters(&mut self, parameters: &Parameters) {
+        self.backend.set_parameters(parameters);
     }
 
     #[frb(sync)]
