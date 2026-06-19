@@ -2,8 +2,6 @@ mod filesystem;
 #[cfg(target_arch = "wasm32")]
 mod indexdb;
 use crate::error::GenericResult;
-#[cfg(target_arch = "wasm32")]
-use crate::error::TrackError;
 
 /*
     $XDG_CONFIG_HOME
@@ -37,22 +35,22 @@ pub async fn read(b: &Location, filename: &str) -> GenericResult<String> {
 
 #[cfg(target_arch = "wasm32")]
 pub async fn write(b: &Location, filename: &str, data: String) -> GenericResult<()> {
-    match indexdb::write(&indexdb::Database::from_location(b), filename, data).await {
+    match indexdb::write(&indexdb::IndexdbLocation::from_location(b), filename, data).await {
         Ok(()) => Ok(()),
         Err(e) => {
             log::error!("error: {:?}", e);
-            return Err(TrackError::IOError.into());
+            return Err(crate::error::TrackError::IOError.into());
         }
     }
 }
 
 #[cfg(target_arch = "wasm32")]
 pub async fn read(b: &Location, filename: &str) -> GenericResult<String> {
-    match indexdb::read(&indexdb::Database::from_location(b), filename).await {
+    match indexdb::read(&indexdb::IndexdbLocation::from_location(b), filename).await {
         Ok(bytes) => Ok(bytes),
         Err(e) => {
             log::error!("error: {:?}", e);
-            Err(TrackError::IOError.into())
+            Err(crate::error::TrackError::IOError.into())
         }
     }
 }
