@@ -178,8 +178,9 @@ impl OSMData {
 
 #[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct GPXWaypointData {
-    pub name: String,
-    pub description: String,
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub index: usize, // index in the waypoint vector
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
@@ -342,18 +343,17 @@ impl InputPoint {
         }
     }
     pub fn from_gpx(
+        index: usize,
         wgs84: &WGS84Point,
         euclidean: &MercatorPoint,
         name: &Option<String>,
         description: &Option<String>,
     ) -> InputPoint {
-        let mut data = GPXWaypointData::default();
-        if let Some(name) = name {
-            data.name = name.clone();
-        }
-        if let Some(description) = description {
-            data.description = description.clone();
-        }
+        let data = GPXWaypointData {
+            name: name.clone(),
+            description: description.clone(),
+            index,
+        };
         InputPoint {
             wgs84: wgs84.clone(),
             track_projections: TrackProjections::new(),
@@ -394,7 +394,7 @@ impl InputPoint {
     pub fn name(&self) -> String {
         match &self.data {
             InputPointData::OSM(d) => d.name(),
-            InputPointData::GPXWaypoint(d) => d.name.clone(),
+            InputPointData::GPXWaypoint(d) => d.name.as_deref().unwrap_or("").to_string(),
             InputPointData::Control(d) => d.name.clone(),
             InputPointData::CutOff => String::new(),
         }
@@ -402,7 +402,7 @@ impl InputPoint {
     pub fn description(&self) -> String {
         match &self.data {
             InputPointData::OSM(d) => d.description(),
-            InputPointData::GPXWaypoint(d) => d.description.clone(),
+            InputPointData::GPXWaypoint(d) => d.description.as_deref().unwrap_or("").to_string(),
             InputPointData::Control(d) => d.description(),
             InputPointData::CutOff => String::new(),
         }

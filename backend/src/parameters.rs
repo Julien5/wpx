@@ -1,4 +1,5 @@
 use crate::{error::RenderError, mercator::DateTime, point_collection::Kinds, waypoint::Waypoint};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, PartialOrd, Ord, PartialEq, Eq, Debug, Default)]
 pub enum RenderFunction {
@@ -63,13 +64,13 @@ pub fn karl_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
     ret
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ProfileIndication {
     None,
     NumericSlope,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct UserStepsOptions {
     pub step_distance: Option<f64>,
     pub step_elevation_gain: Option<f64>,
@@ -86,7 +87,7 @@ impl Default for UserStepsOptions {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ProfileOptions {
     pub elevation_indicators: Vec<ProfileIndication>,
 }
@@ -99,7 +100,7 @@ impl Default for ProfileOptions {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct MapOptions {
     // empty
 }
@@ -110,7 +111,7 @@ impl Default for MapOptions {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Parameters {
     pub control_gpx_name_format: String,
     pub debug: bool,

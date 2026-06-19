@@ -1,12 +1,10 @@
-use std::collections::BTreeSet;
-
 use crate::{
     backend::Segment,
     inputpoint::{InputPoint, InputPointData},
     math,
     mercator::MercatorPoint,
     parameters::Parameters,
-    point_collection::{Kind, SharedPacketProvider},
+    point_collection::SharedPacketProvider,
     segment::SegmentData,
     speed::TimeParameters,
     track::Track,
@@ -291,7 +289,6 @@ pub fn _make_with_osm(
     bigsegment: &SegmentData,
     packet_provider: SharedPacketProvider,
     typical_distance: f64,
-    newkind: &Kind,
 ) -> Vec<InputPoint> {
     let track = &bigsegment.track;
     let total_distance = bigsegment.end() - bigsegment.start();
@@ -373,23 +370,14 @@ pub fn _make_with_osm(
         let waypoint_name = shorten_name(&p.osm_name);
         let waypoint_description = p.osm_name.clone();
         let proj = TrackProjection::at_track_index(&track, p.index);
-        let wgs84 = &track.wgs84[proj.track_index];
-        let eucli = &track.euclidean[proj.track_index];
-        let w = match newkind {
-            &Kind::Controls => InputPoint::create_control_on_track(
-                &track,
-                proj,
-                &segment_name,
-                &waypoint_name,
-                &waypoint_description,
-                &p.nearest_osm_id,
-            ),
-            _ => {
-                let mut i = InputPoint::from_gpx(wgs84, eucli, &Some(p.osm_name.clone()), &None);
-                i.track_projections = BTreeSet::from([{ proj }]);
-                i
-            }
-        };
+        let w = InputPoint::create_control_on_track(
+            &track,
+            proj,
+            &segment_name,
+            &waypoint_name,
+            &waypoint_description,
+            &p.nearest_osm_id,
+        );
         ret.push(w);
     }
     // add the start of the track
@@ -519,7 +507,7 @@ mod tests {
             Parameters::default(),
             TimeParameters::default(),
         );
-        _make_with_osm(&segment, provider, 70_000f64, &Kind::Controls)
+        _make_with_osm(&segment, provider, 70_000f64)
     }
 
     #[tokio::test]
