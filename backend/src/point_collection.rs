@@ -601,10 +601,10 @@ pub fn remove_control_waypoints(
     // a waypoint may have two projections P1 and P2.
     // If only P1 is rendered as control, push P2.
     for w in waypoints {
-        let origin_id = w.gpxwaypoint_id();
+        let origin_id = w.gpxwaypoint_index();
         let matching_control_projections: TrackProjections = controls
             .iter()
-            .filter(|c| c.control_waypoint_origin_id() == origin_id)
+            .filter(|c| c.control_waypoint_origin_index() == origin_id)
             .map(|c| c.track_projections.clone())
             .flatten()
             .collect();

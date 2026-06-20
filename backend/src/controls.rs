@@ -4,7 +4,7 @@ use crate::{
     math,
     mercator::MercatorPoint,
     parameters::Parameters,
-    point_collection::SharedPacketProvider,
+    point_collection::{Kind, SharedPacketProvider},
     segment::SegmentData,
     speed::TimeParameters,
     track::Track,
@@ -58,7 +58,7 @@ pub fn infer_controls_from_gpx_segments(
         track_index: usize,
         waypoint_name: String,
         waypoint_description: String,
-        nearest_waypoint_id: String,
+        nearest_waypoint_index: Option<usize>,
     }
 
     // construct candidates with the *end* of each segment.
@@ -70,7 +70,7 @@ pub fn infer_controls_from_gpx_segments(
         track_index: 0,
         waypoint_name: String::new(),
         waypoint_description: String::new(),
-        nearest_waypoint_id: String::new(),
+        nearest_waypoint_index: None,
     });
 
     let mut acc_length = 0;
@@ -83,7 +83,7 @@ pub fn infer_controls_from_gpx_segments(
             track_index: acc_length - 1,
             waypoint_name: String::new(),
             waypoint_description: String::new(),
-            nearest_waypoint_id: String::new(),
+            nearest_waypoint_index: None,
         });
     }
     debug_assert_eq!(candidates.len(), track.parts.len() + 1);
@@ -98,22 +98,23 @@ pub fn infer_controls_from_gpx_segments(
         (
             candidate.waypoint_name,
             candidate.waypoint_description,
-            candidate.nearest_waypoint_id,
+            candidate.nearest_waypoint_index,
         ) = match nearest {
             Some(neighbor) => {
                 let mut name = String::new();
                 let mut description = String::new();
-                let mut id = String::new();
+                let mut id = None;
                 let distance =
                     math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt();
                 if distance < dmax {
-                    id = neighbor.gpxwaypoint_id();
+                    debug_assert!(neighbor.kind() == Kind::GPXWaypoints);
+                    id = Some(neighbor.gpxwaypoint_index().unwrap());
                     name = neighbor.name();
                     description = neighbor.description();
                 }
                 (name, description, id)
             }
-            None => (String::new(), String::new(), String::new()),
+            None => (String::new(), String::new(), None),
         };
         ret.push((
             candidate.track_index,
@@ -123,7 +124,7 @@ pub fn infer_controls_from_gpx_segments(
                 &candidate.segment_name,
                 &candidate.waypoint_name,
                 &candidate.waypoint_description,
-                &candidate.nearest_waypoint_id,
+                &candidate.nearest_waypoint_index,
             ),
         ));
     }
@@ -168,7 +169,7 @@ pub fn add_control_at_waypoint(
         &"",
         &waypoint.name,
         &waypoint.description,
-        &waypoint.id,
+        &waypoint.index,
     );
     ret.push(new);
     ret.sort_by(|a, b| {
@@ -214,7 +215,7 @@ pub fn remove_control_at_waypoint(
             .as_control()
             .unwrap()
             .nearest_waypoint_id
-            .is_empty();
+            .is_none();
         // Keep start or end segment. Otherwise the end control might be moved to the
         // middle of the track (CP-1), which is confusing.
         let is_start_or_end = index == start_index || index == end_index;
@@ -321,7 +322,6 @@ pub fn _make_with_osm(
     struct ProtoPoint {
         index: usize,
         osm_name: String,
-        nearest_osm_id: String,
     }
 
     // no control in first 10 and the last 10 kms.
@@ -354,7 +354,6 @@ pub fn _make_with_osm(
         proto.push(ProtoPoint {
             index,
             osm_name: name,
-            nearest_osm_id: selected.gpxwaypoint_id(),
         });
         last_control_distance = selected
             .track_projections
@@ -376,7 +375,7 @@ pub fn _make_with_osm(
             &segment_name,
             &waypoint_name,
             &waypoint_description,
-            &p.nearest_osm_id,
+            &None,
         );
         ret.push(w);
     }
@@ -389,7 +388,7 @@ pub fn _make_with_osm(
             &"",
             &"",
             &"",
-            &"",
+            &None,
         ),
     );
     // add the end of the track
@@ -399,7 +398,7 @@ pub fn _make_with_osm(
         &"",
         &"",
         &"",
-        &"",
+        &None,
     ));
     set_control_names(&mut ret);
     ret

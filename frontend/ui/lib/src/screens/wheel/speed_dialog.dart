@@ -136,7 +136,7 @@ String prettySpeed(String spec) {
 }
 
 void openSpeedDialog({
-  required BuildContext context,
+  required BuildContext outerContext,
   required String speed,
   required List<String> allowedSpeeds,
   required String? initialConstantSpeed,
@@ -209,7 +209,7 @@ void openSpeedDialog({
   );
 
   showDialog(
-    context: context,
+    context: outerContext,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (context, setDialogState) {
@@ -281,12 +281,12 @@ void openSpeedDialog({
               // Footer
               DialogFooter(
                 onCancel: () {
-                  onCancel(currentSpeed);
                   Navigator.of(context).pop();
+                  onCancel(currentSpeed);
                 },
                 onConfirm: () {
-                  onConfirm(currentSpeed);
                   Navigator.of(context).pop();
+                  onConfirm(currentSpeed);
                 },
               ),
             ],

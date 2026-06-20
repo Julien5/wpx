@@ -39,7 +39,7 @@ impl Eq for InputPoint {}
 
 #[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 pub struct ControlData {
-    pub nearest_waypoint_id: String,
+    pub nearest_waypoint_id: Option<usize>,
     pub name: String,
     pub waypoint_name: String,
     pub waypoint_description: String,
@@ -239,15 +239,14 @@ impl InputPointData {
 }
 
 impl InputPoint {
-    pub fn gpxwaypoint_id(&self) -> String {
-        // We need an index, otherwise there is no way to differenciate
-        // two gpx waypoints with the same data.
-        format!(
-            "{}|{}|{:?}",
-            self.wgs84.longitude(),
-            self.wgs84.latitude(),
-            self.data.as_gpxwaypoint()
-        )
+    pub fn gpxwaypoint_index(&self) -> Option<usize> {
+        match &self.data {
+            InputPointData::GPXWaypoint(data) => Some(data.index),
+            _ => {
+                log::warn!("this is no GPXWaypoint");
+                None
+            }
+        }
     }
     pub fn map_id(&self) -> String {
         // The track projection is not taken into account
@@ -266,9 +265,9 @@ impl InputPoint {
         p
     }
 
-    pub fn control_waypoint_origin_id(&self) -> String {
+    pub fn control_waypoint_origin_index(&self) -> Option<usize> {
         if self.kind() != Kind::Controls {
-            return String::new();
+            return None;
         }
         self.data.as_control().unwrap().nearest_waypoint_id.clone()
     }
@@ -279,7 +278,7 @@ impl InputPoint {
         segment_name: &str,
         waypoint_name: &str,
         waypoint_description: &str,
-        nearest_waypoint_id: &str,
+        nearest_waypoint_id: &Option<usize>,
     ) -> InputPoint {
         let index = proj.track_index;
         let wgs = track.wgs84[index].clone();
@@ -290,7 +289,7 @@ impl InputPoint {
             waypoint_name: format!("{}", waypoint_name),
             waypoint_description: format!("{}", waypoint_description),
             segment_name: format!("{}", segment_name),
-            nearest_waypoint_id: format!("{}", nearest_waypoint_id),
+            nearest_waypoint_id: nearest_waypoint_id.clone(),
             cutoff_time: None,
         };
         p.track_projections = BTreeSet::from([{ proj }]);
@@ -454,7 +453,7 @@ impl InputPoint {
             has_custom_time,
             info: None,
             origin: self.kind(),
-            id: self.gpxwaypoint_id(),
+            index: self.gpxwaypoint_index(),
         }
     }
 }

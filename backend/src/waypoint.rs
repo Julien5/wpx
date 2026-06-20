@@ -55,7 +55,7 @@ pub struct Waypoint {
     pub description: String,
     pub has_custom_time: bool,
     pub info: Option<WaypointInfo>,
-    pub id: String,
+    pub index: Option<usize>,
 }
 
 pub type Waypoints = Vec<Waypoint>;
@@ -72,7 +72,7 @@ impl Waypoint {
             has_custom_time: false,
             info: None,
             origin: kind,
-            id: String::new(),
+            index: None,
         }
     }
 
@@ -165,10 +165,7 @@ impl WaypointInfo {
         track: &track::Track,
         parameters: &ExportParameters,
     ) {
-        let wgs0 = track.wgs84.first().unwrap();
-        let euc0 = track.euclidean.first().unwrap();
-        let w0 = Waypoint::create(*wgs0, euc0, 0, Kind::CutOff);
-        let mut wprev = w0.clone();
+        let mut wprev = waypoints.first().unwrap().1.clone();
         for (proj, w) in waypoints.iter_mut() {
             let info = Self::create_waypoint_info_cross(
                 track,

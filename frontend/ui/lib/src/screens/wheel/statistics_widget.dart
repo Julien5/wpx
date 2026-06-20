@@ -60,6 +60,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     });
   }
 
+  void persistParameters() async {
+    if (!mounted) return;
+    Bridge bridge = getBackend(context);
+    await bridge.persistSmallParameters();
+    //await Future.delayed(Duration(milliseconds: 150));
+  }
+
   void writeModel() {
     if (!mounted) return;
     ParameterModel parametersModel = Provider.of<ParameterModel>(
@@ -80,6 +87,9 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        persistParameters();
+      });
     });
   }
 
@@ -222,11 +232,11 @@ class _OverviewWidgetState extends State<OverviewWidget> {
               children: [
                 SmallButton(
                   text: startDateText,
-                  callback: () => _selectStartDate(context),
+                  callback: () => _selectStartDate(ctx),
                 ),
                 SmallButton(
                   text: startTimeText,
-                  callback: () => _selectStartTime(context),
+                  callback: () => _selectStartTime(ctx),
                 ),
               ],
             ),
@@ -238,7 +248,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
             SmallButton(
               callback:
                   () => openSpeedDialog(
-                    context: context,
+                    outerContext: ctx,
                     speed: speed!,
                     allowedSpeeds: backend.allowedSpeeds(),
                     initialConstantSpeed: lastConstantSpeed,

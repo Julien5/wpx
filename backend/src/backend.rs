@@ -16,12 +16,12 @@ use crate::osm;
 use crate::osm::DownloadSideData;
 use crate::parameters;
 use crate::parameters::Parameters;
-use crate::parameters::ProfileIndication;
 use crate::parameters::RenderFunction;
 use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
 use crate::parameters::UserStepsOptions;
+use crate::persist;
 use crate::point_collection::controls_speed_data;
 use crate::point_collection::remove_control_waypoints;
 use crate::point_collection::Kind;
@@ -229,10 +229,10 @@ impl Backend {
             .unwrap()
             .collection
             .get_vector(&Kind::Controls);
-        if let Some(control) = controls
-            .iter_mut()
-            .find(|c| c.gpxwaypoint_id() == waypoint.id)
-        {
+        if let Some(control) = controls.iter_mut().find(|c| {
+            c.gpxwaypoint_index()
+                .is_some_and(|id| id == waypoint.index.unwrap())
+        }) {
             // do not allow changing time for start and end because
             // these are determined by self.parameters (start_time and speed).
             if control.data.as_control().unwrap().is_end()
@@ -247,7 +247,7 @@ impl Backend {
                 control.data.as_control_mut().unwrap().cutoff_time = None;
             }
         } else {
-            log::error!("no control found with id={}", waypoint.id);
+            log::error!("no control found with id={:?}", waypoint.index);
         }
         {
             let mut locked = self.d().packet_provider.write().unwrap();
@@ -342,6 +342,27 @@ impl Backend {
 
     pub fn get_parameters(&self) -> Parameters {
         self.d().parameters.clone()
+    }
+
+    pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
+        log::trace!("persist [1]");
+        let controls = {
+            // no lock across async boundaries
+            // the lock must be in an inner scope
+            log::trace!("persist [2]");
+            let locked = self.d().packet_provider.read().unwrap();
+            log::trace!("persist [3]");
+            locked.collection.get_vector(&Kind::Controls)
+        };
+        let parameters = &self.d().parameters;
+        log::trace!("persist [4]");
+        match persist::write_userdata(&parameters, &controls).await {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                log::error!("write user data failed: {:?}", e);
+                Err(TrackError::IOError.into())
+            }
+        }
     }
 
     pub fn set_parameters(&mut self, parameters: &Parameters) {

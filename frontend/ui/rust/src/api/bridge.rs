@@ -192,7 +192,7 @@ pub struct _Waypoint {
     pub description: String,
     pub has_custom_time: bool,
     pub info: Option<WaypointInfo>,
-    pub id: String,
+    pub index: Option<usize>,
 }
 
 #[frb(mirror(SegmentStatistics))]
@@ -271,6 +271,14 @@ impl Bridge {
         self.backend.cancel_osm().await
     }
 
+    pub async fn generateZip(&mut self, kinds: &Kinds) -> Vec<u8> {
+        self.backend.generateZip(&dedup(&kinds)).await
+    }
+
+    pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
+        self.backend.persist_small_parameters().await
+    }
+
     #[frb(sync)]
     pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
         self.backend.load_contents(contents)
@@ -291,9 +299,6 @@ impl Bridge {
         self.backend.allowed_speeds()
     }
 
-    pub async fn generateZip(&mut self, kinds: &Kinds) -> Vec<u8> {
-        self.backend.generateZip(&dedup(&kinds)).await
-    }
     #[frb(sync)]
     pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
         self.backend.get_waypoints(&segment._impl, &dedup(&kinds))
