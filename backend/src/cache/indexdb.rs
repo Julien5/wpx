@@ -1,5 +1,3 @@
-use std::fmt::{Display, Formatter};
-
 use indexed_db_futures::database::Database;
 use indexed_db_futures::prelude::*;
 use indexed_db_futures::transaction::TransactionMode;
@@ -54,7 +52,7 @@ pub enum IndexdbError {
 async fn opendb(database: IndexdbLocation) -> Result<Database, IndexdbError> {
     match Database::open(database.name())
         .with_version(database.version())
-        .with_on_upgrade_needed(|event, db| {
+        .with_on_upgrade_needed(move |event, db| {
             // Convert versions from floats to integers to allow using them in match expressions
             let old = event.old_version() as u64;
             let new = event.new_version().map(|v| v as u64);
@@ -72,6 +70,16 @@ async fn opendb(database: IndexdbLocation) -> Result<Database, IndexdbError> {
              *   _ => {}
              * }
              */
+            let store = database.store();
+            // This logic runs whenever the requested version is higher than the existing version
+            if !db.object_store_names().any(|n| n == store) {
+                match db.create_object_store(&store).build() {
+                    Ok(_) => {}
+                    Err(e) => {
+                        log::error!("failed to create store: {} because {:?}", store, e);
+                    }
+                }
+            }
 
             Ok(())
         })
@@ -90,6 +98,7 @@ async fn awrite(
     filename: &str,
     data: String,
 ) -> Result<(), IndexdbError> {
+    log::trace!("db - write {}: {}", database.name(), filename);
     let db = match opendb(database.clone()).await {
         Ok(db) => db,
         Err(e) => {
