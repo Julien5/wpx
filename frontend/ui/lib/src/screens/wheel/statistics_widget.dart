@@ -60,7 +60,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     });
   }
 
-  void writeModel() async {
+  void writeModel() {
     if (!mounted) return;
     ParameterModel parametersModel = Provider.of<ParameterModel>(
       context,

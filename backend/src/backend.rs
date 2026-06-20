@@ -556,18 +556,6 @@ impl Backend {
         }
     }
 
-    pub fn set_profile_indications(&mut self, indications: &Vec<ProfileIndication>) {
-        self.dmut().parameters.profile_options.elevation_indicators = indications.clone();
-    }
-
-    pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
-        self.dmut().parameters.user_steps_options.gpx_name_format = format.clone();
-    }
-
-    pub fn set_control_gpx_name_format(&mut self, format: &String) {
-        self.dmut().parameters.control_gpx_name_format = format.clone();
-    }
-
     pub fn setStartTime(&mut self, rfc3339: String) {
         self.dmut().parameters.start_time = rfc3339;
     }

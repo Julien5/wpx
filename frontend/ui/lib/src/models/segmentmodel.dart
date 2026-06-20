@@ -79,19 +79,4 @@ class ParameterModel extends ChangeNotifier {
   bridge.Parameters parameters() {
     return backend.getParameters();
   }
-
-  void setUserStepGpxNameFormat(String format) {
-    backend.setUserstepGpxNameFormat(format: format);
-    notifyListeners();
-  }
-
-  void setControlGpxNameFormat(String format) {
-    backend.setControlGpxNameFormat(format: format);
-    notifyListeners();
-  }
-
-  void setProfileIndications(List<bridge.ProfileIndication> indications) {
-    backend.setProfileIndications(indications: indications);
-    notifyListeners();
-  }
 }

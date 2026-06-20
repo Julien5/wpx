@@ -314,21 +314,6 @@ impl Bridge {
     }
 
     #[frb(sync)]
-    pub fn set_profile_indications(&mut self, indications: &Vec<ProfileIndication>) {
-        self.backend.set_profile_indications(indications);
-    }
-
-    #[frb(sync)]
-    pub fn set_userstep_gpx_name_format(&mut self, format: &String) {
-        self.backend.set_userstep_gpx_name_format(format);
-    }
-
-    #[frb(sync)]
-    pub fn set_control_gpx_name_format(&mut self, format: &String) {
-        self.backend.set_control_gpx_name_format(format);
-    }
-
-    #[frb(sync)]
     pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) -> bool {
         self.backend.set_control_time(waypoint, time)
     }
@@ -343,7 +328,8 @@ impl Bridge {
         self.backend.unload()
     }
 
-    pub async fn renderSegment(
+    #[frb(sync)]
+    pub fn renderSegment(
         &mut self,
         segment: &Segment,
         inputs: &Vec<RenderInput>,

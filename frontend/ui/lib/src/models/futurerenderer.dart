@@ -135,7 +135,9 @@ class FutureRenderer with ChangeNotifier {
         bridge.RenderInput(kinds: _kinds, function: d, size: sizeParameter),
       );
     }
-    _future = _backend.renderSegment(segment: _segment, inputs: renderInputs);
+    _future = Future<List<RenderOutput>>(
+      () => _backend.renderSegment(segment: _segment, inputs: renderInputs),
+    );
     _future!.then((values) => onCompleted(values));
   }
 
