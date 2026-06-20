@@ -60,11 +60,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     });
   }
 
-  void persistParameters() async {
+  void persistParameters(Bridge backend) async {
     if (!mounted) return;
-    Bridge bridge = getBackend(context);
-    await bridge.persistSmallParameters();
-    //await Future.delayed(Duration(milliseconds: 150));
+    // There seem to be a bug in flutter_rust_bridge async handling:
+    // the `await backend.persistSmallParameters();` freezes the application.
+    // This one-second delay is a workaround. I hope it efficiently prevents the freeze.
+    await Future.delayed(Duration(milliseconds: 1));
+    await backend.persistSmallParameters();
   }
 
   void writeModel() {
@@ -88,7 +90,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        persistParameters();
+        persistParameters(getBackend(context));
       });
     });
   }
