@@ -62,10 +62,6 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
   void persistParameters(Bridge backend) async {
     if (!mounted) return;
-    // There seem to be a bug in flutter_rust_bridge async handling:
-    // the `await backend.persistSmallParameters();` freezes the application.
-    // This one-second delay is a workaround. I hope it efficiently prevents the freeze.
-    await Future.delayed(Duration(milliseconds: 1));
     await backend.persistSmallParameters();
   }
 

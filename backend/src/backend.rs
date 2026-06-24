@@ -559,6 +559,7 @@ impl Backend {
         let waypoints_w = self.export_points(&waypoints);
         gpxexport::generate(&self.d().track, &controls, &usersteps_groups, &waypoints_w)
     }
+
     pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
         let mut map = self.generateGpx();
         let pdf = self.generatePdf(kinds).await;

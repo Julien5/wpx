@@ -246,8 +246,8 @@ impl Bridge {
             backend: backend::Backend::make(),
         }
     }
-    #[frb(sync)]
-    pub fn set_sink(&mut self, sink: StreamSink<String>) -> Result<(), TrackError> {
+
+    pub async fn set_sink(&mut self, sink: StreamSink<String>) -> Result<(), TrackError> {
         let cell = Box::new(EventSender { sink });
         self.backend.set_sink(cell);
         Ok(())
@@ -271,7 +271,7 @@ impl Bridge {
         self.backend.cancel_osm().await
     }
 
-    pub async fn generateZip(&mut self, kinds: &Kinds) -> Vec<u8> {
+    pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
         self.backend.generateZip(&dedup(&kinds)).await
     }
 
@@ -279,8 +279,7 @@ impl Bridge {
         self.backend.persist_small_parameters().await
     }
 
-    #[frb(sync)]
-    pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
+    pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
         self.backend.load_contents(contents)
     }
 
@@ -289,8 +288,7 @@ impl Bridge {
         self.backend.load_track_parts(contents)
     }
 
-    #[frb(sync)]
-    pub fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
+    pub async fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
         self.backend.load_ordered(parts)
     }
 
@@ -303,23 +301,22 @@ impl Bridge {
     pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
         self.backend.get_waypoints(&segment._impl, &dedup(&kinds))
     }
+
     #[frb(sync)]
-    pub fn get_parameters(&mut self) -> Parameters {
+    pub fn get_parameters(&self) -> Parameters {
         self.backend.get_parameters()
     }
 
-    #[frb(sync)]
-    pub fn set_parameters(&mut self, parameters: &Parameters) {
+    pub async fn set_parameters(&mut self, parameters: &Parameters) {
         self.backend.set_parameters(parameters);
     }
 
-    #[frb(sync)]
-    pub fn set_user_step_options(&mut self, user_steps_options: &UserStepsOptions) {
+    pub async fn set_user_step_options(&mut self, user_steps_options: &UserStepsOptions) {
         self.backend.set_user_step_options(user_steps_options);
     }
 
     #[frb(sync)]
-    pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) -> bool {
+    pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) -> bool {
         self.backend.set_control_time(waypoint, time)
     }
 
@@ -328,17 +325,12 @@ impl Bridge {
         self.backend.loaded()
     }
 
-    #[frb(sync)]
-    pub fn unload(&mut self) {
+    pub async fn unload(&mut self) {
         self.backend.unload()
     }
 
     #[frb(sync)]
-    pub fn renderSegment(
-        &mut self,
-        segment: &Segment,
-        inputs: &Vec<RenderInput>,
-    ) -> Vec<RenderOutput> {
+    pub fn renderSegment(&self, segment: &Segment, inputs: &Vec<RenderInput>) -> Vec<RenderOutput> {
         assert!(self.backend.loaded());
         self.backend.render_segment(&segment._impl, inputs)
     }
