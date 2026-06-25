@@ -231,6 +231,7 @@ impl Track {
         let mut last_point = None;
         for (index, (name, track)) in gpxtracks.iter().enumerate() {
             debug_assert_eq!(track.segments.len(), 1);
+            let mut length = 0usize;
             for segment in &track.segments {
                 for k in 0..segment.points.len() {
                     let point = &segment.points[k];
@@ -243,8 +244,16 @@ impl Track {
                     };
 
                     let w = WGS84Point::new(&lon, &lat, &elevation);
+
+                    // Remove duplicates to ensure clean export/import:
+                    // exporting duplicates ends of segments.
+                    if last_point.is_some() && last_point.unwrap() == w {
+                        continue;
+                    }
+
                     euclidean.push(projection.project(&w));
                     wgs.push(w);
+                    length += 1;
 
                     if last_point.is_some() {
                         let dloc = distance_wgs84(&last_point.unwrap(), &w);
@@ -256,7 +265,7 @@ impl Track {
             }
             parts.push(TrackPart {
                 name: name.clone(),
-                length: track.segments.first().unwrap().points.len(),
+                length,
                 part_index: index,
             });
         }
