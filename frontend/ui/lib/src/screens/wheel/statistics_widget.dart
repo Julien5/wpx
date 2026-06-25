@@ -85,10 +85,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        persistParameters(getBackend(context));
-      });
     });
+    persistParameters(getBackend(context));
   }
 
   Future<void> _selectStartDate(BuildContext context) async {

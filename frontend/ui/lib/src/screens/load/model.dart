@@ -84,7 +84,7 @@ class LoadScreenModel extends ChangeNotifier {
       );
     } else if (job == Job.gpx) {
       assert(_trackParts != null);
-      future = Future<void>(() => backend.loadOrdered(parts: _trackParts!));
+      future = backend.loadOrdered(parts: _trackParts!);
       //future = backend.loadContents(contents: userInput.contents());
     } else if (job == Job.osm) {
       future = backend.loadOsm();
