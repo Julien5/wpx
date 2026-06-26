@@ -305,6 +305,65 @@ impl Backend {
         Ok(())
     }
 
+    pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
+        let waypoints = {
+            // no lock across async boundaries
+            // the lock must be in an inner scope
+            let locked = self.d().packet_provider.read().unwrap();
+            locked.collection.get_vector(&Kind::GPXWaypoints)
+        };
+        match persist::write_trackdata(&self.d().track, &waypoints).await {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                log::error!("write track data failed: {:?}", e);
+                Err(TrackError::IOError.into())
+            }
+        }
+    }
+
+    pub async fn has_persist(&self) -> bool {
+        let has_track = match persist::read_trackdata().await {
+            Some(_) => true,
+            None => false,
+        };
+        let has_smalldata = match persist::read_userdata().await {
+            Some(_) => true,
+            None => false,
+        };
+        has_track && has_smalldata
+    }
+
+    pub async fn load_persist(&mut self) -> Result<(), TrackError> {
+        let mut gpxdata = match persist::read_trackdata().await {
+            Some(data) => data,
+            None => return Err(TrackError::IOError.into()),
+        };
+        let track_data = Track::from_tracks(&gpxdata.tracks)?;
+        let track = std::sync::Arc::new(track_data);
+        for p in &mut gpxdata.waypoints {
+            track.project_point(p);
+        }
+        let smalldata = match persist::read_userdata().await {
+            Some(data) => data,
+            None => return Err(TrackError::IOError.into()),
+        };
+        let point_collection = SharedPacketProvider::new(PacketProvider::new().into());
+        point_collection
+            .write()
+            .unwrap()
+            .collection
+            .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
+
+        let data = BackendData {
+            track,
+            parameters: smalldata.parameters.clone(),
+            packet_provider: point_collection,
+        };
+        self.backend_data = Some(data);
+
+        Ok(())
+    }
+
     pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
         self.send("gpx:read");
         let track_parts = self.load_track_parts(contents)?;

@@ -145,6 +145,7 @@ impl ProjectionTrees {
         self.parts.clone()
     }
 
+    #[allow(dead_code)]
     pub fn debug(&self) {
         log::trace!("(proj) total tree {:?}", self.total_tree.range);
         for tree in &self.subtrees {
