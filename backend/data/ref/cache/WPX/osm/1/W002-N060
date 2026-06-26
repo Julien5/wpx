@@ -1,0 +1,131 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-2,60": [
+      {
+        "id": "12670271392",
+        "wgs84": [
+          -1.1844303,
+          47.3682464,
+          0.0
+        ],
+        "euc": [
+          -131850.17787612425,
+          6002389.768137453
+        ],
+        "tags": {
+          "addr:postcode": "44150",
+          "capital": "8",
+          "name": "Ancenis-Saint-Géréon",
+          "name:br": "Ankiniz-Sant-Gerent",
+          "name:ja": "アンスニ=サン=ジェレオン",
+          "name:ru": "Ансени-Сен-Жереон",
+          "name:uk": "Ансені-Сен-Жереон",
+          "name:zh": "昂斯尼-圣热雷翁",
+          "place": "town",
+          "population": "11600",
+          "population:date": "2023",
+          "source:population": "INSEE 2025",
+          "wikidata": "Q57208924"
+        }
+      },
+      {
+        "id": "26691385",
+        "wgs84": [
+          -1.3757282,
+          47.7194057,
+          0.0
+        ],
+        "euc": [
+          -153145.3626939468,
+          6060300.246177459
+        ],
+        "tags": {
+          "addr:postcode": "44110",
+          "alt_name:br": "Kastellbriant",
+          "capital": "7",
+          "name": "Châteaubriant",
+          "name:br": "Kastell-Briant",
+          "name:el": "Σατωμπριάν",
+          "name:fr": "Châteaubriant",
+          "name:hi": "शातोब्रिआँ",
+          "name:ja": "シャトーブリアン",
+          "name:ko": "샤토브리앙",
+          "name:ru": "Шатобриан",
+          "name:uk": "Шатобріан",
+          "name:zh": "沙托布里扬",
+          "old_name:it": "Castel Briante",
+          "place": "town",
+          "population": "12260",
+          "population:date": "2023",
+          "ref:FR:SIREN": "214400368",
+          "source:population": "INSEE 2025",
+          "website": "https://www.mairie-chateaubriant.fr/",
+          "wikidata": "Q211187",
+          "wikipedia": "fr:Châteaubriant"
+        }
+      },
+      {
+        "id": "26697688",
+        "wgs84": [
+          -1.7643647,
+          47.4755536,
+          0.0
+        ],
+        "euc": [
+          -196408.1799776269,
+          6020044.933253818
+        ],
+        "tags": {
+          "addr:postcode": "44130",
+          "name": "Blain",
+          "name:br": "Blaen",
+          "name:fr": "Blain",
+          "name:ja": "ブラン",
+          "name:ru": "Блен",
+          "name:uk": "Блен",
+          "name:zh": "布兰",
+          "place": "town",
+          "population": "10376",
+          "population:date": "2023",
+          "ref:FR:SIREN": "214400152",
+          "source:population": "INSEE 2025",
+          "wikidata": "Q134204"
+        }
+      },
+      {
+        "id": "26698516",
+        "wgs84": [
+          -1.1816088,
+          47.3648141,
+          0.0
+        ],
+        "euc": [
+          -131536.08993285103,
+          6001825.647972161
+        ],
+        "tags": {
+          "addr:postcode": "44150",
+          "alt_name:br": "Anseniz",
+          "capital": "9",
+          "name": "Ancenis",
+          "name:br": "Ankiniz",
+          "name:fr": "Ancenis",
+          "name:ja": "アンスニ",
+          "name:ru": "Ансени",
+          "name:uk": "Ансені",
+          "name:zh": "昂斯尼",
+          "old_name:it": "Anceniso",
+          "place": "town",
+          "population": "11099",
+          "population:date": "2021",
+          "ref:FR:SIREN": "214400038",
+          "source:population": "INSEE 2024",
+          "website": "http://www.ancenis.fr/",
+          "wikidata": "Q213515",
+          "wikipedia": "fr:Ancenis"
+        }
+      }
+    ]
+  }
+}

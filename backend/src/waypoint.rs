@@ -165,7 +165,10 @@ impl WaypointInfo {
         track: &track::Track,
         parameters: &ExportParameters,
     ) {
-        let mut wprev = waypoints.first().unwrap().1.clone();
+        let wgs0 = track.wgs84.first().unwrap();
+        let euc0 = track.euclidean.first().unwrap();
+        let w0 = Waypoint::create(*wgs0, euc0, 0, Kind::CutOff);
+        let mut wprev = w0.clone();
         for (proj, w) in waypoints.iter_mut() {
             let info = Self::create_waypoint_info_cross(
                 track,

@@ -1,0 +1,146 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-2,62": [
+      {
+        "id": "26692508",
+        "wgs84": [
+          -1.5959177,
+          48.8376296,
+          0.0
+        ],
+        "euc": [
+          -177656.74571197233,
+          6247355.308509397
+        ],
+        "tags": {
+          "addr:postcode": "50400",
+          "capital:INSEE": "zone d'emploi",
+          "name": "Granville",
+          "name:br": "Granville",
+          "name:el": "Γκρανβίλ",
+          "name:hy": "Գրանվիլ",
+          "name:ja": "グランヴィル",
+          "name:ko": "그랑빌",
+          "name:ru": "Гранвиль",
+          "name:uk": "Гранвіль",
+          "name:zh": "格朗维尔",
+          "place": "town",
+          "population": "12581",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215002189",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q333559",
+          "wikipedia": "en:Granville, Manche"
+        }
+      },
+      {
+        "id": "633972384",
+        "wgs84": [
+          -1.0909278,
+          49.115808,
+          0.0
+        ],
+        "euc": [
+          -121441.5271882262,
+          6294534.482425758
+        ],
+        "tags": {
+          "addr:postcode": "50000",
+          "capital": "6",
+          "name": "Saint-Lô",
+          "name:br": "Sant-Lo",
+          "name:da": "Saint-Lo",
+          "name:el": "Σαιν Λο",
+          "name:fr": "Saint-Lô",
+          "name:hy": "Սեն Լո",
+          "name:ja": "サン＝ロー",
+          "name:ko": "생로",
+          "name:ru": "Сен-Ло",
+          "name:th": "แซ็ง-โล",
+          "name:uk": "Сен-Ло",
+          "name:zh": "圣洛",
+          "old_name:it": "Santo Lo",
+          "place": "town",
+          "population": "19373",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215005026",
+          "source:name:br": "proper translation",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q181704",
+          "wikipedia": "fr:Saint-Lô"
+        }
+      },
+      {
+        "id": "640866637",
+        "wgs84": [
+          -1.4454857,
+          49.047792,
+          0.0
+        ],
+        "euc": [
+          -160910.7320729586,
+          6282974.5905660195
+        ],
+        "tags": {
+          "addr:postcode": "50200",
+          "capital": "7",
+          "capital:INSEE": "zone d'emploi",
+          "name": "Coutances",
+          "name:br": "Kergustent",
+          "name:el": "Κουτάνς",
+          "name:fr": "Coutances",
+          "name:ja": "クタンス",
+          "name:ko": "쿠탕스",
+          "name:ru": "Кутанс",
+          "name:uk": "Кутанс",
+          "name:zh": "库唐斯",
+          "old_name:it": "Cutanza",
+          "place": "town",
+          "population": "8353",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215001470",
+          "source": "Wikipedia",
+          "source:population": "INSEE 2024",
+          "website": "http://www.ville-coutances.fr/",
+          "wikidata": "Q202565",
+          "wikipedia": "fr:Coutances"
+        }
+      },
+      {
+        "id": "651232388",
+        "wgs84": [
+          -1.3579476,
+          48.6862085,
+          0.0
+        ],
+        "euc": [
+          -151166.03535594794,
+          6221784.300437471
+        ],
+        "tags": {
+          "addr:postcode": "50300",
+          "capital": "7",
+          "capital:INSEE": "zone d'emploi",
+          "name": "Avranches",
+          "name:br": "Avranches",
+          "name:el": "Αβράνς",
+          "name:fr": "Avranches",
+          "name:ja": "アヴランシュ",
+          "name:ko": "아브랑슈",
+          "name:ru": "Авранш",
+          "name:uk": "Авранш",
+          "name:zh": "阿夫朗什",
+          "old_name:it": "Avaranca",
+          "place": "town",
+          "population": "10240",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215000258",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q204430",
+          "wikipedia": "fr:Avranches"
+        }
+      }
+    ]
+  }
+}

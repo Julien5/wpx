@@ -1,0 +1,104 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-3,60": [
+      {
+        "id": "1725596632",
+        "wgs84": [
+          -2.39808,
+          47.9323786,
+          0.0
+        ],
+        "euc": [
+          -266953.04448153346,
+          6095612.407234705
+        ],
+        "tags": {
+          "addr:postcode": "56800",
+          "name": "Ploërmel",
+          "name:ar": "بلوئرمل",
+          "name:br": "Ploermael",
+          "name:fr": "Ploërmel",
+          "name:fr-gallo": "Pllermè",
+          "name:ja": "プロエルメル",
+          "name:ru": "Плоэрмель",
+          "name:uk": "Плоермель",
+          "name:zh": "普洛埃梅勒",
+          "place": "town",
+          "population": "9879",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215601659",
+          "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2012",
+          "source:population": "INSEE 2024",
+          "website": "https://www.ploermel.com/",
+          "wikidata": "Q127775",
+          "wikipedia": "fr:Ploërmel"
+        }
+      },
+      {
+        "id": "26694508",
+        "wgs84": [
+          -2.0842143,
+          47.6510682,
+          0.0
+        ],
+        "euc": [
+          -232013.67458005913,
+          6049000.093801386
+        ],
+        "tags": {
+          "addr:postcode": "35600",
+          "alt_name:br": "Rezon",
+          "capital": "7",
+          "name": "Redon",
+          "name:br": "Redon",
+          "name:el": "Ρεντόν",
+          "name:fr": "Redon",
+          "name:fr-gallo": "Rdon",
+          "name:ja": "ルドン",
+          "name:ko": "르동",
+          "name:ru": "Редон",
+          "name:uk": "Редон",
+          "name:zh": "勒东",
+          "place": "town",
+          "population": "9312",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213502362",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q206837"
+        }
+      },
+      {
+        "id": "26696098",
+        "wgs84": [
+          -2.0880233,
+          47.4373374,
+          0.0
+        ],
+        "euc": [
+          -232437.69052049072,
+          6013753.126339289
+        ],
+        "tags": {
+          "addr:postcode": "44160",
+          "alt_name": "Pont-Château",
+          "alt_name:br": "Pont-Kastell",
+          "name": "Pontchâteau",
+          "name:br": "Pontkastell-Keren",
+          "name:fr": "Pontchâteau",
+          "name:ja": "ポンシャトー",
+          "name:ru": "Поншато",
+          "name:uk": "Поншато",
+          "name:zh": "蓬沙托",
+          "place": "town",
+          "population": "11075",
+          "population:date": "2021",
+          "ref:FR:SIREN": "214401291",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q818116",
+          "wikipedia": "fr:Pontchâteau"
+        }
+      }
+    ]
+  }
+}

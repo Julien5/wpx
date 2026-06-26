@@ -25,6 +25,7 @@ pub struct InputPoint {
     pub euclidean: MercatorPoint,
     pub data: InputPointData,
     pub track_projections: TrackProjections,
+    pub index: Option<usize>,
 }
 
 impl PartialEq for InputPoint {
@@ -180,7 +181,6 @@ impl OSMData {
 pub struct GPXWaypointData {
     pub name: Option<String>,
     pub description: Option<String>,
-    pub index: usize, // index in the waypoint vector
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
@@ -239,14 +239,8 @@ impl InputPointData {
 }
 
 impl InputPoint {
-    pub fn gpxwaypoint_index(&self) -> Option<usize> {
-        match &self.data {
-            InputPointData::GPXWaypoint(data) => Some(data.index),
-            _ => {
-                log::warn!("this is no GPXWaypoint");
-                None
-            }
-        }
+    pub fn index(&self) -> Option<usize> {
+        self.index.clone()
     }
     pub fn map_id(&self) -> String {
         // The track projection is not taken into account
@@ -339,10 +333,10 @@ impl InputPoint {
             euclidean: euclidean.clone(),
             track_projections: TrackProjections::new(),
             data,
+            index: None,
         }
     }
     pub fn from_gpx(
-        index: usize,
         wgs84: &WGS84Point,
         euclidean: &MercatorPoint,
         name: &Option<String>,
@@ -351,13 +345,13 @@ impl InputPoint {
         let data = GPXWaypointData {
             name: name.clone(),
             description: description.clone(),
-            index,
         };
         InputPoint {
             wgs84: wgs84.clone(),
             track_projections: TrackProjections::new(),
             data: InputPointData::GPXWaypoint(data),
             euclidean: euclidean.clone(),
+            index: None,
         }
     }
 
@@ -453,7 +447,7 @@ impl InputPoint {
             has_custom_time,
             info: None,
             origin: self.kind(),
-            index: self.gpxwaypoint_index(),
+            index: self.index(),
         }
     }
 }
@@ -592,6 +586,7 @@ mod tests {
             euclidean: MercatorPoint::from_point2d(&Point2D::new(0f64, 0f64)),
             data: InputPointData::CutOff,
             track_projections: TrackProjections::new(),
+            index: None,
         }
     }
 

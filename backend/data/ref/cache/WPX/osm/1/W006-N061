@@ -1,0 +1,4318 @@
+{
+  "tiles": {
+    "-51,617": [
+      {
+        "id": "10009352213",
+        "wgs84": [
+          -4.5502946,
+          48.4356971,
+          0.0
+        ],
+        "euc": [
+          -506536.4778313824,
+          6179647.831442369
+        ],
+        "tags": {
+          "name": "Kermabiven Bihan",
+          "name:br": "Kermabiven Vihan",
+          "name:fr": "Kermabiven Bihan",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "10009352214",
+        "wgs84": [
+          -4.5467725,
+          48.4358087,
+          0.0
+        ],
+        "euc": [
+          -506144.3994528595,
+          6179666.556407572
+        ],
+        "tags": {
+          "name": "Kerondy",
+          "name:br": "Keroudi",
+          "name:fr": "Kerondy",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "10009352215",
+        "wgs84": [
+          -4.542509,
+          48.4310168,
+          0.0
+        ],
+        "euc": [
+          -505669.7888038623,
+          6178862.577660565
+        ],
+        "tags": {
+          "name": "Moulin de Kerboroné",
+          "name:br": "Milin Kerboronne",
+          "name:fr": "Moulin de Kerboroné",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "10009359770",
+        "wgs84": [
+          -4.5107676,
+          48.4263164,
+          0.0
+        ],
+        "euc": [
+          -502136.35231879674,
+          6178074.02432062
+        ],
+        "tags": {
+          "name": "Moulin de Kervao",
+          "name:br": "Milin Gervao",
+          "name:fr": "Moulin de Kervao",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "10009359771",
+        "wgs84": [
+          -4.5141917,
+          48.4240752,
+          0.0
+        ],
+        "euc": [
+          -502517.52138722193,
+          6177698.059498087
+        ],
+        "tags": {
+          "name": "Moulin du Ponchou",
+          "name:br": "Milin ar Poñchoù",
+          "name:fr": "Moulin du Ponchou",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "10009359772",
+        "wgs84": [
+          -4.5159743,
+          48.4216146,
+          0.0
+        ],
+        "euc": [
+          -502715.9595115101,
+          6177285.309072213
+        ],
+        "tags": {
+          "name": "Moulin du Beuzit",
+          "name:br": "Milin Beuzid",
+          "name:fr": "Moulin du Beuzit",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "10009359773",
+        "wgs84": [
+          -4.5182221,
+          48.4204117,
+          0.0
+        ],
+        "euc": [
+          -502966.1834629152,
+          6177083.537311075
+        ],
+        "tags": {
+          "name": "Le Beuzit",
+          "name:br": "Ar Veuzid",
+          "name:fr": "Le Beuzit",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "10009359774",
+        "wgs84": [
+          -4.5302383,
+          48.414071,
+          0.0
+        ],
+        "euc": [
+          -504303.8207281853,
+          6176020.041354059
+        ],
+        "tags": {
+          "name": "Kerguillo",
+          "name:br": "Kergilio",
+          "name:fr": "Kerguillo",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "10009359775",
+        "wgs84": [
+          -4.53154,
+          48.4158491,
+          0.0
+        ],
+        "euc": [
+          -504448.7253093509,
+          6176318.260368982
+        ],
+        "tags": {
+          "name": "Moulin de Kerguillo",
+          "name:br": "Milin Kergilio",
+          "name:fr": "Moulin de Kerguillo",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "10009359777",
+        "wgs84": [
+          -4.5211897,
+          48.4107371,
+          0.0
+        ],
+        "euc": [
+          -503296.5351837933,
+          6175460.915098461
+        ],
+        "tags": {
+          "name": "Moulin de Talarn",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "10009373423",
+        "wgs84": [
+          -4.5221538,
+          48.4310305,
+          0.0
+        ],
+        "euc": [
+          -503403.8583048671,
+          6178864.876120664
+        ],
+        "tags": {
+          "name": "Keramezec",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "10009373479",
+        "wgs84": [
+          -4.508016,
+          48.4303142,
+          0.0
+        ],
+        "euc": [
+          -501830.0456079299,
+          6178744.702720147
+        ],
+        "tags": {
+          "name": "Moulin du Ruffa",
+          "name:br": "Milin ar Rufa",
+          "name:fr": "Moulin du Ruffa",
+          "place": "hamlet",
+          "source:name:br": "proper translation"
+        }
+      },
+      {
+        "id": "11370393757",
+        "wgs84": [
+          -4.5494654,
+          48.4329043,
+          0.0
+        ],
+        "euc": [
+          -506444.17170961667,
+          6179179.250903605
+        ],
+        "tags": {
+          "name": "Kermabiven Vraz",
+          "name:br": "Kerabiven Vras",
+          "name:fr": "Kermabiven Vraz",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B058A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398525",
+        "wgs84": [
+          -4.5688062,
+          48.400268,
+          0.0
+        ],
+        "euc": [
+          -508597.1797171512,
+          6173705.387230664
+        ],
+        "tags": {
+          "name": "Castel an Daol",
+          "name:br": "Kastell an Daol",
+          "name:fr": "Castel an Daol",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B006U",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398529",
+        "wgs84": [
+          -4.552068,
+          48.4055129,
+          0.0
+        ],
+        "euc": [
+          -506733.8918163553,
+          6174584.84155082
+        ],
+        "tags": {
+          "name": "Coadic ar Foll",
+          "name:br": "Koadig ar Foll",
+          "name:fr": "Coadic ar Foll",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B010Y",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398530",
+        "wgs84": [
+          -4.5544099,
+          48.4194001,
+          0.0
+        ],
+        "euc": [
+          -506994.590931844,
+          6176913.857480984
+        ],
+        "tags": {
+          "name": "Coat Mez",
+          "name:br": "Ar C'hoad Mez",
+          "name:fr": "Coat Mez",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B012A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398532",
+        "wgs84": [
+          -4.5436937,
+          48.4209872,
+          0.0
+        ],
+        "euc": [
+          -505801.6690046051,
+          6177180.0698008295
+        ],
+        "tags": {
+          "name": "Coat Ty Ogant",
+          "name:br": "Koatiogan",
+          "name:fr": "Coat Ty Ogant",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B014C",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398533",
+        "wgs84": [
+          -4.5599278,
+          48.436746,
+          0.0
+        ],
+        "euc": [
+          -507608.8407500922,
+          6179823.824248618
+        ],
+        "tags": {
+          "name": "Coat ar Guéo",
+          "name:br": "Koad ar Geo",
+          "name:fr": "Coat ar Guéo",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B011Z",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398535",
+        "wgs84": [
+          -4.547528,
+          48.4171134,
+          0.0
+        ],
+        "euc": [
+          -506228.5013281537,
+          6176530.312324364
+        ],
+        "tags": {
+          "name": "Croissant de Keroual Bian",
+          "name:br": "Kroashent Keroual Vihan",
+          "name:fr": "Croissant de Keroual Bian",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B070N",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398536",
+        "wgs84": [
+          -4.5526531,
+          48.4101511,
+          0.0
+        ],
+        "euc": [
+          -506799.0248504184,
+          6175362.641197962
+        ],
+        "tags": {
+          "name": "Croix de Keroual",
+          "name:br": "Kroaz Keroual",
+          "name:fr": "Croix de Keroual",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B069M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398537",
+        "wgs84": [
+          -4.5600903,
+          48.4168235,
+          0.0
+        ],
+        "euc": [
+          -507626.9301673461,
+          6176481.689014252
+        ],
+        "tags": {
+          "name": "Feunteun Viler",
+          "name:br": "Feunteun Wiler",
+          "name:fr": "Feunteun Viler",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B023M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398539",
+        "wgs84": [
+          -4.5321046,
+          48.4116621,
+          0.0
+        ],
+        "euc": [
+          -504511.5762938528,
+          6175616.042587466
+        ],
+        "tags": {
+          "name": "Guerven",
+          "name:br": "Ar Gerven",
+          "name:fr": "Guerven",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B028T",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1674398540",
+        "wgs84": [
+          -4.5476517,
+          48.4255917,
+          0.0
+        ],
+        "euc": [
+          -506242.2715491649,
+          6177952.452942889
+        ],
+        "tags": {
+          "name": "Ker Eol",
+          "name:br": "Ker Eol",
+          "name:fr": "Ker Eol",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B048P",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398541",
+        "wgs84": [
+          -4.5711008,
+          48.4050636,
+          0.0
+        ],
+        "euc": [
+          -508852.61342072545,
+          6174509.50027567
+        ],
+        "tags": {
+          "name": "Kerallan",
+          "name:br": "Kerallann",
+          "name:fr": "Kerallan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B030V",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398542",
+        "wgs84": [
+          -4.5597492,
+          48.4005572,
+          0.0
+        ],
+        "euc": [
+          -507588.9590890365,
+          6173753.877344848
+        ],
+        "tags": {
+          "name": "Keralouët",
+          "name:br": "Keraloued",
+          "name:fr": "Keralouët",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B031W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398543",
+        "wgs84": [
+          -4.5549369,
+          48.42747,
+          0.0
+        ],
+        "euc": [
+          -507053.2563034921,
+          6178267.548997
+        ],
+        "tags": {
+          "name": "Kerampennec",
+          "name:br": "Kerampenneg",
+          "name:fr": "Kerampennec",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069A054J",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398545",
+        "wgs84": [
+          -4.5447126,
+          48.429431,
+          0.0
+        ],
+        "euc": [
+          -505915.0924337745,
+          6178596.530896985
+        ],
+        "tags": {
+          "name": "Kerboroné",
+          "name:br": "Kerboronne",
+          "name:fr": "Kerboroné",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B033Y",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398546",
+        "wgs84": [
+          -4.5753403,
+          48.4254463,
+          0.0
+        ],
+        "euc": [
+          -509324.5524019435,
+          6177928.06170926
+        ],
+        "tags": {
+          "name": "Kerebars Huella",
+          "name:br": "Kerebarz Uhelañ",
+          "name:fr": "Kerebars Huella",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B159K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398547",
+        "wgs84": [
+          -4.5772299,
+          48.4254625,
+          0.0
+        ],
+        "euc": [
+          -509534.90171174647,
+          6177930.779298548
+        ],
+        "tags": {
+          "name": "Kerebars Izella",
+          "name:br": "Kerebarz Izelañ",
+          "name:fr": "Kerebars Izella",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B035A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398548",
+        "wgs84": [
+          -4.5749552,
+          48.4263541,
+          0.0
+        ],
+        "euc": [
+          -509281.683266039,
+          6178080.348696662
+        ],
+        "tags": {
+          "name": "Kerebars",
+          "name:br": "Kroashent Kerebarz",
+          "name:fr": "Kerebars",
+          "place": "hamlet",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398551",
+        "wgs84": [
+          -4.5661806,
+          48.4327319,
+          0.0
+        ],
+        "euc": [
+          -508304.8992621245,
+          6179150.326194469
+        ],
+        "tags": {
+          "name": "Keredec",
+          "name:br": "Keredeg",
+          "name:fr": "Keredec",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B036B",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398553",
+        "wgs84": [
+          -4.5400829,
+          48.4140643,
+          0.0
+        ],
+        "euc": [
+          -505399.7165872488,
+          6176018.917664541
+        ],
+        "tags": {
+          "name": "Kerelie",
+          "name:br": "Kereli",
+          "name:fr": "Kerelie",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B040F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398556",
+        "wgs84": [
+          -4.5636826,
+          48.4031512,
+          0.0
+        ],
+        "euc": [
+          -508026.8231741227,
+          6174188.825204507
+        ],
+        "tags": {
+          "name": "Kerfestour",
+          "name:br": "Kerfestour",
+          "name:fr": "Kerfestour",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B041G",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398566",
+        "wgs84": [
+          -4.5371921,
+          48.406189,
+          0.0
+        ],
+        "euc": [
+          -505077.9142032637,
+          6174698.2152425675
+        ],
+        "tags": {
+          "name": "Kergariou",
+          "name:br": "Kergariou",
+          "name:fr": "Kergariou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B043J",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1674398571",
+        "wgs84": [
+          -4.5581541,
+          48.4018406,
+          0.0
+        ],
+        "euc": [
+          -507411.39336927223,
+          6173969.068128099
+        ],
+        "tags": {
+          "name": "Kergoumpez",
+          "name:br": "Kergoumpez",
+          "name:fr": "Kergoumpez",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B044K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398575",
+        "wgs84": [
+          -4.5383483,
+          48.4153456,
+          0.0
+        ],
+        "euc": [
+          -505206.6217985187,
+          6176233.813399657
+        ],
+        "tags": {
+          "name": "Kerguen",
+          "name:br": "Keragwenn",
+          "name:fr": "Kerguen",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B046M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398577",
+        "wgs84": [
+          -4.554027,
+          48.4224305,
+          0.0
+        ],
+        "euc": [
+          -506951.9666988192,
+          6177422.1690348545
+        ],
+        "tags": {
+          "name": "Kerilis",
+          "name:br": "Keriliz",
+          "name:fr": "Kerilis",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B049R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398578",
+        "wgs84": [
+          -4.5578314,
+          48.4117503,
+          0.0
+        ],
+        "euc": [
+          -507375.4705695933,
+          6175630.83435054
+        ],
+        "tags": {
+          "name": "Keriolet",
+          "name:br": "Kerioled",
+          "name:fr": "Keriolet",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B050S",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398580",
+        "wgs84": [
+          -4.5812282,
+          48.4160095,
+          0.0
+        ],
+        "euc": [
+          -509979.9904317852,
+          6176345.162816484
+        ],
+        "tags": {
+          "name": "Kerionoc",
+          "name:br": "Kerionog",
+          "name:fr": "Kerionoc",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B051T",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398587",
+        "wgs84": [
+          -4.5611451,
+          48.4095382,
+          0.0
+        ],
+        "euc": [
+          -507744.3499662349,
+          6175259.8573010545
+        ],
+        "tags": {
+          "name": "Kerjean",
+          "name:br": "Keryann",
+          "name:fr": "Kerjean",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B052U",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398592",
+        "wgs84": [
+          -4.5572673,
+          48.4320146,
+          0.0
+        ],
+        "euc": [
+          -507312.6752448368,
+          6179029.980995988
+        ],
+        "tags": {
+          "name": "Kerjezequel",
+          "name:br": "Kroashent Kerjezekel",
+          "name:fr": "Kerjezequel",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B054W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398595",
+        "wgs84": [
+          -4.556201,
+          48.4326897,
+          0.0
+        ],
+        "euc": [
+          -507193.9752718038,
+          6179143.2460312
+        ],
+        "tags": {
+          "name": "Kerjézéquel",
+          "name:br": "Kerjezekel",
+          "name:fr": "Kerjézéquel",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B054W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398597",
+        "wgs84": [
+          -4.5494824,
+          48.4108024,
+          0.0
+        ],
+        "euc": [
+          -506446.0641409601,
+          6175471.866168085
+        ],
+        "tags": {
+          "name": "Kerlidien",
+          "name:br": "Ar C'hoad",
+          "name:fr": "Kerlidien",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B055X",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398599",
+        "wgs84": [
+          -4.5431,
+          48.4268429,
+          0.0
+        ],
+        "euc": [
+          -505735.5786229212,
+          6178162.34792801
+        ],
+        "tags": {
+          "name": "Kerloquin",
+          "name:br": "Kerlokin",
+          "name:fr": "Kerloquin",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B056Y",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398602",
+        "wgs84": [
+          -4.5745507,
+          48.4351728,
+          0.0
+        ],
+        "euc": [
+          -509236.6545320131,
+          6179559.861569452
+        ],
+        "tags": {
+          "name": "Kerlubridic",
+          "name:br": "Kerlubridig",
+          "name:fr": "Kerlubridic",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B107D",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398607",
+        "wgs84": [
+          -4.5516713,
+          48.4337688,
+          0.0
+        ],
+        "euc": [
+          -506689.7313743575,
+          6179324.29537109
+        ],
+        "tags": {
+          "name": "Kermabiven",
+          "name:br": "Kerabiven",
+          "name:fr": "Kermabiven",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B058A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398611",
+        "wgs84": [
+          -4.5716251,
+          48.4375607,
+          0.0
+        ],
+        "euc": [
+          -508910.9782297484,
+          6179960.523618474
+        ],
+        "tags": {
+          "name": "Kermaria",
+          "name:br": "Kermaria",
+          "name:fr": "Kermaria",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B061D",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398615",
+        "wgs84": [
+          -4.5662759,
+          48.4239389,
+          0.0
+        ],
+        "euc": [
+          -508315.50800959696,
+          6177675.195493636
+        ],
+        "tags": {
+          "name": "Kermengleuz",
+          "name:br": "Kervengleuz",
+          "name:fr": "Kermengleuz",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B062E",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398619",
+        "wgs84": [
+          -4.5498197,
+          48.4026821,
+          0.0
+        ],
+        "euc": [
+          -506483.6122052046,
+          6174110.16741626
+        ],
+        "tags": {
+          "name": "Kermenguy",
+          "name:br": "Kervengi",
+          "name:fr": "Kermenguy",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B065H",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398623",
+        "wgs84": [
+          -4.5525122,
+          48.4002823,
+          0.0
+        ],
+        "euc": [
+          -506783.3399341656,
+          6173707.784902721
+        ],
+        "tags": {
+          "name": "Kermerrien",
+          "name:br": "Kerverien",
+          "name:fr": "Kermerrien",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B063F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398628",
+        "wgs84": [
+          -4.5487222,
+          48.4166565,
+          0.0
+        ],
+        "euc": [
+          -506361.4390640591,
+          6176453.679161544
+        ],
+        "tags": {
+          "name": "Keroual Bihan",
+          "name:br": "Keroual Vihan",
+          "name:fr": "Keroual Bihan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B070N",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398631",
+        "wgs84": [
+          -4.5555821,
+          48.4154872,
+          0.0
+        ],
+        "euc": [
+          -507125.07963895187,
+          6176257.562452881
+        ],
+        "tags": {
+          "name": "Keroual-Braz",
+          "name:br": "Keroual Vras",
+          "name:fr": "Keroual-Braz",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B071P",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398640",
+        "wgs84": [
+          -4.5351957,
+          48.4109518,
+          0.0
+        ],
+        "euc": [
+          -504855.6759718439,
+          6175496.921194971
+        ],
+        "tags": {
+          "name": "Kerouldry",
+          "name:br": "Kerouldri",
+          "name:fr": "Kerouldry",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B072R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1674398641",
+        "wgs84": [
+          -4.5507944,
+          48.4290142,
+          0.0
+        ],
+        "euc": [
+          -506592.11531288095,
+          6178526.606501663
+        ],
+        "tags": {
+          "name": "Kerouriat",
+          "name:br": "Kerouriad",
+          "name:fr": "Kerouriat",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B073S",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398651",
+        "wgs84": [
+          -4.5555043,
+          48.4030558,
+          0.0
+        ],
+        "euc": [
+          -507116.41898256814,
+          6174172.828656725
+        ],
+        "tags": {
+          "name": "Kerroum",
+          "name:br": "Kerroum",
+          "name:fr": "Kerroum",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B155F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398653",
+        "wgs84": [
+          -4.5703041,
+          48.4345573,
+          0.0
+        ],
+        "euc": [
+          -508763.9251824105,
+          6179456.590828592
+        ],
+        "tags": {
+          "name": "Keruzanval",
+          "name:br": "Keruzanval",
+          "name:fr": "Keruzanval",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B075U",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398654",
+        "wgs84": [
+          -4.5416598,
+          48.4102132,
+          0.0
+        ],
+        "euc": [
+          -505575.2562922807,
+          6175373.055494522
+        ],
+        "tags": {
+          "name": "Kervaly",
+          "name:br": "Kervali",
+          "name:fr": "Kervaly",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B076V",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398661",
+        "wgs84": [
+          -4.5720652,
+          48.4104115,
+          0.0
+        ],
+        "euc": [
+          -508959.96993764647,
+          6175406.3108938
+        ],
+        "tags": {
+          "name": "Kervaziou",
+          "name:br": "Kervaziou",
+          "name:fr": "Kervaziou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B077W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398666",
+        "wgs84": [
+          -4.5572137,
+          48.4343273,
+          0.0
+        ],
+        "euc": [
+          -507306.7085201302,
+          6179418.000945952
+        ],
+        "tags": {
+          "name": "Kerzéspès",
+          "name:br": "Kerzespez",
+          "name:fr": "Kerzéspès",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B080Z",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398669",
+        "wgs84": [
+          -4.5728934,
+          48.4257948,
+          0.0
+        ],
+        "euc": [
+          -509052.16473992146,
+          6177986.52362057
+        ],
+        "tags": {
+          "name": "Kerébars",
+          "name:br": "Kerebarz",
+          "name:fr": "Kerébars",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B159K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398673",
+        "wgs84": [
+          -4.5358442,
+          48.4031366,
+          0.0
+        ],
+        "euc": [
+          -504927.8666616233,
+          6174186.377093573
+        ],
+        "tags": {
+          "name": "Kerédern",
+          "name:br": "Keredern",
+          "name:fr": "Kerédern",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B037C",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398680",
+        "wgs84": [
+          -4.5290423,
+          48.4058312,
+          0.0
+        ],
+        "euc": [
+          -504170.6826171966,
+          6174638.216375765
+        ],
+        "tags": {
+          "name": "La Villeneuve",
+          "name:br": "Ar Gernevez",
+          "name:fr": "La Villeneuve",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B142S",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1674398682",
+        "wgs84": [
+          -4.5762618,
+          48.4175687,
+          0.0
+        ],
+        "euc": [
+          -509427.1333127095,
+          6176606.677813653
+        ],
+        "tags": {
+          "name": "Lambalez",
+          "name:br": "Lambalez",
+          "name:fr": "Lambalez",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B082B",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398686",
+        "wgs84": [
+          -4.5569282,
+          48.4375301,
+          0.0
+        ],
+        "euc": [
+          -507274.9268055087,
+          6179955.389172667
+        ],
+        "tags": {
+          "name": "Lanvian",
+          "name:br": "Lanvihan",
+          "name:fr": "Lanvian",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B145V",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398688",
+        "wgs84": [
+          -4.54405,
+          48.4239024,
+          0.0
+        ],
+        "euc": [
+          -505841.3321391748,
+          6177669.072714883
+        ],
+        "tags": {
+          "name": "Le Candy",
+          "name:br": "Ar C'hanndi",
+          "name:fr": "Le Candy",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B005T",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398695",
+        "wgs84": [
+          -4.5535669,
+          48.4337304,
+          0.0
+        ],
+        "euc": [
+          -506900.7486011053,
+          6179317.852626348
+        ],
+        "tags": {
+          "name": "Le Dervès",
+          "name:br": "An Dervez",
+          "name:fr": "Le Dervès",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B021K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398698",
+        "wgs84": [
+          -4.5581046,
+          48.4276881,
+          0.0
+        ],
+        "euc": [
+          -507405.88305447786,
+          6178304.137330504
+        ],
+        "tags": {
+          "name": "Le Louc'h",
+          "name:br": "Al Louc'h",
+          "name:fr": "Le Louc'h",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B092M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398700",
+        "wgs84": [
+          -4.5543136,
+          48.4377142,
+          0.0
+        ],
+        "euc": [
+          -506983.8708648806,
+          6179986.2797903465
+        ],
+        "tags": {
+          "name": "Le Roudous",
+          "name:br": "Ar Roudouz",
+          "name:fr": "Le Roudous",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B151B",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398702",
+        "wgs84": [
+          -4.561503,
+          48.4005657,
+          0.0
+        ],
+        "euc": [
+          -507784.1912119898,
+          6173755.302542554
+        ],
+        "tags": {
+          "name": "Le Stivel",
+          "name:br": "Ar Stivell",
+          "name:fr": "Le Stivel",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B132F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398705",
+        "wgs84": [
+          -4.5377159,
+          48.4253511,
+          0.0
+        ],
+        "euc": [
+          -505136.2233525411,
+          6177912.091695881
+        ],
+        "tags": {
+          "name": "Le Tridour",
+          "name:br": "An Tridour",
+          "name:fr": "Le Tridour",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B134H",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398706",
+        "wgs84": [
+          -4.5726337,
+          48.4185505,
+          0.0
+        ],
+        "euc": [
+          -509023.25506816246,
+          6176771.353186182
+        ],
+        "tags": {
+          "name": "Lezvingant",
+          "name:br": "Lesvengant",
+          "name:fr": "Lezvingant",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B086F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398708",
+        "wgs84": [
+          -4.5326959,
+          48.4089698,
+          0.0
+        ],
+        "euc": [
+          -504577.3995087589,
+          6175164.537202454
+        ],
+        "tags": {
+          "name": "Menez Bihan",
+          "name:br": "Menez Bihan",
+          "name:fr": "Menez Bihan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B095R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398709",
+        "wgs84": [
+          -4.5623116,
+          48.4058852,
+          0.0
+        ],
+        "euc": [
+          -507874.2041522452,
+          6174647.271515873
+        ],
+        "tags": {
+          "name": "Menhir",
+          "name:br": "Maen-hir",
+          "name:fr": "Menhir",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B094P",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398710",
+        "wgs84": [
+          -4.5454666,
+          48.4197533,
+          0.0
+        ],
+        "euc": [
+          -505999.02732983255,
+          6176973.100786518
+        ],
+        "tags": {
+          "name": "Mezantellou",
+          "name:br": "Mezantelloù",
+          "name:fr": "Mezantellou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B099V",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398714",
+        "wgs84": [
+          -4.5728781,
+          48.4205562,
+          0.0
+        ],
+        "euc": [
+          -509050.46155171224,
+          6177107.775166217
+        ],
+        "tags": {
+          "name": "Milin Huella Pen an Traon",
+          "name:br": "Milin Uhelañ Penn an Traoñ",
+          "name:fr": "Milin Huella Pen an Traon",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B104A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398716",
+        "wgs84": [
+          -4.5729927,
+          48.4214381,
+          0.0
+        ],
+        "euc": [
+          -509063.21876535733,
+          6177255.703057258
+        ],
+        "tags": {
+          "name": "Milin Izella Pen an Traon",
+          "name:br": "Milin Izelañ Penn an Traoñ",
+          "name:fr": "Milin Izella Pen an Traon",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B104A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398726",
+        "wgs84": [
+          -4.5315709,
+          48.4131679,
+          0.0
+        ],
+        "euc": [
+          -504452.1650816165,
+          6175868.5794052025
+        ],
+        "tags": {
+          "name": "Noadegalet",
+          "name:br": "An Oadegaled",
+          "name:fr": "Noadegalet",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B106C",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1674398728",
+        "wgs84": [
+          -4.5715978,
+          48.4202194,
+          0.0
+        ],
+        "euc": [
+          -508907.93920764973,
+          6177051.281780949
+        ],
+        "tags": {
+          "name": "Pen an Traon",
+          "name:br": "Penn an Traoñ",
+          "name:fr": "Pen an Traon",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B108E",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398729",
+        "wgs84": [
+          -4.5707132,
+          48.4311744,
+          0.0
+        ],
+        "euc": [
+          -508809.465986094,
+          6178889.018377688
+        ],
+        "tags": {
+          "name": "Pen ar C'hoat",
+          "name:br": "Penn ar C'hoad",
+          "name:fr": "Pen ar C'hoat",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B109F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398730",
+        "wgs84": [
+          -4.532164,
+          48.4047008,
+          0.0
+        ],
+        "euc": [
+          -504518.1886716059,
+          6174448.664316617
+        ],
+        "tags": {
+          "name": "Pen ar Créac'h",
+          "name:br": "Penn ar C'hreac'h",
+          "name:fr": "Pen ar Créac'h",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B111H",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1674398731",
+        "wgs84": [
+          -4.5464768,
+          48.4039054,
+          0.0
+        ],
+        "euc": [
+          -506111.48227943183,
+          6174315.28953468
+        ],
+        "tags": {
+          "name": "Pen ar Pont",
+          "name:br": "Penn ar Pont",
+          "name:fr": "Pen ar Pont",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B112J",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398732",
+        "wgs84": [
+          -4.5770146,
+          48.4107081,
+          0.0
+        ],
+        "euc": [
+          -509510.9346253787,
+          6175456.051687671
+        ],
+        "tags": {
+          "name": "Pen ar Roz",
+          "name:br": "Penn ar Roz",
+          "name:fr": "Pen ar Roz",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B113K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398733",
+        "wgs84": [
+          -4.548129,
+          48.4280989,
+          0.0
+        ],
+        "euc": [
+          -506295.4043421205,
+          6178373.053334199
+        ],
+        "tags": {
+          "name": "Pen ar Valy",
+          "name:br": "Penn ar Vali",
+          "name:fr": "Pen ar Valy",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B114L",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398738",
+        "wgs84": [
+          -4.5270645,
+          48.4103943,
+          0.0
+        ],
+        "euc": [
+          -503950.5149283056,
+          6175403.426406226
+        ],
+        "tags": {
+          "name": "Penfeld",
+          "name:br": "Penfell",
+          "name:fr": "Penfeld",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B115M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398741",
+        "wgs84": [
+          -4.5617797,
+          48.4325042,
+          0.0
+        ],
+        "euc": [
+          -507814.99331509223,
+          6179112.123582291
+        ],
+        "tags": {
+          "name": "Penquer",
+          "name:br": "Penc'hêr",
+          "name:fr": "Penquer",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B116N",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398750",
+        "wgs84": [
+          -4.5431365,
+          48.4033098,
+          0.0
+        ],
+        "euc": [
+          -505739.6417843351,
+          6174215.4191124
+        ],
+        "tags": {
+          "name": "Pont Cabioc'h",
+          "name:br": "Pont Kabioc'h",
+          "name:fr": "Pont Cabioc'h",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B117P",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398756",
+        "wgs84": [
+          -4.5579684,
+          48.3996861,
+          0.0
+        ],
+        "euc": [
+          -507390.7213398318,
+          6173607.820993279
+        ],
+        "tags": {
+          "name": "Quillihouarn",
+          "name:br": "Killihouarn",
+          "name:fr": "Quillihouarn",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B118R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398762",
+        "wgs84": [
+          -4.5526111,
+          48.4304858,
+          0.0
+        ],
+        "euc": [
+          -506794.3494318051,
+          6178773.49183784
+        ],
+        "tags": {
+          "name": "Saint-Valentin",
+          "name:br": "Sant Valentin",
+          "name:fr": "Saint-Valentin",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B146W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398763",
+        "wgs84": [
+          -4.5596262,
+          48.4043734,
+          0.0
+        ],
+        "euc": [
+          -507575.26679166895,
+          6174393.764763556
+        ],
+        "tags": {
+          "name": "Trévéoc",
+          "name:br": "Treveo",
+          "name:fr": "Trévéoc",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B137L",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398764",
+        "wgs84": [
+          -4.5800575,
+          48.4099441,
+          0.0
+        ],
+        "euc": [
+          -509849.6687039135,
+          6175327.9269679515
+        ],
+        "tags": {
+          "name": "Ti Kozh Bodonnoù",
+          "name:br": "Ti Kozh Bodonnoù",
+          "name:fr": "Ti Kozh Bodonnoù",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B139N",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674398765",
+        "wgs84": [
+          -4.5365589,
+          48.4073351,
+          0.0
+        ],
+        "euc": [
+          -505007.4267016934,
+          6174890.405622545
+        ],
+        "tags": {
+          "name": "Ty Dour",
+          "name:br": "Ti Dour",
+          "name:fr": "Ty Dour",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29069B140P",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674489200",
+        "wgs84": [
+          -4.5776466,
+          48.3815037,
+          0.0
+        ],
+        "euc": [
+          -509581.28854356,
+          6170559.769302217
+        ],
+        "tags": {
+          "name": "Ilioc",
+          "name:br": "An Iliog",
+          "name:fr": "Ilioc",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B058D",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674489374",
+        "wgs84": [
+          -4.5727752,
+          48.3912489,
+          0.0
+        ],
+        "euc": [
+          -509039.0067761096,
+          6172193.294622877
+        ],
+        "tags": {
+          "name": "Keriel",
+          "name:br": "Keryell",
+          "name:fr": "Keriel",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B112M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674489455",
+        "wgs84": [
+          -4.5736667,
+          48.3887427,
+          0.0
+        ],
+        "euc": [
+          -509138.248102152,
+          6171773.166526366
+        ],
+        "tags": {
+          "name": "Kernabat",
+          "name:br": "Keranabad",
+          "name:fr": "Kernabat",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B125B",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674489484",
+        "wgs84": [
+          -4.5724733,
+          48.3803974,
+          0.0
+        ],
+        "euc": [
+          -509005.3994218393,
+          6170374.347102275
+        ],
+        "tags": {
+          "name": "Kernevez ar Frañsig",
+          "name:br": "Kernevez",
+          "name:fr": "Kernevez ar Frañsig",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B131H",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674489510",
+        "wgs84": [
+          -4.573806,
+          48.3819474,
+          0.0
+        ],
+        "euc": [
+          -509153.7549072195,
+          6170634.137089176
+        ],
+        "tags": {
+          "name": "Kerouhant",
+          "name:br": "Kerouc'han",
+          "name:fr": "Kerouhant",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B134L",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674489650",
+        "wgs84": [
+          -4.5810781,
+          48.384572,
+          0.0
+        ],
+        "euc": [
+          -509963.2813762172,
+          6171074.054999217
+        ],
+        "tags": {
+          "name": "L'Hospitalou",
+          "name:br": "An Ospitaloù",
+          "name:fr": "L'Hospitalou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B057C",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674490279",
+        "wgs84": [
+          -4.5684192,
+          48.3816297,
+          0.0
+        ],
+        "euc": [
+          -508554.09907421423,
+          6170580.887877638
+        ],
+        "tags": {
+          "name": "Mesbioudou",
+          "name:br": "Mesbiodou",
+          "name:fr": "Mesbioudou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B174E",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674490321",
+        "wgs84": [
+          -4.5757698,
+          48.3848213,
+          0.0
+        ],
+        "euc": [
+          -509372.3641232392,
+          6171115.842178678
+        ],
+        "tags": {
+          "name": "Mesquiniec",
+          "name:br": "Meskinieg",
+          "name:fr": "Mesquiniec",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B184R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674490375",
+        "wgs84": [
+          -4.5734542,
+          48.3864467,
+          0.0
+        ],
+        "euc": [
+          -509114.5927103583,
+          6171388.293572213
+        ],
+        "tags": {
+          "name": "Penarvern",
+          "name:br": "Pennarvern",
+          "name:fr": "Penarvern",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B204M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674490481",
+        "wgs84": [
+          -4.5769886,
+          48.378449,
+          0.0
+        ],
+        "euc": [
+          -509508.04031861806,
+          6170047.793929666
+        ],
+        "tags": {
+          "name": "Trenen",
+          "name:br": "Trenenn",
+          "name:fr": "Trenen",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29212B240B",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656793",
+        "wgs84": [
+          -4.5148404,
+          48.4241658,
+          0.0
+        ],
+        "euc": [
+          -502589.7343408995,
+          6177713.257468939
+        ],
+        "tags": {
+          "name": "Bellevue",
+          "name:br": "Bellevue",
+          "name:fr": "Bellevue",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B002S",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656797",
+        "wgs84": [
+          -4.5137853,
+          48.4339048,
+          0.0
+        ],
+        "euc": [
+          -502472.2811461637,
+          6179347.113464545
+        ],
+        "tags": {
+          "name": "Bohars ar C'hoat",
+          "name:br": "Boc'harzh ar C'hoad",
+          "name:fr": "Bohars ar C'hoat",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B006W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656813",
+        "wgs84": [
+          -4.5257264,
+          48.4252924,
+          0.0
+        ],
+        "euc": [
+          -503801.5583176752,
+          6177902.2446542205
+        ],
+        "tags": {
+          "name": "Créac'h Bellec",
+          "name:br": "Kreac'h ar Beleg",
+          "name:fr": "Créac'h Bellec",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B014E",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656814",
+        "wgs84": [
+          -4.5176458,
+          48.425659,
+          0.0
+        ],
+        "euc": [
+          -502902.0300403711,
+          6177963.742719081
+        ],
+        "tags": {
+          "name": "Fontaine Saint-Maudez",
+          "name:br": "Feunteun Sant Vaodez",
+          "name:fr": "Fontaine Saint-Maudez",
+          "place": "hamlet",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656825",
+        "wgs84": [
+          -4.5278345,
+          48.4296791,
+          0.0
+        ],
+        "euc": [
+          -504036.2309362164,
+          6178638.153632045
+        ],
+        "tags": {
+          "name": "Kerabiven",
+          "name:br": "Kerabiven",
+          "name:fr": "Kerabiven",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B018J",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656841",
+        "wgs84": [
+          -4.5202932,
+          48.426184,
+          0.0
+        ],
+        "euc": [
+          -503196.7372602971,
+          6178051.8135517435
+        ],
+        "tags": {
+          "name": "Kerampir",
+          "name:br": "Kerampir",
+          "name:fr": "Kerampir",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B023P",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656842",
+        "wgs84": [
+          -4.524922,
+          48.4325098,
+          0.0
+        ],
+        "euc": [
+          -503712.012919281,
+          6179113.063126257
+        ],
+        "tags": {
+          "name": "Keramézec",
+          "name:br": "Keramezeg",
+          "name:fr": "Keramézec",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B020L",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656845",
+        "wgs84": [
+          -4.5296258,
+          48.436605,
+          0.0
+        ],
+        "euc": [
+          -504235.6375400745,
+          6179800.165932851
+        ],
+        "tags": {
+          "name": "Kerangall",
+          "name:br": "Kerangall",
+          "name:fr": "Kerangall",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B024R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656849",
+        "wgs84": [
+          -4.5165258,
+          48.4264654,
+          0.0
+        ],
+        "euc": [
+          -502777.3522106826,
+          6178099.019892557
+        ],
+        "tags": {
+          "name": "Keranoues",
+          "name:br": "Keranouez",
+          "name:fr": "Keranoues",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B025S",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656860",
+        "wgs84": [
+          -4.5327513,
+          48.4310362,
+          0.0
+        ],
+        "euc": [
+          -504583.56660854886,
+          6178865.832414465
+        ],
+        "tags": {
+          "name": "Kerespern",
+          "name:br": "Kerespern",
+          "name:fr": "Kerespern",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B029W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656862",
+        "wgs84": [
+          -4.5142299,
+          48.4323156,
+          0.0
+        ],
+        "euc": [
+          -502521.77379177033,
+          6179080.481144254
+        ],
+        "tags": {
+          "name": "Kerglos",
+          "name:br": "Kergloz",
+          "name:fr": "Kerglos",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B031Y",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656869",
+        "wgs84": [
+          -4.5287027,
+          48.416792,
+          0.0
+        ],
+        "euc": [
+          -504132.8785181232,
+          6176476.405711642
+        ],
+        "tags": {
+          "name": "Kerguillo",
+          "name:br": "Kergilio",
+          "name:fr": "Kerguillo",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B033A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656878",
+        "wgs84": [
+          -4.5065932,
+          48.4368419,
+          0.0
+        ],
+        "euc": [
+          -501671.6602364293,
+          6179839.915296647
+        ],
+        "tags": {
+          "name": "Kerguiouarn",
+          "name:br": "Kergiouarn",
+          "name:fr": "Kerguiouarn",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B034B",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656881",
+        "wgs84": [
+          -4.517349,
+          48.4184459,
+          0.0
+        ],
+        "euc": [
+          -502868.9904155036,
+          6176753.808683658
+        ],
+        "tags": {
+          "name": "Kerléguer",
+          "name:br": "Kerleger",
+          "name:fr": "Kerléguer",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B035C",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656887",
+        "wgs84": [
+          -4.5297185,
+          48.4269575,
+          0.0
+        ],
+        "euc": [
+          -504245.956856871,
+          6178181.572902844
+        ],
+        "tags": {
+          "name": "Kernévéno",
+          "name:br": "Kerneveno",
+          "name:fr": "Kernévéno",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B038F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656906",
+        "wgs84": [
+          -4.5261835,
+          48.4207929,
+          0.0
+        ],
+        "euc": [
+          -503852.44245691673,
+          6177147.478431434
+        ],
+        "tags": {
+          "name": "Kerognan",
+          "name:br": "Kerrognant",
+          "name:fr": "Kerognan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B039G",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656918",
+        "wgs84": [
+          -4.5211825,
+          48.4297673,
+          0.0
+        ],
+        "euc": [
+          -503295.7336834597,
+          6178652.950638816
+        ],
+        "tags": {
+          "name": "Kerouvriou",
+          "name:br": "Kerouriou",
+          "name:fr": "Kerouvriou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B041J",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656939",
+        "wgs84": [
+          -4.5326818,
+          48.4267377,
+          0.0
+        ],
+        "euc": [
+          -504575.82990393863,
+          6178144.699908998
+        ],
+        "tags": {
+          "name": "Kerozan",
+          "name:br": "Kerrozan",
+          "name:fr": "Kerozan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B042K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656947",
+        "wgs84": [
+          -4.5204419,
+          48.4111781,
+          0.0
+        ],
+        "euc": [
+          -503213.2904685781,
+          6175534.8728250265
+        ],
+        "tags": {
+          "name": "Le Lannoc",
+          "name:br": "Al Lannog",
+          "name:fr": "Le Lannoc",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B094S",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656954",
+        "wgs84": [
+          -4.5196425,
+          48.4214776,
+          0.0
+        ],
+        "euc": [
+          -503124.3016676379,
+          6177262.328757059
+        ],
+        "tags": {
+          "name": "Le Beuzit",
+          "name:br": "Beuzid",
+          "name:fr": "Le Beuzit",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B003T",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656976",
+        "wgs84": [
+          -4.5225662,
+          48.4194061,
+          0.0
+        ],
+        "euc": [
+          -503449.76646287023,
+          6176914.863875718
+        ],
+        "tags": {
+          "name": "Le Londen",
+          "name:br": "Londin",
+          "name:fr": "Le Londen",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B047R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656985",
+        "wgs84": [
+          -4.5202432,
+          48.435468,
+          0.0
+        ],
+        "euc": [
+          -503191.1712857575,
+          6179609.391700932
+        ],
+        "tags": {
+          "name": "Le Petit Moulin",
+          "name:br": "Ar Vilin Vihan",
+          "name:fr": "Le Petit Moulin",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B075W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656987",
+        "wgs84": [
+          -4.510399,
+          48.431361,
+          0.0
+        ],
+        "euc": [
+          -502095.31995449023,
+          6178920.324561221
+        ],
+        "tags": {
+          "name": "Lez Huel",
+          "name:br": "Lezuhel",
+          "name:fr": "Lez Huel",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B044M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674656990",
+        "wgs84": [
+          -4.5178762,
+          48.4263155,
+          0.0
+        ],
+        "euc": [
+          -502927.67805104976,
+          6178073.873340879
+        ],
+        "tags": {
+          "name": "Loguillo",
+          "name:br": "Logilio",
+          "name:fr": "Loguillo",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B045N",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657015",
+        "wgs84": [
+          -4.5305093,
+          48.4322957,
+          0.0
+        ],
+        "euc": [
+          -504333.9883101903,
+          6179077.142420898
+        ],
+        "tags": {
+          "name": "Mescouez",
+          "name:br": "Mesgouez",
+          "name:fr": "Mescouez",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B052W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657016",
+        "wgs84": [
+          -4.5357671,
+          48.4279352,
+          0.0
+        ],
+        "euc": [
+          -504919.2839288832,
+          6178345.590877452
+        ],
+        "tags": {
+          "name": "Mestanen",
+          "name:br": "Mestanenn",
+          "name:fr": "Mestanen",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B053X",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657054",
+        "wgs84": [
+          -4.5152755,
+          48.4196953,
+          0.0
+        ],
+        "euc": [
+          -502638.16945134377,
+          6176963.37224264
+        ],
+        "tags": {
+          "name": "Moulin-Neuf",
+          "name:br": "Milin Nevez",
+          "name:fr": "Moulin-Neuf",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B063H",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657063",
+        "wgs84": [
+          -4.519303,
+          48.4248767,
+          0.0
+        ],
+        "euc": [
+          -503086.5087005136,
+          6177832.510478514
+        ],
+        "tags": {
+          "name": "Pen ar Valy",
+          "name:br": "Penn ar Vali",
+          "name:fr": "Pen ar Valy",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B067M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657071",
+        "wgs84": [
+          -4.5202562,
+          48.4129729,
+          0.0
+        ],
+        "euc": [
+          -503192.6184391379,
+          6175835.875650249
+        ],
+        "tags": {
+          "name": "Penfeld Braz",
+          "name:br": "Penfell Vras",
+          "name:fr": "Penfeld Braz",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B072T",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657076",
+        "wgs84": [
+          -4.5281927,
+          48.4123887,
+          0.0
+        ],
+        "euc": [
+          -504076.1055778186,
+          6175737.899305367
+        ],
+        "tags": {
+          "name": "Penfeld Izella",
+          "name:br": "Penfell Izelañ",
+          "name:fr": "Penfeld Izella",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B074V",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657086",
+        "wgs84": [
+          -4.5110819,
+          48.4286197,
+          0.0
+        ],
+        "euc": [
+          -502171.34003475297,
+          6178460.423791112
+        ],
+        "tags": {
+          "name": "Penn ar Guear",
+          "name:br": "Penn ar Gear",
+          "name:fr": "Penn ar Guear",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B068N",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657091",
+        "wgs84": [
+          -4.5273853,
+          48.4120425,
+          0.0
+        ],
+        "euc": [
+          -503986.22622095206,
+          6175679.8385380395
+        ],
+        "tags": {
+          "name": "Pont Aliben",
+          "name:br": "Pontaliben",
+          "name:fr": "Pont Aliben",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B076X",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657097",
+        "wgs84": [
+          -4.518921,
+          48.4149217,
+          0.0
+        ],
+        "euc": [
+          -503043.9846550306,
+          6176162.717582747
+        ],
+        "tags": {
+          "name": "Pont ar Bis",
+          "name:br": "Pont ar Biz",
+          "name:fr": "Pont ar Bis",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B077Y",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657102",
+        "wgs84": [
+          -4.5320749,
+          48.434265,
+          0.0
+        ],
+        "euc": [
+          -504508.2701049762,
+          6179407.548151286
+        ],
+        "tags": {
+          "name": "Poulrinou",
+          "name:br": "Poulrinou",
+          "name:fr": "Poulrinou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B078Z",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657108",
+        "wgs84": [
+          -4.522302,
+          48.4244708,
+          0.0
+        ],
+        "euc": [
+          -503420.35585340264,
+          6177764.4208149575
+        ],
+        "tags": {
+          "name": "Roz Valan",
+          "name:br": "Roz Valan",
+          "name:fr": "Roz Valan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B084F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657119",
+        "wgs84": [
+          -4.505985,
+          48.4300525,
+          0.0
+        ],
+        "euc": [
+          -501603.9557221288,
+          6178700.797825165
+        ],
+        "tags": {
+          "name": "Le Ruffa",
+          "name:br": "Ar Rufa",
+          "name:fr": "Le Ruffa",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B091N",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657121",
+        "wgs84": [
+          -4.5101021,
+          48.4295873,
+          0.0
+        ],
+        "euc": [
+          -502062.2691976738,
+          6178622.75269309
+        ],
+        "tags": {
+          "name": "Traon-Lez",
+          "name:br": "Traoñ Lez",
+          "name:fr": "Traon-Lez",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B085G",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657130",
+        "wgs84": [
+          -4.5368799,
+          48.4254987,
+          0.0
+        ],
+        "euc": [
+          -505043.16025823785,
+          6177936.851939472
+        ],
+        "tags": {
+          "name": "Tridour",
+          "name:br": "Tridour",
+          "name:fr": "Tridour",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B088K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657132",
+        "wgs84": [
+          -4.5033398,
+          48.4333604,
+          0.0
+        ],
+        "euc": [
+          -501309.4934050824,
+          6179255.774345769
+        ],
+        "tags": {
+          "name": "Tromeur",
+          "name:br": "Tromeur",
+          "name:fr": "Tromeur",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B089L",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657137",
+        "wgs84": [
+          -4.515478,
+          48.4247592,
+          0.0
+        ],
+        "euc": [
+          -502660.71164822933,
+          6177812.799815379
+        ],
+        "tags": {
+          "name": "Ty Garde",
+          "name:br": "An Ti Gard",
+          "name:fr": "Ty Garde",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B104C",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1674657146",
+        "wgs84": [
+          -4.5089886,
+          48.4317626,
+          0.0
+        ],
+        "euc": [
+          -501938.31494467554,
+          6178987.7020321535
+        ],
+        "tags": {
+          "name": "Veuleury",
+          "name:br": "Ar Veuleuri",
+          "name:fr": "Veuleury",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29011B090M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676008368",
+        "wgs84": [
+          -4.5139506,
+          48.4229195,
+          0.0
+        ],
+        "euc": [
+          -502490.68225799175,
+          6177504.195485131
+        ],
+        "tags": {
+          "name": "Grand Kervao",
+          "name:br": "Kervao Vras",
+          "name:fr": "Grand Kervao",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C025U",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676008369",
+        "wgs84": [
+          -4.5028299,
+          48.4308807,
+          0.0
+        ],
+        "euc": [
+          -501252.731596727,
+          6178839.744086959
+        ],
+        "tags": {
+          "name": "Grand Kerven",
+          "name:br": "Kerven Vras",
+          "name:fr": "Grand Kerven",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C026V",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676849952",
+        "wgs84": [
+          -4.5349077,
+          48.3883836,
+          0.0
+        ],
+        "euc": [
+          -504823.6159584954,
+          6171712.970312118
+        ],
+        "tags": {
+          "name": "Coat-Tan",
+          "name:br": "Koad Tann",
+          "name:fr": "Coat-Tan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C013F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676849956",
+        "wgs84": [
+          -4.5643757,
+          48.3915234,
+          0.0
+        ],
+        "euc": [
+          -508103.9787131916,
+          6172239.311825614
+        ],
+        "tags": {
+          "name": "Cosquer-Bihan",
+          "name:br": "Ar Gozhkêr Vihan",
+          "name:fr": "Cosquer-Bihan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C015H",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676849963",
+        "wgs84": [
+          -4.5012343,
+          48.4370639,
+          0.0
+        ],
+        "euc": [
+          -501075.1102172173,
+          6179877.164763161
+        ],
+        "tags": {
+          "name": "Douric ar Guen",
+          "name:br": "Dourig ar Gwenn",
+          "name:fr": "Douric ar Guen",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C022R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676849988",
+        "wgs84": [
+          -4.5224581,
+          48.4045329,
+          0.0
+        ],
+        "euc": [
+          -503437.73282591545,
+          6174420.51022556
+        ],
+        "tags": {
+          "name": "Goyen",
+          "name:br": "Ar Gwaien",
+          "name:fr": "Goyen",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C029Y",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850003",
+        "wgs84": [
+          -4.5566671,
+          48.3950231,
+          0.0
+        ],
+        "euc": [
+          -507245.86128646263,
+          6172826.023582697
+        ],
+        "tags": {
+          "name": "Keramoign",
+          "name:br": "Kerarmogn",
+          "name:fr": "Keramoign",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C035E",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850009",
+        "wgs84": [
+          -4.5332228,
+          48.3873267,
+          0.0
+        ],
+        "euc": [
+          -504636.05374845787,
+          6171535.803802129
+        ],
+        "tags": {
+          "name": "Keranroux",
+          "name:br": "Kerarrouz",
+          "name:fr": "Keranroux",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C042M",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850032",
+        "wgs84": [
+          -4.5060927,
+          48.4119256,
+          0.0
+        ],
+        "euc": [
+          -501615.94483128726,
+          6175660.23347509
+        ],
+        "tags": {
+          "name": "Kerellé",
+          "name:br": "Kerele",
+          "name:fr": "Kerellé",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C055B",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850033",
+        "wgs84": [
+          -4.5412884,
+          48.3966148,
+          0.0
+        ],
+        "euc": [
+          -505533.9122334,
+          6173092.879550292
+        ],
+        "tags": {
+          "name": "Keresseïs",
+          "name:br": "Kereseiz",
+          "name:fr": "Keresseïs",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C057D",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850036",
+        "wgs84": [
+          -4.5295727,
+          48.3881322,
+          0.0
+        ],
+        "euc": [
+          -504229.72647511336,
+          6171670.828185997
+        ],
+        "tags": {
+          "name": "Kerfeunteun",
+          "name:br": "Kerfeunteun",
+          "name:fr": "Kerfeunteun",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C060G",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850038",
+        "wgs84": [
+          -4.5508327,
+          48.4005198,
+          0.0
+        ],
+        "euc": [
+          -506596.3788493783,
+          6173747.606477769
+        ],
+        "tags": {
+          "name": "Kergoff",
+          "name:br": "Kergo",
+          "name:fr": "Kergoff",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C064L",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850045",
+        "wgs84": [
+          -4.5510546,
+          48.3934088,
+          0.0
+        ],
+        "euc": [
+          -506621.0806443853,
+          6172555.3871460715
+        ],
+        "tags": {
+          "name": "Kerivin-Vao",
+          "name:br": "Kerivin Vao",
+          "name:fr": "Kerivin-Vao",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C069S",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850046",
+        "wgs84": [
+          -4.5016618,
+          48.4231721,
+          0.0
+        ],
+        "euc": [
+          -501122.69929953135,
+          6177546.5677397195
+        ],
+        "tags": {
+          "name": "Kerizac",
+          "name:br": "Kerizag",
+          "name:fr": "Kerizac",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C070T",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850063",
+        "wgs84": [
+          -4.5148211,
+          48.4189749,
+          0.0
+        ],
+        "euc": [
+          -502587.5858747272,
+          6176842.537943463
+        ],
+        "tags": {
+          "name": "Kerléguer",
+          "name:br": "Kerleger",
+          "name:fr": "Kerléguer",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C073W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850065",
+        "wgs84": [
+          -4.5430977,
+          48.3977305,
+          0.0
+        ],
+        "euc": [
+          -505735.3225880923,
+          6173279.936863314
+        ],
+        "tags": {
+          "name": "Kerléo",
+          "name:br": "Kerleo",
+          "name:fr": "Kerléo",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C074X",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850083",
+        "wgs84": [
+          -4.5621803,
+          48.3895521,
+          0.0
+        ],
+        "euc": [
+          -507859.587903104,
+          6171908.848440019
+        ],
+        "tags": {
+          "name": "Kerneen",
+          "name:br": "Kernen",
+          "name:fr": "Kerneen",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C268H",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850089",
+        "wgs84": [
+          -4.5203435,
+          48.3967243,
+          0.0
+        ],
+        "euc": [
+          -503202.3366306841,
+          6173111.238045607
+        ],
+        "tags": {
+          "name": "Kerorven",
+          "name:br": "Kerorven",
+          "name:fr": "Kerorven",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C081E",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850098",
+        "wgs84": [
+          -4.5578205,
+          48.3789453,
+          0.0
+        ],
+        "euc": [
+          -507374.2571871435,
+          6170130.972962766
+        ],
+        "tags": {
+          "name": "Kervallan",
+          "name:br": "Kervalan",
+          "name:fr": "Kervallan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C087L",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850100",
+        "wgs84": [
+          -4.5063674,
+          48.4248457,
+          0.0
+        ],
+        "euc": [
+          -501646.5242954082,
+          6177827.310214028
+        ],
+        "tags": {
+          "name": "Kervao",
+          "name:br": "Kervao",
+          "name:fr": "Kervao",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C211W",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850103",
+        "wgs84": [
+          -4.4993858,
+          48.4297716,
+          0.0
+        ],
+        "euc": [
+          -500869.3361384858,
+          6178653.672035493
+        ],
+        "tags": {
+          "name": "Kervern",
+          "name:br": "Kervern",
+          "name:fr": "Kervern",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C212X",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850124",
+        "wgs84": [
+          -4.5255832,
+          48.4024015,
+          0.0
+        ],
+        "euc": [
+          -503785.6173665935,
+          6174063.1172932
+        ],
+        "tags": {
+          "name": "Langoulouarn",
+          "name:br": "Langoulouarn",
+          "name:fr": "Langoulouarn",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C098Y",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850127",
+        "wgs84": [
+          -4.5597446,
+          48.3921818,
+          0.0
+        ],
+        "euc": [
+          -507588.4470193789,
+          6172349.687067941
+        ],
+        "tags": {
+          "name": "Lanninguer",
+          "name:br": "Lannenger",
+          "name:fr": "Lanninguer",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C100A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850131",
+        "wgs84": [
+          -4.5562022,
+          48.3830585,
+          0.0
+        ],
+        "euc": [
+          -507194.1088551928,
+          6170820.369476104
+        ],
+        "tags": {
+          "name": "Larc'hantel",
+          "name:br": "An Arc'hantell",
+          "name:fr": "Larc'hantel",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C102C",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850149",
+        "wgs84": [
+          -4.5391775,
+          48.4017397,
+          0.0
+        ],
+        "euc": [
+          -505298.9279202845,
+          6173952.149784317
+        ],
+        "tags": {
+          "name": "Le Buis",
+          "name:br": "Ar Beuz",
+          "name:fr": "Le Buis",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C007Z",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850210",
+        "wgs84": [
+          -4.5333104,
+          48.3979166,
+          0.0
+        ],
+        "euc": [
+          -504645.8053358514,
+          6173311.138630224
+        ],
+        "tags": {
+          "name": "Le Questel",
+          "name:br": "Ar Gestell",
+          "name:fr": "Le Questel",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C242E",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850216",
+        "wgs84": [
+          -4.4935448,
+          48.4287313,
+          0.0
+        ],
+        "euc": [
+          -500219.1189927623,
+          6178479.146148373
+        ],
+        "tags": {
+          "name": "Le Restic",
+          "name:br": "Ar Restig",
+          "name:fr": "Le Restic",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C148C",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850224",
+        "wgs84": [
+          -4.5072474,
+          48.4160263,
+          0.0
+        ],
+        "euc": [
+          -501744.4854473062,
+          6176347.980534102
+        ],
+        "tags": {
+          "name": "Le Spernot",
+          "name:br": "Ar Spernod",
+          "name:fr": "Le Spernot",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C158N",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850235",
+        "wgs84": [
+          -4.5426853,
+          48.3931428,
+          0.0
+        ],
+        "euc": [
+          -505689.4144300891,
+          6172510.793227986
+        ],
+        "tags": {
+          "name": "Le Vern",
+          "name:br": "Ar Vern",
+          "name:fr": "Le Vern",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C166X",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850264",
+        "wgs84": [
+          -4.494953,
+          48.437579,
+          0.0
+        ],
+        "euc": [
+          -500375.8790996974,
+          6179963.594219895
+        ],
+        "tags": {
+          "name": "Lostennic",
+          "name:br": "Lostennig",
+          "name:fr": "Lostennic",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C105F",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850275",
+        "wgs84": [
+          -4.4943222,
+          48.4319885,
+          0.0
+        ],
+        "euc": [
+          -500305.65876490506,
+          6179025.602093571
+        ],
+        "tags": {
+          "name": "Marréguès",
+          "name:br": "Marregez",
+          "name:fr": "Marréguès",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C107H",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850289",
+        "wgs84": [
+          -4.539581,
+          48.3889126,
+          0.0
+        ],
+        "euc": [
+          -505343.8453348196,
+          6171801.647144459
+        ],
+        "tags": {
+          "name": "Menguen",
+          "name:br": "Mengwenn",
+          "name:fr": "Menguen",
+          "place": "hamlet",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850296",
+        "wgs84": [
+          -4.5294547,
+          48.3990849,
+          0.0
+        ],
+        "euc": [
+          -504216.5907751997,
+          6173507.019928112
+        ],
+        "tags": {
+          "name": "Mescalet",
+          "name:br": "Meskaled",
+          "name:fr": "Mescalet",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C109K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850316",
+        "wgs84": [
+          -4.5018948,
+          48.4281111,
+          0.0
+        ],
+        "euc": [
+          -501148.63674088614,
+          6178375.100020529
+        ],
+        "tags": {
+          "name": "Messilio",
+          "name:br": "Mesilio",
+          "name:fr": "Messilio",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C113P",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850320",
+        "wgs84": [
+          -4.5069471,
+          48.4212204,
+          0.0
+        ],
+        "euc": [
+          -501711.056204221,
+          6177219.186318084
+        ],
+        "tags": {
+          "name": "Messioual",
+          "name:br": "Mesiwal",
+          "name:fr": "Messioual",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C114R",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850355",
+        "wgs84": [
+          -4.5440153,
+          48.3895704,
+          0.0
+        ],
+        "euc": [
+          -505837.46935284423,
+          6171911.916143515
+        ],
+        "tags": {
+          "name": "Penmesmadec",
+          "name:br": "Penmesmadeg",
+          "name:fr": "Penmesmadec",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C120X",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850358",
+        "wgs84": [
+          -4.5035114,
+          48.4252501,
+          0.0
+        ],
+        "euc": [
+          -501328.5958297025,
+          6177895.148752205
+        ],
+        "tags": {
+          "name": "Petit Kervao",
+          "name:br": "Kervao Vihan",
+          "name:fr": "Petit Kervao",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C139T",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850359",
+        "wgs84": [
+          -4.5003662,
+          48.4323157,
+          0.0
+        ],
+        "euc": [
+          -500978.4737672596,
+          6179080.497921763
+        ],
+        "tags": {
+          "name": "Petit Kerven",
+          "name:br": "Kerven Vihan",
+          "name:fr": "Petit Kerven",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C140U",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850367",
+        "wgs84": [
+          -4.5259143,
+          48.3900809,
+          0.0
+        ],
+        "euc": [
+          -503822.4752499952,
+          6171997.49378141
+        ],
+        "tags": {
+          "name": "Point du Jour",
+          "name:br": "Strink an Deiz",
+          "name:fr": "Point du Jour",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C121Y",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850385",
+        "wgs84": [
+          -4.4959948,
+          48.4353885,
+          0.0
+        ],
+        "euc": [
+          -500491.8517452059,
+          6179596.052765258
+        ],
+        "tags": {
+          "name": "Pont ar Bilou",
+          "name:br": "Pont ar Biloù",
+          "name:fr": "Pont ar Bilou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C124B",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850404",
+        "wgs84": [
+          -4.5461564,
+          48.3861939,
+          0.0
+        ],
+        "euc": [
+          -506075.81551458174,
+          6171345.918377766
+        ],
+        "tags": {
+          "name": "Poul-ar-Horet",
+          "name:br": "Poull ar C'hored",
+          "name:fr": "Poul-ar-Horet",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C132K",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850449",
+        "wgs84": [
+          -4.5208383,
+          48.4096339,
+          0.0
+        ],
+        "euc": [
+          -503257.41751472856,
+          6175275.9061979605
+        ],
+        "tags": {
+          "name": "Raozoc",
+          "name:br": "Raozog",
+          "name:fr": "Raozoc",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C146A",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850491",
+        "wgs84": [
+          -4.5475856,
+          48.3955853,
+          0.0
+        ],
+        "euc": [
+          -506234.9133308234,
+          6172920.278094911
+        ],
+        "tags": {
+          "name": "Traon-Bihan",
+          "name:br": "Traoñ Bihan",
+          "name:fr": "Traon-Bihan",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C246J",
+          "source": "BMO/Ofis ar Brezhoneg janv2011",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "1676850501",
+        "wgs84": [
+          -4.4949021,
+          48.4168504,
+          0.0
+        ],
+        "euc": [
+          -500370.212937616,
+          6176486.20078955
+        ],
+        "tags": {
+          "name": "Traon-Stivel",
+          "name:br": "Traoñ Stivell",
+          "name:fr": "Traon-Stivel",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C163U",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1676850506",
+        "wgs84": [
+          -4.4965456,
+          48.4116193,
+          0.0
+        ],
+        "euc": [
+          -500553.1665207348,
+          6175608.864734357
+        ],
+        "tags": {
+          "name": "Treornou",
+          "name:br": "Treornou",
+          "name:fr": "Treornou",
+          "place": "hamlet",
+          "ref:FR:FANTOIR": "29019C248L",
+          "source": "BMO/Ofis ar Brezhoneg janv2011"
+        }
+      },
+      {
+        "id": "1883515914",
+        "wgs84": [
+          -4.5710402,
+          48.3798295,
+          0.0
+        ],
+        "euc": [
+          -508845.8674595833,
+          6170279.165383278
+        ],
+        "tags": {
+          "name": "Ty Nevez",
+          "name:br": "Ti Nevez",
+          "name:fr": "Ty Nevez",
+          "place": "hamlet",
+          "source:name:br": "proper translation"
+        }
+      },
+      {
+        "id": "26697742",
+        "wgs84": [
+          -4.5155977,
+          48.428823,
+          0.0
+        ],
+        "euc": [
+          -502674.0365912773,
+          6178494.530051552
+        ],
+        "tags": {
+          "addr:postcode": "29820",
+          "alt_name:br": "Boarz;Boharz",
+          "name": "Bohars",
+          "name:br": "Boc'harzh",
+          "name:fr": "Bohars",
+          "place": "village",
+          "population": "3615",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212900112",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "26697778",
+        "wgs84": [
+          -4.5583284,
+          48.4244717,
+          0.0
+        ],
+        "euc": [
+          -507430.7963565175,
+          6177764.571789219
+        ],
+        "tags": {
+          "addr:postcode": "29820",
+          "name": "Guilers",
+          "name:br": "Gwiler-Leon",
+          "name:fr": "Guilers",
+          "place": "village",
+          "population": "8170",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212900690",
+          "source:population": "INSEE 2024"
+        }
+      },
+      {
+        "id": "563994832",
+        "wgs84": [
+          -4.5247693,
+          48.3943562,
+          0.0
+        ],
+        "euc": [
+          -503695.0144330369,
+          6172714.217152693
+        ],
+        "tags": {
+          "name": "Kerionoc",
+          "name:br": "Kerionog",
+          "name:fr": "Kerionoc",
+          "place": "hamlet"
+        }
+      },
+      {
+        "id": "716941407",
+        "wgs84": [
+          -4.5167686,
+          48.4218099,
+          0.0
+        ],
+        "euc": [
+          -502804.3805830471,
+          6177318.068708854
+        ],
+        "tags": {
+          "name": "Beuzit Huella",
+          "name:br": "Beuzid Uhelañ",
+          "name:fr": "Beuzit Huella",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941416",
+        "wgs84": [
+          -4.5183259,
+          48.4191525,
+          0.0
+        ],
+        "euc": [
+          -502977.7384260595,
+          6176872.327028641
+        ],
+        "tags": {
+          "name": "Beuzit Izella",
+          "name:br": "Beuzid Izelañ",
+          "name:fr": "Beuzit Izella",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941443",
+        "wgs84": [
+          -4.512787,
+          48.4259914,
+          0.0
+        ],
+        "euc": [
+          -502361.15089850465,
+          6178019.5040320465
+        ],
+        "tags": {
+          "name": "Creisquer",
+          "name:br": "Kreiskêr",
+          "name:fr": "Creisquer",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941463",
+        "wgs84": [
+          -4.5156163,
+          48.429541,
+          0.0
+        ],
+        "euc": [
+          -502676.1071338061,
+          6178614.985127679
+        ],
+        "tags": {
+          "name": "Kernevez",
+          "name:br": "Ar Gernevez",
+          "name:fr": "Kernevez",
+          "place": "hamlet",
+          "source:name:br": "proper translation"
+        }
+      },
+      {
+        "id": "716941496",
+        "wgs84": [
+          -4.5238907,
+          48.4319915,
+          0.0
+        ],
+        "euc": [
+          -503597.209128426,
+          6179026.105415572
+        ],
+        "tags": {
+          "historic": "castle",
+          "name": "Manoir de Keramezec",
+          "name:br": "Maner Keramezeg",
+          "name:fr": "Manoir de Keramezec",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941507",
+        "wgs84": [
+          -4.5142762,
+          48.4300206,
+          0.0
+        ],
+        "euc": [
+          -502526.927884194,
+          6178695.446040282
+        ],
+        "tags": {
+          "name": "Kermaria",
+          "name:br": "Kermaria",
+          "name:fr": "Kermaria",
+          "place": "hamlet",
+          "source:name:br": "proper translation"
+        }
+      },
+      {
+        "id": "716941519",
+        "wgs84": [
+          -4.5413154,
+          48.4163232,
+          0.0
+        ],
+        "euc": [
+          -505536.9178596515,
+          6176397.777137754
+        ],
+        "tags": {
+          "name": "Castelmein",
+          "name:br": "Kastell Mein",
+          "name:fr": "Castelmein",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941566",
+        "wgs84": [
+          -4.5333752,
+          48.4352242,
+          0.0
+        ],
+        "euc": [
+          -504653.01883885474,
+          6179568.485697669
+        ],
+        "tags": {
+          "name": "Poulrinou Bras",
+          "name:br": "Poulrinou Vras",
+          "name:fr": "Poulrinou Bras",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941572",
+        "wgs84": [
+          -4.5182826,
+          48.4268102,
+          0.0
+        ],
+        "euc": [
+          -502972.91829210817,
+          6178156.862275601
+        ],
+        "tags": {
+          "name": "Castellou-Izella",
+          "name:br": "Kastelloù Izelañ",
+          "name:fr": "Castellou-Izella",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941576",
+        "wgs84": [
+          -4.5277265,
+          48.4108853,
+          0.0
+        ],
+        "euc": [
+          -504024.2084312108,
+          6175485.768847941
+        ],
+        "tags": {
+          "name": "Maugras",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010"
+        }
+      },
+      {
+        "id": "716941581",
+        "wgs84": [
+          -4.5485018,
+          48.4297002,
+          0.0
+        ],
+        "euc": [
+          -506336.9042482883,
+          6178641.693503209
+        ],
+        "tags": {
+          "name": "Mez Ar Run",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010"
+        }
+      },
+      {
+        "id": "716941621",
+        "wgs84": [
+          -4.5344417,
+          48.4338961,
+          0.0
+        ],
+        "euc": [
+          -504771.7410757858,
+          6179345.653775856
+        ],
+        "tags": {
+          "name": "Poulrinou Bihan",
+          "name:br": "Poulrinou Vihan",
+          "name:fr": "Poulrinou Bihan",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941634",
+        "wgs84": [
+          -4.5268081,
+          48.4153225,
+          0.0
+        ],
+        "euc": [
+          -503921.97261086624,
+          6176229.939090046
+        ],
+        "tags": {
+          "name": "Penfeld Huella",
+          "name:br": "Penfell Uhelañ",
+          "name:fr": "Penfeld Huella",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941690",
+        "wgs84": [
+          -4.5292511,
+          48.4080722,
+          0.0
+        ],
+        "euc": [
+          -504193.9261268741,
+          6175014.01277024
+        ],
+        "tags": {
+          "name": "Fort de Penfeld",
+          "name:br": "Kreñv Penfell",
+          "name:fr": "Fort de Penfeld",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941718",
+        "wgs84": [
+          -4.5264699,
+          48.417678,
+          0.0
+        ],
+        "euc": [
+          -503884.32435908,
+          6176625.0103292
+        ],
+        "tags": {
+          "name": "Les Hameaux de Kerguillo",
+          "name:br": "Pennkêrioù Kergilio",
+          "name:fr": "Les Hameaux de Kerguillo",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010"
+        }
+      },
+      {
+        "id": "716941726",
+        "wgs84": [
+          -4.5348261,
+          48.4301247,
+          0.0
+        ],
+        "euc": [
+          -504814.5322880467,
+          6178712.910654767
+        ],
+        "tags": {
+          "name": "Ker Avel",
+          "name:br": "Kêr Avel",
+          "name:fr": "Ker Avel",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941738",
+        "wgs84": [
+          -4.5204816,
+          48.431485,
+          0.0
+        ],
+        "euc": [
+          -503217.7098523626,
+          6178941.12830518
+        ],
+        "tags": {
+          "name": "Coat Bihan",
+          "name:br": "Koad Bihan",
+          "name:fr": "Coat Bihan",
+          "place": "hamlet",
+          "source:name:br": "proper translation"
+        }
+      },
+      {
+        "id": "716941742",
+        "wgs84": [
+          -4.5753612,
+          48.4091941,
+          0.0
+        ],
+        "euc": [
+          -509326.8789793011,
+          6175202.151955764
+        ],
+        "tags": {
+          "name": "Kervaziou Bras",
+          "name:br": "Kervaziou Vras",
+          "name:fr": "Kervaziou Bras",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941744",
+        "wgs84": [
+          -4.5244636,
+          48.4128448,
+          0.0
+        ],
+        "euc": [
+          -503660.98406470136,
+          6175814.3918671785
+        ],
+        "tags": {
+          "name": "Penfeld Creis",
+          "name:br": "Penfell Greiz",
+          "name:fr": "Penfeld Creis",
+          "place": "hamlet",
+          "source": "BMO/SIG 2010",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941761",
+        "wgs84": [
+          -4.5199855,
+          48.4138744,
+          0.0
+        ],
+        "euc": [
+          -503162.48425298,
+          6175987.068675478
+        ],
+        "tags": {
+          "name": "Roz Vian",
+          "name:br": "Roz Vihan",
+          "name:fr": "Roz Vian",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "716941769",
+        "wgs84": [
+          -4.5214539,
+          48.4342786,
+          0.0
+        ],
+        "euc": [
+          -503325.94579326094,
+          6179409.829980168
+        ],
+        "tags": {
+          "name": "Le Clos du Bois",
+          "name:br": "Kloz ar C'hoad",
+          "name:fr": "Le Clos du Bois",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "7555410432",
+        "wgs84": [
+          -4.5044748,
+          48.4132361,
+          0.0
+        ],
+        "euc": [
+          -501435.8410271328,
+          6175880.01736346
+        ],
+        "tags": {
+          "name": "Le Petit Spernot",
+          "name:br": "Ar Spernod Vihan",
+          "name:fr": "Le Petit Spernot",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "7574486727",
+        "wgs84": [
+          -4.5341715,
+          48.4065886,
+          0.0
+        ],
+        "euc": [
+          -504741.66254937346,
+          6174765.223978456
+        ],
+        "tags": {
+          "name": "Guenvez",
+          "name:br": "Gwenvez",
+          "name:fr": "Guenvez",
+          "place": "hamlet",
+          "source:name:br": "ofis publik ar brezhoneg"
+        }
+      },
+      {
+        "id": "775961690",
+        "wgs84": [
+          -4.5805701,
+          48.3816682,
+          0.0
+        ],
+        "euc": [
+          -509906.73107489425,
+          6170587.340786111
+        ],
+        "tags": {
+          "name": "La Chesnaie",
+          "name:br": "An Dervenneg",
+          "name:fr": "La Chesnaie",
+          "place": "hamlet",
+          "source:name:br": "proper translation"
+        }
+      }
+    ]
+  },
+  "chunks": {
+    "-6,61": [
+      {
+        "id": "26692356",
+        "wgs84": [
+          -4.6212044,
+          48.3817165,
+          0.0
+        ],
+        "euc": [
+          -514430.1206596353,
+          6170595.436260007
+        ],
+        "tags": {
+          "name": "Plouzané",
+          "name:br": "Plouzane",
+          "name:el": "Πλουζανέ",
+          "name:ja": "プルザネ",
+          "name:ru": "Плузане",
+          "name:uk": "Плузане",
+          "name:zh": "普卢扎内",
+          "place": "town",
+          "population": "13473",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212902126",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q474768"
+        }
+      }
+    ]
+  }
+}

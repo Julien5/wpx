@@ -38,6 +38,7 @@ fn input_point_from_feature(feature: &OSMFeature) -> InputPoint {
         euclidean: feature.euc.clone(),
         data: InputPointData::OSM(data),
         track_projections: TrackProjections::new(),
+        index: None,
     }
 }
 

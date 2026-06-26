@@ -94,11 +94,13 @@ fn test_constant_strech() {
 
     backend.make_control_at_waypoint(&result[control_index], true);
     let result = table(&backend);
+    display_table(&result, &start_time);
+
     let mortagne_time = parameters::parse_time(&result[1].info.as_ref().unwrap().time);
     assert_eq!(format!("{}", mortagne_time.format("%H:%M")), "04:05");
     let loudeac_time = parameters::parse_time(&result[3].info.as_ref().unwrap().time);
     assert_eq!(format!("{}", loudeac_time.format("%H:%M")), "14:57");
-
+    assert!(result[control_index].index.is_some());
     let ok = backend.set_control_time(
         &result[control_index],
         &Some(format!("2026-04-12T20:00:00")),

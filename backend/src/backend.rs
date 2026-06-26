@@ -229,10 +229,10 @@ impl Backend {
             .unwrap()
             .collection
             .get_vector(&Kind::Controls);
-        if let Some(control) = controls.iter_mut().find(|c| {
-            c.gpxwaypoint_index()
-                .is_some_and(|id| id == waypoint.index.unwrap())
-        }) {
+        if let Some(control) = controls
+            .iter_mut()
+            .find(|c| c.index().is_some_and(|id| id == waypoint.index.unwrap()))
+        {
             // do not allow changing time for start and end because
             // these are determined by self.parameters (start_time and speed).
             if control.data.as_control().unwrap().is_end()
@@ -515,6 +515,11 @@ impl Backend {
         for (index, projection) in projections {
             let w = points[index].waypoint(&projection);
             list.push((projection.clone(), w));
+            log::trace!(
+                "export: {} => index:{}",
+                points[index].name(),
+                projection.track_floating_index
+            );
         }
         debug_assert!(
             points.len() <= list.len(),

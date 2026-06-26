@@ -1,0 +1,43 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-4,62": [
+      {
+        "id": "1872239980",
+        "wgs84": [
+          -3.4587994,
+          48.7322183,
+          0.0
+        ],
+        "euc": [
+          -385031.78796408017,
+          6229545.986472859
+        ],
+        "tags": {
+          "addr:postcode": "22300",
+          "capital": "7",
+          "name": "Lannion",
+          "name:ar": "لانيون",
+          "name:br": "Lannuon",
+          "name:el": "Λανιόν",
+          "name:fr": "Lannion",
+          "name:he": "לאניון",
+          "name:hy": "Լանիոն",
+          "name:ja": "ランニオン",
+          "name:ka": "ლანიონი",
+          "name:ko": "라니옹",
+          "name:ru": "Ланьон",
+          "name:uk": "Ланьйон",
+          "name:zh": "拉尼永",
+          "place": "town",
+          "population": "20344",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "website": "https://www.lannion.bzh/",
+          "wikidata": "Q207581",
+          "wikipedia": "fr:Lannion"
+        }
+      }
+    ]
+  }
+}

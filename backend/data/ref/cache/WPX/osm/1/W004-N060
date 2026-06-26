@@ -1,0 +1,294 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-4,60": [
+      {
+        "id": "1681903701",
+        "wgs84": [
+          -2.7599079,
+          47.6586772,
+          0.0
+        ],
+        "euc": [
+          -307231.542064333,
+          6050257.570760864
+        ],
+        "tags": {
+          "addr:postcode": "56000",
+          "capital": "6",
+          "name": "Vannes",
+          "name:br": "Gwened",
+          "name:el": "Βαν",
+          "name:fr": "Vannes",
+          "name:fr-gallo": "Vann",
+          "name:gd": "Gwened",
+          "name:hy": "Վան",
+          "name:ja": "ヴァンヌ",
+          "name:ka": "ვანი",
+          "name:ko": "반",
+          "name:la": "Darioritum",
+          "name:mk": "Ван",
+          "name:ru": "Ванн",
+          "name:uk": "Ванн",
+          "name:zh": "瓦讷",
+          "old_name:it": "Vanna",
+          "place": "town",
+          "political_division": "canton",
+          "population": "54420",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215602608",
+          "reg_name": "Gwened",
+          "source:population": "INSEE 2024",
+          "website": "https://www.mairie-vannes.fr/",
+          "wikidata": "Q6593",
+          "wikipedia": "fr:Vannes"
+        }
+      },
+      {
+        "id": "26691461",
+        "wgs84": [
+          -3.3444489,
+          47.7639726,
+          0.0
+        ],
+        "euc": [
+          -372302.3485321239,
+          6067677.726624646
+        ],
+        "tags": {
+          "addr:postcode": "56600",
+          "name": "Lanester",
+          "name:br": "Lannarstêr",
+          "name:fr": "Lanester",
+          "name:ja": "ラネステール",
+          "name:ko": "라네스테르",
+          "name:ru": "Ланесте",
+          "name:uk": "Ланесте",
+          "name:zh": "拉内斯泰尔",
+          "place": "town",
+          "population": "23026",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215600982",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q71535"
+        }
+      },
+      {
+        "id": "26691507",
+        "wgs84": [
+          -3.4270534,
+          47.7354591,
+          0.0
+        ],
+        "euc": [
+          -381497.8394093569,
+          6062956.953606327
+        ],
+        "tags": {
+          "addr:postcode": "56270",
+          "alt_name": "Ploemeur",
+          "name": "Plœmeur",
+          "name:br": "Plañvour",
+          "name:el": "Πλεμέρ",
+          "name:ja": "プロモール",
+          "name:ru": "Плоэмёр",
+          "name:uk": "Плоемер",
+          "name:zh": "普勒默尔",
+          "place": "town",
+          "population": "18591",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215601626",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q128369",
+          "wikipedia": "fr:Ploemeur"
+        }
+      },
+      {
+        "id": "26691704",
+        "wgs84": [
+          -3.3660907,
+          47.7477336,
+          0.0
+        ],
+        "euc": [
+          -374711.5026879738,
+          6064988.836351282
+        ],
+        "tags": {
+          "addr:postcode": "56100",
+          "capital": "7",
+          "name": "Lorient",
+          "name:br": "An Oriant",
+          "name:fr": "Lorient",
+          "name:gd": "An Oriant",
+          "name:ja": "ロリアン",
+          "name:oc": "An Oriant",
+          "name:ru": "Лорьян",
+          "name:th": "ลอรีย็อง",
+          "name:uk": "Лор'ян",
+          "name:zh": "洛里昂",
+          "place": "town",
+          "population": "57846",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "website": "https://www.lorient.bzh/",
+          "wikidata": "Q71724",
+          "wikipedia": "fr:Lorient"
+        }
+      },
+      {
+        "id": "26691854",
+        "wgs84": [
+          -3.5505644,
+          47.8692882,
+          0.0
+        ],
+        "euc": [
+          -395247.0210367249,
+          6085136.532189416
+        ],
+        "tags": {
+          "addr:postcode": "29300",
+          "name": "Quimperlé",
+          "name:br": "Kemperle",
+          "name:el": "Κιμπερλέ",
+          "name:ja": "カンペルレ",
+          "name:ko": "캥페를레",
+          "name:ru": "Кемперле",
+          "name:uk": "Кемперле",
+          "name:zh": "坎佩莱",
+          "place": "town",
+          "population": "12313",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212902332",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q235382"
+        }
+      },
+      {
+        "id": "26692010",
+        "wgs84": [
+          -3.2751174,
+          47.8058026,
+          0.0
+        ],
+        "euc": [
+          -364584.4012561901,
+          6074607.900816011
+        ],
+        "tags": {
+          "addr:postcode": "56700",
+          "alt_name:br": "An Henbont",
+          "name": "Hennebont",
+          "name:br": "Henbont",
+          "name:el": "Ενμπόν",
+          "name:fr": "Hennebont",
+          "name:ja": "エンヌボン",
+          "name:ru": "Энбон",
+          "name:uk": "Еннбон",
+          "name:zh": "埃讷邦",
+          "place": "town",
+          "population": "15746",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215600834",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q71503"
+        }
+      },
+      {
+        "id": "26692331",
+        "wgs84": [
+          -2.9833718,
+          47.6664485,
+          0.0
+        ],
+        "euc": [
+          -332107.429623012,
+          6051542.0588883385
+        ],
+        "tags": {
+          "addr:postcode": "56400",
+          "name": "Auray",
+          "name:br": "An Alre",
+          "name:el": "Ωραί",
+          "name:fr": "Auray",
+          "name:fr-gallo": "Orè",
+          "name:ja": "オーレー",
+          "name:ko": "오레",
+          "name:mk": "Оре",
+          "name:ru": "Оре",
+          "name:uk": "Оре",
+          "name:zh": "歐賴",
+          "place": "town",
+          "population": "14222",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215600073",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q62958",
+          "wikipedia": "fr:Auray"
+        }
+      },
+      {
+        "id": "26695866",
+        "wgs84": [
+          -3.4914955,
+          47.7894226,
+          0.0
+        ],
+        "euc": [
+          -388671.5011670061,
+          6071893.484252194
+        ],
+        "tags": {
+          "addr:postcode": "56520",
+          "name": "Guidel",
+          "name:br": "Gwidel",
+          "name:el": "Γκιντέλ",
+          "name:fr": "Guidel",
+          "name:ja": "ギデル",
+          "name:ru": "Гидель",
+          "name:uk": "Гідель",
+          "name:zh": "吉代勒",
+          "place": "town",
+          "population": "11947",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215600784",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q69284",
+          "wikipedia": "fr:Guidel"
+        }
+      },
+      {
+        "id": "26696276",
+        "wgs84": [
+          -2.7358875,
+          47.6903849,
+          0.0
+        ],
+        "euc": [
+          -304557.60336768226,
+          6055499.616008546
+        ],
+        "tags": {
+          "addr:postcode": "56890",
+          "name": "Saint-Avé",
+          "name:br": "Sant-Teve",
+          "name:el": "Σαιντ-Αβέ",
+          "name:fr": "Saint-Avé",
+          "name:ja": "サンタヴェ",
+          "name:mk": "Сент Аве",
+          "name:ru": "Сент-Аве",
+          "name:uk": "Сент-Аве",
+          "name:zh": "圣阿韦",
+          "place": "town",
+          "population": "11927",
+          "population:date": "2021",
+          "ref:FR:SIREN": "215602061",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q128043",
+          "wikipedia": "fr:Saint-Avé"
+        }
+      }
+    ]
+  }
+}

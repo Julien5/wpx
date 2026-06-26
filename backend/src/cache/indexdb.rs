@@ -19,7 +19,7 @@ impl IndexdbLocation {
     fn version(&self) -> u8 {
         match self {
             Self::UserData => 1,
-            Self::OsmCache => 2,
+            Self::OsmCache => 1,
         }
     }
     fn name(&self) -> String {

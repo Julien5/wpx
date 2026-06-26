@@ -1,0 +1,165 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-1,62": [
+      {
+        "id": "26691691",
+        "wgs84": [
+          -0.0223386,
+          48.74289,
+          0.0
+        ],
+        "euc": [
+          -2486.721577034621,
+          6231347.278053351
+        ],
+        "tags": {
+          "addr:postcode": "61200",
+          "capital": "7",
+          "name": "Argentan",
+          "name:el": "Αρζαντάν",
+          "name:hy": "Արժանտան",
+          "name:ja": "アルジャンタン",
+          "name:ko": "아르장탕",
+          "name:oc": "Argenton",
+          "name:ru": "Аржантан",
+          "name:uk": "Аржантан",
+          "name:zh": "阿让唐",
+          "old_name:it": "Argentano",
+          "place": "town",
+          "population": "13291",
+          "population:date": "2021",
+          "ref:FR:SIREN": "216100065",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q207622"
+        }
+      },
+      {
+        "id": "393803584",
+        "wgs84": [
+          -0.8893293,
+          48.8385198,
+          0.0
+        ],
+        "euc": [
+          -98999.68482353842,
+          6247505.867943754
+        ],
+        "tags": {
+          "addr:postcode": "14500",
+          "capital": "7",
+          "capital:INSEE": "zone d'emploi",
+          "name": "Vire",
+          "name:br": "Vir",
+          "name:el": "Βιρ",
+          "name:hy": "Վիր",
+          "name:ja": "ヴィール",
+          "name:ko": "비르",
+          "name:ru": "Вир",
+          "name:uk": "Вір",
+          "name:zh": "维尔",
+          "old_name:it": "Vira",
+          "place": "town",
+          "population": "17135",
+          "population:date": "2021",
+          "ref:FR:SIREN": "211407622",
+          "source": "Wikipedia",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q220684"
+        }
+      },
+      {
+        "id": "393888094",
+        "wgs84": [
+          -0.1999129,
+          48.8964741,
+          0.0
+        ],
+        "euc": [
+          -22254.20223100662,
+          6257313.43622105
+        ],
+        "tags": {
+          "addr:postcode": "14700",
+          "name": "Falaise",
+          "name:hy": "Ֆալեզ",
+          "name:ja": "ファレーズ",
+          "name:ko": "팔레즈",
+          "name:ru": "Фалез",
+          "name:uk": "Фалез",
+          "name:zh": "法萊斯",
+          "old_name:it": "Falesia;Falesa",
+          "place": "town",
+          "population": "7782",
+          "population:date": "2021",
+          "ref:FR:SIREN": "211402581",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q193306",
+          "wikipedia": "fr:Falaise (Calvados)"
+        }
+      },
+      {
+        "id": "441795692",
+        "wgs84": [
+          -0.3496385,
+          49.1380679,
+          0.0
+        ],
+        "euc": [
+          -38921.57978172399,
+          6298321.181968399
+        ],
+        "tags": {
+          "addr:postcode": "14123",
+          "census": "2006",
+          "name": "Ifs",
+          "name:ar": "إيف",
+          "name:el": "Ιφ",
+          "name:hy": "Իֆ",
+          "name:ja": "イフ",
+          "name:ru": "Иф",
+          "name:uk": "Іф",
+          "name:zh": "伊夫",
+          "place": "town",
+          "population": "11981",
+          "population:date": "2021",
+          "ref:FR:SIREN": "211403415",
+          "source": "http://fr.wikipedia.org/wiki/Ifs",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q996113",
+          "wikipedia": "fr:Ifs"
+        }
+      },
+      {
+        "id": "60086396",
+        "wgs84": [
+          -0.5697257,
+          48.7484236,
+          0.0
+        ],
+        "euc": [
+          -63421.57481584134,
+          6232281.452931621
+        ],
+        "tags": {
+          "addr:postcode": "61100",
+          "capital:INSEE": "zone d'emploi",
+          "name": "Flers",
+          "name:el": "Φλερ",
+          "name:hy": "Ֆլեր",
+          "name:ja": "フレール",
+          "name:ru": "Флер",
+          "name:uk": "Флер",
+          "name:zh": "弗莱尔",
+          "place": "town",
+          "population": "14482",
+          "population:date": "2021",
+          "ref:FR:SIREN": "216101691",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q534812",
+          "wikipedia": "fr:Flers (Orne)"
+        }
+      }
+    ]
+  }
+}

@@ -215,11 +215,11 @@ impl ProfileBoundingBox {
 pub fn read_waypoints(gpx: &gpx::Gpx) -> Vec<InputPoint> {
     let mut ret = Vec::new();
     let projection = mercator::WebMercatorProjection::make();
-    for (index, w) in gpx.waypoints.iter().enumerate() {
+    for w in gpx.waypoints.iter() {
         let (lon, lat) = w.point().x_y();
         let wgs = WGS84Point::new(&lon, &lat, &0f64);
         let euc = projection.project(&wgs);
-        let p = InputPoint::from_gpx(index, &wgs, &euc, &w.name, &w.description);
+        let p = InputPoint::from_gpx(&wgs, &euc, &w.name, &w.description);
         ret.push(p);
     }
     ret

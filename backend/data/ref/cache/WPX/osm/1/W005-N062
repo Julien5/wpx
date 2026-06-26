@@ -1,0 +1,52 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-5,62": [
+      {
+        "id": "26691885",
+        "wgs84": [
+          -3.8331972,
+          48.5824932,
+          0.0
+        ],
+        "euc": [
+          -426709.560414202,
+          6204313.876157153
+        ],
+        "tags": {
+          "addr:postcode": "29600",
+          "capital": "7",
+          "name": "Morlaix",
+          "name:be": "Морле",
+          "name:bg": "Морле",
+          "name:br": "Montroulez",
+          "name:cy": "Montroulez",
+          "name:fa": "مورلیکس",
+          "name:fr": "Morlaix",
+          "name:fr-gallo": "Morlèz",
+          "name:hy": "Մոռլէ",
+          "name:ja": "モルレー",
+          "name:kk": "Морле",
+          "name:kw": "Montroulez",
+          "name:la": "Mons Relaxus",
+          "name:mk": "Морле",
+          "name:oc": "Montroulez",
+          "name:ru": "Морле",
+          "name:sr": "Морле",
+          "name:uk": "Морле",
+          "name:zh": "莫尔莱",
+          "old_name:it": "Morlasso",
+          "place": "town",
+          "population": "14903",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212901516",
+          "source:name:oc": "ieo-bdtopoc",
+          "source:population": "INSEE 2024",
+          "website": "https://www.ville.morlaix.fr/",
+          "wikidata": "Q202368",
+          "wikipedia": "fr:Morlaix"
+        }
+      }
+    ]
+  }
+}

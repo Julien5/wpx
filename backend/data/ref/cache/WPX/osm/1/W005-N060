@@ -1,0 +1,67 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-5,60": [
+      {
+        "id": "26692087",
+        "wgs84": [
+          -3.9223889,
+          47.8757017,
+          0.0
+        ],
+        "euc": [
+          -436638.3350411884,
+          6086200.882125141
+        ],
+        "tags": {
+          "addr:postcode": "29900",
+          "name": "Concarneau",
+          "name:br": "Konk-Kerne",
+          "name:fr": "Concarneau",
+          "name:hy": "Կոնկառնո",
+          "name:ja": "コンカルノー",
+          "name:ko": "콩카르노",
+          "name:ru": "Конкарно",
+          "name:uk": "Конкарно",
+          "name:zh": "孔卡諾",
+          "place": "town",
+          "population": "20607",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212900393",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q17393",
+          "wikipedia": "fr:Concarneau"
+        }
+      },
+      {
+        "id": "26695401",
+        "wgs84": [
+          -4.0115365,
+          47.8945402,
+          0.0
+        ],
+        "euc": [
+          -446562.2004786309,
+          6089327.980205855
+        ],
+        "tags": {
+          "addr:postcode": "29170",
+          "name": "Fouesnant",
+          "name:br": "Fouenant",
+          "name:fr": "Fouesnant",
+          "name:ja": "フエナン",
+          "name:ru": "Фуэнан",
+          "name:uk": "Фуенан",
+          "name:zh": "富埃南",
+          "place": "town",
+          "population": "10098",
+          "population:date": "2021",
+          "ref:FR:SIREN": "212900583",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q245149",
+          "wikipedia": "fr:Fouesnant"
+        }
+      }
+    ]
+  }
+}

@@ -3,7 +3,7 @@
 set -e
 # set -x
 
-TYPST=/opt/typst/typst-x86_64-unknown-linux-musl/typst
+SCRIPTDIR=$(dirname $(realpath "$0"))
 
 function segment-length() {
 	local file=$1
@@ -104,6 +104,7 @@ function filter-log {
 function unit-tests() {
 	# export RUST_LOG=trace
 	export RUST_BACKTRACE=1
+	export CACHE_DIR=${SCRIPTDIR}/data/ref/cache
 	rm -Rf /tmp/graphs/
 	2>&1 cargo test $@ -- --nocapture # --test-threads=1
 }

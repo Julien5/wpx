@@ -144,6 +144,14 @@ impl ProjectionTrees {
     pub fn parts(&self) -> Vec<TrackPart> {
         self.parts.clone()
     }
+
+    pub fn debug(&self) {
+        log::trace!("(proj) total tree {:?}", self.total_tree.range);
+        for tree in &self.subtrees {
+            log::trace!("(proj) sub  tree {:?}", tree.range);
+        }
+    }
+
     pub fn make_parts(euclidean: &Vec<MercatorPoint>, resolution: &Resolution) -> Vec<TrackPart> {
         let start = 0;
         let end = euclidean.len();
@@ -272,6 +280,7 @@ mod tests {
             euclidean: pos.clone(),
             data: InputPointData::GPXWaypoint(GPXWaypointData::default()),
             track_projections: TrackProjections::new(),
+            index: None,
         };
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
         let mut map = InputPointMap::new();

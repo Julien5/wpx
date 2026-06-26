@@ -1,0 +1,71 @@
+{
+  "tiles": {},
+  "chunks": {
+    "-3,62": [
+      {
+        "id": "26691521",
+        "wgs84": [
+          -2.0260409,
+          48.649518,
+          0.0
+        ],
+        "euc": [
+          -225537.8413143457,
+          6215599.827176537
+        ],
+        "tags": {
+          "addr:postcode": "35400",
+          "capital": "7",
+          "name": "Saint-Malo",
+          "name:br": "Sant-Maloù",
+          "name:el": "Σαιν-Μαλό",
+          "name:fr": "Saint-Malo",
+          "name:hy": "Սեն Մալո",
+          "name:ja": "サン・マロ",
+          "name:ka": "სენ-მალო",
+          "name:ko": "생말로",
+          "name:ru": "Сен-Мало",
+          "name:th": "แซ็ง-มาโล",
+          "name:uk": "Сен-Мало",
+          "name:zh": "圣马洛",
+          "place": "town",
+          "population": "47323",
+          "population:date": "2021",
+          "ref:FR:SIREN": "213502883",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q163108",
+          "wikipedia": "fr:Saint-Malo"
+        }
+      },
+      {
+        "id": "26695638",
+        "wgs84": [
+          -2.0580178,
+          48.6320379,
+          0.0
+        ],
+        "euc": [
+          -229097.49353949312,
+          6212655.001018762
+        ],
+        "tags": {
+          "name": "Dinard",
+          "name:br": "Dinarzh",
+          "name:el": "Ντινάρ",
+          "name:fr-gallo": "Dinard",
+          "name:hy": "Դինար",
+          "name:ja": "ディナール",
+          "name:ko": "디나르",
+          "name:ru": "Динар",
+          "name:uk": "Дінар",
+          "name:zh": "迪纳尔",
+          "place": "town",
+          "population": "10219",
+          "population:date": "2021",
+          "source:population": "INSEE 2024",
+          "wikidata": "Q131600"
+        }
+      }
+    ]
+  }
+}

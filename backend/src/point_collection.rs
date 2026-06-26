@@ -419,11 +419,14 @@ impl PointCollection {
         self.map.entry(otype).or_default().push(point);
     }
 
-    fn set_vector(&mut self, points: Vec<InputPoint>) {
+    fn set_vector(&mut self, mut points: Vec<InputPoint>) {
         if points.is_empty() {
             return;
         }
         let otype = points.first().unwrap().kind();
+        for (index, point) in points.iter_mut().enumerate() {
+            point.index = Some(index);
+        }
         self.map.insert(otype, points);
     }
 
@@ -601,10 +604,10 @@ pub fn remove_control_waypoints(
     // a waypoint may have two projections P1 and P2.
     // If only P1 is rendered as control, push P2.
     for w in waypoints {
-        let origin_id = w.gpxwaypoint_index();
+        let index = w.index();
         let matching_control_projections: TrackProjections = controls
             .iter()
-            .filter(|c| c.control_waypoint_origin_index() == origin_id)
+            .filter(|c| c.control_waypoint_origin_index() == index)
             .map(|c| c.track_projections.clone())
             .flatten()
             .collect();

@@ -473,11 +473,15 @@ mod tests {
         let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
         log::trace!("segment length: {}m", length);
         log::trace!("  track length: {}m", track.total_distance());
-        let mut waypoints = gpxdata.waypoints.clone();
-        for w in &mut waypoints {
-            track.project_point(w);
-        }
         let mut collection = PointCollection::new();
+        {
+            let mut waypoints = gpxdata.waypoints.clone();
+            for w in &mut waypoints {
+                track.project_point(w);
+            }
+            collection.import_other(&Kind::GPXWaypoints, waypoints);
+        }
+        let waypoints = collection.get_vector(&Kind::GPXWaypoints);
 
         if with_osm {
             let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});

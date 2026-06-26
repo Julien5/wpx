@@ -108,7 +108,7 @@ pub fn infer_controls_from_gpx_segments(
                     math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt();
                 if distance < dmax {
                     debug_assert!(neighbor.kind() == Kind::GPXWaypoints);
-                    id = Some(neighbor.gpxwaypoint_index().unwrap());
+                    id = Some(neighbor.index().unwrap());
                     name = neighbor.name();
                     description = neighbor.description();
                 }
@@ -416,7 +416,7 @@ mod tests {
         inputpoint::InputPoint,
         osm::{self, DownloadSideData},
         parameters,
-        point_collection::PacketProvider,
+        point_collection::{PacketProvider, PointCollection},
     };
 
     fn read(filename: &str) -> GpxData {
@@ -438,7 +438,17 @@ mod tests {
         use crate::controls::*;
         let gpxdata = read("data/ref/karl-400.gpx");
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints);
+        let mut collection = PointCollection::new();
+        {
+            let mut waypoints = gpxdata.waypoints.clone();
+            for w in &mut waypoints {
+                track.project_point(w);
+            }
+            collection.import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
+        }
+        let waypoints = collection.get_vector(&Kind::GPXWaypoints);
+
+        let controls = infer_controls_from_gpx_segments(&track, &waypoints);
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -462,7 +472,16 @@ mod tests {
         use crate::controls::*;
         let gpxdata = read("data/ref/roland.gpx");
         let track = Track::from_tracks(&gpxdata.tracks).unwrap();
-        let controls = infer_controls_from_gpx_segments(&track, &gpxdata.waypoints);
+        let mut collection = PointCollection::new();
+        {
+            let mut waypoints = gpxdata.waypoints.clone();
+            for w in &mut waypoints {
+                track.project_point(w);
+            }
+            collection.import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
+        }
+        let waypoints = collection.get_vector(&Kind::GPXWaypoints);
+        let controls = infer_controls_from_gpx_segments(&track, &waypoints);
         assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
