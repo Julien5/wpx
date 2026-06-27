@@ -11,7 +11,7 @@ use crate::{
     inputpoint::InputPoint,
     label_placement::features::PointFeature,
     math::IntegerSize2D,
-    parameters::{Parameters, RenderFunction, UserStepsOptions},
+    parameters::{Parameters, RenderFunction},
     track::Track,
     track_projection::{TrackProjection, TrackProjections},
 };
@@ -143,14 +143,6 @@ impl std::fmt::Debug for RenderInputParameters {
             .field("|usersteps|", &self.usersteps.len())
             .finish()
     }
-}
-
-fn only_usersteps_parameter_may_differ(p1: &Parameters, p2: &Parameters) -> bool {
-    let mut c1 = p1.clone();
-    let mut c2 = p2.clone();
-    c1.user_steps_options = UserStepsOptions::default();
-    c2.user_steps_options = UserStepsOptions::default();
-    return c1 == c2;
 }
 
 impl RenderInputParameters {

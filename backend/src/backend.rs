@@ -1,15 +1,11 @@
 #![allow(non_snake_case)]
 
-use std::sync::Arc;
-
 use crate::backend_data::BackendData;
-use crate::controls;
 use crate::error;
 use crate::error::TrackError;
 use crate::event;
 use crate::gpsdata;
 use crate::gpsdata::GpxData;
-use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::osm::DownloadSideData;
@@ -18,10 +14,11 @@ use crate::parameters::RenderFunction;
 use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
+use crate::parameters::UserStepsOptions;
+use crate::persist;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
-use crate::point_collection::PointCollection;
 use crate::speed;
 use crate::track::Track;
 use crate::waypoint::Waypoint;
@@ -204,7 +201,7 @@ impl Backend {
     }
 
     pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
-        Ok(())
+        self.backend_data.as_ref().unwrap().persist_gpxdata().await
     }
 
     pub async fn has_persist(&self) -> bool {
@@ -212,7 +209,40 @@ impl Backend {
     }
 
     pub async fn load_persist(&mut self) -> Result<(), TrackError> {
+        let mut gpxdata = match persist::read_trackdata().await {
+            Some(data) => data,
+            None => return Err(TrackError::IOError.into()),
+        };
+        let track_data = Track::from_tracks(&gpxdata.tracks)?;
+        let track = std::sync::Arc::new(track_data);
+        for p in &mut gpxdata.waypoints {
+            track.project_point(p);
+        }
+        let smalldata = match persist::read_userdata().await {
+            Some(data) => data,
+            None => return Err(TrackError::IOError.into()),
+        };
+        let mut packet_provider = PacketProvider::new();
+        packet_provider
+            .collection
+            .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
+
+        let data = BackendData {
+            track,
+            parameters: smalldata.parameters.clone(),
+            packet_provider,
+        };
+        self.backend_data = Some(data);
+
         Ok(())
+    }
+
+    pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
+        self.backend_data
+            .as_ref()
+            .unwrap()
+            .persist_small_parameters()
+            .await
     }
 
     pub fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
@@ -279,6 +309,25 @@ impl Backend {
             .unwrap()
             .set_parameters(parameters)
     }
+
+    pub fn set_start_time(&mut self, rfc3339: String) {
+        self.backend_data.as_mut().unwrap().set_start_time(rfc3339);
+    }
+
+    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
+        self.backend_data
+            .as_mut()
+            .unwrap()
+            .set_user_step_options(options)
+    }
+
+    pub fn set_segment_length(&mut self, length: f64) {
+        self.backend_data
+            .as_mut()
+            .unwrap()
+            .set_segment_length(length);
+    }
+
     pub fn statistics(&self) -> SegmentStatistics {
         self.backend_data.as_ref().unwrap().statistics()
     }
@@ -294,21 +343,12 @@ impl Backend {
 mod tests {
     use crate::{
         backend::Backend,
-        backend_data::BackendData,
         math::IntegerSize2D,
         parameters::{ProfileIndication, RenderFunction},
-        point_collection::{self, Kind, Kinds},
-        wheel,
+        point_collection::{self},
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
     static BLACK_FOREST: &'static str = "data/blackforest.gpx";
-
-    async fn load_test_data_no_osm(filename: &str) -> Backend {
-        let mut backend = Backend::make();
-        backend.load_filename(filename).expect("fail");
-        backend.load_controls().unwrap();
-        backend
-    }
 
     async fn load_test_data(filename: &str) -> Backend {
         let mut backend = Backend::make();

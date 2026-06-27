@@ -416,7 +416,7 @@ mod tests {
         inputpoint::InputPoint,
         osm::{self, DownloadSideData},
         parameters,
-        point_collection::{PacketProvider, PointCollection},
+        point_collection::PointCollection,
     };
 
     fn read(filename: &str) -> GpxData {

@@ -1,11 +1,9 @@
 #![allow(non_snake_case)]
 
 use std::collections::BTreeMap;
-use std::sync::Arc;
 
 use crate::controls;
 use crate::error::TrackError;
-use crate::gpsdata::GpxData;
 use crate::gpxexport;
 use crate::inputpoint::*;
 use crate::make_points;
@@ -22,13 +20,11 @@ use crate::point_collection::remove_control_waypoints;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
-use crate::point_collection::PointCollection;
 use crate::segment::SegmentData;
 use crate::speed;
 use crate::speed::Speed;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
-use crate::track::Track;
 use crate::waypoint;
 use crate::waypoint::ExportParameters;
 use crate::waypoint::FlatWaypoints;
@@ -50,7 +46,7 @@ pub struct BackendData {
 use chrono::TimeDelta;
 
 impl BackendData {
-    pub fn make_segment_data(&self, segment: &Segment) -> SegmentData {
+    pub fn make_segment_data(&self, segment: &Segment) -> SegmentData<'_> {
         SegmentData::new(
             segment,
             self.track.clone(),
@@ -69,6 +65,20 @@ impl BackendData {
 
     pub fn get_parameters(&self) -> Parameters {
         self.parameters.clone()
+    }
+
+    pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
+        let waypoints = self
+            .packet_provider
+            .collection
+            .get_vector(&Kind::GPXWaypoints);
+        match persist::write_trackdata(&self.track, &waypoints).await {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                log::error!("write track data failed: {:?}", e);
+                Err(TrackError::IOError.into())
+            }
+        }
     }
 
     pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
@@ -289,10 +299,11 @@ impl BackendData {
         }
     }
 
-    pub fn setStartTime(&mut self, rfc3339: String) {
+    pub fn set_start_time(&mut self, rfc3339: String) {
         self.parameters.start_time = rfc3339;
     }
-    pub fn setSegmentLength(&mut self, length: f64) {
+
+    pub fn set_segment_length(&mut self, length: f64) {
         self.parameters.segment_length = length;
     }
 
@@ -321,10 +332,6 @@ impl BackendData {
         let start = 0f64;
         let end = self.track.total_distance();
         Segment { id: -1, start, end }
-    }
-
-    pub fn track(&self) -> Track {
-        (*self.track).clone()
     }
 
     pub fn render_segment_simple(
@@ -534,10 +541,7 @@ impl BackendData {
 #[cfg(test)]
 mod tests {
     use crate::{
-        backend::Backend,
-        backend_data::BackendData,
         math::IntegerSize2D,
-        parameters::{ProfileIndication, RenderFunction},
         point_collection::{self, Kind, Kinds},
         testhelpers::load_backend_data,
         wheel,

@@ -271,26 +271,14 @@ impl<'a> SegmentData<'a> {
 
 #[cfg(test)]
 mod tests {
-    use std::sync::Arc;
-
-    use tokio_util::sync::CancellationToken;
-
     use crate::{
-        backend_data::BackendData,
-        controls, event,
-        gpsdata::GpxData,
-        make_points,
         math::IntegerSize2D,
-        osm::{self, DownloadSideData},
-        parameters::{self, Parameters, ProfileIndication, RenderFunction},
-        point_collection::{
-            allkinds, controls_speed_data, Kind, PacketProvider, PointCollection, RenderResult,
-        },
+        parameters::{Parameters, ProfileIndication, RenderFunction},
+        point_collection::{allkinds, RenderResult},
         profile,
-        segment::{Segment, SegmentData},
+        segment::Segment,
         speed, svgmap,
-        testhelpers::{load_backend_data, load_backend_data_with_parameters, load_file},
-        track::Track,
+        testhelpers::{load_backend_data_with_parameters, load_file},
     };
 
     static START_TIME: &'static str = "1985-04-12T09:00:00";
@@ -323,7 +311,7 @@ mod tests {
         with_osm: bool,
     ) -> bool {
         let _ = env_logger::try_init();
-        let (track, gpxdata) = load_file(src);
+        let (track, _gpxdata) = load_file(src);
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = None;
@@ -344,7 +332,7 @@ mod tests {
         let map_parameters = segment.map_render_parameters(&kinds, size);
         let profile_parameters = segment.profile_render_parameters(&kinds, size);
 
-        let mut collection = segment.packet_provider.collection.clone();
+        let collection = segment.packet_provider.collection.clone();
 
         let result = match function {
             &RenderFunction::Profile => profile::render_profile(
