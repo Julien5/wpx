@@ -288,7 +288,6 @@ pub fn compute_track_projection(
     let di = point.euclidean.d2(&track[index]);
     let df = point.euclidean.d2(&middle);
     debug_assert!(df <= di);
-    let distance_on_track_to_projection = distance(index1) + track[index1].d2(&middle).sqrt();
 
     let well = (index as f64 - floating_index).abs() < 1f64;
     // may happen if track[index]==track[index+1]
@@ -296,9 +295,14 @@ pub fn compute_track_projection(
         let d = track[index].point2d().distance_to(&middle.point2d());
         if d < 1f64 {
             floating_index = index as f64;
+            index_floating_part = 0f64;
             middle = track[index].clone();
         }
     }
+
+    let distance_on_track_to_projection =
+        (1f64 - index_floating_part) * distance(index1) + index_floating_part * distance(index2);
+
     let well = (index as f64 - floating_index).abs() < 1f64;
     // make svg to visualize the situation
     if !well && false {

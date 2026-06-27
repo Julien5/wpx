@@ -50,12 +50,14 @@ pub fn elevation_gain(smooth: &Vec<f64>, from: usize, to: usize) -> f64 {
 
 #[cfg(test)]
 mod tests {
-    use crate::backend;
+    use crate::{
+        backend,
+        testhelpers::{load_backend_data, load_backend_data_without_osm},
+    };
 
     #[test]
     fn ele() {
-        let mut backend = backend::Backend::make();
-        backend.load_filename("data/blackforest.gpx").expect("fail");
+        let mut backend = load_backend_data_without_osm("data/blackforest.gpx");
         let S = backend.segments();
         let km = 1000f64;
         for s in &S {

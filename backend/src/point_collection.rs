@@ -1,4 +1,5 @@
 use crate::{
+    backend::Segment,
     inputpoint::InputPointData::OSM,
     speed::{self, TimeParameters},
 };
@@ -386,10 +387,10 @@ impl PointCollection {
         remove_control_waypoints(&waypoints, &controls)
     }
 
-    pub fn range_cut(&mut self, range: &std::ops::Range<usize>) {
-        self.map
-            .iter_mut()
-            .for_each(|(_key, points)| points.retain(|point| point.is_in_range(range)));
+    pub fn range_cut(&mut self, segment: &Segment) {
+        self.map.iter_mut().for_each(|(_key, points)| {
+            points.retain(|point| point.is_on_segment(segment.start, segment.end))
+        });
     }
 
     pub fn kinds_cut(&mut self, kinds: &Kinds) {
@@ -412,8 +413,10 @@ impl PointCollection {
         Self { map }
     }
 
-    pub fn profile(&self) -> Packets {
-        let clone = self.clone();
+    pub fn profile(&self, segment: &Segment, kinds: &Kinds) -> Packets {
+        let mut clone = self.clone();
+        clone.range_cut(segment);
+        clone.kinds_cut(kinds);
         vec![
             Packet::make_forced_packet(clone.controls()),
             Packet::make_forced_packet(clone.gpxwaypoints()),
@@ -424,12 +427,14 @@ impl PointCollection {
             Self::osm_packet(clone.ontrack_cities()),
             Self::osm_packet(clone.get_vector(&Kind::Villages)),
             Self::osm_packet(clone.get_vector(&Kind::Mountains)),
-            //clone.get_vector(&Kind::Hamlets),
+            // Self::osm_packet(clone.get_vector(&Kind::Hamlets)),
         ]
     }
 
-    pub fn map(&self) -> Packets {
-        let clone = self.clone();
+    pub fn map(&self, segment: &Segment, kinds: &Kinds) -> Packets {
+        let mut clone = self.clone();
+        clone.range_cut(segment);
+        clone.kinds_cut(kinds);
         vec![
             Packet::make_forced_packet(clone.controls()),
             Packet::make_forced_packet(clone.gpxwaypoints()),
@@ -443,7 +448,7 @@ impl PointCollection {
             Self::osm_packet(clone.get_vector(&Kind::Villages)),
             Self::osm_packet(clone.get_vector(&Kind::Mountains)),
             Self::osm_packet(clone.offtrack_cities()),
-            //clone.get_vector(&Kind::Hamlets),
+            // Self::osm_packet(clone.get_vector(&Kind::Hamlets)),
         ]
     }
 }

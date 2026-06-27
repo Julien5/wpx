@@ -364,6 +364,23 @@ impl InputPoint {
         false
     }
 
+    pub fn is_on_segment(&self, start: f64, end: f64) -> bool {
+        for proj in &self.track_projections {
+            let d = &proj.distance_on_track_to_projection;
+            if start <= *d && *d <= end {
+                return true;
+            }
+            log::trace!(
+                "DD discard:{:?} -- {} <=? {} <=? {}",
+                self.name(),
+                start,
+                d,
+                end
+            );
+        }
+        false
+    }
+
     pub fn is_in_distance_range(&self, start: f64, end: f64) -> bool {
         for proj in &self.track_projections {
             let d = proj.distance_on_track_to_projection;

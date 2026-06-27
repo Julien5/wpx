@@ -192,7 +192,10 @@ impl<'a> SegmentData<'a> {
             profile::render_profile(
                 &self.track,
                 &render_parameters,
-                &self.packet_provider.collection.profile(),
+                &self
+                    .packet_provider
+                    .collection
+                    .profile(&self.segment, kinds),
                 self.debug_graphic_dir(&format!("render-profile-{}x{}", size.width, size.height)),
             )
         };
@@ -210,7 +213,7 @@ impl<'a> SegmentData<'a> {
             svgmap::render_map(
                 &self.track,
                 &map_parameters,
-                &self.packet_provider.collection.map(),
+                &self.packet_provider.collection.map(&self.segment, kinds),
                 self.debug_graphic_dir(&format!("render-map-{}x{}", size.width, size.height)),
             )
         };
@@ -235,7 +238,10 @@ impl<'a> SegmentData<'a> {
             let rp = profile::render_profile(
                 &self.track,
                 &profile_parameters,
-                &self.packet_provider.collection.profile(),
+                &self
+                    .packet_provider
+                    .collection
+                    .profile(&self.segment, kinds),
                 self.debug_graphic_dir(&format!(
                     "joinprofile-{}x{}",
                     profile_size.width, profile_size.height
@@ -247,7 +253,7 @@ impl<'a> SegmentData<'a> {
             let rm = svgmap::render_map(
                 &self.track,
                 &map_parameters,
-                &profile_collection.map(),
+                &profile_collection.map(&self.segment, kinds),
                 self.debug_graphic_dir(&format!("joinmap-{}x{}", map_size.width, map_size.height)),
             );
 
@@ -270,6 +276,7 @@ mod tests {
     use tokio_util::sync::CancellationToken;
 
     use crate::{
+        backend_data::BackendData,
         controls, event,
         gpsdata::GpxData,
         make_points,
@@ -278,99 +285,16 @@ mod tests {
         parameters::{self, Parameters, ProfileIndication, RenderFunction},
         point_collection::{
             allkinds, controls_speed_data, Kind, PacketProvider, PointCollection, RenderResult,
-            SharedPacketProvider,
         },
         profile,
         segment::{Segment, SegmentData},
         speed, svgmap,
+        testhelpers::{load_backend_data, load_backend_data_with_parameters, load_file},
         track::Track,
     };
 
-    fn read(filename: &str) -> GpxData {
-        use crate::gpsdata;
-        let mut f = std::fs::File::open(filename).unwrap();
-        let mut content = Vec::new();
-        // read the whole file
-        use std::io::prelude::*;
-        f.read_to_end(&mut content).unwrap();
-        gpsdata::GpxData::read_content(&content).unwrap()
-    }
-
     static START_TIME: &'static str = "1985-04-12T09:00:00";
     const WITH_OSM: bool = true;
-
-    async fn load_segment(
-        filename: &str,
-        start: f64,
-        length: f64,
-        parameters: Parameters,
-        with_osm: bool,
-    ) -> SegmentData {
-        let gpxdata = read(filename);
-        let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
-        log::trace!("segment length: {}m", length);
-        log::trace!("  track length: {}m", track.total_distance());
-        let mut collection = PointCollection::new();
-        {
-            let mut waypoints = gpxdata.waypoints.clone();
-            for w in &mut waypoints {
-                track.project_point(w);
-            }
-            collection.import_other(&Kind::GPXWaypoints, waypoints);
-        }
-        let waypoints = collection.get_vector(&Kind::GPXWaypoints);
-
-        if with_osm {
-            let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
-            let logger = std::sync::RwLock::new(Some(b));
-            let token = CancellationToken::new();
-            let side = DownloadSideData {
-                logger: &logger,
-                cancel_token: &token,
-            };
-            let mut osmpoints = osm::download_for_track(&track, &side).await.unwrap();
-            track.project_map(&mut osmpoints);
-            collection.import_osm(&osmpoints.as_vector());
-        }
-
-        let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
-
-        let allowed_speeds = speed::allowed_speeds(track.total_distance());
-        let speed_spec = match allowed_speeds.iter().find(|spec| spec.contains("ACP")) {
-            Some(spec) => spec.clone(),
-            None => speed::format_kmh(15.0),
-        };
-
-        let time_parameters = speed::TimeParameters {
-            controls: controls_speed_data(&controls),
-            start: parameters::parse_time(&parameters.start_time),
-            speed: speed::parse_speed(&speed_spec),
-            track_distance: track.total_distance(),
-        };
-
-        for c in &mut controls {
-            track.project_point(c);
-        }
-
-        let controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
-
-        collection.import_other(&Kind::GPXWaypoints, waypoints);
-        collection.import_other(&Kind::Controls, controls);
-
-        let usersteps = make_points::user_points(&track, &parameters.user_steps_options);
-        collection.import_other(&Kind::CutOff, usersteps);
-
-        let fsegment = Segment {
-            id: 0,
-            start: start,
-            end: start + length,
-        };
-        let mut pprovider = PacketProvider::new();
-        pprovider.collection = collection;
-        let provider = SharedPacketProvider::new(pprovider.into());
-
-        SegmentData::new(&fsegment, track, provider, parameters, time_parameters)
-    }
 
     fn basename(path: &str) -> String {
         use std::path::Path;
@@ -379,6 +303,14 @@ mod tests {
             .and_then(|s| s.to_str())
             .unwrap_or("")
             .to_string()
+    }
+
+    fn make_segment(start: f64, length: f64) -> Segment {
+        Segment {
+            id: 0,
+            start: start,
+            end: start + length,
+        }
     }
 
     async fn graph_test(
@@ -391,31 +323,42 @@ mod tests {
         with_osm: bool,
     ) -> bool {
         let _ = env_logger::try_init();
+        let (track, gpxdata) = load_file(src);
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = None;
         parameters.user_steps_options.step_elevation_gain = Some(250f64);
         parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
-        let segment = load_segment(src, start, length, parameters, with_osm).await;
+
+        let allowed_speeds = speed::allowed_speeds(track.total_distance());
+        parameters.speed = match allowed_speeds.iter().find(|spec| spec.contains("ACP")) {
+            Some(spec) => spec.clone(),
+            None => speed::format_kmh(15.0),
+        };
+
+        let backend_data = load_backend_data_with_parameters(src, parameters, with_osm).await;
         //let kinds = onekind(Kind::Cities);
         let kinds = allkinds();
+        let fsegment = make_segment(start, length);
+        let segment = backend_data.make_segment_data(&fsegment);
         let map_parameters = segment.map_render_parameters(&kinds, size);
         let profile_parameters = segment.profile_render_parameters(&kinds, size);
 
-        let mut collection = segment.packet_provider.read().unwrap().collection.clone();
-        collection.range_cut(&segment.range());
-        collection.kinds_cut(&kinds);
+        let mut collection = segment.packet_provider.collection.clone();
 
         let result = match function {
-            &RenderFunction::Profile => profile::profile_background(
+            &RenderFunction::Profile => profile::render_profile(
                 &segment.track,
                 &profile_parameters,
-                &collection.profile(),
+                &collection.profile(&fsegment, &kinds),
                 None,
             ),
-            &RenderFunction::Map => {
-                svgmap::map_background(&segment.track, &map_parameters, &collection.map(), None)
-            }
+            &RenderFunction::Map => svgmap::render_map(
+                &segment.track,
+                &map_parameters,
+                &collection.map(&fsegment, &kinds),
+                None,
+            ),
             _ => {
                 assert!(false);
                 RenderResult::default()

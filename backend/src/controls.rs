@@ -512,7 +512,6 @@ mod tests {
 
         let mut provider = PacketProvider::new();
         provider.collection.import_osm(&osmpoints.as_vector());
-        let provider = SharedPacketProvider::new(provider.into());
 
         let segment = SegmentData::new(
             &Segment {
@@ -521,11 +520,11 @@ mod tests {
                 end: track.total_distance(),
             },
             track.clone(),
-            provider.clone(),
+            &provider,
             Parameters::default(),
             TimeParameters::default(),
         );
-        _make_with_osm(&segment, provider, 70_000f64)
+        _make_with_osm(&segment, &provider, 70_000f64)
     }
 
     #[tokio::test]

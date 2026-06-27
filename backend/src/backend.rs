@@ -1,21 +1,28 @@
 #![allow(non_snake_case)]
 
+use std::sync::Arc;
+
 use crate::backend_data::BackendData;
+use crate::controls;
 use crate::error;
 use crate::error::TrackError;
 use crate::event;
 use crate::gpsdata;
 use crate::gpsdata::GpxData;
+use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::osm::DownloadSideData;
 use crate::parameters::Parameters;
 use crate::parameters::RenderFunction;
+use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
+use crate::point_collection::PointCollection;
+use crate::speed;
 use crate::track::Track;
 use crate::waypoint::Waypoint;
 
@@ -117,27 +124,41 @@ impl Backend {
         Ok(())
     }
 
-    pub fn load_controls(&self) -> Result<usize, TrackError> {
-        Ok(0usize)
+    pub fn load_controls(&mut self) -> Result<usize, TrackError> {
+        self.backend_data.as_mut().unwrap().load_controls()
     }
 
-    pub fn make_control_at_waypoint(&self, waypoint: &Waypoint, on: bool) {}
+    pub fn make_control_at_waypoint(&mut self, waypoint: &Waypoint, on: bool) {
+        self.backend_data
+            .as_mut()
+            .unwrap()
+            .make_control_at_waypoint(waypoint, on)
+    }
 
     pub fn allowed_speeds(&self) -> Vec<String> {
-        //speed::allowed_speeds(self.d.track.total_distance())
-        Vec::new()
+        let distance = self.backend_data.as_ref().unwrap().track.total_distance();
+        speed::allowed_speeds(distance)
     }
 
     pub fn get_parameters(&self) -> Parameters {
         self.backend_data.as_ref().unwrap().parameters.clone()
     }
 
-    pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) -> bool {
-        true
+    pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) -> bool {
+        self.backend_data
+            .as_mut()
+            .unwrap()
+            .set_control_time(waypoint, time)
     }
 
     pub fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
-        Ok(())
+        self.load_contents(&vec![content.clone()])
+    }
+
+    pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
+        self.send("gpx:read");
+        let track_parts = self.load_track_parts(contents)?;
+        self.load_ordered(&track_parts)
     }
 
     pub fn load_track_parts(&self, contents: &Vec<Vec<u8>>) -> Result<Vec<TrackPart>, TrackError> {
@@ -194,19 +215,23 @@ impl Backend {
         Ok(())
     }
 
-    pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
-        Ok(())
-    }
-
     pub fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
-        Ok(())
+        let mut f = std::fs::File::open(filename).unwrap();
+        let mut buffer = Vec::new();
+        // read the whole file
+        use std::io::prelude::*;
+        f.read_to_end(&mut buffer).unwrap();
+        self.load_content(&buffer)
     }
 
     pub fn track(&self) -> Track {
         (*self.backend_data.as_ref().unwrap().track).clone()
     }
     pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
-        Vec::new()
+        self.backend_data
+            .as_ref()
+            .unwrap()
+            .get_waypoints(segment, kinds)
     }
     pub fn render_segment_map_profile(
         &self,
@@ -232,6 +257,19 @@ impl Backend {
             .unwrap()
             .render_segment_simple(segment, size, kinds, function)
     }
+    pub fn render_segment(
+        &self,
+        segment: &Segment,
+        render_inputs: &Vec<RenderInput>,
+    ) -> Vec<RenderOutput> {
+        self.backend_data
+            .as_ref()
+            .unwrap()
+            .render_segment(segment, render_inputs)
+    }
+    pub fn segments(&self) -> Vec<Segment> {
+        self.backend_data.as_ref().unwrap().segments()
+    }
     pub fn trackSegment(&self) -> Segment {
         self.backend_data.as_ref().unwrap().trackSegment()
     }
@@ -249,5 +287,191 @@ impl Backend {
     }
     pub async fn generatePdf(&self, kinds: &Kinds) -> Vec<u8> {
         self.backend_data.as_ref().unwrap().generatePdf(kinds).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        backend::Backend,
+        backend_data::BackendData,
+        math::IntegerSize2D,
+        parameters::{ProfileIndication, RenderFunction},
+        point_collection::{self, Kind, Kinds},
+        wheel,
+    };
+    static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
+    static BLACK_FOREST: &'static str = "data/blackforest.gpx";
+
+    async fn load_test_data_no_osm(filename: &str) -> Backend {
+        let mut backend = Backend::make();
+        backend.load_filename(filename).expect("fail");
+        backend.load_controls().unwrap();
+        backend
+    }
+
+    async fn load_test_data(filename: &str) -> Backend {
+        let mut backend = Backend::make();
+        backend.load_filename(filename).expect("fail");
+        backend.load_osm().await.unwrap();
+        backend.load_controls().unwrap();
+        backend
+    }
+
+    #[tokio::test]
+    async fn svg_profile() {
+        let _ = env_logger::try_init();
+        let mut backend = load_test_data(BLACK_FOREST).await;
+
+        let mut parameters = backend.get_parameters();
+        parameters.start_time = START_TIME.to_string();
+        parameters.user_steps_options.step_distance = Some((10_000) as f64);
+        parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
+        parameters.debug = true;
+
+        backend.set_parameters(&parameters);
+
+        let segments = backend.segments();
+        let mut ok_count = 0;
+        let profile_size = IntegerSize2D::new(1420, 400);
+        for segment in &segments {
+            let result = backend.render_segment_simple(
+                &segment,
+                &profile_size,
+                point_collection::allkinds(),
+                RenderFunction::Profile,
+            );
+
+            let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
+            println!("test {}", reffilename);
+            let reference_svg = if std::fs::exists(&reffilename).unwrap() {
+                std::fs::read_to_string(&reffilename).unwrap()
+            } else {
+                String::new()
+            };
+            if reference_svg == result {
+                ok_count += 1;
+            }
+            let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id);
+            std::fs::write(&tmpfilename, result.clone()).unwrap();
+            if reference_svg != result {
+                println!("test failed: {} {}", tmpfilename, reffilename);
+            }
+        }
+        assert!(ok_count == segments.len());
+    }
+
+    #[tokio::test]
+    async fn svg_large_map() {
+        let _ = env_logger::try_init();
+        let mut backend = load_test_data(BLACK_FOREST).await;
+        let mut parameters = backend.get_parameters();
+        parameters.start_time = START_TIME.to_string();
+        parameters.user_steps_options.step_distance = Some((10_000) as f64);
+        backend.set_parameters(&parameters);
+
+        let segment = &backend.trackSegment();
+        let map_size = IntegerSize2D::new(800, 800);
+        let result = backend.render_segment_simple(
+            &segment,
+            &map_size,
+            point_collection::allkinds(),
+            RenderFunction::Map,
+        );
+        let reffilename = std::format!("data/ref/largemap.svg");
+        println!("test {}", reffilename);
+        let refdata = if std::fs::exists(&reffilename).unwrap() {
+            std::fs::read_to_string(&reffilename).unwrap()
+        } else {
+            String::new()
+        };
+        let tmpfilename = std::format!("/tmp/largemap.svg");
+        std::fs::write(&tmpfilename, result.clone()).unwrap();
+        if refdata != result {
+            println!("test failed: {} {}", tmpfilename, reffilename);
+            assert!(false);
+        }
+    }
+
+    #[tokio::test]
+    async fn svg_map() {
+        let _ = env_logger::try_init();
+        let mut backend = load_test_data(BLACK_FOREST).await;
+        let mut parameters = backend.get_parameters();
+        parameters.start_time = START_TIME.to_string();
+        parameters.user_steps_options.step_distance = Some((10_000) as f64);
+        backend.set_parameters(&parameters);
+
+        let segments = backend.segments();
+        let map_size = IntegerSize2D::new(400, 400);
+
+        let mut ok_count = 0;
+        for (_idx, segment) in segments.iter().enumerate() {
+            let result = backend.render_segment_simple(
+                &segment,
+                &map_size,
+                point_collection::allkinds(),
+                RenderFunction::Map,
+            );
+
+            let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
+            println!("test {}", reffilename);
+            let refdata = if std::fs::exists(&reffilename).unwrap() {
+                std::fs::read_to_string(&reffilename).unwrap()
+            } else {
+                String::new()
+            };
+            if refdata == result {
+                ok_count += 1;
+            }
+            let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id);
+            std::fs::write(&tmpfilename, result.clone()).unwrap();
+            if refdata != result {
+                println!("test failed: {} {}", tmpfilename, reffilename);
+            }
+        }
+        assert!(ok_count == segments.len());
+    }
+
+    #[tokio::test]
+    async fn reorder() {
+        let _ = env_logger::try_init();
+        let bytes = {
+            let mut f = std::fs::File::open("data/ref/karl-400.gpx").unwrap();
+            let mut buffer = Vec::new();
+            // read the whole file
+            use std::io::prelude::*;
+            f.read_to_end(&mut buffer).unwrap();
+            buffer
+        };
+        let mut backend = Backend::make();
+        let mut track_parts = backend.load_track_parts(&vec![bytes]).unwrap();
+        let result = backend.load_ordered(&track_parts);
+        assert!(result.is_ok());
+        assert!(backend.loaded());
+        let s1 = backend.statistics();
+        log::trace!(
+            "dstart={:.1} dend={:.1} km={:.1}",
+            s1.distance_start,
+            s1.distance_end,
+            s1.length / 1000f64
+        );
+
+        track_parts.insert(0, track_parts.last().unwrap().clone());
+        track_parts.remove(track_parts.len() - 1);
+        let result = backend.load_ordered(&track_parts);
+        assert!(result.is_ok());
+        assert!(backend.loaded());
+        let s2 = backend.statistics();
+        log::trace!(
+            "dstart={:.1} dend={:.1} km={:.1}",
+            s2.distance_start,
+            s2.distance_end,
+            s2.length / 1000f64
+        );
+        let d = (s1.length - s2.length).abs();
+        log::trace!("d={}", d);
+        // there is a 65m distance between the end of K4-K5 and the beginning of K5-Ziel.
+        assert!(d < 100f64);
     }
 }

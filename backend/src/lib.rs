@@ -24,6 +24,7 @@ pub mod point_collection;
 mod profile;
 mod split_ambiguity;
 mod svgtable;
+mod testhelpers;
 pub mod tile;
 mod track_projection;
 mod trackparts;
