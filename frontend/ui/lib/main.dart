@@ -34,6 +34,7 @@ Future<void> main() async {
     await windowManager.setIcon('assets/icons/png/wpx_icon.png');
   }
   await RustLib.init();
+  await bridge.Bridge.initPdfFonts();
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   developer.log("frontend loaded");
   runApp(

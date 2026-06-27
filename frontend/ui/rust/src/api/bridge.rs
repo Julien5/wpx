@@ -247,6 +247,10 @@ impl Bridge {
         }
     }
 
+    pub async fn init_pdf_fonts() -> Result<(), TrackError> {
+        backend::Backend::init_pdf_fonts().await
+    }
+
     pub async fn set_sink(&mut self, sink: StreamSink<String>) -> Result<(), TrackError> {
         let cell = Box::new(EventSender { sink });
         self.backend.set_sink(cell);
