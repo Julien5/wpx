@@ -233,6 +233,7 @@ impl Backend {
         *self.backend_data.write().unwrap() = Some(data);
 
         // this updates the collection, too
+        self.set_user_step_options(&self.get_parameters().user_steps_options);
         self.send("gpx:done");
         Ok(())
     }
