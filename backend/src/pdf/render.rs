@@ -360,10 +360,10 @@ fn link(profilesvg: &str, mapsvg: &str, points_table_svg: &String, document: &mu
     document.add_table(profilesvg, mapsvg, points_table_svg);
 }
 
-pub async fn make_pdf_document(backend: &BackendData, kinds: &Kinds) -> Vec<u8> {
+pub fn make_pdf_document(backend: &BackendData, kinds: &Kinds) -> Result<Vec<u8>, crate::error::TrackError> {
     let mut options: usvg::Options<'static> = usvg::Options::default();
     options.fontdb_mut().load_system_fonts();
-    super::fonts::register_libertinus_fonts(options.fontdb_mut()).await;
+    super::fonts::apply_cached_fonts(options.fontdb_mut())?;
     let mut document = PdfComposer::new(options);
     let debug = backend.get_parameters().debug;
     let fsegments = backend.segments();
@@ -411,5 +411,5 @@ pub async fn make_pdf_document(backend: &BackendData, kinds: &Kinds) -> Vec<u8> 
             break;
         }
     }
-    document.finish()
+    Ok(document.finish())
 }

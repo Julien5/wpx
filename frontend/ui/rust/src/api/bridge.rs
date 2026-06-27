@@ -267,16 +267,27 @@ impl Bridge {
         self.backend.load_osm().await
     }
 
+    pub async fn has_persist(&self) -> bool {
+        self.backend.has_persist().await
+    }
+
+    pub async fn load_persist(&self) -> Result<(), TrackError> {
+        self.backend.load_persist().await
+    }
+
     pub async fn cancel_osm(&self) {
         self.backend.cancel_osm().await
     }
 
-    pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
-        self.backend.generateZip(&dedup(&kinds)).await
+    pub async fn generateZip(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
+        self.backend.generateZip(&dedup(&kinds))
     }
 
     pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
         self.backend.persist_small_parameters().await
+    }
+    pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
+        self.backend.persist_gpxdata().await
     }
 
     pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {

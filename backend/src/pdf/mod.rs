@@ -1,4 +1,5 @@
 mod fonts;
+pub use fonts::init_fonts;
 #[cfg(not(target_arch = "wasm32"))]
 mod local;
 pub mod render;

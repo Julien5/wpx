@@ -237,6 +237,7 @@ async fn main() -> anyhow::Result<()> {
     let gpxpath = std::path::Path::new(gpxinputs.first().unwrap());
 
     let mut backend = Backend::make();
+    let _ = Backend::init_pdf_fonts().await;
     let mut gpxdata = Vec::new();
     for gpxinput in &gpxinputs {
         log::info!("read gpx {}", gpxinput);
@@ -370,11 +371,11 @@ async fn main() -> anyhow::Result<()> {
     println!("make: {}", filename);
     match get_extension(&filename) {
         Some("zip") => {
-            let data = backend.generateZip(&kinds).await;
+            let data = backend.generateZip(&kinds)?;
             std::fs::write(&filename, data).expect("Failed to write ZIP");
         }
         Some("pdf") => {
-            let data = backend.generatePdf(&kinds).await;
+            let data = backend.generatePdf(&kinds)?;
             std::fs::write(&filename, data).expect("Failed to write PDF");
         }
         Some(other) => panic!("Unsupported extension: .{}", other),

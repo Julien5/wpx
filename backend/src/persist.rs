@@ -23,14 +23,7 @@ impl SmallDataset {
     }
 }
 
-pub async fn write_userdata(
-    parameters: &Parameters,
-    controls: &Vec<InputPoint>,
-) -> GenericResult<()> {
-    let data = SmallDataset {
-        parameters: parameters.clone(),
-        controls: controls.clone(),
-    };
+pub async fn write_userdata(data: &SmallDataset) -> GenericResult<()> {
     cache::write(
         &cache::Location::UserData,
         "parameters",
@@ -142,11 +135,7 @@ impl TrackDataset {
     }
 }
 
-pub async fn write_trackdata(
-    track: &crate::track::Track,
-    waypoints: &Vec<InputPoint>,
-) -> GenericResult<()> {
-    let data = TrackDataset::from_track_and_waypoints(track, waypoints);
+pub async fn write_trackdata(data: &TrackDataset) -> GenericResult<()> {
     cache::write(
         &cache::Location::UserData,
         "track-data",

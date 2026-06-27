@@ -22,6 +22,7 @@ use crate::point_collection::PacketProvider;
 use crate::speed;
 use crate::track::Track;
 use crate::waypoint::Waypoint;
+use std::sync::RwLock;
 
 pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
@@ -32,29 +33,29 @@ pub type SenderHandlerLock = crate::event::SenderHandlerLock;
 use tokio_util::sync::CancellationToken;
 
 pub struct Backend {
-    backend_data: Option<BackendData>,
-    gpxdata: std::sync::RwLock<Option<GpxData>>,
-    osm_cancel_token: std::sync::RwLock<Option<CancellationToken>>,
+    backend_data: RwLock<Option<BackendData>>,
+    gpxdata: RwLock<Option<GpxData>>,
+    osm_cancel_token: RwLock<Option<CancellationToken>>,
     pub sender: SenderHandlerLock,
 }
 
 impl Backend {
     pub fn make() -> Backend {
         Backend {
-            backend_data: None,
-            gpxdata: std::sync::RwLock::new(None),
-            osm_cancel_token: std::sync::RwLock::new(None),
-            sender: std::sync::RwLock::new(None),
+            backend_data: RwLock::new(None),
+            gpxdata: RwLock::new(None),
+            osm_cancel_token: RwLock::new(None),
+            sender: RwLock::new(None),
         }
     }
     pub fn loaded(&self) -> bool {
-        self.backend_data.is_some()
+        self.backend_data.read().unwrap().is_some()
     }
     pub fn unload(&mut self) {
-        self.backend_data = None;
+        *self.backend_data.write().unwrap() = None;
     }
     pub fn set_sink(&mut self, sink: SenderHandler) {
-        self.sender = std::sync::RwLock::new(Some(sink));
+        self.sender = RwLock::new(Some(sink));
     }
     pub fn send(&self, data: &str) {
         log::trace!("event:{}", data);
@@ -78,7 +79,7 @@ impl Backend {
         }
     }
 
-    pub async fn load_osm(&mut self) -> Result<(), TrackError> {
+    pub async fn load_osm(&self) -> Result<(), TrackError> {
         {
             let lock = self.osm_cancel_token.read().unwrap();
             match *lock {
@@ -98,8 +99,15 @@ impl Backend {
             logger: &self.sender,
             cancel_token: &token,
         };
-        let track = &self.backend_data.as_ref().unwrap().track;
-        let result = osm::download_for_track(track, &side).await;
+        let track = self
+            .backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .track
+            .clone();
+        let result = osm::download_for_track(&track, &side).await;
         {
             let mut lock = self.osm_cancel_token.write().unwrap();
             *lock = None;
@@ -117,32 +125,59 @@ impl Backend {
                 return Err(error::TrackError::from(e));
             }
         };
-        self.backend_data.as_mut().unwrap().load_osm(osmpoints);
+        self.backend_data
+            .write()
+            .unwrap()
+            .as_mut()
+            .unwrap()
+            .load_osm(osmpoints);
         Ok(())
     }
 
-    pub fn load_controls(&mut self) -> Result<usize, TrackError> {
-        self.backend_data.as_mut().unwrap().load_controls()
+    pub fn load_controls(&self) -> Result<usize, TrackError> {
+        self.backend_data
+            .write()
+            .unwrap()
+            .as_mut()
+            .unwrap()
+            .load_controls()
     }
 
-    pub fn make_control_at_waypoint(&mut self, waypoint: &Waypoint, on: bool) {
+    pub fn make_control_at_waypoint(&self, waypoint: &Waypoint, on: bool) {
         self.backend_data
+            .write()
+            .unwrap()
             .as_mut()
             .unwrap()
             .make_control_at_waypoint(waypoint, on)
     }
 
     pub fn allowed_speeds(&self) -> Vec<String> {
-        let distance = self.backend_data.as_ref().unwrap().track.total_distance();
+        let distance = self
+            .backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .track
+            .total_distance();
         speed::allowed_speeds(distance)
     }
 
     pub fn get_parameters(&self) -> Parameters {
-        self.backend_data.as_ref().unwrap().parameters.clone()
+        self.backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .parameters
+            .clone()
     }
 
-    pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) -> bool {
+    pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) -> bool {
         self.backend_data
+            .write()
+            .unwrap()
             .as_mut()
             .unwrap()
             .set_control_time(waypoint, time)
@@ -193,7 +228,7 @@ impl Backend {
             parameters,
             packet_provider: point_collection,
         };
-        self.backend_data = Some(data);
+        *self.backend_data.write().unwrap() = Some(data);
 
         // this updates the collection, too
         self.send("gpx:done");
@@ -201,14 +236,39 @@ impl Backend {
     }
 
     pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
-        self.backend_data.as_ref().unwrap().persist_gpxdata().await
+        let data = self
+            .backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .track_dataset();
+        match persist::write_trackdata(&data).await {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                log::error!("write user data failed: {:?}", e);
+                Err(TrackError::IOError.into())
+            }
+        }
     }
 
     pub async fn has_persist(&self) -> bool {
+        match persist::read_trackdata().await {
+            Some(_) => {}
+            None => {
+                return false;
+            }
+        };
+        match persist::read_userdata().await {
+            Some(_) => {}
+            None => {
+                return false;
+            }
+        };
         true
     }
 
-    pub async fn load_persist(&mut self) -> Result<(), TrackError> {
+    pub async fn load_persist(&self) -> Result<(), TrackError> {
         let mut gpxdata = match persist::read_trackdata().await {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
@@ -232,17 +292,26 @@ impl Backend {
             parameters: smalldata.parameters.clone(),
             packet_provider,
         };
-        self.backend_data = Some(data);
+        *self.backend_data.write().unwrap() = Some(data);
 
         Ok(())
     }
 
     pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
-        self.backend_data
+        let data = self
+            .backend_data
+            .read()
+            .unwrap()
             .as_ref()
             .unwrap()
-            .persist_small_parameters()
-            .await
+            .small_parameters();
+        match persist::write_userdata(&data).await {
+            Ok(()) => Ok(()),
+            Err(e) => {
+                log::error!("write user data failed: {:?}", e);
+                Err(TrackError::IOError.into())
+            }
+        }
     }
 
     pub fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
@@ -255,10 +324,12 @@ impl Backend {
     }
 
     pub fn track(&self) -> Track {
-        (*self.backend_data.as_ref().unwrap().track).clone()
+        (*self.backend_data.read().unwrap().as_ref().unwrap().track).clone()
     }
     pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
         self.backend_data
+            .read()
+            .unwrap()
             .as_ref()
             .unwrap()
             .get_waypoints(segment, kinds)
@@ -271,6 +342,8 @@ impl Backend {
         kinds: Kinds,
     ) -> Vec<RenderOutput> {
         self.backend_data
+            .read()
+            .unwrap()
             .as_ref()
             .unwrap()
             .render_segment_map_profile(segment, map_size, profile_size, kinds)
@@ -283,6 +356,8 @@ impl Backend {
         function: RenderFunction,
     ) -> String {
         self.backend_data
+            .read()
+            .unwrap()
             .as_ref()
             .unwrap()
             .render_segment_simple(segment, size, kinds, function)
@@ -293,29 +368,50 @@ impl Backend {
         render_inputs: &Vec<RenderInput>,
     ) -> Vec<RenderOutput> {
         self.backend_data
+            .read()
+            .unwrap()
             .as_ref()
             .unwrap()
             .render_segment(segment, render_inputs)
     }
     pub fn segments(&self) -> Vec<Segment> {
-        self.backend_data.as_ref().unwrap().segments()
+        self.backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .segments()
     }
     pub fn trackSegment(&self) -> Segment {
-        self.backend_data.as_ref().unwrap().trackSegment()
-    }
-    pub fn set_parameters(&mut self, parameters: &Parameters) {
         self.backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .trackSegment()
+    }
+    pub fn set_parameters(&self, parameters: &Parameters) {
+        self.backend_data
+            .write()
+            .unwrap()
             .as_mut()
             .unwrap()
             .set_parameters(parameters)
     }
 
     pub fn set_start_time(&mut self, rfc3339: String) {
-        self.backend_data.as_mut().unwrap().set_start_time(rfc3339);
+        self.backend_data
+            .write()
+            .unwrap()
+            .as_mut()
+            .unwrap()
+            .set_start_time(rfc3339);
     }
 
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
         self.backend_data
+            .write()
+            .unwrap()
             .as_mut()
             .unwrap()
             .set_user_step_options(options)
@@ -323,19 +419,50 @@ impl Backend {
 
     pub fn set_segment_length(&mut self, length: f64) {
         self.backend_data
+            .write()
+            .unwrap()
             .as_mut()
             .unwrap()
             .set_segment_length(length);
     }
 
     pub fn statistics(&self) -> SegmentStatistics {
-        self.backend_data.as_ref().unwrap().statistics()
+        self.backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .statistics()
     }
-    pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
-        self.backend_data.as_ref().unwrap().generateZip(kinds).await
+
+    pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
+        self.backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .segment_statistics(segment)
     }
-    pub async fn generatePdf(&self, kinds: &Kinds) -> Vec<u8> {
-        self.backend_data.as_ref().unwrap().generatePdf(kinds).await
+
+    pub fn generateZip(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
+        self.backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .generateZip(kinds)
+    }
+    pub fn generatePdf(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
+        self.backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .generatePdf(kinds)
+    }
+
+    pub async fn init_pdf_fonts() -> Result<(), TrackError> {
+        crate::pdf::init_fonts().await
     }
 }
 

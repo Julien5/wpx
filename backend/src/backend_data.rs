@@ -14,7 +14,8 @@ use crate::parameters::RenderFunction;
 use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::UserStepsOptions;
-use crate::persist;
+use crate::persist::SmallDataset;
+use crate::persist::TrackDataset;
 use crate::point_collection::controls_speed_data;
 use crate::point_collection::remove_control_waypoints;
 use crate::point_collection::Kind;
@@ -67,31 +68,21 @@ impl BackendData {
         self.parameters.clone()
     }
 
-    pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
+    pub fn track_dataset(&self) -> TrackDataset {
         let waypoints = self
             .packet_provider
             .collection
             .get_vector(&Kind::GPXWaypoints);
-        match persist::write_trackdata(&self.track, &waypoints).await {
-            Ok(()) => Ok(()),
-            Err(e) => {
-                log::error!("write track data failed: {:?}", e);
-                Err(TrackError::IOError.into())
-            }
-        }
+        TrackDataset::from_track_and_waypoints(&self.track, &waypoints)
     }
 
-    pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
+    pub fn small_parameters(&self) -> SmallDataset {
         log::trace!("persist [1]");
         let controls = self.packet_provider.collection.get_vector(&Kind::Controls);
         let parameters = &self.parameters;
-        log::trace!("persist [4]");
-        match persist::write_userdata(&parameters, &controls).await {
-            Ok(()) => Ok(()),
-            Err(e) => {
-                log::error!("write user data failed: {:?}", e);
-                Err(TrackError::IOError.into())
-            }
+        SmallDataset {
+            parameters: parameters.clone(),
+            controls: controls.clone(),
         }
     }
 
@@ -255,12 +246,12 @@ impl BackendData {
         self.export_points(&self.get_points(&segment, kinds))
     }
 
-    pub async fn generatePdf(&self, kinds: &Kinds) -> Vec<u8> {
+    pub fn generatePdf(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
         /*let typbytes = render::make_typst_document(self, kinds);
         let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;*/
-        let ret = crate::pdf::render::make_pdf_document(self, kinds).await;
+        let ret = crate::pdf::render::make_pdf_document(self, kinds)?;
         log::info!("generated {} pdf bytes", ret.len());
-        ret
+        Ok(ret)
     }
     pub fn generateGpx(&self) -> BTreeMap<String, Vec<u8>> {
         let collection = &self.packet_provider.collection;
@@ -280,11 +271,11 @@ impl BackendData {
         gpxexport::generate(&self.track, &controls, &usersteps_groups, &waypoints_w)
     }
 
-    pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
+    pub fn generateZip(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
         let mut map = self.generateGpx();
-        let pdf = self.generatePdf(kinds).await;
+        let pdf = self.generatePdf(kinds)?;
         map.insert("route.pdf".to_string(), pdf);
-        zipexport::generate(map)
+        Ok(zipexport::generate(map))
     }
 
     pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
