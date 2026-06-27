@@ -125,12 +125,14 @@ impl Backend {
                 return Err(error::TrackError::from(e));
             }
         };
+        self.send("osm:sort");
         self.backend_data
             .write()
             .unwrap()
             .as_mut()
             .unwrap()
             .load_osm(osmpoints);
+        self.send("osm:done");
         Ok(())
     }
 
