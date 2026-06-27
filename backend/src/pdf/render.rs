@@ -2,8 +2,7 @@
 
 use euclid::Size2D;
 
-use crate::backend::Backend;
-
+use crate::backend_data::BackendData;
 use crate::parameters::UserStepsOptions;
 use crate::point_collection::Kinds;
 use crate::svgtable::waypoints_to_svg;
@@ -361,7 +360,7 @@ fn link(profilesvg: &str, mapsvg: &str, points_table_svg: &String, document: &mu
     document.add_table(profilesvg, mapsvg, points_table_svg);
 }
 
-pub async fn make_pdf_document(backend: &Backend, kinds: &Kinds) -> Vec<u8> {
+pub async fn make_pdf_document(backend: &BackendData, kinds: &Kinds) -> Vec<u8> {
     let mut options: usvg::Options<'static> = usvg::Options::default();
     options.fontdb_mut().load_system_fonts();
     super::fonts::register_libertinus_fonts(options.fontdb_mut()).await;
@@ -389,7 +388,7 @@ pub async fn make_pdf_document(backend: &Backend, kinds: &Kinds) -> Vec<u8> {
         let [rendered_map, rendered_profile]: [_; 2] = both.try_into().unwrap();
         let waypoints = decimate(&segment.segment, &rendered_profile.waypoints, 15);
         let user_steps_options = backend.get_parameters().user_steps_options.clone();
-        let elevation_gain = backend.d().track.elevation_gain_on_range(&range);
+        let elevation_gain = backend.track.elevation_gain_on_range(&range);
         let table_info = TableInfo {
             waypoints: waypoints.clone(),
             user_steps_options,
@@ -408,7 +407,7 @@ pub async fn make_pdf_document(backend: &Backend, kinds: &Kinds) -> Vec<u8> {
             &table_svg,
             &mut document,
         );
-        if range.end == backend.d().track.len() {
+        if range.end == backend.track.len() {
             break;
         }
     }

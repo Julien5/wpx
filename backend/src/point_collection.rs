@@ -126,29 +126,8 @@ pub struct RenderInputParameters {
     pub drange: std::ops::Range<f64>,
     pub range: std::ops::Range<usize>,
     pub screen_size: IntegerSize2D,
-    pub other_parameters_hash: Option<String>,
     pub background_points: Vec<Vec<InputPoint>>,
     pub usersteps: Vec<InputPoint>,
-}
-
-impl RenderInputParameters {
-    pub fn hash(&self) -> String {
-        let mut parameters = self.parameters.clone();
-        // Parameters must be taken into account (because of start time and speed),
-        // but the cache may be re-used for different user steps parameters because
-        // user steps are rendered in the foreground.
-        parameters.user_steps_options = UserStepsOptions::default();
-        format!(
-            "F={:?}-S={:?}-K={:?}-Rd={:?}-P={:?}-O={:?}-B={:?}",
-            self.function,
-            self.screen_size,
-            self.kinds,
-            self.drange,
-            parameters,
-            self.other_parameters_hash,
-            self.background_points
-        )
-    }
 }
 
 impl std::fmt::Debug for RenderInputParameters {
@@ -160,7 +139,6 @@ impl std::fmt::Debug for RenderInputParameters {
             .field("end", &self.drange.end)
             .field("width", &self.screen_size.width)
             .field("height", &self.screen_size.width)
-            .field("other", &self.other_parameters_hash.is_some())
             .field("|usersteps|", &self.usersteps.len())
             .finish()
     }
@@ -197,7 +175,6 @@ impl RenderInputParameters {
             },
             range: track.subrange(start, end),
             screen_size: size.clone(),
-            other_parameters_hash: None,
             background_points: background_points.clone(),
             usersteps: usersteps.clone(),
         }
@@ -225,120 +202,20 @@ impl RenderInputParameters {
             },
             range: track.subrange(start, end),
             screen_size: size.clone(),
-            other_parameters_hash: None,
             background_points: background_points.clone(),
             usersteps: usersteps.clone(),
         }
     }
-
-    pub fn mismatch(&self, other: &Self) -> String {
-        if self.hash() == other.hash() {
-            return String::new();
-        }
-        if self.kinds != other.kinds {
-            return format!("kinds mismatch ({:?} != {:?})", self.kinds, other.kinds);
-        }
-        if self.function != other.function {
-            return format!(
-                "function mismatch ({:?} != {:?})",
-                self.function, other.function
-            );
-        }
-        if self.other_parameters_hash != other.other_parameters_hash {
-            return format!(
-                "other parameter mismatch ({:?} != {:?})",
-                self.other_parameters_hash, other.other_parameters_hash
-            );
-        }
-        if self.screen_size != other.screen_size {
-            return format!(
-                "screen size width ({:?} != {:?})",
-                self.screen_size, other.screen_size
-            );
-        }
-        if !only_usersteps_parameter_may_differ(&self.parameters, &other.parameters) {
-            return format!(
-                "parameter mismatch (other than user steps) {:?} != {:?}",
-                self.parameters, other.parameters
-            );
-        }
-        if self.range != other.range {
-            return format!("range mismatch {:?} != {:?}", self.range, other.range);
-        }
-        if self.background_points != other.background_points {
-            return format!(
-                "background points mismatch ({:?} != {:?})",
-                self.background_points, other.background_points
-            );
-        }
-        String::new()
-    }
 }
-
-#[derive(Clone)]
-struct CachedResults {
-    results: Vec<RenderResult>,
-}
-
-// TODO: limit the cache size ?
-impl CachedResults {
-    pub fn new() -> Self {
-        Self {
-            results: Vec::new(),
-        }
-    }
-    pub fn push(&mut self, result: RenderResult) {
-        self.results.push(result);
-    }
-    pub fn hit(&self, parameters: &RenderInputParameters) -> Option<RenderResult> {
-        for result in &self.results {
-            let mismatch = result.parameters.mismatch(parameters);
-            if mismatch.is_empty() {
-                log::info!("cache hit: {:?}", parameters);
-                return Some(result.clone());
-            } else {
-                /*
-                    log::trace!(
-                        "cache mismatch with parameters: {:?} ({})",
-                        parameters,
-                        mismatch
-                );
-                    */
-            }
-        }
-        None
-    }
-}
-
-pub type SharedPacketProvider = std::sync::Arc<std::sync::RwLock<PacketProvider>>;
 
 pub struct PacketProvider {
     pub collection: PointCollection,
-    results: CachedResults,
 }
 
 impl PacketProvider {
     pub fn new() -> Self {
         Self {
             collection: PointCollection::new(),
-            results: CachedResults::new(),
-        }
-    }
-    pub fn register_result(&mut self, result: &RenderResult) {
-        assert!(self.results.hit(&result.parameters).is_none());
-        self.results.push(result.clone());
-    }
-
-    pub fn hit(&self, p: &RenderInputParameters) -> Option<RenderResult> {
-        self.results.hit(&p)
-    }
-
-    pub fn load(&self, p: &RenderInputParameters) -> RenderResult {
-        match self.results.hit(&p) {
-            Some(result) => result,
-            None => {
-                panic!("cache mismatch for parameters: {:?}", p);
-            }
         }
     }
 }
@@ -527,6 +404,14 @@ impl PointCollection {
         Packet { hardness, points }
     }
 
+    pub fn from_result(profile: &RenderResult) -> Self {
+        let mut map: BTreeMap<Kind, Vec<InputPoint>> = BTreeMap::new();
+        for point in profile.rendered_input_points() {
+            map.entry(point.kind()).or_default().push(point.clone());
+        }
+        Self { map }
+    }
+
     pub fn profile(&self) -> Packets {
         let clone = self.clone();
         vec![
@@ -548,10 +433,12 @@ impl PointCollection {
         vec![
             Packet::make_forced_packet(clone.controls()),
             Packet::make_forced_packet(clone.gpxwaypoints()),
-            Packet {
-                hardness: 0,
-                points: clone.get_vector(&Kind::CutOff),
-            },
+            /* exclude cutoff points from the map
+             * Packet {
+             *    hardness: 0,
+             *    points: clone.get_vector(&Kind::CutOff),
+             * },
+             */
             Self::osm_packet(clone.ontrack_cities()),
             Self::osm_packet(clone.get_vector(&Kind::Villages)),
             Self::osm_packet(clone.get_vector(&Kind::Mountains)),

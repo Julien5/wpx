@@ -4,7 +4,7 @@ use crate::{
     math,
     mercator::MercatorPoint,
     parameters::Parameters,
-    point_collection::{Kind, SharedPacketProvider},
+    point_collection::{Kind, PacketProvider},
     segment::SegmentData,
     speed::TimeParameters,
     track::Track,
@@ -288,7 +288,7 @@ pub fn _select_osm_points_on_segment(
 
 pub fn _make_with_osm(
     bigsegment: &SegmentData,
-    packet_provider: SharedPacketProvider,
+    packet_provider: &PacketProvider,
     typical_distance: f64,
 ) -> Vec<InputPoint> {
     let track = &bigsegment.track;
@@ -311,7 +311,7 @@ pub fn _make_with_osm(
         let data = SegmentData::new(
             &subsegment,
             track.clone(),
-            packet_provider.clone(),
+            &packet_provider,
             Parameters::default(),
             TimeParameters::default(),
         );

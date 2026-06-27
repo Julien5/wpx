@@ -43,17 +43,10 @@ wasmtimer = "0.4.3"
 version = "0.3"
 features = ["DomException","Location","Window"]
 
+[lints.rust]
+warnings = "allow"
 
-#[features]
-# default = ["typstpdf"]
-#typstpdf = ["dep:typst-as-lib","dep:typst-pdf"]
 		  
-
-
-
-
-
-
 
 
 

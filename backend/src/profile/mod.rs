@@ -186,25 +186,21 @@ impl ProfileView {
         }
     }
 
-    fn cutoffs_dots(&mut self, cutoff_points: &Vec<InputPoint>) -> Vec<Point2D> {
+    fn cutoff_dot(&self, point: &InputPoint) -> Option<Point2D> {
         let bottom = ProfileGenerator::header_bottom();
-        let mut ret = Vec::new();
-        for point in cutoff_points {
-            assert!(point.track_projections.len() == 1);
-            let x = point
-                .track_projections
-                .first()
-                .unwrap()
-                .distance_on_track_to_projection;
-            let xd = self.toSD(&Point2D::new(x, 0f64)).x;
-            if xd > self.WD() {
-                break;
-            }
-            // give the stroke some more width to avoid rendering
-            // right at the edge of control point labels
-            ret.push(Point2D::new(xd, bottom + 8f64));
+        assert!(point.track_projections.len() == 1);
+        let x = point
+            .track_projections
+            .first()
+            .unwrap()
+            .distance_on_track_to_projection;
+        let xd = self.toSD(&Point2D::new(x, 0f64)).x;
+        if xd > self.WD() {
+            return None;
         }
-        ret
+        // give the stroke some more width to avoid rendering
+        // right at the edge of control point labels
+        Some(Point2D::new(xd, bottom + 8f64))
     }
 
     fn compute_time_ticks(&mut self) -> TimeTicks {
@@ -527,49 +523,21 @@ impl ProfileView {
         Polyline::new(polyline_points)
     }
 
-    fn userstep_dot(box_center: &Point2D, w: &InputPoint, k: usize) -> PointFeature {
+    fn userstep_dot(box_center: &Point2D, w: &InputPoint) -> PointFeature {
         assert!(w.kind() == Kind::CutOff);
         let center = *box_center;
         let circle = draw_for_profile(&center, &format!("user-step"), w);
         let mut label = drawings::make_label_text(&w);
-        label.id = format!("{}/user-step/text", k);
+        label.id = format!("user-step/text");
         let proj = w.track_projections.first().unwrap().clone();
         PointFeature {
             circle,
             label,
             input_point: Some(w.clone_with_proj(&proj)),
             link: None,
-            xmlid: k,
+            xmlid: w.index().unwrap_or(0),
             hardness: 0,
         }
-    }
-
-    pub fn add_features(
-        &mut self,
-        background_features: &Vec<PointFeature>,
-        usersteps: &Vec<InputPoint>,
-        track: &Track,
-    ) {
-        let mut bottom = self.HD() - self.frame_stroke_width;
-        for indication in self.indications() {
-            if indication == ProfileIndication::NumericSlope {
-                bottom = self.add_numeric_slope(bottom, track, &self.range(track));
-            }
-        }
-
-        let cutoff_dots = self.cutoffs_dots(usersteps);
-
-        let mut points = Vec::new();
-        points.extend_from_slice(&background_features);
-        for (index, center) in cutoff_dots.iter().enumerate() {
-            let w = &usersteps[index];
-            points.push(Self::userstep_dot(&center, w, index));
-        }
-
-        self.model = Some(ProfileModel {
-            points,
-            polylines: vec![self.make_polyline(track)],
-        });
     }
 
     fn place_packets(&mut self, packets: &Packets, track: &Track) -> Features {
@@ -598,6 +566,11 @@ impl ProfileView {
             let mut feature_packet = Vec::new();
             for w in &packet.points {
                 if w.kind() == Kind::CutOff {
+                    let dot = self.cutoff_dot(&w);
+                    if dot.is_none() {
+                        continue;
+                    }
+                    feature_unlabeled.push(Self::userstep_dot(&dot.unwrap(), w));
                     continue;
                 }
                 for proj in &w.track_projections {
@@ -892,28 +865,10 @@ impl ProfileGenerator {
     }
 }
 
-pub fn profile_background(
+pub fn render_profile(
     track: &Track,
     parameters: &RenderInputParameters,
     packets: &Packets,
-    debug_dir: Option<String>,
-) -> RenderResult {
-    log::info!("compute profile background for parameters {:?}", parameters);
-    let profile_bbox =
-        ProfileBoundingBox::from_track(track, &parameters.drange.start, &parameters.drange.end);
-    let mut view = ProfileView::init(&profile_bbox, parameters, debug_dir);
-    // add_canvas is useless for the background since only the rendered point features are
-    // used in profile_foreground
-    // view.add_canvas();
-    view.add_packets(packets, track);
-    view.render_model();
-    view.render_document()
-}
-
-pub fn profile_foreground(
-    track: &Track,
-    parameters: &RenderInputParameters,
-    background: &RenderResult,
     debug_dir: Option<String>,
 ) -> RenderResult {
     log::info!("compute profile foreground for parameters {:?}", parameters);
@@ -921,11 +876,7 @@ pub fn profile_foreground(
         ProfileBoundingBox::from_track(track, &parameters.drange.start, &parameters.drange.end);
     let mut view = ProfileView::init(&profile_bbox, parameters, debug_dir);
     view.add_canvas();
-    let usersteps = match parameters.kinds.contains(&Kind::CutOff) {
-        true => parameters.usersteps.clone(),
-        false => Vec::new(),
-    };
-    view.add_features(&background.rendered, &usersteps, track);
+    view.add_packets(packets, track);
     view.render_model();
     view.render_document()
 }

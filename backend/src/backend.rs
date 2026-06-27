@@ -1,61 +1,30 @@
 #![allow(non_snake_case)]
 
-use std::collections::BTreeMap;
-
-use crate::controls;
+use crate::backend_data::BackendData;
 use crate::error;
 use crate::error::TrackError;
 use crate::event;
 use crate::gpsdata;
 use crate::gpsdata::GpxData;
-use crate::gpxexport;
-use crate::inputpoint::*;
-use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::osm::DownloadSideData;
-use crate::parameters;
 use crate::parameters::Parameters;
 use crate::parameters::RenderFunction;
-use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
-use crate::parameters::UserStepsOptions;
-use crate::persist;
-use crate::point_collection::controls_speed_data;
-use crate::point_collection::remove_control_waypoints;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
-use crate::point_collection::SharedPacketProvider;
-use crate::segment::SegmentData;
-use crate::speed;
-use crate::speed::Speed;
-use crate::split_ambiguity;
-use crate::track::SharedTrack;
 use crate::track::Track;
-use crate::waypoint;
-use crate::waypoint::ExportParameters;
-use crate::waypoint::FlatWaypoints;
 use crate::waypoint::Waypoint;
-use crate::waypoint::WaypointInfo;
-use crate::waypoint::Waypoints;
-use crate::wheel;
 
 pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
 pub use crate::event::Sender;
-use crate::zipexport;
 pub type SenderHandler = crate::event::SenderHandler;
 pub type SenderHandlerLock = crate::event::SenderHandlerLock;
 
-pub struct BackendData {
-    pub parameters: Parameters,
-    pub track: SharedTrack,
-    pub packet_provider: SharedPacketProvider,
-}
-
-use chrono::TimeDelta;
 use tokio_util::sync::CancellationToken;
 
 pub struct Backend {
@@ -105,12 +74,7 @@ impl Backend {
         }
     }
 
-    pub async fn load_osm(&self) -> Result<(), TrackError> {
-        /*let tick = tokio::time::Duration::from_millis(1000);
-                    for i in 0..5 {
-                        self.send(&format!("download {}", i));
-                        tokio::time::sleep(tick).await;
-        }*/
+    pub async fn load_osm(&mut self) -> Result<(), TrackError> {
         {
             let lock = self.osm_cancel_token.read().unwrap();
             match *lock {
@@ -130,13 +94,14 @@ impl Backend {
             logger: &self.sender,
             cancel_token: &token,
         };
-        let result = osm::download_for_track(&self.d().track, &side).await;
+        let track = &self.backend_data.as_ref().unwrap().track;
+        let result = osm::download_for_track(track, &side).await;
         {
             let mut lock = self.osm_cancel_token.write().unwrap();
             *lock = None;
         }
 
-        let mut osmpoints = match result {
+        let osmpoints = match result {
             Ok(p) => {
                 if std::path::Path::new(&"/tmp/force_error").exists() {
                     return Err(TrackError::OSMDownloadFailed);
@@ -148,116 +113,31 @@ impl Backend {
                 return Err(error::TrackError::from(e));
             }
         };
-
-        self.d().track.project_map(&mut osmpoints);
-
-        self.send("osm:sort");
-        {
-            // TODO: osmpoints are sorted per tile.
-            // we loose the sorting. Performance loss is okay, but this probably needs cleanup.
-            let mut locked = self.d().packet_provider.write().unwrap();
-            locked.collection.import_osm(&osmpoints.as_vector());
-        }
-        self.send("osm:done");
+        self.backend_data.as_mut().unwrap().load_osm(osmpoints);
         Ok(())
     }
 
     pub fn load_controls(&self) -> Result<usize, TrackError> {
-        let waypoints = self
-            .d()
-            .packet_provider
-            .read()
-            .unwrap()
-            .collection
-            .get_vector(&Kind::GPXWaypoints);
-        let mut controls = controls::infer_controls_from_gpx_segments(&self.d().track, &waypoints);
-        for c in &mut controls {
-            debug_assert!(!c.track_projections.is_empty());
-            if c.track_projections.is_empty() {
-                self.d().track.project_point(c);
-            }
-        }
-
-        let len = controls.len();
-        debug_assert!(len >= 2);
-
-        // update provider
-        {
-            let mut locked = self.d().packet_provider.write().unwrap();
-            locked.collection.import_other(&Kind::Controls, controls);
-        }
-
-        Ok(len)
+        Ok(0usize)
     }
 
-    pub fn make_control_at_waypoint(&self, waypoint: &Waypoint, on: bool) {
-        let controls = self
-            .d()
-            .packet_provider
-            .read()
-            .unwrap()
-            .collection
-            .get_vector(&Kind::Controls);
-        let new = match on {
-            true => controls::add_control_at_waypoint(&self.d().track, controls, waypoint),
-            false => controls::remove_control_at_waypoint(controls, waypoint),
-        };
-        {
-            let mut locked = self.d().packet_provider.write().unwrap();
-            locked.collection.import_other(&Kind::Controls, new);
-        }
-    }
+    pub fn make_control_at_waypoint(&self, waypoint: &Waypoint, on: bool) {}
 
     pub fn allowed_speeds(&self) -> Vec<String> {
-        speed::allowed_speeds(self.d().track.total_distance())
+        //speed::allowed_speeds(self.d.track.total_distance())
+        Vec::new()
+    }
+
+    pub fn get_parameters(&self) -> Parameters {
+        self.backend_data.as_ref().unwrap().parameters.clone()
     }
 
     pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) -> bool {
-        match self.time_parameters().speed {
-            Speed::ACP(_) => {
-                return false;
-            }
-            Speed::LRM(_) => {
-                return false;
-            }
-            Speed::KMH(_) => {}
-        }
-        let mut controls = self
-            .d()
-            .packet_provider
-            .read()
-            .unwrap()
-            .collection
-            .get_vector(&Kind::Controls);
-        if let Some(control) = controls
-            .iter_mut()
-            .find(|c| c.index().is_some_and(|id| id == waypoint.index.unwrap()))
-        {
-            // do not allow changing time for start and end because
-            // these are determined by self.parameters (start_time and speed).
-            if control.data.as_control().unwrap().is_end()
-                || control.data.as_control().unwrap().is_start()
-            {
-                return false;
-            }
-            if let Some(data) = time {
-                let t = parameters::parse_time(&data);
-                control.data.as_control_mut().unwrap().cutoff_time = Some(t);
-            } else {
-                control.data.as_control_mut().unwrap().cutoff_time = None;
-            }
-        } else {
-            log::error!("no control found with id={:?}", waypoint.index);
-        }
-        {
-            let mut locked = self.d().packet_provider.write().unwrap();
-            locked.collection.import_other(&Kind::Controls, controls);
-        }
         true
     }
 
     pub fn load_content(&mut self, content: &Vec<u8>) -> Result<(), TrackError> {
-        self.load_contents(&vec![content.clone()])
+        Ok(())
     }
 
     pub fn load_track_parts(&self, contents: &Vec<Vec<u8>>) -> Result<Vec<TrackPart>, TrackError> {
@@ -285,10 +165,8 @@ impl Backend {
         }
 
         let parameters = Parameters::default();
-        let point_collection = SharedPacketProvider::new(PacketProvider::new().into());
+        let mut point_collection = PacketProvider::new();
         point_collection
-            .write()
-            .unwrap()
             .collection
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
@@ -300,471 +178,36 @@ impl Backend {
         self.backend_data = Some(data);
 
         // this updates the collection, too
-        self.set_user_step_options(&self.get_parameters().user_steps_options);
         self.send("gpx:done");
         Ok(())
     }
 
     pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
-        let waypoints = {
-            // no lock across async boundaries
-            // the lock must be in an inner scope
-            let locked = self.d().packet_provider.read().unwrap();
-            locked.collection.get_vector(&Kind::GPXWaypoints)
-        };
-        match persist::write_trackdata(&self.d().track, &waypoints).await {
-            Ok(()) => Ok(()),
-            Err(e) => {
-                log::error!("write track data failed: {:?}", e);
-                Err(TrackError::IOError.into())
-            }
-        }
+        Ok(())
     }
 
     pub async fn has_persist(&self) -> bool {
-        let has_track = match persist::read_trackdata().await {
-            Some(_) => true,
-            None => false,
-        };
-        let has_smalldata = match persist::read_userdata().await {
-            Some(_) => true,
-            None => false,
-        };
-        has_track && has_smalldata
+        true
     }
 
     pub async fn load_persist(&mut self) -> Result<(), TrackError> {
-        let mut gpxdata = match persist::read_trackdata().await {
-            Some(data) => data,
-            None => return Err(TrackError::IOError.into()),
-        };
-        let track_data = Track::from_tracks(&gpxdata.tracks)?;
-        let track = std::sync::Arc::new(track_data);
-        for p in &mut gpxdata.waypoints {
-            track.project_point(p);
-        }
-        let smalldata = match persist::read_userdata().await {
-            Some(data) => data,
-            None => return Err(TrackError::IOError.into()),
-        };
-        let point_collection = SharedPacketProvider::new(PacketProvider::new().into());
-        point_collection
-            .write()
-            .unwrap()
-            .collection
-            .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
-
-        let data = BackendData {
-            track,
-            parameters: smalldata.parameters.clone(),
-            packet_provider: point_collection,
-        };
-        self.backend_data = Some(data);
-
         Ok(())
     }
 
     pub fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
-        self.send("gpx:read");
-        let track_parts = self.load_track_parts(contents)?;
-        self.load_ordered(&track_parts)
+        Ok(())
     }
 
     pub fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
-        let mut f = std::fs::File::open(filename).unwrap();
-        let mut buffer = Vec::new();
-        // read the whole file
-        use std::io::prelude::*;
-        f.read_to_end(&mut buffer).unwrap();
-        self.load_content(&buffer)
-    }
-}
-
-// methods that access BackendData (should not be used in bridge)
-impl Backend {
-    pub fn d(&self) -> &BackendData {
-        self.backend_data.as_ref().unwrap()
-    }
-    fn dmut(&mut self) -> &mut BackendData {
-        self.backend_data.as_mut().unwrap()
-    }
-
-    pub fn make_segment_data(&self, segment: &Segment) -> SegmentData {
-        SegmentData::new(
-            segment,
-            self.d().track.clone(),
-            self.d().packet_provider.clone(),
-            self.d().parameters.clone(),
-            self.time_parameters(),
-        )
-    }
-
-    pub fn get_parameters(&self) -> Parameters {
-        self.d().parameters.clone()
-    }
-
-    pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
-        log::trace!("persist [1]");
-        let controls = {
-            // no lock across async boundaries
-            // the lock must be in an inner scope
-            log::trace!("persist [2]");
-            let locked = self.d().packet_provider.read().unwrap();
-            log::trace!("persist [3]");
-            locked.collection.get_vector(&Kind::Controls)
-        };
-        let parameters = &self.d().parameters;
-        log::trace!("persist [4]");
-        match persist::write_userdata(&parameters, &controls).await {
-            Ok(()) => Ok(()),
-            Err(e) => {
-                log::error!("write user data failed: {:?}", e);
-                Err(TrackError::IOError.into())
-            }
-        }
-    }
-
-    pub fn set_parameters(&mut self, parameters: &Parameters) {
-        let old_time_parameters = self.time_parameters();
-        let new_time_parameters = speed::TimeParameters {
-            controls: Vec::new(),
-            start: parameters::parse_time(&parameters.start_time),
-            speed: speed::parse_speed(&parameters.speed),
-            track_distance: self.d().track.total_distance(),
-        };
-        self.dmut().parameters = parameters.clone();
-
-        // unsupported ?
-        if self.d().parameters.segment_overlap > self.d().parameters.segment_length {
-            assert!(false);
-        }
-
-        // update user steps
-        {
-            let mut locked = self.d().packet_provider.write().unwrap();
-            let usersteps =
-                make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-            locked.collection.import_other(&Kind::CutOff, usersteps);
-        }
-
-        let old_start = old_time_parameters.time(0f64);
-        let new_start = new_time_parameters.time(0f64);
-        let new_end = new_time_parameters.time(self.d().track.total_distance());
-
-        // reset control time
-        // we might have t(end) < t(CP) (if the speed gets higher).
-        // at less drastic measure would be to only reset the time
-        // on controls which time are after the time of the last control.
-        {
-            let mut locked = self.d().packet_provider.write().unwrap();
-            let mut controls = locked.collection.get_vector(&Kind::Controls);
-
-            // compute delta
-            let mut delta_from_start: BTreeMap<usize, TimeDelta> = BTreeMap::new();
-            for c in &mut controls {
-                match c.data.as_control().unwrap().cutoff_time {
-                    Some(t) => {
-                        let index = c.track_projections.first().unwrap().track_index;
-                        debug_assert!(t >= old_start);
-                        delta_from_start.insert(index, t - old_start);
-                    }
-                    None => {}
-                };
-            }
-
-            // apply delta
-            for c in &mut controls {
-                let index = c.track_projections.first().unwrap().track_index;
-                let cdata = c.data.as_control().unwrap();
-                let new_cutoff = match cdata.cutoff_time {
-                    Some(_) => {
-                        debug_assert!(delta_from_start.contains_key(&index));
-                        // the END control time cannot be set.
-                        debug_assert!(!cdata.is_end());
-                        let delta = delta_from_start[&index];
-                        let candidate = new_start + delta;
-                        if candidate < new_end {
-                            Some(candidate)
-                        } else {
-                            None
-                        }
-                    }
-                    None => None,
-                };
-                c.data.as_control_mut().unwrap().cutoff_time = new_cutoff;
-            }
-            locked.collection.import_other(&Kind::Controls, controls);
-        }
-    }
-
-    pub fn get_points(&self, segment: &Segment, kinds: &Kinds) -> Vec<InputPoint> {
-        let mut points = Vec::new();
-        let range = self.d().track.subrange(segment.start, segment.end);
-        if kinds.is_empty() {
-            return Vec::new();
-        }
-
-        // take care of the GPXWaypoints/Control case first.
-        if kinds.contains(&Kind::GPXWaypoints) {
-            let controls = self
-                .d()
-                .packet_provider
-                .read()
-                .unwrap()
-                .collection
-                .get_vector(&Kind::Controls);
-            let mut waypoints = self
-                .d()
-                .packet_provider
-                .read()
-                .unwrap()
-                .collection
-                .get_vector(&Kind::GPXWaypoints);
-            if kinds.contains(&Kind::Controls) {
-                waypoints = remove_control_waypoints(&waypoints, &controls);
-            }
-            points.extend_from_slice(&waypoints);
-        }
-
-        for kind in kinds {
-            if *kind == Kind::GPXWaypoints {
-                continue;
-            }
-            let kpoints = self
-                .d()
-                .packet_provider
-                .read()
-                .unwrap()
-                .collection
-                .get_vector(kind);
-            let mut copy = kpoints.clone();
-            copy.retain(|w| {
-                w.is_close_to_track()
-                    && range.contains(&w.track_projections.first().unwrap().track_index)
-            });
-            points.extend_from_slice(&copy);
-        }
-        log::info!(
-            "segment: {} [{:.1}:{:.1}] export {} waypoints",
-            segment.id,
-            segment.start / 1000f64,
-            segment.end / 1000f64,
-            points.len()
-        );
-        points
-    }
-
-    fn controls(&self) -> Vec<InputPoint> {
-        let lock = self.d().packet_provider.read();
-        lock.unwrap().collection.get_vector(&Kind::Controls)
-    }
-
-    fn time_parameters(&self) -> speed::TimeParameters {
-        speed::TimeParameters {
-            controls: controls_speed_data(&self.controls()),
-            start: parameters::parse_time(&self.d().parameters.start_time),
-            speed: speed::parse_speed(&self.d().parameters.speed),
-            track_distance: self.d().track.total_distance(),
-        }
-    }
-
-    pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {
-        let projections = InputPoint::flatten_projections(&points);
-        let mut list = FlatWaypoints::new();
-        for (index, projection) in projections {
-            let w = points[index].waypoint(&projection);
-            list.push((projection.clone(), w));
-            log::trace!(
-                "export: {} => index:{}",
-                points[index].name(),
-                projection.track_floating_index
-            );
-        }
-        debug_assert!(
-            points.len() <= list.len(),
-            "points:{} != map:{}",
-            points.len(),
-            list.len()
-        );
-        let export_parameters = ExportParameters {
-            parameters: self.d().parameters.clone(),
-            time_parameters: self.time_parameters(),
-        };
-        WaypointInfo::make_waypoint_infos(&mut list, &self.d().track, &export_parameters);
-        list.iter().map(|(_proj, w)| w.clone()).collect()
-    }
-
-    pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
-        self.export_points(&self.get_points(&segment, kinds))
-    }
-
-    pub async fn generatePdf(&self, kinds: &Kinds) -> Vec<u8> {
-        /*let typbytes = render::make_typst_document(self, kinds);
-        let ret = pdf::compile(&typbytes, self.get_parameters().debug).await;*/
-        let ret = crate::pdf::render::make_pdf_document(self, kinds).await;
-        log::info!("generated {} pdf bytes", ret.len());
-        ret
-    }
-    pub fn generateGpx(&self) -> BTreeMap<String, Vec<u8>> {
-        let collection = &self.d().packet_provider.read().unwrap().collection;
-        let usersteps = collection.get_vector(&Kind::CutOff);
-        let waypoints = collection.get_vector(&Kind::GPXWaypoints);
-        let controls = collection.get_vector(&Kind::Controls);
-        let split_indices =
-            split_ambiguity::user_steps_split(&usersteps, &controls, &self.d().track);
-        let userssteps_w = self.export_points(&usersteps);
-        let usersteps_groups = waypoint::group_waypoints(&userssteps_w, &split_indices);
-        let mut check_sum = 0;
-        for g in &usersteps_groups {
-            check_sum += g.len();
-        }
-        debug_assert_eq!(check_sum, userssteps_w.len());
-        debug_assert!(!usersteps_groups.is_empty());
-        let waypoints_w = self.export_points(&waypoints);
-        gpxexport::generate(&self.d().track, &controls, &usersteps_groups, &waypoints_w)
-    }
-
-    pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
-        let mut map = self.generateGpx();
-        let pdf = self.generatePdf(kinds).await;
-        map.insert("route.pdf".to_string(), pdf);
-        zipexport::generate(map)
-    }
-
-    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
-        self.dmut().parameters.user_steps_options = options.clone();
-        // update user steps
-        {
-            let mut locked = self.d().packet_provider.write().unwrap();
-            let usersteps =
-                make_points::user_points(&self.d().track, &self.d().parameters.user_steps_options);
-            locked.collection.import_other(&Kind::CutOff, usersteps);
-        }
-    }
-
-    pub fn setStartTime(&mut self, rfc3339: String) {
-        self.dmut().parameters.start_time = rfc3339;
-    }
-    pub fn setSegmentLength(&mut self, length: f64) {
-        self.dmut().parameters.segment_length = length;
-    }
-
-    pub fn segments(&self) -> Vec<Segment> {
-        let mut ret = Vec::new();
-
-        let mut start = 0f64;
-        let mut k = 0usize;
-        loop {
-            let end = start + self.d().parameters.segment_length;
-            ret.push(Segment {
-                id: k as i32,
-                start,
-                end,
-            });
-            if end > self.d().track.total_distance() {
-                break;
-            }
-            start += self.d().parameters.segment_length - self.d().parameters.segment_overlap;
-            k = k + 1;
-        }
-        ret
-    }
-
-    pub fn trackSegment(&self) -> Segment {
-        let start = 0f64;
-        let end = self.d().track.total_distance();
-        Segment { id: -1, start, end }
+        Ok(())
     }
 
     pub fn track(&self) -> Track {
-        (*self.d().track).clone()
+        (*self.backend_data.as_ref().unwrap().track).clone()
     }
-
-    pub fn render_segment_simple(
-        &self,
-        segment: &Segment,
-        size: &IntegerSize2D,
-        kinds: Kinds,
-        function: RenderFunction,
-    ) -> String {
-        let input = RenderInput {
-            kinds,
-            function,
-            size: (size.width, size.height),
-        };
-        self.render_segment(segment, &vec![input]).remove(0).svg
+    pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
+        Vec::new()
     }
-
-    pub fn render_segment(
-        &self,
-        segment: &Segment,
-        render_inputs: &Vec<RenderInput>,
-    ) -> Vec<RenderOutput> {
-        if render_inputs.len() == 2 {
-            let sizes: BTreeMap<_, _> = render_inputs
-                .iter()
-                .map(|input| (input.function.clone(), input.size))
-                .collect();
-            let kinds = render_inputs.first().unwrap().kinds.clone();
-            match (
-                sizes.get(&RenderFunction::Map),
-                sizes.get(&RenderFunction::Profile),
-            ) {
-                (Some(msize), Some(psize)) => {
-                    let map_size = IntegerSize2D::new(msize.0, msize.1);
-                    let profile_size = IntegerSize2D::new(psize.0, psize.1);
-                    return self.render_segment_map_profile(
-                        segment,
-                        &map_size,
-                        &profile_size,
-                        kinds,
-                    );
-                }
-                _ => {}
-            }
-        }
-
-        let data = self.make_segment_data(segment);
-        let mut ret = Vec::new();
-        let time_parameters = self.time_parameters();
-        for render_input in render_inputs {
-            let size = IntegerSize2D::new(render_input.size.0, render_input.size.1);
-            data.preload(&render_input.function, &render_input.kinds, &size);
-
-            let render_result = match render_input.function {
-                RenderFunction::Profile => data.render_profile(&size, &render_input.kinds),
-                RenderFunction::Map => data.render_map(&size, &render_input.kinds),
-                RenderFunction::Wheel => {
-                    let mut model = wheel::model::WheelModel::new(&time_parameters);
-                    model.add_points(&data, &render_input.kinds);
-                    wheel::render(&size, &model)
-                }
-                RenderFunction::WheelPages => {
-                    let mut model = wheel::model::WheelModel::new(&time_parameters);
-                    model.add_points(&data, &render_input.kinds);
-                    model.add_pages(&self.segments());
-                    wheel::render(&size, &model)
-                }
-                RenderFunction::Unknown => {
-                    panic!("The render function is not set. Bye.");
-                }
-            };
-            log::info!(
-                "done - render_segment_what:{} {:?}",
-                segment.id,
-                render_input.function
-            );
-            let points = render_result.rendered_input_points_for_table();
-            ret.push(RenderOutput {
-                svg: render_result.svg,
-                render_input: render_input.clone(),
-                error: None,
-                waypoints: waypoint::table(&data, &points),
-            });
-        }
-        ret
-    }
-
     pub fn render_segment_map_profile(
         &self,
         segment: &Segment,
@@ -772,306 +215,39 @@ impl Backend {
         profile_size: &IntegerSize2D,
         kinds: Kinds,
     ) -> Vec<RenderOutput> {
-        log::info!(
-            "start - render_segment_profile_map:{} map_size:{}x{} profile_size:{}x{}",
-            segment.id,
-            map_size.width,
-            map_size.height,
-            profile_size.width,
-            profile_size.height
-        );
-        let data = self.make_segment_data(segment);
-        data.preload_map_profile(&kinds, map_size, profile_size);
-        let (result_map, result_profile) = data.render_map_profile(map_size, profile_size, &kinds);
-        let mut ret = Vec::new();
-        ret.push((RenderFunction::Map, map_size, result_map));
-        ret.push((RenderFunction::Profile, profile_size, result_profile));
-        ret.iter()
-            .map(|(function, size, result)| {
-                debug_assert_eq!(result.parameters.function, function.clone());
-                let points = result.rendered_input_points_for_table();
-                RenderOutput {
-                    svg: result.svg.clone(),
-                    render_input: RenderInput {
-                        kinds: kinds.clone(),
-                        function: function.clone(),
-                        size: (size.width, size.height),
-                    },
-                    error: None,
-                    waypoints: waypoint::table(&data, &points),
-                }
-            })
-            .collect()
+        self.backend_data
+            .as_ref()
+            .unwrap()
+            .render_segment_map_profile(segment, map_size, profile_size, kinds)
     }
-
-    pub fn segment_statistics(&self, segment: &Segment) -> SegmentStatistics {
-        self.make_segment_data(segment).statistics()
+    pub fn render_segment_simple(
+        &self,
+        segment: &Segment,
+        size: &IntegerSize2D,
+        kinds: Kinds,
+        function: RenderFunction,
+    ) -> String {
+        self.backend_data
+            .as_ref()
+            .unwrap()
+            .render_segment_simple(segment, size, kinds, function)
     }
-
+    pub fn trackSegment(&self) -> Segment {
+        self.backend_data.as_ref().unwrap().trackSegment()
+    }
+    pub fn set_parameters(&mut self, parameters: &Parameters) {
+        self.backend_data
+            .as_mut()
+            .unwrap()
+            .set_parameters(parameters)
+    }
     pub fn statistics(&self) -> SegmentStatistics {
-        self.segment_statistics(&self.trackSegment())
+        self.backend_data.as_ref().unwrap().statistics()
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{
-        backend::Backend,
-        math::IntegerSize2D,
-        parameters::{ProfileIndication, RenderFunction},
-        point_collection::{self, Kind, Kinds},
-        wheel,
-    };
-    static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
-    static BLACK_FOREST: &'static str = "data/blackforest.gpx";
-
-    async fn load_test_data_no_osm(filename: &str) -> Backend {
-        let mut backend = Backend::make();
-        backend.load_filename(filename).expect("fail");
-        backend.load_controls().unwrap();
-        backend
+    pub async fn generateZip(&self, kinds: &Kinds) -> Vec<u8> {
+        self.backend_data.as_ref().unwrap().generateZip(kinds).await
     }
-
-    async fn load_test_data(filename: &str) -> Backend {
-        let mut backend = Backend::make();
-        backend.load_filename(filename).expect("fail");
-        backend.load_osm().await.unwrap();
-        backend.load_controls().unwrap();
-        backend
-    }
-
-    #[tokio::test]
-    async fn svg_profile() {
-        let _ = env_logger::try_init();
-        let mut backend = load_test_data(BLACK_FOREST).await;
-
-        let mut parameters = backend.get_parameters();
-        parameters.start_time = START_TIME.to_string();
-        parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
-
-        backend.set_parameters(&parameters);
-
-        let segments = backend.segments();
-        let mut ok_count = 0;
-        let profile_size = IntegerSize2D::new(1420, 400);
-        for segment in &segments {
-            let result = backend.render_segment_simple(
-                &segment,
-                &profile_size,
-                point_collection::allkinds(),
-                RenderFunction::Profile,
-            );
-
-            let reffilename = std::format!("data/ref/profile-{}.svg", segment.id);
-            println!("test {}", reffilename);
-            let reference_svg = if std::fs::exists(&reffilename).unwrap() {
-                std::fs::read_to_string(&reffilename).unwrap()
-            } else {
-                String::new()
-            };
-            if reference_svg == result {
-                ok_count += 1;
-            }
-            let tmpfilename = std::format!("/tmp/profile-{}.svg", segment.id);
-            std::fs::write(&tmpfilename, result.clone()).unwrap();
-            if reference_svg != result {
-                println!("test failed: {} {}", tmpfilename, reffilename);
-            }
-        }
-        assert!(ok_count == segments.len());
-    }
-
-    #[tokio::test]
-    async fn svg_segment_wheel() {
-        let _ = env_logger::try_init();
-        let mut backend = load_test_data_no_osm(BLACK_FOREST).await;
-        let mut parameters = backend.get_parameters();
-        parameters.start_time = START_TIME.to_string();
-        parameters.user_steps_options.step_distance = Some((3_000) as f64);
-        parameters.segment_length = 55000f64;
-        parameters.segment_overlap = 5000f64;
-        backend.set_parameters(&parameters);
-        let reffilename = std::format!("data/ref/segment-wheel.svg");
-        let data = if std::fs::exists(&reffilename).unwrap() {
-            std::fs::read_to_string(&reffilename).unwrap()
-        } else {
-            String::new()
-        };
-        let track_segment = backend.trackSegment();
-        let sgdata = backend.make_segment_data(&track_segment);
-        let segments = backend.segments();
-        let time_parameters = backend.time_parameters();
-        let mut model = wheel::model::WheelModel::new(&time_parameters);
-        model.add_pages(&segments);
-        model.add_points(&sgdata, &point_collection::allkinds());
-        let result = wheel::render(&IntegerSize2D::new(400, 400), &model);
-
-        let tmpfilename = std::format!("/tmp/segment-wheel.svg");
-        std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
-        if data != result.svg {
-            println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
-        }
-    }
-
-    #[tokio::test]
-    async fn test_get_waypoints() {
-        let _ = env_logger::try_init();
-        let backend = load_test_data(BLACK_FOREST).await;
-        let fseg = backend.trackSegment();
-        let seg = backend.make_segment_data(&fseg);
-        let controls = seg.controls();
-        let len = controls.len();
-        assert!(len > 0);
-        let kinds = Kinds::from([Kind::Controls]);
-        let waypoints = backend.get_waypoints(&fseg, &kinds);
-        assert!(!waypoints.is_empty());
-        for waypoint in waypoints {
-            log::info!("gpx name={}", waypoint.info.unwrap().gpx_name);
-        }
-    }
-
-    #[tokio::test]
-    async fn svg_large_map() {
-        let _ = env_logger::try_init();
-        let mut backend = load_test_data(BLACK_FOREST).await;
-        let mut parameters = backend.get_parameters();
-        parameters.start_time = START_TIME.to_string();
-        parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        backend.set_parameters(&parameters);
-
-        let segment = &backend.trackSegment();
-        let map_size = IntegerSize2D::new(800, 800);
-        let result = backend.render_segment_simple(
-            &segment,
-            &map_size,
-            point_collection::allkinds(),
-            RenderFunction::Map,
-        );
-        let reffilename = std::format!("data/ref/largemap.svg");
-        println!("test {}", reffilename);
-        let refdata = if std::fs::exists(&reffilename).unwrap() {
-            std::fs::read_to_string(&reffilename).unwrap()
-        } else {
-            String::new()
-        };
-        let tmpfilename = std::format!("/tmp/largemap.svg");
-        std::fs::write(&tmpfilename, result.clone()).unwrap();
-        if refdata != result {
-            println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
-        }
-    }
-
-    #[tokio::test]
-    async fn svg_map() {
-        let _ = env_logger::try_init();
-        let mut backend = load_test_data(BLACK_FOREST).await;
-        let mut parameters = backend.get_parameters();
-        parameters.start_time = START_TIME.to_string();
-        parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        backend.set_parameters(&parameters);
-
-        let segments = backend.segments();
-        let map_size = IntegerSize2D::new(400, 400);
-
-        let mut ok_count = 0;
-        for (_idx, segment) in segments.iter().enumerate() {
-            let result = backend.render_segment_simple(
-                &segment,
-                &map_size,
-                point_collection::allkinds(),
-                RenderFunction::Map,
-            );
-
-            let reffilename = std::format!("data/ref/map-{}.svg", segment.id);
-            println!("test {}", reffilename);
-            let refdata = if std::fs::exists(&reffilename).unwrap() {
-                std::fs::read_to_string(&reffilename).unwrap()
-            } else {
-                String::new()
-            };
-            if refdata == result {
-                ok_count += 1;
-            }
-            let tmpfilename = std::format!("/tmp/map-{}.svg", segment.id);
-            std::fs::write(&tmpfilename, result.clone()).unwrap();
-            if refdata != result {
-                println!("test failed: {} {}", tmpfilename, reffilename);
-            }
-        }
-        assert!(ok_count == segments.len());
-    }
-
-    #[tokio::test]
-    async fn gpx() {
-        let _ = env_logger::try_init();
-        let mut backend = load_test_data(&"data/synthetic.gpx").await;
-        let mut parameters = backend.get_parameters();
-        parameters.start_time = START_TIME.to_string();
-        parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        backend.set_parameters(&parameters);
-        let gpx = backend.generateGpx();
-        let mut bad = Vec::new();
-        for (filename, filecontent) in gpx {
-            let tmpfilename = std::format!("/tmp/{}", filename);
-            let reffilename = std::format!("data/ref/gpx/{}", filename);
-            println!("test {}", reffilename);
-            let data = if std::fs::exists(&reffilename).unwrap() {
-                std::fs::read(&reffilename).unwrap()
-            } else {
-                Vec::new()
-            };
-            std::fs::write(&tmpfilename, filecontent.clone()).unwrap();
-            if data != filecontent {
-                println!("test failed: {} {}", tmpfilename, reffilename);
-                bad.push(tmpfilename);
-            }
-        }
-        log::trace!("bad={:?}", bad);
-        assert!(bad.is_empty());
-    }
-
-    #[tokio::test]
-    async fn reorder() {
-        let _ = env_logger::try_init();
-        let bytes = {
-            let mut f = std::fs::File::open("data/ref/karl-400.gpx").unwrap();
-            let mut buffer = Vec::new();
-            // read the whole file
-            use std::io::prelude::*;
-            f.read_to_end(&mut buffer).unwrap();
-            buffer
-        };
-        let mut backend = Backend::make();
-        let mut track_parts = backend.load_track_parts(&vec![bytes]).unwrap();
-        let result = backend.load_ordered(&track_parts);
-        assert!(result.is_ok());
-        assert!(backend.loaded());
-        let s1 = backend.statistics();
-        log::trace!(
-            "dstart={:.1} dend={:.1} km={:.1}",
-            s1.distance_start,
-            s1.distance_end,
-            s1.length / 1000f64
-        );
-
-        track_parts.insert(0, track_parts.last().unwrap().clone());
-        track_parts.remove(track_parts.len() - 1);
-        let result = backend.load_ordered(&track_parts);
-        assert!(result.is_ok());
-        assert!(backend.loaded());
-        let s2 = backend.statistics();
-        log::trace!(
-            "dstart={:.1} dend={:.1} km={:.1}",
-            s2.distance_start,
-            s2.distance_end,
-            s2.length / 1000f64
-        );
-        let d = (s1.length - s2.length).abs();
-        log::trace!("d={}", d);
-        // there is a 65m distance between the end of K4-K5 and the beginning of K5-Ziel.
-        assert!(d < 100f64);
+    pub async fn generatePdf(&self, kinds: &Kinds) -> Vec<u8> {
+        self.backend_data.as_ref().unwrap().generatePdf(kinds).await
     }
 }

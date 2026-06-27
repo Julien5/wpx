@@ -335,13 +335,7 @@ impl MapMaker {
         }
     }
 
-    fn make_view_features(
-        &self,
-        track: &Track,
-        features: &Vec<PointFeature>,
-        usersteps: &Vec<InputPoint>,
-        _debug_graphic_dir: Option<String>,
-    ) -> MapView {
+    fn make_view_features(&self, track: &Track, features: &Vec<PointFeature>) -> MapView {
         let mut attributes = Attributes::new();
         let size = &self.parameters.screen_size;
         set_attr(
@@ -349,14 +343,7 @@ impl MapMaker {
             "viewBox",
             format!("0, 0, {}, {}", size.width, size.height).as_str(),
         );
-        let mut points = features.clone();
-        for w in usersteps {
-            let feature = self.make_one_feature(w, 0, track, points.len());
-            if !self.point_is_visible(&feature.center()) {
-                continue;
-            }
-            points.push(feature);
-        }
+        let points = features.clone();
         set_attr(&mut attributes, "width", format!("{}", size.width).as_str());
         set_attr(
             &mut attributes,
@@ -403,39 +390,18 @@ impl MapMaker {
     }
 }
 
-pub fn map_background(
+pub fn render_map(
     track: &Track,
     parameters: &RenderInputParameters,
     packets: &Packets,
     debug_dir: Option<String>,
 ) -> RenderResult {
-    log::info!("compute map background for parameters {:?}", parameters);
     let maker = MapMaker::init(track, parameters);
     let view = maker.make_model_from_packets(track, packets, debug_dir);
-    let svg = view.render();
-    RenderResult {
-        svg,
-        rendered: view.points.clone(),
-        parameters: parameters.clone(),
-    }
-}
-
-pub fn map_foreground(
-    track: &Track,
-    parameters: &RenderInputParameters,
-    background: &RenderResult,
-    debug_dir: Option<String>,
-) -> RenderResult {
-    log::info!("compute map foreground for parameters {:?}", parameters);
-    let maker = MapMaker::init(track, parameters);
-    let usersteps = match parameters.kinds.contains(&Kind::CutOff) {
-        true => parameters.usersteps.clone(),
-        false => Vec::new(),
-    };
-    let view = maker.make_view_features(track, &background.rendered, &usersteps, debug_dir);
+    let view = maker.make_view_features(track, &view.points);
     RenderResult {
         svg: view.render(),
-        rendered: background.rendered.clone(),
+        rendered: view.points.clone(),
         parameters: parameters.clone(),
     }
 }
