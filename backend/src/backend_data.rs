@@ -13,7 +13,6 @@ use crate::parameters::Parameters;
 use crate::parameters::RenderFunction;
 use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
-use crate::parameters::UserStepsOptions;
 use crate::persist::SmallDataset;
 use crate::persist::TrackDataset;
 use crate::point_collection::controls_speed_data;
@@ -116,7 +115,7 @@ impl BackendData {
 
         // reset control time
         // we might have t(end) < t(CP) (if the speed gets higher).
-        // at less drastic measure would be to only reset the time
+        // a less drastic measure would be to only reset the time
         // on controls which time are after the time of the last control.
         {
             let mut controls = self.packet_provider.collection.get_vector(&Kind::Controls);
@@ -276,18 +275,6 @@ impl BackendData {
         let pdf = self.generatePdf(kinds)?;
         map.insert("route.pdf".to_string(), pdf);
         Ok(zipexport::generate(map))
-    }
-
-    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
-        self.parameters.user_steps_options = options.clone();
-        // update user steps
-        {
-            let usersteps =
-                make_points::user_points(&self.track, &self.parameters.user_steps_options);
-            self.packet_provider
-                .collection
-                .import_other(&Kind::CutOff, usersteps);
-        }
     }
 
     pub fn set_start_time(&mut self, rfc3339: String) {

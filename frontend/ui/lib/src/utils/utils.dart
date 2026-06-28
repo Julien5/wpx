@@ -129,6 +129,23 @@ class ParameterChanger {
     init = ret;
     return ret;
   }
+
+  bridge.Parameters changeUserStepsOptions(bridge.UserStepsOptions options) {
+    bridge.Parameters ret = bridge.Parameters(
+      speed: init.speed,
+      startTime: init.startTime,
+      segmentLength: init.segmentLength,
+      segmentOverlap: init.segmentOverlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: init.profileOptions,
+      mapOptions: init.mapOptions,
+      userStepsOptions: options,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
 }
 
 DateTime parseDateTime(String data) {

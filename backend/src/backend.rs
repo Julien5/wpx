@@ -14,7 +14,6 @@ use crate::parameters::RenderFunction;
 use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
-use crate::parameters::UserStepsOptions;
 use crate::persist;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
@@ -232,8 +231,10 @@ impl Backend {
         };
         *self.backend_data.write().unwrap() = Some(data);
 
-        // this updates the collection, too
-        self.set_user_step_options(&self.get_parameters().user_steps_options);
+        // point collection doest not include OSM and user steps
+        // => OSM are handled in load_osm
+        // => user steps and handled in set_parameters.
+        self.set_parameters(&self.get_parameters());
         self.send("gpx:done");
         Ok(())
     }
@@ -409,15 +410,6 @@ impl Backend {
             .as_mut()
             .unwrap()
             .set_start_time(rfc3339);
-    }
-
-    pub fn set_user_step_options(&mut self, options: &UserStepsOptions) {
-        self.backend_data
-            .write()
-            .unwrap()
-            .as_mut()
-            .unwrap()
-            .set_user_step_options(options)
     }
 
     pub fn set_segment_length(&mut self, length: f64) {

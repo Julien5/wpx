@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/utils/utils.dart';
 
 typedef Kinds = List<bridge.Kind>;
 
@@ -65,9 +66,11 @@ class ParameterModel extends ChangeNotifier {
     return backend.getParameters().userStepsOptions;
   }
 
-  void setUserStepsOptions(bridge.UserStepsOptions p) {
-    backend.setUserStepOptions(userStepsOptions: p);
-    debugPrint("new users steps options:$p");
+  void setUserStepsOptions(bridge.UserStepsOptions options) {
+    ParameterChanger changer = ParameterChanger(init: parameters());
+    changer.changeUserStepsOptions(options);
+    setParameters(changer.current());
+    debugPrint("new users steps options:$options");
     notifyListeners();
   }
 

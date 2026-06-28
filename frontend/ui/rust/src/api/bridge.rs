@@ -326,10 +326,6 @@ impl Bridge {
         self.backend.set_parameters(parameters);
     }
 
-    pub async fn set_user_step_options(&mut self, user_steps_options: &UserStepsOptions) {
-        self.backend.set_user_step_options(user_steps_options);
-    }
-
     #[frb(sync)]
     pub fn set_control_time(&self, waypoint: &Waypoint, time: &Option<String>) -> bool {
         self.backend.set_control_time(waypoint, time)
