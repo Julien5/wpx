@@ -69,27 +69,14 @@ class TrackProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bridge.Bridge backend = getBackend(context);
-    RootModel root = Provider.of<RootModel>(context);
-    developer.log("build TrackProvider: loaded: ${root.isLoaded()}");
-    if (root.isLoaded()) {
-      /* we cannot simply:
-          return MultiProvider(
-            providers: [ChangeNotifierProvider(create: (_) => _create(backend))],
-            child: child,
-          );
-        because ChangeNotifierProvider's create callback is only called once when 
-        the provider is first created. 
-      */
-      return ChangeNotifierProxyProvider<RootModel, SegmentModel>(
-        create: (_) => _create(backend),
-        update: (context, rootModel, previousSegment) {
-          // This runs on every rebuild
-          return _create(getBackend(context));
-        },
-        child: child,
-      );
-    }
-    return child;
+    // Keep provider in tree always to avoid disposing/recreating it.
+    return ChangeNotifierProxyProvider<RootModel, SegmentModel>(
+      create: (_) => _create(backend),
+      update: (context, rootModel, previousSegment) {
+        return previousSegment ?? _create(backend);
+      },
+      child: child,
+    );
   }
 }
 
