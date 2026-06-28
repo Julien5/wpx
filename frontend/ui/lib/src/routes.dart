@@ -16,9 +16,9 @@ class Routes {
   static const String settings = "/settings";
 }
 
-GoRouter getRouter() {
+GoRouter getRouter(String initialLocation) {
   return GoRouter(
-    initialLocation: Routes.home,
+    initialLocation: initialLocation,
     routes: [
       GoRoute(
         path: Routes.home,
@@ -67,7 +67,6 @@ GoRouter getRouter() {
 }
 
 void gotoOverview(BuildContext ctx) {
-  debugPrint("goto home");
   FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
   ScreenConfiguration config = Provider.of<ScreenConfiguration>(
     ctx,

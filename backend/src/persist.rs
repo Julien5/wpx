@@ -23,17 +23,19 @@ impl SmallDataset {
     }
 }
 
+static SMALLPARAMETERS_FILENAME: &'static str = "small-parameters";
+
 pub async fn write_userdata(data: &SmallDataset) -> GenericResult<()> {
     cache::write(
         &cache::Location::UserData,
-        "parameters",
+        SMALLPARAMETERS_FILENAME,
         data.as_string().unwrap(),
     )
     .await
 }
 
 pub async fn read_userdata() -> Option<SmallDataset> {
-    match cache::read(&cache::Location::UserData, &"parameters-controls").await {
+    match cache::read(&cache::Location::UserData, SMALLPARAMETERS_FILENAME).await {
         Ok(bytes) => match SmallDataset::from_string(&bytes) {
             Ok(d) => Some(d),
             Err(e) => {
@@ -135,17 +137,19 @@ impl TrackDataset {
     }
 }
 
+static TRACKDATA_FILENAME: &'static str = "track-data";
+
 pub async fn write_trackdata(data: &TrackDataset) -> GenericResult<()> {
     cache::write(
         &cache::Location::UserData,
-        "track-data",
+        TRACKDATA_FILENAME,
         data.as_string().unwrap(),
     )
     .await
 }
 
 pub async fn read_trackdata() -> Option<GpxData> {
-    match cache::read(&cache::Location::UserData, &"track-data").await {
+    match cache::read(&cache::Location::UserData, TRACKDATA_FILENAME).await {
         Ok(bytes) => match TrackDataset::from_string(&bytes) {
             Ok(data) => match data.to_gpxdata() {
                 Ok(gpxdata) => Some(gpxdata),

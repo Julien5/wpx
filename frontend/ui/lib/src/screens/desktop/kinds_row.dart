@@ -53,7 +53,9 @@ class _KindsRowState extends State<KindsRow> {
     //bool hasControls = model.kinds.contains(Kind.controls) && model.hasControls();
     bool hasGPXWaypoints =
         model.kinds.contains(Kind.gpxWaypoints) && model.hasGPXWaypoints();
-    bool hasCities = model.kinds.contains(Kind.cities) && model.osmIsLoaded!;
+    bool hasOSM =
+        model.kinds.contains(Kind.cities) &&
+        (model.osmIsLoaded != null && model.osmIsLoaded!);
     bool hasUserSteps = model.kinds.contains(Kind.cutOff);
     SizedBox hdiv = SizedBox(width: 20);
 
@@ -86,7 +88,7 @@ class _KindsRowState extends State<KindsRow> {
         ),
         Text("Waypoints"),
         hdiv,
-        Checkbox(tristate: true, value: hasCities, onChanged: onOSMCallback),
+        Checkbox(tristate: true, value: hasOSM, onChanged: onOSMCallback),
         Text("OSM"),
         hdiv,
         Checkbox(

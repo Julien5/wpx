@@ -48,9 +48,10 @@ class RootModel extends ChangeNotifier {
 enum ScreenFocus { home, load, overview, usersteps, controls, settings }
 
 class FociModel extends ChangeNotifier {
-  Set<ScreenFocus> foci = {ScreenFocus.home};
+  Set<ScreenFocus> foci;
 
-  FociModel();
+  FociModel({Set<ScreenFocus>? initialFoci})
+    : foci = initialFoci ?? {ScreenFocus.home};
 
   void setFocus(ScreenFocus f) {
     if (foci.length == 1 && foci.contains(f)) {

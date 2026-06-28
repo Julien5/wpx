@@ -1,7 +1,6 @@
 import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/events.dart';
@@ -35,13 +34,20 @@ Future<void> main() async {
   }
   await RustLib.init();
   await bridge.Bridge.initPdfFonts();
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  final packageInfo = await PackageInfo.fromPlatform();
+  final backend = bridge.Bridge.make();
+  final hasPersistedData = await backend.hasPersist();
+  if (hasPersistedData) {
+    await backend.loadPersist();
+  }
+  final initialLocation = hasPersistedData ? Routes.overview : Routes.home;
   developer.log("frontend loaded");
   runApp(
     ApplicationProvider(
       packageInfo: packageInfo,
-      backend: bridge.Bridge.make(),
-      child: Application(),
+      backend: backend,
+      initialLocation: initialLocation,
+      child: Application(initialLocation: initialLocation),
     ),
   );
 }
@@ -91,11 +97,13 @@ class ApplicationProvider extends StatelessWidget {
   final Widget child;
   final PackageInfo? packageInfo;
   final bridge.Bridge backend;
+  final String initialLocation;
   const ApplicationProvider({
     super.key,
     required this.child,
     this.packageInfo,
     required this.backend,
+    required this.initialLocation,
   });
   @override
   Widget build(BuildContext context) {
@@ -104,7 +112,16 @@ class ApplicationProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RootModel(backend: backend)),
         ChangeNotifierProvider(create: (_) => ScreenConfiguration()),
         ChangeNotifierProvider(create: (_) => EventModel(backend: backend)),
-        ChangeNotifierProvider(create: (_) => FociModel()),
+        ChangeNotifierProvider(
+          create:
+              (_) => FociModel(
+                initialFoci: {
+                  initialLocation == Routes.overview
+                      ? ScreenFocus.overview
+                      : ScreenFocus.home,
+                },
+              ),
+        ),
         ChangeNotifierProvider(create: (_) => KindsModel()),
         ChangeNotifierProvider(create: (_) => ParameterModel(backend: backend)),
         ChangeNotifierProvider(
@@ -126,10 +143,9 @@ class ApplicationProvider extends StatelessWidget {
   }
 }
 
-final GoRouter router = getRouter();
-
 class Application extends StatelessWidget {
-  const Application({super.key});
+  final String initialLocation;
+  const Application({super.key, required this.initialLocation});
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +153,7 @@ class Application extends StatelessWidget {
     double textBaseSize = screen.isMobile() ? 12.0 : 14.0;
     return MaterialApp.router(
       routeInformationParser: null,
-      routerConfig: router,
+      routerConfig: getRouter(initialLocation),
       title: "WPX",
       theme: ThemeData(
         textTheme: TextTheme(

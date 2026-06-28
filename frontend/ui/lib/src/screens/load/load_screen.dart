@@ -174,8 +174,14 @@ class _BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<_BodyWidget> {
-  void onOKPressed(BuildContext context) {
+  void onOKPressed(BuildContext context) async {
     try {
+      debugPrint("persist gpx start");
+      await getBackend(context).persistGpxdata();
+      if (!context.mounted) {
+        return;
+      }
+      debugPrint("persist gpx end");
       Provider.of<SegmentModel>(context, listen: false);
       gotoOverview(context);
     } catch (e) {
