@@ -290,6 +290,9 @@ impl Backend {
         packet_provider
             .collection
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
+        packet_provider
+            .collection
+            .import_other(&Kind::Controls, smalldata.controls);
 
         let data = BackendData {
             track,
