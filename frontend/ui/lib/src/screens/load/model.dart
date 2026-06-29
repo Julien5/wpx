@@ -172,7 +172,6 @@ class LoadScreenModel extends ChangeNotifier {
     runningFuture = null;
     done.add(job);
     _failed.remove(job);
-    debugPrint("running notify");
     notifyListeners();
 
     Job nextJob = next(job);
@@ -180,12 +179,9 @@ class LoadScreenModel extends ChangeNotifier {
       Future.delayed(const Duration(milliseconds: 250), () {
         startJob(nextJob);
       });
-    }
-
-    if (rootModel.isLoaded()) {
-      debugPrint("rootModel notify");
+    } else if (rootModel.isLoaded()) {
+      // trigger rebuild of TrackProvider in main.dart.
       rootModel.notify();
-      // go to overview.
     }
   }
 

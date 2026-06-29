@@ -214,6 +214,9 @@ class _DesktopTableState extends State<DesktopTable> {
                   SegmentModel segment = Provider.of(context, listen: false);
                   segment.setControlTime(w, newDateTime);
                   await segment.backend.persistSmallParameters();
+                  if (!mounted) {
+                    return;
+                  }
                   FutureRenderer renderer = Provider.of(context, listen: false);
                   renderer.reset();
                 },

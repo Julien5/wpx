@@ -69,11 +69,13 @@ class TrackProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bridge.Bridge backend = getBackend(context);
-    // Keep provider in tree always to avoid disposing/recreating it.
-    return ChangeNotifierProxyProvider<RootModel, SegmentModel>(
-      create: (_) => _create(backend),
+    RootModel root = Provider.of<RootModel>(context);
+    developer.log("build TrackProvider: loaded: ${root.isLoaded()}");
+
+    return ChangeNotifierProxyProvider<RootModel, SegmentModel?>(
+      create: (_) => root.isLoaded() ? _create(backend) : null,
       update: (context, rootModel, previousSegment) {
-        return previousSegment ?? _create(backend);
+        return rootModel.isLoaded() ? _create(getBackend(context)) : null;
       },
       child: child,
     );
