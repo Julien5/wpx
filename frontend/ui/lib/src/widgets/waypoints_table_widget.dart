@@ -78,7 +78,7 @@ class _DesktopTableState extends State<DesktopTable> {
     return NumberFormat('0.0').format(km);
   }
 
-  void makeControlAtWaypoint(Waypoint waypoint, bool on) {
+  void makeControlAtWaypoint(Waypoint waypoint, bool on) async {
     SegmentModel segment = Provider.of(context, listen: false);
     segment.makeControlAtWaypoint(waypoint, on);
     KindsModel kinds = Provider.of(context, listen: false);
@@ -86,6 +86,7 @@ class _DesktopTableState extends State<DesktopTable> {
       // KindsModel wants to know how many controls there are.
       kinds.updateStatistics(segment.statistics());
     });
+    await segment.backend.persistSmallParameters();
   }
 
   Waypoint? previousControl(List<Waypoint> waypoints, int index) {
@@ -209,9 +210,10 @@ class _DesktopTableState extends State<DesktopTable> {
                 previousControl: previousControl(waypoints, index),
                 nextControl: nextControl(waypoints, index),
                 currentControl: w,
-                onTimeChanged: (DateTime newDateTime) {
+                onTimeChanged: (DateTime newDateTime) async {
                   SegmentModel segment = Provider.of(context, listen: false);
                   segment.setControlTime(w, newDateTime);
+                  await segment.backend.persistSmallParameters();
                   FutureRenderer renderer = Provider.of(context, listen: false);
                   renderer.reset();
                 },
