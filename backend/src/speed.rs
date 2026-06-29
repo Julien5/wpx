@@ -510,6 +510,7 @@ pub fn interpolate_distance(
     let span_ns = (t2 - t1)
         .num_nanoseconds()
         .expect("time span overflows i64 nanoseconds");
+    // log::trace!("t1={} time={} t2={}", t1, time, t2);
     debug_assert!(t1 <= time && time <= t2 || time > t2);
 
     let offset_ns = (time - t1)

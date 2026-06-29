@@ -1,0 +1,164 @@
+{
+  "parameters": {
+    "control_gpx_name_format": "NAME[3]-TIME[%H:%M]-SLOPE[4.1%]",
+    "debug": false,
+    "map_options": {},
+    "profile_options": {
+      "elevation_indicators": [
+        "NumericSlope"
+      ]
+    },
+    "segment_length": 110000.0,
+    "segment_overlap": 10000.0,
+    "smooth_width": 200.0,
+    "speed": "ACP-300-20.0",
+    "start_time": "2026-06-28T22:00:00.000Z",
+    "user_steps_options": {
+      "step_distance": 10000.0,
+      "step_elevation_gain": null,
+      "gpx_name_format": "TIME[%H:%M]-SLOPE[4.1%]"
+    }
+  },
+  "controls": [
+    {
+      "wgs84": [
+        8.448436,
+        47.929981,
+        693.4
+      ],
+      "euclidean": [
+        940475.593519561,
+        6095214.063128205
+      ],
+      "data": {
+        "Control": {
+          "nearest_waypoint_id": null,
+          "name": "START",
+          "waypoint_name": "",
+          "waypoint_description": "",
+          "segment_name": "",
+          "cutoff_time": null
+        }
+      },
+      "track_projections": [
+        {
+          "track_floating_index": 0.0,
+          "track_index": 0,
+          "euclidean": [
+            940475.593519561,
+            6095214.063128205
+          ],
+          "elevation": 693.4,
+          "track_distance": 0.0,
+          "distance_on_track_to_projection": 0.0
+        }
+      ],
+      "index": 0
+    },
+    {
+      "wgs84": [
+        8.090605,
+        48.279406,
+        216.7
+      ],
+      "euclidean": [
+        900642.0288095131,
+        6153464.555120398
+      ],
+      "data": {
+        "Control": {
+          "nearest_waypoint_id": 1,
+          "name": "CP-1",
+          "waypoint_name": "K2",
+          "waypoint_description": "Haslach",
+          "segment_name": "MittelgebirgeClassique2023 - Final",
+          "cutoff_time": "2026-06-29T07:00:00+02:00"
+        }
+      },
+      "track_projections": [
+        {
+          "track_floating_index": 1557.0,
+          "track_index": 1557,
+          "euclidean": [
+            900642.0288095131,
+            6153464.555120398
+          ],
+          "elevation": 216.7,
+          "track_distance": 0.0,
+          "distance_on_track_to_projection": 72050.12323616279
+        }
+      ],
+      "index": 1
+    },
+    {
+      "wgs84": [
+        8.288608,
+        48.533576,
+        597.5
+      ],
+      "euclidean": [
+        922683.6219450536,
+        6196086.4120781915
+      ],
+      "data": {
+        "Control": {
+          "nearest_waypoint_id": 2,
+          "name": "CP-2",
+          "waypoint_name": "K3",
+          "waypoint_description": "Obertal",
+          "segment_name": "MittelgebirgeClassique2023 - Final",
+          "cutoff_time": null
+        }
+      },
+      "track_projections": [
+        {
+          "track_floating_index": 3081.0,
+          "track_index": 3081,
+          "euclidean": [
+            922683.6219450536,
+            6196086.4120781915
+          ],
+          "elevation": 597.5,
+          "track_distance": 0.0,
+          "distance_on_track_to_projection": 137367.3605238332
+        }
+      ],
+      "index": 2
+    },
+    {
+      "wgs84": [
+        8.266062,
+        49.054234,
+        102.8
+      ],
+      "euclidean": [
+        920173.8127056286,
+        6284068.784318711
+      ],
+      "data": {
+        "Control": {
+          "nearest_waypoint_id": 3,
+          "name": "END",
+          "waypoint_name": "K4",
+          "waypoint_description": "END",
+          "segment_name": "MittelgebirgeClassique2023 - Final",
+          "cutoff_time": null
+        }
+      },
+      "track_projections": [
+        {
+          "track_floating_index": 5726.0,
+          "track_index": 5726,
+          "euclidean": [
+            920173.8127056286,
+            6284068.784318711
+          ],
+          "elevation": 102.8,
+          "track_distance": 0.0,
+          "distance_on_track_to_projection": 252432.73849744088
+        }
+      ],
+      "index": 3
+    }
+  ]
+}

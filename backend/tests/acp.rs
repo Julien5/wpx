@@ -76,7 +76,7 @@ fn display_table(result: &Vec<Waypoint>, start_time: &DateTime) {
 #[test]
 fn test_constant_strech() {
     let _ = env_logger::try_init();
-    let mut backend = load_test_data(&"data/PBP-simple.gpx");
+    let backend = load_test_data(&"data/PBP-simple.gpx");
     let mut parameters = backend.get_parameters();
     parameters.start_time = START_TIME.to_string();
     parameters.speed = format!("KMH-{}", 28.89);
@@ -125,7 +125,7 @@ fn test_constant_strech() {
 #[test]
 fn test_acp_strech() {
     let _ = env_logger::try_init();
-    let mut backend = load_test_data(&"data/PBP-simple.gpx");
+    let backend = load_test_data(&"data/PBP-simple.gpx");
     let mut parameters = backend.get_parameters();
     parameters.start_time = START_TIME.to_string();
     parameters.speed = format!("ACP-1200-90.0");

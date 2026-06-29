@@ -300,7 +300,7 @@ impl Backend {
             packet_provider,
         };
         *self.backend_data.write().unwrap() = Some(data);
-        let _ = self.load_osm().await;
+        // let _ = self.load_osm().await;
         Ok(())
     }
 
@@ -486,7 +486,7 @@ mod tests {
     #[tokio::test]
     async fn svg_profile() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data(BLACK_FOREST).await;
+        let backend = load_test_data(BLACK_FOREST).await;
 
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
@@ -529,7 +529,7 @@ mod tests {
     #[tokio::test]
     async fn svg_large_map() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data(BLACK_FOREST).await;
+        let backend = load_test_data(BLACK_FOREST).await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
@@ -561,7 +561,7 @@ mod tests {
     #[tokio::test]
     async fn svg_map() {
         let _ = env_logger::try_init();
-        let mut backend = load_test_data(BLACK_FOREST).await;
+        let backend = load_test_data(BLACK_FOREST).await;
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
@@ -638,5 +638,24 @@ mod tests {
         log::trace!("d={}", d);
         // there is a 65m distance between the end of K4-K5 and the beginning of K5-Ziel.
         assert!(d < 100f64);
+    }
+
+    #[tokio::test]
+    async fn persist() {
+        let _ = env_logger::try_init();
+        // see filesystem.rs
+        // DATA_DIR=data/ref/persist/share1
+        unsafe {
+            std::env::set_var("DATA_DIR", "data/ref/persist/share1");
+        }
+        let backend = Backend::make();
+        let _ = backend.load_persist().await;
+        let svg = backend.render_segment_simple(
+            &backend.trackSegment(),
+            &IntegerSize2D::new(2000, 1000),
+            point_collection::allkinds(),
+            RenderFunction::Profile,
+        );
+        assert!(!svg.is_empty());
     }
 }
