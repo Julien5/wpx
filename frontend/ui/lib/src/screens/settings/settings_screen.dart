@@ -40,7 +40,6 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
     changer.changeSegmentLength(length);
     changer.changeSegmentOverlap(overlap);
     parameters.setParameters(changer.current());
-    await parameters.backend.persistSmallParameters();
     Parameters output = parameters.parameters();
     debugPrint(
       "print output length: ${output.segmentLength} overlap:${output.segmentOverlap}",

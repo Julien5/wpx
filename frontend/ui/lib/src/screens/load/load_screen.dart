@@ -177,7 +177,9 @@ class _BodyWidgetState extends State<_BodyWidget> {
   void onOKPressed(BuildContext context) async {
     try {
       debugPrint("persist gpx start");
-      await getBackend(context).persistGpxdata();
+      bridge.Bridge backend = getBackend(context);
+      await backend.persistGpxdata();
+      await backend.persistSmallParameters();
       if (!context.mounted) {
         return;
       }

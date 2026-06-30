@@ -43,14 +43,16 @@ class SegmentModel extends ChangeNotifier {
     return someWaypoints([bridge.Kind.gpxWaypoints, bridge.Kind.controls]);
   }
 
-  void makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) {
+  void makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) async {
     backend.makeControlAtWaypoint(waypoint: waypoint, on_: on);
+    backend.persistSmallParameters();
     notifyListeners();
   }
 
-  void setControlTime(bridge.Waypoint waypoint, DateTime? time) {
+  void setControlTime(bridge.Waypoint waypoint, DateTime? time) async {
     String? rfc3339time = time?.toUtc().toIso8601String();
     backend.setControlTime(waypoint: waypoint, time: rfc3339time);
+    await backend.persistSmallParameters();
     notifyListeners();
   }
 }
@@ -76,6 +78,7 @@ class ParameterModel extends ChangeNotifier {
 
   void setParameters(bridge.Parameters p) async {
     await backend.setParameters(parameters: p);
+    await backend.persistSmallParameters();
     notifyListeners();
   }
 

@@ -60,11 +60,6 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     });
   }
 
-  void persistParameters(Bridge backend) async {
-    if (!mounted) return;
-    await backend.persistSmallParameters();
-  }
-
   void writeModel() {
     if (!mounted) return;
     ParameterModel parametersModel = Provider.of<ParameterModel>(
@@ -86,7 +81,6 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
     });
-    persistParameters(getBackend(context));
   }
 
   Future<void> _selectStartDate(BuildContext context) async {

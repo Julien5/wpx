@@ -104,7 +104,6 @@ class UserStepsModel extends ChangeNotifier {
   void _sendParameterToBackend() async {
     notifyListeners();
     parameterModel.setUserStepsOptions(currentOptions!);
-    await parameterModel.backend.persistSmallParameters();
   }
 
   void _updateOptions(SelectedParameter parameter, String? value) {

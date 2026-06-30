@@ -53,6 +53,10 @@ Size makeFinite(Size size) {
   return Size(w.toDouble(), h.toDouble());
 }
 
+String serializeTime(DateTime dateTime) {
+  return dateTime.toUtc().toIso8601String();
+}
+
 class ParameterChanger {
   bridge.Parameters init;
   ParameterChanger({required this.init});
@@ -78,7 +82,7 @@ class ParameterChanger {
   }
 
   bridge.Parameters changeStartTime(DateTime time) {
-    String rfc3339time = time.toUtc().toIso8601String();
+    String rfc3339time = serializeTime(time);
     developer.log("time = $rfc3339time");
     bridge.Parameters ret = bridge.Parameters(
       speed: init.speed,
