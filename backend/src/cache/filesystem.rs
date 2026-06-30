@@ -1,5 +1,5 @@
 use std::{
-    env,
+    env, fs,
     path::{Path, PathBuf},
 };
 
@@ -73,6 +73,34 @@ pub fn hit_cache(path: &str) -> bool {
         return false;
     }
     true
+}
+
+pub fn allfiles(directory: &Directory) -> GenericResult<Vec<String>> {
+    let root = PathBuf::from(directory.name());
+    if !root.exists() {
+        return Ok(vec![]);
+    }
+    let mut result = Vec::new();
+    collect_files(&root, &root, &mut result)?;
+    Ok(result)
+}
+
+fn collect_files(root: &Path, dir: &Path, result: &mut Vec<String>) -> GenericResult<()> {
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.is_dir() {
+            collect_files(root, &path, result)?;
+        } else if path.is_file() {
+            let relative = path
+                .strip_prefix(root)
+                .map_err(|_| TrackError::IOError)?
+                .to_string_lossy()
+                .into_owned();
+            result.push(relative);
+        }
+    }
+    Ok(())
 }
 
 pub fn write(directory: &Directory, filename: &str, data: String) -> GenericResult<()> {

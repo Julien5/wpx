@@ -157,24 +157,12 @@ pub async fn write(
 }
 
 async fn aread(database: &IndexdbLocation, filename: &str) -> Result<String, IndexdbError> {
-    let db = match opendb(database.clone()).await {
-        Ok(db) => db,
-        Err(e) => {
-            return Err(e);
-        }
-    };
-    let transaction = match db
+    let db = match opendb(database.clone()).await?;
+	let transaction = db
         .transaction(database.store())
         .with_mode(TransactionMode::Readonly)
         .build()
-    {
-        Ok(d) => d,
-        Err(e) => {
-            log::error!("couldn not open transaction because {}", e);
-            return Err(IndexdbError::ReadFailed);
-        }
-    };
-
+        .map_err(|_| IndexdbError::ReadFailed)?;
     let store = transaction.object_store(&database.store()).unwrap();
     let data = store.get(&filename).await.unwrap();
     match data {
@@ -185,4 +173,20 @@ async fn aread(database: &IndexdbLocation, filename: &str) -> Result<String, Ind
 
 pub async fn read(database: &IndexdbLocation, filename: &str) -> Result<String, IndexdbError> {
     aread(database, filename).await
+}
+
+pub async fn allfiles(database: &IndexdbLocation) -> Result<Vec<String>, IndexdbError> {
+    let db = opendb(database.clone()).await?;
+    let transaction = db
+        .transaction(database.store())
+        .with_mode(TransactionMode::Readonly)
+        .build()
+        .map_err(|_| IndexdbError::ReadFailed)?;
+    let store = transaction.object_store(&database.store()).unwrap();
+    let iter = store
+        .get_all_keys::<String>()
+        .await
+        .map_err(|_| IndexdbError::ReadFailed)?;
+    iter.collect::<Result<Vec<_>, _>>()
+        .map_err(|_| IndexdbError::ReadFailed)
 }

@@ -8,6 +8,40 @@ use crate::{
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct TrackFile {
+    pub number: usize,
+    pub name: String,
+    pub last_modified: String,
+    pub length: f64,
+    pub elevation_gain: f64,
+}
+
+impl TrackFile {
+    pub async fn read_all() -> GenericResult<Vec<TrackFile>> {
+        let mut entries = cache::allfiles(&cache::Location::UserData).await?;
+        entries.retain(|e| e.ends_with(&".meta"));
+        let mut ret = Vec::new();
+        for meta in &entries {
+            let content = cache::read(&cache::Location::UserData, meta).await?;
+            ret.push(Self::from_string(&content)?);
+        }
+        Ok(ret)
+    }
+    pub fn from_string(data: &str) -> GenericResult<Self> {
+        serde_json::from_str(data).map_err(|_| TrackError::IOError.into())
+    }
+
+    pub fn as_string(&self) -> GenericResult<String> {
+        serde_json::to_string_pretty(&self).map_err(|_| TrackError::IOError.into())
+    }
+    pub async fn write_meta(&self) -> GenericResult<()> {
+        let filename = format!("{}.meta", self.number);
+        let _ = cache::write(&cache::Location::UserData, &filename, self.as_string()?).await;
+        Ok(())
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct SmallParameters {
     pub parameters: Parameters,
     pub controls: Vec<InputPoint>,
@@ -25,17 +59,25 @@ impl SmallParameters {
 
 static SMALLPARAMETERS_FILENAME: &'static str = "small-parameters";
 
-pub async fn write_smallparameters(data: &SmallParameters) -> GenericResult<()> {
+pub async fn write_smallparameters(
+    trackfile: &TrackFile,
+    data: &SmallParameters,
+) -> GenericResult<()> {
     cache::write(
         &cache::Location::UserData,
-        SMALLPARAMETERS_FILENAME,
+        &format!("{}.{}", trackfile.number, SMALLPARAMETERS_FILENAME),
         data.as_string().unwrap(),
     )
     .await
 }
 
-pub async fn read_smallparameters() -> Option<SmallParameters> {
-    match cache::read(&cache::Location::UserData, SMALLPARAMETERS_FILENAME).await {
+pub async fn read_smallparameters(trackfile: &TrackFile) -> Option<SmallParameters> {
+    match cache::read(
+        &cache::Location::UserData,
+        &format!("{}.{}", trackfile.number, SMALLPARAMETERS_FILENAME),
+    )
+    .await
+    {
         Ok(bytes) => match SmallParameters::from_string(&bytes) {
             Ok(d) => Some(d),
             Err(e) => {
@@ -139,17 +181,22 @@ impl TrackDataset {
 
 static TRACKDATA_FILENAME: &'static str = "track-data";
 
-pub async fn write_trackdata(data: &TrackDataset) -> GenericResult<()> {
+pub async fn write_trackdata(trackfile: &TrackFile, data: &TrackDataset) -> GenericResult<()> {
     cache::write(
         &cache::Location::UserData,
-        TRACKDATA_FILENAME,
+        &format!("{}.{}", trackfile.number, TRACKDATA_FILENAME),
         data.as_string().unwrap(),
     )
     .await
 }
 
-pub async fn read_trackdata() -> Option<GpxData> {
-    match cache::read(&cache::Location::UserData, TRACKDATA_FILENAME).await {
+pub async fn read_trackdata(trackfile: &TrackFile) -> Option<GpxData> {
+    match cache::read(
+        &cache::Location::UserData,
+        &format!("{}.{}", trackfile.number, TRACKDATA_FILENAME),
+    )
+    .await
+    {
         Ok(bytes) => match TrackDataset::from_string(&bytes) {
             Ok(data) => match data.to_gpxdata() {
                 Ok(gpxdata) => Some(gpxdata),

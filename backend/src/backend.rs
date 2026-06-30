@@ -20,6 +20,7 @@ use crate::point_collection::PacketProvider;
 use crate::speed;
 use crate::track::Track;
 use crate::trackfile;
+use crate::trackfile::TrackFile;
 use crate::waypoint::Waypoint;
 use std::sync::RwLock;
 
@@ -249,7 +250,7 @@ impl Backend {
         Ok(())
     }
 
-    pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
+    pub async fn save_gpxdata(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
         let data = self
             .backend_data
             .read()
@@ -257,7 +258,7 @@ impl Backend {
             .as_ref()
             .unwrap()
             .track_dataset();
-        match trackfile::write_trackdata(&data).await {
+        match trackfile::write_trackdata(&trackfile, &data).await {
             Ok(()) => Ok(()),
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);
@@ -266,24 +267,14 @@ impl Backend {
         }
     }
 
-    pub async fn has_persist(&self) -> bool {
-        match trackfile::read_trackdata().await {
-            Some(_) => {}
-            None => {
-                return false;
-            }
-        };
-        match trackfile::read_smallparameters().await {
-            Some(_) => {}
-            None => {
-                return false;
-            }
-        };
-        true
+    pub async fn trackfiles(&self) -> Result<Vec<TrackFile>, TrackError> {
+        trackfile::TrackFile::read_all()
+            .await
+            .map_err(|_| TrackError::IOError.into())
     }
 
-    pub async fn load_persist(&self) -> Result<(), TrackError> {
-        let mut gpxdata = match trackfile::read_trackdata().await {
+    pub async fn read_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+        let mut gpxdata = match trackfile::read_trackdata(trackfile).await {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
         };
@@ -292,7 +283,7 @@ impl Backend {
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
         }
-        let smalldata = match trackfile::read_smallparameters().await {
+        let smalldata = match trackfile::read_smallparameters(trackfile).await {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
         };
@@ -313,7 +304,7 @@ impl Backend {
         Ok(())
     }
 
-    pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
+    pub async fn save_small_parameters(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
         let data = self
             .backend_data
             .read()
@@ -321,7 +312,7 @@ impl Backend {
             .as_ref()
             .unwrap()
             .small_parameters();
-        match trackfile::write_smallparameters(&data).await {
+        match trackfile::write_smallparameters(trackfile, &data).await {
             Ok(()) => Ok(()),
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);
@@ -658,13 +649,15 @@ mod tests {
             std::env::set_var("DATA_DIR", "data/ref/persist/share1");
         }
         let backend = Backend::make();
-        let _ = backend.load_persist().await;
-        let svg = backend.render_segment_simple(
-            &backend.trackSegment(),
-            &IntegerSize2D::new(2000, 1000),
-            point_collection::allkinds(),
-            RenderFunction::Profile,
-        );
-        assert!(!svg.is_empty());
+        for trackfile in backend.trackfiles().await.unwrap() {
+            let _ = backend.read_trackfile(&trackfile).await;
+            let svg = backend.render_segment_simple(
+                &backend.trackSegment(),
+                &IntegerSize2D::new(2000, 1000),
+                point_collection::allkinds(),
+                RenderFunction::Profile,
+            );
+            assert!(!svg.is_empty());
+        }
     }
 }

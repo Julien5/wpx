@@ -21,6 +21,7 @@ pub use tracks::parameters::RenderOutput;
 pub use tracks::parameters::TrackPart;
 pub use tracks::parameters::UserStepsOptions;
 pub use tracks::point_collection::Kind;
+pub use tracks::trackfile::TrackFile;
 pub use tracks::waypoint::Waypoint;
 pub use tracks::waypoint::WaypointInfo;
 pub use tracks::wgs84point::WGS84Point;
@@ -221,6 +222,15 @@ pub enum _TrackError {
     Unknown,
 }
 
+#[frb(mirror(TrackFile))]
+pub struct _TrackFile {
+    pub number: usize,
+    pub name: String,
+    pub last_modified: String,
+    pub length: f64,
+    pub elevation_gain: f64,
+}
+
 #[frb(sync)]
 pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<Waypoint> {
     tracks::waypoint::decimate(&segment._impl, waypoints, n)
@@ -275,12 +285,12 @@ impl Bridge {
         self.backend.load_osm_without_download().await
     }
 
-    pub async fn has_persist(&self) -> bool {
-        self.backend.has_persist().await
+    pub async fn trackfiles(&self) -> Result<Vec<TrackFile>, TrackError> {
+        self.backend.trackfiles().await
     }
 
-    pub async fn load_persist(&self) -> Result<(), TrackError> {
-        self.backend.load_persist().await
+    pub async fn load_persist(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+        self.backend.read_trackfile(trackfile).await
     }
 
     pub async fn cancel_osm(&self) {
@@ -291,11 +301,12 @@ impl Bridge {
         self.backend.generateZip(&dedup(&kinds))
     }
 
-    pub async fn persist_small_parameters(&self) -> Result<(), TrackError> {
-        self.backend.persist_small_parameters().await
+    pub async fn save_small_parameters(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+        self.backend.save_small_parameters(trackfile).await
     }
-    pub async fn persist_gpxdata(&self) -> Result<(), TrackError> {
-        self.backend.persist_gpxdata().await
+
+    pub async fn save_gpxdata(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+        self.backend.save_gpxdata(trackfile).await
     }
 
     pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {

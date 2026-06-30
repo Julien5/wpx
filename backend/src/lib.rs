@@ -26,7 +26,7 @@ mod svgtable;
 mod testhelpers;
 pub mod tile;
 mod track_projection;
-mod trackfile;
+pub mod trackfile;
 mod trackparts;
 pub mod wheel;
 mod zipexport;

@@ -54,3 +54,19 @@ pub async fn read(b: &Location, filename: &str) -> GenericResult<String> {
         }
     }
 }
+
+#[cfg(not(target_arch = "wasm32"))]
+pub async fn allfiles(b: &Location) -> GenericResult<Vec<String>> {
+    filesystem::allfiles(&filesystem::Directory::from_location(b))
+}
+
+#[cfg(target_arch = "wasm32")]
+pub async fn allfiles(b: &Location) -> GenericResult<Vec<String>> {
+    match indexdb::allfiles(&indexdb::IndexdbLocation::from_location(b)).await {
+        Ok(keys) => Ok(keys),
+        Err(e) => {
+            log::error!("error: {:?}", e);
+            Err(crate::error::TrackError::IOError.into())
+        }
+    }
+}
