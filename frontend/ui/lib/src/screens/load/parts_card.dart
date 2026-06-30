@@ -72,16 +72,11 @@ class PartsCard extends StatelessWidget {
         enabled
             ? ReorderableListView(
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: enabled,
               onReorderItem: onReorder,
               children: children,
             )
-            : ListView(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: children,
-            );
+            : ListView(shrinkWrap: true, children: children);
 
     Widget header = _Padding(
       child: Row(children: [SmallText(text: "Segments")]),
