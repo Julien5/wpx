@@ -38,8 +38,17 @@ impl Directory {
                 format!("{}/{}/{}", dir, "WPX", version)
             }
             Directory::OsmCache => {
-                let dir = env::var("CACHE_DIR")
-                    .unwrap_or_else(|_| dirs::cache_dir().unwrap().to_str().unwrap().to_string());
+                let dir = env::var("CACHE_DIR").unwrap_or_else(|_| {
+                    if cfg!(test) {
+                        // env!("CARGO_MANIFEST_DIR") resolves at compile time to the directory
+                        // containing Cargo.toml (i.e. backend/
+                        let mut p = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+                        p.push("data/ref/cache");
+                        p.to_string_lossy().into_owned()
+                    } else {
+                        dirs::cache_dir().unwrap().to_str().unwrap().to_string()
+                    }
+                });
                 format!("{}/{}/{}", dir, "WPX/osm", version)
             }
         };

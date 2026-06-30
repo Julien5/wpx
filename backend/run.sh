@@ -104,7 +104,6 @@ function filter-log {
 function unit-tests() {
 	# export RUST_LOG=trace
 	export RUST_BACKTRACE=1
-	export CACHE_DIR=${SCRIPTDIR}/data/ref/cache
 	rm -Rf /tmp/graphs/
 	2>&1 cargo test $@ -- --nocapture # --test-threads=1
 }

@@ -14,12 +14,12 @@ use crate::parameters::RenderFunction;
 use crate::parameters::RenderInput;
 use crate::parameters::RenderOutput;
 use crate::parameters::TrackPart;
-use crate::persist;
 use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
 use crate::speed;
 use crate::track::Track;
+use crate::trackfile;
 use crate::waypoint::Waypoint;
 use std::sync::RwLock;
 
@@ -257,7 +257,7 @@ impl Backend {
             .as_ref()
             .unwrap()
             .track_dataset();
-        match persist::write_trackdata(&data).await {
+        match trackfile::write_trackdata(&data).await {
             Ok(()) => Ok(()),
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);
@@ -267,13 +267,13 @@ impl Backend {
     }
 
     pub async fn has_persist(&self) -> bool {
-        match persist::read_trackdata().await {
+        match trackfile::read_trackdata().await {
             Some(_) => {}
             None => {
                 return false;
             }
         };
-        match persist::read_userdata().await {
+        match trackfile::read_smallparameters().await {
             Some(_) => {}
             None => {
                 return false;
@@ -283,7 +283,7 @@ impl Backend {
     }
 
     pub async fn load_persist(&self) -> Result<(), TrackError> {
-        let mut gpxdata = match persist::read_trackdata().await {
+        let mut gpxdata = match trackfile::read_trackdata().await {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
         };
@@ -292,7 +292,7 @@ impl Backend {
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
         }
-        let smalldata = match persist::read_userdata().await {
+        let smalldata = match trackfile::read_smallparameters().await {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
         };
@@ -321,7 +321,7 @@ impl Backend {
             .as_ref()
             .unwrap()
             .small_parameters();
-        match persist::write_userdata(&data).await {
+        match trackfile::write_smallparameters(&data).await {
             Ok(()) => Ok(()),
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);

@@ -8,12 +8,12 @@ use crate::{
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct SmallDataset {
+pub struct SmallParameters {
     pub parameters: Parameters,
     pub controls: Vec<InputPoint>,
 }
 
-impl SmallDataset {
+impl SmallParameters {
     pub fn from_string(data: &str) -> Result<Self, serde_json::Error> {
         serde_json::from_str(data)
     }
@@ -25,7 +25,7 @@ impl SmallDataset {
 
 static SMALLPARAMETERS_FILENAME: &'static str = "small-parameters";
 
-pub async fn write_userdata(data: &SmallDataset) -> GenericResult<()> {
+pub async fn write_smallparameters(data: &SmallParameters) -> GenericResult<()> {
     cache::write(
         &cache::Location::UserData,
         SMALLPARAMETERS_FILENAME,
@@ -34,9 +34,9 @@ pub async fn write_userdata(data: &SmallDataset) -> GenericResult<()> {
     .await
 }
 
-pub async fn read_userdata() -> Option<SmallDataset> {
+pub async fn read_smallparameters() -> Option<SmallParameters> {
     match cache::read(&cache::Location::UserData, SMALLPARAMETERS_FILENAME).await {
-        Ok(bytes) => match SmallDataset::from_string(&bytes) {
+        Ok(bytes) => match SmallParameters::from_string(&bytes) {
             Ok(d) => Some(d),
             Err(e) => {
                 log::error!("coud not read data {:?}", e);

@@ -9,22 +9,13 @@ use crate::inputpoint::*;
 use crate::make_points;
 use crate::math::IntegerSize2D;
 use crate::parameters;
-use crate::parameters::Parameters;
-use crate::parameters::RenderFunction;
-use crate::parameters::RenderInput;
-use crate::parameters::RenderOutput;
-use crate::persist::SmallDataset;
-use crate::persist::TrackDataset;
-use crate::point_collection::controls_speed_data;
-use crate::point_collection::remove_control_waypoints;
-use crate::point_collection::Kind;
-use crate::point_collection::Kinds;
-use crate::point_collection::PacketProvider;
+use crate::parameters::*;
+use crate::point_collection::*;
 use crate::segment::SegmentData;
-use crate::speed;
-use crate::speed::Speed;
+use crate::speed::*;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
+use crate::trackfile::*;
 use crate::waypoint;
 use crate::waypoint::ExportParameters;
 use crate::waypoint::FlatWaypoints;
@@ -75,11 +66,11 @@ impl BackendData {
         TrackDataset::from_track_and_waypoints(&self.track, &waypoints)
     }
 
-    pub fn small_parameters(&self) -> SmallDataset {
+    pub fn small_parameters(&self) -> SmallParameters {
         log::trace!("persist [1]");
         let controls = self.packet_provider.collection.get_vector(&Kind::Controls);
         let parameters = &self.parameters;
-        SmallDataset {
+        SmallParameters {
             parameters: parameters.clone(),
             controls: controls.clone(),
         }
@@ -87,10 +78,10 @@ impl BackendData {
 
     pub fn set_parameters(&mut self, parameters: &Parameters) {
         let old_time_parameters = self.time_parameters();
-        let new_time_parameters = speed::TimeParameters {
+        let new_time_parameters = TimeParameters {
             controls: Vec::new(),
             start: parameters::parse_time(&parameters.start_time),
-            speed: speed::parse_speed(&parameters.speed),
+            speed: parse_speed(&parameters.speed),
             track_distance: self.track.total_distance(),
         };
         self.parameters = parameters.clone();
@@ -206,11 +197,11 @@ impl BackendData {
         self.packet_provider.collection.get_vector(&Kind::Controls)
     }
 
-    fn time_parameters(&self) -> speed::TimeParameters {
-        speed::TimeParameters {
+    fn time_parameters(&self) -> TimeParameters {
+        TimeParameters {
             controls: controls_speed_data(&self.controls()),
             start: parameters::parse_time(&self.parameters.start_time),
-            speed: speed::parse_speed(&self.parameters.speed),
+            speed: parse_speed(&self.parameters.speed),
             track_distance: self.track.total_distance(),
         }
     }
