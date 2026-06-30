@@ -32,20 +32,25 @@ class _CentralWidgetState extends State<CentralWidget> {
       kinds: [Kind.gpxWaypoints, Kind.controls],
     );
     if (renderOutput != null) {
-      List<Waypoint> osm =
-          renderOutput.waypoints
-              .where(
-                (waypoint) =>
-                    waypoint.origin != Kind.controls &&
-                    waypoint.origin != Kind.gpxWaypoints,
-              )
-              .toList();
-      waypoints.addAll(osm);
-      waypoints = decimate(
-        waypoints: waypoints,
-        segment: renderer.getSegment(),
-        n: BigInt.from(renderOutput.waypoints.length),
-      );
+      if (waypoints.length < 15) {
+        List<Waypoint> osm =
+            renderOutput.waypoints
+                .where(
+                  (waypoint) =>
+                      waypoint.origin != Kind.controls &&
+                      waypoint.origin != Kind.gpxWaypoints,
+                )
+                .toList();
+        osm = decimate(
+          waypoints: osm,
+          segment: renderer.getSegment(),
+          n: BigInt.from(15),
+        );
+        waypoints.addAll(osm);
+        waypoints.sort((w1, w2) {
+          return w1.info!.distance.compareTo(w2.info!.distance);
+        });
+      }
       table = DesktopTable(waypoints: waypoints, editControls: true);
     } else {
       // build() is also triggered from futureRenderer!.reset() in
