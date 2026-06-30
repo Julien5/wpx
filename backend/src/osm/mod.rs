@@ -45,6 +45,7 @@ fn input_point_from_feature(feature: &OSMFeature) -> InputPoint {
 pub async fn download_for_track(
     track: &Track,
     side: &DownloadSideData<'_>,
+    try_download: bool,
 ) -> GenericResult<InputPointMap> {
     let (tiles, chunks) = track.boxes(0f64, track.total_distance());
     log::trace!("there are {} tiles on the track", tiles.len());
@@ -53,7 +54,7 @@ pub async fn download_for_track(
     boxes.push(Boxes::from_tiles(&tiles));
     boxes.push(Boxes::from_chunks(&chunks));
     let request = Request { boxes };
-    match get_response(&request, &side).await {
+    match get_response(&request, &side, try_download).await {
         Ok(chunk_data) => {
             let mut map = BTreeMap::new();
             for (tile, tile_features) in &chunk_data.data.tiles {

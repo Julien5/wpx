@@ -62,7 +62,7 @@ static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
 #[tokio::test]
 async fn table_1() {
     let _ = env_logger::try_init();
-    let mut backend = load_test_data(&"data/PBP-simple.gpx").await;
+    let backend = load_test_data(&"data/PBP-simple.gpx").await;
     let mut parameters = backend.get_parameters();
     parameters.start_time = START_TIME.to_string();
     backend.set_parameters(&parameters);

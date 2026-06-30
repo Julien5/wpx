@@ -507,7 +507,10 @@ mod tests {
             logger: &logger,
             cancel_token: &token,
         };
-        let mut osmpoints = osm::download_for_track(&track, &side).await.unwrap();
+        let try_download = true;
+        let mut osmpoints = osm::download_for_track(&track, &side, !try_download)
+            .await
+            .unwrap();
         track.project_map(&mut osmpoints);
 
         let mut provider = PacketProvider::new();

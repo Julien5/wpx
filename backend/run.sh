@@ -113,7 +113,7 @@ function performance-test() {
 	rm -Rf /tmp/*.svg /tmp/wpx
 	export RUST_LOG=trace
 	export RUST_BACKTRACE=1
-	cargo flamegraph --no-inline -- --performance-test true --output /tmp/route.zip --debug false --step-elevation-gain 500 data/ref/pbp2023.gpx 
+	cargo flamegraph --bin wpx --no-inline -- --performance-test true --output /tmp/route.zip --debug false --step-elevation-gain 500 data/ref/pbp2023.gpx 
 }
 
 function render-graph() {

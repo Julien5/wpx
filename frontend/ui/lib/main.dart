@@ -39,6 +39,7 @@ Future<void> main() async {
   final hasPersistedData = await backend.hasPersist();
   if (hasPersistedData) {
     await backend.loadPersist();
+    await backend.loadOsmWithoutDownload();
   }
   final initialLocation = hasPersistedData ? Routes.overview : Routes.home;
   developer.log("frontend loaded");

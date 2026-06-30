@@ -92,7 +92,8 @@ async fn main() -> anyhow::Result<()> {
         cancel_token: &token,
     };
 
-    if let Ok(chunk_data) = get_response(&request, &side).await {
+    let try_download = true;
+    if let Ok(chunk_data) = get_response(&request, &side, try_download).await {
         for (tile, tile_features) in &chunk_data.data.tiles {
             log::trace!("tile: {:?} len:{}", tile, tile_features.len(),);
         }

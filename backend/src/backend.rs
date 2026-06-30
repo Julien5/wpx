@@ -78,12 +78,12 @@ impl Backend {
         }
     }
 
-    pub async fn load_osm(&self) -> Result<(), TrackError> {
+    async fn load_osm(&self, try_download: bool) -> Result<(), TrackError> {
         {
             let lock = self.osm_cancel_token.read().unwrap();
             match *lock {
                 Some(_) => {
-                    return Err(TrackError::OSMDownloadRunning);
+                    return Err(TrackError::OSMDownloadAlreadyRunning);
                 }
                 None => {}
             }
@@ -106,7 +106,7 @@ impl Backend {
             .unwrap()
             .track
             .clone();
-        let result = osm::download_for_track(&track, &side).await;
+        let result = osm::download_for_track(&track, &side, try_download).await;
         {
             let mut lock = self.osm_cancel_token.write().unwrap();
             *lock = None;
@@ -133,6 +133,16 @@ impl Backend {
             .load_osm(osmpoints);
         self.send("osm:done");
         Ok(())
+    }
+
+    pub async fn load_osm_with_download(&self) -> Result<(), TrackError> {
+        let try_dowload = true;
+        self.load_osm(try_dowload).await
+    }
+
+    pub async fn load_osm_without_download(&self) -> Result<(), TrackError> {
+        let try_dowload = true;
+        self.load_osm(!try_dowload).await
     }
 
     pub fn load_controls(&self) -> Result<usize, TrackError> {
@@ -300,7 +310,6 @@ impl Backend {
             packet_provider,
         };
         *self.backend_data.write().unwrap() = Some(data);
-        // let _ = self.load_osm().await;
         Ok(())
     }
 
@@ -478,7 +487,7 @@ mod tests {
     async fn load_test_data(filename: &str) -> Backend {
         let mut backend = Backend::make();
         backend.load_filename(filename).expect("fail");
-        backend.load_osm().await.unwrap();
+        backend.load_osm_without_download().await.unwrap();
         backend.load_controls().unwrap();
         backend
     }

@@ -67,7 +67,11 @@ async fn load_osm(track: &Track, collection: &mut PointCollection) {
         logger: &logger,
         cancel_token: &token,
     };
-    let mut osmpoints = osm::download_for_track(&track, &side).await.unwrap();
+    let try_download = true;
+    // use try_download if necessary.
+    let mut osmpoints = osm::download_for_track(&track, &side, !try_download)
+        .await
+        .unwrap();
     track.project_map(&mut osmpoints);
     collection.import_osm(&osmpoints.as_vector());
 }

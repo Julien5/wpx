@@ -56,7 +56,7 @@ String errorString(Object o) {
   if (e is bridge.TrackError_OSMDownloadTimeout) {
     return "download timed out";
   }
-  if (e is bridge.TrackError_OSMDownloadRunning) {
+  if (e is bridge.TrackError_OSMDownloadAlreadyRunning) {
     return "download running";
   }
   if (e is bridge.TrackError_OSMDownloadCancelled) {

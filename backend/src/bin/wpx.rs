@@ -145,7 +145,7 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
 async fn performance_test(backend: &mut Backend) -> anyhow::Result<()> {
     let start = std::time::Instant::now();
     let segment = backend.trackSegment();
-    let _ = backend.load_osm().await;
+    let _ = backend.load_osm_without_download().await;
     let mut svg = String::new();
     for _ in 1..30 {
         svg = backend.render_segment_simple(
@@ -251,7 +251,7 @@ async fn main() -> anyhow::Result<()> {
 
     let is_test = args.render_graph.unwrap_or(false);
     if !is_test {
-        let _ = backend.load_osm().await;
+        let _ = backend.load_osm_with_download().await;
     }
     let _ = backend.load_controls();
 

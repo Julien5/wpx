@@ -87,7 +87,7 @@ class LoadScreenModel extends ChangeNotifier {
       future = backend.loadOrdered(parts: _trackParts!);
       //future = backend.loadContents(contents: userInput.contents());
     } else if (job == Job.osm) {
-      future = backend.loadOsm();
+      future = backend.loadOsmWithDownload();
     } else if (job == Job.controls) {
       future = Future<void>(() => backend.loadControls());
     } else {

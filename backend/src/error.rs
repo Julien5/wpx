@@ -24,7 +24,7 @@ pub enum TrackError {
     OSMDownloadCancelled,
 
     #[error("OSM download running")]
-    OSMDownloadRunning,
+    OSMDownloadAlreadyRunning,
 
     #[error("input/output error")]
     IOError,

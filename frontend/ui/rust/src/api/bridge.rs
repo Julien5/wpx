@@ -216,7 +216,7 @@ pub enum _TrackError {
     OSMDownloadFailed,
     OSMDownloadTimeout,
     OSMDownloadCancelled,
-    OSMDownloadRunning,
+    OSMDownloadAlreadyRunning,
     IOError,
     Unknown,
 }
@@ -267,8 +267,12 @@ impl Bridge {
         self.backend.make_control_at_waypoint(waypoint, on);
     }
 
-    pub async fn load_osm(&self) -> Result<(), TrackError> {
-        self.backend.load_osm().await
+    pub async fn load_osm_with_download(&self) -> Result<(), TrackError> {
+        self.backend.load_osm_with_download().await
+    }
+
+    pub async fn load_osm_without_download(&self) -> Result<(), TrackError> {
+        self.backend.load_osm_without_download().await
     }
 
     pub async fn has_persist(&self) -> bool {
