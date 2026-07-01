@@ -180,15 +180,10 @@ class _BodyWidgetState extends State<_BodyWidget> {
     } catch (e) {
       developer.log("[SegmentModel not yet available]");
     }
-
-    debugPrint("persist gpx start");
-        //TODO await backend.persistGpxdata();
-    //TODO await backend.persistSmallParameters();
+    await context.read<SegmentModel>().saveTrackFile();
     if (!context.mounted) {
       return;
     }
-    debugPrint("persist gpx end");
-
     gotoOverview(context);
   }
 

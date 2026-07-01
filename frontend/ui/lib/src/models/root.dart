@@ -58,6 +58,10 @@ class RootModel extends ChangeNotifier {
     return userInput!.trackFile();
   }
 
+  Future<List<bridge.TrackFile>> trackFiles() async {
+    return await backend.trackfiles();
+  }
+
   void notify() {
     notifyListeners();
   }

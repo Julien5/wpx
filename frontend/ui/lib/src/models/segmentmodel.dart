@@ -73,9 +73,18 @@ class SegmentModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> saveTrackFile() async {
+    if (trackFile != null) {
+      await backend.saveGpxdata(trackfile: trackFile!);
+      await backend.saveSmallParameters(trackfile: trackFile!);
+    }
+  }
+
   void setParameters(bridge.Parameters p) async {
     await backend.setParameters(parameters: p);
-    // TODO: await backend.persistSmallParameters();
+    if (trackFile != null) {
+      await backend.saveSmallParameters(trackfile: trackFile!);
+    }
     notifyListeners();
   }
 
