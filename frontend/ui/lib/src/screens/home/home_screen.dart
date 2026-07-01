@@ -2,7 +2,6 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/main.dart';
 import 'package:wpx/src/models/root.dart';
@@ -56,7 +55,7 @@ class _ChooseDataState extends State<_ChooseData> {
   }
 
   void onDone(UserInput userInput) async {
-    RootModel root = Provider.of<RootModel>(context, listen: false);
+    RootModel root = context.read<RootModel>();
     root.setUserInput(userInput);
     gotoLoad(context);
   }
@@ -135,9 +134,9 @@ class HomeScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    PackageInfo info = Provider.of<PackageModel>(ctx).packageInfo;
+    PackageModel info = ctx.watch<PackageModel>();
     return Scaffold(
-      appBar: AppBar(title: Text('WPX ${info.version}')),
+      appBar: AppBar(title: Text('WPX ${info.packageInfo.version}')),
       body: _HomeBody(),
     );
   }

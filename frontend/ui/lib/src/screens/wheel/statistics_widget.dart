@@ -43,11 +43,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
   void readModel() {
     developer.log("read model");
-    ParameterModel parametersModel = Provider.of<ParameterModel>(
-      context,
-      listen: false,
-    );
-    bridge.Parameters parameters = parametersModel.parameters();
+    SegmentModel segmentModel = context.read();
+    bridge.Parameters parameters = segmentModel.parameters();
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
@@ -62,11 +59,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
   void writeModel() {
     if (!mounted) return;
-    ParameterModel parametersModel = Provider.of<ParameterModel>(
-      context,
-      listen: false,
-    );
-    bridge.Parameters oldParameters = parametersModel.parameters();
+    SegmentModel segmentModel = context.read<SegmentModel>();
+    bridge.Parameters oldParameters = segmentModel.parameters();
     ParameterChanger changer = ParameterChanger(init: oldParameters);
     SpeedMode speedMode = parseSpeedMode(speed!);
     if (speedMode == SpeedMode.kmh) {
@@ -75,7 +69,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     changer.changeSpeed(speed!);
     changer.changeStartTime(startTime!);
     bridge.Parameters parameters = changer.current();
-    parametersModel.setParameters(parameters);
+    segmentModel.setParameters(parameters);
     debugPrint("write speed:${parameters.speed}");
     setState(() {
       startTime = parseDateTime(parameters.startTime);
@@ -136,7 +130,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     // see here
     // https://stackoverflow.com/questions/66023387/flutter-how-to-use-timepickerthemedata-properly
     // to change the colors of the time picker.
-    SegmentModel segmentModel = Provider.of(context, listen: false);
+    SegmentModel segmentModel = context.read();
 
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -178,13 +172,12 @@ class _OverviewWidgetState extends State<OverviewWidget> {
   }
 
   Widget buildWorker(BuildContext ctx) {
-    SegmentModel segmentModel = Provider.of<SegmentModel>(ctx);
-    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
-    Parameters parameters = parameterModel.parameters();
+    SegmentModel segmentModel = context.watch<SegmentModel>();
+    Parameters parameters = segmentModel.parameters();
     bridge.SegmentStatistics statistics = segmentModel.statistics();
     double km = statistics.distanceEnd / 1000;
     double hm = statistics.elevationGain;
-    speed = parameterModel.parameters().speed;
+    speed = parameters.speed;
 
     if (startTime == null) {
       return Text("loading..");

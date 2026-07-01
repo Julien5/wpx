@@ -21,7 +21,7 @@ class _EventWidgetState extends State<EventWidget> {
     if (widget.forcedString != null) {
       return SmallText(text: widget.forcedString!);
     }
-    LoadScreenModel screenModel = Provider.of<LoadScreenModel>(context);
+    LoadScreenModel screenModel = context.watch<LoadScreenModel>();
     return SmallText(
       text: filterEvent(screenModel.lastEvent(), widget.target, screenModel),
     );
@@ -94,7 +94,7 @@ class OsmEventWidget extends StatefulWidget {
 class _OsmEventWidgetState extends State<OsmEventWidget> {
   @override
   Widget build(BuildContext context) {
-    EventModel event = Provider.of<EventModel>(context);
+    EventModel event = context.watch<EventModel>();
     OsmStatus progressInfo = event.getOsmEvent();
 
     if (progressInfo.niceTaskName().isNotEmpty && !progressInfo.done()) {

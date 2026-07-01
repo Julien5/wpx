@@ -22,11 +22,10 @@ class _CentralWidgetState extends State<CentralWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ParameterModel>(context);
-    FutureRenderer renderer = Provider.of<FutureRenderer>(context);
+    FutureRenderer renderer = context.watch<FutureRenderer>();
     RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
     table ??= Text("no waypoints");
-    SegmentModel segmentModel = Provider.of(context, listen: false);
+    SegmentModel segmentModel = context.watch();
     List<Waypoint> waypoints = getBackend(context).getWaypoints(
       segment: segmentModel.segment,
       kinds: [Kind.gpxWaypoints, Kind.controls],

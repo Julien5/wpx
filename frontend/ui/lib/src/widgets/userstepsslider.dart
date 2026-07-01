@@ -9,7 +9,7 @@ import 'package:wpx/src/widgets/slidervalues.dart';
 enum SelectedParameter { distance, elevation, none }
 
 class UserStepsModel extends ChangeNotifier {
-  final ParameterModel parameterModel;
+  final SegmentModel segmentModel;
   UserStepsOptions? currentOptions;
 
   final Map<SelectedParameter, List<String>> _sliderValues = {};
@@ -37,7 +37,7 @@ class UserStepsModel extends ChangeNotifier {
     return options.stepElevationGain?.toStringAsFixed(0);
   }
 
-  UserStepsModel({required this.parameterModel}) {
+  UserStepsModel({required this.segmentModel}) {
     _sliderValues[SelectedParameter.distance] = ["5", "10", "15", "20", "25"];
     _sliderValues[SelectedParameter.elevation] = [
       "10",
@@ -57,7 +57,7 @@ class UserStepsModel extends ChangeNotifier {
     _selectedValue[SelectedParameter.elevation] =
         _sliderValues[SelectedParameter.elevation]![1];
 
-    currentOptions = parameterModel.userStepsOptions();
+    currentOptions = segmentModel.userStepsOptions();
     assert(currentOptions != null);
     var v = value(currentOptions!);
     if (v != null) {
@@ -103,7 +103,7 @@ class UserStepsModel extends ChangeNotifier {
    */
   void _sendParameterToBackend() async {
     notifyListeners();
-    parameterModel.setUserStepsOptions(currentOptions!);
+    segmentModel.setUserStepsOptions(currentOptions!);
   }
 
   void _updateOptions(SelectedParameter parameter, String? value) {
@@ -164,7 +164,7 @@ class UserStepsSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var model = Provider.of<UserStepsModel>(context);
+    var model = context.watch<UserStepsModel>();
     var values = model.sliderValues(widgetParameter);
     if (values == null) {
       return const Text('not set yet');
@@ -195,7 +195,7 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
   SelectedParameter selectedParameter = SelectedParameter.none;
 
   void onSelected(SelectedParameter? value) {
-    UserStepsModel model = Provider.of<UserStepsModel>(context, listen: false);
+    UserStepsModel model = context.read<UserStepsModel>();
     if (value != null) {
       selectedParameter = value;
     } else {
@@ -209,7 +209,7 @@ class _UserStepsSliderConsumerState extends State<UserStepsSliderConsumer> {
   Widget build(BuildContext context) {
     context.watch<ScreenConfiguration>();
 
-    UserStepsModel model = Provider.of<UserStepsModel>(context);
+    UserStepsModel model = context.watch<UserStepsModel>();
     selectedParameter = model.getSelectedParameter();
 
     Widget distanceSlider = UserStepsSlider(
@@ -319,9 +319,9 @@ class UserStepsSliderProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ParameterModel model = Provider.of<ParameterModel>(context);
+    SegmentModel model = context.watch<SegmentModel>();
     return ChangeNotifierProvider(
-      create: (ctx) => UserStepsModel(parameterModel: model),
+      create: (ctx) => UserStepsModel(segmentModel: model),
       builder: (context, child) {
         return UserStepsSliderWidget();
       },

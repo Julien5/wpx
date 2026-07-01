@@ -19,7 +19,7 @@ class TrackView extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        FutureRenderer renderer = Provider.of(context);
+        FutureRenderer renderer = context.watch();
         Size size =
             svgSize != null
                 ? svgSize!

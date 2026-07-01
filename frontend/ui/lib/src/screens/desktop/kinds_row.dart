@@ -12,7 +12,7 @@ class KindsRow extends StatefulWidget {
 
 class _KindsRowState extends State<KindsRow> {
   void onControlsCheck(bool? checked) {
-    KindsModel model = Provider.of(context, listen: false);
+    KindsModel model = context.read();
     if (checked == null || checked == false) {
       model.removeKind(Kind.controls);
     } else {
@@ -21,7 +21,7 @@ class _KindsRowState extends State<KindsRow> {
   }
 
   void onWaypointsCheck(bool? checked) {
-    KindsModel model = Provider.of(context, listen: false);
+    KindsModel model = context.read();
     if (checked == null || checked == false) {
       model.removeKind(Kind.gpxWaypoints);
     } else {
@@ -30,7 +30,7 @@ class _KindsRowState extends State<KindsRow> {
   }
 
   void onUserStepsCheck(bool? checked) {
-    KindsModel model = Provider.of(context, listen: false);
+    KindsModel model = context.read();
     if (checked == null || checked == false) {
       model.removeKind(Kind.cutOff);
     } else {
@@ -39,7 +39,7 @@ class _KindsRowState extends State<KindsRow> {
   }
 
   void onOSMCheck(bool? checked) {
-    KindsModel model = Provider.of(context, listen: false);
+    KindsModel model = context.read();
     if (checked == null || checked == false) {
       model.removeOSM();
     } else {
@@ -49,7 +49,7 @@ class _KindsRowState extends State<KindsRow> {
 
   @override
   Widget build(BuildContext context) {
-    KindsModel model = Provider.of(context);
+    KindsModel model = context.watch();
     //bool hasControls = model.kinds.contains(Kind.controls) && model.hasControls();
     bool hasGPXWaypoints =
         model.kinds.contains(Kind.gpxWaypoints) && model.hasGPXWaypoints();

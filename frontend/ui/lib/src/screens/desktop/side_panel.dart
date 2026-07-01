@@ -29,7 +29,7 @@ class UserStepsCard extends StatefulWidget {
 class _UserStepsCardState extends State<UserStepsCard> {
   @override
   Widget build(BuildContext context) {
-    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
+    SegmentModel parameterModel = context.watch<SegmentModel>();
 
     String pacingPointsText = getPacingPointText(parameterModel.parameters());
     Widget tile = ExpansionTile(
@@ -74,14 +74,13 @@ class PDFCard extends StatefulWidget {
 class _PDFCardState extends State<PDFCard> {
   @override
   Widget build(BuildContext context) {
-    SegmentModel segment = Provider.of<SegmentModel>(context, listen: false);
-    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
+    SegmentModel segment = context.watch<SegmentModel>();
     List<Segment> segments = segment.backend.segments();
-    String segLength =
-        (segmentLengthWithoutOverlap(parameterModel.parameters()) / 1000)
-            .ceil()
-            .toString()
-            .padLeft(3);
+    String segLength = (segmentLengthWithoutOverlap(segment.parameters()) /
+            1000)
+        .ceil()
+        .toString()
+        .padLeft(3);
     String pageCount = PageCountInfo.getPagesCountString(segments.length);
     Widget tile = ExpansionTile(
       title: Row(
@@ -127,7 +126,7 @@ class _SidePanelState extends State<SidePanel> {
     // do not change the state during build (otherwise exception)
     SchedulerBinding.instance.addPostFrameCallback((_) {
       debugPrint("focus:$f expanded:$expanded");
-      FociModel fociModel = Provider.of<FociModel>(context, listen: false);
+      FociModel fociModel = context.read<FociModel>();
       if (expanded) {
         fociModel.addFocus(f);
       } else {
@@ -150,7 +149,7 @@ class _SidePanelState extends State<SidePanel> {
 
   @override
   Widget build(BuildContext context) {
-    FociModel fociModel = Provider.of<FociModel>(context);
+    FociModel fociModel = context.watch<FociModel>();
     updateWidgetsFromModel(context, fociModel);
     Widget div = Divider(color: Colors.lightBlue, thickness: 1, height: 1);
     List<Widget> children = [

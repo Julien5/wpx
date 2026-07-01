@@ -8,7 +8,7 @@ import 'package:wpx/src/screens/desktop/side_panel.dart';
 class _MainScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
+    ScreenConfiguration screen = ctx.watch<ScreenConfiguration>();
     Widget div = VerticalDivider(
       color: Colors.lightBlue,
       thickness: 1,

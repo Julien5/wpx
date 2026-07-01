@@ -44,7 +44,7 @@ class _GPXStrings {
 class _GPXCard extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
-    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    LoadScreenModel model = ctx.watch<LoadScreenModel>();
     _GPXStrings strings = _GPXStrings(screenModel: model);
     Widget inner = Column(children: [SmallText(text: "Track")]);
     if (model.hasDone(Job.gpx)) {
@@ -100,7 +100,7 @@ class ControlsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    LoadScreenModel model = ctx.watch<LoadScreenModel>();
     _ControlStrings strings = _ControlStrings(screenModel: model);
     Widget inner = Column(
       children: [
@@ -124,7 +124,7 @@ class _OSMCard extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     debugPrint("OSMCard build ");
-    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    LoadScreenModel model = ctx.watch<LoadScreenModel>();
 
     Widget row = OsmEventWidget(target: Job.osm);
     if (model.hasFailed(Job.osm) != null || model.runningJob() == Job.osm) {
@@ -176,19 +176,20 @@ class _BodyWidget extends StatefulWidget {
 class _BodyWidgetState extends State<_BodyWidget> {
   void onOKPressed(BuildContext context) async {
     try {
-      debugPrint("persist gpx start");
-      bridge.Bridge backend = getBackend(context);
-      await backend.persistGpxdata();
-      await backend.persistSmallParameters();
-      if (!context.mounted) {
-        return;
-      }
-      debugPrint("persist gpx end");
-      Provider.of<SegmentModel>(context, listen: false);
-      gotoOverview(context);
+      context.read<SegmentModel>();
     } catch (e) {
       developer.log("[SegmentModel not yet available]");
     }
+
+    debugPrint("persist gpx start");
+        //TODO await backend.persistGpxdata();
+    //TODO await backend.persistSmallParameters();
+    if (!context.mounted) {
+      return;
+    }
+    debugPrint("persist gpx end");
+
+    gotoOverview(context);
   }
 
   void onHomePressed(BuildContext context) {
@@ -198,9 +199,9 @@ class _BodyWidgetState extends State<_BodyWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    LoadScreenModel load = Provider.of(context);
-    KindsModel kinds = Provider.of(context);
-    RootModel root = Provider.of(context);
+    LoadScreenModel load = context.watch();
+    KindsModel kinds = context.watch();
+    RootModel root = context.watch();
     if (root.isLoaded()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // KindsModel needs the statistics to decide what
@@ -213,7 +214,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
 
   @override
   Widget build(BuildContext ctx) {
-    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    LoadScreenModel model = context.watch<LoadScreenModel>();
 
     bool okAllowed =
         model.hasDone(Job.controls) && model.runningJob() == Job.none;
@@ -265,7 +266,7 @@ class _LoadScaffold extends StatefulWidget {
 
 class _LoadScaffoldState extends State<_LoadScaffold> {
   Widget buildScaffold(BuildContext ctx) {
-    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    LoadScreenModel model = context.watch<LoadScreenModel>();
     return Scaffold(
       appBar: AppBar(title: Text(_title(model))),
       body: _BodyWidget(),
@@ -287,7 +288,7 @@ class _LoadScaffoldState extends State<_LoadScaffold> {
 
   @override
   Widget build(BuildContext ctx) {
-    LoadScreenModel _ = Provider.of<LoadScreenModel>(ctx);
+    LoadScreenModel _ = context.watch<LoadScreenModel>();
     debugPrint("LoadScreen build");
     return buildScaffold(ctx);
   }
@@ -300,11 +301,11 @@ class _LoadScreenProviders extends MultiProvider {
         providers: [
           ChangeNotifierProxyProvider2<RootModel, EventModel, LoadScreenModel>(
             create: (context) {
-              EventModel events = Provider.of(context, listen: false);
+              EventModel events = context.read();
               developer.log("make LoadScreenModel");
               return LoadScreenModel(
                 backend: getBackend(context),
-                rootModel: Provider.of<RootModel>(context, listen: false),
+                rootModel: context.read<RootModel>(),
                 events: events,
                 userInput: userInput,
               );

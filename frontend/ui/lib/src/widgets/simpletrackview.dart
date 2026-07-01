@@ -33,14 +33,14 @@ class _SimpleTrackViewState extends State<SimpleTrackView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.watch<ParameterModel>();
+    context.watch<SegmentModel>();
     FutureRenderer? externalRenderer = context.read<FutureRenderer?>();
     assert(externalRenderer != null);
   }
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<SegmentModel>(context);
+    context.watch<SegmentModel>();
     BridgeRenderFunction data = widget.rendererParameters.trackData;
     StackViewsController controller = context.watch<StackViewsController>();
     // honor controller.sizes

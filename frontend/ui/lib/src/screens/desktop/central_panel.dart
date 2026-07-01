@@ -71,10 +71,10 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.watch<ParameterModel>();
-    KindsModel kindsModel = Provider.of(context);
+    context.watch<SegmentModel>();
+    KindsModel kindsModel = context.watch();
     if (futureRenderer == null) {
-      SegmentModel segmentModel = Provider.of(context);
+      SegmentModel segmentModel = context.watch();
       debugPrint("CREATE FUTURE RENDER FOR ${widget.screenFocus}");
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
@@ -150,12 +150,12 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     FociModel fociModel = context.watch<FociModel>();
-    context.watch<ParameterModel>();
-    RootModel root = Provider.of(context);
+    context.watch<SegmentModel>();
+    RootModel root = context.watch();
     List<Segment> segs = root.backend.segments();
     if (renderers.length != segs.length) {
       disposeModels();
-      RootModel root = Provider.of(context);
+      RootModel root = context.watch();
       for (int k = 0; k < segs.length; ++k) {
         renderers.add(
           FutureRenderer(
@@ -166,10 +166,16 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
             name: "${widget.screenFocus}",
           ),
         );
-        segments.add(SegmentModel(segment: segs[k], backend: root.backend));
+        segments.add(
+          SegmentModel(
+            segment: segs[k],
+            backend: root.backend,
+            trackFile: root.trackFile(),
+          ),
+        );
       }
     }
-    KindsModel kindsModel = Provider.of(context);
+    KindsModel kindsModel = context.watch();
     for (FutureRenderer renderer in renderers) {
       renderer.setKinds(kindsModel.kinds);
       renderer.setVisible(isVisible(fociModel));
@@ -198,8 +204,8 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
   Widget build(BuildContext context) {
     debugPrint("CentralPanelTabView build()");
     assert(renderers.isNotEmpty);
-    RootModel root = Provider.of<RootModel>(context, listen: false);
-    Provider.of<ParameterModel>(context);
+    RootModel root = context.read<RootModel>();
+    context.watch<SegmentModel>();
     List<Widget> children = [];
     for (int k = 0; k < segments.length; ++k) {
       FutureRenderer renderer = renderers[k];
@@ -231,7 +237,7 @@ class CentralPanel extends StatefulWidget {
 class _CentralPanelState extends State<CentralPanel> {
   @override
   Widget build(BuildContext context) {
-    FociModel fociModel = Provider.of<FociModel>(context);
+    FociModel fociModel = context.watch<FociModel>();
     debugPrint("_CentralPanelState build()");
     return IndexedStack(
       index:

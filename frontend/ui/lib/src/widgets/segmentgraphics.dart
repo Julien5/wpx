@@ -73,7 +73,7 @@ class SegmentGraphicsButtonsColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    StackViewsController model = Provider.of<StackViewsController>(context);
+    StackViewsController model = context.watch<StackViewsController>();
     if (model.exposed.length <= 1) {
       return SizedBox();
     }
@@ -126,10 +126,7 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
       return;
     }
 
-    StackViewsController model = Provider.of<StackViewsController>(
-      context,
-      listen: false,
-    );
+    StackViewsController model = context.read<StackViewsController>();
 
     for (RenderFunction data in model.exposed) {
       widgets[data] = SimpleTrackView.make(widget.kinds, data);
@@ -138,18 +135,15 @@ class _SegmentGraphicsState extends State<SegmentGraphics> {
   }
 
   void onTap() {
-    StackViewsController model = Provider.of<StackViewsController>(
-      context,
-      listen: false,
-    );
+    StackViewsController model = context.read<StackViewsController>();
     model.cycle();
   }
 
   @override
   Widget build(BuildContext ctx) {
-    // Instanciating a Provider.of<Model>(context) (listen=true)
+    // Instanciating a context.watch<\1>() (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    StackViewsController model = Provider.of<StackViewsController>(context);
+    StackViewsController model = context.watch<StackViewsController>();
     double margin = 8;
     RenderFunction currentModelData = model.currentData();
     // I would like to have `visible = widgets[currentModelData]`
@@ -183,18 +177,15 @@ class TrackGraphicsRow extends StatelessWidget {
   const TrackGraphicsRow({super.key, required this.kinds});
 
   void onButtonPressed(BuildContext context, RenderFunction data) {
-    StackViewsController model = Provider.of<StackViewsController>(
-      context,
-      listen: false,
-    );
+    StackViewsController model = context.read<StackViewsController>();
     model.changeCurrent(data);
   }
 
   @override
   Widget build(BuildContext context) {
-    // Instanciating a Provider.of<Model>(context) (listen=true)
+    // Instanciating a context.watch<\1>() (listen=true)
     // is necessary to get rebuild on notifyListeners.
-    StackViewsController model = Provider.of<StackViewsController>(context);
+    StackViewsController model = context.watch<StackViewsController>();
     RenderFunction currentModelData = model.currentData();
     developer.log("[TrackGraphicsRow] build currentData:$currentModelData");
     Widget buttonColumn = SegmentGraphicsButtonsColumn(

@@ -161,7 +161,7 @@ String joinNonEmpty(List<String> parts) {
 }
 
 bridge.Bridge getBackend(BuildContext context) {
-  RootModel root = Provider.of<RootModel>(context, listen: false);
+  RootModel root = context.read<RootModel>();
   return root.getBackend();
 }
 

@@ -19,9 +19,9 @@ class DesktopScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FociModel foci = Provider.of<FociModel>(context);
+    FociModel foci = context.watch<FociModel>();
     debugPrint("desktop focus on: ${foci.foci}");
-    RootModel root = Provider.of<RootModel>(context);
+    RootModel root = context.watch<RootModel>();
     if (foci.contains(ScreenFocus.home)) {
       return HomeScreen();
     }

@@ -20,7 +20,7 @@ class ScreenShell extends StatelessWidget {
             .last
             .matchedLocation ==
         currentLocation;
-    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(context);
+    ScreenConfiguration screen = context.watch<ScreenConfiguration>();
     return LayoutBuilder(
       builder: (context, constraints) {
         debugPrint(

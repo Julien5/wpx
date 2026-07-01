@@ -48,7 +48,7 @@ class _FutureRenderingWidgetState extends State<FutureRenderingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    FutureRenderer future = Provider.of<FutureRenderer>(context);
+    FutureRenderer future = context.watch<FutureRenderer>();
     return buildWorker(future);
   }
 }

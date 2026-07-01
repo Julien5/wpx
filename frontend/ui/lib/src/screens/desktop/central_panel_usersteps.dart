@@ -13,7 +13,7 @@ class CentralWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ParameterModel>(context);
+    context.watch<SegmentModel>();
     Widget bottom = Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

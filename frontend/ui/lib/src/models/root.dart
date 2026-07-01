@@ -7,16 +7,27 @@ import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
 class UserInput {
-  List<List<int>>? bytes;
+  List<List<int>>? _bytes;
+  bridge.TrackFile? _trackFile;
 
-  static UserInput makeFromBytes(List<List<int>> bytes) {
+  static UserInput makeFromTrackFile(bridge.TrackFile trackFile) {
     var ret = UserInput();
-    ret.bytes = bytes;
+    ret._trackFile = trackFile;
     return ret;
   }
 
+  static UserInput makeFromBytes(List<List<int>> bytes) {
+    var ret = UserInput();
+    ret._bytes = bytes;
+    return ret;
+  }
+
+  bridge.TrackFile? trackFile() {
+    return _trackFile;
+  }
+
   List<Uint8List> contents() {
-    return bytes!.map((chunk) => Uint8List.fromList(chunk)).toList();
+    return _bytes!.map((chunk) => Uint8List.fromList(chunk)).toList();
   }
 }
 
@@ -40,6 +51,13 @@ class RootModel extends ChangeNotifier {
     return backend.isLoaded();
   }
 
+  bridge.TrackFile? trackFile() {
+    if (userInput == null) {
+      return null;
+    }
+    return userInput!.trackFile();
+  }
+
   void notify() {
     notifyListeners();
   }
@@ -50,8 +68,7 @@ enum ScreenFocus { home, load, overview, usersteps, controls, settings }
 class FociModel extends ChangeNotifier {
   Set<ScreenFocus> foci;
 
-  FociModel({Set<ScreenFocus>? initialFoci})
-    : foci = initialFoci ?? {ScreenFocus.home};
+  FociModel() : foci = {ScreenFocus.home};
 
   void setFocus(ScreenFocus f) {
     if (foci.length == 1 && foci.contains(f)) {

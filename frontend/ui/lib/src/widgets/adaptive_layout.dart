@@ -48,10 +48,10 @@ class _MobileScaffoldBodyState extends State<MobileScaffoldBody> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     FociModel fociModel = context.watch<FociModel>();
-    context.watch<ParameterModel>();
-    KindsModel kindsModel = Provider.of(context);
+    context.watch<SegmentModel>();
+    KindsModel kindsModel = context.watch();
     if (futureRenderer == null) {
-      SegmentModel segmentModel = Provider.of(context);
+      SegmentModel segmentModel = context.watch();
       debugPrint("CREATE FUTURE RENDER FOR ${widget.screenFocus}");
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
@@ -72,7 +72,7 @@ class _MobileScaffoldBodyState extends State<MobileScaffoldBody> {
 
   @override
   Widget build(BuildContext ctx) {
-    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(ctx);
+    ScreenConfiguration screen = context.watch<ScreenConfiguration>();
     Widget child = HorizontalLayout(
       topRow: widget.topRow,
       midColumn: widget.midColumn,

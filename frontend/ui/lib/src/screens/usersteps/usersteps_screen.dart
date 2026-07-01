@@ -13,7 +13,7 @@ class ButtonWidget extends StatelessWidget {
   const ButtonWidget({super.key});
 
   void gotoTable(BuildContext context) {
-    SegmentModel model = Provider.of<SegmentModel>(context, listen: false);
+    SegmentModel model = context.read<SegmentModel>();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -42,8 +42,7 @@ class _TextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Kinds usersteps = [Kind.cutOff];
-    SegmentModel model = Provider.of<SegmentModel>(context);
-    Provider.of<ParameterModel>(context);
+    SegmentModel model = context.watch<SegmentModel>();
     List<Waypoint> waypoints = model.someWaypoints(usersteps);
     String text =
         waypoints.isEmpty

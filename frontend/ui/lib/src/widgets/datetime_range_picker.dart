@@ -318,7 +318,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     String text2b = formatMps(mps2);
     String text2c = formatDistance(distance2);
 
-    ScreenConfiguration screenConfiguration = Provider.of(context);
+    ScreenConfiguration screenConfiguration = context.watch();
     final double space =
         screenConfiguration.mode == DisplayMode.vertical ? 50 : 100;
 

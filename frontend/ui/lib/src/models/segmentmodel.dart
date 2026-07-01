@@ -9,8 +9,13 @@ typedef Kinds = List<bridge.Kind>;
 class SegmentModel extends ChangeNotifier {
   final bridge.Segment segment;
   final bridge.Bridge backend;
+  final bridge.TrackFile? trackFile;
 
-  SegmentModel({required this.segment, required this.backend});
+  SegmentModel({
+    required this.segment,
+    required this.backend,
+    required this.trackFile,
+  });
 
   @override
   void notifyListeners() {
@@ -45,27 +50,19 @@ class SegmentModel extends ChangeNotifier {
 
   void makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) async {
     backend.makeControlAtWaypoint(waypoint: waypoint, on_: on);
-    backend.persistSmallParameters();
+    if (trackFile != null) {
+      backend.saveSmallParameters(trackfile: trackFile!);
+    }
     notifyListeners();
   }
 
   void setControlTime(bridge.Waypoint waypoint, DateTime? time) async {
     String? rfc3339time = time?.toUtc().toIso8601String();
     backend.setControlTime(waypoint: waypoint, time: rfc3339time);
-    await backend.persistSmallParameters();
+    if (trackFile != null) {
+      backend.saveSmallParameters(trackfile: trackFile!);
+    }
     notifyListeners();
-  }
-}
-
-class ParameterModel extends ChangeNotifier {
-  final bridge.Bridge backend;
-
-  ParameterModel({required this.backend});
-
-  void debug() {}
-
-  bridge.UserStepsOptions userStepsOptions() {
-    return backend.getParameters().userStepsOptions;
   }
 
   void setUserStepsOptions(bridge.UserStepsOptions options) {
@@ -78,7 +75,7 @@ class ParameterModel extends ChangeNotifier {
 
   void setParameters(bridge.Parameters p) async {
     await backend.setParameters(parameters: p);
-    await backend.persistSmallParameters();
+    // TODO: await backend.persistSmallParameters();
     notifyListeners();
   }
 

@@ -87,7 +87,7 @@ class _ExportButtonState extends State<ExportButton> {
     setState(() {
       busy = true;
     });
-    KindsModel kindsModel = Provider.of(context, listen: false);
+    KindsModel kindsModel = context.read();
     var data = await generate(backend, kindsModel.kinds);
     fileSave(data);
     setState(() {

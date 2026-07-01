@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/futurerenderer.dart';
+import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/models/stackviewscontroller.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -50,7 +51,7 @@ class _LocalSegmentGraphicsState extends State<LocalSegmentGraphics> {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<ParameterModel>();
+    context.watch<SegmentModel>();
     developer.log("[LocalSegmentGraphics]");
     widget.model.debug();
     debugPrint("update segment: ${widget.model.segment.id()}");
@@ -119,7 +120,7 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     with TickerProviderStateMixin {
   TabController? _tabController;
   List<SegmentModel> segments = [];
-  ParameterModel? parameterModel;
+  SegmentModel? segmentModel;
 
   void _onParameterChanged() {
     bride.Bridge backend = getBackend(context);
@@ -132,8 +133,13 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     } else {
       return;
     }
+    RootModel root = context.read<RootModel>();
     for (Segment segment in newSegments) {
-      SegmentModel model = SegmentModel(backend: backend, segment: segment);
+      SegmentModel model = SegmentModel(
+        backend: backend,
+        segment: segment,
+        trackFile: root.trackFile(),
+      );
       segments.add(model);
     }
     _tabController = TabController(length: segments.length, vsync: this);
@@ -143,9 +149,9 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (parameterModel == null) {
-      parameterModel = Provider.of<ParameterModel>(context, listen: false);
-      parameterModel!.addListener(_onParameterChanged);
+    if (segmentModel == null) {
+      segmentModel = context.read<SegmentModel>();
+      segmentModel!.addListener(_onParameterChanged);
     }
     _onParameterChanged();
     assert(_tabController != null);
@@ -156,24 +162,21 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     if (_tabController != null) {
       _tabController!.dispose();
     }
-    if (parameterModel != null) {
-      parameterModel!.removeListener(_onParameterChanged);
+    if (segmentModel != null) {
+      segmentModel!.removeListener(_onParameterChanged);
     }
     super.dispose();
   }
 
   void onButtonPressed(BuildContext context, RenderFunction data) {
-    StackViewsController model = Provider.of<StackViewsController>(
-      context,
-      listen: false,
-    );
+    StackViewsController model = context.read<StackViewsController>();
     model.changeCurrent(data);
   }
 
   @override
   Widget build(BuildContext context) {
     developer.log("[rebuild _SegmentsGraphicsRowState]");
-    StackViewsController model = Provider.of<StackViewsController>(context);
+    StackViewsController model = context.watch<StackViewsController>();
     assert(_tabController != null);
 
     RenderFunction currentModelData = model.currentData();

@@ -160,7 +160,7 @@ class DialogTitle extends StatelessWidget {
 
 TextStyle infoTextStyle(BuildContext context) {
   final cs = Theme.of(context).colorScheme;
-  ScreenConfiguration screenConfiguration = Provider.of(context);
+  ScreenConfiguration screenConfiguration = context.watch();
   double fontSize = screenConfiguration.mode == DisplayMode.vertical ? 9 : 11;
   double letterSpacing =
       screenConfiguration.mode == DisplayMode.vertical ? 0.7 : 1.1;
@@ -173,7 +173,7 @@ TextStyle infoTextStyle(BuildContext context) {
 
 TextStyle spinnerTextStyle(BuildContext context) {
   final cs = Theme.of(context).colorScheme;
-  ScreenConfiguration screenConfiguration = Provider.of(context);
+  ScreenConfiguration screenConfiguration = context.watch();
   double fontSize = screenConfiguration.mode == DisplayMode.vertical ? 12 : 14;
   double letterSpacing =
       screenConfiguration.mode == DisplayMode.vertical ? 0.7 : 1.1;

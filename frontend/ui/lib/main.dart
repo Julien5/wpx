@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/events.dart';
@@ -13,7 +14,6 @@ import 'package:wpx/src/models/stackviewscontroller.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/frb_generated.dart';
-import 'package:wpx/src/utils/utils.dart';
 
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -36,19 +36,13 @@ Future<void> main() async {
   await bridge.Bridge.initPdfFonts();
   final packageInfo = await PackageInfo.fromPlatform();
   final backend = bridge.Bridge.make();
-  final hasPersistedData = await backend.hasPersist();
-  if (hasPersistedData) {
-    await backend.loadPersist();
-    await backend.loadOsmWithoutDownload();
-  }
-  final initialLocation = hasPersistedData ? Routes.overview : Routes.home;
+
   developer.log("frontend loaded");
   runApp(
     ApplicationProvider(
       packageInfo: packageInfo,
       backend: backend,
-      initialLocation: initialLocation,
-      child: Application(initialLocation: initialLocation),
+      child: Application(),
     ),
   );
 }
@@ -62,21 +56,23 @@ class TrackProvider extends StatelessWidget {
   final Widget child;
   const TrackProvider({super.key, required this.child});
 
-  SegmentModel _create(bridge.Bridge backend) {
+  SegmentModel _createSegmentModel(RootModel root) {
     developer.log("create track segment");
-    return SegmentModel(backend: backend, segment: backend.trackSegment());
+    return SegmentModel(
+      backend: root.backend,
+      segment: root.backend.trackSegment(),
+      trackFile: root.trackFile(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    bridge.Bridge backend = getBackend(context);
-    RootModel root = Provider.of<RootModel>(context);
+    RootModel root = context.watch<RootModel>();
     developer.log("build TrackProvider: loaded: ${root.isLoaded()}");
-
     return ChangeNotifierProxyProvider<RootModel, SegmentModel?>(
-      create: (_) => root.isLoaded() ? _create(backend) : null,
+      create: (_) => root.isLoaded() ? _createSegmentModel(root) : null,
       update: (context, rootModel, previousSegment) {
-        return rootModel.isLoaded() ? _create(getBackend(context)) : null;
+        return rootModel.isLoaded() ? _createSegmentModel(root) : null;
       },
       child: child,
     );
@@ -87,13 +83,11 @@ class ApplicationProvider extends StatelessWidget {
   final Widget child;
   final PackageInfo? packageInfo;
   final bridge.Bridge backend;
-  final String initialLocation;
   const ApplicationProvider({
     super.key,
     required this.child,
     this.packageInfo,
     required this.backend,
-    required this.initialLocation,
   });
   @override
   Widget build(BuildContext context) {
@@ -102,18 +96,11 @@ class ApplicationProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RootModel(backend: backend)),
         ChangeNotifierProvider(create: (_) => ScreenConfiguration()),
         ChangeNotifierProvider(create: (_) => EventModel(backend: backend)),
-        ChangeNotifierProvider(
-          create:
-              (_) => FociModel(
-                initialFoci: {
-                  initialLocation == Routes.overview
-                      ? ScreenFocus.overview
-                      : ScreenFocus.home,
-                },
-              ),
-        ),
+        ChangeNotifierProvider(create: (_) => FociModel()),
         ChangeNotifierProvider(create: (_) => KindsModel()),
-        ChangeNotifierProvider(create: (_) => ParameterModel(backend: backend)),
+        ChangeNotifierProvider(
+          create: (_) => PackageModel(packageInfo: packageInfo!),
+        ),
         ChangeNotifierProvider(
           create:
               (_) => StackViewsController(
@@ -133,17 +120,18 @@ class ApplicationProvider extends StatelessWidget {
   }
 }
 
+final GoRouter router = getRouter();
+
 class Application extends StatelessWidget {
-  final String initialLocation;
-  const Application({super.key, required this.initialLocation});
+  const Application({super.key});
 
   @override
   Widget build(BuildContext context) {
-    ScreenConfiguration screen = Provider.of<ScreenConfiguration>(context);
+    ScreenConfiguration screen = context.watch<ScreenConfiguration>();
     double textBaseSize = screen.isMobile() ? 12.0 : 14.0;
     return MaterialApp.router(
       routeInformationParser: null,
-      routerConfig: getRouter(initialLocation),
+      routerConfig: router,
       title: "WPX",
       theme: ThemeData(
         textTheme: TextTheme(

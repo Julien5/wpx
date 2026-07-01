@@ -44,6 +44,7 @@ pubspec.lock
 .svn/
 **/generated_plugin_registrant.cc
 **/generated_plugins.cmake
+**/agents
 
 # As packages are no longer pinned, we use a lockfile for testing locally.
 # When unpinning packages, Using lockfiles ensures that failures in PRs are

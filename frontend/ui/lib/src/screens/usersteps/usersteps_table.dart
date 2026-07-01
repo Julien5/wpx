@@ -8,17 +8,17 @@ class UserStepsTableScaffold extends StatelessWidget {
   const UserStepsTableScaffold({super.key});
 
   /* void _setShortFormat(BuildContext ctx) {
-    ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
+    ParameterModel model = context.read<ParameterModel>();
     model.setUserStepGpxNameFormat("TIME[%H:%M]");
   }
 
   void _setMediumFormat(BuildContext ctx) {
-    ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
+    ParameterModel model = context.read<ParameterModel>();
     model.setUserStepGpxNameFormat("TIME[%H:%M]-SLOPE[4.1%]");
   }
 
   void _setLongFormat(BuildContext ctx) {
-    ParameterModel model = Provider.of<ParameterModel>(ctx, listen: false);
+    ParameterModel model = context.read<ParameterModel>();
     model.setUserStepGpxNameFormat("NAME[*]-TIME[%H:%M]-SLOPE[4.1%]");
   }*/
 

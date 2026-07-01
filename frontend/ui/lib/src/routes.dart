@@ -16,9 +16,9 @@ class Routes {
   static const String settings = "/settings";
 }
 
-GoRouter getRouter(String initialLocation) {
+GoRouter getRouter() {
   return GoRouter(
-    initialLocation: initialLocation,
+    initialLocation: Routes.home,
     routes: [
       GoRoute(
         path: Routes.home,
@@ -67,11 +67,8 @@ GoRouter getRouter(String initialLocation) {
 }
 
 void gotoOverview(BuildContext ctx) {
-  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
-  ScreenConfiguration config = Provider.of<ScreenConfiguration>(
-    ctx,
-    listen: false,
-  );
+  FociModel fociModel = ctx.read<FociModel>();
+  ScreenConfiguration config = ctx.read<ScreenConfiguration>();
   fociModel.setFocus(ScreenFocus.overview);
   if (config.isMobile()) {
     ctx.go(Routes.overview);
@@ -80,11 +77,8 @@ void gotoOverview(BuildContext ctx) {
 
 void gotoUserSteps(BuildContext ctx) {
   debugPrint("gotoUserSteps");
-  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
-  ScreenConfiguration config = Provider.of<ScreenConfiguration>(
-    ctx,
-    listen: false,
-  );
+  FociModel fociModel = ctx.read<FociModel>();
+  ScreenConfiguration config = ctx.read<ScreenConfiguration>();
   fociModel.addFocus(ScreenFocus.usersteps);
   if (config.isMobile()) {
     ctx.go(Routes.usersteps);
@@ -93,11 +87,8 @@ void gotoUserSteps(BuildContext ctx) {
 
 void gotoPDF(BuildContext ctx) {
   debugPrint("gotoPDF");
-  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
-  ScreenConfiguration config = Provider.of<ScreenConfiguration>(
-    ctx,
-    listen: false,
-  );
+  FociModel fociModel = ctx.read<FociModel>();
+  ScreenConfiguration config = ctx.read<ScreenConfiguration>();
   fociModel.addFocus(ScreenFocus.settings);
   if (config.isMobile()) {
     ctx.go(Routes.settings);
@@ -106,11 +97,8 @@ void gotoPDF(BuildContext ctx) {
 
 void gotoControls(BuildContext ctx) {
   debugPrint("gotoControls");
-  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
-  ScreenConfiguration config = Provider.of<ScreenConfiguration>(
-    ctx,
-    listen: false,
-  );
+  FociModel fociModel = ctx.read<FociModel>();
+  ScreenConfiguration config = ctx.read<ScreenConfiguration>();
   fociModel.addFocus(ScreenFocus.controls);
   if (config.isMobile()) {
     ctx.go(Routes.controls);
@@ -119,14 +107,14 @@ void gotoControls(BuildContext ctx) {
 
 void gotoHome(BuildContext ctx) {
   debugPrint("goto home");
-  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
+  FociModel fociModel = ctx.read<FociModel>();
   fociModel.setFocus(ScreenFocus.home);
   ctx.go(Routes.home);
 }
 
 void gotoLoad(BuildContext ctx) {
   debugPrint("goto load");
-  FociModel fociModel = Provider.of<FociModel>(ctx, listen: false);
+  FociModel fociModel = ctx.read<FociModel>();
   fociModel.setFocus(ScreenFocus.load);
   ctx.go(Routes.load);
 }

@@ -79,9 +79,9 @@ class _DesktopTableState extends State<DesktopTable> {
   }
 
   void makeControlAtWaypoint(Waypoint waypoint, bool on) async {
-    SegmentModel segment = Provider.of(context, listen: false);
+    SegmentModel segment = context.read();
     segment.makeControlAtWaypoint(waypoint, on);
-    KindsModel kinds = Provider.of(context, listen: false);
+    KindsModel kinds = context.read();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // KindsModel wants to know how many controls there are.
       kinds.updateStatistics(segment.statistics());
@@ -210,13 +210,13 @@ class _DesktopTableState extends State<DesktopTable> {
                 nextControl: nextControl(waypoints, index),
                 currentControl: w,
                 onTimeChanged: (DateTime newDateTime) async {
-                  SegmentModel segment = Provider.of(context, listen: false);
+                  SegmentModel segment = context.read();
                   segment.setControlTime(w, newDateTime);
 
                   if (!mounted) {
                     return;
                   }
-                  FutureRenderer renderer = Provider.of(context, listen: false);
+                  FutureRenderer renderer = context.read();
                   renderer.reset();
                 },
               )
@@ -236,10 +236,7 @@ class _DesktopTableState extends State<DesktopTable> {
                       setState(() {
                         if (value != null) {
                           makeControlAtWaypoint(w, value);
-                          FutureRenderer renderer = Provider.of(
-                            context,
-                            listen: false,
-                          );
+                          FutureRenderer renderer = context.read();
                           renderer.reset();
                         }
                       });
@@ -287,12 +284,11 @@ class _DesktopTableState extends State<DesktopTable> {
 
   @override
   Widget build(BuildContext context) {
-    SegmentModel model = Provider.of<SegmentModel>(context);
+    SegmentModel model = context.watch<SegmentModel>();
     debugPrint("build table for segment ${model.segment.id()}");
-    ParameterModel parameters = Provider.of<ParameterModel>(context);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      child: buildData(widget.waypoints, parameters.parameters()),
+      child: buildData(widget.waypoints, model.parameters()),
     );
   }
 }
@@ -357,8 +353,8 @@ class GPXTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SegmentModel model = Provider.of<SegmentModel>(context);
-    context.watch<ParameterModel>();
+    SegmentModel model = context.watch<SegmentModel>();
+    context.watch<SegmentModel>();
     var waypoints = model.someWaypoints(kinds);
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,

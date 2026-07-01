@@ -72,7 +72,7 @@ class _InteractiveScaffoldState extends State<InteractiveScaffold> {
   */
   @override
   Widget build(BuildContext ctx) {
-    SegmentModel track = Provider.of<SegmentModel>(ctx);
+    SegmentModel track = context.watch<SegmentModel>();
     Bridge backend = getBackend(ctx);
     return Scaffold(
       appBar: appBar(ctx),

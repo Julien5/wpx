@@ -22,14 +22,13 @@ class _CentralWidgetState extends State<CentralWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<ParameterModel>(context);
-    SegmentModel segmentModel = Provider.of<SegmentModel>(context);
-    RootModel root = Provider.of<RootModel>(context);
+    SegmentModel segmentModel = context.watch<SegmentModel>();
+    RootModel root = context.watch<RootModel>();
     Segment segment = segmentModel.segment;
     SegmentStatistics stat = root.backend.segmentStatistics(segment: segment);
     debugPrint("CENTRAL segment: ${segment.id()}: ${statisticsString(stat)}");
 
-    FutureRenderer renderer = Provider.of<FutureRenderer>(context);
+    FutureRenderer renderer = context.watch<FutureRenderer>();
     RenderOutput? renderOutput = renderer.renderOutput(RenderFunction.profile);
     table ??= Text("no waypoints");
     if (renderOutput != null) {
@@ -96,8 +95,8 @@ class _CentralPanelPDFState extends State<CentralPanelPDF>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.watch<ParameterModel>();
-    RootModel root = Provider.of(context, listen: false);
+    context.watch<SegmentModel>();
+    RootModel root = context.read();
     _tabController = TabController(
       length: root.backend.segments().length,
       vsync: this,

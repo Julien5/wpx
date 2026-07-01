@@ -12,7 +12,7 @@ class _TextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Kinds control = [Kind.controls];
-    SegmentModel model = Provider.of<SegmentModel>(context);
+    SegmentModel model = context.watch<SegmentModel>();
     List<Waypoint> waypoints = model.someWaypoints(control);
     String text =
         waypoints.isEmpty ? "no controls" : "${waypoints.length} controls";
@@ -29,7 +29,7 @@ class _TableState extends State<_Table> {
   DesktopTable? table;
   @override
   Widget build(BuildContext context) {
-    SegmentModel segmentModel = Provider.of<SegmentModel>(context);
+    SegmentModel segmentModel = context.watch<SegmentModel>();
     List<Waypoint> waypoints = segmentModel.someWaypoints([
       Kind.controls,
       Kind.gpxWaypoints,

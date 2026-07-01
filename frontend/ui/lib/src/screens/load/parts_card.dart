@@ -23,7 +23,7 @@ class PartsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext ctx) {
-    LoadScreenModel model = Provider.of<LoadScreenModel>(ctx);
+    LoadScreenModel model = ctx.watch<LoadScreenModel>();
     debugPrint("running:${model.runningJob()}");
     if (!model.hasDone(Job.parts)) {
       if (model.hasFailed(Job.parts) != null) {

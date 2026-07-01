@@ -26,10 +26,7 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
   PageCountInfo? _pages;
 
   void changePageIndex(BuildContext context, int desiredPageIndex) async {
-    ParameterModel parameters = Provider.of<ParameterModel>(
-      context,
-      listen: false,
-    );
+    SegmentModel parameters = context.read<SegmentModel>();
     _pages!.setPossiblePageIndex(desiredPageIndex);
     debugPrint("print setPossiblePageIndex: $desiredPageIndex");
     ParameterChanger changer = ParameterChanger(init: parameters.parameters());
@@ -61,21 +58,16 @@ class _PagesSliderWidgetState extends State<PagesSliderWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    SegmentModel track = Provider.of(context, listen: false);
-    ParameterModel parameterModel = Provider.of(context, listen: false);
+    SegmentModel track = context.read();
     double trackLength = track.statistics().length;
-    _pages ??= PageCountInfo(
-      trackLength,
-      parameterModel.parameters().segmentLength,
-    );
-    Parameters p = parameterModel.parameters();
+    _pages ??= PageCountInfo(trackLength, track.parameters().segmentLength);
+    Parameters p = track.parameters();
     _pages!.setParameters(p.segmentLength, p.segmentOverlap);
   }
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<SegmentModel>(context);
-    Provider.of<ParameterModel>(context);
+    context.watch<SegmentModel>();
 
     return Slider(
       min: _pages!.getMinIndex(),
@@ -99,11 +91,10 @@ class SettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ParameterModel parameterModel = Provider.of<ParameterModel>(context);
-
-    RootModel root = Provider.of(context);
+    SegmentModel segmentModel = context.watch<SegmentModel>();
+    RootModel root = context.watch();
     List<Segment> segments = root.backend.segments();
-    Parameters parameters = parameterModel.parameters();
+    Parameters parameters = segmentModel.parameters();
     String segLength = (segmentLengthWithoutOverlap(parameters) / 1000)
         .ceil()
         .toString()
@@ -171,7 +162,7 @@ class TopRow extends StatelessWidget {
   const TopRow({super.key});
   @override
   Widget build(BuildContext context) {
-    context.watch<ParameterModel>();
+    context.watch<SegmentModel>();
     return ChangeNotifierProvider(
       create: (_) => StackViewsController(exposed: [RenderFunction.wheelPages]),
       child: TrackGraphicsRow(kinds: allkinds()),
