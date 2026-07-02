@@ -7,65 +7,13 @@ import 'package:wpx/main.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/screens/home/trackfile_list_widget.dart';
 
 class _ChooseData extends StatefulWidget {
   const _ChooseData();
 
   @override
   State<_ChooseData> createState() => _ChooseDataState();
-}
-
-class TrackFileListWidget extends StatefulWidget {
-  const TrackFileListWidget({super.key});
-
-  @override
-  State<TrackFileListWidget> createState() => _TrackFileListWidgetState();
-}
-
-typedef TrackFileList = List<bridge.TrackFile>;
-
-class _TrackFileListWidgetState extends State<TrackFileListWidget> {
-  late Future<TrackFileList> _future;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _future = context.read<RootModel>().trackFiles();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<TrackFileList>(
-      future: _future,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('waiting');
-          //return const CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        final data = snapshot.data!;
-        if (data.isEmpty) {
-          return const Text('no tracks saved');
-        }
-        return ListView.builder(
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Text(data[index].toString()),
-            );
-          },
-        );
-      },
-    );
-  }
 }
 
 class _ChooseDataState extends State<_ChooseData> {
@@ -154,7 +102,7 @@ class _ChooseDataState extends State<_ChooseData> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                // TrackFileListWidget(),
+                Expanded(child: TrackFileListWidget()),
               ],
             ),
           ),
