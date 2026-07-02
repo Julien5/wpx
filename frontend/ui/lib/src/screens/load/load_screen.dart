@@ -186,7 +186,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
         await context.read<SegmentModel>().createTrackFile();
     assert(root.isLoaded());
     debugPrint("create: set user input ${trackFile.name}");
-    await root.setTrackFile(trackFile);
+    await root.setTrackFile(trackFile, load: false);
     assert(root.isLoaded());
     if (context.mounted) {
       gotoOverview(context);

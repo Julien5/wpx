@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/main.dart';
+import 'package:wpx/src/models/kindsmodel.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
@@ -58,7 +59,14 @@ class _ChooseDataState extends State<_ChooseData> {
   void onTrackFileClicked(bridge.TrackFile trackFile) async {
     debugPrint("selected: ${trackFile.name}");
     RootModel root = context.read<RootModel>();
-    await root.setTrackFile(trackFile);
+    await root.setTrackFile(trackFile, load: true);
+    int missingOSM = (await root.backend.loadOsmWithoutDownload()).toInt();
+    if (mounted == false) {
+      return;
+    }
+    if (missingOSM == 0) {
+      context.read<KindsModel>().osmIsLoaded = true;
+    }
     if (!mounted) return;
     gotoOverview(context);
   }

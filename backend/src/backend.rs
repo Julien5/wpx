@@ -79,7 +79,7 @@ impl Backend {
         }
     }
 
-    async fn load_osm(&self, try_download: bool) -> Result<(), TrackError> {
+    async fn load_osm(&self, try_download: bool) -> Result<usize, TrackError> {
         {
             let lock = self.osm_cancel_token.read().unwrap();
             match *lock {
@@ -113,7 +113,7 @@ impl Backend {
             *lock = None;
         }
 
-        let osmpoints = match result {
+        let (osmpoints, missing_box_count) = match result {
             Ok(p) => {
                 if std::path::Path::new(&"/tmp/force_error").exists() {
                     return Err(TrackError::OSMDownloadFailed);
@@ -133,15 +133,15 @@ impl Backend {
             .unwrap()
             .load_osm(osmpoints);
         self.send("osm:done");
-        Ok(())
+        Ok(missing_box_count)
     }
 
-    pub async fn load_osm_with_download(&self) -> Result<(), TrackError> {
+    pub async fn load_osm_with_download(&self) -> Result<usize, TrackError> {
         let try_dowload = true;
         self.load_osm(try_dowload).await
     }
 
-    pub async fn load_osm_without_download(&self) -> Result<(), TrackError> {
+    pub async fn load_osm_without_download(&self) -> Result<usize, TrackError> {
         let try_dowload = true;
         self.load_osm(!try_dowload).await
     }
@@ -329,7 +329,6 @@ impl Backend {
             packet_provider,
         };
         *self.backend_data.write().unwrap() = Some(data);
-        let _ = self.load_osm_without_download().await;
         Ok(())
     }
 

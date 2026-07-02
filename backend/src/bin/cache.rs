@@ -93,7 +93,8 @@ async fn main() -> anyhow::Result<()> {
     };
 
     let try_download = true;
-    if let Ok(chunk_data) = get_response(&request, &side, try_download).await {
+    if let Ok((chunk_data, _missing_box_count)) = get_response(&request, &side, try_download).await
+    {
         for (tile, tile_features) in &chunk_data.data.tiles {
             log::trace!("tile: {:?} len:{}", tile, tile_features.len(),);
         }

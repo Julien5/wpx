@@ -46,7 +46,7 @@ pub async fn download_for_track(
     track: &Track,
     side: &DownloadSideData<'_>,
     try_download: bool,
-) -> GenericResult<InputPointMap> {
+) -> GenericResult<(InputPointMap, usize)> {
     let (tiles, chunks) = track.boxes(0f64, track.total_distance());
     log::trace!("there are {} tiles on the track", tiles.len());
     log::trace!("there are {} chunks on the track", chunks.len());
@@ -55,7 +55,7 @@ pub async fn download_for_track(
     boxes.push(Boxes::from_chunks(&chunks));
     let request = Request { boxes };
     match get_response(&request, &side, try_download).await {
-        Ok(chunk_data) => {
+        Ok((chunk_data, missing_box_count)) => {
             let mut map = BTreeMap::new();
             for (tile, tile_features) in &chunk_data.data.tiles {
                 for f in tile_features {
@@ -71,7 +71,7 @@ pub async fn download_for_track(
                         .push(i);
                 }
             }
-            Ok(InputPointMap { map })
+            Ok((InputPointMap { map }, missing_box_count))
         }
         Err(e) => {
             log::error!("download error: {:?}", e);

@@ -38,10 +38,12 @@ class RootModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setTrackFile(bridge.TrackFile f) async {
+  Future<void> setTrackFile(bridge.TrackFile f, {required bool load}) async {
     _trackFile = f;
     _pendingContent = null;
-    await backend.loadTrackfile(trackfile: f);
+    if (load) {
+      await backend.loadTrackfile(trackfile: f);
+    }
     notifyListeners();
   }
 

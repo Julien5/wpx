@@ -91,16 +91,16 @@ pub async fn get_response(
     request: &Request,
     side: &DownloadSideData<'_>,
     try_download: bool,
-) -> GenericResult<ChunkData> {
+) -> GenericResult<(ChunkData, usize)> {
     let (chunk_data, missing_request) = read_cache(request, side.logger).await;
     if missing_request.boxes.is_empty() {
         log::trace!("complete cache hit.");
-        return Ok(chunk_data);
+        return Ok((chunk_data, 0));
     }
     if !try_download {
         log::trace!("incomplete cache hit, and do not try to download osm data.");
         // problem: we cannot return an error *and* the data.
-        return Ok(chunk_data);
+        return Ok((chunk_data, missing_request.boxes.len()));
     }
 
     log::trace!("incomplete cache hit.");
@@ -154,7 +154,7 @@ pub async fn get_response(
     let (chunk_data, missing) = super::request_cache::read_cache(&request, side.logger).await;
     if missing.boxes.is_empty() {
         log::trace!("complete cache hit.");
-        return Ok(chunk_data);
+        return Ok((chunk_data, 0));
     }
     log::trace!("incomplete cache hit.");
     Err(TrackError::OSMDownloadFailed.into())

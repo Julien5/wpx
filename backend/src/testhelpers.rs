@@ -59,7 +59,7 @@ fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Paramete
     }
 }
 
-async fn load_osm(track: &Track, collection: &mut PointCollection) {
+async fn load_osm(track: &Track, collection: &mut PointCollection) -> usize {
     let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
     let logger = std::sync::RwLock::new(Some(b));
     let token = CancellationToken::new();
@@ -69,11 +69,12 @@ async fn load_osm(track: &Track, collection: &mut PointCollection) {
     };
     let try_download = true;
     // use try_download if necessary.
-    let mut osmpoints = osm::download_for_track(&track, &side, !try_download)
+    let (mut osmpoints, missing_box_count) = osm::download_for_track(&track, &side, !try_download)
         .await
         .unwrap();
     track.project_map(&mut osmpoints);
     collection.import_osm(&osmpoints.as_vector());
+    missing_box_count
 }
 
 pub fn load_file(filename: &str) -> (Track, GpxData) {
