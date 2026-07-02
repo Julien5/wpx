@@ -4,7 +4,8 @@ import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
 class TrackFileListWidget extends StatefulWidget {
-  const TrackFileListWidget({super.key});
+  final void Function(bridge.TrackFile) onTrackFileSelected;
+  const TrackFileListWidget({super.key, required this.onTrackFileSelected});
 
   @override
   State<TrackFileListWidget> createState() => _TrackFileListWidgetState();
@@ -45,9 +46,13 @@ class _TrackFileListWidgetState extends State<TrackFileListWidget> {
         return ListView.builder(
           itemCount: data.length,
           itemBuilder: (context, index) {
+            final trackFile = data[index];
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Text(data[index].name),
+              child: ElevatedButton(
+                onPressed: () => widget.onTrackFileSelected(trackFile),
+                child: Text(trackFile.name),
+              ),
             );
           },
         );

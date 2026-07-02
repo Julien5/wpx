@@ -55,6 +55,10 @@ class _ChooseDataState extends State<_ChooseData> {
     onDone(PendingContent.makeFromBytes([bytes]));
   }
 
+  void onTrackFileSelected(bridge.TrackFile trackFile) {
+    debugPrint("selected: $trackFile.name");
+  }
+
   void onDone(PendingContent userInput) async {
     RootModel root = context.read<RootModel>();
     root.setPendingContent(userInput);
@@ -102,7 +106,11 @@ class _ChooseDataState extends State<_ChooseData> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                Expanded(child: TrackFileListWidget()),
+                Expanded(
+                  child: TrackFileListWidget(
+                    onTrackFileSelected: onTrackFileSelected,
+                  ),
+                ),
               ],
             ),
           ),
