@@ -329,6 +329,7 @@ impl Backend {
             packet_provider,
         };
         *self.backend_data.write().unwrap() = Some(data);
+        let _ = self.load_osm_without_download().await;
         Ok(())
     }
 

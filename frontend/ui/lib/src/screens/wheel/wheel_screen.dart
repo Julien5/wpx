@@ -61,10 +61,11 @@ class WheelScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    try {
-      context.watch<SegmentModel>();
-    } catch (e) {
-      debugPrint("could not watch segment model: $e");
+    final SegmentModel? model = context.watch<SegmentModel?>();
+    if (model == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
     return _WheelScaffold();
   }

@@ -21,7 +21,7 @@ class _ChooseDataState extends State<_ChooseData> {
   String? errorMessage;
   bool loading = false;
 
-  void chooseGPX() async {
+  void onChooseGPXClicked() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ["gpx"],
@@ -44,24 +44,29 @@ class _ChooseDataState extends State<_ChooseData> {
           bytes.add(file.bytes!.buffer.asInt8List().toList());
         }
       }
-      onDone(PendingContent.makeFromBytes(bytes));
+      loadPendingContent(bytes);
     } on Exception catch (_, e) {
       debugPrint(e.toString());
     }
   }
 
-  void chooseDemo() {
+  void onSampleClicked() {
     List<int> bytes = bridge.demoBytes();
-    onDone(PendingContent.makeFromBytes([bytes]));
+    loadPendingContent([bytes]);
   }
 
-  void onTrackFileSelected(bridge.TrackFile trackFile) {
-    debugPrint("selected: $trackFile.name");
-  }
-
-  void onDone(PendingContent userInput) async {
+  void onTrackFileClicked(bridge.TrackFile trackFile) {
+    debugPrint("selected: ${trackFile.name}");
     RootModel root = context.read<RootModel>();
-    root.setPendingContent(userInput);
+    root.setTrackFile(trackFile);
+    if (!context.mounted) return;
+    gotoOverview(context);
+  }
+
+  void loadPendingContent(List<List<int>> bytes) async {
+    RootModel root = context.read<RootModel>();
+    PendingContent content = PendingContent.makeFromBytes(bytes);
+    root.setPendingContent(content);
     gotoLoad(context);
   }
 
@@ -81,7 +86,7 @@ class _ChooseDataState extends State<_ChooseData> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: loading ? null : () => chooseGPX(),
+                      onPressed: loading ? null : () => onChooseGPXClicked(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         side: const BorderSide(
@@ -108,7 +113,7 @@ class _ChooseDataState extends State<_ChooseData> {
                 const SizedBox(height: 20),
                 Expanded(
                   child: TrackFileListWidget(
-                    onTrackFileSelected: onTrackFileSelected,
+                    onTrackFileSelected: onTrackFileClicked,
                   ),
                 ),
               ],
@@ -118,7 +123,7 @@ class _ChooseDataState extends State<_ChooseData> {
             bottom: 16,
             right: 16,
             child: ElevatedButton(
-              onPressed: loading ? null : () => chooseDemo(),
+              onPressed: loading ? null : () => onSampleClicked(),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),

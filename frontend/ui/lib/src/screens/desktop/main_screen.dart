@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/screen_configuration.dart';
+import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/screens/desktop/central_panel.dart';
 import 'package:wpx/src/screens/desktop/side_panel.dart';
@@ -14,6 +15,12 @@ class _MainScaffold extends StatelessWidget {
       thickness: 1,
       width: 1, // This is the horizontal space the widget occupies
     );
+
+    final SegmentModel? model = ctx.watch<SegmentModel?>();
+    if (model == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
