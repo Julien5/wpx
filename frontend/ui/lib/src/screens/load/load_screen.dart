@@ -180,11 +180,20 @@ class _BodyWidgetState extends State<_BodyWidget> {
     } catch (e) {
       developer.log("[SegmentModel not yet available]");
     }
-    await context.read<SegmentModel>().saveTrackFile();
-    if (!context.mounted) {
-      return;
+    RootModel root = context.read<RootModel>();
+    assert(root.isLoaded());
+    bridge.TrackFile trackFile =
+        await context.read<SegmentModel>().createTrackFile();
+    assert(root.isLoaded());
+    debugPrint("create: set user input ${trackFile.name}");
+    assert(root.isLoaded());
+    root.setTrackFile(trackFile);
+    assert(root.isLoaded());
+    root.notify();
+    assert(root.isLoaded());
+    if (context.mounted) {
+      gotoOverview(context);
     }
-    gotoOverview(context);
   }
 
   void onHomePressed(BuildContext context) {
@@ -290,7 +299,7 @@ class _LoadScaffoldState extends State<_LoadScaffold> {
 }
 
 class _LoadScreenProviders extends MultiProvider {
-  final UserInput userInput;
+  final PendingContent userInput;
   _LoadScreenProviders({required this.userInput, required Widget child})
     : super(
         providers: [
@@ -317,7 +326,7 @@ class _LoadScreenProviders extends MultiProvider {
 }
 
 class LoadScreen extends StatelessWidget {
-  final UserInput userInput;
+  final PendingContent userInput;
   const LoadScreen({super.key, required this.userInput});
 
   @override

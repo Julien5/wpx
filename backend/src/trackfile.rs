@@ -1,4 +1,5 @@
 use crate::{
+    backend::SegmentStatistics,
     cache,
     error::{GenericResult, TrackError},
     gpsdata::GpxData,
@@ -31,13 +32,27 @@ impl TrackFile {
         serde_json::from_str(data).map_err(|_| TrackError::IOError.into())
     }
 
-    pub fn as_string(&self) -> GenericResult<String> {
-        serde_json::to_string_pretty(&self).map_err(|_| TrackError::IOError.into())
+    pub fn as_string(&self) -> String {
+        serde_json::to_string_pretty(&self).unwrap()
     }
     pub async fn write_meta(&self) -> GenericResult<()> {
         let filename = format!("{}.meta", self.number);
-        let _ = cache::write(&cache::Location::UserData, &filename, self.as_string()?).await;
+        let _ = cache::write(&cache::Location::UserData, &filename, self.as_string()).await;
         Ok(())
+    }
+    pub async fn create(name: &String, stats: &SegmentStatistics) -> GenericResult<Self> {
+        let mut entries = cache::allfiles(&cache::Location::UserData).await?;
+        entries.retain(|e| e.ends_with(&".meta"));
+        let ret = TrackFile {
+            number: entries.len(),
+            name: name.clone(),
+            last_modified: String::new(),
+            length: stats.length,
+            elevation_gain: stats.elevation_gain,
+        };
+
+        let _ = ret.write_meta().await?;
+        Ok(ret)
     }
 }
 
@@ -69,6 +84,7 @@ pub async fn write_smallparameters(
         data.as_string().unwrap(),
     )
     .await
+    // TODO: update last modified in meta.
 }
 
 pub async fn read_smallparameters(trackfile: &TrackFile) -> Option<SmallParameters> {
@@ -188,6 +204,7 @@ pub async fn write_trackdata(trackfile: &TrackFile, data: &TrackDataset) -> Gene
         data.as_string().unwrap(),
     )
     .await
+    // TODO: update last modified in meta.
 }
 
 pub async fn read_trackdata(trackfile: &TrackFile) -> Option<GpxData> {

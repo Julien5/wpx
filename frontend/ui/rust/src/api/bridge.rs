@@ -289,7 +289,15 @@ impl Bridge {
         self.backend.trackfiles().await
     }
 
-    pub async fn load_persist(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+    pub async fn create_trackfile(&self) -> Result<TrackFile, TrackError> {
+        self.backend.create_trackfile().await
+    }
+
+    pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
+        self.backend.load_contents(contents)
+    }
+
+    pub async fn load_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
         self.backend.read_trackfile(trackfile).await
     }
 
@@ -307,10 +315,6 @@ impl Bridge {
 
     pub async fn save_gpxdata(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
         self.backend.save_gpxdata(trackfile).await
-    }
-
-    pub async fn load_contents(&mut self, contents: &Vec<Vec<u8>>) -> Result<(), TrackError> {
-        self.backend.load_contents(contents)
     }
 
     #[frb(sync)]

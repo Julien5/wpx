@@ -28,7 +28,7 @@ class MobileScreen extends StatelessWidget {
     debugPrint("mobile focus on: ${foci.foci}");
     if (foci.contains(ScreenFocus.load)) {
       RootModel root = context.read<RootModel>();
-      return LoadScreen(userInput: root.userInput!);
+      return LoadScreen(userInput: root.pendingContent()!);
     }
     if (foci.contains(ScreenFocus.settings)) {
       return SettingsScreen();

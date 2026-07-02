@@ -26,7 +26,7 @@ class DesktopScreen extends StatelessWidget {
       return HomeScreen();
     }
     if (foci.contains(ScreenFocus.load)) {
-      return LoadScreen(userInput: root.userInput!);
+      return LoadScreen(userInput: root.pendingContent()!);
     }
     return MainScreen();
   }

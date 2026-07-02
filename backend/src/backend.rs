@@ -250,6 +250,34 @@ impl Backend {
         Ok(())
     }
 
+    pub async fn create_trackfile(&self) -> Result<TrackFile, TrackError> {
+        log::trace!("[create_trackfile]{}", self.loaded());
+        assert!(self.loaded());
+        let name = {
+            let lock = self.backend_data.read().unwrap();
+            let track = &lock.as_ref().unwrap().track;
+            debug_assert!(!track.parts.is_empty());
+            track.parts.first().as_ref().unwrap().name.clone()
+        };
+        log::trace!("[create_trackfile]{}", self.loaded());
+        let track = self.trackSegment();
+        let stats = self.segment_statistics(&track);
+        log::trace!("[create_trackfile]{}", self.loaded());
+        let trackFile = match trackfile::TrackFile::create(&name, &stats).await {
+            Ok(trackfile) => trackfile,
+            Err(e) => {
+                log::error!("write user data failed: {:?}", e);
+                return Err(TrackError::IOError.into());
+            }
+        };
+        log::trace!("[create_trackfile]{}", self.loaded());
+        let _ = self.save_gpxdata(&trackFile).await;
+        let _ = self.save_small_parameters(&trackFile).await;
+        log::trace!("[create_trackfile]{}", self.loaded());
+        assert!(self.loaded());
+        Ok(trackFile)
+    }
+
     pub async fn save_gpxdata(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
         let data = self
             .backend_data

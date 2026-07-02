@@ -15,7 +15,13 @@ class SegmentModel extends ChangeNotifier {
     required this.segment,
     required this.backend,
     required this.trackFile,
-  });
+  }) {
+    if (trackFile == null) {
+      debugPrint("create no trackFile");
+    } else {
+      debugPrint("create  trackFile=${trackFile!}");
+    }
+  }
 
   @override
   void notifyListeners() {
@@ -73,11 +79,10 @@ class SegmentModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveTrackFile() async {
-    if (trackFile != null) {
-      await backend.saveGpxdata(trackfile: trackFile!);
-      await backend.saveSmallParameters(trackfile: trackFile!);
-    }
+  Future<bridge.TrackFile> createTrackFile() async {
+    assert(backend.isLoaded());
+    bridge.TrackFile trackFile = await backend.createTrackfile();
+    return trackFile;
   }
 
   void setParameters(bridge.Parameters p) async {

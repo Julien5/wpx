@@ -30,7 +30,7 @@ class LoadScreenModel extends ChangeNotifier {
   final bridge.Bridge backend;
   final RootModel rootModel;
   final EventModel events;
-  final UserInput userInput;
+  final PendingContent userInput;
 
   List<bridge.TrackPart>? _trackParts;
 
@@ -179,8 +179,9 @@ class LoadScreenModel extends ChangeNotifier {
       Future.delayed(const Duration(milliseconds: 250), () {
         startJob(nextJob);
       });
-    } else if (rootModel.isLoaded()) {
-      // trigger rebuild of TrackProvider in main.dart.
+    } else {
+      // trigger rebuild of the TrackProvider (main.dart)
+      // needed because of the statistics in GPXCard.
       rootModel.notify();
     }
   }

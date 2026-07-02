@@ -6,24 +6,13 @@ import 'package:flutter/widgets.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
-class UserInput {
+class PendingContent {
   List<List<int>>? _bytes;
-  bridge.TrackFile? _trackFile;
 
-  static UserInput makeFromTrackFile(bridge.TrackFile trackFile) {
-    var ret = UserInput();
-    ret._trackFile = trackFile;
-    return ret;
-  }
-
-  static UserInput makeFromBytes(List<List<int>> bytes) {
-    var ret = UserInput();
+  static PendingContent makeFromBytes(List<List<int>> bytes) {
+    var ret = PendingContent();
     ret._bytes = bytes;
     return ret;
-  }
-
-  bridge.TrackFile? trackFile() {
-    return _trackFile;
   }
 
   List<Uint8List> contents() {
@@ -33,7 +22,8 @@ class UserInput {
 
 class RootModel extends ChangeNotifier {
   final bridge.Bridge backend;
-  UserInput? userInput;
+  PendingContent? _pendingContent;
+  bridge.TrackFile? _trackFile;
 
   RootModel({required this.backend});
 
@@ -41,9 +31,16 @@ class RootModel extends ChangeNotifier {
     return backend;
   }
 
-  void setUserInput(UserInput u) {
-    userInput = u;
+  void setPendingContent(PendingContent u) {
+    _pendingContent = u;
+    _trackFile = null;
     backend.unload();
+    notifyListeners();
+  }
+
+  void setTrackFile(bridge.TrackFile f) {
+    _trackFile = f;
+    _pendingContent = null;
     notifyListeners();
   }
 
@@ -52,10 +49,11 @@ class RootModel extends ChangeNotifier {
   }
 
   bridge.TrackFile? trackFile() {
-    if (userInput == null) {
-      return null;
-    }
-    return userInput!.trackFile();
+    return _trackFile;
+  }
+
+  PendingContent? pendingContent() {
+    return _pendingContent;
   }
 
   Future<List<bridge.TrackFile>> trackFiles() async {

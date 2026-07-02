@@ -69,7 +69,7 @@ class _TrackFileListWidgetState extends State<TrackFileListWidget> {
 }
 
 class _ChooseDataState extends State<_ChooseData> {
-  UserInput? findResult;
+  PendingContent? findResult;
   String? errorMessage;
   bool loading = false;
 
@@ -96,7 +96,7 @@ class _ChooseDataState extends State<_ChooseData> {
           bytes.add(file.bytes!.buffer.asInt8List().toList());
         }
       }
-      onDone(UserInput.makeFromBytes(bytes));
+      onDone(PendingContent.makeFromBytes(bytes));
     } on Exception catch (_, e) {
       debugPrint(e.toString());
     }
@@ -104,12 +104,12 @@ class _ChooseDataState extends State<_ChooseData> {
 
   void chooseDemo() {
     List<int> bytes = bridge.demoBytes();
-    onDone(UserInput.makeFromBytes([bytes]));
+    onDone(PendingContent.makeFromBytes([bytes]));
   }
 
-  void onDone(UserInput userInput) async {
+  void onDone(PendingContent userInput) async {
     RootModel root = context.read<RootModel>();
-    root.setUserInput(userInput);
+    root.setPendingContent(userInput);
     gotoLoad(context);
   }
 
@@ -154,7 +154,7 @@ class _ChooseDataState extends State<_ChooseData> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                TrackFileListWidget(),
+                // TrackFileListWidget(),
               ],
             ),
           ),
