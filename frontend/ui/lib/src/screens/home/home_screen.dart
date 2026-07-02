@@ -55,11 +55,11 @@ class _ChooseDataState extends State<_ChooseData> {
     loadPendingContent([bytes]);
   }
 
-  void onTrackFileClicked(bridge.TrackFile trackFile) {
+  void onTrackFileClicked(bridge.TrackFile trackFile) async {
     debugPrint("selected: ${trackFile.name}");
     RootModel root = context.read<RootModel>();
-    root.setTrackFile(trackFile);
-    if (!context.mounted) return;
+    await root.setTrackFile(trackFile);
+    if (!mounted) return;
     gotoOverview(context);
   }
 
