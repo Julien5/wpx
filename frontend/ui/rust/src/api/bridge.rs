@@ -227,6 +227,7 @@ pub struct _TrackFile {
     pub number: usize,
     pub name: String,
     pub last_modified: String,
+    pub start_time: String,
     pub length: f64,
     pub elevation_gain: f64,
 }

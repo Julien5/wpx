@@ -9,6 +9,7 @@ use crate::gpsdata::GpxData;
 use crate::math::IntegerSize2D;
 use crate::osm;
 use crate::osm::DownloadSideData;
+use crate::parameters::current_time_as_string;
 use crate::parameters::Parameters;
 use crate::parameters::RenderFunction;
 use crate::parameters::RenderInput;
@@ -358,13 +359,15 @@ impl Backend {
     }
 
     pub async fn save_small_parameters(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
-        let small_parameters = self
+        let mut small_parameters = self
             .backend_data
             .read()
             .unwrap()
             .as_ref()
             .unwrap()
             .small_parameters_with_trackfile(trackfile);
+        small_parameters.trackfile.last_modified = current_time_as_string();
+        small_parameters.trackfile.start_time = small_parameters.parameters.start_time.clone();
         match small_parameters.write().await {
             Ok(()) => Ok(()),
             Err(e) => {

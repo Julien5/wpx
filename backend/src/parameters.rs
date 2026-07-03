@@ -162,3 +162,7 @@ pub fn parse_time(data: &str) -> DateTime {
 pub fn time_to_iso8601(time: &DateTime) -> String {
     time.to_rfc3339()
 }
+
+pub fn current_time_as_string() -> String {
+    time_to_iso8601(&chrono::Local::now())
+}

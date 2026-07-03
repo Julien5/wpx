@@ -183,7 +183,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
       return Text("loading..");
     }
 
-    String startDateText = DateFormat('dd/MM').format(startTime!);
+    String startDateText = formatDate(startTime!);
     String startTimeText = formatTime(startTime!);
     DateTime endTime = parseDateTime(statistics.endTime);
     String endTimeText = formatTime(endTime);

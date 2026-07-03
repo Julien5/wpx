@@ -22,8 +22,6 @@ class FileListWidget extends StatefulWidget {
 }
 
 class _FileListWidgetState extends State<FileListWidget> {
-  int _sortColumnIndex = 0;
-  bool _sortAscending = true;
   late List<TrackFile> _files;
 
   @override
@@ -35,9 +33,6 @@ class _FileListWidgetState extends State<FileListWidget> {
 
   void _sort(int columnIndex, {required bool ascending}) {
     setState(() {
-      _sortColumnIndex = columnIndex;
-      _sortAscending = ascending;
-
       switch (columnIndex) {
         case 0:
           _files.sort(
@@ -113,6 +108,15 @@ class _FileListWidgetState extends State<FileListWidget> {
     return '${(meters / 1000).toStringAsFixed(1)} km';
   }
 
+  String _formatDatetime(String datetimeData) {
+    try {
+      DateTime parsed = parseDateTime(datetimeData);
+      return formatDate(parsed);
+    } catch (e) {
+      return "/";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Bridge backend = getBackend(context);
@@ -162,7 +166,7 @@ class _FileListWidgetState extends State<FileListWidget> {
                 ),
               ),
               DataCell(Text(_formatLength(file.length))),
-              DataCell(Text("TODO")),
+              DataCell(Text(_formatDatetime(file.startTime))),
               DataCell(
                 IconButton(
                   icon: const Icon(Icons.delete_outline, size: 20),

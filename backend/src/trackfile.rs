@@ -4,7 +4,7 @@ use crate::{
     error::{GenericResult, TrackError},
     gpsdata::GpxData,
     inputpoint::InputPoint,
-    parameters::Parameters,
+    parameters::{current_time_as_string, Parameters},
 };
 use serde::{Deserialize, Serialize};
 
@@ -13,6 +13,7 @@ pub struct TrackFile {
     pub number: usize,
     pub name: String,
     pub last_modified: String,
+    pub start_time: String,
     pub length: f64,
     pub elevation_gain: f64,
 }
@@ -49,16 +50,20 @@ impl SmallParameters {
     pub async fn create(name: &String, stats: &SegmentStatistics) -> GenericResult<TrackFile> {
         let mut entries = cache::list(&cache::Location::UserData).await?;
         entries.retain(|e| e.ends_with(&SMALLPARAMETERS_FILENAME));
+
+        let parameters = Parameters::default();
+
         let trackfile = TrackFile {
             number: entries.len(),
             name: name.clone(),
-            last_modified: String::new(),
+            last_modified: current_time_as_string(),
+            start_time: parameters.start_time.clone(),
             length: stats.length,
             elevation_gain: stats.elevation_gain,
         };
 
         let small_parameters = SmallParameters {
-            parameters: Parameters::default(),
+            parameters: parameters.clone(),
             controls: Vec::new(),
             trackfile: trackfile.clone(),
         };
@@ -100,7 +105,6 @@ impl SmallParameters {
             self.as_string().unwrap(),
         )
         .await
-        // TODO: update last modified in meta.
     }
 
     pub async fn read(trackfile: &TrackFile) -> Option<Self> {

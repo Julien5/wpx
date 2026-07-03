@@ -217,6 +217,10 @@ String formatTime(DateTime t) {
   return DateFormat('HH:mm').format(_roundToMinute(t));
 }
 
+String formatDate(DateTime t) {
+  return DateFormat('dd/MM').format(t);
+}
+
 String formatDuration(Duration duration) {
   // https://stackoverflow.com/questions/54775097/formatting-a-duration-as-hhmmss
   String negativeSign = duration.isNegative ? '-' : '';
