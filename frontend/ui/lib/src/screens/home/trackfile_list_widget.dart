@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
+import 'package:wpx/src/screens/home/filelist.dart';
 
 class TrackFileListWidget extends StatefulWidget {
   final void Function(bridge.TrackFile) onTrackFileSelected;
@@ -39,22 +40,13 @@ class _TrackFileListWidgetState extends State<TrackFileListWidget> {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
-        final data = snapshot.data!;
-        if (data.isEmpty) {
+        final filelist = snapshot.data!;
+        if (filelist.isEmpty) {
           return const Text('no tracks saved');
         }
-        return ListView.builder(
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            final trackFile = data[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: ElevatedButton(
-                onPressed: () => widget.onTrackFileSelected(trackFile),
-                child: Text(trackFile.name),
-              ),
-            );
-          },
+        return FileListWidget(
+          files: filelist,
+          onTrackFileSelected: widget.onTrackFileSelected,
         );
       },
     );

@@ -23,25 +23,11 @@ pub enum Location {
     OsmCache,
 }
 
-#[cfg(not(target_arch = "wasm32"))]
-pub async fn write(b: &Location, filename: &str, data: String) -> GenericResult<()> {
-    filesystem::write(&filesystem::Directory::from_location(b), filename, data)
-}
+// read
 
 #[cfg(not(target_arch = "wasm32"))]
 pub async fn read(b: &Location, filename: &str) -> GenericResult<String> {
     filesystem::read(&filesystem::Directory::from_location(b), filename)
-}
-
-#[cfg(target_arch = "wasm32")]
-pub async fn write(b: &Location, filename: &str, data: String) -> GenericResult<()> {
-    match indexdb::write(&indexdb::IndexdbLocation::from_location(b), filename, data).await {
-        Ok(()) => Ok(()),
-        Err(e) => {
-            log::error!("error: {:?}", e);
-            return Err(crate::error::TrackError::IOError.into());
-        }
-    }
 }
 
 #[cfg(target_arch = "wasm32")]
@@ -55,15 +41,53 @@ pub async fn read(b: &Location, filename: &str) -> GenericResult<String> {
     }
 }
 
+// write
+
 #[cfg(not(target_arch = "wasm32"))]
-pub async fn allfiles(b: &Location) -> GenericResult<Vec<String>> {
+pub async fn write(b: &Location, filename: &str, data: String) -> GenericResult<()> {
+    filesystem::write(&filesystem::Directory::from_location(b), filename, data)
+}
+
+#[cfg(target_arch = "wasm32")]
+pub async fn write(b: &Location, filename: &str, data: String) -> GenericResult<()> {
+    match indexdb::write(&indexdb::IndexdbLocation::from_location(b), filename, data).await {
+        Ok(()) => Ok(()),
+        Err(e) => {
+            log::error!("error: {:?}", e);
+            return Err(crate::error::TrackError::IOError.into());
+        }
+    }
+}
+
+// list
+
+#[cfg(not(target_arch = "wasm32"))]
+pub async fn list(b: &Location) -> GenericResult<Vec<String>> {
     filesystem::allfiles(&filesystem::Directory::from_location(b))
 }
 
 #[cfg(target_arch = "wasm32")]
-pub async fn allfiles(b: &Location) -> GenericResult<Vec<String>> {
+pub async fn list(b: &Location) -> GenericResult<Vec<String>> {
     match indexdb::allfiles(&indexdb::IndexdbLocation::from_location(b)).await {
         Ok(keys) => Ok(keys),
+        Err(e) => {
+            log::error!("error: {:?}", e);
+            Err(crate::error::TrackError::IOError.into())
+        }
+    }
+}
+
+// remove
+
+#[cfg(not(target_arch = "wasm32"))]
+pub async fn remove(b: &Location, filename: &str) -> GenericResult<()> {
+    filesystem::remove(&filesystem::Directory::from_location(b), filename)
+}
+
+#[cfg(target_arch = "wasm32")]
+pub async fn remove(b: &Location, filename: &str) -> GenericResult<()> {
+    match indexdb::remove(&indexdb::IndexdbLocation::from_location(b), filename).await {
+        Ok(()) => Ok(()),
         Err(e) => {
             log::error!("error: {:?}", e);
             Err(crate::error::TrackError::IOError.into())

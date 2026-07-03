@@ -20,6 +20,7 @@ use crate::point_collection::PacketProvider;
 use crate::speed;
 use crate::track::Track;
 use crate::trackfile;
+use crate::trackfile::SmallParameters;
 use crate::trackfile::TrackFile;
 use crate::waypoint::Waypoint;
 use std::sync::RwLock;
@@ -263,7 +264,7 @@ impl Backend {
         let track = self.trackSegment();
         let stats = self.segment_statistics(&track);
         log::trace!("[create_trackfile]{}", self.loaded());
-        let trackFile = match trackfile::TrackFile::create(&name, &stats).await {
+        let trackFile = match trackfile::SmallParameters::create(&name, &stats).await {
             Ok(trackfile) => trackfile,
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);
@@ -296,7 +297,31 @@ impl Backend {
     }
 
     pub async fn trackfiles(&self) -> Result<Vec<TrackFile>, TrackError> {
-        trackfile::TrackFile::read_all()
+        trackfile::SmallParameters::list()
+            .await
+            .map_err(|_| TrackError::IOError.into())
+    }
+
+    pub async fn remove_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+        SmallParameters::remove(trackfile)
+            .await
+            .map_err(|_| TrackError::IOError.into())
+    }
+
+    pub async fn update_trackfile_name(
+        &self,
+        trackfile: &TrackFile,
+        name: &str,
+    ) -> Result<TrackFile, TrackError> {
+        let mut small_parameters = self
+            .backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .small_parameters_with_trackfile(trackfile);
+        small_parameters
+            .update_name(name)
             .await
             .map_err(|_| TrackError::IOError.into())
     }
@@ -311,7 +336,7 @@ impl Backend {
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
         }
-        let smalldata = match trackfile::read_smallparameters(trackfile).await {
+        let smalldata = match trackfile::SmallParameters::read(trackfile).await {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
         };
@@ -333,14 +358,14 @@ impl Backend {
     }
 
     pub async fn save_small_parameters(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
-        let data = self
+        let small_parameters = self
             .backend_data
             .read()
             .unwrap()
             .as_ref()
             .unwrap()
-            .small_parameters();
-        match trackfile::write_smallparameters(trackfile, &data).await {
+            .small_parameters_with_trackfile(trackfile);
+        match small_parameters.write().await {
             Ok(()) => Ok(()),
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);

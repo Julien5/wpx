@@ -122,3 +122,16 @@ pub fn write(directory: &Directory, filename: &str, data: String) -> GenericResu
         }
     }
 }
+
+pub fn remove(directory: &Directory, filename: &str) -> GenericResult<()> {
+    let abspath = format!("{}/{}", directory.name(), filename);
+    let path = Path::new(&abspath);
+    log::trace!("remove: [{}]", abspath);
+    match std::fs::remove_file(path) {
+        Ok(()) => Ok(()),
+        Err(e) => {
+            log::error!("error removing in {}: {:?}", directory.name(), e);
+            Err(TrackError::IOError.into())
+        }
+    }
+}

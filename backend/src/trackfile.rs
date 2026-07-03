@@ -17,33 +17,39 @@ pub struct TrackFile {
     pub elevation_gain: f64,
 }
 
-impl TrackFile {
-    pub async fn read_all() -> GenericResult<Vec<TrackFile>> {
-        let mut entries = cache::allfiles(&cache::Location::UserData).await?;
-        entries.retain(|e| e.ends_with(&".meta"));
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct SmallParameters {
+    pub parameters: Parameters,
+    pub controls: Vec<InputPoint>,
+    pub trackfile: TrackFile,
+}
+
+static SMALLPARAMETERS_FILENAME: &'static str = "small-parameters";
+impl SmallParameters {
+    fn from_string(data: &str) -> Result<Self, serde_json::Error> {
+        serde_json::from_str(data)
+    }
+
+    fn as_string(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string_pretty(&self)
+    }
+
+    pub async fn list() -> GenericResult<Vec<TrackFile>> {
+        let mut entries = cache::list(&cache::Location::UserData).await?;
+        entries.retain(|e| e.ends_with(&SMALLPARAMETERS_FILENAME));
         let mut ret = Vec::new();
         for meta in &entries {
             let content = cache::read(&cache::Location::UserData, meta).await?;
-            ret.push(Self::from_string(&content)?);
+            let small_parameters = Self::from_string(&content)?;
+            ret.push(small_parameters.trackfile);
         }
         Ok(ret)
     }
-    pub fn from_string(data: &str) -> GenericResult<Self> {
-        serde_json::from_str(data).map_err(|_| TrackError::IOError.into())
-    }
 
-    pub fn as_string(&self) -> String {
-        serde_json::to_string_pretty(&self).unwrap()
-    }
-    pub async fn write_meta(&self) -> GenericResult<()> {
-        let filename = format!("{}.meta", self.number);
-        let _ = cache::write(&cache::Location::UserData, &filename, self.as_string()).await;
-        Ok(())
-    }
-    pub async fn create(name: &String, stats: &SegmentStatistics) -> GenericResult<Self> {
-        let mut entries = cache::allfiles(&cache::Location::UserData).await?;
-        entries.retain(|e| e.ends_with(&".meta"));
-        let ret = TrackFile {
+    pub async fn create(name: &String, stats: &SegmentStatistics) -> GenericResult<TrackFile> {
+        let mut entries = cache::list(&cache::Location::UserData).await?;
+        entries.retain(|e| e.ends_with(&SMALLPARAMETERS_FILENAME));
+        let trackfile = TrackFile {
             number: entries.len(),
             name: name.clone(),
             last_modified: String::new(),
@@ -51,59 +57,73 @@ impl TrackFile {
             elevation_gain: stats.elevation_gain,
         };
 
-        let _ = ret.write_meta().await?;
-        Ok(ret)
-    }
-}
+        let small_parameters = SmallParameters {
+            parameters: Parameters::default(),
+            controls: Vec::new(),
+            trackfile: trackfile.clone(),
+        };
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct SmallParameters {
-    pub parameters: Parameters,
-    pub controls: Vec<InputPoint>,
-}
-
-impl SmallParameters {
-    pub fn from_string(data: &str) -> Result<Self, serde_json::Error> {
-        serde_json::from_str(data)
+        let _ = small_parameters.write().await?;
+        Ok(trackfile)
     }
 
-    pub fn as_string(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string_pretty(&self)
+    pub async fn update_name(&mut self, name: &str) -> GenericResult<TrackFile> {
+        self.trackfile.name = format!("{}", name);
+        match self.write().await {
+            Ok(()) => Ok(self.trackfile.clone()),
+            Err(e) => Err(e.into()),
+        }
     }
-}
 
-static SMALLPARAMETERS_FILENAME: &'static str = "small-parameters";
+    pub async fn remove(trackfile: &TrackFile) -> GenericResult<()> {
+        let mut entries = cache::list(&cache::Location::UserData).await?;
+        entries.retain(|e| e.starts_with(&format!("{}.", trackfile.number)));
+        let mut all_good = true;
+        for e in entries {
+            match cache::remove(&cache::Location::UserData, &e).await {
+                Ok(()) => {}
+                Err(_) => {
+                    all_good = false;
+                }
+            }
+        }
+        match all_good {
+            true => Ok(()),
+            false => Err(TrackError::IOError.into()),
+        }
+    }
 
-pub async fn write_smallparameters(
-    trackfile: &TrackFile,
-    data: &SmallParameters,
-) -> GenericResult<()> {
-    cache::write(
-        &cache::Location::UserData,
-        &format!("{}.{}", trackfile.number, SMALLPARAMETERS_FILENAME),
-        data.as_string().unwrap(),
-    )
-    .await
-    // TODO: update last modified in meta.
-}
+    pub async fn write(&self) -> GenericResult<()> {
+        cache::write(
+            &cache::Location::UserData,
+            &format!("{}.{}", self.trackfile.number, SMALLPARAMETERS_FILENAME),
+            self.as_string().unwrap(),
+        )
+        .await
+        // TODO: update last modified in meta.
+    }
 
-pub async fn read_smallparameters(trackfile: &TrackFile) -> Option<SmallParameters> {
-    match cache::read(
-        &cache::Location::UserData,
-        &format!("{}.{}", trackfile.number, SMALLPARAMETERS_FILENAME),
-    )
-    .await
-    {
-        Ok(bytes) => match SmallParameters::from_string(&bytes) {
-            Ok(d) => Some(d),
+    pub async fn read(trackfile: &TrackFile) -> Option<Self> {
+        match cache::read(
+            &cache::Location::UserData,
+            &format!("{}.{}", trackfile.number, SMALLPARAMETERS_FILENAME),
+        )
+        .await
+        {
+            Ok(bytes) => match SmallParameters::from_string(&bytes) {
+                Ok(d) => {
+                    debug_assert!(d.trackfile.number == trackfile.number);
+                    Some(d)
+                }
+                Err(e) => {
+                    log::error!("coud not read data {:?}", e);
+                    None
+                }
+            },
             Err(e) => {
                 log::error!("coud not read data {:?}", e);
                 None
             }
-        },
-        Err(e) => {
-            log::error!("coud not read data {:?}", e);
-            None
         }
     }
 }

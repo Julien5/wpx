@@ -118,7 +118,7 @@ class _ChooseDataState extends State<_ChooseData> {
                     const SizedBox(width: 20),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 Expanded(
                   child: TrackFileListWidget(
                     onTrackFileSelected: onTrackFileClicked,

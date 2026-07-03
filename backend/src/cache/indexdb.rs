@@ -190,3 +190,30 @@ pub async fn allfiles(database: &IndexdbLocation) -> Result<Vec<String>, Indexdb
     iter.collect::<Result<Vec<_>, _>>()
         .map_err(|_| IndexdbError::ReadFailed)
 }
+
+pub async fn remove(database: &IndexdbLocation, filename: &str) -> Result<(), IndexdbError> {
+    log::trace!("db - remove {}: {}", database.name(), filename);
+    let db = opendb(database.clone()).await?;
+    let transaction = db
+        .transaction(database.store())
+        .with_mode(TransactionMode::Readwrite)
+        .build()
+        .map_err(|_| IndexdbError::WriteFailed)?;
+    let store = transaction.object_store(&database.store()).unwrap();
+    store
+        .delete(&filename)
+        .await
+        .map_err(|e| {
+            log::error!("could not delete key because {}", e);
+            IndexdbError::WriteFailed
+        })?;
+    match transaction.commit().await {
+        Ok(()) => {
+            log::info!("commit ok");
+        }
+        Err(e) => {
+            log::info!("could not commit because {}", e);
+        }
+    }
+    Ok(())
+}

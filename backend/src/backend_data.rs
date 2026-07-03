@@ -66,13 +66,14 @@ impl BackendData {
         TrackDataset::from_track_and_waypoints(&self.track, &waypoints)
     }
 
-    pub fn small_parameters(&self) -> SmallParameters {
+    pub fn small_parameters_with_trackfile(&self, trackfile: &TrackFile) -> SmallParameters {
         log::trace!("persist [1]");
         let controls = self.packet_provider.collection.get_vector(&Kind::Controls);
         let parameters = &self.parameters;
         SmallParameters {
             parameters: parameters.clone(),
             controls: controls.clone(),
+            trackfile: trackfile.clone(),
         }
     }
 

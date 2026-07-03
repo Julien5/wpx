@@ -301,6 +301,18 @@ impl Bridge {
         self.backend.read_trackfile(trackfile).await
     }
 
+    pub async fn update_trackfile_name(
+        &self,
+        trackfile: &TrackFile,
+        name: &str,
+    ) -> Result<TrackFile, TrackError> {
+        self.backend.update_trackfile_name(trackfile, name).await
+    }
+
+    pub async fn remove_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+        self.backend.remove_trackfile(trackfile).await
+    }
+
     pub async fn cancel_osm(&self) {
         self.backend.cancel_osm().await
     }
