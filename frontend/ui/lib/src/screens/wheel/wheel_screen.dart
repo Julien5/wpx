@@ -6,6 +6,7 @@ import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/screens/wheel/statistics_widget.dart';
 import 'package:wpx/src/widgets/adaptive_layout.dart';
+import 'package:wpx/src/widgets/editable_text.dart';
 import 'package:wpx/src/widgets/export.dart';
 import 'package:wpx/src/widgets/segmentgraphics.dart';
 
@@ -22,6 +23,10 @@ class _WheelScaffold extends StatelessWidget {
     gotoControls(ctx);
   }
 
+  Future<void> updateTrackFileName(BuildContext ctx, String newName) async {
+    ctx.read<SegmentModel>().updateTrackfileName(newName: newName);
+  }
+
   @override
   Widget build(BuildContext ctx) {
     Widget statisticsCard = OverviewWidget(
@@ -33,8 +38,8 @@ class _WheelScaffold extends StatelessWidget {
       statisticsCard,
       Center(child: ExportButton(text: "export zip")),
     ];
-
-    String trackName = ctx.read<SegmentModel>().trackFileName();
+    SegmentModel segmentModel = ctx.watch<SegmentModel>();
+    String trackName = segmentModel.trackFileName();
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +47,11 @@ class _WheelScaffold extends StatelessWidget {
           icon: Icon(Icons.home),
           onPressed: () => gotoHome(ctx),
         ),
-        title: Text(trackName),
+        title: WritableText(
+          initialName: trackName,
+          onSubmitted:
+              (newName) async => await updateTrackFileName(ctx, newName),
+        ),
       ),
       body: MobileScaffoldBody(
         topRow: TrackGraphicsRow(kinds: allkinds()),

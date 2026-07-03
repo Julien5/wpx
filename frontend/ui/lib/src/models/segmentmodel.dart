@@ -67,6 +67,8 @@ class SegmentModel extends ChangeNotifier {
       trackfile: trackFile!,
       name: newName,
     );
+    assert(trackFile!.name == newName);
+    notifyListeners();
   }
 
   String trackFileName() {

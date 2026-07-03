@@ -5,8 +5,13 @@ import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/screens/desktop/central_panel.dart';
 import 'package:wpx/src/screens/desktop/side_panel.dart';
+import 'package:wpx/src/widgets/editable_text.dart';
 
 class _MainScaffold extends StatelessWidget {
+  Future<void> updateTrackFileName(BuildContext ctx, String newName) async {
+    ctx.read<SegmentModel>().updateTrackfileName(newName: newName);
+  }
+
   @override
   Widget build(BuildContext ctx) {
     ScreenConfiguration screen = ctx.watch<ScreenConfiguration>();
@@ -16,7 +21,8 @@ class _MainScaffold extends StatelessWidget {
       width: 1, // This is the horizontal space the widget occupies
     );
 
-    String trackName = ctx.read<SegmentModel>().trackFileName();
+    SegmentModel segmentModel = ctx.watch<SegmentModel>();
+    String trackName = segmentModel.trackFileName();
 
     return Scaffold(
       appBar: AppBar(
@@ -24,7 +30,11 @@ class _MainScaffold extends StatelessWidget {
           icon: Icon(Icons.home),
           onPressed: () => gotoHome(ctx),
         ),
-        title: Text(trackName),
+        title: WritableText(
+          initialName: trackName,
+          onSubmitted:
+              (newName) async => await updateTrackFileName(ctx, newName),
+        ),
       ),
       body: Row(
         children: [
