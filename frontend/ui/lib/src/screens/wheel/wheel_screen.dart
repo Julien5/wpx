@@ -34,13 +34,15 @@ class _WheelScaffold extends StatelessWidget {
       Center(child: ExportButton(text: "export zip")),
     ];
 
+    String trackName = ctx.read<SegmentModel>().trackFileName();
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.home),
           onPressed: () => gotoHome(ctx),
         ),
-        title: const Text('Overview'),
+        title: Text(trackName),
       ),
       body: MobileScaffoldBody(
         topRow: TrackGraphicsRow(kinds: allkinds()),

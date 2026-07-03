@@ -9,7 +9,7 @@ typedef Kinds = List<bridge.Kind>;
 class SegmentModel extends ChangeNotifier {
   final bridge.Segment segment;
   final bridge.Bridge backend;
-  final bridge.TrackFile? trackFile;
+  bridge.TrackFile? trackFile;
 
   SegmentModel({
     required this.segment,
@@ -54,12 +54,24 @@ class SegmentModel extends ChangeNotifier {
     return someWaypoints([bridge.Kind.gpxWaypoints, bridge.Kind.controls]);
   }
 
-  void makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) async {
+  Future<void> makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) async {
     backend.makeControlAtWaypoint(waypoint: waypoint, on_: on);
-    if (trackFile != null) {
-      backend.saveSmallParameters(trackfile: trackFile!);
-    }
+    assert(trackFile != null);
+    backend.saveSmallParameters(trackfile: trackFile!);
     notifyListeners();
+  }
+
+  Future<void> updateTrackfileName({required String newName}) async {
+    assert(trackFile != null);
+    trackFile = await backend.updateTrackfileName(
+      trackfile: trackFile!,
+      name: newName,
+    );
+  }
+
+  String trackFileName() {
+    assert(trackFile != null);
+    return trackFile!.name;
   }
 
   void setControlTime(bridge.Waypoint waypoint, DateTime? time) async {
