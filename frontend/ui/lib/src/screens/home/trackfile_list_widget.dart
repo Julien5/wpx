@@ -6,7 +6,12 @@ import 'package:wpx/src/screens/home/filelist.dart';
 
 class TrackFileListWidget extends StatefulWidget {
   final void Function(bridge.TrackFile) onTrackFileSelected;
-  const TrackFileListWidget({super.key, required this.onTrackFileSelected});
+  final bool isLoading;
+  const TrackFileListWidget({
+    super.key,
+    required this.onTrackFileSelected,
+    required this.isLoading,
+  });
 
   @override
   State<TrackFileListWidget> createState() => _TrackFileListWidgetState();
@@ -34,8 +39,7 @@ class _TrackFileListWidgetState extends State<TrackFileListWidget> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('waiting');
-          //return const CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -45,6 +49,7 @@ class _TrackFileListWidgetState extends State<TrackFileListWidget> {
           return const Text('no tracks saved');
         }
         return FileListWidget(
+          isLoading: widget.isLoading,
           files: filelist,
           onTrackFileSelected: widget.onTrackFileSelected,
         );

@@ -157,8 +157,8 @@ pub async fn write(
 }
 
 async fn aread(database: &IndexdbLocation, filename: &str) -> Result<String, IndexdbError> {
-    let db = match opendb(database.clone()).await?;
-	let transaction = db
+    let db = opendb(database.clone()).await?;
+    let transaction = db
         .transaction(database.store())
         .with_mode(TransactionMode::Readonly)
         .build()
@@ -200,13 +200,10 @@ pub async fn remove(database: &IndexdbLocation, filename: &str) -> Result<(), In
         .build()
         .map_err(|_| IndexdbError::WriteFailed)?;
     let store = transaction.object_store(&database.store()).unwrap();
-    store
-        .delete(&filename)
-        .await
-        .map_err(|e| {
-            log::error!("could not delete key because {}", e);
-            IndexdbError::WriteFailed
-        })?;
+    store.delete(&filename).await.map_err(|e| {
+        log::error!("could not delete key because {}", e);
+        IndexdbError::WriteFailed
+    })?;
     match transaction.commit().await {
         Ok(()) => {
             log::info!("commit ok");

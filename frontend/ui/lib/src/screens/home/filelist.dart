@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/utils/utils.dart';
-import 'package:wpx/src/widgets/editable_text.dart'; // add `intl` to pubspec.yaml
 
 /// A Material-styled, sortable list of GPX files.
 ///
@@ -11,10 +10,12 @@ import 'package:wpx/src/widgets/editable_text.dart'; // add `intl` to pubspec.ya
 class FileListWidget extends StatefulWidget {
   final List<TrackFile> files;
   final void Function(TrackFile) onTrackFileSelected;
+  final bool isLoading;
   const FileListWidget({
     super.key,
     required this.files,
     required this.onTrackFileSelected,
+    required this.isLoading,
   });
 
   @override
@@ -139,11 +140,14 @@ class _FileListWidgetState extends State<FileListWidget> {
         rows: List.generate(_files.length, (index) {
           final file = _files[index];
           return DataRow(
-            onSelectChanged: (selected) {
-              if (selected != null && selected == true) {
-                widget.onTrackFileSelected(file);
-              }
-            },
+            onSelectChanged:
+                widget.isLoading
+                    ? null
+                    : (selected) {
+                      if (selected != null && selected == true) {
+                        widget.onTrackFileSelected(file);
+                      }
+                    },
             cells: [
               DataCell(
                 ConstrainedBox(

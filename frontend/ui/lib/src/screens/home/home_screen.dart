@@ -57,9 +57,12 @@ class _ChooseDataState extends State<_ChooseData> {
   }
 
   void onTrackFileClicked(bridge.TrackFile trackFile) async {
-    debugPrint("selected: ${trackFile.name}");
+    setState(() {
+      loading = true;
+    });
+
     RootModel root = context.read<RootModel>();
-    await root.setTrackFile(trackFile, load: true);
+    await root.setTrackFile(trackFile);
     int missingOSM = (await root.backend.loadOsmWithoutDownload()).toInt();
     if (mounted == false) {
       return;
@@ -72,6 +75,7 @@ class _ChooseDataState extends State<_ChooseData> {
   }
 
   void loadPendingContent(List<List<int>> bytes) async {
+    loading = true;
     RootModel root = context.read<RootModel>();
     PendingContent content = PendingContent.makeFromBytes(bytes);
     root.setPendingContent(content);
@@ -121,6 +125,7 @@ class _ChooseDataState extends State<_ChooseData> {
                 const SizedBox(height: 40),
                 Expanded(
                   child: TrackFileListWidget(
+                    isLoading: loading,
                     onTrackFileSelected: onTrackFileClicked,
                   ),
                 ),

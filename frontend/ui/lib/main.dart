@@ -61,7 +61,6 @@ class TrackProvider extends StatelessWidget {
     return SegmentModel(
       backend: root.backend,
       segment: root.backend.trackSegment(),
-      trackFile: root.trackFile(),
     );
   }
 

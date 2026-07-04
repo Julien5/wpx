@@ -109,6 +109,7 @@ void gotoHome(BuildContext ctx) {
   debugPrint("goto home");
   FociModel fociModel = ctx.read<FociModel>();
   fociModel.setFocus(ScreenFocus.home);
+  ctx.read<RootModel>().getBackend().unload();
   ctx.go(Routes.home);
 }
 

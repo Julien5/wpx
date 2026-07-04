@@ -76,10 +76,13 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     });
   }
 
-  Future<void> _selectStartDate(BuildContext context) async {
+  Future<void> _selectStartDate(
+    BuildContext context, {
+    required DateTime initialDate,
+  }) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
@@ -214,7 +217,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
               children: [
                 SmallButton(
                   text: startDateText,
-                  callback: () => _selectStartDate(ctx),
+                  callback:
+                      () => _selectStartDate(ctx, initialDate: startTime!),
                 ),
                 SmallButton(
                   text: startTimeText,

@@ -8,7 +8,7 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, Default)]
 pub struct TrackFile {
     pub number: usize,
     pub name: String,
@@ -70,14 +70,6 @@ impl SmallParameters {
 
         let _ = small_parameters.write().await?;
         Ok(trackfile)
-    }
-
-    pub async fn update_name(&mut self, name: &str) -> GenericResult<TrackFile> {
-        self.trackfile.name = format!("{}", name);
-        match self.write().await {
-            Ok(()) => Ok(self.trackfile.clone()),
-            Err(e) => Err(e.into()),
-        }
     }
 
     pub async fn remove(trackfile: &TrackFile) -> GenericResult<()> {

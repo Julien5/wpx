@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/futurerenderer.dart';
-import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/models/stackviewscontroller.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -133,13 +132,8 @@ class _SegmentsGraphicsRowState extends State<SegmentsGraphicsRow>
     } else {
       return;
     }
-    RootModel root = context.read<RootModel>();
     for (Segment segment in newSegments) {
-      SegmentModel model = SegmentModel(
-        backend: backend,
-        segment: segment,
-        trackFile: root.trackFile(),
-      );
+      SegmentModel model = SegmentModel(backend: backend, segment: segment);
       segments.add(model);
     }
     _tabController = TabController(length: segments.length, vsync: this);

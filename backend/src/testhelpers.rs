@@ -56,6 +56,7 @@ fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Paramete
         parameters,
         track,
         packet_provider,
+        trackfile: None,
     }
 }
 
@@ -121,6 +122,7 @@ pub async fn load_backend_data_with_track_and_parameters(
         parameters,
         track: Arc::new(track),
         packet_provider,
+        trackfile: None,
     }
 }
 

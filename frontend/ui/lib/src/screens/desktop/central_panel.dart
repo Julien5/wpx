@@ -166,13 +166,7 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
             name: "${widget.screenFocus}",
           ),
         );
-        segments.add(
-          SegmentModel(
-            segment: segs[k],
-            backend: root.backend,
-            trackFile: root.trackFile(),
-          ),
-        );
+        segments.add(SegmentModel(segment: segs[k], backend: root.backend));
       }
     }
     KindsModel kindsModel = context.watch();

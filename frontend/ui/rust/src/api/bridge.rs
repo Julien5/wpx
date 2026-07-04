@@ -302,12 +302,13 @@ impl Bridge {
         self.backend.read_trackfile(trackfile).await
     }
 
-    pub async fn update_trackfile_name(
-        &self,
-        trackfile: &TrackFile,
-        name: &str,
-    ) -> Result<TrackFile, TrackError> {
-        self.backend.update_trackfile_name(trackfile, name).await
+    pub async fn set_trackfile_name(&self, name: &str) -> Result<TrackFile, TrackError> {
+        self.backend.set_trackfile_name(name).await
+    }
+
+    #[frb(sync)]
+    pub fn get_trackfile(&self) -> Option<TrackFile> {
+        self.backend.get_trackfile()
     }
 
     pub async fn remove_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
@@ -322,12 +323,12 @@ impl Bridge {
         self.backend.generateZip(&dedup(&kinds))
     }
 
-    pub async fn save_small_parameters(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
-        self.backend.save_small_parameters(trackfile).await
+    pub async fn save_small_parameters(&self) -> Result<TrackFile, TrackError> {
+        self.backend.save_small_parameters().await
     }
 
-    pub async fn save_gpxdata(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
-        self.backend.save_gpxdata(trackfile).await
+    pub async fn save_gpxdata(&self) -> Result<(), TrackError> {
+        self.backend.save_gpxdata().await
     }
 
     #[frb(sync)]

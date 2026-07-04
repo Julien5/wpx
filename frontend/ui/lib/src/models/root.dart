@@ -23,7 +23,6 @@ class PendingContent {
 class RootModel extends ChangeNotifier {
   final bridge.Bridge backend;
   PendingContent? _pendingContent;
-  bridge.TrackFile? _trackFile;
 
   RootModel({required this.backend});
 
@@ -33,26 +32,19 @@ class RootModel extends ChangeNotifier {
 
   void setPendingContent(PendingContent u) {
     _pendingContent = u;
-    _trackFile = null;
     backend.unload();
     notifyListeners();
   }
 
-  Future<void> setTrackFile(bridge.TrackFile f, {required bool load}) async {
-    _trackFile = f;
+  Future<void> setTrackFile(bridge.TrackFile f) async {
     _pendingContent = null;
-    if (load) {
-      await backend.loadTrackfile(trackfile: f);
-    }
+    await backend.unload();
+    await backend.loadTrackfile(trackfile: f);
     notifyListeners();
   }
 
   bool isLoaded() {
     return backend.isLoaded();
-  }
-
-  bridge.TrackFile? trackFile() {
-    return _trackFile;
   }
 
   PendingContent? pendingContent() {

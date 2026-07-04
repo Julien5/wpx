@@ -30,6 +30,7 @@ pub type SegmentStatistics = crate::segment::SegmentStatistics;
 
 pub struct BackendData {
     pub parameters: Parameters,
+    pub trackfile: Option<TrackFile>,
     pub track: SharedTrack,
     pub packet_provider: PacketProvider,
 }
@@ -66,15 +67,19 @@ impl BackendData {
         TrackDataset::from_track_and_waypoints(&self.track, &waypoints)
     }
 
-    pub fn small_parameters_with_trackfile(&self, trackfile: &TrackFile) -> SmallParameters {
+    pub fn small_parameters(&self) -> SmallParameters {
         log::trace!("persist [1]");
         let controls = self.packet_provider.collection.get_vector(&Kind::Controls);
-        let parameters = &self.parameters;
         SmallParameters {
-            parameters: parameters.clone(),
+            parameters: self.parameters.clone(),
             controls: controls.clone(),
-            trackfile: trackfile.clone(),
+            trackfile: self.trackfile.as_ref().unwrap().clone(),
         }
+    }
+
+    pub fn update_trackfile_name(&mut self, name: &str) -> SmallParameters {
+        self.trackfile.as_mut().unwrap().name = format!("{}", name);
+        self.small_parameters()
     }
 
     pub fn set_parameters(&mut self, parameters: &Parameters) {
@@ -87,9 +92,15 @@ impl BackendData {
         };
         self.parameters = parameters.clone();
 
+        // load_ordered calls set_parameters to update user steps (only for that?)
+        // trackfile is not set in this case.
+        if self.trackfile.is_some() {
+            self.trackfile.as_mut().unwrap().start_time = parameters.start_time.clone();
+        }
+
         // unsupported ?
         if self.parameters.segment_overlap > self.parameters.segment_length {
-            assert!(false);
+            debug_assert!(false);
         }
 
         // update user steps

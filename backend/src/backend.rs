@@ -241,6 +241,7 @@ impl Backend {
             track,
             parameters,
             packet_provider: point_collection,
+            trackfile: None,
         };
         *self.backend_data.write().unwrap() = Some(data);
 
@@ -272,22 +273,29 @@ impl Backend {
                 return Err(TrackError::IOError.into());
             }
         };
+        {
+            self.backend_data
+                .write()
+                .unwrap()
+                .as_mut()
+                .unwrap()
+                .trackfile = Some(trackFile.clone());
+        }
         log::trace!("[create_trackfile]{}", self.loaded());
-        let _ = self.save_gpxdata(&trackFile).await;
-        let _ = self.save_small_parameters(&trackFile).await;
+        let _ = self.save_gpxdata().await;
+        let _ = self.save_small_parameters().await;
         log::trace!("[create_trackfile]{}", self.loaded());
         assert!(self.loaded());
         Ok(trackFile)
     }
 
-    pub async fn save_gpxdata(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
-        let data = self
-            .backend_data
-            .read()
-            .unwrap()
-            .as_ref()
-            .unwrap()
-            .track_dataset();
+    pub async fn save_gpxdata(&self) -> Result<(), TrackError> {
+        let (data, trackfile) = {
+            let lock = self.backend_data.read().unwrap();
+            let data = lock.as_ref().unwrap().track_dataset();
+            let trackfile = &lock.as_ref().unwrap().trackfile;
+            (data, trackfile.as_ref().unwrap().clone())
+        };
         match trackfile::write_trackdata(&trackfile, &data).await {
             Ok(()) => Ok(()),
             Err(e) => {
@@ -309,25 +317,28 @@ impl Backend {
             .map_err(|_| TrackError::IOError.into())
     }
 
-    pub async fn update_trackfile_name(
-        &self,
-        trackfile: &TrackFile,
-        name: &str,
-    ) -> Result<TrackFile, TrackError> {
-        let mut small_parameters = self
-            .backend_data
+    pub async fn set_trackfile_name(&self, name: &str) -> Result<TrackFile, TrackError> {
+        self.backend_data
+            .write()
+            .unwrap()
+            .as_mut()
+            .unwrap()
+            .update_trackfile_name(name);
+        self.save_small_parameters().await
+    }
+
+    pub fn get_trackfile(&self) -> Option<TrackFile> {
+        self.backend_data
             .read()
             .unwrap()
             .as_ref()
             .unwrap()
-            .small_parameters_with_trackfile(trackfile);
-        small_parameters
-            .update_name(name)
-            .await
-            .map_err(|_| TrackError::IOError.into())
+            .trackfile
+            .clone()
     }
 
     pub async fn read_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+        assert!(!self.loaded());
         let mut gpxdata = match trackfile::read_trackdata(trackfile).await {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
@@ -353,23 +364,23 @@ impl Backend {
             track,
             parameters: smalldata.parameters.clone(),
             packet_provider,
+            trackfile: Some(trackfile.clone()),
         };
         *self.backend_data.write().unwrap() = Some(data);
         Ok(())
     }
 
-    pub async fn save_small_parameters(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
+    pub async fn save_small_parameters(&self) -> Result<TrackFile, TrackError> {
         let mut small_parameters = self
             .backend_data
             .read()
             .unwrap()
             .as_ref()
             .unwrap()
-            .small_parameters_with_trackfile(trackfile);
+            .small_parameters();
         small_parameters.trackfile.last_modified = current_time_as_string();
-        small_parameters.trackfile.start_time = small_parameters.parameters.start_time.clone();
         match small_parameters.write().await {
-            Ok(()) => Ok(()),
+            Ok(()) => Ok(small_parameters.trackfile),
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);
                 Err(TrackError::IOError.into())

@@ -9,19 +9,8 @@ typedef Kinds = List<bridge.Kind>;
 class SegmentModel extends ChangeNotifier {
   final bridge.Segment segment;
   final bridge.Bridge backend;
-  bridge.TrackFile? trackFile;
 
-  SegmentModel({
-    required this.segment,
-    required this.backend,
-    required this.trackFile,
-  }) {
-    if (trackFile == null) {
-      debugPrint("create no trackFile");
-    } else {
-      debugPrint("create  trackFile=${trackFile!}");
-    }
-  }
+  SegmentModel({required this.segment, required this.backend});
 
   @override
   void notifyListeners() {
@@ -56,32 +45,26 @@ class SegmentModel extends ChangeNotifier {
 
   Future<void> makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) async {
     backend.makeControlAtWaypoint(waypoint: waypoint, on_: on);
-    assert(trackFile != null);
-    backend.saveSmallParameters(trackfile: trackFile!);
+    backend.saveSmallParameters();
     notifyListeners();
   }
 
   Future<void> updateTrackfileName({required String newName}) async {
-    assert(trackFile != null);
-    trackFile = await backend.updateTrackfileName(
-      trackfile: trackFile!,
-      name: newName,
-    );
-    assert(trackFile!.name == newName);
+    bridge.TrackFile trackFile = await backend.setTrackfileName(name: newName);
+    assert(trackFile.name == newName);
     notifyListeners();
   }
 
   String trackFileName() {
-    assert(trackFile != null);
-    return trackFile!.name;
+    bridge.TrackFile? f = backend.getTrackfile();
+    assert(f != null);
+    return f!.name;
   }
 
   void setControlTime(bridge.Waypoint waypoint, DateTime? time) async {
     String? rfc3339time = time?.toUtc().toIso8601String();
     backend.setControlTime(waypoint: waypoint, time: rfc3339time);
-    if (trackFile != null) {
-      backend.saveSmallParameters(trackfile: trackFile!);
-    }
+    backend.saveSmallParameters();
     notifyListeners();
   }
 
@@ -101,9 +84,7 @@ class SegmentModel extends ChangeNotifier {
 
   void setParameters(bridge.Parameters p) async {
     await backend.setParameters(parameters: p);
-    if (trackFile != null) {
-      await backend.saveSmallParameters(trackfile: trackFile!);
-    }
+    await backend.saveSmallParameters();
     notifyListeners();
   }
 
