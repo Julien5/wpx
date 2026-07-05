@@ -81,7 +81,8 @@ class _CentralWidgetState extends State<CentralWidget> {
 
 class CentralPanelPDF extends StatefulWidget {
   final double width;
-  const CentralPanelPDF({super.key, required this.width});
+  final bool visible;
+  const CentralPanelPDF({super.key, required this.width, required this.visible});
 
   @override
   State<CentralPanelPDF> createState() => _CentralPanelPDFState();
@@ -123,7 +124,7 @@ class _CentralPanelPDFState extends State<CentralPanelPDF>
       width: widget.width,
       clients: [RenderFunction.map, RenderFunction.profile],
       kinds: allkinds(),
-      screenFocus: ScreenFocus.settings,
+      visible: widget.visible,
       child: CentralWidget(width: widget.width),
     );
     return Column(children: [Expanded(child: view), bar]);

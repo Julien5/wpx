@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -55,7 +54,7 @@ class _ControlsScaffold extends StatelessWidget {
         midColumn: MidColumn(
           children: [_TextWidget(), Expanded(child: _Table())],
         ),
-        screenFocus: ScreenFocus.controls,
+        label: 'controls',
         clients: [
           RenderFunction.profile,
           RenderFunction.map,

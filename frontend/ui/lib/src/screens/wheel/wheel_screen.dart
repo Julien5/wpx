@@ -39,6 +39,9 @@ class _WheelScaffold extends StatelessWidget {
       Center(child: ExportButton(text: "export zip")),
     ];
     SegmentModel segmentModel = ctx.watch<SegmentModel>();
+    if (!ctx.read<RootModel>().isLoaded()) {
+      return Text("ignore");
+    }
     String trackName = segmentModel.trackFileName();
 
     return Scaffold(
@@ -56,7 +59,7 @@ class _WheelScaffold extends StatelessWidget {
       body: MobileScaffoldBody(
         topRow: TrackGraphicsRow(kinds: allkinds()),
         midColumn: MidColumn(children: children),
-        screenFocus: ScreenFocus.overview,
+        label: 'overview',
         clients: [
           RenderFunction.profile,
           RenderFunction.map,

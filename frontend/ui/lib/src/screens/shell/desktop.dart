@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/screens/desktop/main_screen.dart';
@@ -10,22 +11,13 @@ class DesktopShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DesktopScreen();
-  }
-}
-
-class DesktopScreen extends StatelessWidget {
-  const DesktopScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    FociModel foci = context.watch<FociModel>();
-    debugPrint("desktop focus on: ${foci.foci}");
-    RootModel root = context.watch<RootModel>();
-    if (foci.contains(ScreenFocus.home)) {
+    final state = GoRouterState.of(context);
+    final path = state.matchedLocation;
+    final root = context.watch<RootModel>();
+    if (path == '/') {
       return HomeScreen();
     }
-    if (foci.contains(ScreenFocus.load)) {
+    if (path == '/load') {
       return LoadScreen(userInput: root.pendingContent()!);
     }
     return MainScreen();

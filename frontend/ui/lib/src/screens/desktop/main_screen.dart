@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/screen_configuration.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/routes.dart';
@@ -7,52 +9,76 @@ import 'package:wpx/src/screens/desktop/central_panel.dart';
 import 'package:wpx/src/screens/desktop/side_panel.dart';
 import 'package:wpx/src/widgets/editable_text.dart';
 
-class _MainScaffold extends StatelessWidget {
-  Future<void> updateTrackFileName(BuildContext ctx, String newName) async {
-    ctx.read<SegmentModel>().updateTrackfileName(newName: newName);
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  String? _activeMode;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncModeFromRoute();
+  }
+
+  void _syncModeFromRoute() {
+    final mode = GoRouterState.of(context).uri.queryParameters['mode'];
+    if (mode != _activeMode) {
+      setState(() => _activeMode = mode);
+    }
+  }
+
+  void _onModeChanged(String? mode) {
+    final target = mode != null ? '/overview?mode=$mode' : '/overview';
+    context.go(target);
   }
 
   @override
-  Widget build(BuildContext ctx) {
-    ScreenConfiguration screen = ctx.watch<ScreenConfiguration>();
+  Widget build(BuildContext context) {
+    ScreenConfiguration screen = context.watch<ScreenConfiguration>();
     Widget div = VerticalDivider(
       color: Colors.lightBlue,
       thickness: 1,
-      width: 1, // This is the horizontal space the widget occupies
+      width: 1,
     );
 
-    SegmentModel segmentModel = ctx.watch<SegmentModel>();
+    // workaround to double build problem
+    if (!context.read<RootModel>().isLoaded()) {
+      return Text("ignore");
+    }
+
+    SegmentModel segmentModel = context.watch<SegmentModel>();
     String trackName = segmentModel.trackFileName();
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.home),
-          onPressed: () => gotoHome(ctx),
+          onPressed: () => gotoHome(context),
         ),
         title: WritableText(
           initialName: trackName,
-          onSubmitted:
-              (newName) async => await updateTrackFileName(ctx, newName),
+          onSubmitted: (newName) async {
+            context.read<SegmentModel>().updateTrackfileName(newName: newName);
+          },
         ),
       ),
       body: Row(
         children: [
           div,
-          const SidePanel(width: 480),
+          SidePanel(
+            width: 480,
+            activeMode: _activeMode,
+            onModeChanged: _onModeChanged,
+          ),
           div,
-          CentralPanel(width: screen.width - 500),
+          CentralPanel(width: screen.width - 500, activeMode: _activeMode),
         ],
       ),
     );
-  }
-}
-
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return _MainScaffold();
   }
 }

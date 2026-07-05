@@ -234,7 +234,7 @@ class _SettingsScaffoldState extends State<SettingsScaffold> {
             if (showBottomWidget) BottomRow(),
           ],
         ),
-        screenFocus: ScreenFocus.settings,
+        label: 'settings',
         clients: [RenderFunction.wheelPages],
       ),
     );

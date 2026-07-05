@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/futurerenderer.dart';
 import 'package:wpx/src/models/kindsmodel.dart';
-import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/screen_configuration.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 
@@ -21,12 +21,12 @@ class MobileScaffoldBody extends StatefulWidget {
   final List<BridgeRenderFunction> clients;
   final Widget topRow;
   final Widget midColumn;
-  final ScreenFocus screenFocus;
+  final String label;
   const MobileScaffoldBody({
     super.key,
     required this.topRow,
     required this.midColumn,
-    required this.screenFocus,
+    required this.label,
     required this.clients,
   });
 
@@ -37,36 +37,26 @@ class MobileScaffoldBody extends StatefulWidget {
 class _MobileScaffoldBodyState extends State<MobileScaffoldBody> {
   FutureRenderer? futureRenderer;
 
-  bool isVisible(FociModel fociModel) {
-    if (widget.screenFocus == ScreenFocus.overview) {
-      return fociModel.hasOnly(ScreenFocus.overview);
-    }
-    return fociModel.contains(widget.screenFocus);
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    FociModel fociModel = context.watch<FociModel>();
     context.watch<SegmentModel>();
     KindsModel kindsModel = context.watch();
     if (futureRenderer == null) {
       SegmentModel segmentModel = context.watch();
-      debugPrint("CREATE FUTURE RENDER FOR ${widget.screenFocus}");
+      developer.log("CREATE FUTURE RENDER FOR ${widget.label}");
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
         segment: segmentModel.segment,
         clients: widget.clients,
         kinds: kindsModel.kinds,
-        name: "${widget.screenFocus}",
+        name: widget.label,
       );
     } else {
-      debugPrint("REUSE FUTURE RENDER FOR ${widget.screenFocus}");
+      developer.log("REUSE FUTURE RENDER FOR ${widget.label}");
     }
     futureRenderer!.setKinds(kindsModel.kinds);
-    futureRenderer!.setVisible(isVisible(fociModel));
-    // Needed because futureRenderer does not know the time parameters.
-    // Change time parameters => update graphics.
+    futureRenderer!.setVisible(true);
     futureRenderer!.reset();
   }
 

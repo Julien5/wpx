@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -76,7 +75,7 @@ class UserStepsScaffold extends StatelessWidget {
       body: MobileScaffoldBody(
         topRow: TrackGraphicsRow(kinds: usersteps),
         midColumn: MidColumn(children: midChilren),
-        screenFocus: ScreenFocus.usersteps,
+        label: 'usersteps',
         clients: [
           RenderFunction.profile,
           RenderFunction.map,

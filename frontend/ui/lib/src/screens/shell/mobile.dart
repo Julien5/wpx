@@ -1,6 +1,5 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/screens/controls/controls_screen.dart';
@@ -15,38 +14,25 @@ class MobileShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MobileScreen();
-  }
-}
-
-class MobileScreen extends StatelessWidget {
-  const MobileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    FociModel foci = context.watch<FociModel>();
-    debugPrint("mobile focus on: ${foci.foci}");
-    if (foci.contains(ScreenFocus.load)) {
-      RootModel root = context.read<RootModel>();
-      return LoadScreen(userInput: root.pendingContent()!);
-    }
-    if (foci.contains(ScreenFocus.settings)) {
-      return SettingsScreen();
-    }
-    if (foci.contains(ScreenFocus.controls)) {
-      return ControlsScreen();
-    }
-    if (foci.contains(ScreenFocus.usersteps)) {
-      return UserStepsScreen();
-    }
-    if (foci.contains(ScreenFocus.overview)) {
-      return WheelScreen();
-    }
-    if (foci.contains(ScreenFocus.home)) {
+    final state = GoRouterState.of(context);
+    final path = state.matchedLocation;
+    final root = context.read<RootModel>();
+    if (path == '/') {
       return HomeScreen();
     }
-    developer.log("!!!! [NO SCREEN FOR ${foci.foci}] !!!!");
-    assert(false);
-    return HomeScreen();
+    if (path == '/load') {
+      return LoadScreen(userInput: root.pendingContent()!);
+    }
+    // path == '/overview'
+    switch (state.uri.queryParameters['mode']) {
+      case 'usersteps':
+        return UserStepsScreen();
+      case 'controls':
+        return ControlsScreen();
+      case 'settings':
+        return SettingsScreen();
+      default:
+        return WheelScreen();
+    }
   }
 }

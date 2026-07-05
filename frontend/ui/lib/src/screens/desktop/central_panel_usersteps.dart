@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/widgets/trackview.dart';
@@ -49,12 +48,14 @@ class CentralWidget extends StatelessWidget {
 
 class CentralPanelUserSteps extends StatelessWidget {
   final double width;
-  const CentralPanelUserSteps({super.key, required this.width});
+  final bool visible;
+  const CentralPanelUserSteps({super.key, required this.width, required this.visible});
 
   @override
   Widget build(BuildContext context) {
     return CentralPanelContent(
-      screenFocus: ScreenFocus.usersteps,
+      label: 'usersteps',
+      visible: visible,
       child: CentralWidget(width: width),
     );
   }

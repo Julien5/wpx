@@ -34,11 +34,13 @@ class GraphicsPadding extends StatelessWidget {
 }
 
 class CentralPanelContent extends StatefulWidget {
-  final ScreenFocus screenFocus;
+  final String label;
+  final bool visible;
   final Widget child;
   const CentralPanelContent({
     super.key,
-    required this.screenFocus,
+    required this.label,
+    required this.visible,
     required this.child,
   });
 
@@ -49,25 +51,6 @@ class CentralPanelContent extends StatefulWidget {
 class _CentralPanelContentState extends State<CentralPanelContent> {
   FutureRenderer? futureRenderer;
 
-  bool isVisible(FociModel fociModel) {
-    if (widget.screenFocus == ScreenFocus.overview) {
-      // Visible for {overview} or {overview,controls}.
-      if (fociModel.hasOnly(ScreenFocus.overview)) {
-        return true;
-      }
-      if (fociModel.contains(ScreenFocus.controls)) {
-        assert(
-          fociModel.contains(ScreenFocus.overview) &&
-              fociModel.foci.length == 2,
-          "foci:${fociModel.foci}",
-        );
-        return true;
-      }
-      return false;
-    }
-    return fociModel.contains(widget.screenFocus);
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -75,23 +58,28 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
     KindsModel kindsModel = context.watch();
     if (futureRenderer == null) {
       SegmentModel segmentModel = context.watch();
-      debugPrint("CREATE FUTURE RENDER FOR ${widget.screenFocus}");
+      debugPrint("CREATE FUTURE RENDER FOR ${widget.label}");
       futureRenderer = FutureRenderer(
         bridge: segmentModel.backend,
         segment: segmentModel.segment,
         clients: [RenderFunction.profile, RenderFunction.map],
         kinds: kindsModel.kinds,
-        name: "${widget.screenFocus}",
+        name: widget.label,
       );
     } else {
-      debugPrint("REUSE FUTURE RENDER FOR ${widget.screenFocus}");
+      debugPrint("REUSE FUTURE RENDER FOR ${widget.label}");
     }
     futureRenderer!.setKinds(kindsModel.kinds);
-    // reset() is needed because futureRenderer does not know the time parameters.
-    // Change time parameters => update graphics.
-    //
-    // This is not very good because this causes rebuild of the table, which flickers.
+    futureRenderer!.setVisible(widget.visible);
     futureRenderer!.reset();
+  }
+
+  @override
+  void didUpdateWidget(CentralPanelContent old) {
+    super.didUpdateWidget(old);
+    if (old.visible != widget.visible && futureRenderer != null) {
+      futureRenderer!.setVisible(widget.visible);
+    }
   }
 
   @override
@@ -102,9 +90,7 @@ class _CentralPanelContentState extends State<CentralPanelContent> {
 
   @override
   Widget build(BuildContext context) {
-    FociModel fociModel = context.watch<FociModel>();
-    futureRenderer!.setVisible(isVisible(fociModel));
-    debugPrint("_CentralPanelContentState(${futureRenderer!.clients}) build()");
+    debugPrint("_CentralPanelContentState(${widget.label}) build()");
     assert(futureRenderer != null);
     return FutureRendererProvider(
       futureRenderer: futureRenderer!,
@@ -117,7 +103,7 @@ class CentralPanelTabView extends StatefulWidget {
   final double width;
   final List<RenderFunction> clients;
   final Kinds kinds;
-  final ScreenFocus screenFocus;
+  final bool visible;
   final TabController tabController;
   final Widget child;
   const CentralPanelTabView({
@@ -125,7 +111,7 @@ class CentralPanelTabView extends StatefulWidget {
     required this.width,
     required this.clients,
     required this.kinds,
-    required this.screenFocus,
+    required this.visible,
     required this.tabController,
     required this.child,
   });
@@ -135,27 +121,17 @@ class CentralPanelTabView extends StatefulWidget {
 }
 
 class _CentralPanelTabViewState extends State<CentralPanelTabView> {
-  // the list cannot be empty, so empty marks uninitialized
   List<FutureRenderer> renderers = [];
   List<SegmentModel> segments = [];
-
-  bool isVisible(FociModel fociModel) {
-    if (widget.screenFocus == ScreenFocus.overview) {
-      return fociModel.hasOnly(ScreenFocus.overview);
-    }
-    return fociModel.contains(widget.screenFocus);
-  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    FociModel fociModel = context.watch<FociModel>();
     context.watch<SegmentModel>();
-    RootModel root = context.watch();
+    RootModel root = context.read<RootModel>();
     List<Segment> segs = root.backend.segments();
     if (renderers.length != segs.length) {
       disposeModels();
-      RootModel root = context.watch();
       for (int k = 0; k < segs.length; ++k) {
         renderers.add(
           FutureRenderer(
@@ -163,7 +139,7 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
             segment: segs[k],
             clients: widget.clients,
             kinds: widget.kinds,
-            name: "${widget.screenFocus}",
+            name: "settings",
           ),
         );
         segments.add(SegmentModel(segment: segs[k], backend: root.backend));
@@ -172,8 +148,18 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
     KindsModel kindsModel = context.watch();
     for (FutureRenderer renderer in renderers) {
       renderer.setKinds(kindsModel.kinds);
-      renderer.setVisible(isVisible(fociModel));
+      renderer.setVisible(widget.visible);
       renderer.reset();
+    }
+  }
+
+  @override
+  void didUpdateWidget(CentralPanelTabView old) {
+    super.didUpdateWidget(old);
+    if (old.visible != widget.visible) {
+      for (final renderer in renderers) {
+        renderer.setVisible(widget.visible);
+      }
     }
   }
 
@@ -222,7 +208,8 @@ class _CentralPanelTabViewState extends State<CentralPanelTabView> {
 
 class CentralPanel extends StatefulWidget {
   final double width;
-  const CentralPanel({super.key, required this.width});
+  final String? activeMode;
+  const CentralPanel({super.key, required this.width, required this.activeMode});
 
   @override
   State<CentralPanel> createState() => _CentralPanelState();
@@ -231,27 +218,33 @@ class CentralPanel extends StatefulWidget {
 class _CentralPanelState extends State<CentralPanel> {
   @override
   Widget build(BuildContext context) {
-    FociModel fociModel = context.watch<FociModel>();
-    debugPrint("_CentralPanelState build()");
+    debugPrint("_CentralPanelState build() activeMode=${widget.activeMode}");
+    final isUserSteps = widget.activeMode == 'usersteps';
+    final isSettings = widget.activeMode == 'settings';
+    final index = isUserSteps ? 0 : isSettings ? 1 : 2;
     return IndexedStack(
-      index:
-          fociModel.contains(ScreenFocus.usersteps)
-              ? 0
-              : fociModel.contains(ScreenFocus.settings)
-              ? 1
-              : 2,
+      index: index,
       children: [
         SizedBox(
           width: widget.width,
-          child: CentralPanelUserSteps(width: widget.width),
+          child: CentralPanelUserSteps(
+            width: widget.width,
+            visible: isUserSteps,
+          ),
         ),
         SizedBox(
           width: widget.width,
-          child: CentralPanelPDF(width: widget.width),
+          child: CentralPanelPDF(
+            width: widget.width,
+            visible: isSettings,
+          ),
         ),
         SizedBox(
           width: widget.width,
-          child: CentralPanelOverview(width: widget.width),
+          child: CentralPanelOverview(
+            width: widget.width,
+            visible: !isUserSteps && !isSettings,
+          ),
         ),
       ],
     );

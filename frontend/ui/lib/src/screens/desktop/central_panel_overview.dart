@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wpx/src/models/futurerenderer.dart';
-import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
 import 'package:wpx/src/utils/utils.dart';
@@ -91,14 +90,16 @@ class _CentralWidgetState extends State<CentralWidget> {
 
 class CentralPanelOverview extends StatelessWidget {
   final double width;
-  const CentralPanelOverview({super.key, required this.width});
+  final bool visible;
+  const CentralPanelOverview({super.key, required this.width, required this.visible});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return CentralPanelContent(
-          screenFocus: ScreenFocus.overview,
+          label: 'overview',
+          visible: visible,
           child: CentralWidget(width: width),
         );
       },
