@@ -12,6 +12,12 @@ class ScreenConfiguration extends ChangeNotifier {
   double get width => _width;
   double get height => _height;
 
+  @override
+  void notifyListeners() {
+    debugPrint("ScreenConfiguration notifies");
+    super.notifyListeners();
+  }
+
   bool isMobile() {
     return mode != DisplayMode.desktop;
   }

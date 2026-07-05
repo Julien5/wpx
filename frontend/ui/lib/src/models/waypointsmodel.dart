@@ -7,6 +7,12 @@ class WaypointsModel with ChangeNotifier {
   bridge.Segment segment;
   WaypointsModel({required this.brd, required this.segment});
 
+  @override
+  void notifyListeners() {
+    debugPrint("ScreenConfiguration notifies");
+    super.notifyListeners();
+  }
+
   List<bridge.Waypoint> all() {
     // This is buggy: the first waypoint will have
     // wrong inter_* values if segment.id>0.

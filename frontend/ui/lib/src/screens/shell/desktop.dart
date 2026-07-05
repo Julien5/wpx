@@ -14,12 +14,13 @@ class DesktopShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final path = state.matchedLocation;
     final root = context.watch<RootModel>();
+    debugPrint("[1] path: $path");
     if (path == '/') {
       return HomeScreen();
     }
     if (path == '/load') {
       return LoadScreen(userInput: root.pendingContent()!);
     }
-    return MainScreen();
+    return MainScreen(routerState: state);
   }
 }

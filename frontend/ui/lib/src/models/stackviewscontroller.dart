@@ -19,6 +19,12 @@ class StackViewsController extends ChangeNotifier {
     ];
   }
 
+  @override
+  void notifyListeners() {
+    debugPrint("ScreenConfiguration notifies");
+    super.notifyListeners();
+  }
+
   void cycle() {
     currentIndex++;
     if (currentIndex >= exposed.length) {

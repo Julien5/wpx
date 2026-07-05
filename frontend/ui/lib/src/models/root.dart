@@ -27,6 +27,12 @@ class RootModel extends ChangeNotifier {
     return backend;
   }
 
+  @override
+  void notifyListeners() {
+    debugPrint("ScreenConfiguration notifies");
+    super.notifyListeners();
+  }
+
   void setPendingContent(PendingContent u) {
     _pendingContent = u;
     backend.unload();
@@ -56,5 +62,3 @@ class RootModel extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-

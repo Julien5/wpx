@@ -13,9 +13,10 @@ class ScreenShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final path = routerState.matchedLocation;
     ScreenConfiguration screen = context.read<ScreenConfiguration>();
+    debugPrint("[1] ScreenShell build path: $path");
     return LayoutBuilder(
       builder: (context, constraints) {
-        debugPrint("CONST: $constraints, path: $path");
+        debugPrint("[1] $constraints, path: $path");
         screen.updateConstraints(constraints);
         if (screen.isMobile()) {
           return MobileShell(state: routerState);

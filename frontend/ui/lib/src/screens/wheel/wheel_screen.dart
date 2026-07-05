@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/models/segmentmodel.dart';
 import 'package:wpx/src/routes.dart';
 import 'package:wpx/src/rust/api/bridge.dart';
@@ -39,9 +38,6 @@ class _WheelScaffold extends StatelessWidget {
       Center(child: ExportButton(text: "export zip")),
     ];
     SegmentModel segmentModel = ctx.watch<SegmentModel>();
-    if (!ctx.read<RootModel>().isLoaded()) {
-      return Text("ignore");
-    }
     String trackName = segmentModel.trackFileName();
 
     return Scaffold(

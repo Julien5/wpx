@@ -10,7 +10,8 @@ import 'package:wpx/src/screens/desktop/side_panel.dart';
 import 'package:wpx/src/widgets/editable_text.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final GoRouterState routerState;
+  const MainScreen({super.key, required this.routerState});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -20,13 +21,21 @@ class _MainScreenState extends State<MainScreen> {
   String? _activeMode;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _syncModeFromRoute();
+  void initState() {
+    super.initState();
+    _syncModeFromState(widget.routerState);
   }
 
-  void _syncModeFromRoute() {
-    final mode = GoRouterState.of(context).uri.queryParameters['mode'];
+  @override
+  void didUpdateWidget(MainScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.routerState != oldWidget.routerState) {
+      _syncModeFromState(widget.routerState);
+    }
+  }
+
+  void _syncModeFromState(GoRouterState state) {
+    final mode = state.uri.queryParameters['mode'];
     if (mode != _activeMode) {
       setState(() => _activeMode = mode);
     }
@@ -46,10 +55,8 @@ class _MainScreenState extends State<MainScreen> {
       width: 1,
     );
 
-    // workaround to double build problem
-    if (!context.read<RootModel>().isLoaded()) {
-      return Text("ignore");
-    }
+    debugPrint("[1] build MainScreen");
+    assert(context.read<RootModel>().isLoaded());
 
     SegmentModel segmentModel = context.watch<SegmentModel>();
     String trackName = segmentModel.trackFileName();

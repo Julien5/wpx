@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -60,25 +58,16 @@ void gotoControls(BuildContext ctx) {
   ctx.go('${Routes.overview}?mode=controls');
 }
 
-void gotoHome(BuildContext ctx) {
+void gotoHome(BuildContext ctx) async {
   debugPrint("goto home");
-  ctx.read<RootModel>().getBackend().unload();
+  await ctx.read<RootModel>().getBackend().unload();
+  if (!ctx.mounted) {
+    return;
+  }
   ctx.go(Routes.home);
 }
 
 void gotoLoad(BuildContext ctx) {
   debugPrint("goto load");
   ctx.go(Routes.load);
-}
-
-// ignore: unused_element
-void _pushto(BuildContext ctx, String path) {
-  developer.log("PUSH:$path");
-  if (path.startsWith("/")) {
-    ctx.push(path);
-    return;
-  }
-  final currentLocation = GoRouterState.of(ctx).matchedLocation;
-  final fullPath = '$currentLocation/$path';
-  ctx.push(fullPath);
 }
