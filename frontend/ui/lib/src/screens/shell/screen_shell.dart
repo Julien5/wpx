@@ -6,34 +6,21 @@ import 'package:wpx/src/screens/shell/desktop.dart';
 import 'package:wpx/src/screens/shell/mobile.dart';
 
 class ScreenShell extends StatelessWidget {
-  const ScreenShell({super.key});
+  final GoRouterState routerState;
+  const ScreenShell({super.key, required this.routerState});
 
   @override
   Widget build(BuildContext context) {
-    final currentLocation = GoRouterState.of(context).matchedLocation;
-    final router = GoRouter.of(context);
-    final isTopRoute =
-        router
-            .routerDelegate
-            .currentConfiguration
-            .matches
-            .last
-            .matchedLocation ==
-        currentLocation;
+    final path = routerState.matchedLocation;
     ScreenConfiguration screen = context.read<ScreenConfiguration>();
     return LayoutBuilder(
       builder: (context, constraints) {
-        debugPrint(
-          "CONST: $constraints, isTop: $isTopRoute, path: $currentLocation",
-        );
-
-        if (isTopRoute) {
-          screen.updateConstraints(constraints);
-        }
+        debugPrint("CONST: $constraints, path: $path");
+        screen.updateConstraints(constraints);
         if (screen.isMobile()) {
-          return MobileShell();
+          return MobileShell(state: routerState);
         }
-        return DesktopShell();
+        return DesktopShell(state: routerState);
       },
     );
   }

@@ -20,21 +20,21 @@ GoRouter getRouter() {
         path: Routes.home,
         builder: (context, state) {
           debugPrint("home:${state.matchedLocation}");
-          return ScreenShell();
+          return ScreenShell(routerState: state);
         },
       ),
       GoRoute(
         path: Routes.load,
         builder: (context, state) {
           debugPrint("load:${state.matchedLocation}");
-          return ScreenShell();
+          return ScreenShell(routerState: state);
         },
       ),
       GoRoute(
         path: Routes.overview,
         builder: (context, state) {
           debugPrint("overview:${state.matchedLocation}");
-          return ScreenShell();
+          return ScreenShell(routerState: state);
         },
       ),
     ],

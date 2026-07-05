@@ -10,11 +10,11 @@ import 'package:wpx/src/screens/usersteps/usersteps_screen.dart';
 import 'package:wpx/src/screens/wheel/wheel_screen.dart';
 
 class MobileShell extends StatelessWidget {
-  const MobileShell({super.key});
+  final GoRouterState state;
+  const MobileShell({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
-    final state = GoRouterState.of(context);
     final path = state.matchedLocation;
     final root = context.read<RootModel>();
     if (path == '/') {

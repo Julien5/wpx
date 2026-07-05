@@ -7,11 +7,11 @@ import 'package:wpx/src/screens/home/home_screen.dart';
 import 'package:wpx/src/screens/load/load_screen.dart';
 
 class DesktopShell extends StatelessWidget {
-  const DesktopShell({super.key});
+  final GoRouterState state;
+  const DesktopShell({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
-    final state = GoRouterState.of(context);
     final path = state.matchedLocation;
     final root = context.watch<RootModel>();
     if (path == '/') {
