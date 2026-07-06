@@ -89,7 +89,8 @@ impl JsonParameters {
 
     pub async fn remove(trackfile: &TrackFile) -> GenericResult<()> {
         let mut entries = cache::list(&cache::Location::UserData).await?;
-        entries.retain(|e| e.starts_with(&format!("{}.", trackfile.number)));
+        let empty = "";
+        entries.retain(|e| e.starts_with(&basename(trackfile.number, &empty)));
         let mut all_good = true;
         for e in entries {
             match cache::remove(&cache::Location::UserData, &e).await {

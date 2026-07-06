@@ -145,10 +145,9 @@ class _FileListWidgetState extends State<FileListWidget> {
 
           if (widget.isLoading) {
             if (clickedIndex == index) {
-              deleteWidget = const SizedBox(
-                height: 15.0,
-                width: 15.0,
-                child: Center(child: CircularProgressIndicator()),
+              deleteWidget = Transform.scale(
+                scale: 0.4,
+                child: CircularProgressIndicator(),
               );
             }
           } else {
