@@ -21,7 +21,7 @@ use crate::point_collection::PacketProvider;
 use crate::speed;
 use crate::track::Track;
 use crate::trackfile;
-use crate::trackfile::SmallParameters;
+use crate::trackfile::JsonParameters;
 use crate::trackfile::TrackFile;
 use crate::waypoint::Waypoint;
 use std::sync::RwLock;
@@ -266,7 +266,7 @@ impl Backend {
         let track = self.trackSegment();
         let stats = self.segment_statistics(&track);
         log::trace!("[create_trackfile]{}", self.loaded());
-        let trackFile = match trackfile::SmallParameters::create(&name, &stats).await {
+        let trackFile = match trackfile::JsonParameters::create(&name, &stats).await {
             Ok(trackfile) => trackfile,
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);
@@ -282,14 +282,14 @@ impl Backend {
                 .trackfile = Some(trackFile.clone());
         }
         log::trace!("[create_trackfile]{}", self.loaded());
-        let _ = self.save_gpxdata().await;
-        let _ = self.save_small_parameters().await;
+        let _ = self.save_trackfile_trackdata().await;
+        let _ = self.save_trackfile_jsonparameters().await;
         log::trace!("[create_trackfile]{}", self.loaded());
         assert!(self.loaded());
         Ok(trackFile)
     }
 
-    pub async fn save_gpxdata(&self) -> Result<(), TrackError> {
+    async fn save_trackfile_trackdata(&self) -> Result<(), TrackError> {
         let (data, trackfile) = {
             let lock = self.backend_data.read().unwrap();
             let data = lock.as_ref().unwrap().track_dataset();
@@ -306,13 +306,13 @@ impl Backend {
     }
 
     pub async fn trackfiles(&self) -> Result<Vec<TrackFile>, TrackError> {
-        trackfile::SmallParameters::list()
+        trackfile::JsonParameters::list()
             .await
             .map_err(|_| TrackError::IOError.into())
     }
 
     pub async fn remove_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
-        SmallParameters::remove(trackfile)
+        JsonParameters::remove(trackfile)
             .await
             .map_err(|_| TrackError::IOError.into())
     }
@@ -324,7 +324,7 @@ impl Backend {
             .as_mut()
             .unwrap()
             .update_trackfile_name(name);
-        self.save_small_parameters().await
+        self.save_trackfile_jsonparameters().await
     }
 
     pub fn get_trackfile(&self) -> Option<TrackFile> {
@@ -348,7 +348,7 @@ impl Backend {
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
         }
-        let smalldata = match trackfile::SmallParameters::read(trackfile).await {
+        let smalldata = match trackfile::JsonParameters::read(trackfile).await {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
         };
@@ -372,7 +372,7 @@ impl Backend {
         Ok(())
     }
 
-    pub async fn save_small_parameters(&self) -> Result<TrackFile, TrackError> {
+    pub async fn save_trackfile_jsonparameters(&self) -> Result<TrackFile, TrackError> {
         let mut small_parameters = self
             .backend_data
             .read()
@@ -729,4 +729,21 @@ mod tests {
             assert!(!svg.is_empty());
         }
     }
+
+    /*#[tokio::test]
+    async fn persist_idem() {
+        let _ = env_logger::try_init();
+        let backend = load_test_data(BLACK_FOREST).await;
+        backend.
+        for trackfile in backend.trackfiles().await.unwrap() {
+            let _ = backend.read_trackfile(&trackfile).await;
+            let svg = backend.render_segment_simple(
+                &backend.trackSegment(),
+                &IntegerSize2D::new(2000, 1000),
+                point_collection::allkinds(),
+                RenderFunction::Profile,
+            );
+            assert!(!svg.is_empty());
+        }
+    }*/
 }

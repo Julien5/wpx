@@ -67,17 +67,17 @@ impl BackendData {
         TrackDataset::from_track_and_waypoints(&self.track, &waypoints)
     }
 
-    pub fn small_parameters(&self) -> SmallParameters {
+    pub fn small_parameters(&self) -> JsonParameters {
         log::trace!("persist [1]");
         let controls = self.packet_provider.collection.get_vector(&Kind::Controls);
-        SmallParameters {
+        JsonParameters {
             parameters: self.parameters.clone(),
             controls: controls.clone(),
             trackfile: self.trackfile.as_ref().unwrap().clone(),
         }
     }
 
-    pub fn update_trackfile_name(&mut self, name: &str) -> SmallParameters {
+    pub fn update_trackfile_name(&mut self, name: &str) -> JsonParameters {
         self.trackfile.as_mut().unwrap().name = format!("{}", name);
         self.small_parameters()
     }

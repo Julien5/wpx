@@ -21,7 +21,7 @@ pub struct TrackFile {
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct SmallParameters {
+pub struct JsonParameters {
     pub parameters: Parameters,
     pub controls: Vec<InputPoint>,
     pub trackfile: TrackFile,
@@ -31,8 +31,8 @@ fn basename(number: usize, suffix: &str) -> String {
     format!("{:08}.{}", number, suffix)
 }
 
-static SMALLPARAMETERS_FILENAME: &'static str = "parameters.json";
-impl SmallParameters {
+static JSONPARAMETERS_FILENAME: &'static str = "parameters.json";
+impl JsonParameters {
     fn from_string(data: &str) -> Result<Self, serde_json::Error> {
         serde_json::from_str(data)
     }
@@ -43,23 +43,23 @@ impl SmallParameters {
 
     pub async fn list() -> GenericResult<Vec<TrackFile>> {
         let mut entries = cache::list(&cache::Location::UserData).await?;
-        entries.retain(|e| e.ends_with(&SMALLPARAMETERS_FILENAME));
+        entries.retain(|e| e.ends_with(&JSONPARAMETERS_FILENAME));
         let mut ret = Vec::new();
         for meta in &entries {
             let content = cache::read(&cache::Location::UserData, meta).await?;
-            let small_parameters = Self::from_string(&content)?;
-            ret.push(small_parameters.trackfile);
+            let item = Self::from_string(&content)?;
+            ret.push(item.trackfile);
         }
         Ok(ret)
     }
 
     pub async fn create(name: &String, stats: &SegmentStatistics) -> GenericResult<TrackFile> {
         let mut entries = cache::list(&cache::Location::UserData).await?;
-        entries.retain(|e| e.ends_with(&SMALLPARAMETERS_FILENAME));
+        entries.retain(|e| e.ends_with(&JSONPARAMETERS_FILENAME));
         entries.sort();
 
         let mut candidate = 0usize;
-        while entries.contains(&basename(candidate, &SMALLPARAMETERS_FILENAME)) {
+        while entries.contains(&basename(candidate, &JSONPARAMETERS_FILENAME)) {
             candidate = candidate + 1;
             if candidate > 1_000_000 {
                 return Err(TrackError::IOError.into());
@@ -77,13 +77,13 @@ impl SmallParameters {
             elevation_gain: stats.elevation_gain,
         };
 
-        let small_parameters = SmallParameters {
+        let parameters = JsonParameters {
             parameters: parameters.clone(),
             controls: Vec::new(),
             trackfile: trackfile.clone(),
         };
 
-        let _ = small_parameters.write().await?;
+        let _ = parameters.write().await?;
         Ok(trackfile)
     }
 
@@ -108,7 +108,7 @@ impl SmallParameters {
     pub async fn write(&self) -> GenericResult<()> {
         cache::write(
             &cache::Location::UserData,
-            &basename(self.trackfile.number, SMALLPARAMETERS_FILENAME),
+            &basename(self.trackfile.number, JSONPARAMETERS_FILENAME),
             self.as_string().unwrap(),
         )
         .await
@@ -117,11 +117,11 @@ impl SmallParameters {
     pub async fn read(trackfile: &TrackFile) -> Option<Self> {
         match cache::read(
             &cache::Location::UserData,
-            &basename(trackfile.number, SMALLPARAMETERS_FILENAME),
+            &basename(trackfile.number, JSONPARAMETERS_FILENAME),
         )
         .await
         {
-            Ok(bytes) => match SmallParameters::from_string(&bytes) {
+            Ok(bytes) => match JsonParameters::from_string(&bytes) {
                 Ok(d) => {
                     debug_assert!(d.trackfile.number == trackfile.number);
                     Some(d)

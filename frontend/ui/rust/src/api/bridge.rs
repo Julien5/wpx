@@ -323,12 +323,8 @@ impl Bridge {
         self.backend.generateZip(&dedup(&kinds))
     }
 
-    pub async fn save_small_parameters(&self) -> Result<TrackFile, TrackError> {
-        self.backend.save_small_parameters().await
-    }
-
-    pub async fn save_gpxdata(&self) -> Result<(), TrackError> {
-        self.backend.save_gpxdata().await
+    pub async fn save_trackfile_jsonparameters(&self) -> Result<TrackFile, TrackError> {
+        self.backend.save_trackfile_jsonparameters().await
     }
 
     #[frb(sync)]
