@@ -360,12 +360,14 @@ impl Backend {
             .collection
             .import_other(&Kind::Controls, smalldata.controls);
 
-        let data = BackendData {
+        let mut data = BackendData {
             track,
             parameters: smalldata.parameters.clone(),
             packet_provider,
             trackfile: Some(trackfile.clone()),
         };
+        // fix user steps
+        data.set_parameters(&smalldata.parameters);
         *self.backend_data.write().unwrap() = Some(data);
         Ok(())
     }
