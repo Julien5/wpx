@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::{
     backend::SegmentStatistics,
     cache,
@@ -25,7 +27,11 @@ pub struct SmallParameters {
     pub trackfile: TrackFile,
 }
 
-static SMALLPARAMETERS_FILENAME: &'static str = "small-parameters";
+fn basename(number: usize, suffix: &str) -> String {
+    format!("{:08}.{}", number, suffix)
+}
+
+static SMALLPARAMETERS_FILENAME: &'static str = "parameters.json";
 impl SmallParameters {
     fn from_string(data: &str) -> Result<Self, serde_json::Error> {
         serde_json::from_str(data)
@@ -50,6 +56,15 @@ impl SmallParameters {
     pub async fn create(name: &String, stats: &SegmentStatistics) -> GenericResult<TrackFile> {
         let mut entries = cache::list(&cache::Location::UserData).await?;
         entries.retain(|e| e.ends_with(&SMALLPARAMETERS_FILENAME));
+        entries.sort();
+
+        let mut candidate = 0usize;
+        while entries.contains(&basename(candidate, &SMALLPARAMETERS_FILENAME)) {
+            candidate = candidate + 1;
+            if candidate > 1_000_000 {
+                return Err(TrackError::IOError.into());
+            }
+        }
 
         let parameters = Parameters::default();
 
@@ -93,7 +108,7 @@ impl SmallParameters {
     pub async fn write(&self) -> GenericResult<()> {
         cache::write(
             &cache::Location::UserData,
-            &format!("{}.{}", self.trackfile.number, SMALLPARAMETERS_FILENAME),
+            &basename(self.trackfile.number, SMALLPARAMETERS_FILENAME),
             self.as_string().unwrap(),
         )
         .await
@@ -102,7 +117,7 @@ impl SmallParameters {
     pub async fn read(trackfile: &TrackFile) -> Option<Self> {
         match cache::read(
             &cache::Location::UserData,
-            &format!("{}.{}", trackfile.number, SMALLPARAMETERS_FILENAME),
+            &basename(trackfile.number, SMALLPARAMETERS_FILENAME),
         )
         .await
         {
@@ -202,21 +217,24 @@ impl TrackDataset {
         GpxData::read_content(&bytes)
     }
 
-    pub fn from_string(data: &str) -> Result<Self, serde_json::Error> {
-        serde_json::from_str(data)
+    pub fn from_string(data: &str) -> Result<Self, TrackError> {
+        match String::from_str(&data) {
+            Ok(string) => Ok(Self { gpx: string }),
+            Err(_) => Err(TrackError::IOError.into()),
+        }
     }
 
     pub fn as_string(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string_pretty(&self)
+        Ok(self.gpx.clone())
     }
 }
 
-static TRACKDATA_FILENAME: &'static str = "track-data";
+static TRACKDATA_FILENAME: &'static str = "track.gpx";
 
 pub async fn write_trackdata(trackfile: &TrackFile, data: &TrackDataset) -> GenericResult<()> {
     cache::write(
         &cache::Location::UserData,
-        &format!("{}.{}", trackfile.number, TRACKDATA_FILENAME),
+        &basename(trackfile.number, TRACKDATA_FILENAME),
         data.as_string().unwrap(),
     )
     .await
@@ -226,7 +244,7 @@ pub async fn write_trackdata(trackfile: &TrackFile, data: &TrackDataset) -> Gene
 pub async fn read_trackdata(trackfile: &TrackFile) -> Option<GpxData> {
     match cache::read(
         &cache::Location::UserData,
-        &format!("{}.{}", trackfile.number, TRACKDATA_FILENAME),
+        &basename(trackfile.number, TRACKDATA_FILENAME),
     )
     .await
     {

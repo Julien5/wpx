@@ -24,6 +24,7 @@ class FileListWidget extends StatefulWidget {
 
 class _FileListWidgetState extends State<FileListWidget> {
   late List<TrackFile> _files;
+  int? clickedIndex;
 
   @override
   void initState() {
@@ -139,12 +140,35 @@ class _FileListWidgetState extends State<FileListWidget> {
         ],
         rows: List.generate(_files.length, (index) {
           final file = _files[index];
+
+          Widget deleteWidget = SizedBox.shrink();
+
+          if (widget.isLoading) {
+            if (clickedIndex == index) {
+              deleteWidget = const SizedBox(
+                height: 15.0,
+                width: 15.0,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+          } else {
+            deleteWidget = IconButton(
+              icon: const Icon(Icons.delete_outline, size: 20),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 20),
+              visualDensity: VisualDensity.compact,
+              tooltip: 'Delete',
+              onPressed: () async => await _confirmDelete(backend, index),
+            );
+          }
+
           return DataRow(
             onSelectChanged:
                 widget.isLoading
                     ? null
                     : (selected) {
                       if (selected != null && selected == true) {
+                        clickedIndex = index;
                         widget.onTrackFileSelected(file);
                       }
                     },
@@ -157,16 +181,7 @@ class _FileListWidgetState extends State<FileListWidget> {
               ),
               DataCell(Text(_formatLength(file.length))),
               DataCell(Text(_formatDatetime(file.startTime))),
-              DataCell(
-                IconButton(
-                  icon: const Icon(Icons.delete_outline, size: 20),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 20),
-                  visualDensity: VisualDensity.compact,
-                  tooltip: 'Delete',
-                  onPressed: () async => await _confirmDelete(backend, index),
-                ),
-              ),
+              DataCell(deleteWidget),
             ],
           );
         }),

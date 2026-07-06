@@ -24,7 +24,19 @@ pub fn send_worker(handler: &SenderHandlerLock, data: &str) {
 
 #[cfg(target_arch = "wasm32")]
 pub fn send_worker(handler: &SenderHandlerLock, data: &str) {
-    let _ = handler.write().unwrap().as_mut().unwrap().send(&data);
+    match handler.write() {
+        Ok(mut lock) => match lock.as_mut() {
+            Some(sender) => {
+                sender.send(&data);
+            }
+            None => {
+                log::info!("no sender for message: {}", data);
+            }
+        },
+        Err(_) => {
+            log::info!("write lock error for message: {}", data);
+        }
+    }
     //let tick = std::time::Duration::from_millis(0);
     //let _ = wasmtimer::tokio::sleep(tick).await;
 }
