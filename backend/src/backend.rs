@@ -730,20 +730,37 @@ mod tests {
         }
     }
 
-    /*#[tokio::test]
+    #[tokio::test]
     async fn persist_idem() {
         let _ = env_logger::try_init();
-        let backend = load_test_data(BLACK_FOREST).await;
-        backend.
-        for trackfile in backend.trackfiles().await.unwrap() {
-            let _ = backend.read_trackfile(&trackfile).await;
-            let svg = backend.render_segment_simple(
-                &backend.trackSegment(),
-                &IntegerSize2D::new(2000, 1000),
-                point_collection::allkinds(),
-                RenderFunction::Profile,
-            );
-            assert!(!svg.is_empty());
+        unsafe {
+            std::env::set_var("DATA_DIR", "/tmp/");
         }
-    }*/
+        let mut backend = load_test_data(BLACK_FOREST).await;
+        let l0 = {
+            let lock = backend.backend_data.read().unwrap();
+            lock.as_ref().unwrap().track.len()
+        };
+        let trackfile = backend.create_trackfile().await.unwrap();
+
+        backend.unload();
+        let _ = backend.read_trackfile(&trackfile).await;
+        let l1 = {
+            let lock = backend.backend_data.read().unwrap();
+            lock.as_ref().unwrap().track.len()
+        };
+
+        backend.unload();
+        let trackfiles = backend.trackfiles().await.unwrap();
+        debug_assert!(trackfiles.len() > 0);
+        let trackfile = trackfiles.first().unwrap().clone();
+        let _ = backend.read_trackfile(&trackfile).await;
+        let l2 = {
+            let lock = backend.backend_data.read().unwrap();
+            lock.as_ref().unwrap().track.len()
+        };
+        log::trace!("l0={} l1={} l2={}", l0, l1, l2);
+        debug_assert_eq!(l1, l0);
+        debug_assert_eq!(l1, l2);
+    }
 }
