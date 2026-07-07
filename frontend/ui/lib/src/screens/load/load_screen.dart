@@ -197,9 +197,11 @@ class _BodyWidgetState extends State<_BodyWidget> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     LoadScreenModel load = context.watch();
-    KindsModel kinds = context.watch();
+    KindsModel kinds = context.read();
     RootModel root = context.watch();
     if (root.isLoaded()) {
+      // Prevent setState() or markNeedsBuild() called during build
+      // (TODO: not good to change state in didChangeDependencies).
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // KindsModel needs the statistics to decide what
         // what kinds are disabled or not.

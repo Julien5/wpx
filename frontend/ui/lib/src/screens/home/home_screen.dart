@@ -67,8 +67,10 @@ class _ChooseDataState extends State<_ChooseData> {
     if (mounted == false) {
       return;
     }
-    if (missingOSM == 0) {
-      context.read<KindsModel>().osmIsLoaded = true;
+    if (root.isLoaded()) {
+      KindsModel kinds = context.read();
+      kinds.osmIsLoaded = missingOSM == 0;
+      kinds.updateStatistics(root.backend.statistics());
     }
     if (!mounted) return;
     gotoOverview(context);
@@ -170,19 +172,6 @@ class HomeScaffold extends StatelessWidget {
     );
   }
 }
-
-/*class HomeProviders extends MultiProvider {
-  final Widget child;
-  HomeProviders({super.key, required this.child})
-    : super(
-        providers: [
-          ChangeNotifierProvider(
-            create: (_) => HomeModel(packageInfo: packageInfo),
-          ),
-        ],
-        child: child,
-      );
-}*/
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
