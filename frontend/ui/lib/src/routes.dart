@@ -10,9 +10,57 @@ class Routes {
   static const String overview = "/overview";
 }
 
+class RoutesHistory extends ChangeNotifier {
+  List<String> history;
+
+  RoutesHistory() : history = <String>[];
+
+  void push(String route) {
+    debugPrint("history push: $route");
+    history.add(route);
+  }
+
+  String? last() {
+    if (history.isEmpty) {
+      return null;
+    }
+    return history.last;
+  }
+}
+
+String? accessControl(RoutesHistory history, String wanted) {
+  debugPrint("history=${history.history}");
+  String? last = history.last();
+  if (last == null) {
+    if (wanted != Routes.home) {
+      return Routes.home;
+    } else {
+      return null;
+    }
+  }
+  // This does not cover all cases. For example home => overview
+  // is accepted even when no SegmentModel exists. But this is ok
+  // as a first flush.
+  if (wanted == Routes.load && last != Routes.home) {
+    return Routes.home;
+  }
+  return null;
+}
+
 GoRouter getRouter() {
   return GoRouter(
     initialLocation: Routes.home,
+    redirect: (BuildContext context, GoRouterState state) {
+      RoutesHistory history = context.read<RoutesHistory>();
+      String wanted = state.matchedLocation;
+      String? goto = accessControl(history, wanted);
+      debugPrint("wanted:$wanted => goto:$goto");
+      final effective = goto ?? wanted;
+      if (history.last() != effective) {
+        history.push(effective);
+      }
+      return goto;
+    },
     routes: [
       GoRoute(
         path: Routes.home,
