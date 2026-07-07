@@ -60,20 +60,32 @@ class _ChooseDataState extends State<_ChooseData> {
     setState(() {
       loading = true;
     });
-
-    RootModel root = context.read<RootModel>();
-    await root.setTrackFile(trackFile);
-    int missingOSM = (await root.backend.loadOsmWithoutDownload()).toInt();
-    if (mounted == false) {
+    try {
+      RootModel root = context.read<RootModel>();
+      await root.loadTrackFile(trackFile);
+      int missingOSM = (await root.backend.loadOsmWithoutDownload()).toInt();
+      if (!mounted) return;
+      if (root.isLoaded()) {
+        KindsModel kinds = context.read();
+        kinds.osmIsLoaded = missingOSM == 0;
+        kinds.updateStatistics(root.backend.statistics());
+      }
+      gotoOverview(context);
+    } catch (e) {
+      String errorText = 'Error: "$e"';
+      if (e is bridge.TrackError) {
+        bridge.TrackError trackError = e;
+        errorText = 'Error: "$trackError"';
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorText)));
+      setState(() {
+        loading = false;
+      });
       return;
     }
-    if (root.isLoaded()) {
-      KindsModel kinds = context.read();
-      kinds.osmIsLoaded = missingOSM == 0;
-      kinds.updateStatistics(root.backend.statistics());
-    }
-    if (!mounted) return;
-    gotoOverview(context);
   }
 
   void loadPendingContent(List<List<int>> bytes) async {
