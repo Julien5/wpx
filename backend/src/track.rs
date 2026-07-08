@@ -226,8 +226,8 @@ impl Geometry {
 #[derive(Clone)]
 pub struct Track {
     pub wgs84: Vec<WGS84Point>,
-    pub simplified: Geometry,
-    pub geometry: Geometry,
+    pub simplified: std::sync::Arc<Geometry>,
+    pub geometry: std::sync::Arc<Geometry>,
     pub parts: Vec<TrackPart>,
     pub tiles: Tiles,
     trees: ProjectionTrees,
@@ -413,8 +413,6 @@ impl Track {
         );
         assert_eq!(smooth_elevation.len(), wgs.len());
 
-        let smooth_elevation_gain = Self::compute_elevation_gain(&smooth_elevation);
-
         let mut boxes = Tiles::new();
         for e in &euclidean {
             boxes.insert(tile::Tile::for_point(&e));
@@ -446,8 +444,8 @@ impl Track {
         let geometry = Geometry::copy(&euclidean, &_distance, &elevation);
         let ret = Track {
             wgs84: wgs,
-            simplified,
-            geometry,
+            simplified: std::sync::Arc::new(simplified),
+            geometry: std::sync::Arc::new(geometry),
             parts,
             tiles: boxes,
             trees,

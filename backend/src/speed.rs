@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use chrono::TimeDelta;
 
-use crate::mercator::DateTime;
+use crate::{mercator::DateTime, track::Geometry};
 
 // from mps to kmh
 pub fn _kmh(_mps: f64) -> f64 {
@@ -619,6 +619,7 @@ pub struct TimeParameters {
     pub start: DateTime,
     pub speed: Speed,
     pub track_distance: f64,
+    pub geometry: Option<std::sync::Arc<Geometry>>,
 }
 
 impl TimeParameters {
@@ -690,6 +691,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
+            geometry: None,
         };
 
         // 300 km at 15 km/h should take 20 hours
@@ -714,6 +716,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
+            geometry: None,
         };
 
         let dist_40km = 40_000.0;
@@ -740,6 +743,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
+            geometry: None,
         };
         let dist_300km = 300_000.0;
         let time_300 = time_parameters.time(dist_300km);
@@ -763,6 +767,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
+            geometry: None,
         };
 
         let dist_600km = 600_000.0;
@@ -791,6 +796,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
+            geometry: None,
         };
 
         // 800 km: 600/15 + (800-600)/11.428
@@ -818,6 +824,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
+            geometry: None,
         };
 
         // 1000 km: hard cap should be 75 hours
@@ -846,6 +853,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
+            geometry: None,
         };
 
         // 1200 km: 600/15 + 400/11.428 + 200/13.333
@@ -878,6 +886,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_lrm(2f64 * TRACK_DISTANCE_1200),
             track_distance: 2f64 * TRACK_DISTANCE_1200,
+            geometry: None,
         };
 
         // 2400 km at 10kmh => 240 hours => 10 days
@@ -908,6 +917,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_lrm(TRACK_DISTANCE_3000),
             track_distance: TRACK_DISTANCE_3000,
+            geometry: None,
         };
 
         // 3000 km at 200km/day => 15 days => 360 hours
@@ -949,6 +959,7 @@ mod tests {
                 start: start.clone(),
                 speed: best_guess_acp(distance),
                 track_distance: distance,
+                geometry: None,
             };
             let time = time_parameters.time(distance);
             let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
@@ -994,6 +1005,7 @@ mod tests {
                 start: start.clone(),
                 speed: best_guess_acp(1_250_000f64),
                 track_distance: 1_250_000f64,
+                geometry: None,
             };
             let time = time_parameters.time(distance);
             let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
@@ -1023,6 +1035,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
+            geometry: None,
         };
         let distance = 1_200_000f64;
         let time_end = start + TimeDelta::hours(90);
@@ -1052,6 +1065,7 @@ mod tests {
             start: start_time.clone(),
             speed: best_guess_acp(end.distance),
             track_distance: end.distance,
+            geometry: None,
         };
 
         let expected_time = parameters::parse_time(&"2026-04-29T02:00:00");
@@ -1083,6 +1097,7 @@ mod tests {
             start: start_time,
             speed: best_guess_acp(end.distance),
             track_distance: end.distance,
+            geometry: None,
         };
         let cut_off = time_parameters.time(0f64);
         assert_eq!(cut_off, expected);

@@ -139,6 +139,7 @@ mod tests {
             start: parameters::parse_time(&parameters.start_time),
             speed: parse_speed(&parameters.speed),
             track_distance: distance,
+            geometry: None,
         }
     }
 

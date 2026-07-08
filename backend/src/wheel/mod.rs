@@ -485,6 +485,7 @@ mod tests {
             start: default_date,
             speed: speed::Speed::KMH(KMHSpec { kmh: 1f64 }),
             track_distance: 200_000f64,
+            geometry: None,
         };
 
         WheelModel {

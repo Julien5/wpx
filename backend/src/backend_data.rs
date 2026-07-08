@@ -89,6 +89,7 @@ impl BackendData {
             start: parameters::parse_time(&parameters.start_time),
             speed: parse_speed(&parameters.speed),
             track_distance: self.track.total_distance(),
+            geometry: Some(self.track.geometry.clone()),
         };
         self.parameters = parameters.clone();
 
@@ -215,6 +216,7 @@ impl BackendData {
             start: parameters::parse_time(&self.parameters.start_time),
             speed: parse_speed(&self.parameters.speed),
             track_distance: self.track.total_distance(),
+            geometry: Some(self.track.geometry.clone()),
         }
     }
 
