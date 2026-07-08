@@ -2,14 +2,15 @@ use crate::{inputpoint::InputPoint, parameters::UserStepsOptions, track::Track};
 
 fn profile_points_elevation_gain_track(track: &Track, d: &f64) -> Vec<InputPoint> {
     let mut ret: Vec<InputPoint> = Vec::new();
-    let max_elevation = track.smooth_elevation_gain.last().unwrap();
+    let len = track.len();
+    let max_elevation = track.simplified.elevation_gain(len - 1);
     loop {
         let start_search = match ret.last() {
             Some(w) => w.track_projections.first().unwrap().track_index,
             None => 0,
         };
         let di = (ret.len() + 1) as f64 * d;
-        if di > *max_elevation {
+        if di > max_elevation {
             break;
         }
         let (wgs, proj) = track.point_at_elevation_gain(di, start_search);

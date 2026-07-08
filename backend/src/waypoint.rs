@@ -5,6 +5,7 @@ use crate::parameters;
 use crate::point_collection::{is_osm, Kind};
 use crate::segment::SegmentData;
 use crate::speed::TimeParameters;
+use crate::track::Geometry;
 use crate::track_projection::TrackProjection;
 use crate::{
     elevation, mercator::MercatorPoint, parameters::Parameters, track, wgs84point::WGS84Point,
@@ -120,7 +121,7 @@ impl WaypointInfo {
     }
     fn create_waypoint_info_cross(
         track: &track::Track,
-        smooth: &Vec<f64>,
+        smooth: &Geometry,
         parameters: &ExportParameters,
         proj: &TrackProjection,
         w: &Waypoint,
@@ -166,13 +167,13 @@ impl WaypointInfo {
         parameters: &ExportParameters,
     ) {
         let wgs0 = track.wgs84.first().unwrap();
-        let euc0 = track.euclidean.first().unwrap();
+        let euc0 = track.geometry.xypoints.first().unwrap();
         let w0 = Waypoint::create(*wgs0, euc0, 0, Kind::CutOff);
         let mut wprev = w0.clone();
         for (proj, w) in waypoints.iter_mut() {
             let info = Self::create_waypoint_info_cross(
                 track,
-                &track.smooth_elevation,
+                &track.simplified,
                 parameters,
                 proj,
                 w,

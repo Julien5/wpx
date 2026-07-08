@@ -23,7 +23,7 @@ mod LRM {
     use super::time_delta;
     use crate::{
         mercator::DateTime,
-        speed::{ControlSpeedData, LRMSpec, LRM_MIN_DISTANCE},
+        speed::{InterpolationPoint, LRMSpec, LRM_MIN_DISTANCE},
     };
 
     fn speed_kmh(end_distance: f64) -> f64 {
@@ -55,16 +55,16 @@ mod LRM {
         end_distance: f64,
         start_time: &DateTime,
         spec: &LRMSpec,
-    ) -> Vec<ControlSpeedData> {
+    ) -> Vec<InterpolationPoint> {
         let mps = spec.kmh * 1000.0 / 3600.0;
         let mut all = Vec::new();
-        all.push(ControlSpeedData {
+        all.push(InterpolationPoint {
             distance: 0f64,
             time: Some(start_time.clone()),
             is_end: false,
         });
         let end_duration = time_delta(end_distance / mps);
-        all.push(ControlSpeedData {
+        all.push(InterpolationPoint {
             distance: end_distance,
             time: Some(*start_time + end_duration),
             is_end: true,
@@ -113,7 +113,7 @@ https://docs.google.com/spreadsheets/u/0/d/e/2PACX-1vRU8adejamxip0ue6pMMGgRjPDNr
 #[allow(non_snake_case)]
 mod ACP {
     use super::time_delta;
-    use super::ControlSpeedData;
+    use super::InterpolationPoint;
     use super::ACP_MAX_DISTANCE;
     use crate::mercator::DateTime;
     use crate::speed::ACPSpec;
@@ -208,11 +208,11 @@ mod ACP {
         time_delta(time_hours * 3600.0)
     }
 
-    fn fixed_interpolation_controls(start: &DateTime) -> Vec<ControlSpeedData> {
+    fn fixed_interpolation_controls(start: &DateTime) -> Vec<InterpolationPoint> {
         let mut ret = Vec::new();
         let acp_points = fixed_interpolation_points();
         for (km, hours) in acp_points.iter() {
-            ret.push(ControlSpeedData {
+            ret.push(InterpolationPoint {
                 distance: km * 1000f64,
                 time: Some(*start + TimeDelta::seconds((hours * 3600f64).round() as i64)),
                 is_end: false,
@@ -224,13 +224,13 @@ mod ACP {
     pub fn interpolation_controls(
         start_time: &DateTime,
         end_distance: f64,
-        controls: &Vec<ControlSpeedData>,
+        controls: &Vec<InterpolationPoint>,
         spec: &ACPSpec,
-    ) -> Vec<ControlSpeedData> {
+    ) -> Vec<InterpolationPoint> {
         let mut ret = Vec::new();
         debug_assert!(end_distance <= ACP_MAX_DISTANCE);
         // the START control
-        ret.push(ControlSpeedData {
+        ret.push(InterpolationPoint {
             distance: 0f64,
             time: Some(*start_time),
             is_end: false,
@@ -243,7 +243,7 @@ mod ACP {
         /* For brevets up to 1200 km, the end control has a
          * fixed ACP time (e.g. 90h, even if distance = 1230km).
          */
-        let end = ControlSpeedData {
+        let end = InterpolationPoint {
             distance: end_distance,
             time: Some(*start_time + spec_duration),
             is_end: true,
@@ -258,7 +258,7 @@ mod ACP {
         if !copy.is_empty() {
             let prelastc = copy.last().unwrap();
             // in ACP mode, ignore the time set by user on that control.
-            let prelast = ControlSpeedData {
+            let prelast = InterpolationPoint {
                 distance: prelastc.distance,
                 time: Some(*start_time + duration(prelastc.distance)),
                 is_end: false,
@@ -280,19 +280,19 @@ mod ACP {
 #[allow(non_snake_case)]
 mod MPS {
     use super::time_delta;
-    use super::ControlSpeedData;
+    use super::InterpolationPoint;
     use crate::mercator::DateTime;
     pub fn interpolation_points(
-        controls: &Vec<ControlSpeedData>,
+        controls: &Vec<InterpolationPoint>,
         end_distance: f64,
         start_time: &DateTime,
         mps: f64,
-    ) -> Vec<ControlSpeedData> {
+    ) -> Vec<InterpolationPoint> {
         let mut all = controls.clone();
         all.retain(|c| c.time.is_some());
         // add START if needed
         if all.iter().find(|c| c.distance == 0f64).is_none() {
-            all.push(ControlSpeedData {
+            all.push(InterpolationPoint {
                 distance: 0f64,
                 time: Some(start_time.clone()),
                 is_end: false,
@@ -301,7 +301,7 @@ mod MPS {
         // add END if needed
         if all.iter().find(|c| c.is_end).is_none() {
             let end_duration = time_delta(end_distance / mps);
-            all.push(ControlSpeedData {
+            all.push(InterpolationPoint {
                 distance: end_distance,
                 time: Some(*start_time + end_duration),
                 is_end: true,
@@ -320,25 +320,25 @@ fn time_delta(seconds: f64) -> TimeDelta {
 }
 
 #[derive(Clone, Debug, Default)]
-pub struct ControlSpeedData {
+pub struct InterpolationPoint {
     pub distance: f64,
     pub time: Option<DateTime>,
     pub is_end: bool,
 }
 
-impl ControlSpeedData {
+impl InterpolationPoint {
     pub fn unwrap_time(&self) -> DateTime {
         self.time.unwrap().clone()
     }
 }
 
-impl PartialOrd for ControlSpeedData {
+impl PartialOrd for InterpolationPoint {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for ControlSpeedData {
+impl Ord for InterpolationPoint {
     fn cmp(&self, other: &Self) -> Ordering {
         // Compare by distance first (NaN values are sorted last)
         let dist_order = self
@@ -364,18 +364,18 @@ impl Ord for ControlSpeedData {
     }
 }
 
-impl PartialEq for ControlSpeedData {
+impl PartialEq for InterpolationPoint {
     fn eq(&self, other: &Self) -> bool {
         self.cmp(other) == Ordering::Equal
     }
 }
 
-impl Eq for ControlSpeedData {}
+impl Eq for InterpolationPoint {}
 
 fn find_interval_at_distance(
-    interpolation_points: &Vec<ControlSpeedData>,
+    interpolation_points: &Vec<InterpolationPoint>,
     distance: f64,
-) -> (&ControlSpeedData, &ControlSpeedData) {
+) -> (&InterpolationPoint, &InterpolationPoint) {
     // controls must contains START and END.
     debug_assert!(interpolation_points.len() >= 2);
     // controls has to be sorted by distance and time
@@ -427,7 +427,7 @@ fn find_interval_at_distance(
     (previous, next)
 }
 
-fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64) -> DateTime {
+fn interpolate_time(interpolation_points: &Vec<InterpolationPoint>, distance: f64) -> DateTime {
     // controls must contains START and END.
     debug_assert!(interpolation_points.len() >= 2);
     // controls has to be sorted by distance and time
@@ -464,9 +464,9 @@ fn interpolate_time(interpolation_points: &Vec<ControlSpeedData>, distance: f64)
 }
 
 fn find_interval_at_time<'a>(
-    interpolation_points: &'a Vec<ControlSpeedData>,
+    interpolation_points: &'a Vec<InterpolationPoint>,
     time: &DateTime,
-) -> (&'a ControlSpeedData, &'a ControlSpeedData) {
+) -> (&'a InterpolationPoint, &'a InterpolationPoint) {
     let next_candidate = interpolation_points
         .iter()
         .find(|c| c.unwrap_time() >= *time);
@@ -495,7 +495,7 @@ fn find_interval_at_time<'a>(
 }
 
 pub fn interpolate_distance(
-    interpolation_points: &Vec<ControlSpeedData>,
+    interpolation_points: &Vec<InterpolationPoint>,
     start_time: &DateTime,
     duration: &TimeDelta,
 ) -> f64 {
@@ -615,14 +615,14 @@ pub fn allowed_speeds(end_distance: f64) -> Vec<String> {
 
 #[derive(Clone, Default)]
 pub struct TimeParameters {
-    pub controls: Vec<ControlSpeedData>,
+    pub controls: Vec<InterpolationPoint>,
     pub start: DateTime,
     pub speed: Speed,
     pub track_distance: f64,
 }
 
 impl TimeParameters {
-    pub fn interpolation_points(&self) -> Vec<ControlSpeedData> {
+    pub fn interpolation_points(&self) -> Vec<InterpolationPoint> {
         let ret = match &self.speed {
             Speed::ACP(spec) => {
                 ACP::interpolation_controls(&self.start, self.track_distance, &self.controls, &spec)
@@ -986,7 +986,7 @@ mod tests {
         let start = parameters::parse_time(&params.start_time);
         for (distance, expected_hours) in test_cases {
             let time_parameters = TimeParameters {
-                controls: vec![ControlSpeedData {
+                controls: vec![InterpolationPoint {
                     distance: 1_100_000f64,
                     time: None,
                     is_end: false,
@@ -1033,12 +1033,12 @@ mod tests {
     #[test]
     fn test_acp_revert() {
         let _ = env_logger::try_init();
-        let start = ControlSpeedData {
+        let start = InterpolationPoint {
             distance: 0f64,
             time: None,
             is_end: false,
         };
-        let end = ControlSpeedData {
+        let end = InterpolationPoint {
             distance: 400_000f64,
             time: None,
             is_end: true,
@@ -1065,12 +1065,12 @@ mod tests {
     #[test]
     fn test_acp_time_parameters() {
         let _ = env_logger::try_init();
-        let start = ControlSpeedData {
+        let start = InterpolationPoint {
             distance: 0f64,
             time: None,
             is_end: false,
         };
-        let end = ControlSpeedData {
+        let end = InterpolationPoint {
             distance: 400_000f64,
             time: None,
             is_end: true,

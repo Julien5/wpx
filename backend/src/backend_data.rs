@@ -300,6 +300,7 @@ impl BackendData {
                 start,
                 end,
             });
+            log::trace!("end:{} l={}", end, self.track.total_distance());
             if end > self.track.total_distance() {
                 break;
             }

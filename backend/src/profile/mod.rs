@@ -504,18 +504,18 @@ impl ProfileView {
         let range = self.range(track);
         let mut polyline_points = PolylinePoints::new();
         // make sure to cover the whole bounding box.
-        for w in track.simplified.dz.windows(2) {
+        for w in track.simplified.indices_z.windows(2) {
             let (k1, k2) = (w[0], w[1]);
             if !range.contains(&k1) && range.contains(&k2) || (range.start == 0 && k1 == 0) {
-                let e = track.smooth_elevation[range.start];
+                let e = track.simplified.elevation(range.start);
                 let p = self.toSD(&Point2D::new(track.distance(range.start), e));
                 polyline_points.push(PolylinePoint(p));
             } else if range.contains(&k1) && !range.contains(&k2) {
-                let e = track.smooth_elevation[range.end - 1];
+                let e = track.simplified.elevation(range.end - 1);
                 let p = self.toSD(&Point2D::new(track.distance(range.end - 1), e));
                 polyline_points.push(PolylinePoint(p));
             } else if range.contains(&k2) {
-                let e = track.smooth_elevation[k2];
+                let e = track.simplified.elevation(k2);
                 let p = self.toSD(&Point2D::new(track.distance(k2), e));
                 polyline_points.push(PolylinePoint(p));
             }

@@ -46,9 +46,20 @@ impl JsonParameters {
         entries.retain(|e| e.ends_with(&JSONPARAMETERS_FILENAME));
         let mut ret = Vec::new();
         for meta in &entries {
-            let content = cache::read(&cache::Location::UserData, meta).await?;
-            let item = Self::from_string(&content)?;
-            ret.push(item.trackfile);
+            let content = match cache::read(&cache::Location::UserData, meta).await {
+                Ok(content) => content,
+                Err(e) => {
+                    log::error!("failed to read file:{}", meta);
+                    return Err(e.into());
+                }
+            };
+            match Self::from_string(&content) {
+                Ok(item) => ret.push(item.trackfile),
+                Err(e) => {
+                    log::error!("failed to read file content for file:{}", meta);
+                    return Err(e.into());
+                }
+            }
         }
         Ok(ret)
     }

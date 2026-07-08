@@ -709,15 +709,13 @@ mod tests {
         assert!(d < 100f64);
     }
 
-    #[tokio::test]
-    async fn persist() {
-        let _ = env_logger::try_init();
+    async fn persist_smoke() {
         // see filesystem.rs
         // DATA_DIR=data/ref/persist/share1
         unsafe {
             std::env::set_var("DATA_DIR", "data/ref/persist/share1");
         }
-        let backend = Backend::make();
+        let mut backend = Backend::make();
         for trackfile in backend.trackfiles().await.unwrap() {
             let _ = backend.read_trackfile(&trackfile).await;
             let svg = backend.render_segment_simple(
@@ -727,14 +725,14 @@ mod tests {
                 RenderFunction::Profile,
             );
             assert!(!svg.is_empty());
+            backend.unload();
         }
     }
 
-    #[tokio::test]
     async fn persist_idem() {
-        let _ = env_logger::try_init();
+        let tmp = tempfile::tempdir().unwrap();
         unsafe {
-            std::env::set_var("DATA_DIR", "/tmp/");
+            std::env::set_var("DATA_DIR", tmp.path().to_str().unwrap());
         }
         let mut backend = load_test_data(BLACK_FOREST).await;
         let l0 = {
@@ -762,5 +760,11 @@ mod tests {
         log::trace!("l0={} l1={} l2={}", l0, l1, l2);
         debug_assert_eq!(l1, l0);
         debug_assert_eq!(l1, l2);
+    }
+
+    #[tokio::test]
+    async fn persist() {
+        let _ = persist_smoke().await;
+        let _ = persist_idem().await;
     }
 }

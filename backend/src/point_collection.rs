@@ -504,7 +504,7 @@ pub fn remove_control_waypoints(
     ret
 }
 
-fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {
+fn control_speed_data(control: &InputPoint) -> speed::InterpolationPoint {
     let distance = control
         .track_projections
         .first()
@@ -513,14 +513,14 @@ fn control_speed_data(control: &InputPoint) -> speed::ControlSpeedData {
     let cdata = control.data.as_control().unwrap();
     let time = cdata.cutoff_time.clone();
     let is_end = cdata.is_end();
-    speed::ControlSpeedData {
+    speed::InterpolationPoint {
         distance,
         time,
         is_end,
     }
 }
 
-pub fn controls_speed_data(controls: &Vec<InputPoint>) -> Vec<speed::ControlSpeedData> {
+pub fn controls_speed_data(controls: &Vec<InputPoint>) -> Vec<speed::InterpolationPoint> {
     let mut ret: Vec<_> = controls.iter().map(|c| control_speed_data(c)).collect();
     ret.sort_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap());
     ret

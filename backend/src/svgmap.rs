@@ -184,9 +184,9 @@ pub fn euclidean_bounding_box(
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
-    for idx in &track.simplified.xy {
+    for idx in &track.simplified.indices_xy {
         if range.contains(idx) {
-            bbox.update(&track.euclidean[*idx].point2d());
+            bbox.update(&track.geometry.xypoints[*idx].point2d());
         }
     }
     bbox.enlarge(100f64);
@@ -261,9 +261,9 @@ impl MapMaker {
     fn make_polyline(&self, track: &Track) -> Polyline {
         let mut path = Vec::new();
         let range = &self.parameters.range;
-        for idx in &track.simplified.xy {
+        for idx in &track.simplified.indices_xy {
             if *idx >= range.start && *idx < range.end {
-                path.push(track.euclidean[*idx].clone());
+                path.push(track.geometry.xypoints[*idx].clone());
             }
         }
 

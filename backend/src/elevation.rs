@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use crate::track::Geometry;
+
 /*
  * converted to rust from gpxstudio:
  * https://github.com/gpxstudio/gpx.studio/blob/main/gpx/src/gpx.ts#L1945
@@ -33,19 +35,9 @@ pub fn smooth(
     ret
 }
 
-pub fn elevation_gain(smooth: &Vec<f64>, from: usize, to: usize) -> f64 {
+pub fn elevation_gain(smooth: &Geometry, from: usize, to: usize) -> f64 {
     debug_assert!(from <= to, "from:{}, to:{}", from, to);
-    let mut ret = 0f64;
-    for k in from..to {
-        if k == 0 {
-            continue;
-        }
-        let d = smooth[k] - smooth[k - 1];
-        if d > 0f64 {
-            ret += d;
-        }
-    }
-    ret
+    smooth.elevation_gain(to) - smooth.elevation_gain(from)
 }
 
 #[cfg(test)]
@@ -54,8 +46,10 @@ mod tests {
 
     #[test]
     fn ele() {
+        let _ = env_logger::try_init();
         let backend = load_backend_data_without_osm("data/blackforest.gpx");
         let S = backend.segments();
+        assert_eq!(S.len(), 3);
         let km = 1000f64;
         for s in &S {
             let stat = backend.segment_statistics(s);
@@ -67,6 +61,5 @@ mod tests {
                 stat.elevation_gain
             );
         }
-        assert_eq!(S.len(), 3);
     }
 }
