@@ -24,6 +24,67 @@ const KMH_TO_MS: f64 = 1000.0 / 3600.0;
 const MS_TO_KMH: f64 = 3600.0 / 1000.0;
 
 impl PowerParameters {
+    // duration need to ride from distance(start) to distance(end),
+    // the elevation at each index is given by elevation(index).
+    // returns the duration in seconds.
+    // if any segment is impassable (speed <= 0), returns INFINITY.
+    pub fn duration_at_power(
+        &self,
+        power: f64,
+        distance: &impl Fn(usize) -> f64,
+        elevation: &impl Fn(usize) -> f64,
+        start: usize,
+        end: usize,
+    ) -> f64 {
+        let mut total = 0.0;
+        for i in start..end {
+            let ds = distance(i + 1) - distance(i);
+            let de = elevation(i + 1) - elevation(i);
+            let grade = de / ds * 100.0;
+            let v_kmh = self.speed_at_power(power, grade);
+            if v_kmh <= 0.0 {
+                return f64::INFINITY;
+            }
+            let v_ms = v_kmh * KMH_TO_MS;
+            total += ds / v_ms;
+        }
+        total
+    }
+
+    pub fn power_at_duration(
+        &self,
+        seconds: f64,
+        distance: impl Fn(usize) -> f64,
+        elevation: impl Fn(usize) -> f64,
+        start: usize,
+        end: usize,
+    ) -> f64 {
+        if seconds <= 0.0 {
+            return 0.0;
+        }
+
+        let mut power_high = 1.0;
+        while self.duration_at_power(power_high, &distance, &elevation, start, end) > seconds {
+            power_high *= 2.0;
+            if power_high > 1_000_000.0 {
+                return f64::INFINITY;
+            }
+        }
+
+        let mut power_low = 0.0;
+        for _ in 0..60 {
+            let mid = (power_low + power_high) / 2.0;
+            let dur = self.duration_at_power(mid, &distance, &elevation, start, end);
+            if dur > seconds {
+                power_low = mid;
+            } else {
+                power_high = mid;
+            }
+        }
+
+        (power_low + power_high) / 2.0
+    }
+
     /// Same model as gribble.org/cycling/power_v_speed.html, including
     /// drivetrain loss: only a fraction of rider power actually reaches
     /// the road, the rest is dissipated in the chain/derailleur/bearings.
@@ -163,6 +224,57 @@ mod tests {
                 let power_back = p.power_at_speed(speed, grade);
                 assert_close(power_back, power, 0.5);
             }
+        }
+    }
+
+    #[test]
+    fn duration_on_flat() {
+        let p = params(|_| {});
+        // distance: 3 points at 0, 500, 1000 metres
+        let dist = |i: usize| -> f64 { [0.0, 500.0, 1000.0][i] };
+        let elev = |_: usize| -> f64 { 100.0 };
+        // 200 W on flat → 32.4 km/h ≈ 9.0 m/s → 1000/9.0 ≈ 111.11 s
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 2);
+        assert_close(dur, 111.11, 0.1);
+    }
+
+    #[test]
+    fn duration_matches_speed_times_distance() {
+        let p = params(|_| {});
+        // 10 equally spaced points over 10 km, flat
+        let n = 10;
+        let dist = |i: usize| -> f64 { i as f64 * 1000.0 };
+        let elev = |_: usize| -> f64 { 100.0 };
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, n);
+        // expected = total distance / actual speed
+        let v_ms = p.speed_at_power(200.0, 0.0) * KMH_TO_MS;
+        let expected = 10000.0 / v_ms;
+        assert_close(dur, expected, 0.01);
+    }
+
+    #[test]
+    fn duration_uphill() {
+        let p = params(|_| {});
+        // 1 km at 5% grade: elevation goes from 0 to 50
+        let dist = |i: usize| -> f64 { [0.0, 1000.0][i] };
+        let elev = |i: usize| -> f64 { [0.0, 50.0][i] };
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 1);
+        // speed_at_power(200, 5) ≈ 13.47 km/h (from gribble model)
+        let v_ms = p.speed_at_power(200.0, 5.0) * KMH_TO_MS;
+        let expected = 1000.0 / v_ms;
+        assert_close(dur, expected, 0.1);
+    }
+
+    #[test]
+    fn power_at_duration_round_trip() {
+        let p = params(|_| {});
+        let dist = |i: usize| -> f64 { i as f64 * 1000.0 };
+        let elev = |_: usize| -> f64 { 100.0 };
+        let n = 10;
+        for power in [50.0, 100.0, 200.0, 300.0] {
+            let seconds = p.duration_at_power(power, &dist, &elev, 0, n);
+            let power_back = p.power_at_duration(seconds, dist, elev, 0, n);
+            assert_close(power_back, power, 0.5);
         }
     }
 
