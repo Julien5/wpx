@@ -53,7 +53,7 @@ impl PowerParameters {
     ) where
         F: FnMut(usize, f64),
     {
-        let v_min = 4.0;
+        let v_min = 0.0;
         for i in start..(end - 1) {
             let ds = distance(i + 1) - distance(i);
             if ds <= 0.0 {
@@ -269,7 +269,7 @@ mod tests {
         let dist = |i: usize| -> f64 { [0.0, 500.0, 1000.0][i] };
         let elev = |_: usize| -> f64 { 100.0 };
         // 200 W on flat → 32.4 km/h ≈ 9.0 m/s → 1000/9.0 ≈ 111.11 s
-        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 2);
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 3);
         assert_close(dur, 111.11, 0.1);
     }
 
@@ -280,7 +280,7 @@ mod tests {
         let n = 10;
         let dist = |i: usize| -> f64 { i as f64 * 1000.0 };
         let elev = |_: usize| -> f64 { 100.0 };
-        let dur = p.duration_at_power(200.0, &dist, &elev, 0, n);
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, n + 1);
         // expected = total distance / actual speed
         let v_ms = p.speed_at_power(200.0, 0.0) * KMH_TO_MS;
         let expected = 10000.0 / v_ms;
@@ -293,7 +293,7 @@ mod tests {
         // 1 km at 5% grade: elevation goes from 0 to 50
         let dist = |i: usize| -> f64 { [0.0, 1000.0][i] };
         let elev = |i: usize| -> f64 { [0.0, 50.0][i] };
-        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 1);
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 2);
         // speed_at_power(200, 5) ≈ 13.47 km/h (from gribble model)
         let v_ms = p.speed_at_power(200.0, 5.0) * KMH_TO_MS;
         let expected = 1000.0 / v_ms;
