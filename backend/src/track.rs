@@ -336,24 +336,6 @@ impl Track {
         startidx..endidx
     }
 
-    fn compute_elevation_gain(smooth_elevation: &Vec<f64>) -> Vec<f64> {
-        let mut ret = vec![0f64; smooth_elevation.len()];
-        let range = std::ops::Range {
-            start: 0,
-            end: smooth_elevation.len(),
-        };
-        for k in range.start + 1..range.end {
-            let d = smooth_elevation[k] - smooth_elevation[k - 1];
-            if d > 0.0 {
-                ret[k] = ret[k - 1] + d;
-            } else {
-                ret[k] = ret[k - 1];
-            }
-        }
-        assert_eq!(ret.len(), smooth_elevation.len());
-        ret
-    }
-
     pub fn from_tracks(gpxtracks: &Vec<(String, gpx::Track)>) -> Result<Track, TrackError> {
         let mut _distance = Vec::new();
         let mut wgs = Vec::new();
@@ -426,7 +408,6 @@ impl Track {
         }
 
         // Compute simplified euclidean using Douglas-Peucker (for the map)
-
         let simplified = Geometry::make_simplified(&euclidean, &_distance, &smooth_elevation);
 
         let trees = match parts.len() > 1 {

@@ -89,7 +89,7 @@ impl BackendData {
             start: parameters::parse_time(&parameters.start_time),
             speed: parse_speed(&parameters.speed),
             track_distance: self.track.total_distance(),
-            geometry: Some(self.track.geometry.clone()),
+            geometry: Some(ConstantPowerGeometry::new(&self.track.geometry).into()),
         };
         self.parameters = parameters.clone();
 
@@ -211,12 +211,21 @@ impl BackendData {
     }
 
     fn time_parameters(&self) -> TimeParameters {
+        let t0 = TimeParameters {
+            controls: controls_speed_data(&self.controls()),
+            start: parameters::parse_time(&self.parameters.start_time),
+            speed: parse_speed(&self.parameters.speed),
+            track_distance: self.track.total_distance(),
+            geometry: None,
+        };
+        let mut power_geometry = ConstantPowerGeometry::new(&self.track.simplified);
+        power_geometry.solve(&t0.control_interpolation_points());
         TimeParameters {
             controls: controls_speed_data(&self.controls()),
             start: parameters::parse_time(&self.parameters.start_time),
             speed: parse_speed(&self.parameters.speed),
             track_distance: self.track.total_distance(),
-            geometry: Some(self.track.geometry.clone()),
+            geometry: Some(power_geometry.into()),
         }
     }
 

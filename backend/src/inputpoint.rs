@@ -370,13 +370,6 @@ impl InputPoint {
             if start <= *d && *d <= end {
                 return true;
             }
-            log::trace!(
-                "DD discard:{:?} -- {} <=? {} <=? {}",
-                self.name(),
-                start,
-                d,
-                end
-            );
         }
         false
     }

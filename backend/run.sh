@@ -66,7 +66,7 @@ function pdf() {
 	time cargo ${cmd} ${mode} --bin wpx -- \
 		 --output /tmp/wpx/route.zip \
 		 --start-time "2026-04-10T00:00:00" \
-		 --speed ACP \
+		 --speed "KMH-20.0" \
 		 --kinds Controls,CutOff,GPXWaypoints,Cities,Villages,Mountains \
 		 --debug true \
 		 --step-elevation-gain 100 \

@@ -168,7 +168,7 @@ pub fn generate_times_uniform_distance(
     let mut points = BTreeSet::new();
     let total_distance = end - start;
     debug_assert!(start < end);
-    let interval_points = time_parameters.interpolation_points();
+    let interval_points = time_parameters.control_interpolation_points();
     for window in interval_points.windows(2) {
         let (prev, next) = (&window[0], &window[1]);
         let tprev = prev.unwrap_time();

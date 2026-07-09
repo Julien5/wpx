@@ -8,6 +8,7 @@
 and
 - percent grade of hill: G (percent)
  */
+#[derive(Clone)]
 #[allow(non_snake_case)]
 pub struct PowerParameters {
     W: f64,              // total weight (rider + bike), kg
@@ -19,11 +20,53 @@ pub struct PowerParameters {
     DrivetrainLoss: f64, // drivetrain loss, percent (e.g. 3.0 for 3%)
 }
 
+impl Default for PowerParameters {
+    fn default() -> PowerParameters {
+        PowerParameters {
+            W: 80.0,
+            Crr: 0.005,
+            Vhw: 0.0,
+            A: 0.4,
+            Rho: 1.225,
+            Cd: 0.9,
+            DrivetrainLoss: 2f64,
+        }
+    }
+}
+
 const G: f64 = 9.8067; // m/s^2, matches Gribble's constant
 const KMH_TO_MS: f64 = 1000.0 / 3600.0;
 const MS_TO_KMH: f64 = 3600.0 / 1000.0;
 
 impl PowerParameters {
+    /// Iterates over each segment in `start..end` and calls `f(i, seg_time_seconds)`.
+    /// The grade and speed calculations (including v_min clamping) live here,
+    /// so callers like `solve_interval` don't duplicate the loop.
+    pub fn for_each_segment<F>(
+        &self,
+        power: f64,
+        distance: &impl Fn(usize) -> f64,
+        elevation: &impl Fn(usize) -> f64,
+        start: usize,
+        end: usize,
+        mut f: F,
+    ) where
+        F: FnMut(usize, f64),
+    {
+        let v_min = 4.0;
+        for i in start..(end - 1) {
+            let ds = distance(i + 1) - distance(i);
+            if ds <= 0.0 {
+                continue;
+            }
+            let de = elevation(i + 1) - elevation(i);
+            let grade = de / ds * 100.0;
+            let v_kmh = self.speed_at_power(power, grade);
+            let v_ms = v_kmh.max(v_min) * KMH_TO_MS;
+            f(i, ds / v_ms);
+        }
+    }
+
     // duration need to ride from distance(start) to distance(end),
     // the elevation at each index is given by elevation(index).
     // returns the duration in seconds.
@@ -37,17 +80,9 @@ impl PowerParameters {
         end: usize,
     ) -> f64 {
         let mut total = 0.0;
-        for i in start..end {
-            let ds = distance(i + 1) - distance(i);
-            let de = elevation(i + 1) - elevation(i);
-            let grade = de / ds * 100.0;
-            let v_kmh = self.speed_at_power(power, grade);
-            if v_kmh <= 0.0 {
-                return f64::INFINITY;
-            }
-            let v_ms = v_kmh * KMH_TO_MS;
-            total += ds / v_ms;
-        }
+        self.for_each_segment(power, distance, elevation, start, end, |_, seg_time| {
+            total += seg_time;
+        });
         total
     }
 
