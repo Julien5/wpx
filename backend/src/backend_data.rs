@@ -12,6 +12,7 @@ use crate::parameters;
 use crate::parameters::*;
 use crate::point_collection::*;
 use crate::segment::SegmentData;
+use crate::speed::powergeometry::ConstantPowerGeometry;
 use crate::speed::*;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
@@ -89,7 +90,7 @@ impl BackendData {
             start: parameters::parse_time(&parameters.start_time),
             speed: parse_speed(&parameters.speed),
             track_distance: self.track.total_distance(),
-            geometry: Some(ConstantPowerGeometry::new(&self.track.geometry).into()),
+            power: None,
         };
         self.parameters = parameters.clone();
 
@@ -211,22 +212,23 @@ impl BackendData {
     }
 
     fn time_parameters(&self) -> TimeParameters {
+        let start_time = parameters::parse_time(&self.parameters.start_time);
         let t0 = TimeParameters {
-            controls: controls_speed_data(&self.controls()),
-            start: parameters::parse_time(&self.parameters.start_time),
+            controls: controls_speed_data(&start_time, &self.controls()),
+            start: start_time,
             speed: parse_speed(&self.parameters.speed),
             track_distance: self.track.total_distance(),
-            geometry: None,
+            power: None,
         };
-        /*
-            let mut power_geometry = ConstantPowerGeometry::new(&self.track.simplified);
-            power_geometry.solve(&t0.control_interpolation_points());
-            TimeParameters {
-                controls: controls_speed_data(&self.controls()),
+
+        /*let power_geometry = ConstantPowerGeometry::new(&self.track.simplified);
+        let _power = power_geometry.interpolation_points(&t0.control_interpolation_points());
+        TimeParameters {
+                controls: controls_speed_data(&start_time, &self.controls()),
                 start: parameters::parse_time(&self.parameters.start_time),
                 speed: parse_speed(&self.parameters.speed),
                 track_distance: self.track.total_distance(),
-                geometry: Some(power_geometry.into()),
+                power: Some(power),
         }*/
         t0
     }

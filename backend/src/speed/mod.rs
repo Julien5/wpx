@@ -1,21 +1,27 @@
+pub mod power;
+pub mod powergeometry;
 pub mod spec;
 mod test;
 
 use chrono::TimeDelta;
 use std::cmp::Ordering;
 
-use crate::{mercator::DateTime, power::PowerParameters, track::Geometry};
+use crate::mercator::DateTime;
 
 #[derive(Clone, Debug, Default)]
 pub struct InterpolationPoint {
     pub distance: f64,
-    pub time: Option<DateTime>,
+    //pub _time: Option<DateTime>,
+    pub duration: Option<TimeDelta>,
     pub is_end: bool,
 }
 
 impl InterpolationPoint {
-    pub fn unwrap_time(&self) -> DateTime {
-        self.time.unwrap().clone()
+    pub fn unwrap_duration(&self) -> TimeDelta {
+        self.duration.unwrap().clone()
+    }
+    pub fn unwrap_time(&self, start_time: &DateTime) -> DateTime {
+        *start_time + self.unwrap_duration()
     }
 }
 
@@ -42,7 +48,7 @@ impl Ord for InterpolationPoint {
         }
 
         // Distances are equal — break tie by time (None sorts last)
-        match (&self.time, &other.time) {
+        match (&self.duration, &other.duration) {
             (Some(a), Some(b)) => a.cmp(b),
             (Some(_), None) => Ordering::Less,
             (None, Some(_)) => Ordering::Greater,
@@ -114,14 +120,17 @@ fn find_interval_at_distance(
     (previous, next)
 }
 
-fn interpolate_time(interpolation_points: &Vec<InterpolationPoint>, distance: f64) -> DateTime {
+fn interpolate_duration(
+    interpolation_points: &Vec<InterpolationPoint>,
+    distance: f64,
+) -> TimeDelta {
     // controls must contains START and END.
     debug_assert!(interpolation_points.len() >= 2);
     // controls has to be sorted by distance and time
     debug_assert!(interpolation_points.is_sorted());
     let (previous, next) = find_interval_at_distance(interpolation_points, distance);
-    let (t1, d1) = (previous.unwrap_time(), previous.distance);
-    let (t2, d2) = (next.unwrap_time(), next.distance);
+    let (t1, d1) = (previous.unwrap_duration(), previous.distance);
+    let (t2, d2) = (next.unwrap_duration(), next.distance);
 
     // log::trace!("[TP ] distance:{:?}", distance); //
     // log::trace!("[TP1] previous:{:?}", previous); //
@@ -152,11 +161,11 @@ fn interpolate_time(interpolation_points: &Vec<InterpolationPoint>, distance: f6
 
 fn find_interval_at_time<'a>(
     interpolation_points: &'a Vec<InterpolationPoint>,
-    time: &DateTime,
+    duration: &TimeDelta,
 ) -> (&'a InterpolationPoint, &'a InterpolationPoint) {
     let next_candidate = interpolation_points
         .iter()
-        .find(|c| c.unwrap_time() >= *time);
+        .find(|c| c.unwrap_duration() >= *duration);
 
     let next = match next_candidate {
         Some(point) => point,
@@ -172,7 +181,7 @@ fn find_interval_at_time<'a>(
 
     let previous_candidate = interpolation_points
         .iter()
-        .filter(|control| control.unwrap_time() < next.time.unwrap())
+        .filter(|control| control.unwrap_duration() < next.duration.unwrap())
         .last();
     let previous = match previous_candidate {
         Some(point) => point,
@@ -186,10 +195,9 @@ pub fn interpolate_distance(
     start_time: &DateTime,
     duration: &TimeDelta,
 ) -> f64 {
-    let time = *start_time + *duration;
-    let (previous, next) = find_interval_at_time(interpolation_points, &time);
-    let (t1, d1) = (previous.unwrap_time(), previous.distance);
-    let (t2, d2) = (next.unwrap_time(), next.distance);
+    let (previous, next) = find_interval_at_time(interpolation_points, duration);
+    let (t1, d1) = (*start_time + previous.unwrap_duration(), previous.distance);
+    let (t2, d2) = (*start_time + next.unwrap_duration(), next.distance);
     debug_assert!(t1 <= t2);
     if t1 == t2 {
         return d2;
@@ -198,6 +206,7 @@ pub fn interpolate_distance(
         .num_nanoseconds()
         .expect("time span overflows i64 nanoseconds");
     // log::trace!("t1={} time={} t2={}", t1, time, t2);
+    let time = *start_time + *duration;
     debug_assert!(t1 <= time && time <= t2 || time > t2);
 
     let offset_ns = (time - t1)
@@ -300,183 +309,47 @@ pub fn allowed_speeds(end_distance: f64) -> Vec<String> {
     ret
 }
 
-#[derive(Clone)]
-pub struct ConstantPowerGeometry {
-    geometry: Geometry,
-    power_params: PowerParameters,
-    points: Option<Vec<InterpolationPoint>>,
-}
-
-impl ConstantPowerGeometry {
-    pub fn new(geometry: &Geometry) -> Self {
-        Self {
-            geometry: geometry.clone(),
-            power_params: PowerParameters::default(),
-            points: None,
-        }
-    }
-
-    pub fn with_power_params(mut self, params: PowerParameters) -> Self {
-        self.power_params = params;
-        self
-    }
-
-    /// Computes interior interpolation points for one control interval.
-    /// Returns points for geometry indices strictly between `prev` and `next`,
-    /// so the caller can stitch intervals together without duplicates.
-    fn solve_interval(
-        &self,
-        prev: &InterpolationPoint,
-        next: &InterpolationPoint,
-    ) -> Vec<InterpolationPoint> {
-        let start = self.geometry.index_after(prev.distance);
-        let end = self.geometry.index_before(next.distance) + 1;
-        if start >= end {
-            return Vec::new();
-        }
-
-        let duration_ns = (next.unwrap_time() - prev.unwrap_time())
-            .num_nanoseconds()
-            .unwrap() as f64;
-        let duration_secs = duration_ns / 1_000_000_000.0;
-
-        let power = self.power_params.power_at_duration(
-            duration_secs,
-            |i| self.geometry.distance(i),
-            |i| self.geometry.elevation(i),
-            start,
-            end,
-        );
-        log::trace!("{} -> {}, power = {}", start, end, power);
-        let mut points = Vec::new();
-        let mut cum_time = 0.0;
-        let start_time = prev.unwrap_time();
-
-        self.power_params.for_each_segment(
-            power,
-            &|i| self.geometry.distance(i),
-            &|i| self.geometry.elevation(i),
-            start,
-            end,
-            |i, seg_time| {
-                cum_time += seg_time;
-                let new = InterpolationPoint {
-                    distance: self.geometry.distance(i + 1),
-                    time: Some(
-                        start_time
-                            + TimeDelta::nanoseconds((cum_time * 1_000_000_000.0).round() as i64),
-                    ),
-                    is_end: false,
-                };
-                if points.last().is_some() {
-                    let last: &InterpolationPoint = points.last().unwrap();
-                    debug_assert!(*last < new);
-                }
-                points.push(new);
-            },
-        );
-
-        points
-    }
-
-    /// Builds a dense set of interpolation points from sparse control points.
-    /// Each adjacent pair `(prev, next)` defines a time window; the constant
-    /// power needed to cover that distance in that time is computed, and the
-    /// segment-by-segment cumulative times become the new points.
-    pub fn solve(&mut self, controls: &Vec<InterpolationPoint>) {
-        log::warn!(
-            "solve called\n{:?}",
-            std::backtrace::Backtrace::force_capture()
-        );
-        let mut all_points = Vec::new();
-
-        for window in controls.windows(2) {
-            let prev = &window[0];
-            let next = &window[1];
-
-            if all_points.is_empty() {
-                all_points.push(InterpolationPoint {
-                    distance: prev.distance,
-                    time: Some(prev.unwrap_time()),
-                    is_end: false,
-                });
-            }
-
-            all_points.extend(self.solve_interval(prev, next));
-            debug_assert!(all_points.is_sorted());
-        }
-
-        if let Some(last) = controls.last() {
-            all_points.push(InterpolationPoint {
-                distance: last.distance,
-                time: Some(last.unwrap_time()),
-                is_end: true,
-            });
-            all_points.retain(|p| p <= last);
-        }
-        debug_assert!(all_points.is_sorted());
-        self.points = Some(all_points);
-    }
-}
-
 #[derive(Clone, Default)]
 pub struct TimeParameters {
     pub controls: Vec<InterpolationPoint>,
     pub start: DateTime,
     pub speed: Speed,
     pub track_distance: f64,
-    pub geometry: Option<std::sync::Arc<ConstantPowerGeometry>>,
+    pub power: Option<Vec<InterpolationPoint>>,
 }
 
 impl TimeParameters {
     pub fn control_interpolation_points(&self) -> Vec<InterpolationPoint> {
         let ret = match &self.speed {
-            Speed::ACP(spec) => spec::ACP::interpolation_controls(
-                &self.start,
-                self.track_distance,
-                &self.controls,
-                &spec,
-            ),
-            Speed::LRM(spec) => {
-                spec::LRM::interpolation_points(self.track_distance, &self.start, &spec)
+            Speed::ACP(spec) => {
+                spec::ACP::interpolation_controls(self.track_distance, &self.controls, &spec)
             }
+            Speed::LRM(spec) => spec::LRM::interpolation_points(self.track_distance, &spec),
             Speed::KMH(kmh) => {
                 let mps = kmh.kmh * 1000.0 / 3600.0;
-                spec::MPS::interpolation_points(
-                    &self.controls,
-                    self.track_distance,
-                    &self.start,
-                    mps,
-                )
+                spec::MPS::interpolation_points(&self.controls, self.track_distance, mps)
             }
         };
         debug_assert!(ret.is_sorted());
         debug_assert!(ret.len() >= 2);
-        ret.iter().for_each(|c| debug_assert!(c.time.is_some()));
+        ret.iter().for_each(|c| debug_assert!(c.duration.is_some()));
         ret
     }
 
     pub fn time(&self, distance: f64) -> DateTime {
-        match &self.geometry {
-            Some(g) => match &g.points {
-                Some(interpolation_points) => {
-                    return interpolate_time(&interpolation_points, distance)
-                }
-                None => {}
-            },
-            None => {}
-        }
-        interpolate_time(&self.control_interpolation_points(), distance)
+        let duration = match &self.power {
+            Some(points) => interpolate_duration(&points, distance),
+
+            None => interpolate_duration(&self.control_interpolation_points(), distance),
+        };
+        self.start + duration
     }
 
     pub fn distance(&self, duration: &TimeDelta) -> f64 {
-        match &self.geometry {
-            Some(g) => match &g.points {
-                Some(interpolation_points) => {
-                    return interpolate_distance(&interpolation_points, &self.start, duration);
-                }
-                None => {}
-            },
+        match &self.power {
+            Some(points) => {
+                return interpolate_distance(&points, &self.start, duration);
+            }
             None => {}
         }
         interpolate_distance(&self.control_interpolation_points(), &self.start, duration)
@@ -484,8 +357,8 @@ impl TimeParameters {
 
     pub fn duration(&self, distance_a: f64, distance_b: f64) -> TimeDelta {
         debug_assert!(distance_a <= distance_b);
-        let ta = interpolate_time(&self.control_interpolation_points(), distance_a);
-        let tb = interpolate_time(&self.control_interpolation_points(), distance_b);
+        let ta = interpolate_duration(&self.control_interpolation_points(), distance_a);
+        let tb = interpolate_duration(&self.control_interpolation_points(), distance_b);
         debug_assert!(ta <= tb);
         tb - ta
     }

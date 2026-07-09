@@ -171,7 +171,7 @@ pub fn generate_times_uniform_distance(
     let interval_points = time_parameters.control_interpolation_points();
     for window in interval_points.windows(2) {
         let (prev, next) = (&window[0], &window[1]);
-        let tprev = prev.unwrap_time();
+        let tprev = prev.unwrap_time(&time_parameters.start);
         if next.distance < start {
             continue;
         }
@@ -181,15 +181,15 @@ pub fn generate_times_uniform_distance(
         if next.distance == prev.distance {
             continue;
         }
-        let tnext = next.unwrap_time();
+        let tnext = next.unwrap_time(&time_parameters.start);
         let interval_duration = tnext - tprev;
         let interval_distance = next.distance - prev.distance;
         let interval_n = (n as f64 * interval_distance / total_distance).ceil() as usize;
         let interval_delta = nice_interval(&interval_duration, interval_n);
         debug_assert!(interval_delta.num_seconds() > 0);
-        let mut t = midnight(&prev.unwrap_time());
+        let mut t = midnight(&prev.unwrap_time(&time_parameters.start));
         loop {
-            if t > next.unwrap_time() {
+            if t > next.unwrap_time(&time_parameters.start) {
                 break;
             }
             let pos = time_parameters.distance(&(t - time_parameters.start));

@@ -9,10 +9,7 @@ fn time_delta(seconds: f64) -> TimeDelta {
 pub mod LRM {
     const LRM_MIN_DISTANCE: f64 = 1050_000f64;
     use super::time_delta;
-    use crate::{
-        mercator::DateTime,
-        speed::{InterpolationPoint, LRMSpec},
-    };
+    use crate::speed::{InterpolationPoint, LRMSpec};
 
     fn speed_kmh(end_distance: f64) -> f64 {
         // https://www.randonneursmondiaux.org/files/Rules_2019.pdf
@@ -39,27 +36,23 @@ pub mod LRM {
         })
     }
 
-    pub fn interpolation_points(
-        end_distance: f64,
-        start_time: &DateTime,
-        spec: &LRMSpec,
-    ) -> Vec<InterpolationPoint> {
+    pub fn interpolation_points(end_distance: f64, spec: &LRMSpec) -> Vec<InterpolationPoint> {
         let mps = spec.kmh * 1000.0 / 3600.0;
         let mut all = Vec::new();
         all.push(InterpolationPoint {
             distance: 0f64,
-            time: Some(start_time.clone()),
+            duration: Some(time_delta(0f64)),
             is_end: false,
         });
         let end_duration = time_delta(end_distance / mps);
         all.push(InterpolationPoint {
             distance: end_distance,
-            time: Some(*start_time + end_duration),
+            duration: Some(end_duration),
             is_end: true,
         });
         all.sort();
         debug_assert!(all.len() >= 2);
-        all.iter().for_each(|c| debug_assert!(c.time.is_some()));
+        all.iter().for_each(|c| debug_assert!(c.duration.is_some()));
         all
     }
 }
@@ -103,7 +96,6 @@ pub mod ACP {
     const ACP_MAX_DISTANCE: f64 = 1250_000f64;
     use super::super::InterpolationPoint;
     use super::time_delta;
-    use crate::mercator::DateTime;
     use crate::speed::ACPSpec;
     use chrono::TimeDelta;
 
@@ -196,13 +188,13 @@ pub mod ACP {
         time_delta(time_hours * 3600.0)
     }
 
-    fn fixed_interpolation_controls(start: &DateTime) -> Vec<InterpolationPoint> {
+    fn fixed_interpolation_controls() -> Vec<InterpolationPoint> {
         let mut ret = Vec::new();
         let acp_points = fixed_interpolation_points();
         for (km, hours) in acp_points.iter() {
             ret.push(InterpolationPoint {
                 distance: km * 1000f64,
-                time: Some(*start + TimeDelta::seconds((hours * 3600f64).round() as i64)),
+                duration: Some(TimeDelta::seconds((hours * 3600f64).round() as i64)),
                 is_end: false,
             });
         }
@@ -210,7 +202,6 @@ pub mod ACP {
     }
 
     pub fn interpolation_controls(
-        start_time: &DateTime,
         end_distance: f64,
         controls: &Vec<InterpolationPoint>,
         spec: &ACPSpec,
@@ -220,7 +211,7 @@ pub mod ACP {
         // the START control
         ret.push(InterpolationPoint {
             distance: 0f64,
-            time: Some(*start_time),
+            duration: Some(time_delta(0f64)),
             is_end: false,
         });
 
@@ -233,7 +224,7 @@ pub mod ACP {
          */
         let end = InterpolationPoint {
             distance: end_distance,
-            time: Some(*start_time + spec_duration),
+            duration: Some(spec_duration),
             is_end: true,
         };
         ret.push(end);
@@ -248,13 +239,13 @@ pub mod ACP {
             // in ACP mode, ignore the time set by user on that control.
             let prelast = InterpolationPoint {
                 distance: prelastc.distance,
-                time: Some(*start_time + duration(prelastc.distance)),
+                duration: Some(duration(prelastc.distance)),
                 is_end: false,
             };
             ret.push(prelast);
         }
 
-        let mut fixed = fixed_interpolation_controls(start_time);
+        let mut fixed = fixed_interpolation_controls();
         // exclude the acp point at closest_to_end_acp.
         // The right point for that is END (included above).
         fixed.retain(|c| c.distance < end_distance && c.distance != spec_distance);
@@ -269,20 +260,18 @@ pub mod ACP {
 pub mod MPS {
     use super::super::InterpolationPoint;
     use super::time_delta;
-    use crate::mercator::DateTime;
     pub fn interpolation_points(
         controls: &Vec<InterpolationPoint>,
         end_distance: f64,
-        start_time: &DateTime,
         mps: f64,
     ) -> Vec<InterpolationPoint> {
         let mut all = controls.clone();
-        all.retain(|c| c.time.is_some());
+        all.retain(|c| c.duration.is_some());
         // add START if needed
         if all.iter().find(|c| c.distance == 0f64).is_none() {
             all.push(InterpolationPoint {
                 distance: 0f64,
-                time: Some(start_time.clone()),
+                duration: Some(time_delta(0f64)),
                 is_end: false,
             });
         }
@@ -291,13 +280,13 @@ pub mod MPS {
             let end_duration = time_delta(end_distance / mps);
             all.push(InterpolationPoint {
                 distance: end_distance,
-                time: Some(*start_time + end_duration),
+                duration: Some(end_duration),
                 is_end: true,
             });
         }
         all.sort();
         debug_assert!(all.len() >= 2);
-        all.iter().for_each(|c| debug_assert!(c.time.is_some()));
+        all.iter().for_each(|c| debug_assert!(c.duration.is_some()));
         all
     }
 }

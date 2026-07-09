@@ -20,7 +20,6 @@ pub mod osm;
 pub mod parameters;
 mod pdf;
 pub mod point_collection;
-mod power;
 mod profile;
 mod render;
 mod segment;

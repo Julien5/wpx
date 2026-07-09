@@ -1,6 +1,7 @@
 use crate::{
     backend::Segment,
     inputpoint::InputPointData::OSM,
+    mercator::DateTime,
     speed::{self, TimeParameters},
 };
 use clap::ValueEnum;
@@ -504,7 +505,7 @@ pub fn remove_control_waypoints(
     ret
 }
 
-fn control_speed_data(control: &InputPoint) -> speed::InterpolationPoint {
+fn control_speed_data(start_time: &DateTime, control: &InputPoint) -> speed::InterpolationPoint {
     let distance = control
         .track_projections
         .first()
@@ -513,15 +514,25 @@ fn control_speed_data(control: &InputPoint) -> speed::InterpolationPoint {
     let cdata = control.data.as_control().unwrap();
     let time = cdata.cutoff_time.clone();
     let is_end = cdata.is_end();
+    let duration = match time {
+        Some(t) => Some(t - start_time),
+        None => None,
+    };
     speed::InterpolationPoint {
         distance,
-        time,
+        duration,
         is_end,
     }
 }
 
-pub fn controls_speed_data(controls: &Vec<InputPoint>) -> Vec<speed::InterpolationPoint> {
-    let mut ret: Vec<_> = controls.iter().map(|c| control_speed_data(c)).collect();
+pub fn controls_speed_data(
+    start_time: &DateTime,
+    controls: &Vec<InputPoint>,
+) -> Vec<speed::InterpolationPoint> {
+    let mut ret: Vec<_> = controls
+        .iter()
+        .map(|c| control_speed_data(start_time, c))
+        .collect();
     ret.sort_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap());
     ret
 }

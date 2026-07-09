@@ -31,7 +31,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
 
         // 300 km at 15 km/h should take 20 hours
@@ -56,7 +56,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
 
         let dist_40km = 40_000.0;
@@ -83,7 +83,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
         let dist_300km = 300_000.0;
         let time_300 = time_parameters.time(dist_300km);
@@ -107,7 +107,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
 
         let dist_600km = 600_000.0;
@@ -136,7 +136,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
 
         // 800 km: 600/15 + (800-600)/11.428
@@ -164,7 +164,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
 
         // 1000 km: hard cap should be 75 hours
@@ -193,7 +193,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
 
         // 1200 km: 600/15 + 400/11.428 + 200/13.333
@@ -226,7 +226,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_lrm(2f64 * TRACK_DISTANCE_1200),
             track_distance: 2f64 * TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
 
         // 2400 km at 10kmh => 240 hours => 10 days
@@ -257,7 +257,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_lrm(TRACK_DISTANCE_3000),
             track_distance: TRACK_DISTANCE_3000,
-            geometry: None,
+            power: None,
         };
 
         // 3000 km at 200km/day => 15 days => 360 hours
@@ -299,7 +299,7 @@ mod tests {
                 start: start.clone(),
                 speed: best_guess_acp(distance),
                 track_distance: distance,
-                geometry: None,
+                power: None,
             };
             let time = time_parameters.time(distance);
             let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
@@ -339,13 +339,13 @@ mod tests {
             let time_parameters = TimeParameters {
                 controls: vec![InterpolationPoint {
                     distance: 1_100_000f64,
-                    time: None,
+                    duration: None,
                     is_end: false,
                 }],
                 start: start.clone(),
                 speed: best_guess_acp(1_250_000f64),
                 track_distance: 1_250_000f64,
-                geometry: None,
+                power: None,
             };
             let time = time_parameters.time(distance);
             let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
@@ -375,7 +375,7 @@ mod tests {
             start: start.clone(),
             speed: best_guess_acp(TRACK_DISTANCE_1200),
             track_distance: TRACK_DISTANCE_1200,
-            geometry: None,
+            power: None,
         };
         let distance = 1_200_000f64;
         let time_end = start + TimeDelta::hours(90);
@@ -388,12 +388,12 @@ mod tests {
         let _ = env_logger::try_init();
         let start = InterpolationPoint {
             distance: 0f64,
-            time: None,
+            duration: None,
             is_end: false,
         };
         let end = InterpolationPoint {
             distance: 400_000f64,
-            time: None,
+            duration: None,
             is_end: true,
         };
         let controls = vec![start, end.clone()];
@@ -405,7 +405,7 @@ mod tests {
             start: start_time.clone(),
             speed: best_guess_acp(end.distance),
             track_distance: end.distance,
-            geometry: None,
+            power: None,
         };
 
         let expected_time = parameters::parse_time(&"2026-04-29T02:00:00");
@@ -421,12 +421,12 @@ mod tests {
         let _ = env_logger::try_init();
         let start = InterpolationPoint {
             distance: 0f64,
-            time: None,
+            duration: None,
             is_end: false,
         };
         let end = InterpolationPoint {
             distance: 400_000f64,
-            time: None,
+            duration: None,
             is_end: true,
         };
         let controls = vec![start.clone(), end.clone()];
@@ -437,7 +437,7 @@ mod tests {
             start: start_time,
             speed: best_guess_acp(end.distance),
             track_distance: end.distance,
-            geometry: None,
+            power: None,
         };
         let cut_off = time_parameters.time(0f64);
         assert_eq!(cut_off, expected);
