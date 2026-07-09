@@ -1,3 +1,5 @@
+use chrono::TimeDelta;
+
 /*
 - total weight W (kg)
 - rolling resistance Crr (unitless)
@@ -51,19 +53,24 @@ impl PowerParameters {
         end: usize,
         mut f: F,
     ) where
-        F: FnMut(usize, f64),
+        F: FnMut(usize, TimeDelta),
     {
         let v_min = 0.0;
-        for i in start..(end - 1) {
-            let ds = distance(i + 1) - distance(i);
+        for i in start..=end {
+            if i == 0 {
+                continue;
+            }
+            let ds = distance(i) - distance(i - 1);
             if ds <= 0.0 {
                 continue;
             }
-            let de = elevation(i + 1) - elevation(i);
+            let de = elevation(i) - elevation(i - 1);
             let grade = de / ds * 100.0;
             let v_kmh = self.speed_at_power(power, grade);
             let v_ms = v_kmh.max(v_min) * KMH_TO_MS;
-            f(i, ds / v_ms);
+            let seconds = ds / v_ms;
+            let duration = TimeDelta::nanoseconds((seconds * 1_000_000_000.0).round() as i64);
+            f(i, duration);
         }
     }
 
@@ -78,28 +85,28 @@ impl PowerParameters {
         elevation: &impl Fn(usize) -> f64,
         start: usize,
         end: usize,
-    ) -> f64 {
-        let mut total = 0.0;
-        self.for_each_segment(power, distance, elevation, start, end, |_, seg_time| {
-            total += seg_time;
+    ) -> TimeDelta {
+        let mut total = TimeDelta::seconds(0);
+        self.for_each_segment(power, distance, elevation, start, end, |_, duration| {
+            total += duration;
         });
         total
     }
 
     pub fn power_at_duration(
         &self,
-        seconds: f64,
+        duration: &TimeDelta,
         distance: impl Fn(usize) -> f64,
         elevation: impl Fn(usize) -> f64,
         start: usize,
         end: usize,
     ) -> f64 {
-        if seconds <= 0.0 {
+        if *duration <= TimeDelta::seconds(0) {
             return 0.0;
         }
 
         let mut power_high = 1.0;
-        while self.duration_at_power(power_high, &distance, &elevation, start, end) > seconds {
+        while self.duration_at_power(power_high, &distance, &elevation, start, end) > *duration {
             power_high *= 2.0;
             if power_high > 1_000_000.0 {
                 return f64::INFINITY;
@@ -110,7 +117,7 @@ impl PowerParameters {
         for _ in 0..60 {
             let mid = (power_low + power_high) / 2.0;
             let dur = self.duration_at_power(mid, &distance, &elevation, start, end);
-            if dur > seconds {
+            if dur > *duration {
                 power_low = mid;
             } else {
                 power_high = mid;
@@ -225,6 +232,16 @@ mod tests {
         );
     }
 
+    fn assert_close_duration(actual: TimeDelta, expected: TimeDelta, tol: f64) {
+        assert!(
+            (actual.num_milliseconds() as f64 / 1000f64
+                - expected.num_milliseconds() as f64 / 1000f64)
+                .abs()
+                < tol,
+            "expected ~{expected:.3} km/h, got {actual:.3} km/h"
+        );
+    }
+
     #[test]
     fn no_wind() {
         let p = params(|_| {});
@@ -268,36 +285,46 @@ mod tests {
         // distance: 3 points at 0, 500, 1000 metres
         let dist = |i: usize| -> f64 { [0.0, 500.0, 1000.0][i] };
         let elev = |_: usize| -> f64 { 100.0 };
-        // 200 W on flat → 32.4 km/h ≈ 9.0 m/s → 1000/9.0 ≈ 111.11 s
-        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 3);
-        assert_close(dur, 111.11, 0.1);
+        // 200 W on flat -> 32.4 km/h ~= 9.0 m/s -> 1000/9.0 ~= 111.11 s
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 2);
+        assert_close_duration(dur, TimeDelta::milliseconds(111_110), 0.1);
     }
 
     #[test]
     fn duration_matches_speed_times_distance() {
+        let _ = env_logger::try_init();
         let p = params(|_| {});
         // 10 equally spaced points over 10 km, flat
         let n = 10;
         let dist = |i: usize| -> f64 { i as f64 * 1000.0 };
         let elev = |_: usize| -> f64 { 100.0 };
-        let dur = p.duration_at_power(200.0, &dist, &elev, 0, n + 1);
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, n);
         // expected = total distance / actual speed
         let v_ms = p.speed_at_power(200.0, 0.0) * KMH_TO_MS;
         let expected = 10000.0 / v_ms;
-        assert_close(dur, expected, 0.01);
+        assert_close_duration(
+            dur,
+            TimeDelta::milliseconds((expected * 1000f64).round() as i64),
+            0.01,
+        );
     }
 
     #[test]
     fn duration_uphill() {
+        let _ = env_logger::try_init();
         let p = params(|_| {});
         // 1 km at 5% grade: elevation goes from 0 to 50
         let dist = |i: usize| -> f64 { [0.0, 1000.0][i] };
         let elev = |i: usize| -> f64 { [0.0, 50.0][i] };
-        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 2);
+        let dur = p.duration_at_power(200.0, &dist, &elev, 0, 1);
         // speed_at_power(200, 5) ≈ 13.47 km/h (from gribble model)
         let v_ms = p.speed_at_power(200.0, 5.0) * KMH_TO_MS;
         let expected = 1000.0 / v_ms;
-        assert_close(dur, expected, 0.1);
+        assert_close_duration(
+            dur,
+            TimeDelta::milliseconds((expected * 1000f64).round() as i64),
+            0.1,
+        );
     }
 
     #[test]
@@ -308,7 +335,7 @@ mod tests {
         let n = 10;
         for power in [50.0, 100.0, 200.0, 300.0] {
             let seconds = p.duration_at_power(power, &dist, &elev, 0, n);
-            let power_back = p.power_at_duration(seconds, dist, elev, 0, n);
+            let power_back = p.power_at_duration(&seconds, dist, elev, 0, n);
             assert_close(power_back, power, 0.5);
         }
     }

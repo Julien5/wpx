@@ -221,16 +221,14 @@ impl BackendData {
             power: None,
         };
 
-        /*let power_geometry = ConstantPowerGeometry::new(&self.track.simplified);
-        let _power = power_geometry.interpolation_points(&t0.control_interpolation_points());
+        let power_geometry = ConstantPowerGeometry::new(&self.track.simplified);
         TimeParameters {
-                controls: controls_speed_data(&start_time, &self.controls()),
-                start: parameters::parse_time(&self.parameters.start_time),
-                speed: parse_speed(&self.parameters.speed),
-                track_distance: self.track.total_distance(),
-                power: Some(power),
-        }*/
-        t0
+            controls: controls_speed_data(&start_time, &self.controls()),
+            start: parameters::parse_time(&self.parameters.start_time),
+            speed: parse_speed(&self.parameters.speed),
+            track_distance: self.track.total_distance(),
+            power: Some(power_geometry.interpolation_points(&t0.control_interpolation_points())),
+        }
     }
 
     pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {

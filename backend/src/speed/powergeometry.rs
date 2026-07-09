@@ -1,4 +1,6 @@
 #![allow(dead_code)]
+use std::collections::BTreeMap;
+
 use chrono::TimeDelta;
 
 use crate::{
@@ -6,17 +8,47 @@ use crate::{
     track::Geometry,
 };
 
+pub type Table = BTreeMap<i32, Vec<TimeDelta>>;
+
 #[derive(Clone)]
 pub struct ConstantPowerGeometry {
     geometry: Geometry,
     power_params: PowerParameters,
+    table: Table,
 }
 
 impl ConstantPowerGeometry {
+    pub fn compute_table(power_params: &PowerParameters, geometry: &Geometry) -> Table {
+        let mut table = Table::new();
+        debug_assert!(geometry.len() > 0);
+        for power in (10..=1000).step_by(10) {
+            let mut durations = vec![TimeDelta::seconds(0); geometry.len()];
+
+            power_params.for_each_segment(
+                power as f64,
+                &|i| geometry.distance(i),
+                &|i| geometry.elevation(i),
+                0,
+                geometry.len() - 1,
+                |i, duration| {
+                    durations[i] = if i > 0 {
+                        durations[i - 1] + duration
+                    } else {
+                        duration
+                    };
+                },
+            );
+            table.insert(power, durations);
+        }
+        table
+    }
     pub fn new(geometry: &Geometry) -> Self {
+        let params = PowerParameters::default();
+        let table = Self::compute_table(&params, geometry);
         Self {
             geometry: geometry.clone(),
-            power_params: PowerParameters::default(),
+            power_params: params,
+            table,
         }
     }
 
@@ -39,35 +71,30 @@ impl ConstantPowerGeometry {
             return Vec::new();
         }
 
-        let duration_ns = (next.unwrap_duration() - prev.unwrap_duration())
-            .num_nanoseconds()
-            .unwrap() as f64;
-        let duration_secs = duration_ns / 1_000_000_000.0;
+        let duration = next.unwrap_duration() - prev.unwrap_duration();
 
         let power = self.power_params.power_at_duration(
-            duration_secs,
+            &duration,
             |i| self.geometry.distance(i),
             |i| self.geometry.elevation(i),
             start,
-            end,
+            end.min(self.geometry.len() - 1),
         );
         log::trace!("{} -> {}, power = {}", start, end, power);
         let mut points = Vec::new();
-        let mut cum_time = 0.0f64;
-        let duration = prev.duration.unwrap()
-            + TimeDelta::nanoseconds((cum_time * 1_000_000_000.0).round() as i64);
+        let mut cumulative_duration = TimeDelta::seconds(0);
 
         self.power_params.for_each_segment(
             power,
             &|i| self.geometry.distance(i),
             &|i| self.geometry.elevation(i),
             start,
-            end,
-            |i, seg_time| {
-                cum_time += seg_time;
+            end.min(self.geometry.len() - 1),
+            |i, duration| {
+                cumulative_duration += duration;
                 let new = InterpolationPoint {
-                    distance: self.geometry.distance(i + 1),
-                    duration: Some(duration),
+                    distance: self.geometry.distance(i),
+                    duration: Some(cumulative_duration),
                     is_end: false,
                 };
                 if points.last().is_some() {
@@ -89,10 +116,8 @@ impl ConstantPowerGeometry {
         &self,
         controls: &Vec<InterpolationPoint>,
     ) -> Vec<InterpolationPoint> {
-        log::warn!(
-            "solve called\n{:?}",
-            std::backtrace::Backtrace::force_capture()
-        );
+        // std::backtrace::Backtrace::force_capture()
+        log::warn!("solve called",);
         let mut all_points = Vec::new();
 
         for window in controls.windows(2) {

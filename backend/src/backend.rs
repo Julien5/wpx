@@ -19,6 +19,7 @@ use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
 use crate::speed;
+use crate::speed::powergeometry::ConstantPowerGeometry;
 use crate::track::Track;
 use crate::trackfile;
 use crate::trackfile::JsonParameters;
@@ -237,6 +238,7 @@ impl Backend {
             .collection
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
+        let power_geometry = ConstantPowerGeometry::new(&track.simplified);
         let data = BackendData {
             track,
             parameters,
