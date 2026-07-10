@@ -53,7 +53,7 @@ fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Paramete
 
     let mut packet_provider = PacketProvider::new();
     packet_provider.collection = collection;
-    let power_geometry = ConstantPowerGeometry::new(&track.simplified);
+    let power_geometry = ConstantPowerGeometry::new(&track.geometry);
     BackendData {
         parameters,
         track,
@@ -121,7 +121,7 @@ pub async fn load_backend_data_with_track_and_parameters(
 
     let mut packet_provider = PacketProvider::new();
     packet_provider.collection = collection;
-    let power_geometry = ConstantPowerGeometry::new(&track.simplified);
+    let power_geometry = ConstantPowerGeometry::new(&track.geometry);
     BackendData {
         parameters,
         track: Arc::new(track),

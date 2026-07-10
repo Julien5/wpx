@@ -319,19 +319,12 @@ impl Track {
         self.geometry.total_distance()
     }
 
-    pub fn index_after(&self, distance: f64) -> usize {
-        self.geometry.index_after(distance)
-    }
-    pub fn index_before(&self, distance: f64) -> usize {
-        self.geometry.index_before(distance)
-    }
-
     pub fn subrange(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {
         assert!(self.geometry.len() > 0);
         assert!(d0 < d1);
-        let startidx = self.index_after(d0);
+        let startidx = self.geometry.index_after(d0);
         // past the end
-        let endidx = self.index_before(d1) + 1;
+        let endidx = self.geometry.index_before(d1) + 1;
         assert!(endidx <= self.len());
         startidx..endidx
     }
@@ -432,21 +425,6 @@ impl Track {
             trees,
         };
         Ok(ret)
-    }
-
-    pub fn douglas_peucker_z(&self, epsilon: f64, range: &std::ops::Range<usize>) -> Vec<usize> {
-        let mut coords = Vec::new();
-        for k in range.start..range.end {
-            let x = self.distance(k);
-            //let y = self.elevation(k);
-            let y = self.simplified.elevation(k);
-            coords.push(geo::coord!(x:x, y:y));
-        }
-        let line = geo::LineString::new(coords);
-        line.simplify_idx(epsilon)
-            .iter()
-            .map(|k| k + range.start)
-            .collect::<Vec<_>>()
     }
 
     pub fn project_point(&self, point: &mut InputPoint) {

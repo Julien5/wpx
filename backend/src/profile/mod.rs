@@ -267,8 +267,8 @@ impl ProfileView {
                 break;
             }
             let range = std::ops::Range {
-                start: track.index_after(x0),
-                end: track.index_before(x1),
+                start: track.geometry.index_after(x0),
+                end: track.geometry.index_before(x1),
             };
             if range.start >= range.end {
                 break;

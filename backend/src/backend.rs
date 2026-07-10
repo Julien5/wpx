@@ -239,7 +239,7 @@ impl Backend {
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
         log::trace!("start compute power geometry");
-        let power_geometry = ConstantPowerGeometry::new(&track.simplified);
+        let power_geometry = ConstantPowerGeometry::new(&track.geometry);
         log::trace!("start compute power geometry");
         let data = BackendData {
             track,
@@ -366,7 +366,7 @@ impl Backend {
             .import_other(&Kind::Controls, smalldata.controls);
 
         log::trace!("start compute power geometry");
-        let power_geometry = ConstantPowerGeometry::new(&track.simplified);
+        let power_geometry = ConstantPowerGeometry::new(&track.geometry);
         log::trace!("start compute power geometry");
         let mut data = BackendData {
             track,
