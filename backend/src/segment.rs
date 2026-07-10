@@ -142,7 +142,7 @@ impl<'a> SegmentData<'a> {
     }
 
     pub fn map_box(&self) -> BoundingBox {
-        svgmap::euclidean_bounding_box(&self.track, &self.range())
+        svgmap::euclidean_bounding_box(&self.track.map, &self.range())
     }
 
     fn debug_graphic_dir(&self, marker: &str) -> Option<String> {
@@ -190,7 +190,7 @@ impl<'a> SegmentData<'a> {
         let ret = {
             let render_parameters = self.profile_render_parameters(kinds, size);
             profile::render_profile(
-                &self.track,
+                &self.track.profile,
                 &render_parameters,
                 &self
                     .packet_provider
@@ -211,7 +211,7 @@ impl<'a> SegmentData<'a> {
         let ret = {
             let map_parameters = self.map_render_parameters(kinds, size);
             svgmap::render_map(
-                &self.track,
+                &self.track.map,
                 &map_parameters,
                 &self.packet_provider.collection.map(&self.segment, kinds),
                 self.debug_graphic_dir(&format!("render-map-{}x{}", size.width, size.height)),
@@ -236,7 +236,7 @@ impl<'a> SegmentData<'a> {
             let profile_parameters = self.profile_render_parameters(kinds, profile_size);
 
             let rp = profile::render_profile(
-                &self.track,
+                &self.track.profile,
                 &profile_parameters,
                 &self
                     .packet_provider
@@ -251,7 +251,7 @@ impl<'a> SegmentData<'a> {
             let profile_collection = PointCollection::from_result(&rp);
 
             let rm = svgmap::render_map(
-                &self.track,
+                &self.track.map,
                 &map_parameters,
                 &profile_collection.map(&self.segment, kinds),
                 self.debug_graphic_dir(&format!("joinmap-{}x{}", map_size.width, map_size.height)),
@@ -336,13 +336,13 @@ mod tests {
 
         let result = match function {
             &RenderFunction::Profile => profile::render_profile(
-                &segment.track,
+                &segment.track.profile,
                 &profile_parameters,
                 &collection.profile(&fsegment, &kinds),
                 None,
             ),
             &RenderFunction::Map => svgmap::render_map(
-                &segment.track,
+                &segment.track.map,
                 &map_parameters,
                 &collection.map(&fsegment, &kinds),
                 None,

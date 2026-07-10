@@ -11,7 +11,6 @@ use crate::{
     osm::{self, DownloadSideData},
     parameters::Parameters,
     point_collection::{Kind, PacketProvider, PointCollection},
-    speed::powergeometry::ConstantPowerGeometry,
     track::Track,
 };
 
@@ -53,7 +52,7 @@ fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Paramete
 
     let mut packet_provider = PacketProvider::new();
     packet_provider.collection = collection;
-    let power_geometry = ConstantPowerGeometry::new(&track.geometry);
+    let power_geometry = track.make_power_geometry();
     BackendData {
         parameters,
         track,
@@ -121,7 +120,7 @@ pub async fn load_backend_data_with_track_and_parameters(
 
     let mut packet_provider = PacketProvider::new();
     packet_provider.collection = collection;
-    let power_geometry = ConstantPowerGeometry::new(&track.geometry);
+    let power_geometry = track.make_power_geometry();
     BackendData {
         parameters,
         track: Arc::new(track),

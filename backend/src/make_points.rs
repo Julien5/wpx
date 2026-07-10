@@ -3,7 +3,7 @@ use crate::{inputpoint::InputPoint, parameters::UserStepsOptions, track::Track};
 fn profile_points_elevation_gain_track(track: &Track, d: &f64) -> Vec<InputPoint> {
     let mut ret: Vec<InputPoint> = Vec::new();
     let len = track.len();
-    let max_elevation = track.simplified.elevation_gain(len - 1);
+    let max_elevation = track.profile.elevation_gain(len - 1);
     loop {
         let start_search = match ret.last() {
             Some(w) => w.track_projections.first().unwrap().track_index,

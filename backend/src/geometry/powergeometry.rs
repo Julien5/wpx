@@ -4,14 +4,11 @@ use std::collections::BTreeMap;
 
 use chrono::TimeDelta;
 
-use crate::{
-    speed::{power::PowerParameters, InterpolationPoint},
-    track::Geometry,
-};
+use crate::{geometry::power::PowerParameters, speed::InterpolationPoint};
 
 pub type Table = BTreeMap<i32, Vec<TimeDelta>>;
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum SolverMethod {
     Linear,
     Newton,
@@ -20,24 +17,76 @@ pub enum SolverMethod {
 
 #[derive(Clone)]
 pub struct ConstantPowerGeometry {
-    geometry: Geometry,
+    distances: Vec<f64>,
+    elevations: Vec<f64>,
     power_params: PowerParameters,
     table: Table,
     pub interpolation: Option<Vec<InterpolationPoint>>,
 }
 
+fn index_after(distances: &[f64], d: f64) -> usize {
+    if d < 0.0 {
+        return 0;
+    }
+    let maxdist = distances.last().copied().unwrap_or(0.0);
+    if d > maxdist {
+        return distances.len();
+    }
+    distances.iter().position(|&x| x >= d).unwrap()
+}
+
+fn index_before(distances: &[f64], d: f64) -> usize {
+    assert!(!distances.is_empty());
+    assert!(d >= 0.0);
+    let maxdist = distances.last().copied().unwrap_or(0.0);
+    if d >= maxdist {
+        return distances.len() - 1;
+    }
+    if d <= 0.0 {
+        return 0;
+    }
+    match distances.iter().rposition(|&x| x < d) {
+        Some(idx) => idx,
+        None => {
+            log::error!("no index_before distance {}", d);
+            0
+        }
+    }
+}
+
 impl ConstantPowerGeometry {
-    pub fn compute_table(power_params: &PowerParameters, geometry: &Geometry) -> Table {
+    pub fn new(distances: &[f64], elevations: &[f64]) -> Self {
+        let params = PowerParameters::default();
+        let table = Self::compute_table(&params, distances, elevations);
+        Self {
+            distances: distances.to_vec(),
+            elevations: elevations.to_vec(),
+            power_params: params,
+            table,
+            interpolation: None,
+        }
+    }
+
+    pub fn with_power_params(mut self, params: PowerParameters) -> Self {
+        self.power_params = params;
+        self
+    }
+
+    pub fn compute_table(
+        power_params: &PowerParameters,
+        distances: &[f64],
+        elevations: &[f64],
+    ) -> Table {
         let mut table = Table::new();
-        debug_assert!(geometry.len() > 0);
+        debug_assert!(distances.len() > 0);
         for power in (10..=1000).step_by(50) {
-            let mut durations = vec![TimeDelta::zero(); geometry.len()];
+            let mut durations = vec![TimeDelta::zero(); distances.len()];
             power_params.for_each_segment(
                 power as f64,
-                &|i| geometry.distance(i),
-                &|i| geometry.elevation(i),
+                &|i| distances[i],
+                &|i| elevations[i],
                 0,
-                geometry.len() - 1,
+                distances.len() - 1,
                 |i, duration| {
                     durations[i] = if i > 0 {
                         durations[i - 1] + duration
@@ -51,23 +100,6 @@ impl ConstantPowerGeometry {
         table
     }
 
-    pub fn new(geometry: &Geometry) -> Self {
-        let params = PowerParameters::default();
-        let table = Self::compute_table(&params, geometry);
-        Self {
-            geometry: geometry.clone(),
-            power_params: params,
-            table,
-            interpolation: None,
-        }
-    }
-
-    pub fn with_power_params(mut self, params: PowerParameters) -> Self {
-        self.power_params = params;
-        self
-    }
-
-    /// Common point generator used by all solvers
     fn generate_points(
         &self,
         power: f64,
@@ -78,14 +110,14 @@ impl ConstantPowerGeometry {
         let mut points = Vec::new();
         self.power_params.for_each_segment(
             power,
-            &|i| self.geometry.distance(i),
-            &|i| self.geometry.elevation(i),
+            &|i| self.distances[i],
+            &|i| self.elevations[i],
             start,
             end,
             |i, duration| {
                 cumulative_duration += duration;
                 let new = InterpolationPoint {
-                    distance: self.geometry.distance(i),
+                    distance: self.distances[i],
                     duration: Some(cumulative_duration),
                     is_end: false,
                 };
@@ -98,17 +130,18 @@ impl ConstantPowerGeometry {
         points
     }
 
-    // -------------------------------------------------------------------------
-    // ALGORITHM 1: Memory-Cache Table + Linear Interpolation
-    // -------------------------------------------------------------------------
+    fn len(&self) -> usize {
+        self.distances.len()
+    }
+
     fn solve_interval_linear(
         &self,
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
     ) -> Vec<InterpolationPoint> {
-        let start = self.geometry.index_after(prev.distance);
-        let mut end = self.geometry.index_before(next.distance) + 1;
-        end = end.min(self.geometry.len() - 1);
+        let start = index_after(&self.distances, prev.distance);
+        let mut end = index_before(&self.distances, next.distance) + 1;
+        end = end.min(self.len() - 1);
         if start >= end {
             return Vec::new();
         }
@@ -152,17 +185,14 @@ impl ConstantPowerGeometry {
         self.generate_points(power, start, end, prev.unwrap_duration())
     }
 
-    // -------------------------------------------------------------------------
-    // ALGORITHM 2: Table Seeding + Newton-Raphson Refinement
-    // -------------------------------------------------------------------------
     fn solve_interval_newton(
         &self,
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
     ) -> Vec<InterpolationPoint> {
-        let start = self.geometry.index_after(prev.distance);
-        let mut end = self.geometry.index_before(next.distance) + 1;
-        end = end.min(self.geometry.len() - 1);
+        let start = index_after(&self.distances, prev.distance);
+        let mut end = index_before(&self.distances, next.distance) + 1;
+        end = end.min(self.len() - 1);
         if start >= end {
             return Vec::new();
         }
@@ -170,7 +200,6 @@ impl ConstantPowerGeometry {
         let target_duration_secs =
             (next.unwrap_duration() - prev.unwrap_duration()).num_milliseconds() as f64 / 1000.0;
 
-        // 1. Seed from the closest table value
         let mut best_p = 200.0;
         let mut min_err = f64::MAX;
         for (&p, durations) in &self.table {
@@ -182,14 +211,12 @@ impl ConstantPowerGeometry {
             }
         }
 
-        // 2. Newton-Raphson Iteration
         let mut power = best_p;
         for _ in 0..5 {
-            // Cap at 5 to prevent infinite loops, usually converges in 1-2
             let (t, dt_dp) = self.power_params.duration_and_derivative_at_power(
                 power,
-                &|i| self.geometry.distance(i),
-                &|i| self.geometry.elevation(i),
+                &|i| self.distances[i],
+                &|i| self.elevations[i],
                 start,
                 end,
             );
@@ -197,30 +224,27 @@ impl ConstantPowerGeometry {
             let err = t - target_duration_secs;
             if err.abs() < 0.1 {
                 break;
-            } // Converged to within 0.1 seconds
+            }
 
             if dt_dp.abs() < 1e-6 {
                 break;
-            } // Prevent division by zero
+            }
 
             power = power - err / dt_dp;
-            power = power.clamp(0.0, 2000.0); // Keep physics sane
+            power = power.clamp(0.0, 2000.0);
         }
 
         self.generate_points(power, start, end, prev.unwrap_duration())
     }
 
-    // -------------------------------------------------------------------------
-    // ALGORITHM 3: Original 60-iteration Bisection Approach (Baseline)
-    // -------------------------------------------------------------------------
     fn solve_interval_60iterations(
         &self,
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
     ) -> Vec<InterpolationPoint> {
-        let start = self.geometry.index_after(prev.distance);
-        let mut end = self.geometry.index_before(next.distance) + 1;
-        end = end.min(self.geometry.len() - 1);
+        let start = index_after(&self.distances, prev.distance);
+        let mut end = index_before(&self.distances, next.distance) + 1;
+        end = end.min(self.len() - 1);
         if start >= end {
             return Vec::new();
         }
@@ -229,8 +253,8 @@ impl ConstantPowerGeometry {
 
         let power = self.power_params.power_at_duration(
             &duration,
-            |i| self.geometry.distance(i),
-            |i| self.geometry.elevation(i),
+            |i| self.distances[i],
+            |i| self.elevations[i],
             start,
             end,
         );
@@ -238,7 +262,6 @@ impl ConstantPowerGeometry {
         self.generate_points(power, start, end, prev.unwrap_duration())
     }
 
-    /// Builds a dense set of interpolation points from sparse control points.
     pub fn update_interpolation_points(
         &mut self,
         controls: &Vec<InterpolationPoint>,

@@ -65,7 +65,7 @@ pub fn infer_controls_from_gpx_segments(
     let mut candidates: Vec<Candidate> = Vec::new();
     // START
     candidates.push(Candidate {
-        euc: track.geometry.xypoints[0].clone(),
+        euc: track.map.first().clone(),
         segment_name: String::new(),
         track_index: 0,
         waypoint_name: String::new(),
@@ -78,7 +78,7 @@ pub fn infer_controls_from_gpx_segments(
         acc_length += part.length;
         assert!(acc_length <= track.len());
         candidates.push(Candidate {
-            euc: track.geometry.xypoints[acc_length - 1].clone(),
+            euc: track.map.point_at(acc_length - 1).clone(),
             segment_name: part.name.clone(),
             track_index: acc_length - 1,
             waypoint_name: String::new(),

@@ -1,10 +1,11 @@
 use crate::bbox::BoundingBox;
 use crate::error::TrackError;
+use crate::geometry::profilegeometry::ProfileGeometry;
 use crate::inputpoint::InputPoint;
 use crate::math::Point2D;
+use crate::mercator;
 use crate::parameters::TrackPart;
 use crate::wgs84point::WGS84Point;
-use crate::{mercator, track};
 
 pub fn distance_wgs84(p1: &WGS84Point, p2: &WGS84Point) -> f64 {
     use geo::Distance;
@@ -198,11 +199,11 @@ impl GpxData {
 pub type ProfileBoundingBox = BoundingBox;
 
 impl ProfileBoundingBox {
-    pub fn from_track(track: &track::Track, start: &f64, end: &f64) -> ProfileBoundingBox {
+    pub fn from_track(profile: &ProfileGeometry, start: &f64, end: &f64) -> ProfileBoundingBox {
         let mut ymin = f64::MAX;
         let mut ymax = f64::MIN;
-        for k in 0..track.len() {
-            let y = track.elevation(k);
+        for k in 0..profile.len() {
+            let y = profile.elevation(k);
             ymin = y.min(ymin);
             ymax = y.max(ymax);
         }

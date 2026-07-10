@@ -358,7 +358,7 @@ impl PointFeatures {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct PolylinePoint(pub Point2D);
 pub type PolylinePoints = Vec<PolylinePoint>;
 

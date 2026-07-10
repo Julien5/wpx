@@ -1,5 +1,3 @@
-pub mod power;
-pub mod powergeometry;
 pub mod spec;
 mod test;
 

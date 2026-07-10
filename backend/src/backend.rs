@@ -19,7 +19,6 @@ use crate::point_collection::Kind;
 use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
 use crate::speed;
-use crate::speed::powergeometry::ConstantPowerGeometry;
 use crate::track::Track;
 use crate::trackfile;
 use crate::trackfile::JsonParameters;
@@ -239,7 +238,7 @@ impl Backend {
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
         log::trace!("start compute power geometry");
-        let power_geometry = ConstantPowerGeometry::new(&track.geometry);
+        let power_geometry = track.make_power_geometry();
         log::trace!("start compute power geometry");
         let data = BackendData {
             track,
@@ -366,7 +365,7 @@ impl Backend {
             .import_other(&Kind::Controls, smalldata.controls);
 
         log::trace!("start compute power geometry");
-        let power_geometry = ConstantPowerGeometry::new(&track.geometry);
+        let power_geometry = track.make_power_geometry();
         log::trace!("start compute power geometry");
         let mut data = BackendData {
             track,

@@ -6,7 +6,7 @@ use crate::math::Point2D;
 // pub struct WGS84Space;
 // pub type WGS84Point = euclid::Point3D<f64, WGS84Space>;
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Copy)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
 pub struct WGS84Point(pub f64, pub f64, pub f64);
 
 impl WGS84Point {

@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 
 use crate::controls;
 use crate::error::TrackError;
+use crate::geometry::powergeometry::ConstantPowerGeometry;
 use crate::gpxexport;
 use crate::inputpoint::*;
 use crate::make_points;
@@ -12,7 +13,6 @@ use crate::parameters;
 use crate::parameters::*;
 use crate::point_collection::*;
 use crate::segment::SegmentData;
-use crate::speed::powergeometry::ConstantPowerGeometry;
 use crate::speed::*;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;

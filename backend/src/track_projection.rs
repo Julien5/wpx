@@ -24,7 +24,7 @@ impl TrackProjection {
         TrackProjection {
             track_floating_index: index as f64,
             track_index: index,
-            euclidean: track.geometry.xypoints[index].clone(),
+            euclidean: track.map.point_at(index).clone(),
             elevation: track.elevation(index),
             track_distance: 0f64,
             distance_on_track_to_projection: track.distance(index),
@@ -129,7 +129,6 @@ where
 #[derive(Clone)]
 pub struct ProjectionTrees {
     total_tree: locate::IndexedPointsTree,
-    graphics_tree: locate::IndexedPointsTree,
     subtrees: Vec<locate::IndexedPointsTree>,
     parts: Vec<TrackPart>,
 }
@@ -201,17 +200,9 @@ impl ProjectionTrees {
             .collect()
     }
 
-    pub fn make_from_parts(
-        euclidean: &Vec<MercatorPoint>,
-        simplified: &Vec<MercatorPoint>,
-        parts: &Vec<TrackPart>,
-    ) -> Self {
+    pub fn make_from_parts(euclidean: &Vec<MercatorPoint>, parts: &Vec<TrackPart>) -> Self {
         Self {
             total_tree: locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len())),
-            graphics_tree: locate::IndexedPointsTree::from_track(
-                &simplified,
-                &(0..simplified.len()),
-            ),
             subtrees: Self::make_projection_trees_from_parts(euclidean, parts),
             parts: parts.clone(),
         }
@@ -234,14 +225,6 @@ impl ProjectionTrees {
                 }
             }
         }
-    }
-
-    pub fn project_graphics(
-        &self,
-        point: &MercatorPoint,
-        euclidean: &Vec<MercatorPoint>,
-    ) -> TrackProjection {
-        locate::compute_track_projection_2d(&euclidean, &self.graphics_tree, point)
     }
 }
 

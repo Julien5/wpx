@@ -3,6 +3,7 @@
 use std::collections::HashSet;
 
 use crate::bbox::BoundingBox;
+use crate::geometry::mapgeometry::MapGeometry;
 use crate::inputpoint::InputPoint;
 use crate::label_placement::candidate::Candidate;
 use crate::label_placement::drawings::draw_for_map;
@@ -11,7 +12,6 @@ use crate::label_placement::{self, *};
 use crate::math::{IntegerSize2D, Point2D};
 use crate::mercator::{EuclideanBoundingBox, MercatorPoint};
 use crate::point_collection::{Packets, RenderInputParameters, RenderResult};
-use crate::track::Track;
 
 #[allow(unused_imports)]
 use crate::math::distance2;
@@ -179,14 +179,14 @@ struct MapMaker {
 }
 
 pub fn euclidean_bounding_box(
-    track: &Track,
+    map: &MapGeometry,
     range: &std::ops::Range<usize>,
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();
-    for idx in &track.simplified.indices_xy {
+    for idx in map.simplified_indices() {
         if range.contains(idx) {
-            bbox.update(&track.geometry.xypoints[*idx].point2d());
+            bbox.update(&map.point_at(*idx).point2d());
         }
     }
     bbox.enlarge(100f64);
@@ -194,8 +194,8 @@ pub fn euclidean_bounding_box(
 }
 
 impl MapMaker {
-    pub fn init(track: &Track, parameters: &RenderInputParameters) -> Self {
-        let mut bbox = euclidean_bounding_box(track, &parameters.range);
+    pub fn init(map: &MapGeometry, parameters: &RenderInputParameters) -> Self {
+        let mut bbox = euclidean_bounding_box(map, &parameters.range);
         bbox.fix_aspect_ratio(&parameters.screen_size);
         Self {
             parameters: parameters.clone(),
@@ -228,13 +228,13 @@ impl MapMaker {
         &self,
         w: &InputPoint,
         hardness: usize,
-        track: &Track,
+        map: &MapGeometry,
         counter: usize,
     ) -> PointFeature {
         let euclidean = &w.euclidean;
         let bbox = &self.map_box;
         let size = &self.parameters.screen_size;
-        let on_track = track.project_graphics(&euclidean).euclidean;
+        let on_track = map.project_graphics(&euclidean).euclidean;
         let margin = self.margin();
         let mut p = to_graphics_coordinates(bbox, &euclidean, size.width, size.height, margin);
         let p_track = to_graphics_coordinates(bbox, &on_track, size.width, size.height, margin);
@@ -258,12 +258,12 @@ impl MapMaker {
         }
     }
 
-    fn make_polyline(&self, track: &Track) -> Polyline {
+    fn make_polyline(&self, map: &MapGeometry) -> Polyline {
         let mut path = Vec::new();
         let range = &self.parameters.range;
-        for idx in &track.simplified.indices_xy {
+        for idx in map.simplified_indices() {
             if *idx >= range.start && *idx < range.end {
-                path.push(track.geometry.xypoints[*idx].clone());
+                path.push(map.point_at(*idx).clone());
             }
         }
 
@@ -284,11 +284,11 @@ impl MapMaker {
 
     fn make_features(
         &self,
-        track: &Track,
+        map: &MapGeometry,
         packets: &Packets,
         debug_graphic_dir: Option<String>,
     ) -> Features {
-        let polyline = self.make_polyline(track);
+        let polyline = self.make_polyline(map);
         let generator = Box::new(MapGenerator {});
         let mut feature_packets = Vec::new();
         let mut feature_unlabeled = Vec::new();
@@ -301,7 +301,7 @@ impl MapMaker {
                 if !seen.insert(w.map_id()) {
                     continue;
                 }
-                let feature = self.make_one_feature(w, packet.hardness, track, counter);
+                let feature = self.make_one_feature(w, packet.hardness, map, counter);
                 if !self.point_is_visible(&feature.center()) {
                     continue;
                 }
@@ -335,7 +335,7 @@ impl MapMaker {
         }
     }
 
-    fn make_view_features(&self, track: &Track, features: &Vec<PointFeature>) -> MapView {
+    fn make_view_features(&self, map: &MapGeometry, features: &Vec<PointFeature>) -> MapView {
         let mut attributes = Attributes::new();
         let size = &self.parameters.screen_size;
         set_attr(
@@ -350,7 +350,7 @@ impl MapMaker {
             "height",
             format!("{}", size.height).as_str(),
         );
-        let polyline = self.make_polyline(track);
+        let polyline = self.make_polyline(&map);
         MapView {
             points: points,
             polyline: polyline,
@@ -362,11 +362,11 @@ impl MapMaker {
 
     fn make_model_from_packets(
         &self,
-        track: &Track,
+        map: &MapGeometry,
         packets: &Packets,
         debug_graphic_dir: Option<String>,
     ) -> MapView {
-        let mut features = self.make_features(track, packets, debug_graphic_dir);
+        let mut features = self.make_features(map, packets, debug_graphic_dir);
         let mut attributes = Attributes::new();
         let size = &self.parameters.screen_size;
         set_attr(
@@ -391,14 +391,14 @@ impl MapMaker {
 }
 
 pub fn render_map(
-    track: &Track,
+    map: &MapGeometry,
     parameters: &RenderInputParameters,
     packets: &Packets,
     debug_dir: Option<String>,
 ) -> RenderResult {
-    let maker = MapMaker::init(track, parameters);
-    let view = maker.make_model_from_packets(track, packets, debug_dir);
-    let view = maker.make_view_features(track, &view.points);
+    let maker = MapMaker::init(&map, parameters);
+    let view = maker.make_model_from_packets(map, packets, debug_dir);
+    let view = maker.make_view_features(map, &view.points);
     RenderResult {
         svg: view.render(),
         rendered: view.points.clone(),

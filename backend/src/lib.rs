@@ -7,6 +7,7 @@ mod elevation;
 pub mod error;
 pub mod event;
 mod format;
+mod geometry;
 pub mod gpsdata;
 mod gpxexport;
 pub mod inputpoint;

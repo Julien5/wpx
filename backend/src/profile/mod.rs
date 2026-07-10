@@ -7,6 +7,7 @@ use svg::Node;
 
 use crate::bbox::BoundingBox;
 use crate::format::round_time;
+use crate::geometry::profilegeometry::ProfileGeometry;
 use crate::gpsdata;
 use crate::gpsdata::ProfileBoundingBox;
 use crate::inputpoint::InputPoint;
@@ -19,7 +20,6 @@ use crate::math::Point2D;
 use crate::mercator::DateTime;
 use crate::parameters::ProfileIndication;
 use crate::point_collection::{Kind, Packets, RenderInputParameters, RenderResult};
-use crate::track::Track;
 use crate::{label_placement, wheel};
 use crate::{label_placement::*, parameters};
 use elements::*;
@@ -255,7 +255,7 @@ impl ProfileView {
     fn add_numeric_slope(
         &mut self,
         bottom: f64,
-        track: &Track,
+        profile: &ProfileGeometry,
         _range: &std::ops::Range<usize>,
     ) -> f64 {
         let eticks = ticks::xticks_all(&self.bboxdata, self.W);
@@ -267,15 +267,15 @@ impl ProfileView {
                 break;
             }
             let range = std::ops::Range {
-                start: track.geometry.index_after(x0),
-                end: track.geometry.index_before(x1),
+                start: profile.index_after(x0),
+                end: profile.index_before(x1),
             };
             if range.start >= range.end {
                 break;
             }
-            assert!(range.start <= track.len());
-            assert!(range.end < track.len());
-            let elevation_gain = track.elevation_gain_on_range(&range);
+            assert!(range.start <= profile.len());
+            assert!(range.end < profile.len());
+            let elevation_gain = profile.gain_on_range(&range);
             let slope_percent = 100.0 * elevation_gain / (x1 - x0);
             let mut text = elements::text(
                 format!("{:.1}%", slope_percent).as_str(),
@@ -485,8 +485,8 @@ impl ProfileView {
         self.SD.append(points_group);
     }
 
-    pub fn add_packets(&mut self, packets: &Packets, track: &Track) {
-        let features = self.place_packets(packets, track);
+    pub fn add_packets(&mut self, packets: &Packets, profile: &ProfileGeometry) {
+        let features = self.place_packets(packets, profile);
         // the userstep-based time line and time points are rendered
         // in the foreground => do not render them here.
         self.model = Some(ProfileModel {
@@ -495,28 +495,28 @@ impl ProfileView {
         });
     }
 
-    fn range(&self, track: &Track) -> std::ops::Range<usize> {
+    fn range(&self, profile: &ProfileGeometry) -> std::ops::Range<usize> {
         let bbox = &self.bboxview();
-        track.subrange(bbox.get_xmin(), bbox.get_xmax())
+        profile.subrange(bbox.get_xmin(), bbox.get_xmax())
     }
 
-    fn make_polyline(&self, track: &Track) -> Polyline {
-        let range = self.range(track);
+    fn make_polyline(&self, profile: &ProfileGeometry) -> Polyline {
+        let range = self.range(profile);
         let mut polyline_points = PolylinePoints::new();
         // make sure to cover the whole bounding box.
-        for w in track.simplified.indices_z.windows(2) {
+        for w in profile.simplified_indices().windows(2) {
             let (k1, k2) = (w[0], w[1]);
             if !range.contains(&k1) && range.contains(&k2) || (range.start == 0 && k1 == 0) {
-                let e = track.simplified.elevation(range.start);
-                let p = self.toSD(&Point2D::new(track.distance(range.start), e));
+                let e = profile.elevation(range.start);
+                let p = self.toSD(&Point2D::new(profile.distance(range.start), e));
                 polyline_points.push(PolylinePoint(p));
             } else if range.contains(&k1) && !range.contains(&k2) {
-                let e = track.simplified.elevation(range.end - 1);
-                let p = self.toSD(&Point2D::new(track.distance(range.end - 1), e));
+                let e = profile.elevation(range.end - 1);
+                let p = self.toSD(&Point2D::new(profile.distance(range.end - 1), e));
                 polyline_points.push(PolylinePoint(p));
             } else if range.contains(&k2) {
-                let e = track.simplified.elevation(k2);
-                let p = self.toSD(&Point2D::new(track.distance(k2), e));
+                let e = profile.elevation(k2);
+                let p = self.toSD(&Point2D::new(profile.distance(k2), e));
                 polyline_points.push(PolylinePoint(p));
             }
         }
@@ -540,15 +540,15 @@ impl ProfileView {
         }
     }
 
-    fn place_packets(&mut self, packets: &Packets, track: &Track) -> Features {
+    fn place_packets(&mut self, packets: &Packets, profile: &ProfileGeometry) -> Features {
         // make sure to cover the whole bounding box.
         // => start before, end after
-        let range = self.range(track);
-        let polyline = self.make_polyline(track);
+        let range = self.range(profile);
+        let polyline = self.make_polyline(profile);
         let mut bottom = self.HD() - self.frame_stroke_width;
         for indication in self.indications() {
             if indication == ProfileIndication::NumericSlope {
-                bottom = self.add_numeric_slope(bottom, track, &range);
+                bottom = self.add_numeric_slope(bottom, profile, &range);
             }
         }
 
@@ -578,10 +578,9 @@ impl ProfileView {
                     if !range.contains(&index) {
                         continue;
                     }
-                    let trackpoint = &track.wgs84[index];
                     // Note: It would be better to use the middle point with the float
                     // track_index from track_projection.
-                    let p = Point2D::new(track.distance(index), trackpoint.z());
+                    let p = Point2D::new(profile.distance(index), profile.elevation(index));
                     let g = self.toSD(&p);
                     let k = counter;
                     counter += 1;
@@ -593,7 +592,7 @@ impl ProfileView {
                     label.id = format!("{}/wp/text", k);
                     if w.kind() == Kind::Controls
                         && proj.track_index != 0
-                        && proj.track_index != track.len()
+                        && proj.track_index != profile.len()
                     {
                         let time = time_parameters.time(proj.distance_on_track_to_projection);
                         let text = format!("{} ({})", w.name(), round_time(&time).format("%H:%M"));
@@ -866,17 +865,17 @@ impl ProfileGenerator {
 }
 
 pub fn render_profile(
-    track: &Track,
+    profile: &ProfileGeometry,
     parameters: &RenderInputParameters,
     packets: &Packets,
     debug_dir: Option<String>,
 ) -> RenderResult {
     log::info!("compute profile foreground for parameters {:?}", parameters);
     let profile_bbox =
-        ProfileBoundingBox::from_track(track, &parameters.drange.start, &parameters.drange.end);
+        ProfileBoundingBox::from_track(profile, &parameters.drange.start, &parameters.drange.end);
     let mut view = ProfileView::init(&profile_bbox, parameters, debug_dir);
     view.add_canvas();
-    view.add_packets(packets, track);
+    view.add_packets(packets, profile);
     view.render_model();
     view.render_document()
 }

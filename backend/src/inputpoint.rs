@@ -276,7 +276,7 @@ impl InputPoint {
     ) -> InputPoint {
         let index = proj.track_index;
         let wgs = track.wgs84[index].clone();
-        let euc = track.geometry.xypoints[index].clone();
+        let euc = track.map.point_at(index).clone();
         let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::Controls);
         let data = ControlData {
             name: format!("{}", waypoint_name),

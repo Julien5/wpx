@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::track::Geometry;
+use crate::geometry::profilegeometry::ProfileGeometry;
 
 /*
  * converted to rust from gpxstudio:
@@ -35,7 +35,7 @@ pub fn smooth(
     ret
 }
 
-pub fn elevation_gain(smooth: &Geometry, from: usize, to: usize) -> f64 {
+pub fn elevation_gain(smooth: &ProfileGeometry, from: usize, to: usize) -> f64 {
     debug_assert!(from <= to, "from:{}, to:{}", from, to);
     smooth.elevation_gain(to) - smooth.elevation_gain(from)
 }
