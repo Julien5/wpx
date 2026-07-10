@@ -238,18 +238,21 @@ impl Backend {
             .collection
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
+        log::trace!("start compute power geometry");
         let power_geometry = ConstantPowerGeometry::new(&track.simplified);
+        log::trace!("start compute power geometry");
         let data = BackendData {
             track,
             parameters,
             packet_provider: point_collection,
             trackfile: None,
+            power_geometry,
         };
         *self.backend_data.write().unwrap() = Some(data);
 
         // point collection doest not include OSM and user steps
         // => OSM are handled in load_osm
-        // => user steps and handled in set_parameters.
+        // => user steps and power interpolation points handled in set_parameters.
         self.set_parameters(&self.get_parameters());
         self.send("gpx:done");
         Ok(())
@@ -362,11 +365,15 @@ impl Backend {
             .collection
             .import_other(&Kind::Controls, smalldata.controls);
 
+        log::trace!("start compute power geometry");
+        let power_geometry = ConstantPowerGeometry::new(&track.simplified);
+        log::trace!("start compute power geometry");
         let mut data = BackendData {
             track,
             parameters: smalldata.parameters.clone(),
             packet_provider,
             trackfile: Some(trackfile.clone()),
+            power_geometry,
         };
         // fix user steps
         data.set_parameters(&smalldata.parameters);

@@ -34,6 +34,7 @@ pub struct BackendData {
     pub trackfile: Option<TrackFile>,
     pub track: SharedTrack,
     pub packet_provider: PacketProvider,
+    pub power_geometry: ConstantPowerGeometry,
 }
 
 use chrono::TimeDelta;
@@ -163,6 +164,17 @@ impl BackendData {
                 .collection
                 .import_other(&Kind::Controls, controls);
         }
+
+        /*
+            {
+                log::trace!("start compute power interpolation points");
+                self.power_geometry.update_interpolation_points(
+                    &self.time_parameters().control_interpolation_points(),
+                    powergeometry::SolverMethod::Bisection,
+                );
+                log::trace!("done compute power interpolation points");
+        }
+            */
     }
 
     pub fn get_points(&self, segment: &Segment, kinds: &Kinds) -> Vec<InputPoint> {
@@ -218,17 +230,9 @@ impl BackendData {
             start: start_time,
             speed: parse_speed(&self.parameters.speed),
             track_distance: self.track.total_distance(),
-            power: None,
+            power: self.power_geometry.interpolation.clone(),
         };
-
-        let power_geometry = ConstantPowerGeometry::new(&self.track.simplified);
-        TimeParameters {
-            controls: controls_speed_data(&start_time, &self.controls()),
-            start: parameters::parse_time(&self.parameters.start_time),
-            speed: parse_speed(&self.parameters.speed),
-            track_distance: self.track.total_distance(),
-            power: Some(power_geometry.interpolation_points(&t0.control_interpolation_points())),
-        }
+        t0
     }
 
     pub fn export_points(&self, points: &Vec<InputPoint>) -> Waypoints {

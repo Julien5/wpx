@@ -180,8 +180,8 @@ async fn performance_test(backend: &mut Backend) -> anyhow::Result<()> {
 
 fn setup_log() {
     // println!("init logger");
-    env_logger::init();
-    /*
+    // env_logger::init();
+
     use std::io::Write;
     let _ = env_logger::Builder::new()
         .format(|buf, record| {
@@ -194,8 +194,7 @@ fn setup_log() {
             )
         })
         .filter_level(log::LevelFilter::Trace)
-    .try_init();
-    */
+        .try_init();
 }
 
 pub fn read_file(filename: &str) -> Vec<u8> {
