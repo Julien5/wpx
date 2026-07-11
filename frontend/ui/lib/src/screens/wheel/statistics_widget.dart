@@ -31,6 +31,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
   DateTime? endTime;
   String? speed;
   String? lastConstantSpeed;
+  bridge.TimeAxis? timeAxis;
   @override
   void initState() {
     super.initState();
@@ -47,6 +48,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     setState(() {
       startTime = parseDateTime(parameters.startTime);
       speed = parameters.speed;
+      timeAxis = parameters.profileOptions.timeAxis;
       debugPrint("parameter speed: ${parameters.speed}");
       // Initialize lastConstantSpeed if current speed is constant
       SpeedMode speedMode = parseSpeedMode(parameters.speed);
@@ -67,6 +69,8 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     }
     changer.changeSpeed(speed!);
     changer.changeStartTime(startTime!);
+    debugPrint("time axis: $timeAxis");
+    changer.changeTimeAxis(timeAxis!);
     bridge.Parameters parameters = changer.current();
     segmentModel.setParameters(parameters);
     debugPrint("write speed:${parameters.speed}");
@@ -173,6 +177,16 @@ class _OverviewWidgetState extends State<OverviewWidget> {
     }
   }
 
+  void _setTimeAxis(bridge.TimeAxis newTimeAxis) {
+    if (timeAxis == newTimeAxis) {
+      return;
+    }
+    setState(() {
+      timeAxis = newTimeAxis;
+    });
+    writeModel();
+  }
+
   Widget buildWorker(BuildContext ctx) {
     SegmentModel segmentModel = context.watch<SegmentModel>();
     Parameters parameters = segmentModel.parameters();
@@ -257,6 +271,31 @@ class _OverviewWidgetState extends State<OverviewWidget> {
           ],
         ),
         TableRow(children: [SmallText(text: "End time"), endTimeWidget]),
+        TableRow(
+          children: [
+            SmallText(text: "Time axis"),
+            ToggleButtons(
+              isSelected: [
+                timeAxis == bridge.TimeAxis.constantSpeed,
+                timeAxis == bridge.TimeAxis.constantPower,
+              ],
+              onPressed: (index) {
+                _setTimeAxis(
+                  index == 0
+                      ? bridge.TimeAxis.constantSpeed
+                      : bridge.TimeAxis.constantPower,
+                );
+              },
+              borderRadius: BorderRadius.circular(6),
+              constraints: const BoxConstraints(minHeight: 26, minWidth: 0),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              children: const [
+                SmallText(text: "Constant speed"),
+                SmallText(text: "Constant power"),
+              ],
+            ),
+          ],
+        ),
         TableRow(
           children: [
             SmallText(text: "Distance"),

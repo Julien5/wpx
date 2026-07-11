@@ -4,9 +4,7 @@
     "debug": false,
     "map_options": {},
     "profile_options": {
-      "elevation_indicators": [
-        "NumericSlope"
-      ]
+      "time_axis": "ConstantSpeed"
     },
     "segment_length": 110000.0,
     "segment_overlap": 10000.0,

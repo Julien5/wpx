@@ -18,7 +18,6 @@ use crate::label_placement::labelboundingbox::LabelBoundingBox;
 use crate::label_placement::obstacle::Obstacles;
 use crate::math::Point2D;
 use crate::mercator::DateTime;
-use crate::parameters::ProfileIndication;
 use crate::point_collection::{Kind, Packets, RenderInputParameters, RenderResult};
 use crate::{label_placement, wheel};
 use crate::{label_placement::*, parameters};
@@ -68,16 +67,6 @@ impl ProfileView {
     fn free_height(&self) -> f64 {
         self.HD() - self.bottom_height() - self.header_height()
     }
-    fn indications(&self) -> Vec<ProfileIndication> {
-        self.parameters
-            .parameters
-            .profile_options
-            .elevation_indicators
-            .iter()
-            .map(|x| x.clone())
-            .collect()
-    }
-
     fn yticks_end(&self) -> f64 {
         self.HD()
     }
@@ -86,31 +75,8 @@ impl ProfileView {
         ProfileGenerator::header_height()
     }
 
-    fn indicator_height(indicator: &ProfileIndication) -> f64 {
-        match indicator {
-            ProfileIndication::None => 0.0,
-            ProfileIndication::NumericSlope => 15.0,
-        }
-    }
-
     fn bottom_height(&self) -> f64 {
-        let indicators = &self
-            .parameters
-            .parameters
-            .profile_options
-            .elevation_indicators;
-        Self::indicators_height(indicators) + indicators.len() as f64 * self.frame_stroke_width
-    }
-
-    fn indicators_height(indicators: &Vec<ProfileIndication>) -> f64 {
-        if indicators.is_empty() {
-            return 0.0;
-        }
-        let mut ret = 0.0;
-        for indicator in indicators {
-            ret += Self::indicator_height(indicator);
-        }
-        ret
+        15.0 + self.frame_stroke_width
     }
 
     pub fn bboxview(&self) -> ProfileBoundingBox {
@@ -286,7 +252,7 @@ impl ProfileView {
             self.SD.append(text);
         }
 
-        let ceil = bottom - Self::indicator_height(&ProfileIndication::NumericSlope);
+        let ceil = bottom - 15.0;
 
         for xtick in ticks::xticks_dashed(&self.bboxview(), self.W) {
             let xd = self.toSD(&Point2D::new(xtick, 0f64)).x;
@@ -545,12 +511,8 @@ impl ProfileView {
         // => start before, end after
         let range = self.range(profile);
         let polyline = self.make_polyline(profile);
-        let mut bottom = self.HD() - self.frame_stroke_width;
-        for indication in self.indications() {
-            if indication == ProfileIndication::NumericSlope {
-                bottom = self.add_numeric_slope(bottom, profile, &range);
-            }
-        }
+        let bottom = self.HD() - self.frame_stroke_width;
+        self.add_numeric_slope(bottom, profile, &range);
 
         let generator = Box::new(ProfileGenerator {
             _WD: self.WD(),

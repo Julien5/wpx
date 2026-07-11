@@ -544,7 +544,7 @@ mod tests {
     use crate::{
         backend::Backend,
         math::IntegerSize2D,
-        parameters::{ProfileIndication, RenderFunction},
+        parameters::RenderFunction,
         point_collection::{self},
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
@@ -566,7 +566,6 @@ mod tests {
         let mut parameters = backend.get_parameters();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = Some((10_000) as f64);
-        parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
         parameters.debug = true;
 
         backend.set_parameters(&parameters);
@@ -716,6 +715,7 @@ mod tests {
     }
 
     async fn persist_smoke() {
+        let _ = env_logger::try_init();
         // see filesystem.rs
         // DATA_DIR=data/ref/persist/share1
         unsafe {

@@ -273,7 +273,7 @@ impl<'a> SegmentData<'a> {
 mod tests {
     use crate::{
         math::IntegerSize2D,
-        parameters::{Parameters, ProfileIndication, RenderFunction},
+        parameters::{Parameters, RenderFunction},
         point_collection::{allkinds, RenderResult},
         profile,
         segment::Segment,
@@ -316,7 +316,6 @@ mod tests {
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = None;
         parameters.user_steps_options.step_elevation_gain = Some(250f64);
-        parameters.profile_options.elevation_indicators = vec![ProfileIndication::NumericSlope];
 
         let allowed_speeds = speed::allowed_speeds(track.total_distance());
         parameters.speed = match allowed_speeds.iter().find(|spec| spec.contains("ACP")) {

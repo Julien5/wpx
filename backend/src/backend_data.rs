@@ -224,12 +224,17 @@ impl BackendData {
 
     fn time_parameters(&self) -> TimeParameters {
         let start_time = parameters::parse_time(&self.parameters.start_time);
+        let power = if self.parameters.profile_options.time_axis == TimeAxis::ConstantPower {
+            self.power_geometry.interpolation.clone()
+        } else {
+            None
+        };
         let t0 = TimeParameters {
             controls: controls_speed_data(&start_time, &self.controls()),
             start: start_time,
             speed: parse_speed(&self.parameters.speed),
             track_distance: self.track.total_distance(),
-            power: self.power_geometry.interpolation.clone(),
+            power,
         };
         t0
     }

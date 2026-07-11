@@ -50,6 +50,7 @@ impl JsonParameters {
                 Ok(content) => content,
                 Err(e) => {
                     log::error!("failed to read file:{}", meta);
+                    log::error!("error:{:?}", e);
                     return Err(e.into());
                 }
             };
@@ -57,6 +58,7 @@ impl JsonParameters {
                 Ok(item) => ret.push(item.trackfile),
                 Err(e) => {
                     log::error!("failed to read file content for file:{}", meta);
+                    log::error!("error:{:?}", e);
                     return Err(e.into());
                 }
             }

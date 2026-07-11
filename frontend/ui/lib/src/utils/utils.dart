@@ -81,6 +81,23 @@ class ParameterChanger {
     return ret;
   }
 
+  bridge.Parameters changeTimeAxis(bridge.TimeAxis timeAxis) {
+    bridge.Parameters ret = bridge.Parameters(
+      speed: init.speed,
+      startTime: init.startTime,
+      segmentLength: init.segmentLength,
+      segmentOverlap: init.segmentOverlap,
+      smoothWidth: init.smoothWidth,
+      profileOptions: bridge.ProfileOptions(timeAxis: timeAxis),
+      mapOptions: init.mapOptions,
+      userStepsOptions: init.userStepsOptions,
+      debug: init.debug,
+      controlGpxNameFormat: init.controlGpxNameFormat,
+    );
+    init = ret;
+    return ret;
+  }
+
   bridge.Parameters changeStartTime(DateTime time) {
     String rfc3339time = serializeTime(time);
     developer.log("time = $rfc3339time");

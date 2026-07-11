@@ -64,12 +64,6 @@ pub fn karl_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
     ret
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ProfileIndication {
-    None,
-    NumericSlope,
-}
-
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct UserStepsOptions {
     pub step_distance: Option<f64>,
@@ -87,15 +81,21 @@ impl Default for UserStepsOptions {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TimeAxis {
+    ConstantSpeed,
+    ConstantPower,
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ProfileOptions {
-    pub elevation_indicators: Vec<ProfileIndication>,
+    pub time_axis: TimeAxis,
 }
 
 impl Default for ProfileOptions {
     fn default() -> ProfileOptions {
         ProfileOptions {
-            elevation_indicators: vec![ProfileIndication::NumericSlope],
+            time_axis: TimeAxis::ConstantSpeed,
         }
     }
 }

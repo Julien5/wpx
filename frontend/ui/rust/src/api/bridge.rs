@@ -13,11 +13,11 @@ pub use tracks::error::TrackError;
 pub use tracks::mercator::MercatorPoint;
 pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
-pub use tracks::parameters::ProfileIndication;
 pub use tracks::parameters::ProfileOptions;
 pub use tracks::parameters::RenderFunction;
 pub use tracks::parameters::RenderInput;
 pub use tracks::parameters::RenderOutput;
+pub use tracks::parameters::TimeAxis;
 pub use tracks::parameters::TrackPart;
 pub use tracks::parameters::UserStepsOptions;
 pub use tracks::point_collection::Kind;
@@ -127,10 +127,10 @@ pub fn best_guess_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
     parameters::karl_order(parts)
 }
 
-#[frb(mirror(ProfileIndication))]
-pub enum _ProfileIndication {
-    None,
-    NumericSlope,
+#[frb(mirror(TimeAxis))]
+pub enum _TimeAxis {
+    ConstantSpeed,
+    ConstantPower,
 }
 
 #[frb(mirror(UserStepsOptions))]
@@ -142,7 +142,7 @@ pub struct _UserStepsOptions {
 
 #[frb(mirror(ProfileOptions))]
 pub struct _ProfileOptions {
-    pub elevation_indicators: Vec<ProfileIndication>,
+    pub time_axis: TimeAxis,
 }
 
 #[frb(mirror(MapOptions))]
