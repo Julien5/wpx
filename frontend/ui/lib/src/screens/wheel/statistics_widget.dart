@@ -274,25 +274,35 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         TableRow(
           children: [
             SmallText(text: "Time axis"),
-            ToggleButtons(
-              isSelected: [
-                timeAxis == bridge.TimeAxis.constantSpeed,
-                timeAxis == bridge.TimeAxis.constantPower,
-              ],
-              onPressed: (index) {
-                _setTimeAxis(
-                  index == 0
-                      ? bridge.TimeAxis.constantSpeed
-                      : bridge.TimeAxis.constantPower,
-                );
-              },
-              borderRadius: BorderRadius.circular(6),
-              constraints: const BoxConstraints(minHeight: 26, minWidth: 0),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              children: const [
-                SmallText(text: "Constant speed"),
-                SmallText(text: "Constant power"),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: ToggleButtons(
+                isSelected: [
+                  timeAxis == bridge.TimeAxis.constantSpeed,
+                  timeAxis == bridge.TimeAxis.constantPower,
+                ],
+                onPressed: (index) {
+                  _setTimeAxis(
+                    index == 0
+                        ? bridge.TimeAxis.constantSpeed
+                        : bridge.TimeAxis.constantPower,
+                  );
+                },
+                borderRadius: BorderRadius.circular(4),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                constraints: const BoxConstraints(minHeight: 18, minWidth: 0),
+                textStyle: const TextStyle(fontSize: 12),
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                    child: Text("Constant speed"),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                    child: Text("Constant power"),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
