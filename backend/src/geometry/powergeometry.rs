@@ -315,6 +315,18 @@ impl ConstantPowerGeometry {
         for window in controls.windows(2) {
             let prev = &window[0];
             let next = &window[1];
+            let distance = next.distance - prev.distance;
+            let time = next.unwrap_duration() - prev.unwrap_duration();
+            debug_assert!(time >= TimeDelta::zero());
+            if time.as_seconds_f64() < 60f64 {
+                // skip it
+                continue;
+            }
+            let speed_kmh = (distance / time.as_seconds_f64()) * (3600.0 / 1000.0);
+            if speed_kmh > 1000f64 {
+                // skip it
+                continue;
+            }
             let (power, mut new_points) = self.solve_interval(&method, prev, next);
             log::trace!(
                 "[{:.1}-{:.1}] in {} hours => power: {:.1}W",

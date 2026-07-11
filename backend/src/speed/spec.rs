@@ -211,7 +211,7 @@ pub mod ACP {
         // the START control
         ret.push(InterpolationPoint {
             distance: 0f64,
-            duration: Some(time_delta(0f64)),
+            duration: Some(TimeDelta::zero()),
             is_end: false,
         });
 
@@ -239,7 +239,7 @@ pub mod ACP {
             // in ACP mode, ignore the time set by user on that control.
             let prelast = InterpolationPoint {
                 distance: prelastc.distance,
-                duration: Some(duration(prelastc.distance)),
+                duration: Some(duration(prelastc.distance).min(spec_duration)),
                 is_end: false,
             };
             ret.push(prelast);
