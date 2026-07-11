@@ -1,6 +1,7 @@
 use chrono::TimeDelta;
 use tracks::{
     backend::Backend,
+    math::IntegerSize2D,
     parameters::{parse_time, time_to_iso8601, RenderFunction, RenderInput},
     point_collection::{self, Kind},
     waypoint::Waypoint,
@@ -49,9 +50,10 @@ fn table(backend: &Backend) -> Vec<Waypoint> {
 fn display_table(result: &Vec<Waypoint>) {
     for (index, p) in result.iter().enumerate() {
         log::trace!(
-            "[{:3}] | {:16} | {:16} | {:32} | {:?}",
+            "[{:3}] | {:16} | {:5.1}km | {:16} | {:32} | {:?}",
             index,
             parse_time(&p.info.as_ref().unwrap().time).format("%H:%M"),
+            p.info.as_ref().unwrap().distance / 1000f64,
             p.name,
             p.description,
             p.origin
@@ -106,5 +108,31 @@ async fn table_1() {
     assert_eq!(
         result[9].info.as_ref().unwrap().time,
         time_to_iso8601(&time2)
+    );
+}
+
+#[tokio::test]
+async fn wheel_smoke() {
+    let _ = env_logger::try_init();
+    let backend = load_test_data(&"data/PBP-simple.gpx").await;
+    let mut parameters = backend.get_parameters();
+    parameters.start_time = START_TIME.to_string();
+    backend.set_parameters(&parameters);
+    let result = table(&backend);
+    backend.make_control_at_waypoint(&result[1], true);
+    backend.make_control_at_waypoint(&result[9], true);
+    let result = table(&backend);
+    display_table(&result);
+    let time_end = parse_time(&result[10].info.as_ref().unwrap().time);
+    let time2 = time_end - TimeDelta::seconds(200);
+    let ok = backend.set_control_time(&result[9], &Some(time_to_iso8601(&time2)));
+    debug_assert!(ok);
+    let result = table(&backend);
+    display_table(&result);
+    backend.render_segment_simple(
+        &backend.trackSegment(),
+        &IntegerSize2D::new(250, 250),
+        point_collection::allkinds(),
+        RenderFunction::Wheel,
     );
 }

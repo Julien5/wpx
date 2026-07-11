@@ -123,7 +123,7 @@ impl ConstantPowerGeometry {
         start: usize,
         end: usize,
         mut cumulative_duration: TimeDelta,
-    ) -> Vec<InterpolationPoint> {
+    ) -> (f64, Vec<InterpolationPoint>) {
         debug_assert!(start < end);
         let mut points = Vec::new();
         self.power_params.for_each_segment(
@@ -145,11 +145,11 @@ impl ConstantPowerGeometry {
                 points.push(new);
             },
         );
-        let d_start = self.simplified_distances[start];
-        let d_end = self.simplified_distances[end];
+        let distance_start = self.simplified_distances[start];
+        let distance_end = self.simplified_distances[end];
         // exclude the borders to avoid conflicts between intervals
-        points.retain(|p| d_start < p.distance && p.distance < d_end);
-        points
+        points.retain(|p| distance_start < p.distance && p.distance < distance_end);
+        (power, points)
     }
 
     fn len(&self) -> usize {
@@ -174,6 +174,7 @@ impl ConstantPowerGeometry {
         let start_error = (self.simplified_distances[start] - prev.distance).abs();
         let end_error = (self.simplified_distances[end] - next.distance).abs();
         log::trace!("error: {:.1} {:.1}", start_error, end_error);
+        debug_assert!(start < end);
         (start, end)
     }
 
@@ -181,11 +182,8 @@ impl ConstantPowerGeometry {
         &self,
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
-    ) -> Vec<InterpolationPoint> {
+    ) -> (f64, Vec<InterpolationPoint>) {
         let (start, end) = self.find_start_end(prev, next);
-        if start >= end {
-            return Vec::new();
-        }
 
         let target_duration = next.unwrap_duration() - prev.unwrap_duration();
 
@@ -230,11 +228,8 @@ impl ConstantPowerGeometry {
         &self,
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
-    ) -> Vec<InterpolationPoint> {
+    ) -> (f64, Vec<InterpolationPoint>) {
         let (start, end) = self.find_start_end(prev, next);
-        if start >= end {
-            return Vec::new();
-        }
 
         let target_duration_secs =
             (next.unwrap_duration() - prev.unwrap_duration()).num_milliseconds() as f64 / 1000.0;
@@ -270,7 +265,7 @@ impl ConstantPowerGeometry {
             }
 
             power = power - err / dt_dp;
-            power = power.clamp(0.0, 2000.0);
+            power = power.max(0.0);
         }
 
         self.generate_points(power, start, end, prev.unwrap_duration())
@@ -280,11 +275,8 @@ impl ConstantPowerGeometry {
         &self,
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
-    ) -> Vec<InterpolationPoint> {
+    ) -> (f64, Vec<InterpolationPoint>) {
         let (start, end) = self.find_start_end(prev, next);
-        if start >= end {
-            return Vec::new();
-        }
 
         let duration = next.unwrap_duration() - prev.unwrap_duration();
 
@@ -299,6 +291,19 @@ impl ConstantPowerGeometry {
         self.generate_points(power, start, end, prev.unwrap_duration())
     }
 
+    pub fn solve_interval(
+        &self,
+        method: &SolverMethod,
+        prev: &InterpolationPoint,
+        next: &InterpolationPoint,
+    ) -> (f64, Vec<InterpolationPoint>) {
+        match method {
+            SolverMethod::Linear => self.solve_interval_linear(prev, next),
+            SolverMethod::Newton => self.solve_interval_newton(prev, next),
+            SolverMethod::Bisection => self.solve_interval_bisection(prev, next),
+        }
+    }
+
     pub fn update_interpolation_points(
         &mut self,
         controls: &Vec<InterpolationPoint>,
@@ -310,18 +315,99 @@ impl ConstantPowerGeometry {
         for window in controls.windows(2) {
             let prev = &window[0];
             let next = &window[1];
-            let new_points = match method {
-                SolverMethod::Linear => self.solve_interval_linear(prev, next),
-                SolverMethod::Newton => self.solve_interval_newton(prev, next),
-                SolverMethod::Bisection => self.solve_interval_bisection(prev, next),
-            };
-            // the new points should not include the controls.
-            new_points.iter().for_each(|p| {
+            let (power, mut new_points) = self.solve_interval(&method, prev, next);
+            log::trace!(
+                "[{:.1}-{:.1}] in {} hours => power: {:.1}W",
+                prev.distance / 1000f64,
+                next.distance / 1000f64,
+                (next.unwrap_duration() - prev.unwrap_duration()).num_hours(),
+                power
+            );
+            // Post solver cleaning:
+            // Because the numerical solver may fail to find an exact solution, a power
+            // that is a bit too high, which results in intermediate points that may be
+            // reached before the next control time. We remove those intermediate points.
+            // Note: The new points do not include the controls.
+            new_points.retain(|p| {
                 debug_assert!(prev.distance < p.distance && p.distance < next.distance);
+                prev.unwrap_duration() <= p.unwrap_duration()
+                    && p.unwrap_duration() <= next.unwrap_duration()
             });
             all_points.extend(new_points);
         }
         all_points.sort();
+        debug_assert!(all_points.is_sorted_by_key(|a| a.distance));
+        debug_assert!(all_points.is_sorted_by_key(|a| a.unwrap_duration()));
         self.interpolation = Some(all_points);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::TimeDelta;
+
+    use crate::{
+        geometry::powergeometry::{ConstantPowerGeometry, SolverMethod},
+        speed::InterpolationPoint,
+    };
+
+    fn synthetic_geometry() -> ConstantPowerGeometry {
+        let _ = env_logger::try_init();
+        let step = 100.0;
+        let n = (100_000.0 / step) as usize + 1;
+        let mut distances = Vec::with_capacity(n);
+        let mut elevations = Vec::with_capacity(n);
+        let mut state: u64 = 42;
+        let mut rng = move || {
+            state = state
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            state as f64 / u64::MAX as f64
+        };
+        let mut e = 500.0;
+        for km in 0..n {
+            let d = km as f64 * step;
+            e = (e + (rng() - 0.5) * 20.0).clamp(0.0, 1000.0);
+            distances.push(d);
+            elevations.push(e);
+        }
+        ConstantPowerGeometry::new(&distances, &elevations, &Vec::new())
+    }
+
+    fn compare_at_duration(hours: i64) {
+        let geometry = synthetic_geometry();
+        let start = InterpolationPoint {
+            distance: 0f64,
+            duration: Some(TimeDelta::zero()),
+            is_end: false,
+        };
+        let end = InterpolationPoint {
+            distance: 100_000f64,
+            duration: Some(TimeDelta::hours(hours)),
+            is_end: true,
+        };
+        let (p_lin, _) = geometry.solve_interval(&SolverMethod::Linear, &start, &end);
+        let (p_new, _) = geometry.solve_interval(&SolverMethod::Newton, &start, &end);
+        let (p_bis, _) = geometry.solve_interval(&SolverMethod::Bisection, &start, &end);
+        if 1 < hours && hours < 10 {
+            log::trace!("hours={hours:5} lin={p_lin:8.3} new={p_new:8.3}");
+            assert!((p_bis - p_lin).abs() < 5.0,);
+        }
+        log::trace!("hours={hours:5} bis={p_bis:8.3} new={p_new:8.3}");
+        let tol = if hours < 100 { 0.1 } else { 5.0 };
+        assert!((p_bis - p_new).abs() < tol);
+    }
+
+    #[test]
+    fn compare_solvers() {
+        let _ = env_logger::try_init();
+        compare_at_duration(10);
+        compare_at_duration(5);
+        compare_at_duration(4);
+        compare_at_duration(3);
+        compare_at_duration(2);
+        compare_at_duration(1);
+        compare_at_duration(100);
+        compare_at_duration(1000);
     }
 }

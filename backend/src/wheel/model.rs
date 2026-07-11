@@ -9,10 +9,10 @@ use crate::{
 };
 
 pub fn angle(x: f64, total: f64) -> f64 {
+    assert!(x <= total);
     let topmargin = super::constants::ARCANGLE / 2.0;
     let a = (360.0 - 2.0 * topmargin) / total;
     let b = topmargin;
-    assert!(x <= total);
     a * x + b
 }
 
@@ -95,6 +95,18 @@ fn angles(time_parameters: &TimeParameters, point: &InputPoint) -> Vec<f64> {
         .map(|proj| {
             let d =
                 time_parameters.time(proj.distance_on_track_to_projection) - time_parameters.start;
+            debug_assert!(
+                proj.distance_on_track_to_projection <= time_parameters.track_distance,
+                "distance={} track_distance={}",
+                proj.distance_on_track_to_projection,
+                time_parameters.track_distance
+            );
+            debug_assert!(
+                d <= total,
+                "d={} total={}",
+                d.as_seconds_f64(),
+                total.as_seconds_f64()
+            );
             angle(d.as_seconds_f64(), total.as_seconds_f64())
         })
         .collect()

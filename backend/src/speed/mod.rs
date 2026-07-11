@@ -193,9 +193,14 @@ pub fn interpolate_distance(
     start_time: &DateTime,
     duration: &TimeDelta,
 ) -> f64 {
+    debug_assert!(
+        interpolation_points.len() > 1,
+        "len={}",
+        interpolation_points.len()
+    );
     let (previous, next) = find_interval_at_time(interpolation_points, duration);
-    let (t1, d1) = (*start_time + previous.unwrap_duration(), previous.distance);
-    let (t2, d2) = (*start_time + next.unwrap_duration(), next.distance);
+    let (t1, d1) = (previous.unwrap_time(start_time), previous.distance);
+    let (t2, d2) = (next.unwrap_time(start_time), next.distance);
     debug_assert!(t1 <= t2);
     if t1 == t2 {
         return d2;
@@ -203,9 +208,17 @@ pub fn interpolate_distance(
     let span_ns = (t2 - t1)
         .num_nanoseconds()
         .expect("time span overflows i64 nanoseconds");
-    // log::trace!("t1={} time={} t2={}", t1, time, t2);
     let time = *start_time + *duration;
-    debug_assert!(t1 <= time && time <= t2 || time > t2);
+    debug_assert!(interpolation_points.is_sorted());
+    debug_assert!(interpolation_points.is_sorted_by_key(|a| a.unwrap_duration()));
+    debug_assert!(
+        t1 <= time && time <= t2 || time > t2,
+        "t1={} time={} t2={} | len={}",
+        t1,
+        time,
+        t2,
+        interpolation_points.len()
+    );
 
     let offset_ns = (time - t1)
         .num_nanoseconds()

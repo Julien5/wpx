@@ -90,9 +90,19 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     return DateTime(t.year, t.month, t.day, t.hour, t.minute);
   }
 
-  DateTime minTime() {
-    DateTime ret = parseDateTime(widget.previousControl!.info!.time);
-    ret = ret.add(const Duration(minutes: 5));
+  static double maxSpeed() {
+    const double kmh = 60.0;
+    return kmh * 1000.0 / 3600.0;
+  }
+
+  DateTime minAcceptableTime() {
+    WaypointInfo prev = widget.previousControl!.info!;
+    WaypointInfo current = widget.currentControl.info!;
+    DateTime prevTime = parseDateTime(prev.time);
+    double distance = current.distance - prev.distance;
+    double minSeconds = distance / maxSpeed();
+    DateTime ret = prevTime;
+    ret = ret.add(Duration(seconds: minSeconds.round()));
     return zeroSeconds(ret);
   }
 
@@ -104,9 +114,14 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     return parseDateTime(widget.nextControl!.info!.time);
   }
 
-  DateTime maxTime() {
-    DateTime ret = parseDateTime(widget.nextControl!.info!.time);
-    ret = ret.add(const Duration(minutes: -5));
+  DateTime maxAcceptableTime() {
+    WaypointInfo next = widget.nextControl!.info!;
+    WaypointInfo current = widget.currentControl.info!;
+    DateTime nextTime = parseDateTime(next.time);
+    double distance = next.distance - current.distance;
+    double minSeconds = distance / maxSpeed();
+    DateTime ret = nextTime;
+    ret = ret.subtract(Duration(seconds: minSeconds.round()));
     return zeroSeconds(ret);
   }
 
@@ -119,7 +134,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   }
 
   // Day index relative to widget.min (0, 1, 2, …)
-  int get _dayIndex => _current.difference(_dayStart(minTime())).inDays;
+  int get _dayIndex => _current.difference(_dayStart(start())).inDays;
 
   // List of distinct calendar days in the range
   late final List<DateTime> _days;
@@ -127,17 +142,17 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   @override
   void initState() {
     super.initState();
-    _totalMinutes = maxTime().difference(minTime()).inMinutes;
+    _totalMinutes = end().difference(start()).inMinutes;
     final initial = init();
     _offsetMinutes = initial
-        .difference(minTime())
+        .difference(start())
         .inMinutes
         .clamp(0, _totalMinutes);
 
     // Build the list of days
     _days = [];
-    var d = _dayStart(minTime());
-    while (!d.isAfter(_dayStart(maxTime()))) {
+    var d = _dayStart(start());
+    while (!d.isAfter(_dayStart(maxAcceptableTime()))) {
       _days.add(d);
       d = d.add(const Duration(days: 1));
     }
@@ -157,14 +172,14 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     super.dispose();
   }
 
-  DateTime get _current => minTime().add(Duration(minutes: _offsetMinutes));
+  DateTime get _current => start().add(Duration(minutes: _offsetMinutes));
 
   DateTime _dayStart(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
   /// Valid hour range for a given day index.
   ({int min, int max}) _hourBounds(int dayIdx) {
-    final minH = dayIdx == 0 ? minTime().hour : 0;
-    final maxH = dayIdx == _days.length - 1 ? maxTime().hour : 23;
+    final minH = dayIdx == 0 ? minAcceptableTime().hour : 0;
+    final maxH = dayIdx == _days.length - 1 ? maxAcceptableTime().hour : 23;
     return (min: minH, max: maxH);
   }
 
@@ -173,15 +188,17 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     final hb = _hourBounds(dayIdx);
     int minM = 0;
     int maxM = 59;
-    if (dayIdx == 0 && hour == hb.min) minM = minTime().minute;
+    if (dayIdx == 0 && hour == hb.min) minM = minAcceptableTime().minute;
     if (dayIdx == _days.length - 1 && hour == hb.max) {
-      maxM = maxTime().minute;
+      maxM = maxAcceptableTime().minute;
     }
     return (min: minM, max: maxM);
   }
 
   void _applyOffset(int newOffset) {
-    final clamped = newOffset.clamp(0, _totalMinutes);
+    final maxTimeOffset = maxAcceptableTime().difference(start()).inMinutes;
+    final minTimeOffset = minAcceptableTime().difference(start()).inMinutes;
+    final clamped = newOffset.clamp(minTimeOffset, maxTimeOffset);
     if (clamped == _offsetMinutes) return;
     setState(() {
       _offsetMinutes = clamped;
@@ -202,7 +219,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     final mb = _minuteBounds(dayIdx, hour);
     minute = minute.clamp(mb.min, mb.max);
     final target = _days[dayIdx].add(Duration(hours: hour, minutes: minute));
-    final offset = target.difference(minTime()).inMinutes;
+    final offset = target.difference(start()).inMinutes;
     _applyOffset(offset);
   }
 
@@ -419,7 +436,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
           // Day-boundary pips
           _DayPips(
             days: _days,
-            min: minTime(),
+            min: minAcceptableTime(),
             totalMinutes: _totalMinutes,
             accentColor: cs.primary,
           ),

@@ -229,7 +229,7 @@ impl BackendData {
             start: start_time,
             speed: parse_speed(&self.parameters.speed),
             track_distance: self.track.total_distance(),
-            power: None, //self.power_geometry.interpolation.clone(),
+            power: self.power_geometry.interpolation.clone(),
         };
         t0
     }
@@ -380,6 +380,10 @@ impl BackendData {
             self.packet_provider
                 .collection
                 .import_other(&Kind::Controls, new);
+            self.power_geometry.update_interpolation_points(
+                &self.time_parameters().control_interpolation_points(),
+                SolverMethod::Newton,
+            );
         }
     }
 
