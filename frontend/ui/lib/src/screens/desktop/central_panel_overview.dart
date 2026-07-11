@@ -30,7 +30,7 @@ class _CentralWidgetState extends State<CentralWidget> {
       kinds: [Kind.gpxWaypoints, Kind.controls],
     );
     if (renderOutput != null) {
-      if (waypoints.length < 15) {
+      if (waypoints.length < 5) {
         List<Waypoint> osm =
             renderOutput.waypoints
                 .where(
@@ -91,7 +91,11 @@ class _CentralWidgetState extends State<CentralWidget> {
 class CentralPanelOverview extends StatelessWidget {
   final double width;
   final bool visible;
-  const CentralPanelOverview({super.key, required this.width, required this.visible});
+  const CentralPanelOverview({
+    super.key,
+    required this.width,
+    required this.visible,
+  });
 
   @override
   Widget build(BuildContext context) {
