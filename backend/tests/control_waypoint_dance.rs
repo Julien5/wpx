@@ -1,6 +1,7 @@
+use chrono::TimeDelta;
 use tracks::{
     backend::Backend,
-    parameters::{RenderFunction, RenderInput},
+    parameters::{parse_time, time_to_iso8601, RenderFunction, RenderInput},
     point_collection::{self, Kind},
     waypoint::Waypoint,
 };
@@ -48,8 +49,9 @@ fn table(backend: &Backend) -> Vec<Waypoint> {
 fn display_table(result: &Vec<Waypoint>) {
     for (index, p) in result.iter().enumerate() {
         log::trace!(
-            "[{:3}] | {:16} | {:32} | {:?}",
+            "[{:3}] | {:16} | {:16} | {:32} | {:?}",
             index,
+            parse_time(&p.info.as_ref().unwrap().time).format("%H:%M"),
             p.name,
             p.description,
             p.origin
@@ -93,4 +95,16 @@ async fn table_1() {
     assert_eq!(result[1].origin, Kind::Controls);
     assert_eq!(result[9].name, "CP-2");
     assert_eq!(result[9].origin, Kind::Controls);
+
+    let time1 = parse_time(&result[9].info.as_ref().unwrap().time);
+    let time2 = time1 + TimeDelta::hours(1);
+    backend.set_control_time(&result[9], &Some(time_to_iso8601(&time2)));
+    let result = table(&backend);
+    display_table(&result);
+    assert_eq!(result.len(), 11);
+    assert!(result[9].has_custom_time);
+    assert_eq!(
+        result[9].info.as_ref().unwrap().time,
+        time_to_iso8601(&time2)
+    );
 }

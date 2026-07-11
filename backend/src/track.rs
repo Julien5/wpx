@@ -273,9 +273,9 @@ impl Track {
         self.projection_at_track_floating_index(f)
     }
 
-    pub fn make_power_geometry(&self) -> ConstantPowerGeometry {
+    pub fn make_power_geometry(&self, waypoints: &[InputPoint]) -> ConstantPowerGeometry {
         let distances: Vec<f64> = (0..self.len()).map(|i| self.profile.distance(i)).collect();
         let elevations: Vec<f64> = self.wgs84.iter().map(|w| w.z()).collect();
-        ConstantPowerGeometry::new(&distances, &elevations)
+        ConstantPowerGeometry::new(&distances, &elevations, waypoints)
     }
 }

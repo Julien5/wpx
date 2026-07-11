@@ -230,6 +230,9 @@ impl Backend {
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
         }
+        log::trace!("start compute power geometry");
+        let power_geometry = track.make_power_geometry(&gpxdata.waypoints);
+        log::trace!("start compute power geometry");
 
         let parameters = Parameters::default();
         let mut point_collection = PacketProvider::new();
@@ -237,9 +240,6 @@ impl Backend {
             .collection
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
-        log::trace!("start compute power geometry");
-        let power_geometry = track.make_power_geometry();
-        log::trace!("start compute power geometry");
         let data = BackendData {
             track,
             parameters,
@@ -356,6 +356,7 @@ impl Backend {
             Some(data) => data,
             None => return Err(TrackError::IOError.into()),
         };
+        let power_geometry = track.make_power_geometry(&gpxdata.waypoints);
         let mut packet_provider = PacketProvider::new();
         packet_provider
             .collection
@@ -364,9 +365,6 @@ impl Backend {
             .collection
             .import_other(&Kind::Controls, smalldata.controls);
 
-        log::trace!("start compute power geometry");
-        let power_geometry = track.make_power_geometry();
-        log::trace!("start compute power geometry");
         let mut data = BackendData {
             track,
             parameters: smalldata.parameters.clone(),

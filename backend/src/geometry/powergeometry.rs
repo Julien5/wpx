@@ -1,10 +1,13 @@
 #![allow(dead_code)]
 use core::f64;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use chrono::TimeDelta;
+use geo::SimplifyIdx;
 
-use crate::{geometry::power::PowerParameters, speed::InterpolationPoint};
+use crate::{
+    elevation, geometry::power::PowerParameters, inputpoint::InputPoint, speed::InterpolationPoint,
+};
 
 pub type Table = BTreeMap<i32, Vec<TimeDelta>>;
 
@@ -17,51 +20,65 @@ pub enum SolverMethod {
 
 #[derive(Clone)]
 pub struct ConstantPowerGeometry {
-    distances: Vec<f64>,
-    elevations: Vec<f64>,
+    simplified_indices: Vec<usize>,
+    simplified_distances: Vec<f64>,
+    simplified_elevations: Vec<f64>,
     power_params: PowerParameters,
     table: Table,
     pub interpolation: Option<Vec<InterpolationPoint>>,
 }
 
-fn index_after(distances: &[f64], d: f64) -> usize {
-    if d < 0.0 {
-        return 0;
-    }
-    let maxdist = distances.last().copied().unwrap_or(0.0);
-    if d > maxdist {
-        return distances.len();
-    }
-    distances.iter().position(|&x| x >= d).unwrap()
-}
-
-fn index_before(distances: &[f64], d: f64) -> usize {
-    assert!(!distances.is_empty());
-    assert!(d >= 0.0);
-    let maxdist = distances.last().copied().unwrap_or(0.0);
-    if d >= maxdist {
-        return distances.len() - 1;
-    }
-    if d <= 0.0 {
-        return 0;
-    }
-    match distances.iter().rposition(|&x| x < d) {
-        Some(idx) => idx,
-        None => {
-            log::error!("no index_before distance {}", d);
-            0
-        }
-    }
-}
-
 impl ConstantPowerGeometry {
-    pub fn new(distances: &[f64], elevations: &[f64]) -> Self {
-        let params = PowerParameters::default();
-        let table = Self::compute_table(&params, distances, elevations);
+    pub fn new(distances: &[f64], elevations: &[f64], waypoints: &[InputPoint]) -> Self {
+        let smooth_elevation = elevation::smooth(
+            200f64,
+            distances.len(),
+            &|i: usize| -> f64 { distances[i] },
+            &|i: usize| -> f64 { elevations[i] },
+        );
+
+        let simplified_indices: Vec<usize> = {
+            let coords: Vec<geo::Coord> = smooth_elevation
+                .iter()
+                .enumerate()
+                .map(|(idx, elevation)| geo::coord!(x: distances[idx], y: *elevation))
+                .collect();
+            let line = geo::LineString::new(coords);
+            let epsilon = 2f64;
+            let mut dp_indices = line.simplify_idx(epsilon);
+            let waypoint_indices = {
+                let projections = InputPoint::flatten_projections(&waypoints);
+                let indices: Vec<_> = projections
+                    .iter()
+                    .map(|proj| proj.1.track_index)
+                    .collect::<BTreeSet<_>>()
+                    .iter()
+                    .cloned()
+                    .collect();
+                indices
+            };
+            dp_indices.extend_from_slice(&waypoint_indices);
+            dp_indices.sort();
+            dp_indices
+        };
+
+        let simplified_distances: Vec<_> =
+            simplified_indices.iter().map(|i| distances[*i]).collect();
+
+        let simplified_elevations: Vec<_> = simplified_indices
+            .iter()
+            .map(|i| smooth_elevation[*i])
+            .collect();
+
+        let power_params = PowerParameters::default();
+        let table =
+            Self::compute_table(&power_params, &simplified_distances, &simplified_elevations);
+
         Self {
-            distances: distances.to_vec(),
-            elevations: elevations.to_vec(),
-            power_params: params,
+            simplified_indices,
+            simplified_distances,
+            simplified_elevations,
+            power_params,
             table,
             interpolation: None,
         }
@@ -107,17 +124,18 @@ impl ConstantPowerGeometry {
         end: usize,
         mut cumulative_duration: TimeDelta,
     ) -> Vec<InterpolationPoint> {
+        debug_assert!(start < end);
         let mut points = Vec::new();
         self.power_params.for_each_segment(
             power,
-            &|i| self.distances[i],
-            &|i| self.elevations[i],
+            &|i| self.simplified_distances[i],
+            &|i| self.simplified_elevations[i],
             start,
             end,
             |i, duration| {
                 cumulative_duration += duration;
                 let new = InterpolationPoint {
-                    distance: self.distances[i],
+                    distance: self.simplified_distances[i],
                     duration: Some(cumulative_duration),
                     is_end: false,
                 };
@@ -127,11 +145,36 @@ impl ConstantPowerGeometry {
                 points.push(new);
             },
         );
+        let d_start = self.simplified_distances[start];
+        let d_end = self.simplified_distances[end];
+        // exclude the borders to avoid conflicts between intervals
+        points.retain(|p| d_start < p.distance && p.distance < d_end);
         points
     }
 
     fn len(&self) -> usize {
-        self.distances.len()
+        self.simplified_distances.len()
+    }
+
+    fn find_start_end(
+        &self,
+        prev: &InterpolationPoint,
+        next: &InterpolationPoint,
+    ) -> (usize, usize) {
+        // In this function, we decide about what error we are going to make.
+        // In KMH mode, there should be no error (we should have exact matches
+        // since the waypoints indices where added to the DP indices).
+        // In ACP/LRM mode there we will be an error. Either we take an interval
+        // that is too large, or too narrow. The power will be evaluated with
+        // this mismatch.
+        use super::{index_after, index_before};
+        let start = index_after(&self.simplified_distances, prev.distance);
+        // iterations are run in start..=end => bound check.
+        let end = (index_before(&self.simplified_distances, next.distance) + 1).min(self.len() - 1);
+        let start_error = (self.simplified_distances[start] - prev.distance).abs();
+        let end_error = (self.simplified_distances[end] - next.distance).abs();
+        log::trace!("error: {:.1} {:.1}", start_error, end_error);
+        (start, end)
     }
 
     fn solve_interval_linear(
@@ -139,9 +182,7 @@ impl ConstantPowerGeometry {
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
     ) -> Vec<InterpolationPoint> {
-        let start = index_after(&self.distances, prev.distance);
-        let mut end = index_before(&self.distances, next.distance) + 1;
-        end = end.min(self.len() - 1);
+        let (start, end) = self.find_start_end(prev, next);
         if start >= end {
             return Vec::new();
         }
@@ -190,9 +231,7 @@ impl ConstantPowerGeometry {
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
     ) -> Vec<InterpolationPoint> {
-        let start = index_after(&self.distances, prev.distance);
-        let mut end = index_before(&self.distances, next.distance) + 1;
-        end = end.min(self.len() - 1);
+        let (start, end) = self.find_start_end(prev, next);
         if start >= end {
             return Vec::new();
         }
@@ -215,8 +254,8 @@ impl ConstantPowerGeometry {
         for _ in 0..5 {
             let (t, dt_dp) = self.power_params.duration_and_derivative_at_power(
                 power,
-                &|i| self.distances[i],
-                &|i| self.elevations[i],
+                &|i| self.simplified_distances[i],
+                &|i| self.simplified_elevations[i],
                 start,
                 end,
             );
@@ -237,14 +276,12 @@ impl ConstantPowerGeometry {
         self.generate_points(power, start, end, prev.unwrap_duration())
     }
 
-    fn solve_interval_60iterations(
+    fn solve_interval_bisection(
         &self,
         prev: &InterpolationPoint,
         next: &InterpolationPoint,
     ) -> Vec<InterpolationPoint> {
-        let start = index_after(&self.distances, prev.distance);
-        let mut end = index_before(&self.distances, next.distance) + 1;
-        end = end.min(self.len() - 1);
+        let (start, end) = self.find_start_end(prev, next);
         if start >= end {
             return Vec::new();
         }
@@ -253,8 +290,8 @@ impl ConstantPowerGeometry {
 
         let power = self.power_params.power_at_duration(
             &duration,
-            |i| self.distances[i],
-            |i| self.elevations[i],
+            |i| self.simplified_distances[i],
+            |i| self.simplified_elevations[i],
             start,
             end,
         );
@@ -267,39 +304,24 @@ impl ConstantPowerGeometry {
         controls: &Vec<InterpolationPoint>,
         method: SolverMethod,
     ) {
-        let mut all_points = Vec::new();
-
+        debug_assert!(!controls.is_empty());
+        debug_assert!(controls.is_sorted());
+        let mut all_points = controls.clone();
         for window in controls.windows(2) {
             let prev = &window[0];
             let next = &window[1];
-
-            if all_points.is_empty() {
-                all_points.push(InterpolationPoint {
-                    distance: prev.distance,
-                    duration: prev.duration.clone(),
-                    is_end: false,
-                });
-            }
-
             let new_points = match method {
                 SolverMethod::Linear => self.solve_interval_linear(prev, next),
                 SolverMethod::Newton => self.solve_interval_newton(prev, next),
-                SolverMethod::Bisection => self.solve_interval_60iterations(prev, next),
+                SolverMethod::Bisection => self.solve_interval_bisection(prev, next),
             };
-
-            all_points.extend(new_points);
-            debug_assert!(all_points.is_sorted());
-        }
-
-        if let Some(last) = controls.last() {
-            all_points.push(InterpolationPoint {
-                distance: last.distance,
-                duration: last.duration.clone(),
-                is_end: true,
+            // the new points should not include the controls.
+            new_points.iter().for_each(|p| {
+                debug_assert!(prev.distance < p.distance && p.distance < next.distance);
             });
-            all_points.retain(|p| p <= last);
+            all_points.extend(new_points);
         }
-        debug_assert!(all_points.is_sorted());
+        all_points.sort();
         self.interpolation = Some(all_points);
     }
 }

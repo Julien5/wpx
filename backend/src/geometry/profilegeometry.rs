@@ -110,33 +110,11 @@ impl ProfileGeometry {
     }
 
     pub fn index_after(&self, distance: f64) -> usize {
-        if distance < 0.0 {
-            return 0;
-        }
-        let maxdist = self.total_distance();
-        if distance > maxdist {
-            return self.len();
-        }
-        self.distances.iter().position(|&d| d >= distance).unwrap()
+        super::index_after(&self.distances, distance)
     }
 
     pub fn index_before(&self, distance: f64) -> usize {
-        assert!(self.len() > 0);
-        assert!(distance >= 0.0);
-        let maxdist = self.total_distance();
-        if distance >= maxdist {
-            return self.len() - 1;
-        }
-        if distance <= 0.0 {
-            return 0;
-        }
-        match self.distances.iter().rposition(|&d| d < distance) {
-            Some(index) => index,
-            None => {
-                log::error!("no index_before distance {}", distance);
-                0
-            }
-        }
+        super::index_before(&self.distances, distance)
     }
 
     pub fn point_at_distance(&self, d: f64, k0: usize) -> f64 {

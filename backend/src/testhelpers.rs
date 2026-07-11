@@ -37,6 +37,7 @@ fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Paramete
         collection.import_other(&Kind::GPXWaypoints, waypoints);
     }
     let waypoints = collection.get_vector(&Kind::GPXWaypoints);
+    let power_geometry = track.make_power_geometry(&waypoints);
     let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
     for c in &mut controls {
         track.project_point(c);
@@ -52,7 +53,7 @@ fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Paramete
 
     let mut packet_provider = PacketProvider::new();
     packet_provider.collection = collection;
-    let power_geometry = track.make_power_geometry();
+
     BackendData {
         parameters,
         track,
@@ -112,6 +113,7 @@ pub async fn load_backend_data_with_track_and_parameters(
         track.project_point(c);
     }
 
+    let power_geometry = track.make_power_geometry(&waypoints);
     collection.import_other(&Kind::GPXWaypoints, waypoints);
     collection.import_other(&Kind::Controls, controls);
 
@@ -120,7 +122,7 @@ pub async fn load_backend_data_with_track_and_parameters(
 
     let mut packet_provider = PacketProvider::new();
     packet_provider.collection = collection;
-    let power_geometry = track.make_power_geometry();
+
     BackendData {
         parameters,
         track: Arc::new(track),

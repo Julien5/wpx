@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 use crate::controls;
 use crate::error::TrackError;
 use crate::geometry::powergeometry::ConstantPowerGeometry;
+use crate::geometry::powergeometry::SolverMethod;
 use crate::gpxexport;
 use crate::inputpoint::*;
 use crate::make_points;
@@ -165,16 +166,14 @@ impl BackendData {
                 .import_other(&Kind::Controls, controls);
         }
 
-        /*
-            {
-                log::trace!("start compute power interpolation points");
-                self.power_geometry.update_interpolation_points(
-                    &self.time_parameters().control_interpolation_points(),
-                    powergeometry::SolverMethod::Bisection,
-                );
-                log::trace!("done compute power interpolation points");
+        if true {
+            log::trace!("start compute power interpolation points");
+            self.power_geometry.update_interpolation_points(
+                &self.time_parameters().control_interpolation_points(),
+                SolverMethod::Newton,
+            );
+            log::trace!("done compute power interpolation points");
         }
-            */
     }
 
     pub fn get_points(&self, segment: &Segment, kinds: &Kinds) -> Vec<InputPoint> {
@@ -230,7 +229,7 @@ impl BackendData {
             start: start_time,
             speed: parse_speed(&self.parameters.speed),
             track_distance: self.track.total_distance(),
-            power: self.power_geometry.interpolation.clone(),
+            power: None, //self.power_geometry.interpolation.clone(),
         };
         t0
     }
@@ -385,6 +384,7 @@ impl BackendData {
     }
 
     pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) -> bool {
+        log::trace!("set_control_time {:?}", time);
         match self.time_parameters().speed {
             Speed::ACP(_) => {
                 return false;
@@ -407,6 +407,7 @@ impl BackendData {
                 return false;
             }
             if let Some(data) = time {
+                log::trace!("do set_control_time {:?}", time);
                 let t = parameters::parse_time(&data);
                 control.data.as_control_mut().unwrap().cutoff_time = Some(t);
             } else {
@@ -418,6 +419,10 @@ impl BackendData {
         self.packet_provider
             .collection
             .import_other(&Kind::Controls, controls);
+        self.power_geometry.update_interpolation_points(
+            &self.time_parameters().control_interpolation_points(),
+            SolverMethod::Newton,
+        );
         true
     }
 
