@@ -172,14 +172,13 @@ pub mod ACP {
                 }
                 prev = (km, hours);
             }
-            // may happen if pre-last control is > 1200km
-            // example: PBP with 1230 km and one control at 1215km.
+            // May happen if last control is > 1200km
+            // Example: PBP with 1230 km and last control at 1215km.
+            // This is quite bad, this would results in a time that is > 90h
+            // and a negative time between the last control and the
+            // END. To prevent this we cap it to 90h.
             if remain_km > 0.0 {
-                // 200 km per day.
-                let days = distance_km / 200.0;
-                let (delta_km, delta_hours) = (distance_km - prev.0, 24.0 * days - prev.1);
-                let speed = delta_km / delta_hours;
-                time += remain_km / speed;
+                time = fixed_interpolation_points().last().unwrap().1;
                 remain_km = 0f64;
             }
             debug_assert_eq!(remain_km, 0f64);
@@ -234,15 +233,14 @@ pub mod ACP {
         copy.retain(|c| !c.is_end && c.distance > 0f64);
         copy.sort();
 
-        if !copy.is_empty() {
-            let prelastc = copy.last().unwrap();
+        for c in copy {
             // in ACP mode, ignore the time set by user on that control.
-            let prelast = InterpolationPoint {
-                distance: prelastc.distance,
-                duration: Some(duration(prelastc.distance).min(spec_duration)),
+            let last = InterpolationPoint {
+                distance: c.distance,
+                duration: Some(duration(c.distance).min(spec_duration)),
                 is_end: false,
             };
-            ret.push(prelast);
+            ret.push(last);
         }
 
         let mut fixed = fixed_interpolation_controls();

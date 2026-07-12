@@ -450,6 +450,63 @@ mod tests {
     #[test]
     fn test_acp_lrm() {
         let _ = env_logger::try_init();
-        log::trace!("X{:?}", speed::allowed_speeds(1200_000f64));
+        let speeds = speed::allowed_speeds(1200_000f64);
+        log::trace!("X{:?}", speeds);
+        let dump = format!("{:?}", speeds);
+        let expected = "[\"KMH-*\", \"ACP-1200-90.0\", \"LRM-13.33\"]";
+        debug_assert_eq!(dump, expected);
+    }
+
+    #[test]
+    fn test_acp_time_parameters_2() {
+        let _ = env_logger::try_init();
+
+        let k1 = InterpolationPoint {
+            distance: 300_000f64,
+            duration: None,
+            is_end: false,
+        };
+
+        let start_time = parameters::parse_time(&"2026-04-29T00:00:00");
+
+        let make_parameters = |distance: f64, k: Option<InterpolationPoint>| -> TimeParameters {
+            let start = InterpolationPoint {
+                distance: 0f64,
+                duration: None,
+                is_end: false,
+            };
+
+            let end = InterpolationPoint {
+                distance: distance,
+                duration: None,
+                is_end: true,
+            };
+            let spec = best_guess_acp(end.distance);
+            TimeParameters {
+                controls: match k {
+                    None => vec![start, end],
+                    Some(p) => vec![start, p.clone(), end],
+                },
+                start: start_time,
+                speed: spec,
+                track_distance: distance,
+                power: None,
+            }
+        };
+
+        let time_parameters_1 = make_parameters(600_000f64, None);
+        let time_parameters_2 = make_parameters(600_000f64, Some(k1.clone()));
+        let expected = parameters::parse_time(&"2026-04-29T20:00:00");
+        let cut_off_1 = time_parameters_1.time(k1.distance);
+        let cut_off_2 = time_parameters_2.time(k1.distance);
+        assert_eq!(cut_off_1, cut_off_2);
+        assert_eq!(cut_off_1, expected);
+
+        let time_parameters_3 = make_parameters(620_000f64, None);
+        let time_parameters_4 = make_parameters(620_000f64, Some(k1.clone()));
+        let cut_off_3 = time_parameters_3.time(k1.distance);
+        let cut_off_4 = time_parameters_4.time(k1.distance);
+        assert_eq!(cut_off_4, expected);
+        assert!(cut_off_3 < cut_off_4);
     }
 }

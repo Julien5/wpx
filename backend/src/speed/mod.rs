@@ -348,29 +348,19 @@ impl TimeParameters {
     }
 
     pub fn time(&self, distance: f64) -> DateTime {
-        let duration = match &self.power {
-            Some(points) => interpolate_duration(&points, distance),
-
-            None => interpolate_duration(&self.control_interpolation_points(), distance),
+        let interpolation_points = match &self.power {
+            Some(points) => &points,
+            None => &self.control_interpolation_points(),
         };
+        let duration = interpolate_duration(interpolation_points, distance);
         self.start + duration
     }
 
     pub fn distance(&self, duration: &TimeDelta) -> f64 {
-        match &self.power {
-            Some(points) => {
-                return interpolate_distance(&points, &self.start, duration);
-            }
-            None => {}
-        }
-        interpolate_distance(&self.control_interpolation_points(), &self.start, duration)
-    }
-
-    pub fn duration(&self, distance_a: f64, distance_b: f64) -> TimeDelta {
-        debug_assert!(distance_a <= distance_b);
-        let ta = interpolate_duration(&self.control_interpolation_points(), distance_a);
-        let tb = interpolate_duration(&self.control_interpolation_points(), distance_b);
-        debug_assert!(ta <= tb);
-        tb - ta
+        let interpolation_points = match &self.power {
+            Some(points) => &points,
+            None => &self.control_interpolation_points(),
+        };
+        interpolate_distance(interpolation_points, &self.start, duration)
     }
 }

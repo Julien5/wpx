@@ -224,7 +224,9 @@ impl BackendData {
 
     fn time_parameters(&self) -> TimeParameters {
         let start_time = parameters::parse_time(&self.parameters.start_time);
-        let power = if self.parameters.profile_options.time_axis == TimeAxis::ConstantPower {
+        let constant_power_mode =
+            self.parameters.profile_options.time_axis == TimeAxis::ConstantPower;
+        let power = if constant_power_mode {
             self.power_geometry.interpolation.clone()
         } else {
             None
