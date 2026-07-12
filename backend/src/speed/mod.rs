@@ -67,55 +67,27 @@ fn find_interval_at_distance(
     interpolation_points: &Vec<InterpolationPoint>,
     distance: f64,
 ) -> (&InterpolationPoint, &InterpolationPoint) {
-    // controls must contains START and END.
     debug_assert!(interpolation_points.len() >= 2);
-    // controls has to be sorted by distance and time
     debug_assert!(interpolation_points.is_sorted());
 
-    /* There is a somewhat degenerate case in the case of ACP at
-     * start. The interpolations points have two elements at d==0:
-     * 0h and 1h.
-     */
-    let equals: Vec<_> = interpolation_points
-        .iter()
-        .filter(|c| c.distance == distance)
-        .collect();
+    let lo = interpolation_points.partition_point(|p| p.distance < distance);
+    let hi = interpolation_points.partition_point(|p| p.distance <= distance);
 
-    if equals.len() >= 2 {
-        return (equals.first().unwrap(), equals.last().unwrap());
+    if lo < hi {
+        return (&interpolation_points[lo], &interpolation_points[hi - 1]);
     }
 
-    let next = {
-        let larger = interpolation_points.iter().find(|c| c.distance >= distance);
-        match larger {
-            Some(point) => point,
-            None => interpolation_points.last().unwrap(),
-        }
+    let next = match interpolation_points.get(lo) {
+        Some(p) => p,
+        None => interpolation_points.last().unwrap(),
     };
 
-    ////////////////////////////////////////////////////////////////////
-    // log::trace!("next: {:?}", next);								  //
-    // for c in interpolation_points {								  //
-    //     log::trace!("[TP1] inter:{:?},{:.1}", c.time, c.distance); //
-    // }															  //
-    ////////////////////////////////////////////////////////////////////
-    if next.distance == 0f64 {
-        return (
-            interpolation_points.first().unwrap(),
-            interpolation_points.first().unwrap(),
-        );
-    }
-    let previous_candidate = interpolation_points
-        .iter()
-        .filter(|control| control.distance < next.distance)
-        .last();
-
-    let previous = match previous_candidate {
-        Some(point) => point,
-        None => interpolation_points.first().unwrap(),
+    let prev = match lo.checked_sub(1).and_then(|i| interpolation_points.get(i)) {
+        Some(p) => p,
+        None => next,
     };
 
-    (previous, next)
+    (prev, next)
 }
 
 fn interpolate_duration(
