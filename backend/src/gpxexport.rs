@@ -6,11 +6,13 @@ use gpx::TrackSegment;
 
 use crate::inputpoint::InputPoint;
 use crate::point_collection::Kind;
+use crate::speed::TimeParameters;
 use crate::track;
 use crate::trackparts::controls_to_segments;
 use crate::waypoint;
 use crate::waypoint::Waypoints;
 use crate::wgs84point::WGS84Point;
+use time::OffsetDateTime;
 
 fn gps_name(w: &waypoint::Waypoint) -> String {
     match &w.origin {
@@ -66,13 +68,20 @@ pub fn flat_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) -> T
     ret
 }
 
-pub fn elevated_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) -> TrackSegment {
+pub fn elevated_export(
+    track: &track::Track,
+    range: &std::ops::Range<usize>,
+    time_params: &TimeParameters,
+) -> TrackSegment {
     let mut ret = TrackSegment::new();
     for index in range.start..range.end {
-        // remove z coordinate to avoid automatic "low" and "hight points" on etrex 10
-        let wgs = wgs84[index];
+        let wgs = track.wgs84[index];
         let mut w = gpx::Waypoint::new(geo::Point::new(wgs.x(), wgs.y()));
         w.elevation = Some(wgs.z());
+        let dt = time_params.time(track.distance(index)).to_utc();
+        let odt = OffsetDateTime::from_unix_timestamp(dt.timestamp()).unwrap()
+            .replace_nanosecond(dt.timestamp_subsec_nanos()).unwrap();
+        w.time = Some(gpx::Time::from(odt));
         match ret.points.last() {
             Some(last) => {
                 if last.point() == w.point() {
@@ -106,6 +115,7 @@ pub fn generate(
     controls: &Vec<InputPoint>,
     groups: &Vec<Waypoints>,
     waypoints: &Waypoints,
+    time_params: &TimeParameters,
 ) -> BTreeMap<String, Vec<u8>> {
     let mut ret: BTreeMap<String, Vec<u8>> = BTreeMap::new();
     let parts = controls_to_segments(&track, &controls);
@@ -127,7 +137,7 @@ pub fn generate(
         );
 
         // Elevated segment
-        let segment = elevated_export(&track.wgs84, &range);
+        let segment = elevated_export(track, &range, time_params);
         let mut gpxtrack = gpx::Track::new();
         gpxtrack.name = Some(format!("[ele] {:0>2}: {}", index + 1, part.name));
         gpxtrack.segments.push(segment);

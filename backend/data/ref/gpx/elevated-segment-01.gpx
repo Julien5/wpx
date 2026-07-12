@@ -5,12 +5,15 @@
     <trkseg>
       <trkpt lat="48" lon="8">
         <ele>200</ele>
+        <time>1985-04-12T06:05:00.000000000Z</time>
       </trkpt>
       <trkpt lat="48.05" lon="8">
         <ele>300</ele>
+        <time>1985-04-12T06:27:14.340962802Z</time>
       </trkpt>
       <trkpt lat="48.1" lon="8">
         <ele>200</ele>
+        <time>1985-04-12T06:49:28.681925605Z</time>
       </trkpt>
     </trkseg>
   </trk>

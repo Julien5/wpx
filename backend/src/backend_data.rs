@@ -293,7 +293,8 @@ impl BackendData {
         debug_assert_eq!(check_sum, userssteps_w.len());
         debug_assert!(!usersteps_groups.is_empty());
         let waypoints_w = self.export_points(&waypoints);
-        gpxexport::generate(&self.track, &controls, &usersteps_groups, &waypoints_w)
+        let time_params = self.time_parameters();
+        gpxexport::generate(&self.track, &controls, &usersteps_groups, &waypoints_w, &time_params)
     }
 
     pub fn generateZip(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
