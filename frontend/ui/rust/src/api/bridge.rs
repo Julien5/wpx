@@ -13,6 +13,7 @@ pub use tracks::error::TrackError;
 pub use tracks::mercator::MercatorPoint;
 pub use tracks::parameters::MapOptions;
 pub use tracks::parameters::Parameters;
+pub use tracks::parameters::PowerParameters;
 pub use tracks::parameters::ProfileOptions;
 pub use tracks::parameters::RenderFunction;
 pub use tracks::parameters::RenderInput;
@@ -127,6 +128,17 @@ pub fn best_guess_order(parts: &Vec<TrackPart>) -> Vec<TrackPart> {
     parameters::karl_order(parts)
 }
 
+#[frb(mirror(PowerParameters))]
+pub struct _PowerParameters {
+    pub W: f64,              // total weight (rider + bike), kg
+    pub Crr: f64,            // rolling resistance coefficient, unitless
+    pub Vhw: f64,            // headwind speed, km/h (positive = headwind, negative = tailwind)
+    pub A: f64,              // frontal area, m^2
+    pub Rho: f64,            // air density, kg/m^3
+    pub Cd: f64,             // drag coefficient, unitless
+    pub DrivetrainLoss: f64, // drivetrain loss, percent (e.g. 3.0 for 3%)
+}
+
 #[frb(mirror(TimeAxis))]
 pub enum _TimeAxis {
     ConstantSpeed,
@@ -156,6 +168,7 @@ pub struct _Parameters {
     pub profile_options: ProfileOptions,
     pub segment_length: f64,
     pub segment_overlap: f64,
+    pub power_parameters: PowerParameters,
     pub smooth_width: f64,
     pub speed: String,
     pub start_time: String,
@@ -324,7 +337,7 @@ impl Bridge {
     }
 
     pub async fn save_trackfile_jsonparameters(&self) -> Result<TrackFile, TrackError> {
-        self.backend.save_trackfile_jsonparameters().await
+        self.backend.save_quick().await
     }
 
     #[frb(sync)]

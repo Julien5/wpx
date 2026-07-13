@@ -15,6 +15,7 @@ impl Into<crate::parameters::Parameters> for Parameters {
             profile_options: def.profile_options.into(),
             segment_length: def.segment_length,
             segment_overlap: def.segment_overlap,
+            power_parameters: def.power_parameters,
             smooth_width: def.smooth_width,
             speed: def.speed,
             start_time: def.start_time,

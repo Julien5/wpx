@@ -1,6 +1,33 @@
+use chrono::{Local, NaiveDateTime, TimeZone};
 use serde::{Deserialize, Serialize};
 
 use crate::mercator::DateTime;
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[allow(non_snake_case)]
+pub struct PowerParameters {
+    pub W: f64,              // total weight (rider + bike), kg
+    pub Crr: f64,            // rolling resistance coefficient, unitless
+    pub Vhw: f64,            // headwind speed, km/h (positive = headwind, negative = tailwind)
+    pub A: f64,              // frontal area, m^2
+    pub Rho: f64,            // air density, kg/m^3
+    pub Cd: f64,             // drag coefficient, unitless
+    pub DrivetrainLoss: f64, // drivetrain loss, percent (e.g. 3.0 for 3%)
+}
+
+impl Default for PowerParameters {
+    fn default() -> PowerParameters {
+        PowerParameters {
+            W: 80.0,
+            Crr: 0.005,
+            Vhw: 0.0,
+            A: 0.4,
+            Rho: 1.225,
+            Cd: 0.9,
+            DrivetrainLoss: 2f64,
+        }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct UserStepsOptions {
@@ -9,12 +36,12 @@ pub struct UserStepsOptions {
     pub gpx_name_format: String,
 }
 
-impl Into<crate::parameters::UserStepsOptions> for UserStepsOptions {
-    fn into(self) -> crate::parameters::UserStepsOptions {
-        crate::parameters::UserStepsOptions {
-            step_distance: self.step_distance,
-            step_elevation_gain: self.step_elevation_gain,
-            gpx_name_format: self.gpx_name_format,
+impl Default for UserStepsOptions {
+    fn default() -> UserStepsOptions {
+        UserStepsOptions {
+            step_distance: Some(10_000.0),
+            step_elevation_gain: None,
+            gpx_name_format: "TIME[%H:%M]-SLOPE[4.1%]".to_string(),
         }
     }
 }
@@ -25,24 +52,15 @@ pub enum TimeAxis {
     ConstantPower,
 }
 
-impl Into<crate::parameters::TimeAxis> for TimeAxis {
-    fn into(self) -> crate::parameters::TimeAxis {
-        match self {
-            TimeAxis::ConstantSpeed => crate::parameters::TimeAxis::ConstantSpeed,
-            TimeAxis::ConstantPower => crate::parameters::TimeAxis::ConstantPower,
-        }
-    }
-}
-
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ProfileOptions {
     pub time_axis: TimeAxis,
 }
 
-impl Into<crate::parameters::ProfileOptions> for ProfileOptions {
-    fn into(self) -> crate::parameters::ProfileOptions {
-        crate::parameters::ProfileOptions {
-            time_axis: self.time_axis.into(),
+impl Default for ProfileOptions {
+    fn default() -> ProfileOptions {
+        ProfileOptions {
+            time_axis: TimeAxis::ConstantSpeed,
         }
     }
 }
@@ -52,9 +70,9 @@ pub struct MapOptions {
     // empty
 }
 
-impl Into<crate::parameters::MapOptions> for MapOptions {
-    fn into(self) -> crate::parameters::MapOptions {
-        crate::parameters::MapOptions {}
+impl Default for MapOptions {
+    fn default() -> MapOptions {
+        MapOptions {}
     }
 }
 
@@ -66,6 +84,7 @@ pub struct Parameters {
     pub profile_options: ProfileOptions,
     pub segment_length: f64,
     pub segment_overlap: f64,
+    pub power_parameters: PowerParameters,
     pub smooth_width: f64,
     /// "17.8" (kmh) or "ACP"
     pub speed: String,
@@ -73,8 +92,33 @@ pub struct Parameters {
     pub user_steps_options: UserStepsOptions,
 }
 
+impl Default for Parameters {
+    fn default() -> Parameters {
+        Parameters {
+            control_gpx_name_format: "NAME[3]-TIME[%H:%M]-SLOPE[4.1%]".to_string(),
+            start_time: time_to_iso8601(&chrono::Local::now()),
+            speed: format!("KMH-{:.1}", 15.0),
+            segment_length: 110f64 * 1000f64,
+            segment_overlap: 10f64 * 1000f64,
+            power_parameters: PowerParameters::default(),
+            smooth_width: 200f64,
+            debug: false,
+            profile_options: ProfileOptions::default(),
+            map_options: MapOptions::default(),
+            user_steps_options: UserStepsOptions::default(),
+        }
+    }
+}
+
+pub fn time_to_iso8601(time: &DateTime) -> String {
+    time.to_rfc3339()
+}
+
+pub fn current_time_as_string() -> String {
+    time_to_iso8601(&chrono::Local::now())
+}
+
 pub fn parse_time(data: &str) -> DateTime {
-    use chrono::{Local, NaiveDateTime, TimeZone};
     // 1. Try to parse with an explicit TimeZone (RFC3339 / ISO8601 with Z or +HH:MM)
     if let Ok(parsed_with_tz) = chrono::DateTime::parse_from_rfc3339(data) {
         return DateTime::from(parsed_with_tz);
@@ -89,19 +133,4 @@ pub fn parse_time(data: &str) -> DateTime {
     panic!("cannot parse time string:{}", data);
 }
 
-impl Into<crate::parameters::Parameters> for Parameters {
-    fn into(self) -> crate::parameters::Parameters {
-        crate::parameters::Parameters {
-            control_gpx_name_format: self.control_gpx_name_format,
-            debug: self.debug,
-            map_options: self.map_options.into(),
-            profile_options: self.profile_options.into(),
-            segment_length: self.segment_length,
-            segment_overlap: self.segment_overlap,
-            smooth_width: self.smooth_width,
-            speed: self.speed,
-            start_time: self.start_time,
-            user_steps_options: self.user_steps_options.into(),
-        }
-    }
-}
+

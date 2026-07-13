@@ -1,46 +1,18 @@
+#![allow(non_snake_case)]
 use chrono::TimeDelta;
 
-/*
-- total weight W (kg)
-- rolling resistance Crr (unitless)
-- headwind speed Vhw (km/h)
-- frontal area A (m2)
-- air density Rho (kg/m3)
-- drag coefficient Cd (unitless)
-and
-- percent grade of hill: G (percent)
- */
-#[derive(Clone)]
-#[allow(non_snake_case)]
-pub struct PowerParameters {
-    W: f64,              // total weight (rider + bike), kg
-    Crr: f64,            // rolling resistance coefficient, unitless
-    Vhw: f64,            // headwind speed, km/h (positive = headwind, negative = tailwind)
-    A: f64,              // frontal area, m^2
-    Rho: f64,            // air density, kg/m^3
-    Cd: f64,             // drag coefficient, unitless
-    DrivetrainLoss: f64, // drivetrain loss, percent (e.g. 3.0 for 3%)
-}
+use crate::parameters::PowerParameters;
 
-impl Default for PowerParameters {
-    fn default() -> PowerParameters {
-        PowerParameters {
-            W: 80.0,
-            Crr: 0.005,
-            Vhw: 0.0,
-            A: 0.4,
-            Rho: 1.225,
-            Cd: 0.9,
-            DrivetrainLoss: 2f64,
-        }
-    }
+#[derive(Clone)]
+pub struct PowerModel {
+    pub parameters: PowerParameters,
 }
 
 const G: f64 = 9.8067; // m/s^2, matches Gribble's constant
 const KMH_TO_MS: f64 = 1000.0 / 3600.0;
 const MS_TO_KMH: f64 = 3600.0 / 1000.0;
 
-impl PowerParameters {
+impl PowerModel {
     /// Iterates over each segment in `start..end` and calls `f(i, seg_time_seconds)`.
     /// The grade and speed calculations (including v_min clamping) live here,
     /// so callers like `solve_interval` don't duplicate the loop.
@@ -136,63 +108,84 @@ impl PowerParameters {
     /// drivetrain loss: only a fraction of rider power actually reaches
     /// the road, the rest is dissipated in the chain/derailleur/bearings.
     pub fn speed_at_power(&self, power: f64, percent: f64) -> f64 {
-        let vhw = self.Vhw * KMH_TO_MS;
+        let W = self.parameters.W;
+        let Crr = self.parameters.Crr;
+        let Vhw = self.parameters.Vhw;
+        let A = self.parameters.A;
+        let Rho = self.parameters.Rho;
+        let Cd = self.parameters.Cd;
+        let DrivetrainLoss = self.parameters.DrivetrainLoss;
+
+        let vhw = Vhw * KMH_TO_MS;
 
         let slope = percent / 100.0;
         let theta = slope.atan();
         let (sin_t, cos_t) = (theta.sin(), theta.cos());
 
         // Power actually delivered to the wheel, after drivetrain loss.
-        let wheel_power = power * (1.0 - self.DrivetrainLoss / 100.0);
+        let wheel_power = power * (1.0 - DrivetrainLoss / 100.0);
 
-        let a = 0.5 * self.Cd * self.A * self.Rho;
-        let b = vhw * self.Cd * self.A * self.Rho;
-        let c =
-            G * self.W * (sin_t + self.Crr * cos_t) + 0.5 * self.Cd * self.A * self.Rho * vhw * vhw;
+        let a = 0.5 * Cd * A * Rho;
+        let b = vhw * Cd * A * Rho;
+        let c = G * W * (sin_t + Crr * cos_t) + 0.5 * Cd * A * Rho * vhw * vhw;
         let d = -wheel_power;
 
         Self::real_cubic_root(a, b, c, d) * MS_TO_KMH
     }
 
     pub fn power_at_speed(&self, speed: f64, percent: f64) -> f64 {
+        let W = self.parameters.W;
+        let Crr = self.parameters.Crr;
+        let Vhw = self.parameters.Vhw;
+        let A = self.parameters.A;
+        let Rho = self.parameters.Rho;
+        let Cd = self.parameters.Cd;
+        let DrivetrainLoss = self.parameters.DrivetrainLoss;
+
         let v_ground = speed * KMH_TO_MS;
-        let vhw = self.Vhw * KMH_TO_MS;
+        let vhw = Vhw * KMH_TO_MS;
 
         let slope = percent / 100.0;
         let theta = slope.atan();
         let (sin_t, cos_t) = (theta.sin(), theta.cos());
 
-        let a = 0.5 * self.Cd * self.A * self.Rho;
-        let b = vhw * self.Cd * self.A * self.Rho;
-        let c =
-            G * self.W * (sin_t + self.Crr * cos_t) + 0.5 * self.Cd * self.A * self.Rho * vhw * vhw;
+        let a = 0.5 * Cd * A * Rho;
+        let b = vhw * Cd * A * Rho;
+        let c = G * W * (sin_t + Crr * cos_t) + 0.5 * Cd * A * Rho * vhw * vhw;
 
         let wheel_power = a * v_ground.powi(3) + b * v_ground.powi(2) + c * v_ground;
 
-        wheel_power / (1.0 - self.DrivetrainLoss / 100.0)
+        wheel_power / (1.0 - DrivetrainLoss / 100.0)
     }
 
     /// Computes both the speed (km/h) and the derivative of speed with respect to power (dv/dP in m/s per Watt).
     /// Used for Newton-Raphson optimization.
     pub fn speed_and_derivative_at_power(&self, power: f64, percent: f64) -> (f64, f64) {
+        let W = self.parameters.W;
+        let Crr = self.parameters.Crr;
+        let Vhw = self.parameters.Vhw;
+        let A = self.parameters.A;
+        let Rho = self.parameters.Rho;
+        let Cd = self.parameters.Cd;
+        let DrivetrainLoss = self.parameters.DrivetrainLoss;
+
         let v_kmh = self.speed_at_power(power, percent);
         let v_ms = v_kmh * KMH_TO_MS;
-        let vhw = self.Vhw * KMH_TO_MS;
+        let vhw = Vhw * KMH_TO_MS;
 
         let slope = percent / 100.0;
         let theta = slope.atan();
         let (sin_t, cos_t) = (theta.sin(), theta.cos());
 
-        let a = 0.5 * self.Cd * self.A * self.Rho;
-        let b = vhw * self.Cd * self.A * self.Rho;
-        let c =
-            G * self.W * (sin_t + self.Crr * cos_t) + 0.5 * self.Cd * self.A * self.Rho * vhw * vhw;
+        let a = 0.5 * Cd * A * Rho;
+        let b = vhw * Cd * A * Rho;
+        let c = G * W * (sin_t + Crr * cos_t) + 0.5 * Cd * A * Rho * vhw * vhw;
 
         // Derivative of wheel power with respect to speed (dP_w/dv)
         let dpw_dv = 3.0 * a * v_ms.powi(2) + 2.0 * b * v_ms + c;
 
         let dv_ms_dp = if dpw_dv > 0.0 {
-            (1.0 - self.DrivetrainLoss / 100.0) / dpw_dv
+            (1.0 - DrivetrainLoss / 100.0) / dpw_dv
         } else {
             0.0
         };
@@ -269,7 +262,7 @@ impl PowerParameters {
 mod tests {
     use super::*;
 
-    fn params(overrides: impl FnOnce(&mut PowerParameters)) -> PowerParameters {
+    fn params(overrides: impl FnOnce(&mut PowerParameters)) -> PowerModel {
         let mut p = PowerParameters {
             W: 80.0,
             Crr: 0.005,
@@ -280,7 +273,7 @@ mod tests {
             DrivetrainLoss: 2f64,
         };
         overrides(&mut p);
-        p
+        PowerModel { parameters: p }
     }
 
     fn assert_close(actual: f64, expected: f64, tol: f64) {

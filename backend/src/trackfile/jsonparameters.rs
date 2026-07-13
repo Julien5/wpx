@@ -52,7 +52,7 @@ where
 {
     match VersionedParameters::deserialize(deserializer)? {
         VersionedParameters::V0(p) => Ok(p.into()),
-        VersionedParameters::V1(p) => Ok(p.into()),
+        VersionedParameters::V1(p) => Ok(p),
     }
 }
 

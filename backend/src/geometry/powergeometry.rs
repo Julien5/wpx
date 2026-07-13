@@ -6,7 +6,8 @@ use chrono::TimeDelta;
 use geo::SimplifyIdx;
 
 use crate::{
-    elevation, geometry::power::PowerParameters, inputpoint::InputPoint, speed::InterpolationPoint,
+    elevation, geometry::power::PowerModel, inputpoint::InputPoint, parameters::PowerParameters,
+    speed::InterpolationPoint,
 };
 
 pub type Table = BTreeMap<i32, Vec<TimeDelta>>;
@@ -23,7 +24,7 @@ pub struct ConstantPowerGeometry {
     simplified_indices: Vec<usize>,
     simplified_distances: Vec<f64>,
     simplified_elevations: Vec<f64>,
-    power_params: PowerParameters,
+    power_model: PowerModel,
     table: Table,
     pub interpolation: Option<Vec<InterpolationPoint>>,
 }
@@ -70,27 +71,29 @@ impl ConstantPowerGeometry {
             .map(|i| smooth_elevation[*i])
             .collect();
 
-        let power_params = PowerParameters::default();
+        let power_model = PowerModel {
+            parameters: PowerParameters::default(),
+        };
         let table =
-            Self::compute_table(&power_params, &simplified_distances, &simplified_elevations);
+            Self::compute_table(&power_model, &simplified_distances, &simplified_elevations);
 
         Self {
             simplified_indices,
             simplified_distances,
             simplified_elevations,
-            power_params,
+            power_model,
             table,
             interpolation: None,
         }
     }
 
     pub fn with_power_params(mut self, params: PowerParameters) -> Self {
-        self.power_params = params;
+        self.power_model.parameters = params;
         self
     }
 
     pub fn compute_table(
-        power_params: &PowerParameters,
+        power_params: &PowerModel,
         distances: &[f64],
         elevations: &[f64],
     ) -> Table {
@@ -126,7 +129,7 @@ impl ConstantPowerGeometry {
     ) -> (f64, Vec<InterpolationPoint>) {
         debug_assert!(start < end);
         let mut points = Vec::new();
-        self.power_params.for_each_segment(
+        self.power_model.for_each_segment(
             power,
             &|i| self.simplified_distances[i],
             &|i| self.simplified_elevations[i],
@@ -247,7 +250,7 @@ impl ConstantPowerGeometry {
 
         let mut power = best_p;
         for _ in 0..5 {
-            let (t, dt_dp) = self.power_params.duration_and_derivative_at_power(
+            let (t, dt_dp) = self.power_model.duration_and_derivative_at_power(
                 power,
                 &|i| self.simplified_distances[i],
                 &|i| self.simplified_elevations[i],
@@ -280,7 +283,7 @@ impl ConstantPowerGeometry {
 
         let duration = next.unwrap_duration() - prev.unwrap_duration();
 
-        let power = self.power_params.power_at_duration(
+        let power = self.power_model.power_at_duration(
             &duration,
             |i| self.simplified_distances[i],
             |i| self.simplified_elevations[i],
