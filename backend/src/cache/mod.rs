@@ -27,7 +27,13 @@ pub enum Location {
 
 #[cfg(not(target_arch = "wasm32"))]
 pub async fn read(b: &Location, filename: &str) -> GenericResult<String> {
-    filesystem::read(&filesystem::Directory::from_location(b), filename)
+    match filesystem::read(&filesystem::Directory::from_location(b), filename) {
+        Ok(data) => Ok(data),
+        Err(e) => {
+            log::error!("could not read {filename} because of {:?}", e);
+            Err(e)
+        }
+    }
 }
 
 #[cfg(target_arch = "wasm32")]

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" creator="https://github.com/georust/gpx">
+  <wpt lat="47.929981" lon="8.448436">
+    <ele>693.4</ele>
+    <name>START</name>
+    <cmt>{"waypoint_name":"","segment_name":"","nearest_waypoint_id":null}</cmt>
+    <desc></desc>
+  </wpt>
+  <wpt lat="48.05084" lon="8.20577">
+    <ele>867.8</ele>
+    <name>CP-1</name>
+    <cmt>{"waypoint_name":"K1","segment_name":"MittelgebirgeClassique2023 - Final","nearest_waypoint_id":0}</cmt>
+    <desc>Furtwangen</desc>
+  </wpt>
+  <wpt lat="48.279406" lon="8.090605">
+    <ele>216.7</ele>
+    <name>CP-2</name>
+    <cmt>{"waypoint_name":"K2","segment_name":"MittelgebirgeClassique2023 - Final","nearest_waypoint_id":1}</cmt>
+    <desc>Haslach</desc>
+  </wpt>
+  <wpt lat="48.533576" lon="8.288608">
+    <ele>597.5</ele>
+    <name>CP-3</name>
+    <cmt>{"waypoint_name":"K3","segment_name":"MittelgebirgeClassique2023 - Final","nearest_waypoint_id":2}</cmt>
+    <desc>Obertal</desc>
+  </wpt>
+  <wpt lat="49.054234" lon="8.266062">
+    <ele>102.8</ele>
+    <name>END</name>
+    <cmt>{"waypoint_name":"K4","segment_name":"MittelgebirgeClassique2023 - Final","nearest_waypoint_id":3}</cmt>
+    <desc>END</desc>
+  </wpt>
+</gpx>

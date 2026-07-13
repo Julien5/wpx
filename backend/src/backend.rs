@@ -21,7 +21,8 @@ use crate::point_collection::PacketProvider;
 use crate::speed;
 use crate::track::Track;
 use crate::trackfile;
-use crate::trackfile::JsonParameters;
+use crate::trackfile::controldataset::ControlDataset;
+use crate::trackfile::jsonparameters::JsonParameters;
 use crate::trackfile::TrackFile;
 use crate::waypoint::Waypoint;
 use std::sync::RwLock;
@@ -266,11 +267,10 @@ impl Backend {
             debug_assert!(!track.parts.is_empty());
             track.parts.first().as_ref().unwrap().name.clone()
         };
-        log::trace!("[create_trackfile]{}", self.loaded());
         let track = self.trackSegment();
         let stats = self.segment_statistics(&track);
-        log::trace!("[create_trackfile]{}", self.loaded());
-        let trackFile = match trackfile::JsonParameters::create(&name, &stats).await {
+        let parameters = self.get_parameters();
+        let trackFile = match trackfile::TrackFile::create(&name, &stats, &parameters).await {
             Ok(trackfile) => trackfile,
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);
@@ -285,22 +285,32 @@ impl Backend {
                 .unwrap()
                 .trackfile = Some(trackFile.clone());
         }
-        log::trace!("[create_trackfile]{}", self.loaded());
-        let _ = self.save_trackfile_trackdata().await;
-        let _ = self.save_trackfile_jsonparameters().await;
-        log::trace!("[create_trackfile]{}", self.loaded());
+        let _ = self.save_all().await;
+        let _ = self.save_quick().await;
         assert!(self.loaded());
         Ok(trackFile)
     }
 
-    async fn save_trackfile_trackdata(&self) -> Result<(), TrackError> {
-        let (data, trackfile) = {
-            let lock = self.backend_data.read().unwrap();
-            let data = lock.as_ref().unwrap().track_dataset();
-            let trackfile = &lock.as_ref().unwrap().trackfile;
-            (data, trackfile.as_ref().unwrap().clone())
+    async fn save_all(&self) -> Result<(), TrackError> {
+        let (trackfile, small_parameters, controls, gpxdata) = {
+            let mut lock = self.backend_data.write().unwrap();
+            let data = lock.as_mut().unwrap();
+            let small = JsonParameters {
+                parameters: data.parameters.clone(),
+            };
+            data.trackfile.as_mut().unwrap().last_modified = current_time_as_string();
+            (
+                data.trackfile.as_ref().unwrap().clone(),
+                small,
+                ControlDataset::from_controls(&data.controls_vec()),
+                data.gpx_data(),
+            )
         };
-        match trackfile::write_trackdata(&trackfile, &data).await {
+
+        match trackfile
+            .write_all(&small_parameters, &controls, &gpxdata)
+            .await
+        {
             Ok(()) => Ok(()),
             Err(e) => {
                 log::error!("write user data failed: {:?}", e);
@@ -310,13 +320,13 @@ impl Backend {
     }
 
     pub async fn trackfiles(&self) -> Result<Vec<TrackFile>, TrackError> {
-        trackfile::JsonParameters::list()
+        TrackFile::list()
             .await
             .map_err(|_| TrackError::IOError.into())
     }
 
     pub async fn remove_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
-        JsonParameters::remove(trackfile)
+        TrackFile::remove(trackfile)
             .await
             .map_err(|_| TrackError::IOError.into())
     }
@@ -328,7 +338,7 @@ impl Backend {
             .as_mut()
             .unwrap()
             .update_trackfile_name(name);
-        self.save_trackfile_jsonparameters().await
+        self.save_quick().await
     }
 
     pub fn get_trackfile(&self) -> Option<TrackFile> {
@@ -343,57 +353,71 @@ impl Backend {
 
     pub async fn read_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
         assert!(!self.loaded());
-        let mut gpxdata = match trackfile::read_trackdata(trackfile).await {
-            Some(data) => data,
-            None => return Err(TrackError::IOError.into()),
-        };
+        log::trace!("read: {}", trackfile.name);
+        let (parameters, controlsdata, mut gpxdata) = trackfile
+            .read_all()
+            .await
+            .inspect_err(|e| {
+                let _trap = 0; // Put your debugger breakpoint on this exact line!
+                eprintln!("Error caught here: {:?}", e);
+            })
+            .map_err(|e| TrackError::from(e))?;
+
         let track_data = Track::from_tracks(&gpxdata.tracks)?;
         let track = std::sync::Arc::new(track_data);
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
         }
-        let smalldata = match trackfile::JsonParameters::read(trackfile).await {
-            Some(data) => data,
-            None => return Err(TrackError::IOError.into()),
-        };
+
+        let mut controls = controlsdata.to_controls().unwrap_or_default();
+        for c in &mut controls {
+            track.project_point(c);
+        }
+
         let power_geometry = track.make_power_geometry(&gpxdata.waypoints);
+
         let mut packet_provider = PacketProvider::new();
         packet_provider
             .collection
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
         packet_provider
             .collection
-            .import_other(&Kind::Controls, smalldata.controls);
+            .import_other(&Kind::Controls, controls);
 
         let mut data = BackendData {
             track,
-            parameters: smalldata.parameters.clone(),
+            parameters: parameters.parameters.clone(),
             packet_provider,
             trackfile: Some(trackfile.clone()),
             power_geometry,
         };
+
         // fix user steps
-        data.set_parameters(&smalldata.parameters);
+        data.set_parameters(&parameters.parameters);
         *self.backend_data.write().unwrap() = Some(data);
         Ok(())
     }
 
-    pub async fn save_trackfile_jsonparameters(&self) -> Result<TrackFile, TrackError> {
-        let mut small_parameters = self
-            .backend_data
-            .read()
-            .unwrap()
-            .as_ref()
-            .unwrap()
-            .small_parameters();
-        small_parameters.trackfile.last_modified = current_time_as_string();
-        match small_parameters.write().await {
-            Ok(()) => Ok(small_parameters.trackfile),
-            Err(e) => {
-                log::error!("write user data failed: {:?}", e);
-                Err(TrackError::IOError.into())
-            }
-        }
+    pub async fn save_quick(&self) -> Result<TrackFile, TrackError> {
+        let (trackfile, parameters, controls) = {
+            let mut lock = self.backend_data.write().unwrap();
+            let data = lock.as_mut().unwrap();
+            data.trackfile.as_mut().unwrap().last_modified = current_time_as_string();
+            (
+                data.trackfile.as_ref().unwrap().clone(),
+                JsonParameters {
+                    parameters: data.get_parameters().clone(),
+                },
+                ControlDataset::from_controls(&data.controls_vec()),
+            )
+        };
+
+        trackfile
+            .write_quick(&parameters, &controls)
+            .await
+            .map_err(|e| TrackError::from(e))?;
+
+        Ok(trackfile)
     }
 
     pub fn load_filename(&mut self, filename: &str) -> Result<(), TrackError> {
@@ -408,6 +432,7 @@ impl Backend {
     pub fn track(&self) -> Track {
         (*self.backend_data.read().unwrap().as_ref().unwrap().track).clone()
     }
+
     pub fn get_waypoints(&self, segment: &Segment, kinds: &Kinds) -> Vec<Waypoint> {
         self.backend_data
             .read()
@@ -416,6 +441,7 @@ impl Backend {
             .unwrap()
             .get_waypoints(segment, kinds)
     }
+
     pub fn render_segment_map_profile(
         &self,
         segment: &Segment,
@@ -430,6 +456,7 @@ impl Backend {
             .unwrap()
             .render_segment_map_profile(segment, map_size, profile_size, kinds)
     }
+
     pub fn render_segment_simple(
         &self,
         segment: &Segment,
@@ -444,6 +471,7 @@ impl Backend {
             .unwrap()
             .render_segment_simple(segment, size, kinds, function)
     }
+
     pub fn render_segment(
         &self,
         segment: &Segment,
@@ -456,6 +484,7 @@ impl Backend {
             .unwrap()
             .render_segment(segment, render_inputs)
     }
+
     pub fn segments(&self) -> Vec<Segment> {
         self.backend_data
             .read()
@@ -464,6 +493,7 @@ impl Backend {
             .unwrap()
             .segments()
     }
+
     pub fn trackSegment(&self) -> Segment {
         self.backend_data
             .read()
@@ -472,6 +502,7 @@ impl Backend {
             .unwrap()
             .trackSegment()
     }
+
     pub fn set_parameters(&self, parameters: &Parameters) {
         self.backend_data
             .write()
@@ -556,6 +587,17 @@ mod tests {
         backend.load_osm_without_download().await.unwrap();
         backend.load_controls().unwrap();
         backend
+    }
+
+    fn profile(backend: &Backend) -> String {
+        let profile_size = IntegerSize2D::new(1420, 400);
+        let segment = backend.trackSegment();
+        backend.render_segment_simple(
+            &segment,
+            &profile_size,
+            point_collection::allkinds(),
+            RenderFunction::Profile,
+        )
     }
 
     #[tokio::test]
@@ -714,63 +756,67 @@ mod tests {
         assert!(d < 100f64);
     }
 
+    #[tokio::test]
     async fn persist_smoke() {
         let _ = env_logger::try_init();
-        // see filesystem.rs
-        // DATA_DIR=data/ref/persist/share1
-        unsafe {
-            std::env::set_var("DATA_DIR", "data/ref/persist/share1");
-        }
-        let mut backend = Backend::make();
-        for trackfile in backend.trackfiles().await.unwrap() {
-            let _ = backend.read_trackfile(&trackfile).await;
-            let svg = backend.render_segment_simple(
-                &backend.trackSegment(),
-                &IntegerSize2D::new(2000, 1000),
-                point_collection::allkinds(),
-                RenderFunction::Profile,
-            );
-            assert!(!svg.is_empty());
-            backend.unload();
-        }
-    }
-
-    async fn persist_idem() {
         let tmp = tempfile::tempdir().unwrap();
+        let tmpdir = tmp.path().to_str().unwrap();
+        //let tmpdir = "/tmp/share";
+        //let tmpdir = "/tmp/foo";
         unsafe {
-            std::env::set_var("DATA_DIR", tmp.path().to_str().unwrap());
+            std::env::set_var("DATA_DIR", tmpdir);
+        }
+        std::fs::create_dir_all(format!("{}/WPX/1/", tmpdir)).unwrap();
+        for suffix in [
+            "track.gpx",
+            "trackfile.json",
+            "controls.gpx",
+            "parameters.json",
+        ] {
+            let src = format!("data/ref/persist/share1/WPX/1/00000000.{suffix}");
+            let dst = format!("{}/WPX/1/00000000.{suffix}", tmpdir);
+            log::trace!("{}->{}", src, dst);
+            std::fs::copy(src, dst).unwrap();
         }
         let mut backend = load_test_data(BLACK_FOREST).await;
-        let l0 = {
-            let lock = backend.backend_data.read().unwrap();
-            lock.as_ref().unwrap().track.len()
-        };
-        let trackfile = backend.create_trackfile().await.unwrap();
+        {
+            let mut parameters = backend.get_parameters();
+            parameters.start_time = START_TIME.to_string();
+            backend.set_parameters(&parameters);
+            let profile_1 = profile(&backend);
+            log::trace!("ok");
+            let _ = backend.create_trackfile().await;
+            log::trace!("ok");
+            let helloworld = "hello, world";
+            let _ = backend.set_trackfile_name(&helloworld).await;
+            log::trace!("ok");
+            let _ = backend.save_all().await;
+            let mut trackfiles = backend.trackfiles().await.unwrap();
+            trackfiles.retain(|file| file.name == helloworld);
+            debug_assert_eq!(trackfiles.len(), 1);
+            let trackfile = trackfiles.first().unwrap();
+            debug_assert_eq!(trackfile.name, helloworld);
+            backend.unload();
+            let _ = backend.read_trackfile(&trackfile).await.inspect_err(|e| {
+                log::error!("Error caught here: {:?}", e);
+            });
+            let _ = backend.load_osm_without_download().await;
+            let profile_2 = profile(&backend);
+            std::fs::write(&"/tmp/persist-profile-1.svg", profile_1.clone()).unwrap();
+            std::fs::write(&"/tmp/persist-profile-2.svg", profile_2.clone()).unwrap();
+            debug_assert!(profile_1 == profile_2);
+        }
 
-        backend.unload();
-        let _ = backend.read_trackfile(&trackfile).await;
-        let l1 = {
-            let lock = backend.backend_data.read().unwrap();
-            lock.as_ref().unwrap().track.len()
-        };
-
-        backend.unload();
-        let trackfiles = backend.trackfiles().await.unwrap();
-        debug_assert!(trackfiles.len() > 0);
-        let trackfile = trackfiles.first().unwrap().clone();
-        let _ = backend.read_trackfile(&trackfile).await;
-        let l2 = {
-            let lock = backend.backend_data.read().unwrap();
-            lock.as_ref().unwrap().track.len()
-        };
-        log::trace!("l0={} l1={} l2={}", l0, l1, l2);
-        debug_assert_eq!(l1, l0);
-        debug_assert_eq!(l1, l2);
-    }
-
-    #[tokio::test]
-    async fn persist() {
-        let _ = persist_smoke().await;
-        let _ = persist_idem().await;
+        {
+            let trackfiles = backend.trackfiles().await.unwrap();
+            debug_assert!(trackfiles.len() > 1);
+            for trackfile in trackfiles {
+                backend.unload();
+                let _ = backend.read_trackfile(&trackfile).await.inspect_err(|e| {
+                    log::error!("Error caught here: {:?}", e);
+                });
+                let _ = backend.save_all().await;
+            }
+        }
     }
 }

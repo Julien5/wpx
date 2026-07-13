@@ -6,6 +6,7 @@ use crate::controls;
 use crate::error::TrackError;
 use crate::geometry::powergeometry::ConstantPowerGeometry;
 use crate::geometry::powergeometry::SolverMethod;
+use crate::gpsdata::GpxData;
 use crate::gpxexport;
 use crate::inputpoint::*;
 use crate::make_points;
@@ -17,7 +18,7 @@ use crate::segment::SegmentData;
 use crate::speed::*;
 use crate::split_ambiguity;
 use crate::track::SharedTrack;
-use crate::trackfile::*;
+use crate::trackfile::TrackFile;
 use crate::waypoint;
 use crate::waypoint::ExportParameters;
 use crate::waypoint::FlatWaypoints;
@@ -51,6 +52,36 @@ impl BackendData {
         )
     }
 
+    pub fn gpx_data(&self) -> GpxData {
+        // Convert each TrackPart into a separate GPX track using the point ranges.
+        use crate::trackparts::parts_to_ranges;
+        let ranges = parts_to_ranges(&self.track.parts);
+        let mut tracks = Vec::new();
+        for (part, range) in self.track.parts.iter().zip(ranges.iter()) {
+            // Skip empty parts just in case.
+            if range.start >= range.end {
+                continue;
+            }
+            let mut t = gpx::Track::new();
+            let mut segment = gpx::TrackSegment::new();
+            for wgs in &self.track.wgs84[range.clone()] {
+                let mut wp = gpx::Waypoint::new(geo::Point::new(wgs.longitude(), wgs.latitude()));
+                wp.elevation = Some(wgs.z());
+                segment.points.push(wp);
+            }
+            t.segments.push(segment);
+            tracks.push((part.name.clone(), t));
+        }
+        let waypoints = self
+            .packet_provider
+            .collection
+            .get_vector(&Kind::GPXWaypoints);
+        GpxData {
+            waypoints: waypoints.clone(),
+            tracks,
+        }
+    }
+
     pub fn load_osm(&mut self, mut osmpoints: InputPointMap) {
         self.track.project_map(&mut osmpoints);
         self.packet_provider
@@ -62,27 +93,13 @@ impl BackendData {
         self.parameters.clone()
     }
 
-    pub fn track_dataset(&self) -> TrackDataset {
-        let waypoints = self
-            .packet_provider
-            .collection
-            .get_vector(&Kind::GPXWaypoints);
-        TrackDataset::from_track_and_waypoints(&self.track, &waypoints)
+    pub fn controls_vec(&self) -> Vec<InputPoint> {
+        self.packet_provider.collection.get_vector(&Kind::Controls)
     }
 
-    pub fn small_parameters(&self) -> JsonParameters {
-        log::trace!("persist [1]");
-        let controls = self.packet_provider.collection.get_vector(&Kind::Controls);
-        JsonParameters {
-            parameters: self.parameters.clone(),
-            controls: controls.clone(),
-            trackfile: self.trackfile.as_ref().unwrap().clone(),
-        }
-    }
-
-    pub fn update_trackfile_name(&mut self, name: &str) -> JsonParameters {
+    pub fn update_trackfile_name(&mut self, name: &str) -> TrackFile {
         self.trackfile.as_mut().unwrap().name = format!("{}", name);
-        self.small_parameters()
+        self.trackfile.as_ref().unwrap().clone()
     }
 
     pub fn set_parameters(&mut self, parameters: &Parameters) {
@@ -294,7 +311,13 @@ impl BackendData {
         debug_assert!(!usersteps_groups.is_empty());
         let waypoints_w = self.export_points(&waypoints);
         let time_params = self.time_parameters();
-        gpxexport::generate(&self.track, &controls, &usersteps_groups, &waypoints_w, &time_params)
+        gpxexport::generate(
+            &self.track,
+            &controls,
+            &usersteps_groups,
+            &waypoints_w,
+            &time_params,
+        )
     }
 
     pub fn generateZip(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
