@@ -25,6 +25,7 @@ use crate::trackfile::controldataset::ControlDataset;
 use crate::trackfile::jsonparameters::JsonParameters;
 use crate::trackfile::TrackFile;
 use crate::waypoint::Waypoint;
+use std::collections::BTreeMap;
 use std::sync::RwLock;
 
 pub type Segment = crate::segment::Segment;
@@ -231,11 +232,11 @@ impl Backend {
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
         }
-        log::trace!("start compute power geometry");
-        let power_geometry = track.make_power_geometry(&gpxdata.waypoints);
-        log::trace!("start compute power geometry");
 
         let parameters = Parameters::default();
+        let power_geometry =
+            track.make_power_geometry(&parameters.power_parameters, &gpxdata.waypoints);
+
         let mut point_collection = PacketProvider::new();
         point_collection
             .collection
@@ -374,7 +375,8 @@ impl Backend {
             track.project_point(c);
         }
 
-        let power_geometry = track.make_power_geometry(&gpxdata.waypoints);
+        let power_geometry =
+            track.make_power_geometry(&parameters.parameters.power_parameters, &gpxdata.waypoints);
 
         let mut packet_provider = PacketProvider::new();
         packet_provider
@@ -548,6 +550,15 @@ impl Backend {
             .segment_statistics(segment)
     }
 
+    pub fn generateGpx(&self) -> BTreeMap<String, Vec<u8>> {
+        self.backend_data
+            .read()
+            .unwrap()
+            .as_ref()
+            .unwrap()
+            .generateGpx()
+    }
+
     pub fn generateZip(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
         self.backend_data
             .read()
@@ -556,6 +567,7 @@ impl Backend {
             .unwrap()
             .generateZip(kinds)
     }
+
     pub fn generatePdf(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
         self.backend_data
             .read()

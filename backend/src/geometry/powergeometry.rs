@@ -30,7 +30,12 @@ pub struct ConstantPowerGeometry {
 }
 
 impl ConstantPowerGeometry {
-    pub fn new(distances: &[f64], elevations: &[f64], waypoints: &[InputPoint]) -> Self {
+    pub fn new(
+        power_parameters: &PowerParameters,
+        distances: &[f64],
+        elevations: &[f64],
+        waypoints: &[InputPoint],
+    ) -> Self {
         let smooth_elevation = elevation::smooth(
             200f64,
             distances.len(),
@@ -72,10 +77,12 @@ impl ConstantPowerGeometry {
             .collect();
 
         let power_model = PowerModel {
-            parameters: PowerParameters::default(),
+            parameters: power_parameters.clone(),
         };
         let table =
             Self::compute_table(&power_model, &simplified_distances, &simplified_elevations);
+
+        log::trace!("build power model: weight: {} kg", power_parameters.W);
 
         Self {
             simplified_indices,
@@ -283,7 +290,7 @@ impl ConstantPowerGeometry {
 
         let duration = next.unwrap_duration() - prev.unwrap_duration();
 
-        let power = self.power_model.power_at_duration(
+        let power = self.power_model.power_at_duraction_bisect(
             &duration,
             |i| self.simplified_distances[i],
             |i| self.simplified_elevations[i],
@@ -363,6 +370,7 @@ mod tests {
 
     use crate::{
         geometry::powergeometry::{ConstantPowerGeometry, SolverMethod},
+        parameters::PowerParameters,
         speed::InterpolationPoint,
     };
 
@@ -386,7 +394,12 @@ mod tests {
             distances.push(d);
             elevations.push(e);
         }
-        ConstantPowerGeometry::new(&distances, &elevations, &Vec::new())
+        ConstantPowerGeometry::new(
+            &PowerParameters::default(),
+            &distances,
+            &elevations,
+            &Vec::new(),
+        )
     }
 
     fn compare_at_duration(hours: i64) {

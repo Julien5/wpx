@@ -8,6 +8,7 @@ use crate::inputpoint::InputPointMap;
 use crate::mercator;
 use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
+use crate::parameters::PowerParameters;
 use crate::parameters::TrackPart;
 use crate::tile;
 use crate::tile::Chunks;
@@ -273,9 +274,13 @@ impl Track {
         self.projection_at_track_floating_index(f)
     }
 
-    pub fn make_power_geometry(&self, waypoints: &[InputPoint]) -> ConstantPowerGeometry {
+    pub fn make_power_geometry(
+        &self,
+        power_parameters: &PowerParameters,
+        waypoints: &[InputPoint],
+    ) -> ConstantPowerGeometry {
         let distances: Vec<f64> = (0..self.len()).map(|i| self.profile.distance(i)).collect();
         let elevations: Vec<f64> = self.wgs84.iter().map(|w| w.z()).collect();
-        ConstantPowerGeometry::new(&distances, &elevations, waypoints)
+        ConstantPowerGeometry::new(power_parameters, &distances, &elevations, waypoints)
     }
 }

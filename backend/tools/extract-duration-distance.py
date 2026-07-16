@@ -46,16 +46,16 @@ def parse_gpx(filepath):
 
 def compute_duration_distance(points):
     if not points:
-        return []
+        return {}
     start_time = points[0][0]
-    result = []
+    result = {}
     cum_dist = 0.0
     prev_lat, prev_lon = points[0][1], points[0][2]
     for i, (t, lat, lon) in enumerate(points):
         duration = (t - start_time).total_seconds()
         if i > 0:
             cum_dist += haversine(prev_lat, prev_lon, lat, lon)
-        result.append((duration, cum_dist))
+        result[duration] = cum_dist
         prev_lat, prev_lon = lat, lon
     return result
 
@@ -68,27 +68,43 @@ def format_duration(seconds):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: extract-duration-distance.py file1.gpx [file2.gpx ...]", file=sys.stderr)
+    speed_only = "--speed" in sys.argv[1:]
+    files = [a for a in sys.argv[1:] if a != "--speed"]
+
+    if not files:
+        cmd = os.path.basename(sys.argv[0])
+        print(f"Usage: {cmd} [--speed] file1.gpx [file2.gpx ...]", file=sys.stderr)
         sys.exit(1)
 
-    outdir = "/tmp/duration-distance"
-    os.makedirs(outdir, exist_ok=True)
-    csv_path = os.path.join(outdir, "duration-distance.csv")
-
     all_series = []
-    labels = []
-    for filepath in sys.argv[1:]:
+
+    for filepath in files:
         points = parse_gpx(filepath)
         if not points:
             print(f"error: no track points with timestamps found in {filepath}", file=sys.stderr)
             sys.exit(1)
         series = compute_duration_distance(points)
-        all_series.append(series)
         basename = os.path.splitext(os.path.basename(filepath))[0]
-        labels.append(basename)
 
-    all_times = sorted({t for series in all_series for t, _ in series})
+        if speed_only:
+            total_duration = max(series.keys())
+            total_distance = series[total_duration]
+            avg_speed = total_distance * 3.6 / total_duration if total_duration > 0 else 0.0
+            print(f"{basename}: {avg_speed:.3f} km/h")
+            continue
+
+        all_series.append((series, basename))
+
+    if speed_only:
+        return
+
+    outdir = "/tmp/duration-distance"
+    os.makedirs(outdir, exist_ok=True)
+    csv_path = os.path.join(outdir, "duration-distance.csv")
+
+    all_series_list, labels = zip(*all_series) if all_series else ([], [])
+
+    all_times = sorted({t for series in all_series_list for t in series})
     if len(all_times) < 2:
         print("error: need at least 2 data points with distinct timestamps to plot", file=sys.stderr)
         sys.exit(1)
@@ -97,11 +113,11 @@ def main():
         header = "time" + "".join(f"|{label}" for label in labels)
         f.write(header + "\n")
         for t in all_times:
-            row = [format_duration(t)]
-            for series in all_series:
-                dists = [d for tt, d in series if tt == t]
-                if dists:
-                    row.append(f"{dists[0]:.1f}")
+            row = [f"{t / 3600.0:.4f}"]
+            for series in all_series_list:
+                d = series.get(t)
+                if d is not None:
+                    row.append(f"{d:.1f}")
                 else:
                     row.append("")
             f.write("|".join(row) + "\n")

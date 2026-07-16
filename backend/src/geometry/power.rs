@@ -70,7 +70,7 @@ impl PowerModel {
         total
     }
 
-    pub fn power_at_duration(
+    pub fn power_at_duraction_bisect(
         &self,
         duration: &TimeDelta,
         distance: impl Fn(usize) -> f64,

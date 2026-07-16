@@ -103,6 +103,7 @@ impl BackendData {
     }
 
     pub fn set_parameters(&mut self, parameters: &Parameters) {
+        let old_parameters = self.parameters.clone();
         let old_time_parameters = self.time_parameters();
         let new_time_parameters = TimeParameters {
             controls: Vec::new(),
@@ -184,6 +185,17 @@ impl BackendData {
         }
 
         if true {
+            // If the power_parameters changed, we have to update the interpolation
+            // table.
+            if parameters.power_parameters != old_parameters.power_parameters {
+                let waypoints = self
+                    .packet_provider
+                    .collection
+                    .get_vector(&Kind::GPXWaypoints);
+                self.power_geometry = self
+                    .track
+                    .make_power_geometry(&parameters.power_parameters, &waypoints);
+            }
             log::trace!("start compute power interpolation points");
             self.power_geometry.update_interpolation_points(
                 &self.time_parameters().control_interpolation_points(),
