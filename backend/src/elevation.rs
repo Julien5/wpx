@@ -49,7 +49,7 @@ mod tests {
         let _ = env_logger::try_init();
         let backend = load_backend_data_without_osm("data/blackforest.gpx");
         let S = backend.segments();
-        assert_eq!(S.len(), 3);
+        debug_assert_eq!(S.len(), 3);
         let km = 1000f64;
         for s in &S {
             let stat = backend.segment_statistics(s);

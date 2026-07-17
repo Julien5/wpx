@@ -98,7 +98,6 @@ async fn awrite(
     filename: &str,
     data: String,
 ) -> Result<(), IndexdbError> {
-    log::trace!("db - write {}: {}", database.name(), filename);
     let db = match opendb(database.clone()).await {
         Ok(db) => db,
         Err(e) => {
@@ -192,7 +191,6 @@ pub async fn allfiles(database: &IndexdbLocation) -> Result<Vec<String>, Indexdb
 }
 
 pub async fn remove(database: &IndexdbLocation, filename: &str) -> Result<(), IndexdbError> {
-    log::trace!("db - remove {}: {}", database.name(), filename);
     let db = opendb(database.clone()).await?;
     let transaction = db
         .transaction(database.store())

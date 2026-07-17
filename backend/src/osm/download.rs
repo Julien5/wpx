@@ -27,7 +27,7 @@ fn use_disk() -> bool {
 }
 
 async fn handle_response(response: reqwest::Response) -> GenericResult<String> {
-    log::trace!("status = {}", response.status());
+    log::info!("http response status = {}", response.status());
     if response.status() == 504 {
         return Err(TrackError::OSMDownloadTimeout.into());
     }
@@ -96,13 +96,11 @@ pub async fn dl_worker(req: &str, side: &DownloadSideData<'_>) -> GenericResult<
             match response {
                 Ok(resp) => handle_response(resp).await,
                 Err(e) => {
-                    log::trace!("e={:?}",e);
                     Err(e.into())
                 },
             }
         }
         _ = side.cancel_token.cancelled() => {
-            log::trace!("e=cancel");
             return Err(TrackError::OSMDownloadCancelled.into());
         }
     }

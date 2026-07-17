@@ -344,7 +344,7 @@ impl PointCollection {
     pub fn import_other(&mut self, kind: &Kind, points: Vec<InputPoint>) {
         self.map.insert(kind.clone(), Vec::new());
         if !points.is_empty() {
-            assert!(points.first().unwrap().kind() == *kind);
+            debug_assert!(points.first().unwrap().kind() == *kind);
         }
         self.set_vector(points);
     }

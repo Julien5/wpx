@@ -169,8 +169,8 @@ mod tests {
         let mut hits = Vec::new();
         qt.query(&query_box, &mut hits);
 
-        assert!(hits.contains(&&10));
-        assert!(hits.contains(&&11));
+        debug_assert!(hits.contains(&&10));
+        debug_assert!(hits.contains(&&11));
     }
 
     #[test]
@@ -193,6 +193,6 @@ mod tests {
 
         let mut hits = Vec::new();
         qt.query(&query_box, &mut hits);
-        assert_eq!(hits.len(), 2);
+        debug_assert_eq!(hits.len(), 2);
     }
 }

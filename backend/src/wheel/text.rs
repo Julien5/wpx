@@ -68,7 +68,7 @@ pub fn position(angle: f64, radius: f64, text_height: f64, region: Region) -> Po
             }
             4 | 5 | 6 => {}
             _ => {
-                assert!(false);
+                debug_assert!(false);
             }
         },
         Region::Outer => match zone(angle) {
@@ -80,7 +80,7 @@ pub fn position(angle: f64, radius: f64, text_height: f64, region: Region) -> Po
                 ret.y += text_height;
             }
             _ => {
-                assert!(false);
+                debug_assert!(false);
             }
         },
     }

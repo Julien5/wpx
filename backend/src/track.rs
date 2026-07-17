@@ -66,7 +66,7 @@ impl Track {
     }
 
     pub fn wgs84_bounding_box(&self) -> WGS84BoundingBox {
-        assert!(!self.wgs84.is_empty());
+        debug_assert!(!self.wgs84.is_empty());
         let mut ret = WGS84BoundingBox::new();
         for p in &self.wgs84 {
             ret.update(&p.point2d());
@@ -99,11 +99,11 @@ impl Track {
     }
 
     pub fn subrange(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {
-        assert!(self.profile.len() > 0);
-        assert!(d0 < d1);
+        debug_assert!(self.profile.len() > 0);
+        debug_assert!(d0 < d1);
         let startidx = self.profile.index_after(d0);
         let endidx = self.profile.index_before(d1) + 1;
-        assert!(endidx <= self.len());
+        debug_assert!(endidx <= self.len());
         startidx..endidx
     }
 
@@ -153,11 +153,9 @@ impl Track {
                 length,
                 part_index: index,
             };
-            log::trace!("load: part:{:?}", part);
             parts.push(part);
         }
-        assert_eq!(_distance.len(), wgs.len());
-        log::trace!("load: part, wgs.len():{:?}", wgs.len());
+        debug_assert_eq!(_distance.len(), wgs.len());
 
         let mut boxes = Tiles::new();
         for e in &euclidean {
@@ -176,12 +174,8 @@ impl Track {
             ProfileGeometry::new(_distance.clone(), &|index: usize| -> f64 { wgs[index].z() });
 
         let trees = match parts.len() > 1 {
-            true => {
-                log::trace!("making projection trees from parts");
-                ProjectionTrees::make_from_parts(&euclidean, &parts)
-            }
+            true => ProjectionTrees::make_from_parts(&euclidean, &parts),
             false => {
-                log::trace!("making appropriate projection trees");
                 let parts = ProjectionTrees::make_parts(&euclidean, &Resolution::Topology);
                 ProjectionTrees::make_from_parts(&euclidean, &parts)
             }
@@ -227,7 +221,7 @@ impl Track {
         let track_index = track_floating_index.round() as usize;
         let t = track_floating_index - track_floating_index.floor();
 
-        assert!(t < 1.0);
+        debug_assert!(t < 1.0);
         let m_base = &self.map.point_at(base).point2d();
         let m_next = if base + 1 >= self.map.len() {
             m_base

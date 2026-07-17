@@ -17,7 +17,7 @@ static FONT_CACHE: OnceLock<RwLock<Option<FontData>>> = OnceLock::new();
 mod download_font {
     #[cfg(target_arch = "wasm32")]
     pub async fn get(file: &str) -> Vec<u8> {
-        log::trace!("download font data {}", file);
+        log::info!("download font data {}", file);
         use crate::pdf::get_font_url;
         let url = get_font_url(file);
         let client = reqwest::Client::new();

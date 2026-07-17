@@ -345,11 +345,10 @@ pub fn bounding_tiles(tiles: &Tiles) -> Tiles {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::BTreeSet;
 
     use crate::{
         mercator::WebMercatorProjection,
-        tile::{bounding_box, bounding_tiles, split_tiles, Chunk, Tile},
+        tile::{bounding_box, split_tiles, Chunk, Tile},
         wgs84point::WGS84Point,
     };
 
@@ -361,22 +360,11 @@ mod tests {
         let a_euc = projection.project(&a_wgs);
 
         let tile = Tile::for_point(&a_euc);
-        let tilesb = split_tiles(&tile.bbox());
-        let tiles = BTreeSet::from([tile.clone()]);
-        let bounding_tiles = bounding_tiles(&tiles);
-        log::trace!("0:{:?}", tile.bbox());
-        log::trace!("1:{:?}", bounding_box(&bounding_tiles));
-        log::trace!("2:{:?}", bounding_box(&tiles));
-        log::trace!("3:{:?}", bounding_box(&tilesb));
 
         let chunk = Chunk::from_coord(&tile.chunk_coord());
         let chunk_box = chunk.bbox();
         let chunk_tiles = split_tiles(&chunk_box);
         let chunk_box2 = bounding_box(&chunk_tiles);
-        log::trace!("chunk_box:{}x{}", chunk_box.width(), chunk_box.height());
-        log::trace!("ntiles:{:?}", chunk_tiles.len());
-        log::trace!("4:{:?}", chunk_box);
-        log::trace!("5:{:?}", chunk_box2);
-        assert_eq!(chunk_box, chunk_box2);
+        debug_assert_eq!(chunk_box, chunk_box2);
     }
 }

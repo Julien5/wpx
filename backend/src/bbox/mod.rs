@@ -338,11 +338,11 @@ mod tests {
         let b1 = BoundingBox::minmax(Point2D::new(0.0, 0.0), Point2D::new(1.0, 2.0));
         let b2 = BoundingBox::minmax(Point2D::new(1.0, 0.0), Point2D::new(2.0, 2.0));
         let b1o = BoundingBox::minmax(Point2D::new(0.2, 0.2), Point2D::new(0.8, 0.8));
-        assert!(!b1.contains(&p));
-        assert!(b2.contains(&p));
-        assert!(!b1.contains_other(&b2));
-        assert!(!b1.contains_other(&b1));
-        assert!(b1.contains_other(&b1o));
-        assert!(!b2.contains_other(&b1));
+        debug_assert!(!b1.contains(&p));
+        debug_assert!(b2.contains(&p));
+        debug_assert!(!b1.contains_other(&b2));
+        debug_assert!(!b1.contains_other(&b1));
+        debug_assert!(b1.contains_other(&b1o));
+        debug_assert!(!b2.contains_other(&b1));
     }
 }

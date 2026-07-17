@@ -10,7 +10,7 @@ fn get_client() -> reqwest::Client {
 }
 
 async fn compile_remote(document: &str) -> Vec<u8> {
-    log::trace!("compile remote");
+    log::info!("compile remote");
     let url = format!("{}/api/typst", get_host());
     let client = get_client();
     let response = client
@@ -43,7 +43,7 @@ fn compile_local(body: &str) -> Option<Vec<u8>> {
         return None;
     }
 
-    log::trace!("compile local");
+    log::info!("compile local");
 
     // create tyspt command
     let status = Command::new("/opt/typst/typst-x86_64-unknown-linux-musl/typst")

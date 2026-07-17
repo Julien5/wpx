@@ -4,7 +4,6 @@ use clap::Parser;
 use tokio_util::sync::CancellationToken;
 use tracks::backend::Backend;
 use tracks::event;
-use tracks::mercator::WebMercatorProjection;
 use tracks::osm::request::{Boxes, Request};
 use tracks::osm::request_handler::get_response;
 use tracks::osm::DownloadSideData;
@@ -62,23 +61,12 @@ async fn main() -> anyhow::Result<()> {
     backend.load_ordered(&parts)?;
     let track = backend.track();
     let (tiles, chunks) = track.boxes(0f64, track.total_distance());
-    for tile in &tiles {
-        if tile.coord.0 == 110 && tile.coord.1 == 619 {
-            log::trace!("found tile {:?}", tile);
-        }
-    }
-
     let tile1 = Tile { coord: (110, 619) };
     let tile2 = Tile { coord: (121, 619) };
     let (_tiles, _chunks) = (
         Tiles::from([tile1.clone(), tile2.clone()]),
         Chunks::from([tile1.chunk(), tile2.chunk()]),
     );
-    let projection = WebMercatorProjection::make();
-    log::trace!("bbox tile1 {:?}", tile1.bbox().unproject_with(&projection));
-
-    log::trace!("there are {} tiles on the track", tiles.len());
-    log::trace!("there are {} chunks on the track", chunks.len());
     let mut boxes = Vec::new();
     boxes.push(Boxes::from_tiles(&tiles));
     boxes.push(Boxes::from_chunks(&chunks));
@@ -96,10 +84,10 @@ async fn main() -> anyhow::Result<()> {
     if let Ok((chunk_data, _missing_box_count)) = get_response(&request, &side, try_download).await
     {
         for (tile, tile_features) in &chunk_data.data.tiles {
-            log::trace!("tile: {:?} len:{}", tile, tile_features.len(),);
+            log::info!("tile: {:?} len:{}", tile, tile_features.len(),);
         }
         for (chunk, chunk_features) in &chunk_data.data.chunks {
-            log::trace!("chunk: {:?} len:{}", chunk, chunk_features.len(),);
+            log::info!("chunk: {:?} len:{}", chunk, chunk_features.len(),);
         }
     }
     Ok(())

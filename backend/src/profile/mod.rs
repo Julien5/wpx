@@ -154,7 +154,7 @@ impl ProfileView {
 
     fn cutoff_dot(&self, point: &InputPoint) -> Option<Point2D> {
         let bottom = ProfileGenerator::header_bottom();
-        assert!(point.track_projections.len() == 1);
+        debug_assert!(point.track_projections.len() == 1);
         let x = point
             .track_projections
             .first()
@@ -239,8 +239,8 @@ impl ProfileView {
             if range.start >= range.end {
                 break;
             }
-            assert!(range.start <= profile.len());
-            assert!(range.end < profile.len());
+            debug_assert!(range.start <= profile.len());
+            debug_assert!(range.end < profile.len());
             let elevation_gain = profile.gain_on_range(&range);
             let slope_percent = 100.0 * elevation_gain / (x1 - x0);
             let mut text = elements::text(
@@ -490,7 +490,7 @@ impl ProfileView {
     }
 
     fn userstep_dot(box_center: &Point2D, w: &InputPoint) -> PointFeature {
-        assert!(w.kind() == Kind::CutOff);
+        debug_assert!(w.kind() == Kind::CutOff);
         let center = *box_center;
         let circle = draw_for_profile(&center, &format!("user-step"), w);
         let mut label = drawings::make_label_text(&w);
@@ -759,7 +759,7 @@ impl ProfileGenerator {
 
     fn cardinal(&self, feature: &PointFeature) -> Vec<Candidate> {
         let mut ret = Vec::new();
-        assert!(feature.input_point().is_some());
+        debug_assert!(feature.input_point().is_some());
 
         ret.extend_from_slice(&label_placement::cardinal_boxes_profile(
             &feature.center(),
@@ -772,7 +772,7 @@ impl ProfileGenerator {
     #[allow(dead_code)]
     fn extended_cardinal(&self, feature: &PointFeature) -> Vec<Candidate> {
         let mut ret = Vec::new();
-        assert!(feature.input_point().is_some());
+        debug_assert!(feature.input_point().is_some());
 
         ret.extend_from_slice(&label_placement::cardinal_boxes(
             &feature.center(),

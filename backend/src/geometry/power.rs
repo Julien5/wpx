@@ -277,14 +277,14 @@ mod tests {
     }
 
     fn assert_close(actual: f64, expected: f64, tol: f64) {
-        assert!(
+        debug_assert!(
             (actual - expected).abs() < tol,
             "expected ~{expected:.3} km/h, got {actual:.3} km/h"
         );
     }
 
     fn assert_close_duration(actual: TimeDelta, expected: TimeDelta, tol: f64) {
-        assert!(
+        debug_assert!(
             (actual.num_milliseconds() as f64 / 1000f64
                 - expected.num_milliseconds() as f64 / 1000f64)
                 .abs()

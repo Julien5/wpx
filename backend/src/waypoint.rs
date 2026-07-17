@@ -96,7 +96,7 @@ impl WaypointInfo {
         time: &DateTime,
         w: &Waypoint,
     ) -> WaypointInfo {
-        assert!(w.get_track_index() < track.len());
+        debug_assert!(w.get_track_index() < track.len());
         let distance = track.distance(w.get_track_index());
         let name = w.name.clone();
         let description = w.description.clone();
@@ -128,7 +128,7 @@ impl WaypointInfo {
         w: &Waypoint,
         wprev: &Waypoint,
     ) -> WaypointInfo {
-        assert!(w.get_track_index() < track.len());
+        debug_assert!(w.get_track_index() < track.len());
         let time = parameters
             .time_parameters
             .time(proj.distance_on_track_to_projection);
@@ -220,7 +220,7 @@ pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<W
             let same_name = c.name == name;
             same_position && same_name
         });
-        assert!(candidates.len() >= 1);
+        debug_assert!(candidates.len() >= 1);
         remains.retain(|c| {
             let same_position = c.euclidean.point2d() == pos;
             let same_name = c.name == name;

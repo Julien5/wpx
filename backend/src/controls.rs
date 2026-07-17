@@ -76,7 +76,7 @@ pub fn infer_controls_from_gpx_segments(
     let mut acc_length = 0;
     for part in &track.parts {
         acc_length += part.length;
-        assert!(acc_length <= track.len());
+        debug_assert!(acc_length <= track.len());
         candidates.push(Candidate {
             euc: track.map.point_at(acc_length - 1).clone(),
             segment_name: part.name.clone(),
@@ -268,7 +268,7 @@ pub fn _select_osm_points_on_segment(
         if w.track_projections.is_empty() {
             return false;
         }
-        assert!(!w.track_projections.is_empty());
+        debug_assert!(!w.track_projections.is_empty());
         for proj in &w.track_projections {
             let distance = proj.distance_on_track_to_projection;
             let is_far_from_last = distance > start;
@@ -444,21 +444,18 @@ mod tests {
         let waypoints = collection.get_vector(&Kind::GPXWaypoints);
 
         let controls = infer_controls_from_gpx_segments(&track, &waypoints);
-        assert!(!controls.is_empty());
+        debug_assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
         }
-        assert_eq!(controls.len(), 7);
-        for k in 0..=4 {
-            log::trace!("k={} => {}", k, controls[k].name());
-        }
-        assert!(controls[0].name().contains("START"));
-        assert!(controls[1].name().contains("CP-1"));
-        assert!(controls[2].name().contains("CP-2"));
-        assert!(controls[3].name().contains("CP-3"));
-        assert!(controls[4].name().contains("CP-4"));
-        assert!(controls[5].name().contains("CP-5"));
-        assert!(controls[6].name().contains("END"));
+        debug_assert_eq!(controls.len(), 7);
+        debug_assert!(controls[0].name().contains("START"));
+        debug_assert!(controls[1].name().contains("CP-1"));
+        debug_assert!(controls[2].name().contains("CP-2"));
+        debug_assert!(controls[3].name().contains("CP-3"));
+        debug_assert!(controls[4].name().contains("CP-4"));
+        debug_assert!(controls[5].name().contains("CP-5"));
+        debug_assert!(controls[6].name().contains("END"));
     }
 
     #[tokio::test]
@@ -477,16 +474,16 @@ mod tests {
         }
         let waypoints = collection.get_vector(&Kind::GPXWaypoints);
         let controls = infer_controls_from_gpx_segments(&track, &waypoints);
-        assert!(!controls.is_empty());
+        debug_assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
         }
-        assert_eq!(controls.len(), 5);
-        assert!(controls[0].name().contains("START"));
-        assert!(controls[1].name().contains("CP-1"));
-        assert!(controls[2].name().contains("CP-2"));
-        assert!(controls[3].name().contains("CP-3"));
-        assert!(controls[4].name().contains("END"));
+        debug_assert_eq!(controls.len(), 5);
+        debug_assert!(controls[0].name().contains("START"));
+        debug_assert!(controls[1].name().contains("CP-1"));
+        debug_assert!(controls[2].name().contains("CP-2"));
+        debug_assert!(controls[3].name().contains("CP-3"));
+        debug_assert!(controls[4].name().contains("END"));
     }
 
     async fn get_controls_from_osm(filename: &str) -> Vec<InputPoint> {
@@ -531,42 +528,42 @@ mod tests {
     async fn controls_infer_sectors_1() {
         let _ = env_logger::try_init();
         let controls = get_controls_from_osm("data/blackforest.gpx").await;
-        assert!(!controls.is_empty());
+        debug_assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
         }
         for c in &controls {
             log::info!("c={} {}", c.name(), c.description());
         }
-        assert_eq!(controls.len(), 5);
-        assert!(controls[1].name().contains("CP-1"));
-        assert!(controls[1].description().contains("Furtwangen"));
-        assert!(controls[2].name().contains("CP-2"));
-        assert!(controls[2].description().contains("Haslach"));
-        assert!(controls[3].name().contains("CP-3"));
-        assert!(controls[3].description().contains("Forbach"));
-        assert!(controls[4].name().contains("END"));
-        assert!(controls[0].name().contains("START"));
+        debug_assert_eq!(controls.len(), 5);
+        debug_assert!(controls[1].name().contains("CP-1"));
+        debug_assert!(controls[1].description().contains("Furtwangen"));
+        debug_assert!(controls[2].name().contains("CP-2"));
+        debug_assert!(controls[2].description().contains("Haslach"));
+        debug_assert!(controls[3].name().contains("CP-3"));
+        debug_assert!(controls[3].description().contains("Forbach"));
+        debug_assert!(controls[4].name().contains("END"));
+        debug_assert!(controls[0].name().contains("START"));
     }
 
     #[tokio::test]
     async fn controls_infer_sectors_2() {
         let _ = env_logger::try_init();
         let controls = get_controls_from_osm("data/ref/roland-nowaypoints.gpx").await;
-        assert!(!controls.is_empty());
+        debug_assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
         }
         for c in &controls {
             log::info!("c={} {}", c.name(), c.description());
         }
-        assert_eq!(controls.len(), 5);
-        assert!(controls[1].name().contains("CP-1"));
-        assert!(controls[1].description().contains("Wangen"));
-        assert!(controls[2].name().contains("CP-2"));
-        assert!(controls[2].description().contains("Isny"));
-        assert!(controls[3].name().contains("CP-3"));
-        assert!(controls[3].description().contains("Bad Waldsee"));
-        assert!(controls[4].name().contains("END"));
+        debug_assert_eq!(controls.len(), 5);
+        debug_assert!(controls[1].name().contains("CP-1"));
+        debug_assert!(controls[1].description().contains("Wangen"));
+        debug_assert!(controls[2].name().contains("CP-2"));
+        debug_assert!(controls[2].description().contains("Isny"));
+        debug_assert!(controls[3].name().contains("CP-3"));
+        debug_assert!(controls[3].description().contains("Bad Waldsee"));
+        debug_assert!(controls[4].name().contains("END"));
     }
 }

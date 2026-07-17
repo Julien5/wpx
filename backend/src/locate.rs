@@ -238,7 +238,7 @@ pub fn compute_track_projection(
 ) -> TrackProjection {
     // user steps projection on track is unique...
     if point.kind() == Kind::CutOff {
-        assert!(!point.track_projections.is_empty());
+        debug_assert!(!point.track_projections.is_empty());
         return point.track_projections.first().unwrap().clone();
     }
     // as opposed to GPX and OSM points, which may be on several segments
@@ -249,11 +249,9 @@ pub fn compute_track_projection(
     let min = tracktree.range.start as f64;
     let max = (tracktree.range.end - 1) as f64;
     if !(min <= partial.track_floating_index && partial.track_floating_index <= max) {
-        //log::trace!("clamping {:?}", partial);
         partial.track_floating_index = partial.track_floating_index.clamp(min, max);
         let rounded = partial.track_floating_index.round() as usize;
         partial.projection = track[rounded].clone();
-        //log::trace!("clamped {:?}", partial);
     }
 
     let index1 = partial.track_floating_index.floor() as usize;
@@ -264,13 +262,11 @@ pub fn compute_track_projection(
     let mut index_floating_part = linestring
         .line_locate_point(&geo::point!(point.euclidean.xy()))
         .unwrap();
-    assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
+    debug_assert!(0.0 <= index_floating_part && index_floating_part <= 1f64);
     let mut floating_index = index1 as f64 + index_floating_part;
 
     if !(min <= floating_index && floating_index <= max) {
-        // log::trace!("clamping {:?}", floating_index);
         floating_index = floating_index.clamp(min as f64, max as f64);
-        // log::trace!("clamped {:?}", floating_index);
         index_floating_part = floating_index - index1 as f64;
     }
 
@@ -315,17 +311,6 @@ pub fn compute_track_projection(
         );
         let filename = format!("/tmp/proj-{}-{}.svg", index, floating_index);
         std::fs::write(&filename, svg.clone()).unwrap();
-        log::trace!("range:{:?}", tracktree.range);
-        log::trace!("index:{:?}", index);
-        log::trace!("index1:{:?} ({:?}) (>={})", index1, a1, min);
-        log::trace!("index2:{:?} ({:?}) (<={})", index2, a2, max);
-        log::trace!(
-            "floating_index:{:?} ({})",
-            floating_index,
-            index_floating_part
-        );
-        log::trace!("track[index]:{:?}", track[index]);
-        log::trace!("floating_point:{:?}", middle);
     }
     debug_assert!(well);
 

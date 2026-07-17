@@ -133,12 +133,6 @@ async fn render_graph(backend: &mut Backend) -> anyhow::Result<()> {
     std::fs::write(&tmpfilename, ret[0].svg.clone()).unwrap();
     let tmpfilename = std::format!("/tmp/rendergraph-profile.svg");
     std::fs::write(&tmpfilename, ret[1].svg.clone()).unwrap();
-    for w in &ret[0].waypoints {
-        log::trace!("map rendered: {}", w.name);
-    }
-    for w in &ret[1].waypoints {
-        log::trace!("profile rendered: {}", w.name);
-    }
     Ok(())
 }
 

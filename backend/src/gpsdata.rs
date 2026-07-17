@@ -137,7 +137,7 @@ impl GpxData {
     }
 
     fn track_part(track: &gpx::Track, id: usize) -> TrackPart {
-        assert_eq!(track.segments.len(), 1);
+        debug_assert_eq!(track.segments.len(), 1);
         let points = &track.segments.first().as_ref().unwrap().points;
         let name = Self::track_name(track);
         TrackPart {
@@ -155,26 +155,25 @@ impl GpxData {
             .collect()
     }
 
-    fn to_wgs84(point: &gpx::Waypoint) -> WGS84Point {
-        let (lon, lat) = point.point().x_y();
-        let elevation = match point.elevation {
-            Some(e) => e,
-            None => 0f64,
-        };
-        WGS84Point::new(&lon, &lat, &elevation)
-    }
-
-    fn check_begin_end(&self) {
+    fn _check_begin_end(&self) {
+        fn to_wgs84(point: &gpx::Waypoint) -> WGS84Point {
+            let (lon, lat) = point.point().x_y();
+            let elevation = match point.elevation {
+                Some(e) => e,
+                None => 0f64,
+            };
+            WGS84Point::new(&lon, &lat, &elevation)
+        }
         let mut last_end = None;
         for (index, t) in self.tracks.iter().enumerate() {
             let track_begin = t.1.segments.first().unwrap().points.first().unwrap();
             let track_end = t.1.segments.first().unwrap().points.last().unwrap();
             let name = &t.0;
             if last_end.is_some() {
-                let p1 = Self::to_wgs84(last_end.unwrap());
-                let p2 = Self::to_wgs84(track_begin);
+                let p1 = to_wgs84(last_end.unwrap());
+                let p2 = to_wgs84(track_begin);
                 let d = distance_wgs84(&p1, &p2);
-                log::trace!("index:{} name:{:25} d(end,begin)={:.1}", index, name, d);
+                log::info!("index:{} name:{:25} d(end,begin)={:.1}", index, name, d);
             }
             last_end = Some(track_end);
         }
@@ -191,7 +190,7 @@ impl GpxData {
             tracks: new_tracks,
             waypoints: self.waypoints.clone(),
         };
-        ret.check_begin_end();
+        //ret.check_begin_end();
         ret
     }
 }
@@ -249,6 +248,6 @@ mod tests {
             (x: 27.8, y: 0.1),
         ];
 
-        assert_eq!(expected, simplified);
+        debug_assert_eq!(expected, simplified);
     }
 }

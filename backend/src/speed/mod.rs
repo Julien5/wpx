@@ -102,12 +102,6 @@ fn interpolate_duration(
     let (t1, d1) = (previous.unwrap_duration(), previous.distance);
     let (t2, d2) = (next.unwrap_duration(), next.distance);
 
-    // log::trace!("[TP ] distance:{:?}", distance); //
-    // log::trace!("[TP1] previous:{:?}", previous); //
-    // log::trace!("[TP1] 1:{:?},{:.1}", t1, d1); //
-    // log::trace!("[TP1] next:{:?}", next); //
-    // log::trace!("[TP1] 2:{:?},{:.1}", t2, d2); //
-
     // This is the "somwhat degenerate" case mentioned above.
     if d1 == d2 {
         debug_assert!(d1 == distance, "{}", &format!("{} / {}", d1, distance));
@@ -123,9 +117,6 @@ fn interpolate_duration(
         .expect("time span overflows i64 nanoseconds");
     let offset_ns = (fraction * span_ns as f64).round() as i64;
     let ret = t1 + TimeDelta::nanoseconds(offset_ns);
-    //////////////////////////////////////////////////////////////////
-    // log::info!("[TP1] distance:{:.1} time:{:?}", distance, ret); //
-    //////////////////////////////////////////////////////////////////
     ret
 }
 
@@ -199,11 +190,6 @@ pub fn interpolate_distance(
     let fraction = offset_ns as f64 / span_ns as f64;
     debug_assert!(fraction >= 0f64);
     let ret = d1 + fraction * (d2 - d1);
-    /*log::trace!(
-        "[TP2] distance:{:.1} time:{:?}",
-        ret / 1000f64,
-        current_time
-    );*/
     ret
 }
 
@@ -239,10 +225,7 @@ impl Default for Speed {
 pub fn parse_speed(data: &str) -> Speed {
     if data.contains("ACP") {
         let parts: Vec<&str> = data.split('-').collect();
-        if parts.len() != 3 {
-            log::trace!("parts:{:?}", parts);
-        }
-        debug_assert!(parts.len() == 3);
+        debug_assert!(parts.len() == 3, "parts:{:?}", parts);
         let distance: f64 = parts[1].parse().expect("Failed to parse distance");
         let time: f64 = parts[2].parse().expect("Failed to parse hours");
         return Speed::ACP(ACPSpec {
@@ -252,10 +235,7 @@ pub fn parse_speed(data: &str) -> Speed {
     }
     if data.contains("LRM") {
         let parts: Vec<&str> = data.split('-').collect();
-        if parts.len() != 2 {
-            log::trace!("parts:{:?}", parts);
-        }
-        debug_assert!(parts.len() == 2);
+        debug_assert!(parts.len() == 2, "parts:{:?}", parts);
         let kmh: f64 = parts[1]
             .parse()
             .expect(&format!("Failed to parse LRM kmh: {}", data));
@@ -263,10 +243,7 @@ pub fn parse_speed(data: &str) -> Speed {
     }
     if data.contains("KMH") {
         let parts: Vec<&str> = data.split('-').collect();
-        if parts.len() != 2 {
-            log::trace!("parts:{:?}", parts);
-        }
-        debug_assert!(parts.len() == 2);
+        debug_assert!(parts.len() == 2, "parts:{:?}", parts);
         let kmh: f64 = parts[1]
             .parse()
             .expect(&format!("Failed to parse KMH kmh: {}", data));

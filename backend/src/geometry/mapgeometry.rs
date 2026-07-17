@@ -78,7 +78,7 @@ impl MapGeometry {
     }
 
     pub fn bounding_box(&self) -> EuclideanBoundingBox {
-        assert!(!self.xypoints.is_empty());
+        debug_assert!(!self.xypoints.is_empty());
         let mut ret = EuclideanBoundingBox::new();
         for p in &self.xypoints {
             ret.update(&p.point2d());

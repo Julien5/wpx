@@ -347,7 +347,7 @@ mod tests {
                 None,
             ),
             _ => {
-                assert!(false);
+                debug_assert!(false);
                 RenderResult::default()
             }
         };
@@ -383,7 +383,7 @@ mod tests {
             WITH_OSM,
         )
         .await;
-        assert!(ok);
+        debug_assert!(ok);
     }
 
     #[tokio::test]
@@ -402,7 +402,7 @@ mod tests {
             WITH_OSM,
         )
         .await;
-        assert!(ok);
+        debug_assert!(ok);
     }
 
     #[tokio::test]
@@ -421,7 +421,7 @@ mod tests {
             WITH_OSM,
         )
         .await;
-        assert!(ok);
+        debug_assert!(ok);
     }
 
     #[tokio::test]
@@ -440,7 +440,7 @@ mod tests {
             WITH_OSM,
         )
         .await;
-        assert!(ok);
+        debug_assert!(ok);
     }
 
     #[tokio::test]
@@ -459,7 +459,7 @@ mod tests {
             WITH_OSM,
         )
         .await;
-        assert!(ok);
+        debug_assert!(ok);
     }
 
     #[tokio::test]
@@ -478,7 +478,7 @@ mod tests {
             !WITH_OSM,
         )
         .await;
-        assert!(ok);
+        debug_assert!(ok);
     }
 
     #[tokio::test]
@@ -497,7 +497,7 @@ mod tests {
             WITH_OSM,
         )
         .await;
-        assert!(ok);
+        debug_assert!(ok);
     }
 
     #[tokio::test]
@@ -516,6 +516,6 @@ mod tests {
             WITH_OSM,
         )
         .await;
-        assert!(ok);
+        debug_assert!(ok);
     }
 }

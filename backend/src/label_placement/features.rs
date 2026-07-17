@@ -61,14 +61,14 @@ pub fn text_width(s: &str, fontsize: f64, fontweight: &str, fontstyle: &str) -> 
             w = w / 1.1;
         } else {
             log::error!("unknown weight {}", fontweight);
-            assert!(false);
+            debug_assert!(false);
         }
         if fontstyle == "normal" {
         } else if fontstyle == "italic" {
             w = w / 1.1;
         } else {
             log::error!("unknown style {}", fontstyle);
-            assert!(false);
+            debug_assert!(false);
         }
         ret += w;
     }
@@ -235,7 +235,7 @@ impl PointFeature {
         if distance < 10f64 {
             return;
         }
-        assert!(distance > std::f64::EPSILON);
+        debug_assert!(distance > std::f64::EPSILON);
         let unit = to_label * (1.0 / distance);
         debug_assert!(!unit.x.is_nan());
         debug_assert!(!unit.y.is_nan());

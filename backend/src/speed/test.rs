@@ -39,7 +39,7 @@ mod tests {
         let duration_sec = (time_300 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
-        assert!(
+        debug_assert!(
             duration_hours == 20.0,
             "Expected ~20 hours, got {}",
             duration_hours
@@ -65,7 +65,7 @@ mod tests {
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 1.0 + (40.0 / 20.0); // 3 hours
 
-        assert!(
+        debug_assert!(
             (duration_hours - expected).abs() < 0.01,
             "Expected ~{} hours for 40km, got {}",
             expected,
@@ -90,7 +90,7 @@ mod tests {
         let duration_sec = (time_300 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
-        assert!(
+        debug_assert!(
             duration_hours == 20.0,
             "Expected 20 hours for 300km, got {}",
             duration_hours
@@ -115,7 +115,7 @@ mod tests {
         let duration_sec = (time_600 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
-        assert!(
+        debug_assert!(
             (duration_hours - 40.0).abs() < 0.01,
             "Expected 40 hours for 600km (hard cap), got {}",
             duration_hours
@@ -146,7 +146,7 @@ mod tests {
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 40.0 + (200.0 / 11.428); // ~57.5 hours
 
-        assert!(
+        debug_assert!(
             (duration_hours - expected).abs() < 0.1,
             "Expected ~{} hours for 800km, got {}",
             expected,
@@ -173,7 +173,7 @@ mod tests {
         let duration_sec = (time_1000 - start).num_seconds();
         let duration_hours = duration_sec as f64 / 3600.0;
 
-        assert!(
+        debug_assert!(
             (duration_hours - 75.0).abs() < 0.1,
             "Expected 75 hours for 1000km (hard cap), got {}",
             duration_hours
@@ -205,7 +205,7 @@ mod tests {
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 40.0 + (400.0 / 11.428) + (200.0 / 13.333);
 
-        assert!(
+        debug_assert!(
             (duration_hours - expected).abs() < 0.1,
             "Expected ~{} hours for 1200km, got {}",
             expected,
@@ -236,7 +236,7 @@ mod tests {
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 240.0;
 
-        assert!(
+        debug_assert!(
             (duration_hours - expected).abs() < 0.00001,
             "Expected ~{} hours for 2400km, got {}",
             expected,
@@ -267,7 +267,7 @@ mod tests {
         let duration_hours = duration_sec as f64 / 3600.0;
         let expected = 360.0;
 
-        assert!(
+        debug_assert!(
             (duration_hours - expected).abs() < 0.00001,
             "Expected ~{} hours for 3000km, got {}",
             expected,
@@ -304,7 +304,7 @@ mod tests {
             let time = time_parameters.time(distance);
             let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
             println!("{} km: {:.2} hours", distance / 1000.0, duration_hours);
-            assert!(
+            debug_assert!(
                 duration_hours <= expected_hours + 0.1,
                 "{} km should not exceed {} hours, got {}",
                 distance / 1000.0,
@@ -350,7 +350,7 @@ mod tests {
             let time = time_parameters.time(distance);
             let duration_hours = (time - start).num_seconds() as f64 / 3600.0;
             println!("{} km: {:.2} hours", distance / 1000.0, duration_hours);
-            assert_eq!(
+            debug_assert_eq!(
                 duration_hours,
                 expected_hours,
                 "{} km should be {} hours, got {}",
@@ -380,7 +380,7 @@ mod tests {
         let distance = 1_200_000f64;
         let time_end = start + TimeDelta::hours(90);
         let time = time_parameters.time(distance);
-        assert!(time == time_end);
+        debug_assert!(time == time_end);
     }
 
     #[test]
@@ -410,10 +410,10 @@ mod tests {
 
         let expected_time = parameters::parse_time(&"2026-04-29T02:00:00");
         let time = time_parameters.time(distance);
-        assert_eq!(time, expected_time);
+        debug_assert_eq!(time, expected_time);
         let duration = time - start_time;
         let d = time_parameters.distance(&duration);
-        assert_eq!(distance, d);
+        debug_assert_eq!(distance, d);
     }
 
     #[test]
@@ -440,18 +440,17 @@ mod tests {
             power: None,
         };
         let cut_off = time_parameters.time(0f64);
-        assert_eq!(cut_off, expected);
+        debug_assert_eq!(cut_off, expected);
 
         let cut_off = format::round_time(&time_parameters.time(72f64 * 1000f64));
         let expected = parameters::parse_time(&"2026-04-29T04:49:00");
-        assert_eq!(cut_off, expected);
+        debug_assert_eq!(cut_off, expected);
     }
 
     #[test]
     fn test_acp_lrm() {
         let _ = env_logger::try_init();
         let speeds = speed::allowed_speeds(1200_000f64);
-        log::trace!("X{:?}", speeds);
         let dump = format!("{:?}", speeds);
         let expected = "[\"KMH-*\", \"ACP-1200-90.0\", \"LRM-13.33\"]";
         debug_assert_eq!(dump, expected);
@@ -499,14 +498,14 @@ mod tests {
         let expected = parameters::parse_time(&"2026-04-29T20:00:00");
         let cut_off_1 = time_parameters_1.time(k1.distance);
         let cut_off_2 = time_parameters_2.time(k1.distance);
-        assert_eq!(cut_off_1, cut_off_2);
-        assert_eq!(cut_off_1, expected);
+        debug_assert_eq!(cut_off_1, cut_off_2);
+        debug_assert_eq!(cut_off_1, expected);
 
         let time_parameters_3 = make_parameters(620_000f64, None);
         let time_parameters_4 = make_parameters(620_000f64, Some(k1.clone()));
         let cut_off_3 = time_parameters_3.time(k1.distance);
         let cut_off_4 = time_parameters_4.time(k1.distance);
-        assert_eq!(cut_off_4, expected);
-        assert!(cut_off_3 < cut_off_4);
+        debug_assert_eq!(cut_off_4, expected);
+        debug_assert!(cut_off_3 < cut_off_4);
     }
 }

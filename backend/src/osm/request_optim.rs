@@ -6,7 +6,7 @@ use crate::{
 };
 
 pub fn partition_track_into_one_box(tiles: &Tiles, features_per_tile: f64) -> Option<BoundingBox> {
-    log::trace!("partition optimize {} tiles in one box", tiles.len(),);
+    log::info!("partition optimize {} tiles in one box", tiles.len(),);
     if tiles.is_empty() {
         return None;
     }
@@ -37,7 +37,7 @@ pub fn partition_track_into_one_box(tiles: &Tiles, features_per_tile: f64) -> Op
 }
 
 pub fn partition_track_into_boxes(tiles: &Tiles, max_span: isize) -> Vec<BoundingBox> {
-    log::trace!(
+    log::info!(
         "partition optimize {} tiles with max_span={}",
         tiles.len(),
         max_span
@@ -112,7 +112,7 @@ pub fn optimize_tiles_into_boxes_hard(tiles: &Tiles, max_span: isize) -> Vec<Bou
         return boxes;
     }
 
-    log::trace!(
+    log::info!(
         "hard optimize {} tiles with max_span={}",
         tiles.len(),
         max_span

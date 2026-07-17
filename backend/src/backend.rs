@@ -221,7 +221,7 @@ impl Backend {
     }
 
     pub fn load_ordered(&mut self, parts: &Vec<TrackPart>) -> Result<(), TrackError> {
-        assert!(self.gpxdata.read().unwrap().is_some());
+        debug_assert!(self.gpxdata.read().unwrap().is_some());
         let mut gpxdata = {
             let mut locked = self.gpxdata.write().unwrap();
             let indices: Vec<_> = parts.iter().map(|part| part.part_index.clone()).collect();
@@ -260,8 +260,7 @@ impl Backend {
     }
 
     pub async fn create_trackfile(&self) -> Result<TrackFile, TrackError> {
-        log::trace!("[create_trackfile]{}", self.loaded());
-        assert!(self.loaded());
+        debug_assert!(self.loaded());
         let name = {
             let lock = self.backend_data.read().unwrap();
             let track = &lock.as_ref().unwrap().track;
@@ -287,7 +286,7 @@ impl Backend {
                 .trackfile = Some(trackFile.clone());
         }
         let _ = self.save_all().await;
-        assert!(self.loaded());
+        debug_assert!(self.loaded());
         Ok(trackFile)
     }
 
@@ -358,8 +357,7 @@ impl Backend {
     }
 
     pub async fn read_trackfile(&self, trackfile: &TrackFile) -> Result<(), TrackError> {
-        assert!(!self.loaded());
-        log::trace!("read: {}", trackfile.name);
+        debug_assert!(!self.loaded());
         let (parameters, controlsdata, mut gpxdata) = trackfile
             .read_all()
             .await
@@ -693,7 +691,7 @@ mod tests {
                 println!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
-        assert!(ok_count == segments.len());
+        debug_assert!(ok_count == segments.len());
     }
 
     #[tokio::test]
@@ -724,7 +722,7 @@ mod tests {
         std::fs::write(&tmpfilename, result.clone()).unwrap();
         if refdata != result {
             println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
+            debug_assert!(false);
         }
     }
 
@@ -765,7 +763,7 @@ mod tests {
                 println!("test failed: {} {}", tmpfilename, reffilename);
             }
         }
-        assert!(ok_count == segments.len());
+        debug_assert!(ok_count == segments.len());
     }
 
     #[tokio::test]
@@ -782,32 +780,18 @@ mod tests {
         let mut backend = Backend::make();
         let mut track_parts = backend.load_track_parts(&vec![bytes]).unwrap();
         let result = backend.load_ordered(&track_parts);
-        assert!(result.is_ok());
-        assert!(backend.loaded());
+        debug_assert!(result.is_ok());
+        debug_assert!(backend.loaded());
         let s1 = backend.statistics();
-        log::trace!(
-            "dstart={:.1} dend={:.1} km={:.1}",
-            s1.distance_start,
-            s1.distance_end,
-            s1.length / 1000f64
-        );
-
         track_parts.insert(0, track_parts.last().unwrap().clone());
         track_parts.remove(track_parts.len() - 1);
         let result = backend.load_ordered(&track_parts);
-        assert!(result.is_ok());
-        assert!(backend.loaded());
+        debug_assert!(result.is_ok());
+        debug_assert!(backend.loaded());
         let s2 = backend.statistics();
-        log::trace!(
-            "dstart={:.1} dend={:.1} km={:.1}",
-            s2.distance_start,
-            s2.distance_end,
-            s2.length / 1000f64
-        );
         let d = (s1.length - s2.length).abs();
-        log::trace!("d={}", d);
         // there is a 65m distance between the end of K4-K5 and the beginning of K5-Ziel.
-        assert!(d < 100f64);
+        debug_assert!(d < 100f64);
     }
 
     #[tokio::test]
@@ -841,7 +825,6 @@ mod tests {
         ] {
             let src = format!("data/ref/persist/share1/WPX/1/00000000.{suffix}");
             let dst = format!("{}/WPX/1/00000000.{suffix}", tmpdir);
-            log::trace!("{}->{}", src, dst);
             std::fs::copy(src, dst).unwrap();
         }
         let mut backend = load_test_data(BLACK_FOREST).await;
@@ -850,12 +833,9 @@ mod tests {
             parameters.start_time = START_TIME.to_string();
             backend.set_parameters(&parameters);
             let profile_1 = profile(&backend);
-            log::trace!("ok");
             let _ = backend.create_trackfile().await;
-            log::trace!("ok");
             let helloworld = "hello, world";
             let _ = backend.set_trackfile_name(&helloworld).await;
-            log::trace!("ok");
             let _ = backend.save_all().await;
             let mut trackfiles = backend.trackfiles().await.unwrap();
             trackfiles.retain(|file| file.name == helloworld);
@@ -918,14 +898,8 @@ mod tests {
             waypoints.retain(|w| w.name == "Boulangerie");
             debug_assert_eq!(waypoints.len(), 1);
             let boulangerie = waypoints.first().unwrap().clone();
-            for w in waypoints {
-                log::trace!("w:{}", w.name);
-            }
             backend.make_control_at_waypoint(&boulangerie, true);
             let controls_2 = backend.get_waypoints(&trackSegment, &kinds_controls);
-            for c in &controls_2 {
-                log::trace!("control:{} [{}]", c.name, c.description);
-            }
             debug_assert_eq!(controls_2.len(), controls_1.len() + 1);
             let _ = backend.save_all().await;
             (trackfile.clone(), controls_2)

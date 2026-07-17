@@ -44,18 +44,15 @@ fn is_timeout(content: &str) -> bool {
 }
 
 async fn download(req_string: &String, side: &DownloadSideData<'_>) -> GenericResult<Vec<u8>> {
-    //log::trace!("download:\n{}\n", req_string);
     let hash = hash(&req_string);
 
     let respfilename = format!("data/osm/response-{}.txt", hash);
     match std::fs::exists(&respfilename) {
         Ok(true) => {
-            log::trace!("found response file {}", respfilename);
             return Ok(std::fs::read(&respfilename).unwrap());
         }
         _ => {}
     };
-    log::trace!("not found {}", respfilename);
 
     let mut nretries = 0;
     loop {
@@ -94,31 +91,19 @@ pub async fn get_response(
 ) -> GenericResult<(ChunkData, usize)> {
     let (chunk_data, missing_request) = read_cache(request, side.logger).await;
     if missing_request.boxes.is_empty() {
-        log::trace!("complete cache hit.");
+        log::info!("complete cache hit.");
         return Ok((chunk_data, 0));
     }
     if !try_download {
-        log::trace!("incomplete cache hit, and do not try to download osm data.");
+        log::info!("incomplete cache hit, and do not try to download osm data.");
         // problem: we cannot return an error *and* the data.
         return Ok((chunk_data, missing_request.boxes.len()));
     }
 
-    log::trace!("incomplete cache hit.");
+    log::info!("incomplete cache hit.");
     let missing = missing_request.strings();
     for (index, pair) in missing.iter().enumerate() {
-        let (missing_zones, missing_req_string) = pair;
-        log::trace!(
-            "request[{}/{}] with {} missing tile bboxes",
-            index,
-            missing.len(),
-            missing_zones.tiles.len(),
-        );
-        log::trace!(
-            "request[{}/{}] with {} missing chunk bboxes",
-            index,
-            missing.len(),
-            missing_zones.chunks.len(),
-        );
+        let (_missing_zones, missing_req_string) = pair;
         event::send_worker(
             &side.logger,
             &format!("osm:download-progress:{}:{}", index, missing.len()),

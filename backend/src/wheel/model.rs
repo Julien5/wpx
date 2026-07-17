@@ -9,7 +9,7 @@ use crate::{
 };
 
 pub fn angle(x: f64, total: f64) -> f64 {
-    assert!(x <= total);
+    debug_assert!(x <= total);
     let topmargin = super::constants::ARCANGLE / 2.0;
     let a = (360.0 - 2.0 * topmargin) / total;
     let b = topmargin;

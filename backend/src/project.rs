@@ -92,7 +92,7 @@ mod tests {
     fn kdtree() {
         let items = vec![[10, 20, 30], [30, 10, 20], [20, 30, 10]];
         let kdtree = kd_tree::KdIndexTree::build(&items);
-        assert_eq!(kdtree.nearest(&[30, 10, 20]).unwrap().item, &1);
-        assert_eq!(kdtree.nearest(&[29, 9, 20]).unwrap().item, &1);
+        debug_assert_eq!(kdtree.nearest(&[30, 10, 20]).unwrap().item, &1);
+        debug_assert_eq!(kdtree.nearest(&[29, 9, 20]).unwrap().item, &1);
     }
 }

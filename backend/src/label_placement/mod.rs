@@ -69,7 +69,7 @@ impl PlacementResult {
         packets: &mut Vec<PointFeatures>,
     ) -> Vec<PointFeature> {
         let mut ret = Vec::new();
-        assert_eq!(results.len(), packets.len());
+        debug_assert_eq!(results.len(), packets.len());
         for (result_index, result) in results.iter().enumerate() {
             let packet = &mut packets[result_index];
             for (feature_index, feature) in packet.points.iter_mut().enumerate() {
@@ -135,7 +135,6 @@ fn place_subset(
         let best_candidate = best_candidates.get(&k);
         match best_candidate {
             Some(candidate) => {
-                //log::trace!("candidate: {}", candidate.bbox().relative());
                 ret.placed_indices.insert(k, candidate.bbox().clone());
             }
             _ => { /* log::info!("failed to place [{}]", feature.label.text); */ }
@@ -154,18 +153,11 @@ pub fn place_labels(
     let mut ret = Vec::new();
     let mut obstacles = Obstacles::new(bbox);
     obstacles.polylines = vec![polyline.clone()];
-    for (idx, packet) in packets.iter().enumerate() {
-        let kind = match packet.points.first() {
+    for (_idx, packet) in packets.iter().enumerate() {
+        let _kind = match packet.points.first() {
             Some(feature) => format!("{:?}", feature.id()),
             None => format!("unknown"),
         };
-        log::trace!(
-            "subset packet [{}] ({}) features:{} obstacles:{}",
-            idx,
-            kind,
-            packet.points.len(),
-            obstacles.bboxes().len()
-        );
         let results = place_subset(&packet, gen, &mut obstacles, debug_graphic_dir.clone());
         ret.push(results);
     }

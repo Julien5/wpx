@@ -59,7 +59,6 @@ impl Directory {
 pub fn read(directory: &Directory, filename: &str) -> GenericResult<String> {
     let abspath = format!("{}/{}", directory.name(), filename);
     let path = Path::new(&abspath);
-    log::trace!("read: [{}]", abspath);
     match std::fs::read_to_string(path) {
         Ok(data) => Ok(data),
         Err(e) => Err(e.into()),
@@ -126,7 +125,6 @@ pub fn write(directory: &Directory, filename: &str, data: String) -> GenericResu
 pub fn remove(directory: &Directory, filename: &str) -> GenericResult<()> {
     let abspath = format!("{}/{}", directory.name(), filename);
     let path = Path::new(&abspath);
-    log::trace!("remove: [{}]", abspath);
     match std::fs::remove_file(path) {
         Ok(()) => Ok(()),
         Err(e) => {

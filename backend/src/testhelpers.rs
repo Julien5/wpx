@@ -27,7 +27,6 @@ fn read(filename: &str) -> GpxData {
 fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Parameters) -> BackendData {
     let gpxdata = read(filename);
     let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
-    log::trace!("  track length: {}m", track.total_distance());
     let mut collection = PointCollection::new();
     {
         let mut waypoints = gpxdata.waypoints.clone();
@@ -92,7 +91,6 @@ pub async fn load_backend_data_with_track_and_parameters(
     parameters: Parameters,
     with_osm: bool,
 ) -> BackendData {
-    log::trace!("  track length: {}m", track.total_distance());
     let mut collection = PointCollection::new();
     {
         let mut waypoints = gpxdata.waypoints.clone();
@@ -138,7 +136,6 @@ pub async fn load_backend_data_with_parameters(
     with_osm: bool,
 ) -> BackendData {
     let (track, gpxdata) = load_file(filename);
-    log::trace!("  track length: {}m", track.total_distance());
     load_backend_data_with_track_and_parameters(track, gpxdata, parameters, with_osm).await
 }
 

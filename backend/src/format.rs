@@ -178,11 +178,11 @@ mod tests {
         let data = setup_test_data(0.0);
 
         let format1 = "TIME[%H:%M]";
-        assert_eq!(make_gpx_name(&data, &parameters(&format1)), "09:00");
+        debug_assert_eq!(make_gpx_name(&data, &parameters(&format1)), "09:00");
 
         // Test different time format
         let format2 = "TIME[%H:%M:%S]";
-        assert_eq!(make_gpx_name(&data, &parameters(&format2)), "09:00:00");
+        debug_assert_eq!(make_gpx_name(&data, &parameters(&format2)), "09:00:00");
     }
 
     #[test]
@@ -193,7 +193,7 @@ mod tests {
 
         // Example 1: TIME[HH:MM] -> "12:32" (Using chrono's "%H:%M")
         let format1 = "NAME[2]-TIME[%H:%M]";
-        assert_eq!(make_gpx_name(&data, &parameters(&format1)), "P2-09:00");
+        debug_assert_eq!(make_gpx_name(&data, &parameters(&format1)), "P2-09:00");
     }
 
     #[test]
@@ -205,11 +205,11 @@ mod tests {
         // Example 2: SLOPE[4.1] -> " 9.1"
         let format1 = "SLOPE[4.1]";
         // 9.1 is 3 characters, width 4 means one leading space.
-        assert_eq!(make_gpx_name(&data, &parameters(&format1)), " 9.1");
+        debug_assert_eq!(make_gpx_name(&data, &parameters(&format1)), " 9.1");
 
         // Example 3: SLOPE[4.1%] -> " 9.1%"
         let format2 = "SLOPE[4.1%]";
-        assert_eq!(make_gpx_name(&data, &parameters(&format2)), " 9.1%");
+        debug_assert_eq!(make_gpx_name(&data, &parameters(&format2)), " 9.1%");
 
         // High slope (10.1% / Ratio 0.101)
         let data_high = setup_test_data(0.101);
@@ -217,12 +217,12 @@ mod tests {
         // Test with high slope and tight width
         let format3 = "SLOPE[4.1%]";
         // 10.1% is 5 characters, width 4 is ignored because the number is wider.
-        assert_eq!(make_gpx_name(&data_high, &parameters(&format3)), "10.1%");
+        debug_assert_eq!(make_gpx_name(&data_high, &parameters(&format3)), "10.1%");
 
         // Test with high slope and sufficient width
         let format4 = "SLOPE[6.2]";
         // 10.10 is 5 chars, width 6 means one leading space.
-        assert_eq!(make_gpx_name(&data_high, &parameters(&format4)), " 10.10");
+        debug_assert_eq!(make_gpx_name(&data_high, &parameters(&format4)), " 10.10");
     }
 
     #[test]
@@ -233,11 +233,12 @@ mod tests {
 
         // No width, just precision (defaults to width 0)
         let format1 = "SLOPE[.0%]";
-        assert_eq!(make_gpx_name(&data_low, &parameters(&format1)), "2%"); // 1.5 rounded to 2
+        debug_assert_eq!(make_gpx_name(&data_low, &parameters(&format1)), "2%"); // 1.5 rounded to 2
 
         // No precision, just width (defaults to precision 1)
         let format2 = "SLOPE[5.]";
-        assert_eq!(make_gpx_name(&data_low, &parameters(&format2)), "  1.5"); // ' 1.5'
+        debug_assert_eq!(make_gpx_name(&data_low, &parameters(&format2)), "  1.5");
+        // ' 1.5'
     }
 
     #[test]
@@ -250,12 +251,12 @@ mod tests {
         let format1 = "TIME[%H:%M]-SLOPE[4.1%]";
         // Note: The example shows "12:32-10.1%". Since 10.1% is 5 chars, width 4 is insufficient,
         // so no padding is applied to the slope.
-        assert_eq!(make_gpx_name(&data, &parameters(&format1)), "09:00-10.1%");
+        debug_assert_eq!(make_gpx_name(&data, &parameters(&format1)), "09:00-10.1%");
 
         // Test complex string with multiple placeholders
         let format2 = "T:TIME[%H] | S:SLOPE[4.0%] | T:TIME[%M]";
         // Slope 10.10% is 6 chars, width 4 is insufficient.
-        assert_eq!(
+        debug_assert_eq!(
             make_gpx_name(&data, &parameters(&format2)),
             "T:09 | S:  10% | T:00"
         );
@@ -264,7 +265,7 @@ mod tests {
         let data_low_slope = setup_test_data(0.05); // 5.0% slope
         let format3 = "T:TIME[%H]-S:SLOPE[5.1%]"; // Width 5 for slope
                                                   // Slope 5.0% is 4 characters, width 5 adds one space: " 5.0%"
-        assert_eq!(
+        debug_assert_eq!(
             make_gpx_name(&data_low_slope, &parameters(&format3)),
             "T:09-S:  5.0%"
         );

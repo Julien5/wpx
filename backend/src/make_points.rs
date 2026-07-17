@@ -53,7 +53,7 @@ pub fn user_points(track: &Track, options: &UserStepsOptions) -> Vec<InputPoint>
             let loc = profile_points_elevation_gain_track(track, &d);
             for p in &loc {
                 let d = p.track_projections.first().unwrap().track_distance;
-                assert_eq!(d, 0f64);
+                debug_assert_eq!(d, 0f64);
             }
             ret.extend_from_slice(&loc);
         }

@@ -82,8 +82,6 @@ impl ConstantPowerGeometry {
         let table =
             Self::compute_table(&power_model, &simplified_distances, &simplified_elevations);
 
-        log::trace!("build power model: weight: {} kg", power_parameters.W);
-
         Self {
             simplified_indices,
             simplified_distances,
@@ -181,9 +179,6 @@ impl ConstantPowerGeometry {
         let start = index_after(&self.simplified_distances, prev.distance);
         // iterations are run in start..=end => bound check.
         let end = (index_before(&self.simplified_distances, next.distance) + 1).min(self.len() - 1);
-        let start_error = (self.simplified_distances[start] - prev.distance).abs();
-        let end_error = (self.simplified_distances[end] - next.distance).abs();
-        log::trace!("error: {:.1} {:.1}", start_error, end_error);
         debug_assert!(start < end);
         (start, end)
     }
@@ -337,14 +332,7 @@ impl ConstantPowerGeometry {
                 // skip it
                 continue;
             }
-            let (power, mut new_points) = self.solve_interval(&method, prev, next);
-            log::trace!(
-                "[{:.1}-{:.1}] in {} hours => power: {:.1}W",
-                prev.distance / 1000f64,
-                next.distance / 1000f64,
-                (next.unwrap_duration() - prev.unwrap_duration()).num_hours(),
-                power
-            );
+            let (_power, mut new_points) = self.solve_interval(&method, prev, next);
             // Post solver cleaning:
             // Because the numerical solver may fail to find an exact solution, a power
             // that is a bit too high, which results in intermediate points that may be
@@ -418,12 +406,10 @@ mod tests {
         let (p_new, _) = geometry.solve_interval(&SolverMethod::Newton, &start, &end);
         let (p_bis, _) = geometry.solve_interval(&SolverMethod::Bisection, &start, &end);
         if 1 < hours && hours < 10 {
-            log::trace!("hours={hours:5} lin={p_lin:8.3} new={p_new:8.3}");
-            assert!((p_bis - p_lin).abs() < 5.0,);
+            debug_assert!((p_bis - p_lin).abs() < 5.0,);
         }
-        log::trace!("hours={hours:5} bis={p_bis:8.3} new={p_new:8.3}");
         let tol = if hours < 100 { 0.1 } else { 5.0 };
-        assert!((p_bis - p_new).abs() < tol);
+        debug_assert!((p_bis - p_new).abs() < tol);
     }
 
     #[test]

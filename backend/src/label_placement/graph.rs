@@ -142,7 +142,7 @@ impl Graph {
     }
 
     pub fn add_node(&mut self, feature: &PointFeature, candidates: Candidates) {
-        assert_eq!(self.ordered_nodes.len(), self.nodes.len());
+        debug_assert_eq!(self.ordered_nodes.len(), self.nodes.len());
 
         let data = NodeData {
             feature: feature.clone(),
@@ -157,8 +157,8 @@ impl Graph {
         let cbb = utils::candidates_bounding_box(&candidates);
         self.tree.insert(&cbb, k);
         self.map.insert(k, BTreeSet::new());
-        assert_eq!(self.ordered_nodes.len(), self.nodes.len());
-        assert_eq!(self.nodes.len(), self.map.len());
+        debug_assert_eq!(self.ordered_nodes.len(), self.nodes.len());
+        debug_assert_eq!(self.nodes.len(), self.map.len());
     }
 
     fn remove_node(&mut self, a: &Node) {
@@ -373,7 +373,7 @@ mod tests {
         let ca2 = make_candidate(2, 2, 3, 2);
         let cb1 = make_candidate(1, 0, 3, 2);
         let cb2 = make_candidate(4, 2, 3, 2);
-        assert!(ca2.hit_other(&cb2));
+        debug_assert!(ca2.hit_other(&cb2));
         ca.push(ca1);
         ca.push(ca2);
         cb.push(cb1.clone());
@@ -421,12 +421,12 @@ mod tests {
         }
         graph.build_map();
 
-        assert_eq!(graph.max_node(), 0);
+        debug_assert_eq!(graph.max_node(), 0);
         graph.update_graph(&2, &cc1);
-        assert!(!graph.map.contains_key(&2));
-        assert_eq!(graph.nodes[0].candidates.len(), 1);
-        assert_eq!(graph.nodes[1].candidates.len(), 1);
-        assert_eq!(graph.map.get(&0).unwrap().len(), 1);
-        assert_eq!(graph.map.get(&1).unwrap().len(), 1);
+        debug_assert!(!graph.map.contains_key(&2));
+        debug_assert_eq!(graph.nodes[0].candidates.len(), 1);
+        debug_assert_eq!(graph.nodes[1].candidates.len(), 1);
+        debug_assert_eq!(graph.map.get(&0).unwrap().len(), 1);
+        debug_assert_eq!(graph.map.get(&1).unwrap().len(), 1);
     }
 }

@@ -196,12 +196,10 @@ impl BackendData {
                     .track
                     .make_power_geometry(&parameters.power_parameters, &waypoints);
             }
-            log::trace!("start compute power interpolation points");
             self.power_geometry.update_interpolation_points(
                 &self.time_parameters().control_interpolation_points(),
                 SolverMethod::Newton,
             );
-            log::trace!("done compute power interpolation points");
         }
     }
 
@@ -276,11 +274,6 @@ impl BackendData {
         for (index, projection) in projections {
             let w = points[index].waypoint(&projection);
             list.push((projection.clone(), w));
-            log::trace!(
-                "export: {} => index:{}",
-                points[index].name(),
-                projection.track_floating_index
-            );
         }
         debug_assert!(
             points.len() <= list.len(),
@@ -359,7 +352,6 @@ impl BackendData {
                 start,
                 end,
             });
-            log::trace!("end:{} l={}", end, self.track.total_distance());
             if end > self.track.total_distance() {
                 break;
             }
@@ -431,7 +423,6 @@ impl BackendData {
     }
 
     pub fn set_control_time(&mut self, waypoint: &Waypoint, time: &Option<String>) -> bool {
-        log::trace!("set_control_time {:?}", time);
         match self.time_parameters().speed {
             Speed::ACP(_) => {
                 return false;
@@ -454,7 +445,6 @@ impl BackendData {
                 return false;
             }
             if let Some(data) = time {
-                log::trace!("do set_control_time {:?}", time);
                 let t = parameters::parse_time(&data);
                 control.data.as_control_mut().unwrap().cutoff_time = Some(t);
             } else {
@@ -629,7 +619,7 @@ mod tests {
         std::fs::write(&tmpfilename, result.svg.clone()).unwrap();
         if data != result.svg {
             println!("test failed: {} {}", tmpfilename, reffilename);
-            assert!(false);
+            debug_assert!(false);
         }
     }
 
@@ -641,10 +631,10 @@ mod tests {
         let seg = backend.make_segment_data(&fseg);
         let controls = seg.controls();
         let len = controls.len();
-        assert!(len > 0);
+        debug_assert!(len > 0);
         let kinds = Kinds::from([Kind::Controls]);
         let waypoints = backend.get_waypoints(&fseg, &kinds);
-        assert!(!waypoints.is_empty());
+        debug_assert!(!waypoints.is_empty());
         for waypoint in waypoints {
             log::info!("gpx name={}", waypoint.info.unwrap().gpx_name);
         }
@@ -675,7 +665,6 @@ mod tests {
                 bad.push(tmpfilename);
             }
         }
-        log::trace!("bad={:?}", bad);
-        assert!(bad.is_empty());
+        debug_assert!(bad.is_empty());
     }
 }

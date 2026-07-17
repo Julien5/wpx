@@ -436,7 +436,7 @@ impl InputPoint {
                 .track_floating_index
                 .total_cmp(&projb.track_floating_index)
         });
-        assert!(result.len() >= points.len());
+        debug_assert!(result.len() >= points.len());
         result
     }
 
