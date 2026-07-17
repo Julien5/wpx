@@ -148,13 +148,16 @@ impl Track {
                     _distance.push(dacc);
                 }
             }
-            parts.push(TrackPart {
+            let part = TrackPart {
                 name: name.clone(),
                 length,
                 part_index: index,
-            });
+            };
+            log::trace!("load: part:{:?}", part);
+            parts.push(part);
         }
         assert_eq!(_distance.len(), wgs.len());
+        log::trace!("load: part, wgs.len():{:?}", wgs.len());
 
         let mut boxes = Tiles::new();
         for e in &euclidean {

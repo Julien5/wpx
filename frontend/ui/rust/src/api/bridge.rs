@@ -336,7 +336,9 @@ impl Bridge {
         self.backend.generateZip(&dedup(&kinds))
     }
 
-    pub async fn save_trackfile_jsonparameters(&self) -> Result<TrackFile, TrackError> {
+    // save_all is exposed because it not need as long as the user cannot
+    // modify the waypoints and the track.
+    pub async fn save_quick(&self) -> Result<TrackFile, TrackError> {
         self.backend.save_quick().await
     }
 

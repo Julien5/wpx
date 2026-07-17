@@ -82,6 +82,12 @@ pub fn update_track_projection(
     let new_projection =
         locate::compute_track_projection(euclidean, distance, elevation, tree, point);
     if point.track_projections.is_empty() {
+        log::trace!(
+            "insert projection: {} new_projection_floating: {} tree-range:[{:?}]",
+            point.name(),
+            new_projection.track_floating_index,
+            tree.range
+        );
         point.track_projections.insert(new_projection);
         return;
     }
@@ -95,10 +101,25 @@ pub fn update_track_projection(
     let known = point.track_projections.iter().any(|proj| {
         let d1 = proj.distance_on_track_to_projection;
         let d2 = new_projection.distance_on_track_to_projection;
-        (d1 - d2).abs() < 10f64 * dmax
+        let delta = (d1 - d2).abs();
+        let delta_max = 10f64 * dmax;
+        log::trace!(
+            "know: {}: d1:{:.1} delta:{:.1} max:{:.1}",
+            point.name(),
+            d1,
+            delta,
+            delta_max
+        );
+        delta < delta_max
     });
 
     if !known {
+        log::trace!(
+            "insert projection: {} new_projection_floating: {} tree-range:[{:?}]",
+            point.name(),
+            new_projection.track_floating_index,
+            tree.range
+        );
         point.track_projections.insert(new_projection);
     }
 }

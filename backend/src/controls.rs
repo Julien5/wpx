@@ -119,7 +119,6 @@ pub fn infer_controls_from_gpx_segments(
         ret.push((
             candidate.track_index,
             InputPoint::create_control_on_track(
-                track,
                 TrackProjection::at_track_index(track, candidate.track_index),
                 &candidate.segment_name,
                 &candidate.waypoint_name,
@@ -164,7 +163,6 @@ pub fn add_control_at_waypoint(
     // now select the projection that is the closest to waypoint.track_index
     let projection = find_closest(&position.track_projections, waypoint.track_index.unwrap());
     let new = InputPoint::create_control_on_track(
-        track,
         projection,
         &"",
         &waypoint.name,
@@ -370,7 +368,6 @@ pub fn _make_with_osm(
         let waypoint_description = p.osm_name.clone();
         let proj = TrackProjection::at_track_index(&track, p.index);
         let w = InputPoint::create_control_on_track(
-            &track,
             proj,
             &segment_name,
             &waypoint_name,
@@ -383,7 +380,6 @@ pub fn _make_with_osm(
     ret.insert(
         0,
         InputPoint::create_control_on_track(
-            &track,
             TrackProjection::at_track_index(&track, 0),
             &"",
             &"",
@@ -393,7 +389,6 @@ pub fn _make_with_osm(
     );
     // add the end of the track
     ret.push(InputPoint::create_control_on_track(
-        &track,
         TrackProjection::at_track_index(&track, track.len() - 1),
         &"",
         &"",

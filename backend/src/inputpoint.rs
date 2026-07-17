@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
-    mercator::{DateTime, MercatorPoint},
+    mercator::{DateTime, MercatorPoint, WebMercatorProjection},
     point_collection::Kind,
     tile::{self, Tile},
     track::Track,
@@ -267,16 +267,14 @@ impl InputPoint {
     }
 
     pub fn create_control_on_track(
-        track: &Track,
         proj: TrackProjection,
         segment_name: &str,
         waypoint_name: &str,
         waypoint_description: &str,
         nearest_waypoint_id: &Option<usize>,
     ) -> InputPoint {
-        let index = proj.track_index;
-        let wgs = track.wgs84[index].clone();
-        let euc = track.map.point_at(index).clone();
+        let euc = proj.euclidean.clone();
+        let wgs = WebMercatorProjection::make().unproject(&euc);
         let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::Controls);
         let data = ControlData {
             name: format!("{}", waypoint_name),

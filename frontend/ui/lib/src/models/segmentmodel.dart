@@ -45,7 +45,7 @@ class SegmentModel extends ChangeNotifier {
 
   Future<void> makeControlAtWaypoint(bridge.Waypoint waypoint, bool on) async {
     backend.makeControlAtWaypoint(waypoint: waypoint, on_: on);
-    backend.saveTrackfileJsonparameters();
+    backend.saveQuick();
     notifyListeners();
   }
 
@@ -64,7 +64,7 @@ class SegmentModel extends ChangeNotifier {
   void setControlTime(bridge.Waypoint waypoint, DateTime? time) async {
     String? rfc3339time = time?.toUtc().toIso8601String();
     backend.setControlTime(waypoint: waypoint, time: rfc3339time);
-    backend.saveTrackfileJsonparameters();
+    backend.saveQuick();
     notifyListeners();
   }
 
@@ -84,7 +84,7 @@ class SegmentModel extends ChangeNotifier {
 
   void setParameters(bridge.Parameters p) async {
     await backend.setParameters(parameters: p);
-    await backend.saveTrackfileJsonparameters();
+    await backend.saveQuick();
     notifyListeners();
   }
 

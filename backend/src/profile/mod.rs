@@ -553,8 +553,8 @@ impl ProfileView {
                     let mut label = drawings::make_label_text(&w);
                     label.id = format!("{}/wp/text", k);
                     if w.kind() == Kind::Controls
-                        && proj.track_index != 0
-                        && proj.track_index != profile.len()
+                        && !w.data.as_control().unwrap().is_start()
+                        && !w.data.as_control().unwrap().is_end()
                     {
                         let time = time_parameters.time(proj.distance_on_track_to_projection);
                         let text = format!("{} ({})", w.name(), round_time(&time).format("%H:%M"));

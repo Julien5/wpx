@@ -287,13 +287,12 @@ impl Backend {
                 .trackfile = Some(trackFile.clone());
         }
         let _ = self.save_all().await;
-        let _ = self.save_quick().await;
         assert!(self.loaded());
         Ok(trackFile)
     }
 
     async fn save_all(&self) -> Result<(), TrackError> {
-        let (trackfile, small_parameters, controls, gpxdata) = {
+        let (trackfile, jsonparameters, controls, gpxdata) = {
             let mut lock = self.backend_data.write().unwrap();
             let data = lock.as_mut().unwrap();
             let small = JsonParameters {
@@ -309,12 +308,18 @@ impl Backend {
         };
 
         match trackfile
-            .write_all(&small_parameters, &controls, &gpxdata)
+            .write_all(&jsonparameters, &controls, &gpxdata)
             .await
         {
-            Ok(()) => Ok(()),
+            Ok(()) => match self.save_quick().await {
+                Ok(_trackfile) => Ok(()),
+                Err(e) => {
+                    log::error!("quick write user data failed: {:?}", e);
+                    Err(TrackError::IOError.into())
+                }
+            },
             Err(e) => {
-                log::error!("write user data failed: {:?}", e);
+                log::error!("all write user data failed: {:?}", e);
                 Err(TrackError::IOError.into())
             }
         }
@@ -370,9 +375,48 @@ impl Backend {
             track.project_point(p);
         }
 
-        let mut controls = controlsdata.to_controls().unwrap_or_default();
+        let mut controls = controlsdata
+            .to_controls(&|p| track.project_point(p))
+            .unwrap_or_default();
+
+        let has_start = controls
+            .iter()
+            .find(|p| {
+                if let Some(cd) = p.data.as_control() {
+                    if cd.is_start() {
+                        return true;
+                    }
+                }
+                false
+            })
+            .is_some();
+
+        let has_end = controls
+            .iter()
+            .find(|p| {
+                if let Some(cd) = p.data.as_control() {
+                    if cd.is_start() {
+                        return true;
+                    }
+                }
+                false
+            })
+            .is_some();
+
+        if !(controls.len() >= 2 && has_start && has_end) {
+            // Something went wrong with the controls.
+            // I can either fail early or re-infer the controls.
+            // => fail early.
+            return Err(TrackError::IOError);
+        }
+
         for c in &mut controls {
-            track.project_point(c);
+            debug_assert!(
+                c.track_projections.len() == 1,
+                "{}:{}",
+                c.name(),
+                c.track_projections.len()
+            );
         }
 
         let power_geometry =
@@ -585,13 +629,11 @@ impl Backend {
 #[cfg(test)]
 mod tests {
     use crate::{
-        backend::Backend,
-        math::IntegerSize2D,
-        parameters::RenderFunction,
-        point_collection::{self},
+        backend::Backend, math::IntegerSize2D, parameters::RenderFunction, point_collection,
     };
     static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
     static BLACK_FOREST: &'static str = "data/blackforest.gpx";
+    static SAMPLE: &'static str = "data/ref/sample.gpx";
 
     async fn load_test_data(filename: &str) -> Backend {
         let mut backend = Backend::make();
@@ -769,16 +811,28 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn persist_smoke() {
+    async fn persist() {
         let _ = env_logger::try_init();
         let tmp = tempfile::tempdir().unwrap();
         let tmpdir = tmp.path().to_str().unwrap();
         //let tmpdir = "/tmp/share";
-        //let tmpdir = "/tmp/foo";
         unsafe {
             std::env::set_var("DATA_DIR", tmpdir);
         }
         std::fs::create_dir_all(format!("{}/WPX/1/", tmpdir)).unwrap();
+        // to rebuild these test data:
+        if false {
+            unsafe {
+                std::env::set_var("DATA_DIR", "data/ref/persist/share1");
+            }
+            let mut backend = load_test_data(BLACK_FOREST).await;
+            let _ = backend.create_trackfile().await;
+            let _ = backend.save_all();
+            backend.unload();
+            unsafe {
+                std::env::set_var("DATA_DIR", tmpdir);
+            }
+        }
         for suffix in [
             "track.gpx",
             "trackfile.json",
@@ -828,6 +882,64 @@ mod tests {
                     log::error!("Error caught here: {:?}", e);
                 });
                 let _ = backend.save_all().await;
+            }
+        }
+        backend.unload();
+
+        // make a new trackfile
+        let mut backend = load_test_data(SAMPLE).await;
+        let sample = "sample";
+        {
+            let _ = backend.create_trackfile().await;
+            let _ = backend.set_trackfile_name(&sample).await;
+            let _ = backend.save_all();
+        }
+        backend.unload();
+
+        let kinds_controls = Vec::from([point_collection::Kind::Controls]);
+        // reload it
+        let (trackfile, controls) = {
+            let mut trackfiles = backend.trackfiles().await.unwrap();
+            trackfiles.retain(|file| file.name == sample);
+            debug_assert_eq!(trackfiles.len(), 1);
+            let trackfile = trackfiles.first().unwrap();
+            let _ = backend.read_trackfile(&trackfile).await.inspect_err(|e| {
+                log::error!("Error caught here: {:?}", e);
+            });
+            let _ = backend.load_osm_without_download().await;
+            let trackSegment = backend.trackSegment();
+
+            let controls_1 = backend.get_waypoints(&trackSegment, &kinds_controls);
+
+            // now find boulangerie and turn it to a control point
+            let kinds_gpxwaypoint = Vec::from([point_collection::Kind::GPXWaypoints]);
+
+            let mut waypoints = backend.get_waypoints(&trackSegment, &kinds_gpxwaypoint);
+            waypoints.retain(|w| w.name == "Boulangerie");
+            debug_assert_eq!(waypoints.len(), 1);
+            let boulangerie = waypoints.first().unwrap().clone();
+            for w in waypoints {
+                log::trace!("w:{}", w.name);
+            }
+            backend.make_control_at_waypoint(&boulangerie, true);
+            let controls_2 = backend.get_waypoints(&trackSegment, &kinds_controls);
+            for c in &controls_2 {
+                log::trace!("control:{} [{}]", c.name, c.description);
+            }
+            debug_assert_eq!(controls_2.len(), controls_1.len() + 1);
+            let _ = backend.save_all().await;
+            (trackfile.clone(), controls_2)
+        };
+        backend.unload();
+        {
+            let _ = backend.read_trackfile(&trackfile).await.inspect_err(|e| {
+                log::error!("Error    here: {:?}", e);
+            });
+            let trackSegment = backend.trackSegment();
+            let controls_reloaded = backend.get_waypoints(&trackSegment, &kinds_controls);
+            debug_assert_eq!(controls.len(), controls_reloaded.len());
+            for k in 0..controls.len() {
+                debug_assert_eq!(controls[k].wgs84, controls_reloaded[k].wgs84);
             }
         }
     }

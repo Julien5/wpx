@@ -1,6 +1,30 @@
 {
   "parameters": {
-    "version": "0",
-    "debug": true
+    "version": "1",
+    "control_gpx_name_format": "NAME[3]-TIME[%H:%M]-SLOPE[4.1%]",
+    "debug": false,
+    "map_options": {},
+    "profile_options": {
+      "time_axis": "ConstantSpeed"
+    },
+    "segment_length": 110000.0,
+    "segment_overlap": 10000.0,
+    "power_parameters": {
+      "W": 80.0,
+      "Crr": 0.005,
+      "Vhw": 0.0,
+      "A": 0.4,
+      "Rho": 1.225,
+      "Cd": 0.9,
+      "DrivetrainLoss": 2.0
+    },
+    "smooth_width": 200.0,
+    "speed": "KMH-15.0",
+    "start_time": "2026-07-16T12:03:28.044878419+02:00",
+    "user_steps_options": {
+      "step_distance": 10000.0,
+      "step_elevation_gain": null,
+      "gpx_name_format": "TIME[%H:%M]-SLOPE[4.1%]"
+    }
   }
 }

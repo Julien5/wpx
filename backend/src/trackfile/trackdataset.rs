@@ -29,6 +29,7 @@ impl TrackDataset {
             if range.start >= range.end {
                 continue;
             }
+            log::trace!("save: range:{:?}", range);
             let mut t = gpx::Track::new();
             let mut segment = gpx::TrackSegment::new();
             for wgs in &track.wgs84[range.clone()] {
