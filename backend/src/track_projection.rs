@@ -178,7 +178,13 @@ impl ProjectionTrees {
         let split_indices = line.simplify_idx(epsilon);
         let ranges: Vec<std::ops::Range<usize>> = split_indices
             .windows(2)
-            .map(|window| window[0]..window[1])
+            .map(|window| {
+                if window[1] == end - 1 {
+                    window[0]..end
+                } else {
+                    window[0]..window[1]
+                }
+            })
             .collect();
         ranges
             .iter()

@@ -65,10 +65,10 @@ impl CandidatesGenerator for MapGenerator {
             Some(point) => {
                 if !point.is_close_to_track() {
                     if feature.force_rendering() {
-                        log::info!(
+                        /*log::info!(
                             "feature has force rendering but is away from track: {:?}",
                             feature.label.text
-                        );
+                        );*/
                     }
                     cardinal_candidates.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
                     return cardinal_candidates;
@@ -93,7 +93,7 @@ impl CandidatesGenerator for MapGenerator {
             .collect();
 
         ret.extend_from_slice(&aux_candidates);
-        let ninit = ret.len();
+        let _ninit = ret.len();
         debug_assert!(!ret.is_empty());
         let last = ret.last().unwrap().clone();
         ret.retain(|c| !obstacles.hit(feature, &c.bbox().absolute()));
@@ -101,12 +101,12 @@ impl CandidatesGenerator for MapGenerator {
             ret = vec![last];
         }
         if ret.is_empty() {
-            log::info!(
+            /*log::info!(
                 "no candidates passed the upfront obstacles test for: [{}] (tried {}) (hard:{})",
                 feature.id(),
                 ninit,
                 feature.hardness
-            );
+            );*/
         }
         ret
     }

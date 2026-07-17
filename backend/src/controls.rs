@@ -36,6 +36,7 @@ impl rstar::PointDistance for InputPoint {
 pub fn set_control_names(controls: &mut Vec<InputPoint>) {
     let ncontrols = controls.len();
     for (index, p) in controls.iter_mut().enumerate() {
+        debug_assert_eq!(p.track_projections.len(), 1);
         let track_index = p.track_projections.first().unwrap().track_index;
         let control_name = if track_index == 0 {
             format!("START")

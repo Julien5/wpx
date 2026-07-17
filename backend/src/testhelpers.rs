@@ -108,7 +108,7 @@ pub async fn load_backend_data_with_track_and_parameters(
     let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
 
     for c in &mut controls {
-        track.project_point(c);
+        debug_assert_eq!(c.track_projections.len(), 1);
     }
 
     let power_geometry = track.make_power_geometry(&parameters.power_parameters, &waypoints);

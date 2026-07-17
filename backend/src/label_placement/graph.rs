@@ -204,11 +204,11 @@ impl Graph {
                 neighbor_candidates.push(last_neighbor_candidate.unwrap().clone());
             }
             if neighbor_candidates.is_empty() {
-                log::info!(
+                /*log::info!(
                     "graph removed [{}] because of overlapping with [{}] (and others)",
                     self.nodes[b].feature.id(),
                     self.nodes[*a].feature.id()
-                );
+                );*/
             }
         }
         self.draw_graph(&format!("{:03}-4-update", a));
@@ -293,11 +293,11 @@ impl Graph {
     fn best_candidate_for_node(&self, node: &Node) -> Option<usize> {
         let candidates = &self.nodes[*node].candidates;
         if candidates.is_empty() {
-            log::info!("no candidate found for {}", self.nodes[*node].feature.id(),);
+            /*log::info!("no candidate found for {}", self.nodes[*node].feature.id(),);*/
             return None;
         }
         // Note: the candidates are sorted by priority
-        let mut nblock_other = 0;
+        let mut _nblock_other = 0;
         for index in 0..candidates.len() {
             let candidate = &candidates[index];
 
@@ -309,7 +309,7 @@ impl Graph {
 
             match self.candidate_blocks_any(node, index) {
                 Some(_other_node) => {
-                    nblock_other += 1;
+                    _nblock_other += 1;
                     continue;
                 }
                 None => {}
@@ -323,12 +323,12 @@ impl Graph {
 
             return Some(index);
         }
-
+        /*
         log::trace!(
             "could not find any good candidate for [{}] ({} block other) => take first candidate",
             self.nodes[*node].feature.id(),
             nblock_other,
-        );
+        );*/
 
         if self.debug_graphic_dir.is_some() {
             let graphic = self.make_graphic();

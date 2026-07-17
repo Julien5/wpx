@@ -48,11 +48,6 @@ fn as_gpx_waypoint(c: &InputPoint) -> Option<gpx::Waypoint> {
             track_floating_index: c.track_projections.first().unwrap().track_floating_index,
         };
         wp.comment = Some(serde_json::to_string(&meta).unwrap());
-        log::trace!(
-            "make control for trackfile:{} [{}]",
-            c.name(),
-            c.description()
-        );
         Some(wp)
     } else {
         None
@@ -118,19 +113,11 @@ where
     };
 
     project(&mut control);
-    let name = control.name();
     let target_f = track_floating_index;
     debug_assert!(control.track_projections.len() >= 1);
     control.track_projections.retain(|proj| {
         let f = proj.track_floating_index;
         let diff = (target_f - f).abs();
-        log::trace!(
-            "{} f:{:.1} target:{:.2} diff:{:.1}",
-            name,
-            f,
-            target_f,
-            diff
-        );
         diff < 0.01
     });
     debug_assert_eq!(control.track_projections.len(), 1);

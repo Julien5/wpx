@@ -110,7 +110,7 @@ pub async fn get_response(
         );
         match download(&missing_req_string, &side).await {
             Ok(data) => {
-                log::trace!("response length: {} bytes", data.len());
+                log::info!("response length: {} bytes", data.len());
                 match parse(&data) {
                     Ok(response) => {
                         let _ = super::request_cache::write_cache(
@@ -138,9 +138,9 @@ pub async fn get_response(
 
     let (chunk_data, missing) = super::request_cache::read_cache(&request, side.logger).await;
     if missing.boxes.is_empty() {
-        log::trace!("complete cache hit.");
+        log::info!("complete cache hit.");
         return Ok((chunk_data, 0));
     }
-    log::trace!("incomplete cache hit.");
+    log::info!("incomplete cache hit.");
     Err(TrackError::OSMDownloadFailed.into())
 }

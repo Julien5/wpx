@@ -174,9 +174,13 @@ impl Track {
             ProfileGeometry::new(_distance.clone(), &|index: usize| -> f64 { wgs[index].z() });
 
         let trees = match parts.len() > 1 {
-            true => ProjectionTrees::make_from_parts(&euclidean, &parts),
+            true => {
+                log::info!("make trees from {} parts", parts.len());
+                ProjectionTrees::make_from_parts(&euclidean, &parts)
+            }
             false => {
                 let parts = ProjectionTrees::make_parts(&euclidean, &Resolution::Topology);
+                log::info!("make trees from topology: {} parts", parts.len());
                 ProjectionTrees::make_from_parts(&euclidean, &parts)
             }
         };

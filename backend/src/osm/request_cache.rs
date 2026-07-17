@@ -153,7 +153,6 @@ pub async fn read_cache(req: &Request, logger: &SenderHandlerLock) -> (ChunkData
                     missing_tiles.add_tile(&tile);
                 }
                 for (tile, features) in found {
-                    log::trace!("found {} features at tile {:?}", features.len(), tile);
                     inplace_tiles.insert(tile, features);
                 }
             }
@@ -163,7 +162,6 @@ pub async fn read_cache(req: &Request, logger: &SenderHandlerLock) -> (ChunkData
                     missing_chunks.add_chunk(&chunk);
                 }
                 for (chunk, features) in found {
-                    log::trace!("found {} features at chunk {:?}", features.len(), chunk);
                     inplace_chunks.insert(chunk, features);
                 }
             }

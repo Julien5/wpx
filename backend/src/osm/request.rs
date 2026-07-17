@@ -138,21 +138,19 @@ impl Request {
         let mut tiles = Vec::new();
         for boxes in &self.boxes {
             let o = boxes.optimized();
-            for bbox in &o {
-                log::trace!("optim: {:?}", bbox);
-            }
             let svg = tiles_debug::paint_svg(&boxes, &o);
             // if debug
             if cfg!(debug_assertions) {
                 let _ = tiles_debug::save_debug_svg_incrementally(&svg);
             }
+            /*
             log::trace!(
                 "reduces {} boxes to {} boxes [{:.1}km2 = {:.1}km2]",
                 boxes.len(),
                 o.len(),
                 boxes.area() / 1_000_000f64,
                 o.iter().map(|bbox| bbox.area()).sum::<f64>() / 1_000_000f64,
-            );
+            );*/
             match boxes {
                 Boxes::Tiled(_) => {
                     tiles.extend_from_slice(&o);
