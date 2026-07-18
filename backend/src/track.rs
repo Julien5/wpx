@@ -132,7 +132,7 @@ impl Track {
 
                     let w = WGS84Point::new(&lon, &lat, &elevation);
 
-                    if last_point.is_some() && last_point.unwrap() == w {
+                    if last_point.is_some() && distance_wgs84(&last_point.unwrap(), &w) == 0f64 {
                         continue;
                     }
 

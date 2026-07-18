@@ -242,6 +242,7 @@ pub fn compute_track_projection(
         return point.track_projections.first().unwrap().clone();
     }
     // as opposed to GPX and OSM points, which may be on several segments
+    debug_assert!(!tracktree.range.is_empty());
     let index = tracktree.nearest_neighbor(&point.euclidean).unwrap();
     let mut partial = projection::compute(track, &point.euclidean, &index);
 

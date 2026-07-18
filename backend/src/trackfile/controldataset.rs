@@ -120,7 +120,13 @@ where
         let diff = (target_f - f).abs();
         diff < 0.01
     });
-    debug_assert_eq!(control.track_projections.len(), 1);
+    debug_assert_eq!(
+        control.track_projections.len(),
+        1,
+        "name: {} projs:{:?}",
+        control.name(),
+        control.track_projections
+    );
     Some(control)
 }
 
