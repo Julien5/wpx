@@ -2,9 +2,9 @@ use crate::error::TrackError;
 use std::sync::{OnceLock, RwLock};
 
 const LIBERTINUS_FONT_FILES: &[&str] = &[
-    "LibertinusSerif-Regular.ttf",
-    "LibertinusSerif-Bold.ttf",
-    "LibertinusSerif-Italic.ttf",
+    "LibertinusSans-Regular.ttf",
+    "LibertinusSans-Bold.ttf",
+    "LibertinusSans-Italic.ttf",
 ];
 
 /// Cached font data singleton
@@ -30,13 +30,12 @@ mod download_font {
     #[cfg(not(target_arch = "wasm32"))]
     pub async fn get(file: &str) -> Vec<u8> {
         if file.contains("Bold") {
-            return include_bytes!("../../../frontend/ui/fonts/LibertinusSerif-Bold.ttf").to_vec();
+            return include_bytes!("../../../frontend/ui/fonts/LibertinusSans-Bold.ttf").to_vec();
         }
         if file.contains("Italic") {
-            return include_bytes!("../../../frontend/ui/fonts/LibertinusSerif-Italic.ttf")
-                .to_vec();
+            return include_bytes!("../../../frontend/ui/fonts/LibertinusSans-Italic.ttf").to_vec();
         }
-        include_bytes!("../../../frontend/ui/fonts/LibertinusSerif-Regular.ttf").to_vec()
+        include_bytes!("../../../frontend/ui/fonts/LibertinusSans-Regular.ttf").to_vec()
     }
 }
 
@@ -71,8 +70,8 @@ pub fn apply_cached_fonts(db: &mut svg2pdf::usvg::fontdb::Database) -> Result<()
         db.load_font_data(bytes.clone());
     }
 
-    db.set_serif_family("Libertinus Serif");
-    db.set_sans_serif_family("Libertinus Serif");
+    db.set_serif_family("Libertinus Sans");
+    db.set_sans_serif_family("Libertinus Sans");
 
     Ok(())
 }
