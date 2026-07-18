@@ -76,7 +76,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   late final int _totalMinutes;
 
   // Current selection expressed as minutes-from-min
-  late int _offsetMinutes;
+  late Duration _offset;
 
   // Fine-adjustment text controllers
   late final TextEditingController _hourCtrl;
@@ -130,6 +130,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
   }
 
   DateTime init() {
+    debugPrint("init:${widget.currentControl.info!.time}");
     return parseDateTime(widget.currentControl.info!.time);
   }
 
@@ -144,10 +145,9 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     super.initState();
     _totalMinutes = end().difference(start()).inMinutes;
     final initial = init();
-    _offsetMinutes = initial
-        .difference(start())
-        .inMinutes
-        .clamp(0, _totalMinutes);
+    _offset = initial.difference(start());
+    debugPrint("start:${start()}");
+    debugPrint("offset:$_offset");
 
     // Build the list of days
     _days = [];
@@ -160,6 +160,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     _hourCtrl = TextEditingController(
       text: _current.hour.toString().padLeft(2, '0'),
     );
+    debugPrint("_current.minute:${_current.minute}");
     _minuteCtrl = TextEditingController(
       text: _current.minute.toString().padLeft(2, '0'),
     );
@@ -172,7 +173,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     super.dispose();
   }
 
-  DateTime get _current => start().add(Duration(minutes: _offsetMinutes));
+  DateTime get _current => start().add(_offset);
 
   DateTime _dayStart(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
@@ -195,13 +196,30 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     return (min: minM, max: maxM);
   }
 
-  void _applyOffset(int newOffset) {
-    final maxTimeOffset = maxAcceptableTime().difference(start()).inMinutes;
-    final minTimeOffset = minAcceptableTime().difference(start()).inMinutes;
-    final clamped = newOffset.clamp(minTimeOffset, maxTimeOffset);
-    if (clamped == _offsetMinutes) return;
+  Duration clampDuration(Duration t, Duration min, Duration max) {
+    if (t > max) {
+      return max;
+    }
+    if (t < min) {
+      return min;
+    }
+    return t;
+  }
+
+  void _applyOffset(Duration newDuration) {
+    final maxTimeOffset = maxAcceptableTime().difference(start());
+    final minTimeOffset = minAcceptableTime().difference(start());
+    final clamped = clampDuration(newDuration, minTimeOffset, maxTimeOffset);
+    debugPrint("maxTimeOffset:$maxTimeOffset");
+    debugPrint("minTimeOffset:$minTimeOffset");
+    debugPrint("newDuration:$newDuration");
+    debugPrint("clamped:$clamped");
+    if (clamped == _offset) {
+      debugPrint("clamped");
+      return;
+    }
     setState(() {
-      _offsetMinutes = clamped;
+      _offset = clamped;
       _syncTextFields();
     });
   }
@@ -219,7 +237,7 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
     final mb = _minuteBounds(dayIdx, hour);
     minute = minute.clamp(mb.min, mb.max);
     final target = _days[dayIdx].add(Duration(hours: hour, minutes: minute));
-    final offset = target.difference(start()).inMinutes;
+    final offset = target.difference(start());
     _applyOffset(offset);
   }
 
@@ -429,14 +447,14 @@ class _DateTimeRangePickerDialogState extends State<DateTimeRangePickerDialog> {
               min: 0,
               max: _totalMinutes.toDouble(),
               divisions: _totalMinutes,
-              value: _offsetMinutes.toDouble(),
-              onChanged: (v) => _applyOffset(v.round()),
+              value: _offset.inMinutes.toDouble(),
+              onChanged: (v) => _applyOffset(Duration(minutes: v.round())),
             ),
           ),
           // Day-boundary pips
           _DayPips(
             days: _days,
-            min: minAcceptableTime(),
+            min: start(),
             totalMinutes: _totalMinutes,
             accentColor: cs.primary,
           ),

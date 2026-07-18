@@ -225,8 +225,8 @@ String formatKmh(double kmh, int n) {
   return result;
 }
 
-DateTime _roundToMinute(DateTime dt) {
-  if (dt.second >= 30 || dt.millisecond >= 500) {
+DateTime _ceilMinuteIfAppropriate(DateTime dt) {
+  if (dt.second >= 59 && dt.millisecond >= 950) {
     return dt
         .copyWith(second: 0, millisecond: 0, microsecond: 0)
         .add(const Duration(minutes: 1));
@@ -237,7 +237,7 @@ DateTime _roundToMinute(DateTime dt) {
 String formatTime(DateTime t) {
   // rounding to the minute (as opposed to truncating the seconds part)
   // allows to display 12:34:59.999 as 12:35:00.
-  return DateFormat('HH:mm').format(_roundToMinute(t));
+  return DateFormat('HH:mm').format(_ceilMinuteIfAppropriate(t));
 }
 
 String formatDate(DateTime t) {
