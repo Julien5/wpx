@@ -7,6 +7,7 @@ use crate::{
     error::{GenericResult, TrackError},
     inputpoint::{ControlData, InputPoint, InputPointData},
     mercator::WebMercatorProjection,
+    track_projection::{TrackProjection, TrackProjections},
     trackfile::TrackFile,
     wgs84point::WGS84Point,
 };
@@ -18,7 +19,7 @@ struct ControlCmtMeta {
     waypoint_name: String,
     segment_name: String,
     nearest_waypoint_id: Option<usize>,
-    track_floating_index: f64,
+    distance_on_track_to_projection: f64,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -45,7 +46,11 @@ fn as_gpx_waypoint(c: &InputPoint) -> Option<gpx::Waypoint> {
             waypoint_name: cd.waypoint_name.clone(),
             segment_name: cd.segment_name.clone(),
             nearest_waypoint_id: cd.nearest_waypoint_id,
-            track_floating_index: c.track_projections.first().unwrap().track_floating_index,
+            distance_on_track_to_projection: c
+                .track_projections
+                .first()
+                .unwrap()
+                .distance_on_track_to_projection,
         };
         wp.comment = Some(serde_json::to_string(&meta).unwrap());
         Some(wp)
@@ -57,10 +62,10 @@ fn as_gpx_waypoint(c: &InputPoint) -> Option<gpx::Waypoint> {
 fn to_control<P>(
     wp: &gpx::Waypoint,
     projection: &WebMercatorProjection,
-    project: &P,
+    make_projection_at_distance: &P,
 ) -> Option<InputPoint>
 where
-    P: Fn(&mut InputPoint),
+    P: Fn(f64) -> TrackProjection,
 {
     let (lon, lat) = wp.point().x_y();
     let ele = wp.elevation.unwrap_or(0.0);
@@ -82,7 +87,7 @@ where
                     meta.waypoint_name,
                     meta.segment_name,
                     meta.nearest_waypoint_id,
-                    meta.track_floating_index,
+                    meta.distance_on_track_to_projection,
                 )
             })
     });
@@ -92,7 +97,7 @@ where
         return None;
     }
 
-    let (waypoint_name, segment_name, nearest_waypoint_id, track_floating_index) =
+    let (waypoint_name, segment_name, nearest_waypoint_id, distance_on_track_to_projection) =
         comment_obj.unwrap();
 
     let cd = ControlData {
@@ -104,29 +109,15 @@ where
         cutoff_time,
     };
 
-    let mut control = InputPoint {
+    let control = InputPoint {
         wgs84,
         euclidean,
         data: InputPointData::Control(cd),
-        track_projections: Default::default(),
+        track_projections: TrackProjections::from([{
+            make_projection_at_distance(distance_on_track_to_projection)
+        }]),
         index: None,
     };
-
-    project(&mut control);
-    let target_f = track_floating_index;
-    debug_assert!(control.track_projections.len() >= 1);
-    control.track_projections.retain(|proj| {
-        let f = proj.track_floating_index;
-        let diff = (target_f - f).abs();
-        diff < 0.01
-    });
-    debug_assert_eq!(
-        control.track_projections.len(),
-        1,
-        "name: {} projs:{:?}",
-        control.name(),
-        control.track_projections
-    );
     Some(control)
 }
 
@@ -146,9 +137,9 @@ impl ControlDataset {
         }
     }
 
-    pub fn to_controls<P>(&self, project: &P) -> Result<Vec<InputPoint>, TrackError>
+    pub fn to_controls<P>(&self, make_projection: &P) -> Result<Vec<InputPoint>, TrackError>
     where
-        P: Fn(&mut InputPoint),
+        P: Fn(f64) -> TrackProjection,
     {
         let bytes = self.gpx.as_bytes().to_vec();
         let reader = std::io::Cursor::new(bytes);
@@ -158,7 +149,7 @@ impl ControlDataset {
         let mut controls = Vec::new();
 
         for wp in &gpx_obj.waypoints {
-            if let Some(control) = to_control(wp, &projection, &project) {
+            if let Some(control) = to_control(wp, &projection, &make_projection) {
                 controls.push(control);
             } else {
                 return Err(TrackError::IOError.into());

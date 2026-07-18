@@ -2,7 +2,13 @@ use std::range::Range;
 #[allow(dead_code)]
 use std::{cmp::Ordering, collections::BTreeSet};
 
-use crate::{inputpoint::InputPoint, locate, mercator::MercatorPoint, track::Track};
+use crate::{
+    inputpoint::InputPoint,
+    locate,
+    mercator::{MercatorPoint, WebMercatorProjection},
+    track::Track,
+    wgs84point::WGS84Point,
+};
 
 use geo::SimplifyIdx;
 use serde::{Deserialize, Serialize};
@@ -18,6 +24,12 @@ pub struct TrackProjection {
 }
 
 impl TrackProjection {
+    pub fn unproject(&self) -> WGS84Point {
+        let mut wgs = WebMercatorProjection::make().unproject(&self.euclidean);
+        wgs.2 = self.elevation;
+        wgs
+    }
+
     pub fn at_track_index(track: &Track, index: usize) -> Self {
         TrackProjection {
             track_floating_index: index as f64,
@@ -26,6 +38,51 @@ impl TrackProjection {
             elevation: track.elevation(index),
             track_distance: 0f64,
             distance_on_track_to_projection: track.distance(index),
+        }
+    }
+
+    pub fn at_distance(track: &Track, distance: f64) -> Self {
+        let i1 = track.profile.index_before(distance);
+        let i2 = track.profile.index_after(distance);
+        let p1 = track.map.point_at(i1);
+        let p2 = track.map.point_at(i2);
+        let d1 = track.distance(i1);
+        let d2 = track.distance(i2);
+        debug_assert!(d1 <= d2);
+        debug_assert!(i1 <= i2);
+        let ad = distance - d1;
+        let a2 = d2 - d1;
+        let alpha = if a2 > 0f64 {
+            ad / a2
+        } else {
+            debug_assert!(
+                d1 == d2 && distance == d2,
+                "d1={}, distance={} d2={}",
+                d1,
+                distance,
+                d2,
+            );
+            0f64
+        };
+        debug_assert!(
+            0.0 <= alpha && alpha <= 1.0,
+            "d1={}, distance={} d2={} =>alpha={}",
+            d1,
+            distance,
+            d2,
+            alpha
+        );
+        let findex = i1 as f64 + alpha;
+        let m = MercatorPoint::from_point2d(&((1.0 - alpha) * p1.point2d() + alpha * p2.point2d()));
+        let z = (1.0 - alpha) * track.elevation(i1) + alpha * track.elevation(i2);
+
+        TrackProjection {
+            track_floating_index: findex,
+            track_index: findex.round() as usize,
+            euclidean: m,
+            elevation: z,
+            track_distance: 0f64,
+            distance_on_track_to_projection: distance,
         }
     }
 }
@@ -234,7 +291,6 @@ mod tests {
         gpsdata::GpxData,
         inputpoint::{GPXWaypointData, InputPointData, InputPointMap},
         trackparts::ProtoTrack,
-        wgs84point::WGS84Point,
     };
 
     fn read(filename: String) -> GpxData {

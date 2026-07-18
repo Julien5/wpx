@@ -12,6 +12,7 @@ pub fn index_after(distances: &[f64], d: f64) -> usize {
     if d > maxdist {
         return distances.len();
     }
+    // TODO: make fast since the distance are sorted.
     distances.iter().position(|&x| x >= d).unwrap()
 }
 
@@ -25,6 +26,7 @@ pub fn index_before(distances: &[f64], d: f64) -> usize {
     if d <= 0.0 {
         return 0;
     }
+    // TODO: make fast since the distance are sorted.
     match distances.iter().rposition(|&x| x < d) {
         Some(idx) => idx,
         None => {

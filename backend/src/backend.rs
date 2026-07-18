@@ -21,6 +21,7 @@ use crate::point_collection::Kinds;
 use crate::point_collection::PacketProvider;
 use crate::speed;
 use crate::track::Track;
+use crate::track_projection::TrackProjection;
 use crate::trackfile;
 use crate::trackfile::controldataset::ControlDataset;
 use crate::trackfile::jsonparameters::JsonParameters;
@@ -381,7 +382,7 @@ impl Backend {
         }
 
         let mut controls = controlsdata
-            .to_controls(&|p| track.project_point(p))
+            .to_controls(&|distance| TrackProjection::at_distance(&track, distance))
             .unwrap_or_default();
 
         let has_start = controls
@@ -811,6 +812,8 @@ mod tests {
         }
         std::fs::create_dir_all(format!("{}/WPX/1/", tmpdir)).unwrap();
         // to rebuild these test data:
+        // rm -rf data/ref/persist/share1
+        // ./run.sh unit-tests persist
         if false {
             unsafe {
                 std::env::set_var("DATA_DIR", "data/ref/persist/share1");
@@ -822,6 +825,7 @@ mod tests {
             unsafe {
                 std::env::set_var("DATA_DIR", tmpdir);
             }
+            return;
         }
         for suffix in [
             "track.gpx",
