@@ -1,10 +1,8 @@
+use std::range::Range;
 #[allow(dead_code)]
 use std::{cmp::Ordering, collections::BTreeSet};
 
-use crate::{
-    inputpoint::InputPoint, locate, mercator::MercatorPoint, parameters::TrackPart, track::Track,
-    trackparts::parts_to_ranges,
-};
+use crate::{inputpoint::InputPoint, locate, mercator::MercatorPoint, track::Track};
 
 use geo::SimplifyIdx;
 use serde::{Deserialize, Serialize};
@@ -132,7 +130,7 @@ where
 pub struct ProjectionTrees {
     total_tree: locate::IndexedPointsTree,
     subtrees: Vec<locate::IndexedPointsTree>,
-    parts: Vec<TrackPart>,
+    ranges: Vec<Range<usize>>,
 }
 
 pub enum Resolution {
@@ -142,8 +140,8 @@ pub enum Resolution {
 }
 
 impl ProjectionTrees {
-    pub fn parts(&self) -> Vec<TrackPart> {
-        self.parts.clone()
+    pub fn ranges(&self) -> Vec<std::range::Range<usize>> {
+        self.ranges.clone()
     }
 
     #[allow(dead_code)]
@@ -154,7 +152,10 @@ impl ProjectionTrees {
         }
     }
 
-    pub fn make_parts(euclidean: &Vec<MercatorPoint>, resolution: &Resolution) -> Vec<TrackPart> {
+    pub fn make_parts(
+        euclidean: &Vec<MercatorPoint>,
+        resolution: &Resolution,
+    ) -> Vec<std::range::Range<usize>> {
         let start = 0;
         let end = euclidean.len();
 
@@ -176,42 +177,33 @@ impl ProjectionTrees {
             Resolution::Topology => 10_000f64,
         };
         let split_indices = line.simplify_idx(epsilon);
-        let ranges: Vec<std::ops::Range<usize>> = split_indices
+        let ranges: Vec<std::range::Range<usize>> = split_indices
             .windows(2)
             .map(|window| {
                 if window[1] == end - 1 {
-                    window[0]..end
+                    (window[0]..end).into()
                 } else {
-                    window[0]..window[1]
+                    (window[0]..window[1]).into()
                 }
             })
             .collect();
         ranges
-            .iter()
-            .enumerate()
-            .map(|(index, range)| TrackPart {
-                name: format!("part-{}", index),
-                length: range.len(),
-                part_index: index,
-            })
-            .collect()
     }
 
-    fn make_projection_trees_from_parts(
+    pub fn make_from_parts(
         euclidean: &Vec<MercatorPoint>,
-        parts: &Vec<TrackPart>,
-    ) -> Vec<locate::IndexedPointsTree> {
-        parts_to_ranges(parts)
-            .iter()
-            .map(|range| locate::IndexedPointsTree::from_track(&euclidean, &range))
-            .collect()
-    }
-
-    pub fn make_from_parts(euclidean: &Vec<MercatorPoint>, parts: &Vec<TrackPart>) -> Self {
+        ranges: &Vec<std::range::Range<usize>>,
+    ) -> Self {
         Self {
-            total_tree: locate::IndexedPointsTree::from_track(&euclidean, &(0..euclidean.len())),
-            subtrees: Self::make_projection_trees_from_parts(euclidean, parts),
-            parts: parts.clone(),
+            total_tree: locate::IndexedPointsTree::from_track(
+                &euclidean,
+                &(0..euclidean.len()).into(),
+            ),
+            subtrees: ranges
+                .iter()
+                .map(|range| locate::IndexedPointsTree::from_track(&euclidean, &range))
+                .collect(),
+            ranges: ranges.clone(),
         }
     }
 
@@ -241,7 +233,7 @@ mod tests {
     use crate::{
         gpsdata::GpxData,
         inputpoint::{GPXWaypointData, InputPointData, InputPointMap},
-        trackparts::proto,
+        trackparts::ProtoTrack,
         wgs84point::WGS84Point,
     };
 
@@ -274,7 +266,7 @@ mod tests {
             track_projections: TrackProjections::new(),
             index: None,
         };
-        let proto = proto(&gpxdata.tracks).unwrap();
+        let proto = ProtoTrack::new(&gpxdata.tracks).unwrap();
         let track = Track::from_proto(&proto).unwrap();
         let mut map = InputPointMap::new();
         map.insert_point(&mortagne);

@@ -137,7 +137,7 @@ impl<'a> SegmentData<'a> {
         clone.potential_controls()
     }
 
-    pub fn range(&self) -> std::ops::Range<usize> {
+    pub fn range(&self) -> std::range::Range<usize> {
         self.track.subrange(self.segment.start, self.segment.end)
     }
 
@@ -280,7 +280,7 @@ mod tests {
         speed, svgmap,
         testhelpers::{self, load_backend_data_with_parameters},
         track::Track,
-        trackparts::proto,
+        trackparts::ProtoTrack,
     };
 
     static START_TIME: &'static str = "1985-04-12T09:00:00";
@@ -315,7 +315,7 @@ mod tests {
         let _ = env_logger::try_init();
         let (track, _gpxdata) = {
             let gpxdata = testhelpers::read(src);
-            let proto = proto(&gpxdata.tracks).unwrap();
+            let proto = ProtoTrack::new(&gpxdata.tracks).unwrap();
             let track = Track::from_proto(&proto).unwrap();
             (track, gpxdata)
         };

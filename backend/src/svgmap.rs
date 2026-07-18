@@ -180,7 +180,7 @@ struct MapMaker {
 
 pub fn euclidean_bounding_box(
     map: &MapGeometry,
-    range: &std::ops::Range<usize>,
+    range: &std::range::Range<usize>,
 ) -> EuclideanBoundingBox {
     assert!(!range.is_empty());
     let mut bbox = BoundingBox::new();

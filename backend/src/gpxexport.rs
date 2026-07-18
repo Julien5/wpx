@@ -49,7 +49,7 @@ fn to_gpx(w: &waypoint::Waypoint) -> gpx::Waypoint {
     ret
 }
 
-pub fn flat_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) -> TrackSegment {
+pub fn flat_export(wgs84: &Vec<WGS84Point>, range: &std::range::Range<usize>) -> TrackSegment {
     let mut ret = TrackSegment::new();
     for index in range.start..range.end {
         // remove z coordinate to avoid automatic "low" and "hight points" on etrex 10
@@ -70,7 +70,7 @@ pub fn flat_export(wgs84: &Vec<WGS84Point>, range: &std::ops::Range<usize>) -> T
 
 pub fn elevated_export(
     track: &track::Track,
-    range: &std::ops::Range<usize>,
+    range: &std::range::Range<usize>,
     time_params: &TimeParameters,
 ) -> TrackSegment {
     let mut ret = TrackSegment::new();
@@ -79,8 +79,10 @@ pub fn elevated_export(
         let mut w = gpx::Waypoint::new(geo::Point::new(wgs.x(), wgs.y()));
         w.elevation = Some(wgs.z());
         let dt = time_params.time(track.distance(index)).to_utc();
-        let odt = OffsetDateTime::from_unix_timestamp(dt.timestamp()).unwrap()
-            .replace_nanosecond(dt.timestamp_subsec_nanos()).unwrap();
+        let odt = OffsetDateTime::from_unix_timestamp(dt.timestamp())
+            .unwrap()
+            .replace_nanosecond(dt.timestamp_subsec_nanos())
+            .unwrap();
         w.time = Some(gpx::Time::from(odt));
         match ret.points.last() {
             Some(last) => {

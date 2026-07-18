@@ -25,7 +25,7 @@ use crate::trackfile;
 use crate::trackfile::controldataset::ControlDataset;
 use crate::trackfile::jsonparameters::JsonParameters;
 use crate::trackfile::TrackFile;
-use crate::trackparts::proto;
+use crate::trackparts::ProtoTrack;
 use crate::waypoint::Waypoint;
 use std::collections::BTreeMap;
 use std::sync::RwLock;
@@ -220,7 +220,7 @@ impl Backend {
             let indices: Vec<_> = parts.iter().map(|part| part.part_index.clone()).collect();
             locked.as_mut().unwrap().reorder(&indices)
         };
-        let proto = proto(&gpxdata.tracks)?;
+        let proto = ProtoTrack::new(&gpxdata.tracks)?;
         let track_data = Track::from_proto(&proto)?;
         let track = std::sync::Arc::new(track_data);
         for p in &mut gpxdata.waypoints {
@@ -373,7 +373,7 @@ impl Backend {
             })
             .map_err(|e| TrackError::from(e))?;
 
-        let proto = proto(&gpxdata.tracks)?;
+        let proto = ProtoTrack::new(&gpxdata.tracks)?;
         let track_data = Track::from_proto(&proto)?;
         let track = std::sync::Arc::new(track_data);
         for p in &mut gpxdata.waypoints {

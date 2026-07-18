@@ -30,8 +30,10 @@ impl MapGeometry {
             .map(|idx| euclidean[*idx].clone())
             .collect();
 
-        let graphics_tree =
-            IndexedPointsTree::from_track(&simplified_points, &(0..simplified_points.len()));
+        let graphics_tree = IndexedPointsTree::from_track(
+            &simplified_points,
+            &std::range::Range::from(0..simplified_points.len()),
+        );
 
         Self {
             xypoints: euclidean.clone(),

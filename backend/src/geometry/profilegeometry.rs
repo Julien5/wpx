@@ -129,18 +129,18 @@ impl ProfileGeometry {
         &self.simplified_indices
     }
 
-    pub fn gain_on_range(&self, range: &std::ops::Range<usize>) -> f64 {
+    pub fn gain_on_range(&self, range: &std::range::Range<usize>) -> f64 {
         debug_assert!(range.end <= self.len());
         debug_assert!(range.start < self.len());
         self.elevation_gain(range.end - 1) - self.elevation_gain(range.start)
     }
 
-    pub fn subrange(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {
+    pub fn subrange(&self, d0: f64, d1: f64) -> std::range::Range<usize> {
         debug_assert!(self.len() > 0);
         debug_assert!(d0 < d1);
         let startidx = self.index_after(d0);
         let endidx = self.index_before(d1) + 1;
         debug_assert!(endidx <= self.len());
-        startidx..endidx
+        (startidx..endidx).into()
     }
 }

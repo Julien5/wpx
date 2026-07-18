@@ -353,7 +353,7 @@ impl InputPoint {
         }
     }
 
-    pub fn is_in_range(&self, range: &std::ops::Range<usize>) -> bool {
+    pub fn is_in_range(&self, range: &std::range::Range<usize>) -> bool {
         for proj in &self.track_projections {
             if range.contains(&proj.track_index) {
                 return true;

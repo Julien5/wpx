@@ -2,14 +2,13 @@ use std::collections::BTreeSet;
 
 use crate::inputpoint::{GPXWaypointData, InputPoint, InputPointData};
 use crate::track::Track;
-use crate::trackparts::parts_to_ranges;
 
 struct Point {
     pub primary: usize,
     pub secondary: Vec<usize>,
 }
 
-type Range = std::ops::Range<usize>;
+type Range = std::range::Range<usize>;
 
 fn ambiguities_count(points: &Vec<Point>, range: &Range) -> usize {
     let mut count = 0;
@@ -60,10 +59,7 @@ pub fn user_steps_split(
     });
 
     let mut candidate_track_indices: BTreeSet<usize> = match controls.is_empty() {
-        true => {
-            let ranges = parts_to_ranges(&track.trees_parts());
-            ranges.iter().map(|r| r.end).collect()
-        }
+        true => track.ranges().iter().map(|r| r.end).collect(),
         false => controls
             .iter()
             .map(|c| c.track_projections.first().unwrap().track_index)

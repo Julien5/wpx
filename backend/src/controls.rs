@@ -408,9 +408,7 @@ pub fn _make_with_osm(
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        gpsdata::GpxData, parameters, point_collection::PointCollection, trackparts::proto,
-    };
+    use crate::{gpsdata::GpxData, parameters, point_collection::PointCollection};
 
     fn read(filename: &str) -> GpxData {
         use crate::gpsdata;
@@ -430,7 +428,7 @@ mod tests {
         let _ = env_logger::try_init();
         use crate::controls::*;
         let gpxdata = read("data/ref/karl-400.gpx");
-        let proto = proto(&gpxdata.tracks).unwrap();
+        let proto = ProtoTrack::new(&gpxdata.tracks).unwrap();
         let track = Track::from_proto(&proto).unwrap();
         let mut collection = PointCollection::new();
         {
@@ -462,7 +460,7 @@ mod tests {
         let _ = env_logger::try_init();
         use crate::controls::*;
         let gpxdata = read("data/ref/roland.gpx");
-        let proto = proto(&gpxdata.tracks).unwrap();
+        let proto = ProtoTrack::new(&gpxdata.tracks).unwrap();
         let track = Track::from_proto(&proto).unwrap();
         let mut collection = PointCollection::new();
         {

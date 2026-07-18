@@ -3,20 +3,9 @@ use crate::{
     track::Track, wgs84point::WGS84Point,
 };
 
-pub fn parts_to_ranges(parts: &Vec<TrackPart>) -> Vec<std::ops::Range<usize>> {
-    parts
-        .iter()
-        .scan(0usize, |offset, part| {
-            let start = *offset;
-            *offset += part.length;
-            Some(start..start + part.length)
-        })
-        .collect()
-}
-
 pub struct TrackSegment {
     pub name: String,
-    pub range: std::ops::Range<usize>,
+    pub range: std::range::Range<usize>,
 }
 
 pub fn controls_to_segments(track: &Track, controls: &Vec<InputPoint>) -> Vec<TrackSegment> {
@@ -30,7 +19,7 @@ pub fn controls_to_segments(track: &Track, controls: &Vec<InputPoint>) -> Vec<Tr
         }
         ret.push(TrackSegment {
             name: format!("to {}", control.name()),
-            range: start..last_index + 1,
+            range: (start..last_index + 1).into(),
         });
         start = last_index;
     }
@@ -39,7 +28,7 @@ pub fn controls_to_segments(track: &Track, controls: &Vec<InputPoint>) -> Vec<Tr
         debug_assert!(false);
         ret.push(TrackSegment {
             name: format!("to end"),
-            range: start..track.len(),
+            range: (start..track.len()).into(),
         });
     }
     ret
@@ -57,46 +46,48 @@ impl ProtoTrack {
     }
 }
 
-pub fn proto(gpxtracks: &Vec<(String, gpx::Track)>) -> Result<ProtoTrack, TrackError> {
-    let mut wgs = Vec::new();
-    let mut parts = Vec::new();
+impl ProtoTrack {
+    pub fn new(gpxtracks: &Vec<(String, gpx::Track)>) -> Result<ProtoTrack, TrackError> {
+        let mut wgs = Vec::new();
+        let mut parts = Vec::new();
 
-    let mut last_point = None;
-    for (index, (name, track)) in gpxtracks.iter().enumerate() {
-        debug_assert_eq!(track.segments.len(), 1);
-        let mut length = 0usize;
-        for segment in &track.segments {
-            for k in 0..segment.points.len() {
-                let point = &segment.points[k];
-                let (lon, lat) = point.point().x_y();
-                let elevation = match point.elevation {
-                    Some(e) => e,
-                    None => {
-                        return Err(TrackError::MissingElevation { index: k });
+        let mut last_point = None;
+        for (index, (name, track)) in gpxtracks.iter().enumerate() {
+            debug_assert_eq!(track.segments.len(), 1);
+            let mut length = 0usize;
+            for segment in &track.segments {
+                for k in 0..segment.points.len() {
+                    let point = &segment.points[k];
+                    let (lon, lat) = point.point().x_y();
+                    let elevation = match point.elevation {
+                        Some(e) => e,
+                        None => {
+                            return Err(TrackError::MissingElevation { index: k });
+                        }
+                    };
+
+                    let w = WGS84Point::new(&lon, &lat, &elevation);
+
+                    if last_point.is_some() && distance_wgs84(&last_point.unwrap(), &w) == 0f64 {
+                        continue;
                     }
-                };
 
-                let w = WGS84Point::new(&lon, &lat, &elevation);
-
-                if last_point.is_some() && distance_wgs84(&last_point.unwrap(), &w) == 0f64 {
-                    continue;
+                    wgs.push(w);
+                    length += 1;
+                    last_point = Some(w.clone());
                 }
-
-                wgs.push(w);
-                length += 1;
-                last_point = Some(w.clone());
             }
+            let part = TrackPart {
+                name: name.clone(),
+                length,
+                part_index: index,
+            };
+            parts.push(part);
         }
-        let part = TrackPart {
-            name: name.clone(),
-            length,
-            part_index: index,
+        let ret = ProtoTrack {
+            wgs84: wgs,
+            parts: parts,
         };
-        parts.push(part);
+        Ok(ret)
     }
-    let ret = ProtoTrack {
-        wgs84: wgs,
-        parts: parts,
-    };
-    Ok(ret)
 }

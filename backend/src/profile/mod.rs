@@ -222,7 +222,7 @@ impl ProfileView {
         &mut self,
         bottom: f64,
         profile: &ProfileGeometry,
-        _range: &std::ops::Range<usize>,
+        _range: &std::range::Range<usize>,
     ) -> f64 {
         let eticks = ticks::xticks_all(&self.bboxdata, self.W);
         for k in 1..eticks.len() {
@@ -232,7 +232,7 @@ impl ProfileView {
             if xg > self.WD() {
                 break;
             }
-            let range = std::ops::Range {
+            let range = std::range::Range {
                 start: profile.index_after(x0),
                 end: profile.index_before(x1),
             };
@@ -461,7 +461,7 @@ impl ProfileView {
         });
     }
 
-    fn range(&self, profile: &ProfileGeometry) -> std::ops::Range<usize> {
+    fn range(&self, profile: &ProfileGeometry) -> std::range::Range<usize> {
         let bbox = &self.bboxview();
         profile.subrange(bbox.get_xmin(), bbox.get_xmax())
     }

@@ -12,7 +12,7 @@ use crate::{
     parameters::Parameters,
     point_collection::{Kind, PacketProvider, PointCollection},
     track::Track,
-    trackparts::{proto, ProtoTrack},
+    trackparts::ProtoTrack,
 };
 
 pub fn read(filename: &str) -> GpxData {
@@ -27,7 +27,7 @@ pub fn read(filename: &str) -> GpxData {
 
 fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Parameters) -> BackendData {
     let gpxdata = read(filename);
-    let proto = proto(&gpxdata.tracks).unwrap();
+    let proto = ProtoTrack::new(&gpxdata.tracks).unwrap();
     let track = Arc::new(Track::from_proto(&proto).unwrap());
     let mut collection = PointCollection::new();
     {
@@ -134,7 +134,7 @@ pub async fn load_backend_data_with_parameters(
     with_osm: bool,
 ) -> BackendData {
     let gpxdata = read(filename);
-    let proto = proto(&gpxdata.tracks).unwrap();
+    let proto = ProtoTrack::new(&gpxdata.tracks).unwrap();
     let track = Track::from_proto(&proto).unwrap();
     load_backend_data_with_track_and_parameters(proto, track, gpxdata, parameters, with_osm).await
 }

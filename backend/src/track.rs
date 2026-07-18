@@ -9,7 +9,6 @@ use crate::mercator;
 use crate::mercator::EuclideanBoundingBox;
 use crate::mercator::MercatorPoint;
 use crate::parameters::PowerParameters;
-use crate::parameters::TrackPart;
 use crate::tile;
 use crate::tile::Chunks;
 use crate::tile::Tiles;
@@ -39,8 +38,8 @@ impl Track {
         self.wgs84.len()
     }
 
-    pub fn trees_parts(&self) -> Vec<TrackPart> {
-        self.trees.parts()
+    pub fn ranges(&self) -> Vec<std::range::Range<usize>> {
+        self.trees.ranges()
     }
 
     pub fn boxes(&self, start: f64, end: f64) -> (Tiles, Chunks) {
@@ -83,7 +82,7 @@ impl Track {
         self.wgs84[index].z()
     }
 
-    pub fn elevation_gain_on_range(&self, range: &std::ops::Range<usize>) -> f64 {
+    pub fn elevation_gain_on_range(&self, range: &std::range::Range<usize>) -> f64 {
         self.profile.gain_on_range(range)
     }
 
@@ -99,13 +98,13 @@ impl Track {
         self.profile.total_distance()
     }
 
-    pub fn subrange(&self, d0: f64, d1: f64) -> std::ops::Range<usize> {
+    pub fn subrange(&self, d0: f64, d1: f64) -> std::range::Range<usize> {
         debug_assert!(self.profile.len() > 0);
         debug_assert!(d0 < d1);
         let startidx = self.profile.index_after(d0);
         let endidx = self.profile.index_before(d1) + 1;
         debug_assert!(endidx <= self.len());
-        startidx..endidx
+        (startidx..endidx).into()
     }
 
     pub fn from_proto(proto: &ProtoTrack) -> Result<Track, TrackError> {
@@ -149,8 +148,8 @@ impl Track {
         });
 
         let trees = {
-            let parts = ProjectionTrees::make_parts(&euclidean, &Resolution::Topology);
-            ProjectionTrees::make_from_parts(&euclidean, &parts)
+            let ranges = ProjectionTrees::make_parts(&euclidean, &Resolution::Topology);
+            ProjectionTrees::make_from_parts(&euclidean, &ranges)
         };
 
         let ret = Track {

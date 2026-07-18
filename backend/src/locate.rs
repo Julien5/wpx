@@ -72,7 +72,7 @@ impl rstar::PointDistance for IndexedPoint {
 #[derive(Clone)]
 pub struct IndexedPointsTree {
     tree: RTree<IndexedPoint>,
-    pub range: std::ops::Range<usize>,
+    pub range: std::range::Range<usize>,
 }
 
 fn coord(point: &MercatorPoint) -> [f64; 2] {
@@ -82,7 +82,7 @@ fn coord(point: &MercatorPoint) -> [f64; 2] {
 impl IndexedPointsTree {
     fn indexed_track_range(
         euclideans: &Vec<MercatorPoint>,
-        range: &std::ops::Range<usize>,
+        range: &std::range::Range<usize>,
     ) -> Vec<IndexedPoint> {
         let mut ret = Vec::new();
         for k in range.start..range.end {
@@ -96,7 +96,7 @@ impl IndexedPointsTree {
 
     pub fn from_track(
         euclideans: &Vec<MercatorPoint>,
-        range: &std::ops::Range<usize>,
+        range: &std::range::Range<usize>,
     ) -> IndexedPointsTree {
         let ipoints = Self::indexed_track_range(euclideans, range);
         let tree = RTree::bulk_load(ipoints);

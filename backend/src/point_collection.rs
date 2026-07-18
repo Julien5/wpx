@@ -125,8 +125,8 @@ pub struct RenderInputParameters {
     pub kinds: Kinds,
     pub parameters: Parameters,
     pub time_parameters: TimeParameters,
-    pub drange: std::ops::Range<f64>,
-    pub range: std::ops::Range<usize>,
+    pub drange: std::range::Range<f64>,
+    pub range: std::range::Range<usize>,
     pub screen_size: IntegerSize2D,
     pub background_points: Vec<Vec<InputPoint>>,
     pub usersteps: Vec<InputPoint>,
@@ -163,7 +163,7 @@ impl RenderInputParameters {
             kinds: kinds.clone(),
             parameters: parameters.clone(),
             time_parameters: time_parameters.clone(),
-            drange: std::ops::Range {
+            drange: std::range::Range {
                 start: start,
                 end: end,
             },
@@ -190,7 +190,7 @@ impl RenderInputParameters {
             kinds: kinds.clone(),
             parameters: parameters.clone(),
             time_parameters: time_parameters.clone(),
-            drange: std::ops::Range {
+            drange: std::range::Range {
                 start: start,
                 end: end,
             },
