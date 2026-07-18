@@ -12,7 +12,7 @@ pub fn controls_to_segments(track: &Track, controls: &Vec<InputPoint>) -> Vec<Tr
     let mut ret = Vec::new();
     let mut start = 0;
     for control in controls.iter() {
-        let last_index = control.track_projections.first().unwrap().track_index;
+        let last_index = control.track_projections.first().unwrap().track_index();
         // handle the case of the START control
         if last_index == 0 {
             continue;

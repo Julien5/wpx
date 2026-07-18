@@ -220,7 +220,6 @@ pub fn compute_track_projection_2d(
 
     let new_proj = TrackProjection {
         track_floating_index: floating_index,
-        track_index: index,
         euclidean: middle,
         elevation: 0f64,
         track_distance,
@@ -271,6 +270,8 @@ pub fn compute_track_projection(
         index_floating_part = floating_index - index1 as f64;
     }
 
+    debug_assert_eq!(floating_index.round() as usize, index);
+
     let t1 = &track[index1];
     let t2 = &track[index2];
     let a1 = (t1.0, t1.1, elevation(index1));
@@ -317,7 +318,6 @@ pub fn compute_track_projection(
 
     let new_proj = TrackProjection {
         track_floating_index: floating_index,
-        track_index: index,
         euclidean: middle,
         elevation,
         track_distance,

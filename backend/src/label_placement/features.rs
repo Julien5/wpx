@@ -191,7 +191,7 @@ impl PointFeature {
                 let indices: String = point
                     .track_projections
                     .iter()
-                    .map(|p| p.track_index)
+                    .map(|p| p.track_index())
                     .map(|n| format!("{}", n))
                     .collect::<Vec<String>>()
                     .join(".");

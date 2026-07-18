@@ -56,7 +56,7 @@ impl ConstantPowerGeometry {
                 let projections = InputPoint::flatten_projections(&waypoints);
                 let indices: Vec<_> = projections
                     .iter()
-                    .map(|proj| proj.1.track_index)
+                    .map(|proj| proj.1.track_index())
                     .collect::<BTreeSet<_>>()
                     .iter()
                     .cloned()

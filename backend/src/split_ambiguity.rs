@@ -43,7 +43,7 @@ pub fn user_steps_split(
     // => we must compute them.
     let mut points = Vec::new();
     steps.iter().for_each(|w| {
-        let primary = w.track_projections.first().unwrap().track_index;
+        let primary = w.track_projections.first().unwrap().track_index();
         let mut clone = w.clone();
         // ugly hack to bypass locate.rs:234
         clone.data = InputPointData::GPXWaypoint(GPXWaypointData::default());
@@ -51,8 +51,8 @@ pub fn user_steps_split(
         track.project_point(&mut clone);
         let mut secondary = Vec::new();
         clone.track_projections.iter().for_each(|proj| {
-            if proj.track_index != primary {
-                secondary.push(proj.track_index);
+            if proj.track_index() != primary {
+                secondary.push(proj.track_index());
             }
         });
         points.push(Point { primary, secondary });
@@ -62,7 +62,7 @@ pub fn user_steps_split(
         true => track.ranges().iter().map(|r| r.end).collect(),
         false => controls
             .iter()
-            .map(|c| c.track_projections.first().unwrap().track_index)
+            .map(|c| c.track_projections.first().unwrap().track_index())
             .collect(),
     };
 

@@ -355,7 +355,7 @@ impl InputPoint {
 
     pub fn is_in_range(&self, range: &std::range::Range<usize>) -> bool {
         for proj in &self.track_projections {
-            if range.contains(&proj.track_index) {
+            if range.contains(&proj.track_index()) {
                 return true;
             }
         }
@@ -449,7 +449,7 @@ impl InputPoint {
         Waypoint {
             wgs84: self.wgs84.clone(),
             euclidean: self.euclidean.clone(),
-            track_index: Some(projection.track_index),
+            track_index: Some(projection.track_index()),
             name: self.name(),
             description: self.description(),
             has_custom_time,

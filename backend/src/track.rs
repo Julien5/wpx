@@ -189,7 +189,6 @@ impl Track {
         track_floating_index: f64,
     ) -> (WGS84Point, TrackProjection) {
         let base = track_floating_index.floor() as usize;
-        let track_index = track_floating_index.round() as usize;
         let t = track_floating_index - track_floating_index.floor();
 
         debug_assert!(t < 1.0);
@@ -221,7 +220,6 @@ impl Track {
 
         let proj = TrackProjection {
             track_floating_index,
-            track_index,
             euclidean: mercator,
             elevation: e,
             track_distance: 0f64,

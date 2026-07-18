@@ -536,12 +536,12 @@ impl ProfileView {
                     continue;
                 }
                 for proj in &w.track_projections {
-                    let index = proj.track_index;
+                    let index = proj.track_index();
                     if !range.contains(&index) {
                         continue;
                     }
                     // Note: It would be better to use the middle point with the float
-                    // track_index from track_projection.
+                    //.track_index() from track_projection.
                     let p = Point2D::new(profile.distance(index), profile.elevation(index));
                     let g = self.toSD(&p);
                     let k = counter;

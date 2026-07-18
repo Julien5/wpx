@@ -141,7 +141,7 @@ impl BackendData {
             for c in &mut controls {
                 match c.data.as_control().unwrap().cutoff_time {
                     Some(t) => {
-                        let index = c.track_projections.first().unwrap().track_index;
+                        let index = c.track_projections.first().unwrap().track_index();
                         debug_assert!(t >= old_start);
                         delta_from_start.insert(index, t - old_start);
                     }
@@ -151,7 +151,7 @@ impl BackendData {
 
             // apply delta
             for c in &mut controls {
-                let index = c.track_projections.first().unwrap().track_index;
+                let index = c.track_projections.first().unwrap().track_index();
                 let cdata = c.data.as_control().unwrap();
                 let new_cutoff = match cdata.cutoff_time {
                     Some(_) => {
@@ -222,7 +222,7 @@ impl BackendData {
             let mut copy = kpoints.clone();
             copy.retain(|w| {
                 w.is_close_to_track()
-                    && range.contains(&w.track_projections.first().unwrap().track_index)
+                    && range.contains(&w.track_projections.first().unwrap().track_index())
             });
             points.extend_from_slice(&copy);
         }

@@ -57,8 +57,8 @@ pub fn nearest_neighboor<T: Projectable>(
 pub trait Projectable {
     fn latitude(&self) -> f64;
     fn longitude(&self) -> f64;
-    fn set_track_index(&self, index: usize);
-    fn get_track_index(&self) -> Option<usize>;
+    fn set.track_index()(&self, index: usize);
+    fn get.track_index()(&self) -> Option<usize>;
 }
 
 impl Projectable for InputPoint {
@@ -68,21 +68,21 @@ impl Projectable for InputPoint {
     fn longitude(&self) -> f64 {
         self.wgs84.longitude()
     }
-    fn set_track_index(&self, index: usize) {
-        self.track_index.set(Some(index));
+    fn set.track_index()(&self, index: usize) {
+        self.track_index().set(Some(index));
     }
-    fn get_track_index(&self) -> Option<usize> {
-        self.track_index.get()
+    fn get.track_index()(&self) -> Option<usize> {
+        self.track_index().get()
     }
 }
 
 pub fn project_on_track<T: Projectable>(track: &Track, waypoints: &Vec<T>, _subset: &Vec<usize>) {
     let mut subset = _subset.clone();
-    subset.retain(|k| waypoints[*k].get_track_index().is_none());
+    subset.retain(|k| waypoints[*k].get.track_index()().is_none());
     let indexmap = nearest_neighboor(&track, &waypoints, &subset);
     debug_assert!(waypoints.len() >= indexmap.len());
     for (src, dest) in indexmap {
-        waypoints[src].set_track_index(dest);
+        waypoints[src].set.track_index()(dest);
     }
 }
 

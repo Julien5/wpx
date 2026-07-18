@@ -16,7 +16,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct TrackProjection {
     pub track_floating_index: f64,
-    pub track_index: usize,
     pub euclidean: MercatorPoint,
     pub elevation: f64,
     pub track_distance: f64,
@@ -30,10 +29,13 @@ impl TrackProjection {
         wgs
     }
 
+    pub fn track_index(&self) -> usize {
+        self.track_floating_index.round() as usize
+    }
+
     pub fn at_track_index(track: &Track, index: usize) -> Self {
         TrackProjection {
             track_floating_index: index as f64,
-            track_index: index,
             euclidean: track.map.point_at(index).clone(),
             elevation: track.elevation(index),
             track_distance: 0f64,
@@ -78,7 +80,6 @@ impl TrackProjection {
 
         TrackProjection {
             track_floating_index: findex,
-            track_index: findex.round() as usize,
             euclidean: m,
             elevation: z,
             track_distance: 0f64,
@@ -91,7 +92,7 @@ pub type TrackProjections = BTreeSet<TrackProjection>;
 
 #[allow(dead_code)]
 pub fn string_projection(projection: &TrackProjection) -> String {
-    format!("proj index:{}", projection.track_index)
+    format!("proj index:{}", projection.track_index())
 }
 
 #[allow(dead_code)]
@@ -272,7 +273,7 @@ impl ProjectionTrees {
         elevation: &impl Fn(usize) -> f64,
     ) {
         update_track_projection(point, euclidean, distance, elevation, &self.total_tree);
-        let index = point.track_projections.first().unwrap().track_index;
+        let index = point.track_projections.first().unwrap().track_index();
         if point.is_close_to_track() {
             for tree in &self.subtrees {
                 // consider a tree only if it does *not* contain the already known index.

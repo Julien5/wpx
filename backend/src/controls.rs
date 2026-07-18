@@ -38,7 +38,7 @@ pub fn set_control_names(controls: &mut Vec<InputPoint>) {
     let ncontrols = controls.len();
     for (index, p) in controls.iter_mut().enumerate() {
         debug_assert_eq!(p.track_projections.len(), 1);
-        let track_index = p.track_projections.first().unwrap().track_index;
+        let track_index = p.track_projections.first().unwrap().track_index();
         let control_name = if track_index == 0 {
             format!("START")
         } else if index < (ncontrols - 1) {
@@ -167,7 +167,7 @@ pub fn add_control_at_waypoint(
         waypoint.origin.clone(),
     );
     track.project_point(&mut position);
-    // now select the projection that is the closest to waypoint.track_index
+    // now select the projection that is the closest to waypoint.track_index()
     let projection = find_closest(&position.track_projections, waypoint.track_index.unwrap());
     let new = InputPoint::create_control_on_track(
         projection,
@@ -201,19 +201,19 @@ pub fn remove_control_at_waypoint(
         .track_projections
         .first()
         .unwrap()
-        .track_index;
+        .track_index();
     let end_index = controls
         .last()
         .unwrap()
         .track_projections
         .first()
         .unwrap()
-        .track_index;
+        .track_index();
     ret.retain(|control| {
         // We should not remove control that are not associated with a waypoint
         // because we cannot re-create them (since there is no waypoint to create
         // them from).
-        let index = control.track_projections.first().unwrap().track_index;
+        let index = control.track_projections.first().unwrap().track_index();
         let not_this_waypoint = index != waypoint.track_index.unwrap();
         let has_waypoint = !control
             .data
@@ -254,7 +254,7 @@ pub fn has_startend_controls(track: &Track, controls: &Vec<InputPoint>) -> (bool
     }
     let mut indices: Vec<_> = InputPoint::flatten_projections(controls)
         .iter()
-        .map(|(_, proj)| proj.track_index)
+        .map(|(_, proj)| proj.track_index())
         .collect();
     indices.sort();
     let maxdist = 1000f64;
@@ -348,7 +348,7 @@ pub fn _make_with_osm(
         let indices_on_segment: Vec<_> = selected
             .track_projections
             .iter()
-            .map(|proj| proj.track_index)
+            .map(|proj| proj.track_index())
             .filter(|index| subsegment.range().contains(index))
             .collect();
         if indices_on_segment.len() > 1 {

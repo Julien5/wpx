@@ -81,7 +81,7 @@ impl Waypoint {
         self.info.as_ref().expect("Waypoint info is missing")
     }
 
-    pub fn get_track_index(&self) -> usize {
+    pub fn track_index(&self) -> usize {
         self.track_index.unwrap()
     }
 
@@ -96,11 +96,11 @@ impl WaypointInfo {
         time: &DateTime,
         w: &Waypoint,
     ) -> WaypointInfo {
-        debug_assert!(w.get_track_index() < track.len());
-        let distance = track.distance(w.get_track_index());
+        debug_assert!(w.track_index() < track.len());
+        let distance = track.distance(w.track_index());
         let name = w.name.clone();
         let description = w.description.clone();
-        let elevation = track.elevation(w.get_track_index());
+        let elevation = track.elevation(w.track_index());
         let origin = w.origin.clone();
         let inter_distance = 0f64;
         let inter_elevation_gain = 0f64;
@@ -128,7 +128,7 @@ impl WaypointInfo {
         w: &Waypoint,
         wprev: &Waypoint,
     ) -> WaypointInfo {
-        debug_assert!(w.get_track_index() < track.len());
+        debug_assert!(w.track_index() < track.len());
         let time = parameters
             .time_parameters
             .time(proj.distance_on_track_to_projection);
@@ -138,9 +138,8 @@ impl WaypointInfo {
             ret.inter_elevation_gain,
             ret.inter_slope,
         ) = {
-            let dx = track.distance(w.get_track_index()) - track.distance(wprev.get_track_index());
-            let dy =
-                elevation::elevation_gain(&smooth, wprev.get_track_index(), w.get_track_index());
+            let dx = track.distance(w.track_index()) - track.distance(wprev.track_index());
+            let dy = elevation::elevation_gain(&smooth, wprev.track_index(), w.track_index());
             let slope = match dx {
                 0f64 => 0f64,
                 _ => dy / dx,
@@ -241,7 +240,7 @@ pub fn decimate(segment: &Segment, waypoints: &Vec<Waypoint>, n: usize) -> Vec<W
         ret.extend_from_slice(&candidates);
     }
     // now we can sort.
-    ret.sort_by_key(|w| w.track_index);
+    ret.sort_by_key(|w| w.track_index());
     ret
 }
 
@@ -254,7 +253,7 @@ pub fn group_waypoints(waypoints: &[Waypoint], split_indices: &[usize]) -> Vec<V
     let mut start = 0;
 
     for &split in split_indices {
-        let end = start + waypoints[start..].partition_point(|w| w.track_index.unwrap() < split);
+        let end = start + waypoints[start..].partition_point(|w| w.track_index() < split);
         ranges.push((start, end));
         start = end;
     }
