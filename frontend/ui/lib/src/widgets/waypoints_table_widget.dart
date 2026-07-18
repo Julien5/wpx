@@ -195,6 +195,7 @@ class _DesktopTableState extends State<DesktopTable> {
       final isGpxWaypoint = w.origin == Kind.gpxWaypoints;
       final isControl = w.origin == Kind.controls;
       final isEditableControl =
+          widget.editControls &&
           isControl &&
           speedMode == SpeedMode.kmh &&
           index != firstControlIndex &&

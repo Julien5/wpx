@@ -90,9 +90,12 @@ class _FileListWidgetState extends State<FileListWidget> {
       await backend.removeTrackfile(trackfile: _files[index]);
       setState(() => _files.removeAt(index));
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Deleted "${file.name}"')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Deleted ${file.name}"),
+            duration: const Duration(milliseconds: 500),
+          ),
+        );
       }
     }
   }
