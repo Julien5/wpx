@@ -12,9 +12,10 @@ use crate::{
     parameters::Parameters,
     point_collection::{Kind, PacketProvider, PointCollection},
     track::Track,
+    trackparts::{proto, ProtoTrack},
 };
 
-fn read(filename: &str) -> GpxData {
+pub fn read(filename: &str) -> GpxData {
     use crate::gpsdata;
     let mut f = std::fs::File::open(filename).unwrap();
     let mut content = Vec::new();
@@ -26,7 +27,8 @@ fn read(filename: &str) -> GpxData {
 
 fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Parameters) -> BackendData {
     let gpxdata = read(filename);
-    let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
+    let proto = proto(&gpxdata.tracks).unwrap();
+    let track = Arc::new(Track::from_proto(&proto).unwrap());
     let mut collection = PointCollection::new();
     {
         let mut waypoints = gpxdata.waypoints.clone();
@@ -37,12 +39,12 @@ fn load_backend_data_with_parameters_no_osm(filename: &str, parameters: Paramete
     }
     let waypoints = collection.get_vector(&Kind::GPXWaypoints);
     let power_geometry = track.make_power_geometry(&parameters.power_parameters, &waypoints);
-    let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
+    let mut controls = controls::infer_controls_from_gpx_segments(&proto, &track, &waypoints);
     for c in &mut controls {
         track.project_point(c);
     }
 
-    let controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
+    let controls = controls::infer_controls_from_gpx_segments(&proto, &track, &waypoints);
 
     collection.import_other(&Kind::GPXWaypoints, waypoints);
     collection.import_other(&Kind::Controls, controls);
@@ -80,12 +82,8 @@ async fn load_osm(track: &Track, collection: &mut PointCollection) -> usize {
     missing_box_count
 }
 
-pub fn load_file(filename: &str) -> (Track, GpxData) {
-    let gpxdata = read(filename);
-    (Track::from_tracks(&gpxdata.tracks).unwrap(), gpxdata)
-}
-
 pub async fn load_backend_data_with_track_and_parameters(
+    proto: ProtoTrack,
     track: Track,
     gpxdata: GpxData,
     parameters: Parameters,
@@ -105,7 +103,7 @@ pub async fn load_backend_data_with_track_and_parameters(
         load_osm(&track, &mut collection).await;
     }
 
-    let mut controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
+    let mut controls = controls::infer_controls_from_gpx_segments(&proto, &track, &waypoints);
 
     for c in &mut controls {
         debug_assert_eq!(c.track_projections.len(), 1);
@@ -135,8 +133,10 @@ pub async fn load_backend_data_with_parameters(
     parameters: Parameters,
     with_osm: bool,
 ) -> BackendData {
-    let (track, gpxdata) = load_file(filename);
-    load_backend_data_with_track_and_parameters(track, gpxdata, parameters, with_osm).await
+    let gpxdata = read(filename);
+    let proto = proto(&gpxdata.tracks).unwrap();
+    let track = Track::from_proto(&proto).unwrap();
+    load_backend_data_with_track_and_parameters(proto, track, gpxdata, parameters, with_osm).await
 }
 
 pub fn load_backend_data_without_osm(filename: &str) -> BackendData {

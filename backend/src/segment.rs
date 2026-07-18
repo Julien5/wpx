@@ -278,7 +278,9 @@ mod tests {
         profile,
         segment::Segment,
         speed, svgmap,
-        testhelpers::{load_backend_data_with_parameters, load_file},
+        testhelpers::{self, load_backend_data_with_parameters},
+        track::Track,
+        trackparts::proto,
     };
 
     static START_TIME: &'static str = "1985-04-12T09:00:00";
@@ -311,7 +313,12 @@ mod tests {
         with_osm: bool,
     ) -> bool {
         let _ = env_logger::try_init();
-        let (track, _gpxdata) = load_file(src);
+        let (track, _gpxdata) = {
+            let gpxdata = testhelpers::read(src);
+            let proto = proto(&gpxdata.tracks).unwrap();
+            let track = Track::from_proto(&proto).unwrap();
+            (track, gpxdata)
+        };
         let mut parameters = Parameters::default();
         parameters.start_time = START_TIME.to_string();
         parameters.user_steps_options.step_distance = None;

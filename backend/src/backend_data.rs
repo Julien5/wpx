@@ -53,25 +53,16 @@ impl BackendData {
     }
 
     pub fn gpx_data(&self) -> GpxData {
-        // Convert each TrackPart into a separate GPX track using the point ranges.
-        use crate::trackparts::parts_to_ranges;
-        let ranges = parts_to_ranges(&self.track.parts);
         let mut tracks = Vec::new();
-        for (part, range) in self.track.parts.iter().zip(ranges.iter()) {
-            // Skip empty parts just in case.
-            if range.start >= range.end {
-                continue;
-            }
-            let mut t = gpx::Track::new();
-            let mut segment = gpx::TrackSegment::new();
-            for wgs in &self.track.wgs84[range.clone()] {
-                let mut wp = gpx::Waypoint::new(geo::Point::new(wgs.longitude(), wgs.latitude()));
-                wp.elevation = Some(wgs.z());
-                segment.points.push(wp);
-            }
-            t.segments.push(segment);
-            tracks.push((part.name.clone(), t));
+        let mut t = gpx::Track::new();
+        let mut segment = gpx::TrackSegment::new();
+        for wgs in &self.track.wgs84 {
+            let mut wp = gpx::Waypoint::new(geo::Point::new(wgs.longitude(), wgs.latitude()));
+            wp.elevation = Some(wgs.z());
+            segment.points.push(wp);
         }
+        t.segments.push(segment);
+        tracks.push(("track".to_string(), t));
         let waypoints = self
             .packet_provider
             .collection

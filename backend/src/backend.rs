@@ -25,6 +25,7 @@ use crate::trackfile;
 use crate::trackfile::controldataset::ControlDataset;
 use crate::trackfile::jsonparameters::JsonParameters;
 use crate::trackfile::TrackFile;
+use crate::trackparts::proto;
 use crate::waypoint::Waypoint;
 use std::collections::BTreeMap;
 use std::sync::RwLock;
@@ -219,7 +220,8 @@ impl Backend {
             let indices: Vec<_> = parts.iter().map(|part| part.part_index.clone()).collect();
             locked.as_mut().unwrap().reorder(&indices)
         };
-        let track_data = Track::from_tracks(&gpxdata.tracks)?;
+        let proto = proto(&gpxdata.tracks)?;
+        let track_data = Track::from_proto(&proto)?;
         let track = std::sync::Arc::new(track_data);
         for p in &mut gpxdata.waypoints {
             track.project_point(p);
@@ -235,7 +237,7 @@ impl Backend {
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
 
         let waypoints = point_collection.collection.get_vector(&Kind::GPXWaypoints);
-        let controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
+        let controls = controls::infer_controls_from_gpx_segments(&proto, &track, &waypoints);
         for c in &controls {
             debug_assert!(!c.track_projections.is_empty());
         }
@@ -269,8 +271,7 @@ impl Backend {
         let name = {
             let lock = self.backend_data.read().unwrap();
             let track = &lock.as_ref().unwrap().track;
-            debug_assert!(!track.parts.is_empty());
-            track.parts.first().as_ref().unwrap().name.clone()
+            track.name.clone()
         };
         let track = self.trackSegment();
         let stats = self.segment_statistics(&track);
@@ -372,7 +373,8 @@ impl Backend {
             })
             .map_err(|e| TrackError::from(e))?;
 
-        let track_data = Track::from_tracks(&gpxdata.tracks)?;
+        let proto = proto(&gpxdata.tracks)?;
+        let track_data = Track::from_proto(&proto)?;
         let track = std::sync::Arc::new(track_data);
         for p in &mut gpxdata.waypoints {
             track.project_point(p);

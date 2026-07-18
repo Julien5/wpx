@@ -18,14 +18,15 @@ use crate::track_projection::Resolution;
 use crate::track_projection::TrackProjection;
 
 use crate::geometry::powergeometry::ConstantPowerGeometry;
+use crate::trackparts::ProtoTrack;
 
 #[derive(Clone)]
 pub struct Track {
     pub wgs84: Vec<WGS84Point>,
     pub map: MapGeometry,
     pub profile: ProfileGeometry,
-    pub parts: Vec<TrackPart>,
     pub tiles: Tiles,
+    pub name: String,
     trees: ProjectionTrees,
 }
 
@@ -107,55 +108,28 @@ impl Track {
         startidx..endidx
     }
 
-    pub fn from_tracks(gpxtracks: &Vec<(String, gpx::Track)>) -> Result<Track, TrackError> {
+    pub fn from_proto(proto: &ProtoTrack) -> Result<Track, TrackError> {
         let mut _distance = Vec::new();
-        let mut wgs = Vec::new();
         let mut dacc = 0f64;
         let projection = mercator::WebMercatorProjection::make();
         let mut euclidean = Vec::new();
-        let mut parts = Vec::new();
-
         let mut last_point = None;
-        for (index, (name, track)) in gpxtracks.iter().enumerate() {
-            debug_assert_eq!(track.segments.len(), 1);
-            let mut length = 0usize;
-            for segment in &track.segments {
-                for k in 0..segment.points.len() {
-                    let point = &segment.points[k];
-                    let (lon, lat) = point.point().x_y();
-                    let elevation = match point.elevation {
-                        Some(e) => e,
-                        None => {
-                            return Err(TrackError::MissingElevation { index: k });
-                        }
-                    };
-
-                    let w = WGS84Point::new(&lon, &lat, &elevation);
-
-                    if last_point.is_some() && distance_wgs84(&last_point.unwrap(), &w) == 0f64 {
-                        continue;
-                    }
-
-                    euclidean.push(projection.project(&w));
-                    wgs.push(w);
-                    length += 1;
-
-                    if last_point.is_some() {
-                        let dloc = distance_wgs84(&last_point.unwrap(), &w);
-                        dacc += dloc;
-                    }
-                    last_point = Some(w.clone());
-                    _distance.push(dacc);
-                }
+        for w in &proto.wgs84 {
+            if last_point.is_some() && distance_wgs84(&last_point.unwrap(), &w) == 0f64 {
+                // should have been filtered in proto
+                debug_assert!(false);
+                continue;
             }
-            let part = TrackPart {
-                name: name.clone(),
-                length,
-                part_index: index,
-            };
-            parts.push(part);
+
+            euclidean.push(projection.project(&w));
+            if last_point.is_some() {
+                let dloc = distance_wgs84(&last_point.unwrap(), &w);
+                dacc += dloc;
+            }
+            last_point = Some(w.clone());
+            _distance.push(dacc);
         }
-        debug_assert_eq!(_distance.len(), wgs.len());
+        debug_assert_eq!(_distance.len(), proto.wgs84.len());
 
         let mut boxes = Tiles::new();
         for e in &euclidean {
@@ -170,8 +144,9 @@ impl Track {
         let track_distance = _distance.last().copied().unwrap_or(0.0);
 
         let map = MapGeometry::new(&euclidean, track_distance);
-        let profile =
-            ProfileGeometry::new(_distance.clone(), &|index: usize| -> f64 { wgs[index].z() });
+        let profile = ProfileGeometry::new(_distance.clone(), &|index: usize| -> f64 {
+            proto.wgs84[index].z()
+        });
 
         let trees = {
             let parts = ProjectionTrees::make_parts(&euclidean, &Resolution::Topology);
@@ -179,10 +154,10 @@ impl Track {
         };
 
         let ret = Track {
-            wgs84: wgs,
+            wgs84: proto.wgs84.clone(),
+            name: proto.name(),
             map,
             profile,
-            parts,
             tiles: boxes,
             trees,
         };

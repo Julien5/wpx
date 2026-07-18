@@ -20,26 +20,16 @@ impl TrackDataset {
         track: &crate::track::Track,
         waypoints: &Vec<InputPoint>,
     ) -> Self {
-        // Convert each TrackPart into a separate GPX track using the point ranges.
-        use crate::trackparts::parts_to_ranges;
-        let ranges = parts_to_ranges(&track.parts);
         let mut tracks = Vec::new();
-        for (part, range) in track.parts.iter().zip(ranges.iter()) {
-            // Skip empty parts just in case.
-            if range.start >= range.end {
-                continue;
-            }
-            log::trace!("save: range:{:?}", range);
-            let mut t = gpx::Track::new();
-            let mut segment = gpx::TrackSegment::new();
-            for wgs in &track.wgs84[range.clone()] {
-                let mut wp = gpx::Waypoint::new(geo::Point::new(wgs.longitude(), wgs.latitude()));
-                wp.elevation = Some(wgs.z());
-                segment.points.push(wp);
-            }
-            t.segments.push(segment);
-            tracks.push((part.name.clone(), t));
+        let mut gpxtrack = gpx::Track::new();
+        let mut segment = gpx::TrackSegment::new();
+        for wgs in &track.wgs84 {
+            let mut wp = gpx::Waypoint::new(geo::Point::new(wgs.longitude(), wgs.latitude()));
+            wp.elevation = Some(wgs.z());
+            segment.points.push(wp);
         }
+        gpxtrack.segments.push(segment);
+        tracks.push(("track".to_string(), gpxtrack));
         let gpxdata = GpxData {
             waypoints: waypoints.clone(),
             tracks,

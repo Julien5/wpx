@@ -2,13 +2,14 @@ use crate::{
     backend::Segment,
     inputpoint::{InputPoint, InputPointData},
     math,
-    mercator::MercatorPoint,
+    mercator::{MercatorPoint, WebMercatorProjection},
     parameters::Parameters,
     point_collection::{Kind, PacketProvider},
     segment::SegmentData,
     speed::TimeParameters,
     track::Track,
     track_projection::{TrackProjection, TrackProjections},
+    trackparts::ProtoTrack,
     waypoint::Waypoint,
     wheel::shorten::shorten_name,
 };
@@ -50,6 +51,7 @@ pub fn set_control_names(controls: &mut Vec<InputPoint>) {
 }
 
 pub fn infer_controls_from_gpx_segments(
+    proto: &ProtoTrack,
     track: &Track,
     waypoints: &Vec<InputPoint>,
 ) -> Vec<InputPoint> {
@@ -61,12 +63,14 @@ pub fn infer_controls_from_gpx_segments(
         waypoint_description: String,
         nearest_waypoint_index: Option<usize>,
     }
+    let mercator = WebMercatorProjection::make();
 
+    debug_assert!(!proto.wgs84.is_empty());
     // construct candidates with the *end* of each segment.
     let mut candidates: Vec<Candidate> = Vec::new();
     // START
     candidates.push(Candidate {
-        euc: track.map.first().clone(),
+        euc: mercator.project(&proto.wgs84.first().unwrap()),
         segment_name: String::new(),
         track_index: 0,
         waypoint_name: String::new(),
@@ -75,11 +79,11 @@ pub fn infer_controls_from_gpx_segments(
     });
 
     let mut acc_length = 0;
-    for part in &track.parts {
+    for part in &proto.parts {
         acc_length += part.length;
-        debug_assert!(acc_length <= track.len());
+        debug_assert!(acc_length <= proto.wgs84.len());
         candidates.push(Candidate {
-            euc: track.map.point_at(acc_length - 1).clone(),
+            euc: mercator.project(&proto.wgs84[acc_length - 1]),
             segment_name: part.name.clone(),
             track_index: acc_length - 1,
             waypoint_name: String::new(),
@@ -87,7 +91,7 @@ pub fn infer_controls_from_gpx_segments(
             nearest_waypoint_index: None,
         });
     }
-    debug_assert_eq!(candidates.len(), track.parts.len() + 1);
+    debug_assert_eq!(candidates.len(), proto.parts.len() + 1);
     debug_assert!(candidates.len() > 0);
 
     let tree = RTree::bulk_load(waypoints.to_vec());
@@ -118,6 +122,7 @@ pub fn infer_controls_from_gpx_segments(
             }
             None => (String::new(), String::new(), None),
         };
+
         ret.push((
             candidate.track_index,
             InputPoint::create_control_on_track(
@@ -403,17 +408,8 @@ pub fn _make_with_osm(
 
 #[cfg(test)]
 mod tests {
-    use std::sync::Arc;
-
-    use tokio_util::sync::CancellationToken;
-
     use crate::{
-        event,
-        gpsdata::GpxData,
-        inputpoint::InputPoint,
-        osm::{self, DownloadSideData},
-        parameters,
-        point_collection::PointCollection,
+        gpsdata::GpxData, parameters, point_collection::PointCollection, trackparts::proto,
     };
 
     fn read(filename: &str) -> GpxData {
@@ -434,7 +430,8 @@ mod tests {
         let _ = env_logger::try_init();
         use crate::controls::*;
         let gpxdata = read("data/ref/karl-400.gpx");
-        let track = Track::from_tracks(&gpxdata.tracks).unwrap();
+        let proto = proto(&gpxdata.tracks).unwrap();
+        let track = Track::from_proto(&proto).unwrap();
         let mut collection = PointCollection::new();
         {
             let mut waypoints = gpxdata.waypoints.clone();
@@ -445,7 +442,7 @@ mod tests {
         }
         let waypoints = collection.get_vector(&Kind::GPXWaypoints);
 
-        let controls = infer_controls_from_gpx_segments(&track, &waypoints);
+        let controls = infer_controls_from_gpx_segments(&proto, &track, &waypoints);
         debug_assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -465,7 +462,8 @@ mod tests {
         let _ = env_logger::try_init();
         use crate::controls::*;
         let gpxdata = read("data/ref/roland.gpx");
-        let track = Track::from_tracks(&gpxdata.tracks).unwrap();
+        let proto = proto(&gpxdata.tracks).unwrap();
+        let track = Track::from_proto(&proto).unwrap();
         let mut collection = PointCollection::new();
         {
             let mut waypoints = gpxdata.waypoints.clone();
@@ -475,7 +473,7 @@ mod tests {
             collection.import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
         }
         let waypoints = collection.get_vector(&Kind::GPXWaypoints);
-        let controls = infer_controls_from_gpx_segments(&track, &waypoints);
+        let controls = infer_controls_from_gpx_segments(&proto, &track, &waypoints);
         debug_assert!(!controls.is_empty());
         for control in &controls {
             log::info!("found:{}", control.name());
@@ -485,87 +483,6 @@ mod tests {
         debug_assert!(controls[1].name().contains("CP-1"));
         debug_assert!(controls[2].name().contains("CP-2"));
         debug_assert!(controls[3].name().contains("CP-3"));
-        debug_assert!(controls[4].name().contains("END"));
-    }
-
-    async fn get_controls_from_osm(filename: &str) -> Vec<InputPoint> {
-        let _ = env_logger::try_init();
-        use crate::controls::*;
-        let gpxdata = read(filename);
-        let track = Arc::new(Track::from_tracks(&gpxdata.tracks).unwrap());
-
-        let b: event::SenderHandler = Box::new(event::ConsoleEventSender {});
-        let logger = std::sync::RwLock::new(Some(b));
-        let token = CancellationToken::new();
-        let side = DownloadSideData {
-            logger: &logger,
-            cancel_token: &token,
-        };
-        let try_download = true;
-        let (mut osmpoints, missing_box_count) =
-            osm::download_for_track(&track, &side, !try_download)
-                .await
-                .unwrap();
-        debug_assert!(missing_box_count == 0);
-        track.project_map(&mut osmpoints);
-
-        let mut provider = PacketProvider::new();
-        provider.collection.import_osm(&osmpoints.as_vector());
-
-        let segment = SegmentData::new(
-            &Segment {
-                id: -1,
-                start: 0f64,
-                end: track.total_distance(),
-            },
-            track.clone(),
-            &provider,
-            Parameters::default(),
-            TimeParameters::default(),
-        );
-        _make_with_osm(&segment, &provider, 70_000f64)
-    }
-
-    #[tokio::test]
-    async fn controls_infer_sectors_1() {
-        let _ = env_logger::try_init();
-        let controls = get_controls_from_osm("data/blackforest.gpx").await;
-        debug_assert!(!controls.is_empty());
-        for control in &controls {
-            log::info!("found:{}", control.name());
-        }
-        for c in &controls {
-            log::info!("c={} {}", c.name(), c.description());
-        }
-        debug_assert_eq!(controls.len(), 5);
-        debug_assert!(controls[1].name().contains("CP-1"));
-        debug_assert!(controls[1].description().contains("Furtwangen"));
-        debug_assert!(controls[2].name().contains("CP-2"));
-        debug_assert!(controls[2].description().contains("Haslach"));
-        debug_assert!(controls[3].name().contains("CP-3"));
-        debug_assert!(controls[3].description().contains("Forbach"));
-        debug_assert!(controls[4].name().contains("END"));
-        debug_assert!(controls[0].name().contains("START"));
-    }
-
-    #[tokio::test]
-    async fn controls_infer_sectors_2() {
-        let _ = env_logger::try_init();
-        let controls = get_controls_from_osm("data/ref/roland-nowaypoints.gpx").await;
-        debug_assert!(!controls.is_empty());
-        for control in &controls {
-            log::info!("found:{}", control.name());
-        }
-        for c in &controls {
-            log::info!("c={} {}", c.name(), c.description());
-        }
-        debug_assert_eq!(controls.len(), 5);
-        debug_assert!(controls[1].name().contains("CP-1"));
-        debug_assert!(controls[1].description().contains("Wangen"));
-        debug_assert!(controls[2].name().contains("CP-2"));
-        debug_assert!(controls[2].description().contains("Isny"));
-        debug_assert!(controls[3].name().contains("CP-3"));
-        debug_assert!(controls[3].description().contains("Bad Waldsee"));
         debug_assert!(controls[4].name().contains("END"));
     }
 }

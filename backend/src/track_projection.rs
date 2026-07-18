@@ -241,6 +241,7 @@ mod tests {
     use crate::{
         gpsdata::GpxData,
         inputpoint::{GPXWaypointData, InputPointData, InputPointMap},
+        trackparts::proto,
         wgs84point::WGS84Point,
     };
 
@@ -273,7 +274,8 @@ mod tests {
             track_projections: TrackProjections::new(),
             index: None,
         };
-        let track = Track::from_tracks(&gpxdata.tracks).unwrap();
+        let proto = proto(&gpxdata.tracks).unwrap();
+        let track = Track::from_proto(&proto).unwrap();
         let mut map = InputPointMap::new();
         map.insert_point(&mortagne);
         track.project_map(&mut map);
