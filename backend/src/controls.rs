@@ -108,10 +108,11 @@ pub fn infer_controls_from_gpx_segments(
                 let distance =
                     math::distance2(&neighbor.euclidean.point2d(), &point.point2d()).sqrt();
                 if distance < dmax {
-                    debug_assert!(neighbor.kind() == Kind::GPXWaypoints);
-                    id = Some(neighbor.index().unwrap());
                     name = neighbor.name();
                     description = neighbor.description();
+                    debug_assert!(neighbor.kind() == Kind::GPXWaypoints);
+                    debug_assert!(neighbor.index().is_some(), "{},{},{}", name, distance, dmax);
+                    id = Some(neighbor.index().unwrap());
                 }
                 (name, description, id)
             }

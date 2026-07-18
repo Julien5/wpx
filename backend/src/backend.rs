@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::backend_data::BackendData;
+use crate::controls;
 use crate::error;
 use crate::error::TrackError;
 use crate::event;
@@ -150,15 +151,6 @@ impl Backend {
         self.load_osm(!try_dowload).await
     }
 
-    pub fn load_controls(&self) -> Result<usize, TrackError> {
-        self.backend_data
-            .write()
-            .unwrap()
-            .as_mut()
-            .unwrap()
-            .load_controls()
-    }
-
     pub fn make_control_at_waypoint(&self, waypoint: &Waypoint, on: bool) {
         self.backend_data
             .write()
@@ -241,6 +233,19 @@ impl Backend {
         point_collection
             .collection
             .import_other(&Kind::GPXWaypoints, gpxdata.waypoints);
+
+        let waypoints = point_collection.collection.get_vector(&Kind::GPXWaypoints);
+        let controls = controls::infer_controls_from_gpx_segments(&track, &waypoints);
+        for c in &controls {
+            debug_assert!(!c.track_projections.is_empty());
+        }
+
+        let len = controls.len();
+        debug_assert!(len >= 2);
+
+        point_collection
+            .collection
+            .import_other(&Kind::Controls, controls);
 
         let data = BackendData {
             track,
@@ -637,7 +642,6 @@ mod tests {
         let mut backend = Backend::make();
         backend.load_filename(filename).expect("fail");
         backend.load_osm_without_download().await.unwrap();
-        backend.load_controls().unwrap();
         backend
     }
 

@@ -282,11 +282,6 @@ impl Bridge {
     }
 
     #[frb(sync)]
-    pub fn load_controls(&self) -> Result<usize, TrackError> {
-        self.backend.load_controls()
-    }
-
-    #[frb(sync)]
     pub fn make_control_at_waypoint(&self, waypoint: &Waypoint, on: bool) {
         self.backend.make_control_at_waypoint(waypoint, on);
     }

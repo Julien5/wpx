@@ -382,29 +382,6 @@ impl BackendData {
         self.render_segment(segment, &vec![input]).remove(0).svg
     }
 
-    pub fn load_controls(&mut self) -> Result<usize, TrackError> {
-        let waypoints = self
-            .packet_provider
-            .collection
-            .get_vector(&Kind::GPXWaypoints);
-        let mut controls = controls::infer_controls_from_gpx_segments(&self.track, &waypoints);
-        for c in &mut controls {
-            debug_assert!(!c.track_projections.is_empty());
-            if c.track_projections.is_empty() {
-                self.track.project_point(c);
-            }
-        }
-
-        let len = controls.len();
-        debug_assert!(len >= 2);
-
-        self.packet_provider
-            .collection
-            .import_other(&Kind::Controls, controls);
-
-        Ok(len)
-    }
-
     pub fn make_control_at_waypoint(&mut self, waypoint: &Waypoint, on: bool) {
         let controls = self.packet_provider.collection.get_vector(&Kind::Controls);
         let new = match on {

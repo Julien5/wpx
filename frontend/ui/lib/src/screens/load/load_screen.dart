@@ -79,7 +79,7 @@ class _ControlStrings {
   String? controlsCount() {
     // Note: this `if` is important. Otherwise: crash in backend,
     // since the backend_data may be none.
-    if (!screenModel.hasDone(Job.controls)) {
+    if (!screenModel.hasDone(Job.gpx)) {
       return null;
     }
     return "${screenModel.controlsCount()} controls";
@@ -88,7 +88,7 @@ class _ControlStrings {
   String? waypointsCount() {
     // Note: this `if` is important. Otherwise: crash in backend,
     // since the backend_data may be none.
-    if (!screenModel.hasDone(Job.controls)) {
+    if (!screenModel.hasDone(Job.gpx)) {
       return null;
     }
     return "${screenModel.waypointsCount()} waypoints";
@@ -106,10 +106,7 @@ class ControlsCard extends StatelessWidget {
       children: [
         SmallText(text: "Points"),
         EventWidget(target: Job.gpx, forcedString: strings.waypointsCount()),
-        EventWidget(
-          target: Job.controls,
-          forcedString: strings.controlsCount(),
-        ),
+        EventWidget(target: Job.gpx, forcedString: strings.controlsCount()),
       ],
     );
     return Card(elevation: 4, child: inner);
@@ -215,8 +212,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
   Widget build(BuildContext ctx) {
     LoadScreenModel model = context.watch<LoadScreenModel>();
 
-    bool okAllowed =
-        model.hasDone(Job.controls) && model.runningJob() == Job.none;
+    bool okAllowed = model.hasDone(Job.gpx) && model.runningJob() == Job.none;
 
     Widget button = ElevatedButton(
       onPressed: null,

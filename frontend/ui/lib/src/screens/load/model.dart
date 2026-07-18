@@ -5,7 +5,7 @@ import 'package:wpx/src/models/events.dart';
 import 'package:wpx/src/models/root.dart';
 import 'package:wpx/src/rust/api/bridge.dart' as bridge;
 
-enum Job { parts, gpx, osm, controls, none }
+enum Job { parts, gpx, osm, none }
 
 class FutureJob {
   final Future<void>? future;
@@ -67,9 +67,6 @@ class LoadScreenModel extends ChangeNotifier {
       return Job.gpx;
     }
     if (old == Job.gpx) {
-      return Job.controls;
-    }
-    if (old == Job.controls) {
       return Job.osm;
     }
     return Job.none;
@@ -88,8 +85,6 @@ class LoadScreenModel extends ChangeNotifier {
       //future = backend.loadContents(contents: userInput.contents());
     } else if (job == Job.osm) {
       future = backend.loadOsmWithDownload();
-    } else if (job == Job.controls) {
-      future = Future<void>(() => backend.loadControls());
     } else {
       assert(false);
     }
@@ -209,9 +204,7 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   bool doneAll() {
-    return done.contains(Job.gpx) &&
-        done.contains(Job.controls) &&
-        done.contains(Job.osm);
+    return done.contains(Job.gpx) && done.contains(Job.osm);
   }
 
   void onError(Job job, Object e) {
@@ -239,12 +232,12 @@ class LoadScreenModel extends ChangeNotifier {
   }
 
   int controlsCount() {
-    assert(done.contains(Job.controls));
+    assert(done.contains(Job.gpx));
     return statistics().controls.length;
   }
 
   int waypointsCount() {
-    assert(done.contains(Job.controls));
+    assert(done.contains(Job.gpx));
     return statistics().waypoints.length;
   }
 

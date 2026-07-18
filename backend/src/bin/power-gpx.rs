@@ -101,7 +101,6 @@ async fn main() -> anyhow::Result<()> {
 
     backend.load_ordered(&parts)?;
     let _ = backend.load_osm_without_download().await;
-    let _ = backend.load_controls();
 
     let track_segment: Segment = backend.trackSegment();
 

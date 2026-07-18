@@ -246,7 +246,6 @@ async fn main() -> anyhow::Result<()> {
     if !is_test {
         let _ = backend.load_osm_with_download().await;
     }
-    let _ = backend.load_controls();
 
     let kinds: Kinds = args.kinds.into_iter().collect();
     let track_segment = backend.trackSegment();

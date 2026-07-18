@@ -12,7 +12,6 @@ async fn load_test_data(filename: &str) -> Backend {
     backend
         .load_filename(filename)
         .expect(&format!("failed to load {}", filename));
-    backend.load_controls().unwrap();
     backend
 }
 
