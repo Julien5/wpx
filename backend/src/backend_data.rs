@@ -27,6 +27,7 @@ use crate::waypoint::WaypointInfo;
 use crate::waypoint::Waypoints;
 use crate::wheel;
 use crate::zipexport;
+use crate::zipexport::sanitize_filename_regex;
 
 pub type Segment = crate::segment::Segment;
 pub type SegmentStatistics = crate::segment::SegmentStatistics;
@@ -317,9 +318,15 @@ impl BackendData {
     }
 
     pub fn generateZip(&self, kinds: &Kinds) -> Result<Vec<u8>, TrackError> {
+        let name = if let Some(trackfile) = &self.trackfile {
+            trackfile.name.clone()
+        } else {
+            format!("route")
+        };
+        let filename = sanitize_filename_regex(&name);
         let mut map = self.generateGpx();
         let pdf = self.generatePdf(kinds)?;
-        map.insert("route.pdf".to_string(), pdf);
+        map.insert(format!("{}.pdf", filename), pdf);
         Ok(zipexport::generate(map))
     }
 

@@ -24,3 +24,22 @@ pub fn generate(content: BTreeMap<String, Vec<u8>>) -> Vec<u8> {
     // Finish and extract bytes
     zip.finish().unwrap().into_inner()
 }
+
+use regex::Regex;
+
+pub fn sanitize_filename_regex(input: &str) -> String {
+    // 1. Replace all whitespace with underscores
+    let re_space = Regex::new(r"\s+").unwrap();
+    let intermediate = re_space.replace_all(input, "-");
+
+    // 2. Remove illegal characters (anything not alphanumeric, dot, hyphen, or underscore)
+    let re_illegal = Regex::new(r"[^\w\.\-]").unwrap();
+    let sanitized = re_illegal.replace_all(&intermediate, "").into_owned();
+
+    // 3. Edge case protection
+    if sanitized.is_empty() || sanitized == "." || sanitized == ".." {
+        return String::from("default_filename");
+    }
+
+    sanitized
+}

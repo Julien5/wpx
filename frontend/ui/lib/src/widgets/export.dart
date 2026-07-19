@@ -41,10 +41,10 @@ FileType fileType(Type type) {
   return FileType.any;
 }
 
-void fileSave(List<int> data) async {
+void fileSave(List<int> data, String name) async {
   if (kIsWeb) {
     await FileSaver.instance.saveFile(
-      name: "route", // on the web, the extension is set automatically...
+      name: name, // on the web, the extension is set automatically...
       bytes: Uint8List.fromList(data),
       fileExtension: fileExtension(Type.zip),
       mimeType: mimeType(Type.zip),
@@ -52,7 +52,7 @@ void fileSave(List<int> data) async {
     );
   } else if (Platform.isLinux) {
     var filepath = await FilePicker.platform.saveFile(
-      fileName: "route.${fileExtension(Type.zip)}", // .. but not on linux
+      fileName: "$name.${fileExtension(Type.zip)}", // .. but not on linux
       type: fileType(Type.zip),
       allowedExtensions: [fileExtension(Type.zip)],
       bytes: Uint8List.fromList(data),
@@ -77,6 +77,22 @@ class ExportButton extends StatefulWidget {
   State<ExportButton> createState() => _ExportButtonState();
 }
 
+String sanitizeFilename(String input) {
+  // 1. Replace all whitespace (spaces, tabs, newlines) with underscores
+  String sanitized = input.replaceAll(RegExp(r'\s+'), '-');
+
+  // 2. Remove characters that are illegal or problematic in filenames
+  // This keeps alphanumeric characters, underscores, hyphens, and dots.
+  sanitized = sanitized.replaceAll(RegExp(r'[^\w\.\-]'), '');
+
+  // 3. Optional: Prevent empty strings or completely hidden files
+  if (sanitized.isEmpty || sanitized == '.' || sanitized == '..') {
+    return 'default-filename';
+  }
+
+  return sanitized;
+}
+
 class _ExportButtonState extends State<ExportButton> {
   bool busy = false;
 
@@ -89,7 +105,12 @@ class _ExportButtonState extends State<ExportButton> {
     });
     KindsModel kindsModel = context.read();
     var data = await generate(backend, kindsModel.kinds);
-    fileSave(data);
+    if (!mounted) {
+      return;
+    }
+    SegmentModel segmentModel = context.read();
+    String name = sanitizeFilename(segmentModel.trackFileName());
+    fileSave(data, name);
     setState(() {
       busy = false;
     });
