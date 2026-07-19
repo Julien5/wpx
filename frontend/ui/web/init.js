@@ -105,10 +105,7 @@ async function download(url, downloadIndex) {
         await download("main.dart.js",                                                                                        0);
         // await download("https://www.gstatic.com/flutter-canvaskit/a8bfdfc394deaed5c57bd45a64ac4294dc976a72/canvaskit.wasm", 1);
 		await download("https://www.gstatic.com/flutter-canvaskit/c416acfeb8126e097f758c664aaa3da929e27da0/canvaskit.wasm", 1);
-        await download("pkg/rust_lib_ui_bg.wasm",                                                                            2);
-        await download("assets/fonts/LibertinusSerif-Regular.ttf",                                                      3);
-        await download("assets/fonts/LibertinusSerif-Bold.ttf",                                                         3);
-        await download("assets/fonts/LibertinusSerif-Italic.ttf",                                                       3);
+        await download("pkg/rust_lib_ui_bg.wasm",                                                                       3);
 		await download("assets/fonts/LibertinusSans-Regular.ttf",                                                      3);
         await download("assets/fonts/LibertinusSans-Bold.ttf",                                                         3);
         await download("assets/fonts/LibertinusSans-Italic.ttf",                                                       3);
