@@ -202,14 +202,6 @@
 <circle cx="130.0512836729973" cy="28" fill="Gray" id="user-step" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g/>
-<g transform="translate(967.0512501001144 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
-10h
-</text>
-</g>
-<g/>
 <g transform="translate(928.8268751501718 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.817105263157941" x="-7.408552631578914" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.81710526315794" x="-9.408552631578914" y="-15"/>
@@ -469,10 +461,10 @@ K
 <circle cx="1043.5" cy="135.25275" fill="Blue" id="1/wp" r="5"/>
 </g>
 <g transform="translate(1043.5 135.25275)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="26.6378947368421" x="-28.6378947368421" y="-131.25275"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="30.6378947368421" x="-30.6378947368421" y="-133.25275"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="end" x="-2.000" y="-121.253">
-END
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="80.16302631578947" x="-82.16302631578947" y="-131.25275"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="84.16302631578947" x="-84.16302631578947" y="-133.25275"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="" text-anchor="end" x="-2.000" y="-121.253">
+END (12:00)
 </text>
 </g>
 <path d="M1043.50,22.00 L1043.50,129.25" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>

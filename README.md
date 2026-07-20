@@ -1,13 +1,13 @@
 # WPX 
 
-WPX is a tool for long-distance cycling, especially brevet/randonneuring. It generates printable route PDFs with elevation profiles, maps, and control points from GPX tracks. 
+WPX is a tool for long-distance cycling, especially brevet/randonneuring. It generates printable route PDFs with elevation profiles, maps, and control points from GPX tracks.
 
-![pdf](docs/images/overview-small.png)
+![WPX overview](docs/images/overview.png)
 
-Try it online: [julien5.dev/wpx](https://www.julien5.dev/wpx).
+Try it online: [julien5.dev/wpx](https://www.julien5.dev/wpx):
 - No installation required.
-- Best used on desktop. The mobile version works, but some features are not yet available.
-- See [here](./docs/UI.md) for more info on the frontend.
+- **[User manual](./docs/UI.md)**
+- Best used on desktop (mobile works, but some features are not yet available).
 
 Source code on [github](https://github.com/Julien5/wpx).
 

@@ -552,10 +552,7 @@ impl ProfileView {
                     //assert!(label.unplaced());
                     let mut label = drawings::make_label_text(&w);
                     label.id = format!("{}/wp/text", k);
-                    if w.kind() == Kind::Controls
-                        && !w.data.as_control().unwrap().is_start()
-                        && !w.data.as_control().unwrap().is_end()
-                    {
+                    if w.kind() == Kind::Controls && !w.data.as_control().unwrap().is_start() {
                         let time = time_parameters.time(proj.distance_on_track_to_projection);
                         let text = format!("{} ({})", w.name(), round_time(&time).format("%H:%M"));
                         let format = drawings::format_for_kind(&w.kind());

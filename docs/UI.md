@@ -84,6 +84,30 @@ The Brest control is assigned a cutoff of 40 hours, while all other controls are
 
 Control times can also be customized to match an individual pacing strategy.
 
+### Time Axis 
+
+![](./images/time-axis-toggle.png)
+
+The time axis is based on a constant speed by default (more precisely: a piecewise constant speed if some controls have [custom cutoffs](#custom-control-cutoffs)). This has the advantage of being simple and transparent, and allows you to estimate your time in hand. But obviously, this does not take the slope into account. 
+
+With **constant power**, the time is computed using a simple [physical model](https://www.gribble.org/cycling/power_v_speed.html) that takes the slope into account. It assumes certain fixed physical parameters (e.g., a total weight of 80 kg) and:
+- first computes the power required to honor the cutoffs
+- then, given that power, computes the times at any distance
+
+The physical parameters are set to:
+
+| parameter          | value       |
+|--------------------|-------------|
+| weight             | 80.0 kg     |
+| rolling resistance | 0.005       |
+| headwind speed     | 0.0 km/h    |
+| frontal area       | 0.4 m2      |
+| air density        | 1.225 kg/m3 |
+| drag coefficient   | 0.9         |
+| drivetrain loss    | 2 %         |
+
+By comparing **constant speed** and **constant power** you can evaluate the impact of topography on your progression. Keep in mind that both models are simplistic and cannot predict your actual arrival times.
+
 ### Choose Point Types
 
 - **Waypoints:** Original waypoints from the input GPX file. If a waypoint coincides with a control point, it is merged into the control and is not displayed separately. Waypoints can be converted into controls using the control checkbox in the overview table (only on desktop).

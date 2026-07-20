@@ -336,22 +336,6 @@
 <circle cx="176.23036717456654" cy="28" fill="Gray" id="user-step" r="2" stroke="black" stroke-width="2"/>
 </g>
 <g/>
-<g transform="translate(2795.769104441937 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.817105263157828" x="-7.408552631578914" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.817105263157828" x="-9.408552631578914" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
- 2h
-</text>
-</g>
-<g/>
-<g transform="translate(2762.8453159513538 17)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="14.817105263157828" x="-7.408552631578914" y="-13"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="18.817105263157828" x="-9.408552631578914" y="-15"/>
-<text font-size="14.0" font-style="normal" font-weight="normal" id="" text-anchor="middle" x="0.000" y="-3.000">
- 1h
-</text>
-</g>
-<g/>
 <g transform="translate(2729.9215274607704 17)">
 <rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="19.625" x="-9.8125" y="-13"/>
 <rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="23.625" x="-11.8125" y="-15"/>
@@ -1689,10 +1673,10 @@ Fougeres
 <circle cx="2828.6928929325204" cy="134.31747753950026" fill="Blue" id="1/wp" r="5"/>
 </g>
 <g transform="translate(2828.6928929325204 134.31747753950026)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="26.6378947368421" x="-13.31894736842105" y="-130.31747753950026"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="30.6378947368421" x="-15.31894736842105" y="-132.31747753950026"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="1/wp/text" text-anchor="middle" x="0.000" y="-120.317">
-END
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="80.16302631578947" x="-82.16302631578947" y="-130.31747753950026"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="84.16302631578947" x="-84.16302631578947" y="-132.31747753950026"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="" text-anchor="end" x="-2.000" y="-120.317">
+END (03:00)
 </text>
 </g>
 <path d="M2828.69,22.00 L2828.69,128.32" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>

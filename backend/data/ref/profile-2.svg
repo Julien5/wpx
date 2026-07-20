@@ -255,10 +255,10 @@ Baden-Baden
 <circle cx="642.3010465936509" cy="291.9424693877551" fill="Blue" id="0/wp" r="5"/>
 </g>
 <g transform="translate(642.3010465936509 291.9424693877551)">
-<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="26.6378947368421" x="-13.31894736842105" y="-287.9424693877551"/>
-<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="30.6378947368421" x="-15.31894736842105" y="-289.9424693877551"/>
-<text font-size="14.0" font-style="normal" font-weight="bold" id="0/wp/text" text-anchor="middle" x="0.000" y="-277.942">
-END
+<rect fill="white" fill-opacity="0.75" height="10" id="label-bg" width="80.16302631578947" x="-40.08151315789473" y="-287.9424693877551"/>
+<rect fill="none" height="14" id="label-dbg" stroke="blue" stroke-width="2" width="84.16302631578947" x="-42.08151315789473" y="-289.9424693877551"/>
+<text font-size="14.0" font-style="normal" font-weight="bold" id="" text-anchor="middle" x="0.000" y="-277.942">
+END (00:55)
 </text>
 </g>
 <path d="M642.30,22.00 L642.30,285.94" id="link" stroke="black" stroke-linejoin="miter" stroke-miterlimit="1" stroke-width="0.5"/>

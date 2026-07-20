@@ -273,7 +273,12 @@ class _OverviewWidgetState extends State<OverviewWidget> {
         TableRow(children: [SmallText(text: "End time"), endTimeWidget]),
         TableRow(
           children: [
-            SmallText(text: "Time axis"),
+            Row(
+              children: [
+                SmallText(text: "Time axis"),
+                SmallInfoLink(url: docsURL("UI.html#time-axis")),
+              ],
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: ToggleButtons(
