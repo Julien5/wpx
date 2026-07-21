@@ -98,13 +98,13 @@ The physical parameters are set to:
 
 | parameter          | value       |
 |--------------------|-------------|
-| weight             | 80.0 kg     |
+| weight             | 90.0 kg     |
 | rolling resistance | 0.005       |
 | headwind speed     | 0.0 km/h    |
-| frontal area       | 0.4 m2      |
+| frontal area       | 0.5 m2      |
 | air density        | 1.225 kg/m3 |
-| drag coefficient   | 0.9         |
-| drivetrain loss    | 2 %         |
+| drag coefficient   | 0.66        |
+| drivetrain loss    | 3 %         |
 
 By comparing **constant speed** and **constant power** you can evaluate the impact of topography on your progression. Keep in mind that both models are simplistic and cannot predict your actual arrival times.
 

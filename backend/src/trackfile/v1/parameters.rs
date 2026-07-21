@@ -18,13 +18,13 @@ pub struct PowerParameters {
 impl Default for PowerParameters {
     fn default() -> PowerParameters {
         PowerParameters {
-            W: 80.0,
+            W: 90.0,
             Crr: 0.005,
             Vhw: 0.0,
-            A: 0.4,
+            A: 0.5,
             Rho: 1.225,
-            Cd: 0.9,
-            DrivetrainLoss: 2f64,
+            Cd: 0.66,
+            DrivetrainLoss: 3f64,
         }
     }
 }
@@ -132,5 +132,3 @@ pub fn parse_time(data: &str) -> DateTime {
     }
     panic!("cannot parse time string:{}", data);
 }
-
-
