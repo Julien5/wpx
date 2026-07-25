@@ -15,7 +15,7 @@ async fn load_test_data(filename: &str) -> Backend {
     backend
 }
 
-fn table(backend: &Backend) -> Vec<Waypoint> {
+fn table_render(backend: &Backend) -> Vec<Waypoint> {
     let map = RenderInput {
         kinds: point_collection::allkinds(),
         function: RenderFunction::Map,
@@ -30,6 +30,26 @@ fn table(backend: &Backend) -> Vec<Waypoint> {
     let outputs = backend.render_segment(&segment, &vec![map, profile]);
     assert_eq!(outputs.len(), 2);
     let mut table = outputs[1].waypoints.clone();
+    table.sort_by(|p1, p2| {
+        let a1 = if let Some(i) = p1.info.as_ref() {
+            i.distance
+        } else {
+            0f64
+        };
+        let a2 = if let Some(i) = p2.info.as_ref() {
+            i.distance
+        } else {
+            0f64
+        };
+        a1.partial_cmp(&a2).unwrap()
+    });
+    table
+}
+
+fn table_get(backend: &Backend) -> Vec<Waypoint> {
+    let kinds = Vec::from([Kind::GPXWaypoints, Kind::Controls]);
+    let segment = backend.trackSegment();
+    let mut table = backend.get_waypoints(&segment, &kinds);
     table.sort_by(|p1, p2| {
         let a1 = if let Some(i) = p1.info.as_ref() {
             i.distance
@@ -63,13 +83,13 @@ fn display_table(result: &Vec<Waypoint>) {
 static START_TIME: &'static str = "1985-04-12T06:05:00.00Z";
 
 #[tokio::test]
-async fn table_1() {
+async fn table_pbp() {
     let _ = env_logger::try_init();
     let backend = load_test_data(&"data/PBP-simple.gpx").await;
     let mut parameters = backend.get_parameters();
     parameters.start_time = START_TIME.to_string();
     backend.set_parameters(&parameters);
-    let result = table(&backend);
+    let result = table_render(&backend);
     display_table(&result);
 
     assert_eq!(result.len(), 11);
@@ -80,7 +100,7 @@ async fn table_1() {
     assert_eq!(result[9].origin, Kind::GPXWaypoints);
 
     backend.make_control_at_waypoint(&result[1], true);
-    let result = table(&backend);
+    let result = table_render(&backend);
     display_table(&result);
     assert_eq!(result.len(), 11);
     assert_eq!(result[1].name, "CP-1");
@@ -89,7 +109,7 @@ async fn table_1() {
     assert_eq!(result[9].origin, Kind::GPXWaypoints);
 
     backend.make_control_at_waypoint(&result[9], true);
-    let result = table(&backend);
+    let result = table_render(&backend);
     display_table(&result);
     assert_eq!(result.len(), 11);
     assert_eq!(result[1].name, "CP-1");
@@ -100,7 +120,7 @@ async fn table_1() {
     let time1 = parse_time(&result[9].info.as_ref().unwrap().time);
     let time2 = time1 + TimeDelta::hours(1);
     backend.set_control_time(&result[9], &Some(time_to_iso8601(&time2)));
-    let result = table(&backend);
+    let result = table_render(&backend);
     display_table(&result);
     assert_eq!(result.len(), 11);
     assert!(result[9].has_custom_time);
@@ -117,16 +137,16 @@ async fn wheel_smoke() {
     let mut parameters = backend.get_parameters();
     parameters.start_time = START_TIME.to_string();
     backend.set_parameters(&parameters);
-    let result = table(&backend);
+    let result = table_render(&backend);
     backend.make_control_at_waypoint(&result[1], true);
     backend.make_control_at_waypoint(&result[9], true);
-    let result = table(&backend);
+    let result = table_render(&backend);
     display_table(&result);
     let time_end = parse_time(&result[10].info.as_ref().unwrap().time);
     let time2 = time_end - TimeDelta::seconds(200);
     let ok = backend.set_control_time(&result[9], &Some(time_to_iso8601(&time2)));
     debug_assert!(ok);
-    let result = table(&backend);
+    let result = table_render(&backend);
     display_table(&result);
     backend.render_segment_simple(
         &backend.trackSegment(),
@@ -134,4 +154,24 @@ async fn wheel_smoke() {
         point_collection::allkinds(),
         RenderFunction::Wheel,
     );
+}
+
+#[tokio::test]
+async fn table_ka_wst() {
+    let _ = env_logger::try_init();
+    let backend = load_test_data(&"data/KA-WST.gpx").await;
+    let mut parameters = backend.get_parameters();
+    parameters.start_time = START_TIME.to_string();
+    backend.set_parameters(&parameters);
+    let result = table_get(&backend);
+    display_table(&result);
+
+    assert_eq!(result.len(), 10);
+    assert_eq!(result[3].name, "K-steinach");
+    assert_eq!(result[3].origin, Kind::GPXWaypoints);
+
+    backend.make_control_at_waypoint(&result[3], true);
+    let result = table_get(&backend);
+    display_table(&result);
+    assert_eq!(result.len(), 10);
 }

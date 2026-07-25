@@ -255,7 +255,7 @@ impl InputPoint {
     pub fn create_user_step_on_track(wgs: &WGS84Point, proj: TrackProjection) -> InputPoint {
         let euc = &proj.euclidean;
         let mut p = InputPoint::from_wgs84(&wgs, &euc, Kind::CutOff);
-        p.track_projections = BTreeSet::from([proj]);
+        p.track_projections = BTreeSet::from([proj.ontrack_clone()]);
         p
     }
 
@@ -284,7 +284,7 @@ impl InputPoint {
             nearest_waypoint_id: nearest_waypoint_id.clone(),
             cutoff_time: None,
         };
-        p.track_projections = BTreeSet::from([{ proj }]);
+        p.track_projections = BTreeSet::from([{ proj.ontrack_clone() }]);
         p.data = InputPointData::Control(data);
         p
     }

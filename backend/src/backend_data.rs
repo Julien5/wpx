@@ -222,8 +222,10 @@ impl BackendData {
             let kpoints = self.packet_provider.collection.get_vector(kind);
             let mut copy = kpoints.clone();
             copy.retain(|w| {
-                w.is_close_to_track()
-                    && range.contains(&w.track_projections.first().unwrap().track_index())
+                let close = w.is_close_to_track();
+                let on_range = range.contains(&w.track_projections.first().unwrap().track_index());
+                let good = close && on_range;
+                good
             });
             points.extend_from_slice(&copy);
         }

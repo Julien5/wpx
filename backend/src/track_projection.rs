@@ -29,6 +29,12 @@ impl TrackProjection {
         wgs
     }
 
+    pub fn ontrack_clone(&self) -> Self {
+        let mut ret = self.clone();
+        ret.track_distance = 0f64;
+        ret
+    }
+
     pub fn track_index(&self) -> usize {
         self.track_floating_index.round() as usize
     }
