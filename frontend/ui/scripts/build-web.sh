@@ -68,6 +68,7 @@ function build() {
 		mkdir -p build/native_assets/linux
 		rustup target add wasm32-unknown-unknown
 		rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+		export RUST_LOG=error
 		/opt/rust/cargo/bin/flutter_rust_bridge_codegen generate
 		# /opt/rust/cargo/bin/flutter_rust_bridge_codegen build-web ${RELEASE}
 		rust-build-web
