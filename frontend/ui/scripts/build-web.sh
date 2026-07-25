@@ -54,7 +54,8 @@ function rust-build-web() {
 function build() {
 	SRC=$HOME/projects/wpx/frontend/ui
 	cd ${SRC}
-	dev.flutter-rust
+	dev.flutter
+	dev.rust
 	dos2unix pubspec.yaml
 	echo "incrementing build version..."
 	perl -i -pe 's/^(version:\s+\d+\.\d+\.)(\d+)\+(\d+)$/$1.($2)."+".($3+1)/e' pubspec.yaml
