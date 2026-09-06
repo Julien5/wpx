@@ -16,7 +16,7 @@ chrono = { version = "0.4", features = ["serde"] }
 time = "0.3"
 clap = { version = "4.5", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.143"
+serde_json = { version = "1.0", features = ["float_roundtrip"] }
 serde_with = "3.20.0"
 reqwest = {version="0.12.23",default-features = false,features = ["gzip", "deflate","rustls-tls"] }
 tokio-util = { version = "0.7" }

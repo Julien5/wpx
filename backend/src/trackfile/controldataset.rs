@@ -191,11 +191,7 @@ impl ControlDataset {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        error::TrackError,
-        track_projection::TrackProjection,
-        trackfile::controldataset::{to_control, ControlCmtMeta, ControlDataset},
-    };
+    use crate::{error::TrackError, trackfile::controldataset::ControlCmtMeta};
 
     fn read(filename: String) -> String {
         let mut f = std::fs::File::open(filename).unwrap();
