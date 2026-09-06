@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" creator="https://github.com/georust/gpx">
+  <wpt lat="48.00631599999999" lon="9.740826">
+    <ele>562.25</ele>
+    <name>START</name>
+    <cmt>{"waypoint_name":"","segment_name":"","nearest_waypoint_id":null,"distance_on_track_to_projection":0.0}</cmt>
+    <desc></desc>
+  </wpt>
+  <wpt lat="48.006314" lon="9.740784">
+    <ele>562.5</ele>
+    <name>END</name>
+    <cmt>{"waypoint_name":"","segment_name":"Alb-2","nearest_waypoint_id":null,"distance_on_track_to_projection":200953.37741340982}</cmt>
+    <desc></desc>
+  </wpt>
+</gpx>

@@ -188,3 +188,43 @@ impl ControlDataset {
         Ok(Self::from_string(&bytes)?)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        error::TrackError,
+        track_projection::TrackProjection,
+        trackfile::controldataset::{to_control, ControlCmtMeta, ControlDataset},
+    };
+
+    fn read(filename: String) -> String {
+        let mut f = std::fs::File::open(filename).unwrap();
+        let mut content = Vec::new();
+        // read the whole file
+        use std::io::prelude::*;
+        f.read_to_end(&mut content).unwrap();
+        String::from_utf8(content).unwrap()
+    }
+
+    #[test]
+    fn badread() {
+        let _ = env_logger::try_init();
+        let gpx = read("data/badread.controldataset.gpx".to_string());
+        let bytes = gpx.as_bytes().to_vec();
+        let reader = std::io::Cursor::new(bytes);
+        let gpx_obj = gpx::read(reader).map_err(|_| TrackError::IOError).unwrap();
+        let mut ok = false;
+        for wp in &gpx_obj.waypoints {
+            let cmt = wp.comment.clone().unwrap();
+            log::trace!("cmt:{}", cmt);
+            let meta = serde_json::from_str::<ControlCmtMeta>(&cmt).unwrap();
+            let txt = "200953.37741340982";
+            let dig: f64 = 200953.37741340982;
+            if cmt.contains(&txt) {
+                debug_assert_eq!(dig, meta.distance_on_track_to_projection);
+                ok = true;
+            }
+        }
+        debug_assert!(ok);
+    }
+}
